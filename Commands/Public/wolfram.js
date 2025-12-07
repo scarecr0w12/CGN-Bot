@@ -1,4 +1,4 @@
-const fetch = require("chainfetch");
+const fetch = require("../../Modules/Utils/ChainFetchShim");
 const { tokens: { wolframAppID } } = require("../../Configurations/auth");
 
 module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text } }, documents, msg, commandData) => {
@@ -17,29 +17,29 @@ module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text } }, docume
 		}));
 
 		response.edit({
-			embed: {
+			embeds: [{
 				color: Colors.RESPONSE,
 				title: "Here's your result from Wolfram|Alpha!",
 				fields,
-			},
+			}],
 		});
 	} else if (!body.error && body.numpods === 0) {
 		response.edit({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "Wolfram|Alpha has nothing 💡",
 				footer: {
 					text: "Try searching for something else!",
 				},
-			},
+			}],
 		});
 	} else {
 		logger.debug("Error occurred at Wolfram|Alpha!", { svrid: msg.guild.id, query: query, err: body.error });
 		response.edit({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "Unfortunately, I didn't get anything back from Wolfram|Alpha 😔",
-			},
+			}],
 		});
 	}
 };

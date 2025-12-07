@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs-nextra");
-const { ObjectID } = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;
@@ -40,7 +40,7 @@ controllers.gallery = async (req, { res }) => {
 				level: { $in: extensionLevel },
 			};
 			if (req.query.id) {
-				matchCriteria._id = new ObjectID(req.query.id);
+				matchCriteria._id = new ObjectId(req.query.id);
 			} else if (req.query.q) {
 				matchCriteria.$text = {
 					$search: req.query.q,
@@ -131,7 +131,7 @@ controllers.installer = async (req, { res }) => {
 
 	let id;
 	try {
-		id = new ObjectID(req.params.extid);
+		id = new ObjectId(req.params.extid);
 	} catch (err) {
 		return renderError(res, "That extension doesn't exist!", undefined, 404);
 	}
@@ -255,7 +255,7 @@ controllers.builder = async (req, { res }) => {
 		if (req.query.extid) {
 			try {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectID(req.query.extid),
+					_id: new ObjectId(req.query.extid),
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {
@@ -329,7 +329,7 @@ controllers.builder.post = async (req, res) => {
 
 			if (req.query.extid) {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectID(req.query.extid),
+					_id: new ObjectId(req.query.extid),
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {
@@ -351,7 +351,7 @@ controllers.builder.post = async (req, res) => {
 controllers.download = async (req, res) => {
 	let extensionDocument;
 	try {
-		extensionDocument = await Gallery.findOne(new ObjectID(req.params.extid));
+		extensionDocument = await Gallery.findOne(new ObjectId(req.params.extid));
 	} catch (err) {
 		return res.sendStatus(500);
 	}
@@ -384,7 +384,7 @@ controllers.gallery.modify = async (req, res) => {
 			const getGalleryDocument = async () => {
 				let doc;
 				try {
-					doc = await Gallery.findOne(new ObjectID(req.params.extid));
+					doc = await Gallery.findOne(new ObjectId(req.params.extid));
 				} catch (err) {
 					res.sendStatus(500);
 					return null;
@@ -458,22 +458,22 @@ controllers.gallery.modify = async (req, res) => {
 					res.sendStatus(200);
 
 					messageOwner(galleryDocument.owner_id, {
-						embed: {
+						embeds: [{
 							color: Colors.GREEN,
 							title: `Your extension ${galleryDocument.name} has been accepted ${galleryDocument.level === "third" ? "by maintainers." : "to the GAwesomeBot extension gallery!"} 🎉`,
 							description: `View your creation [here](${configJS.hostingURL}extensions/gallery?id=${galleryDocument._id.toString()})!`,
-						},
+						}],
 					});
 					break;
 				}
 				case "feature":
 					if (!galleryDocument.featured) {
 						messageOwner(galleryDocument.owner_id, {
-							embed: {
+							embeds: [{
 								color: Colors.GREEN,
 								title: `Your extension ${galleryDocument.name} has been featured on the GAwesomeBot extension gallery! 🌟`,
 								description: `View your achievement [here](${configJS.hostingURL}extensions/gallery?id=${galleryDocument._id.toString()})`,
-							},
+							}],
 						});
 					}
 
@@ -500,11 +500,11 @@ controllers.gallery.modify = async (req, res) => {
 
 					const actionString = `${req.params.action}${req.params.action === "reject" ? "e" : ""}d`;
 					messageOwner(galleryDocument.owner_id, {
-						embed: {
+						embeds: [{
 							color: Colors.LIGHT_RED,
 							title: `Your extension ${galleryDocument.name} has been ${actionString} ${galleryDocument.level === "third" ? "by maintainers" : "from the GAwesomeBot extension gallery"}.`,
 							description: `${req.body.reason.replace(/\\n/g, "\n")}`,
-						},
+						}],
 					});
 					break;
 				}

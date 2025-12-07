@@ -18,13 +18,13 @@ class MessageUpdate extends BaseEvent {
 
 			// Send message in different channel
 			if (statusMessageDocument.type === "single" && statusMessageDocument.channel_id) {
-				const channel = msg.guild.channels.get(statusMessageDocument.channel_id);
+				const channel = msg.guild.channels.cache.get(statusMessageDocument.channel_id);
 				if (channel) {
 					const targetChannelDocument = serverDocument.channels[channel.id];
 					if (!targetChannelDocument || targetChannelDocument.bot_enabled) {
 						channel.send({
-							embed: StatusMessages.MESSAGE_EDITED(statusMessageDocument.type, msg, oldMsg, serverDocument, this.client),
-							disableEveryone: true,
+							embeds: [StatusMessages.MESSAGE_EDITED(statusMessageDocument.type, msg, oldMsg, serverDocument, this.client)],
+							allowedMentions: { parse: [] },
 						}).catch(err => {
 							logger.debug(`Failed to send StatusMessage for MESSAGE_EDITED.`, { svrid: msg.guild.id, chid: channel.id }, err);
 						});
@@ -34,8 +34,8 @@ class MessageUpdate extends BaseEvent {
 				const channelDocument = serverDocument.channels[msg.channel.id];
 				if (!channelDocument || channelDocument.bot_enabled) {
 					msg.channel.send({
-						embed: StatusMessages.MESSAGE_EDITED(statusMessageDocument.type, msg, oldMsg, serverDocument, this.client),
-						disableEveryone: true,
+						embeds: [StatusMessages.MESSAGE_EDITED(statusMessageDocument.type, msg, oldMsg, serverDocument, this.client)],
+						allowedMentions: { parse: [] },
 					}).catch(err => {
 						logger.debug(`Failed to send StatusMessage for MESSAGE_EDITED.`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 					});

@@ -36,21 +36,21 @@ module.exports = async ({ Constants: { Colors, Text }, client }, documents, msg,
 			}
 		}
 
-		const messages = await msg.channel.messages.fetch({ limit: 100, before: before || msg.id, after }).then(msgs => msgs.filter(filter).array().slice(0, num));
+		const messages = await msg.channel.messages.fetch({ limit: 100, before: before || msg.id, after }).then(msgs => msgs.filter(filter).toArray().slice(0, num));
 		msg.channel.bulkDelete(messages, true).then(({ size }) => {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: `Deleted ${size} message${size === 1 ? "" : "s"} in this channel 🗑🔥`,
-				},
+				}],
 			});
 		}).catch(err => {
 			logger.debug(`Failed to ${commandData.name} in channel '${msg.channel.name}' on server '${msg.guild.name}'`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: "Uh oh, I failed to delete all those messages. Try a smaller number, and make sure I have sufficient permissions to nuke in this channel! 💣",
-				},
+				}],
 			});
 		});
 	} else {

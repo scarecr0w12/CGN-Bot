@@ -18,7 +18,7 @@ class AFKHandler extends BaseEvent {
 
 	async handle (msg) {
 		const { serverDocument } = msg.guild;
-		if (serverDocument && msg.mentions.members.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
+		if (serverDocument && msg.mentions.members.cache.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
 			msg.mentions.members.forEach(async member => {
 				if (![this.client.user.id, msg.author.id].includes(member.id) && !serverDocument.config.blocked.includes(member.id) && !member.user.bot) {
 					// Check if they have a server AFK message
@@ -26,14 +26,14 @@ class AFKHandler extends BaseEvent {
 					const targetMemberDocument = serverDocument.members[member.id];
 					if (targetMemberDocument && targetMemberDocument.afk_message) {
 						msg.channel.send({
-							embed: {
+							embeds: [{
 								thumbnail: {
 									url: member.user.displayAvatarURL(),
 								},
 								color: Colors.INFO,
 								title: `@__${this.client.getName(serverDocument, member)}__ is currently AFK.`,
 								description: `${targetMemberDocument.afk_message}`,
-							},
+							}],
 						}).catch(err => {
 							logger.debug(`Failed to send AFK message to channel.`, { usrid: member.id, svrid: msg.guild.id, chid: msg.channel.id, msgid: msg.id }, err);
 						});
@@ -44,14 +44,14 @@ class AFKHandler extends BaseEvent {
 						});
 						if (targetUserDocument && targetUserDocument.afk_message) {
 							msg.channel.send({
-								embed: {
+								embeds: [{
 									thumbnail: {
 										url: member.user.displayAvatarURL(),
 									},
 									color: Colors.INFO,
 									title: `@__${this.client.getName(serverDocument, member)}__ is currently AFK.`,
 									description: `${targetUserDocument.afk_message}`,
-								},
+								}],
 							}).catch(err => {
 								logger.debug(`Failed to send AFK message to channel.`, { usrid: member.id, svrid: msg.guild.id, chid: msg.channel.id, msgid: msg.id }, err);
 							});
@@ -79,11 +79,11 @@ class AFKHandler extends BaseEvent {
 		if (userDocument) userDocument.save();
 		if (changed) {
 			msg.reply({
-				embed: {
+				embeds: [{
 					color: Colors.GREEN,
 					title: `Welcome back! 🎊`,
 					description: `I've removed your AFK message.`,
-				},
+				}],
 			}).catch(err => {
 				logger.debug(`Failed to send AFK removal message to channel.`, { usrid: msg.author.id, svrid: msg.guild.id, chid: msg.channel.id, msgid: msg.id }, err);
 			});

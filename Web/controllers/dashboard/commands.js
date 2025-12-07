@@ -80,7 +80,7 @@ controllers.list.post = async (req, res) => {
 	if (req.body["preset-applied"]) {
 		const disabled_channel_ids = [];
 		req.svr.channels.forEach(ch => {
-			if (ch.type === "text") {
+			if (ch.type === ChannelType.GuildText) {
 				if (!req.body[`preset-disabled_channel_ids-${ch.id}`]) {
 					disabled_channel_ids.push(ch.id);
 				}
@@ -141,7 +141,7 @@ controllers.rss.post = async (req, res) => {
 			serverQueryDocument.set(`config.rss_feeds.${i}.streaming.isEnabled`, req.body[`rss-${feedDocument._id}-streaming-isEnabled`] === "on");
 			serverQueryDocument.set(`config.rss_feeds.${i}.streaming.enabled_channel_ids`, []);
 			req.svr.channels.forEach(ch => {
-				if (ch.type === "text") {
+				if (ch.type === ChannelType.GuildText) {
 					if (req.body[`rss-${feedDocument._id}-streaming-enabled_channel_ids-${ch.id}`] === "on") {
 						serverQueryDocument.push(`config.rss_feeds.${i}.streaming.enabled_channel_ids`, ch.id);
 					}
@@ -328,7 +328,7 @@ controllers.translation.post = async (req, res) => {
 		if (member && !serverDocument.config.translated_messages.id(member.userID)) {
 			const enabled_channel_ids = [];
 			req.svr.channels.forEach(ch => {
-				if (ch.type === "text") {
+				if (ch.type === ChannelType.GuildText) {
 					if (req.body[`new-enabled_channel_ids-${ch.id}`] === "true") {
 						enabled_channel_ids.push(ch.id);
 					}
@@ -346,7 +346,7 @@ controllers.translation.post = async (req, res) => {
 			const autoTranslateQueryDocument = serverQueryDocument.clone.id("config.translated_messages", autoTranslateDocument._id);
 			autoTranslateQueryDocument.set("enabled_channel_ids", []);
 			req.svr.channels.forEach(ch => {
-				if (ch.type === "text") {
+				if (ch.type === ChannelType.GuildText) {
 					if (req.body[`translated_messages-${autoTranslateDocument._id}-enabled_channel_ids-${ch.id}`] === "on") {
 						autoTranslateQueryDocument.push("enabled_channel_ids", ch.id);
 					}

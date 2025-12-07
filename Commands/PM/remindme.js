@@ -9,10 +9,10 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 			msg.sendInvalidUsage(commandData);
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: `Alright, I'll remind you ${moment.duration(result).humanize(true)} ⏰`,
-				},
+				}],
 			});
 		}
 	} else {
@@ -26,19 +26,19 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 		});
 		if (userDocument.reminders.length === 0) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "No reminders set 😴",
 					description: `You don't have any reminders set yet; use \`${commandData.name} ${commandData.usage}\` to set one.`,
-				},
+				}],
 			});
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					title: `Your reminders:`,
 					fields,
-				},
+				}],
 			});
 		}
 	}

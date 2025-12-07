@@ -4,5 +4,6 @@ Configurations/auth.js
 node_modules/
 .idea/
 package-cache*.json
+.env
 
 Temp/*.json

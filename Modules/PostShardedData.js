@@ -1,4 +1,4 @@
-const snekfetch = require("snekfetch");
+const snekfetch = require("./Utils/SnekfetchShim");
 const { tokens } = require("../Configurations/auth.js");
 
 module.exports = async client => {
@@ -13,7 +13,7 @@ module.exports = async client => {
 			}).send({
 				shard_id: Number(process.env.SHARDS),
 				shard_total: Number(process.env.SHARD_COUNT),
-				server_count: client.guilds.size,
+				server_count: client.guilds.cache.size,
 			});
 		} catch (err) {
 			logger.warn(`Failed to post to DiscordBots...`, {}, err);

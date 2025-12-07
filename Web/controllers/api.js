@@ -51,7 +51,7 @@ controllers.users = async (req, res) => {
 		return;
 	}
 	try {
-		let user = req.app.client.users.get(req.query.id);
+		let user = req.app.client.users.cache.get(req.query.id);
 		if (!user) user = await req.app.client.users.fetch(req.query.id, true);
 
 		if (user) {

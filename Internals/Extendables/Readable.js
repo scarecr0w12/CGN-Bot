@@ -6,6 +6,7 @@ module.exports = class extends Extendable {
 	}
 
 	get extend () {
-		return !this.guild || this.permissionsFor(this.guild.me).has("VIEW_CHANNEL");
+		// Discord.js v14: guild.me is now guild.members.me
+		return !this.guild || this.permissionsFor(this.guild.members.me).has(PermissionFlagsBits.ViewChannel);
 	}
 };

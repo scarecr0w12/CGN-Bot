@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const { IsURL } = require("../../Modules/Utils/index");
 
 const rawReasonToUserFriendly = {
@@ -30,10 +30,10 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, c
 	if (msg.suffix) {
 		if (IsURL(msg.suffix)) {
 			await msg.send({
-				embed: {
+				embeds: [{
 					description: `We're checking the redirects for the provided URL`,
 					color: Colors.INFO,
-				},
+				}],
 			});
 			let res;
 			try {
@@ -51,7 +51,7 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, c
 						description.push(tempString.join("\n"));
 					}
 					msg.send({
-						embed: {
+						embeds: [{
 							color,
 							author: {
 								name: `Results provided by spoopy.link`,
@@ -64,16 +64,16 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, c
 							footer: {
 								text: res.body.safe ? "" : `We don't recommend clicking on any of the URLs that aren't marked as "Safe". They can be malicious!`,
 							},
-						},
+						}],
 					});
 				}
 			} catch (err) {
 				return msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						title: Text.ERROR_TITLE(),
 						description: `Here is the error I got: \`\`\`js\n${err.body.error}\`\`\``,
-					},
+					}],
 				});
 			}
 		} else {

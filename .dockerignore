@@ -1,0 +1,10 @@
+node_modules
+npm-debug.log
+logs
+Temp
+.git
+.env
+.env.example
+config.js
+config.json
+auth.js

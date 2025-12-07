@@ -30,7 +30,7 @@ class ChannelDelete extends BaseEvent {
 		// Message of the Day configuration
 		if (serverDocument.config.message_of_the_day.channel_id === channel.id) {
 			updated = true;
-			serverQueryDocument.set("config.message_of_the_day.channel_id", channel.guild.defaultChannel ? channel.guild.defaultChannel.id : channel.guild.channels.first().id);
+			serverQueryDocument.set("config.message_of_the_day.channel_id", channel.guild.defaultChannel ? channel.guild.defaultChannel.id : channel.guild.channels.cache.first().id);
 		}
 
 		// Moderation Filters

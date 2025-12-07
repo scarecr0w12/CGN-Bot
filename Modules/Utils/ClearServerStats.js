@@ -10,11 +10,11 @@ module.exports = async (client, serverDocument) => {
 
 	// Rank members by activity score for the week
 	const topMembers = [];
-	const server = client.guilds.get(serverDocument._id);
+	const server = client.guilds.cache.get(serverDocument._id);
 	if (!server) return;
 	await Promise.all(Object.values(serverDocument.members).map(async memberDocument => {
 		if (!memberDocument) return;
-		const member = server.members.get(memberDocument._id);
+		const member = server.members.cache.get(memberDocument._id);
 		const memberQueryDocument = serverQueryDocument.clone.id("members", memberDocument._id);
 		if (member && member.id !== client.user.id && !member.user.bot) {
 			const activityScore = memberDocument.messages + memberDocument.voice;
@@ -48,7 +48,7 @@ module.exports = async (client, serverDocument) => {
 			}
 		}
 	};
-	if (serverDocument.config.commands.points.isEnabled && server.members.size > 2) {
+	if (serverDocument.config.commands.points.isEnabled && server.members.cache.size > 2) {
 		const promiseArray = [];
 		for (let i = topMembers.length - 1; i > topMembers.length - 4; i--) {
 			if (i >= 0) {

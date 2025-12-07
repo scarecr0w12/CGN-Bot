@@ -1,13 +1,13 @@
 const { tokens } = require("../../Configurations/auth");
-const fetch = require("chainfetch");
+const fetch = require("../../Modules/Utils/ChainFetchShim");
 
 module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text }, auth }, documents, msg, commandData) => {
 	if (!tokens.bitlyToken || tokens.bitlyToken === "") {
 		await msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "The shorten command is not available on this bot. 🌧️",
-			},
+			}],
 		});
 		return;
 	}
@@ -29,25 +29,25 @@ module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text }, auth }, 
 
 			if (body.long_url && body.long_url !== "") {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						description: `That bitly link links to ${body.long_url}`,
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `The bitly link ${link} hasn't been registered yet.`,
-					},
+					}],
 				});
 			}
 		} catch (err) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `The bitly link ${link} hasn't been registered yet.`,
-				},
+				}],
 			});
 		}
 	} else {
@@ -61,31 +61,31 @@ module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text }, auth }, 
 
 			if (body.link && body.link !== "") {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						description: `Done! Here's your bitly link: ${body.link}`,
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: "Something went wrong while trying to shorten your link!",
 						footer: {
 							text: "Make sure it's formatted correctly.",
 						},
-					},
+					}],
 				});
 			}
 		} catch (err) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: "Something went wrong while trying to shorten your link!",
 					footer: {
 						text: "Make sure it's formatted correctly.",
 					},
-				},
+				}],
 			});
 		}
 	}

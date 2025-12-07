@@ -7,7 +7,7 @@
 module.exports = async (client, userDocument, reminderDocument) => {
 	let usr;
 	try {
-		usr = client.users.get(userDocument._id);
+		usr = client.users.cache.get(userDocument._id);
 	} catch (err) {
 		usr = await client.users.fetch(userDocument._id, true);
 	}
@@ -19,11 +19,11 @@ module.exports = async (client, userDocument, reminderDocument) => {
 			const newReminderDocument = newReminderQueryDocument.val;
 			try {
 				await usr.send({
-					embed: {
+					embeds: [{
 						color: 0x3669FA,
 						title: `Hey, here's the reminder you set!`,
 						description: `${newReminderDocument.name}`,
-					},
+					}],
 				});
 				newReminderQueryDocument.remove();
 				await newUserDocument.save();

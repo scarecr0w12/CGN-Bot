@@ -31,7 +31,7 @@ const p = new Process();
 const extensionManager = new ExtensionManager({
 	database: configJS.database,
 	shards: parseInt(process.env.SHARDS),
-	totalShardCount: parseInt(process.env.SHARD_COUNT),
+	shardCount: parseInt(process.env.SHARD_COUNT),
 });
 
 // #region Math
@@ -75,9 +75,9 @@ p.on("jumboEmoji", async ({ input }, callback) => {
 p.on("runExtension", async (data, callback) => {
 	if (!extensionManager.ready) return;
 
-	const guild = extensionManager.guilds.get(data.guild);
+	const guild = extensionManager.guilds.cache.get(data.guild);
 	if (!guild) return callback(false);
-	const channel = guild.channels.get(data.ch);
+	const channel = guild.channels.cache.get(data.ch);
 	if (!channel) return callback(false);
 	const msg = await channel.messages.fetch(data.msg);
 	if (!msg) return callback(false);

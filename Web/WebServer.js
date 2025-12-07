@@ -4,14 +4,13 @@ const express = require("express");
 const http = require("http");
 const https = require("https");
 const compression = require("compression");
-const sio = require("socket.io");
-const bodyParser = require("body-parser");
+const helmet = require("helmet");
+const { Server: SocketIOServer } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
 const session = require("express-session");
-const mongoSessionStore = require("connect-mongo")(session);
+const MongoStore = require("connect-mongo");
 const passport = require("passport");
-const passportSocketIo = require("passport.socketio");
 const discordStrategy = require("passport-discord").Strategy;
 const discordOAuthScopes = ["identify", "guilds", "email"];
 const toobusy = require("toobusy-js");
@@ -76,13 +75,19 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Configure global middleware & Server properties
 	app.use(compression());
 
-	app.use(bodyParser.urlencoded({
+	// Security headers with helmet (configured for dashboard compatibility)
+	app.use(helmet({
+		contentSecurityPolicy: false, // Disable CSP for now due to inline scripts in dashboard
+		crossOriginEmbedderPolicy: false,
+	}));
+
+	// Use Express built-in body parsers (body-parser is deprecated)
+	app.use(express.urlencoded({
 		extended: true,
 		parameterLimit: 10000,
 		limit: "5mb",
 	}));
-	app.use(bodyParser.json({
-		parameterLimit: 10000,
+	app.use(express.json({
 		limit: "5mb",
 	}));
 	app.use(cookieParser());
@@ -119,16 +124,26 @@ exports.open = async (client, auth, configJS, logger) => {
 		done(null, id);
 	});
 
-	const sessionStore = new mongoSessionStore({
+	// connect-mongo v5 uses a different API
+	const sessionStore = MongoStore.create({
 		client: Database.mongoClient,
+		dbName: Database.mongoClient.options?.dbName || "gab",
+		stringify: false,
 	});
 
-	app.use(session({
+	const sessionMiddleware = session({
 		secret: configJS.secret,
 		resave: false,
 		saveUninitialized: false,
 		store: sessionStore,
-	}));
+		cookie: {
+			secure: configJS.httpsRedirect || false,
+			httpOnly: true,
+			maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+		},
+	});
+
+	app.use(sessionMiddleware);
 	app.use(passport.initialize());
 	app.use(passport.session());
 	app.passport = passport;
@@ -140,7 +155,7 @@ exports.open = async (client, auth, configJS, logger) => {
 	// (Horribly) serve public dir
 	const staticRouter = express.static(`${__dirname}/public/`, { maxAge: 86400000 });
 	app.use("/static", (req, res, next) => {
-		const fileExtension = req.path.substr(req.path.lastIndexOf("."));
+		const fileExtension = req.path.substring(req.path.lastIndexOf("."));
 		if (req.get("Accept") && req.get("Accept").includes("image/webp") && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
 			res.redirect(`/static${req.path.substring(0, req.path.lastIndexOf("."))}.webp`);
 		} else {
@@ -151,14 +166,28 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Listen for incoming connections
 	const { server, httpsServer } = await listen(configJS);
 
-	// Setup socket.io for dashboard
-	const io = app.io = sio(typeof httpsServer !== "undefined" ? httpsServer : server);
-	io.use(passportSocketIo.authorize({
-		key: "connect.sid",
-		secret: configJS.secret,
-		store: sessionStore,
-		passport,
-	}));
+	// Setup socket.io v4 for dashboard
+	const io = app.io = new SocketIOServer(typeof httpsServer !== "undefined" ? httpsServer : server, {
+		cors: {
+			origin: configJS.hostingURL,
+			credentials: true,
+		},
+	});
+
+	// Socket.io v4 session middleware (replaces passport.socketio)
+	io.use((socket, next) => {
+		sessionMiddleware(socket.request, {}, next);
+	});
+
+	// Verify user is authenticated for socket connections
+	io.use((socket, next) => {
+		if (socket.request.session?.passport?.user) {
+			socket.user = socket.request.session.passport.user;
+			next();
+		} else {
+			next(new Error("Unauthorized"));
+		}
+	});
 
 	client.IPC.on("dashboardUpdate", msg => {
 		const { namespace } = msg;

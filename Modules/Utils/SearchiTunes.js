@@ -1,4 +1,4 @@
-const request = require("snekfetch");
+const request = require("./SnekfetchShim");
 const { UserAgent } = require("../../Internals/Constants");
 
 const idKeys = [

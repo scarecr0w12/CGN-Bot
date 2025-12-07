@@ -64,13 +64,13 @@ class MessageDelete extends BaseEvent {
 
 			// Send message in different channel
 			if (statusMessageDocument.type === "single" && statusMessageDocument.channel_id) {
-				const channel = msg.guild.channels.get(statusMessageDocument.channel_id);
+				const channel = msg.guild.channels.cache.get(statusMessageDocument.channel_id);
 				if (channel) {
 					const targetChannelDocument = serverDocument.channels[channel.id];
 					if (!targetChannelDocument || targetChannelDocument.bot_enabled) {
 						channel.send({
-							embed: StatusMessages.MESSAGE_DELETED(statusMessageDocument.type, msg, serverDocument, this.client),
-							disableEveryone: true,
+							embeds: [StatusMessages.MESSAGE_DELETED(statusMessageDocument.type, msg, serverDocument, this.client)],
+							allowedMentions: { parse: [] },
 						}).catch(err => {
 							logger.debug(`Failed to send StatusMessage for MESSAGE_DELETED.`, { svrid: msg.guild.id, chid: channel.id }, err);
 						});
@@ -80,8 +80,8 @@ class MessageDelete extends BaseEvent {
 			} else if (statusMessageDocument.type === "msg") {
 				if (!channelDocument || channelDocument.bot_enabled) {
 					msg.channel.send({
-						embed: StatusMessages.MESSAGE_DELETED(statusMessageDocument.type, msg, serverDocument, this.client),
-						disableEveryone: true,
+						embeds: [StatusMessages.MESSAGE_DELETED(statusMessageDocument.type, msg, serverDocument, this.client)],
+						allowedMentions: { parse: [] },
 					}).catch(err => {
 						logger.debug(`Failed to send StatusMessage for MESSAGE_DELETED.`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 					});

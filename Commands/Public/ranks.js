@@ -1,5 +1,5 @@
 module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocument, channelDocument, memberDocument }, msg, commandData) => {
-	const getRankText = (rank, amount = 10) => msg.guild.members.filter(member => {
+	const getRankText = (rank, amount = 10) => msg.guild.members.cache.filter(member => {
 		const targetMemberDocument = serverDocument.members[member.id];
 		return targetMemberDocument && targetMemberDocument.rank === rank;
 	}).sort((memberA, memberB) => serverDocument.members[memberB.id].rank_score - serverDocument.members[memberA.id].rank_score)
@@ -12,29 +12,29 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 			const info = getRankText(rankDocument._id);
 			if (info) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						title: `The top 10 members with rank **${rankDocument._id}** 🏆`,
 						description: info,
 						footer: {
 							text: `You need a rank score of ${rankDocument.max_score} to achieve this rank`,
 						},
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `Nobody on **${msg.guild.name}** has the rank \`${rankDocument._id}\` 🤐`,
-					},
+					}],
 				});
 			}
 		} else if (msg.suffix.toLowerCase() === "me") {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					description: `You have the rank \`${memberDocument.rank}\` 🏅`,
-				},
+				}],
 			});
 		} else {
 			let member;
@@ -46,38 +46,38 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 			if (member) {
 				if (member.user.bot) {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: "All robots are created equal 🤖",
-						},
+						}],
 					});
 				} else {
 					const targetMemberDocument = serverDocument.members[member.id];
 					if (targetMemberDocument && targetMemberDocument.rank) {
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.INFO,
 								description: `**@${client.getName(serverDocument, member)}** has the rank \`${targetMemberDocument.rank}\` 🎖`,
-							},
+							}],
 						});
 					} else {
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.INFO,
 								description: `**@${client.getName(serverDocument, member)}** doesn't have a rank yet 😟`,
-							},
+							}],
 						});
 					}
 				}
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `Rank \`${msg.suffix}\` does not exist on this guild.`,
 						footer: {
 							text: "An admin can create one in the Admin Console ⚡",
 						},
-					},
+					}],
 				});
 			}
 		}
@@ -101,11 +101,11 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 			value: `${rankDocument.members} ${rankDocument.members === 1 ? "member needs" : "members need"} ${rankDocument.max_score} points total to rank up.`,
 		}));
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.RESPONSE,
 				title: `"${msg.guild.name}"'s ranks 🏆`,
 				fields,
-			},
+			}],
 		});
 	}
 };

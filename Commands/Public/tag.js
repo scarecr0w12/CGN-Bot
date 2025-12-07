@@ -33,14 +33,14 @@ class TagCommand {
 	async list () {
 		if (!this.checkPerms("list")) {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.MISSING_PERMS,
 					description: `Only admins can list all tags. ✋`,
-				},
+				}],
 			});
 			return;
 		}
-		await this.client.api.channels(this.channel.id).typing.post();
+		await this.channel.sendTyping();
 		const gistUploader = new Gist(this.client);
 		const info = this.serverDocument.config.tags.list.map(async tag => {
 			const content = tag.content.replace(/(https?:[^ ]+)/gi, "<$1>");
@@ -73,10 +73,10 @@ class TagCommand {
 			await menu.init();
 		} else {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.SOFT_ERR,
 					description: "This server doesn't have any tags yet! 📑",
-				},
+				}],
 			});
 		}
 	}
@@ -130,20 +130,20 @@ class TagCommand {
 		const data = this.get(tag);
 		if (data.val) {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.RESPONSE,
 					description: data.val.content,
-				},
+				}],
 			});
 		} else {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.SOFT_ERR,
 					description: `Tag \`${this.suffix}\` does not exist.`,
 					footer: {
 						text: `Use "${this.msg.guild.commandPrefix}${this.commandData.name} ${this.suffix} | <content>" to create it.`,
 					},
-				},
+				}],
 			});
 		}
 	}
@@ -155,15 +155,15 @@ class TagCommand {
 		}
 
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color: this.Colors.PROMPT,
 				description: "Are you sure you want to clear **all** tags?",
 				footer: {
 					text: "This will remove them forever! You have 1 minute to respond.",
 				},
-			},
+			}],
 		});
-		const response = (await this.channel.awaitMessages(res => res.author.id === this.msg.author.id, { max: 1, time: 60000 })).first();
+		const response = (await this.channel.awaitMessages({ filter: res => res.author.id === this.msg.author.id, max: 1, time: 60000 })).first();
 		if (response) {
 			try {
 				await response.delete();
@@ -175,10 +175,10 @@ class TagCommand {
 			this.serverQueryDocument.set("config.tags.list", []);
 			this.client.logMessage(this.serverDocument, this.LogLevels.INFO, "All tags have been cleared.", this.channel.id, this.msg.author.id);
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.SUCCESS,
 					description: "All tags have been cleared 🗑",
-				},
+				}],
 			});
 		}
 	}
@@ -188,10 +188,10 @@ class TagCommand {
 		const data = this.get();
 		if (!data.val) {
 			return this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.SOFT_ERR,
 					description: `Tag \`${this.tag}\` does not exist 😞`,
-				},
+				}],
 			});
 		}
 
@@ -199,17 +199,17 @@ class TagCommand {
 			data.remove();
 			this.client.logMessage(this.serverDocument, this.LogLevels.INFO, `Tag ${this.tag} has been deleted.`, this.channel.id, this.msg.author.id);
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.SUCCESS,
 					description: `Deleted tag \`${this.tag}\` (✖╭╮✖)`,
-				},
+				}],
 			});
 		} else {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.MISSING_PERMS,
 					description: `Only admins can delete \`${this.tag}\` ✋`,
-				},
+				}],
 			});
 		}
 	}
@@ -227,30 +227,30 @@ class TagCommand {
 				});
 				this.client.logMessage(this.serverDocument, this.LogLevels.INFO, `New tag ${this.tag} has been created.`, this.channel.id, this.msg.author.id);
 				this.msg.send({
-					embed: {
+					embeds: [{
 						color: this.Colors.SUCCESS,
 						description: `New ${this.isCommand ? "command " : ""}tag \`${this.tag}\` created 😃`,
-					},
+					}],
 				});
 			} else {
 				this.msg.send({
-					embed: {
+					embeds: [{
 						color: this.Colors.MISSING_PERMS,
 						description: `Only admins can create new${this.isCommand ? " command " : " "}tags ✋`,
-					},
+					}],
 				});
 			}
 		} else if (this.checkPerms("update")) {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.PROMPT,
 					description: `Tag \`${this.tag}\` already exists. Do you want to overwrite it?`,
 					footer: {
 						text: "You have 1 minute to respond.",
 					},
-				},
+				}],
 			});
-			const response = (await this.channel.awaitMessages(res => res.author.id === this.msg.author.id, { max: 1, time: 60000 })).first();
+			const response = (await this.channel.awaitMessages({ filter: res => res.author.id === this.msg.author.id, max: 1, time: 60000 })).first();
 			if (response) {
 				try {
 					await response.delete();
@@ -264,18 +264,18 @@ class TagCommand {
 					.set("isLocked", this.isLocked);
 				this.client.logMessage(this.serverDocument, this.LogLevels.INFO, `Existing tag ${this.tag} has been updated.`, this.channel.id, this.msg.author.id);
 				this.msg.send({
-					embed: {
+					embeds: [{
 						color: this.Colors.SUCCESS,
 						description: `Tag \`${this.tag}\` updated! ✏`,
-					},
+					}],
 				});
 			}
 		} else {
 			this.msg.send({
-				embed: {
+				embeds: [{
 					color: this.Colors.MISSING_PERMS,
 					description: `Only admins can update this tag. ✋`,
-				},
+				}],
 			});
 		}
 	}
@@ -315,10 +315,10 @@ class TagCommand {
 	loadDefaults () {
 		this.serverQueryDocument.set("config.tags.list", defaultTags);
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color: this.Colors.SUCCESS,
 				description: "Loaded default tags! 📥",
-			},
+			}],
 		});
 	}
 }

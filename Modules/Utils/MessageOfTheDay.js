@@ -17,7 +17,7 @@ module.exports = async (client, server, motdDocument, serverQueryDocument) => {
 		const serverConfigQueryDocument = serverDocument.query.prop("config");
 
 		if (serverConfigDocument.message_of_the_day.isEnabled && serverConfigDocument.message_of_the_day.message_content) {
-			const channel = server.channels.get(serverConfigDocument.message_of_the_day.channel_id);
+			const channel = server.channels.cache.get(serverConfigDocument.message_of_the_day.channel_id);
 			if (channel) {
 				serverConfigQueryDocument.set("message_of_the_day.last_run", Date.now());
 				await serverDocument.save().catch(err => {

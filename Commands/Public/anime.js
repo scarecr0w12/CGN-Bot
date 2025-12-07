@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const ReactionMenu = require("../../Modules/MessageUtils/ReactionMenus/ReactionBasedMenu");
 
 module.exports = async ({ Constants: { Colors, APIs } }, { serverDocument }, msg, commandData) => {
@@ -45,7 +45,7 @@ module.exports = async ({ Constants: { Colors, APIs } }, { serverDocument }, msg
 					inline: true,
 				});
 				return {
-					embed: {
+					embeds: [{
 						color: 0x00FF00,
 						author: {
 							iconURl: `${data.attributes.posterImage.tiny}`,
@@ -60,7 +60,7 @@ module.exports = async ({ Constants: { Colors, APIs } }, { serverDocument }, msg
 						image: {
 							url: `${data.attributes.posterImage.original}`,
 						},
-					},
+					}],
 				};
 			};
 			for (let i = 0; i < number; i++) {
@@ -74,26 +74,26 @@ module.exports = async ({ Constants: { Colors, APIs } }, { serverDocument }, msg
 		} else {
 			logger.verbose(`Couldn't find any animes for "${query}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_RED,
 					description: `No animu found... (˃̥̥ω˂̥̥̥)`,
 					footer: {
 						text: `P-please try again ${msg.author.username}-chan..!`,
 					},
-				},
+				}],
 			});
 		}
 	} else {
 		logger.verbose(`Anime name not provided for "${commandData.name}" command`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_RED,
 				image: {
 					url: `http://i66.tinypic.com/23vxcbc.jpg`,
 				},
 				title: `Baka!`,
 				description: `You need to give me an anime to search for, ${msg.author.username}-chan`,
-			},
+			}],
 		});
 	}
 };

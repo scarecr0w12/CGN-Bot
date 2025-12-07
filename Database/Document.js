@@ -2,7 +2,7 @@ const Query = require("./Query");
 const { Error: GABError } = require("../Internals/Errors");
 
 const mpath = require("mpath");
-const { ObjectID } = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 module.exports = class Document {
 	/**
@@ -290,7 +290,7 @@ module.exports = class Document {
 	static new (obj, model) {
 		const doc = new Document(obj, model);
 		doc._new = true;
-		if (!doc._doc._id && model.schema._options._id !== false && !model.schema._definitions.get("_id")) doc._id = doc._doc._id = new ObjectID();
+		if (!doc._doc._id && model.schema._options._id !== false && !model.schema._definitions.get("_id")) doc._id = doc._doc._id = new ObjectId();
 		return doc;
 	}
 };

@@ -7,11 +7,11 @@ module.exports = async ({ Constants: { Colors } }, { channelDocument, channelQue
 			const voteDocument = channelDocument.poll.responses.id(msg.author.id);
 			if (voteDocument) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						title: `You've already voted in this poll.`,
 						description: `PM me "${commandData.name} ${msg.guild.name}|#${msg.channel.name}" to erase your vote.`,
-					},
+					}],
 				});
 			} else {
 				let vote;
@@ -31,20 +31,20 @@ module.exports = async ({ Constants: { Colors } }, { channelDocument, channelQue
 						vote,
 					});
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `I casted your vote for **${channelDocument.poll.options[vote]}** 🍻`,
-						},
+						}],
 					});
 				} else {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: `There's no matching option for \`${msg.suffix}\`. 😩`,
 							footer: {
 								text: `Please use the *number* (starting from 1) of your choice.`,
 							},
-						},
+						}],
 					});
 				}
 			}
@@ -74,13 +74,13 @@ module.exports = async ({ Constants: { Colors } }, { channelDocument, channelQue
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: `There isn't an ongoing poll in this channel. 🛡`,
 				footer: {
 					text: `PM me "${commandData.name} ${msg.guild.name} | #${msg.channel.name}" to start one.`,
 				},
-			},
+			}],
 		});
 	}
 };

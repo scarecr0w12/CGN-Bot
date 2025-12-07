@@ -29,25 +29,25 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			}).init();
 		} else if (serverDocument.config.streamers_data.length === 1) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: "The 1 streamer added to this server isn't live right now. 😞",
-				},
+				}],
 			});
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `None of the ${serverDocument.config.streamers_data.length} streamers added to this server are live right now. 😞`,
-				},
+				}],
 			});
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "I'm not tracking any streamers yet!\nA Server Admin can add a streamer to track on the dashboard! 🌐",
-			},
+			}],
 		});
 	}
 };

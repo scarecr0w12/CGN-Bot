@@ -27,7 +27,7 @@ controllers.admins = async (req, { res }) => {
 	});
 	res.setConfigData({
 		admins: adminDocuments.map(adminDocument => {
-			adminDocument.name = req.svr.roles.find(role => role.id === adminDocument._id).name;
+			adminDocument.name = req.svr.roles.cache.find(role => role.id === adminDocument._id).name;
 			return adminDocument;
 		}),
 	});
@@ -172,7 +172,7 @@ controllers.muted.post = async (req, res) => {
 
 	if (req.body["new-member"] && req.body["new-channel_id"]) {
 		const member = await findQueryUser(req.body["new-member"], svr);
-		const ch = svr.channels.find(channel => channel.id === req.body["new-channel_id"]);
+		const ch = svr.channels.cache.find(channel => channel.id === req.body["new-channel_id"]);
 
 		let memberDocument = serverDocument.members[member.user.id];
 		if (!memberDocument) {
@@ -357,7 +357,7 @@ controllers.status.post = async (req, res) => {
 						case "enabled_channel_ids":
 							serverQueryDocument.set(`config.moderation.status_messages.${status_message}.${key}`, []);
 							req.svr.channels.forEach(ch => {
-								if (ch.type === "text") {
+								if (ch.type === ChannelType.GuildText) {
 									if (req.body[`${status_message}-${key}-${ch.id}`]) {
 										serverQueryDocument.push(`config.moderation.status_messages.${status_message}.${key}`, ch.id);
 									}
@@ -432,7 +432,7 @@ controllers.filters.post = async (req, res) => {
 				case "disabled_channel_ids":
 					serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, []);
 					req.svr.channels.forEach(ch => {
-						if (ch.type === "text") {
+						if (ch.type === ChannelType.GuildText) {
 							if (req.body[`${filter}-${key}-${ch.id}`] !== "on") {
 								serverQueryDocument.push(`config.moderation.filters.${filter}.${key}`, ch.id);
 							}
@@ -508,7 +508,7 @@ controllers.voicetext.post = async (req, res) => {
 
 	serverQueryDocument.set("config.voicetext_channels", []);
 	req.svr.channels.forEach(ch => {
-		if (ch.type === "voice") {
+		if (ch.type === ChannelType.GuildVoice) {
 			if (req.body[`voicetext_channels-${ch.id}`] === "on") {
 				serverQueryDocument.push("config.voicetext_channels", ch.id);
 			}

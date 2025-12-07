@@ -124,7 +124,7 @@ module.exports = {
 
 	dashboardUpdate: (req, namespace, location) => req.app.client.IPC.send("dashboardUpdate", { namespace: namespace, location: location, author: req.consolemember ? req.consolemember.id : "SYSTEM" }),
 
-	getRoleData: svr => svr.roles.filter(role => role.name !== "@everyone" && role.name.indexOf("color-") !== 0).map(role => ({
+	getRoleData: svr => svr.roles.cache.filter(role => role.name !== "@everyone" && role.name.indexOf("color-") !== 0).map(role => ({
 		name: role.name,
 		id: role.id,
 		color: role.color.toString(16).padStart(6, "0"),
@@ -132,7 +132,7 @@ module.exports = {
 	}))
 		.sort((a, b) => b.position - a.position),
 
-	getChannelData: (svr, type) => svr.channels.filter(ch => ch.type === (type || "text")).map(ch => ({
+	getChannelData: (svr, type) => svr.channels.cache.filter(ch => ch.type === (type || "text")).map(ch => ({
 		name: ch.name,
 		id: ch.id,
 		position: ch.rawPosition,

@@ -16,13 +16,13 @@ module.exports = async ({ client, configJS, Constants: { Colors } }, documents, 
 		inline: true,
 	});
 	msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.LIGHT_GREEN,
 			fields: fields.length ? fields : [],
 			description,
 			footer: {
 				text: `Use "${msg.guild.commandPrefix}help" to list all commands that you can use in this server`,
 			},
-		},
+		}],
 	});
 };

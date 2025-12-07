@@ -16,22 +16,22 @@ module.exports = async ({ Constants: { Colors } }, { serverDocument }, msg, comm
 		});
 	if (description.length) {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SUCCESS,
 				title: `Here ${description.length === 1 ? "is" : "are"} the ${description.length === 1 ? "only game" : `top ${description.length} games`} played in this server this week!`,
 				description: description.join("\n\n"),
 				footer: {
 					text: `There were ${totalGames} games played this week with a combined playtime of ${moment.duration(totalTime, "minutes").humanize()}!`,
 				},
-			},
+			}],
 		});
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INFO,
 				title: `There's nothing to see here! 🎮`,
 				description: `You should start playing some games, I know you want to!`,
-			},
+			}],
 		});
 	}
 };

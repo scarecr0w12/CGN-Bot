@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 
 module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, commandData) => {
@@ -6,14 +6,14 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, c
 	if (statusCode === 200 && body) {
 		if (!body.list.length) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "Definition for '404':",
 					description: "Sorry, this definition could not be found.",
 					footer: {
 						text: "In other words, there were no results found for your search query. Maybe try searching for something else?",
 					},
-				},
+				}],
 			});
 		}
 		const descriptions = [];
@@ -56,11 +56,11 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, documents, msg, c
 	} else {
 		logger.debug(`Failed to fetch Urban Dictionary results`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id, statusCode, err: statusText });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				title: Text.ERROR_TITLE(),
 				description: `I was unable to fetch results from Urban Dictionary!`,
-			},
+			}],
 		});
 	}
 };

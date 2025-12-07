@@ -1,0 +1,35 @@
+services:
+  bot:
+    build: .
+    container_name: gawesomebot
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "8081:8080"
+      - "8443:443"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/
+      - DATABASE_NAME=GAwesomeBot
+      - NODE_ENV=development
+      - SHARD_TOTAL=auto
+    depends_on:
+      - mongo
+    volumes:
+      - ./logs:/usr/src/app/logs
+      - ./Temp:/usr/src/app/Temp
+      - ./.env:/usr/src/app/.env
+
+  mongo:
+    image: mongo:6
+    container_name: gawesomebot-mongo
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

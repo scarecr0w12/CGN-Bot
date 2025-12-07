@@ -68,19 +68,19 @@ class SpamHandler extends BaseEvent {
 						`Handling first-time spam from member "${msg.author.tag}" in channel "${msg.channel.name}".`, msg.channel.id, msg.author.id);
 					// Message user and tell them to stop
 					msg.author.send({
-						embed: {
+						embeds: [{
 							color: Colors.RED,
 							title: `⚠️ Stop Spamming! ⚠️`,
 							description: `Stop spamming in #${msg.channel.name} (${msg.channel}) on ${msg.guild}.\nThe chat moderators have been notified about this.`,
-						},
+						}],
 					});
 
 					// Message bot admins about user spamming
 					this.client.messageBotAdmins(msg.guild, serverDocument, {
-						embed: {
+						embeds: [{
 							color: Colors.RED,
 							description: `**@${this.client.getName(serverDocument, msg.member, true)}** is spamming in #${msg.channel.name} (${msg.channel}) on ${msg.guild}.`,
-						},
+						}],
 					});
 
 					// Deduct 25 GAwesomePoints if necessary
@@ -135,7 +135,7 @@ class SpamHandler extends BaseEvent {
 						// Handle this as a violation
 						let violatorRoleID = null;
 						// eslint-disable-next-line max-len
-						if (!isNaN(serverDocument.config.moderation.filters.spam_filter.violator_role_id) && !msg.member.roles.has(serverDocument.config.moderation.filters.spam_filter.violator_role_id)) {
+						if (!isNaN(serverDocument.config.moderation.filters.spam_filter.violator_role_id) && !msg.member.roles.cache.has(serverDocument.config.moderation.filters.spam_filter.violator_role_id)) {
 							violatorRoleID = serverDocument.config.moderation.filters.spam_filter.violator_role_id;
 						}
 						// eslint-disable-next-line max-len

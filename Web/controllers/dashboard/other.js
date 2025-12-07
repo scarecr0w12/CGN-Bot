@@ -1,6 +1,6 @@
 const fs = require("fs-nextra");
 const moment = require("moment");
-const { ObjectID } = require("mongodb");
+const { ObjectId } = require("mongodb");
 const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");
 const parsers = require("../../parsers");
@@ -110,12 +110,12 @@ controllers.activities = async (req, { res }) => {
 
 	let defaultChannel;
 
-	const generalChannel = svr.channels.find(ch => (ch.name === "general" || ch.name === "mainchat") && ch.type === "text");
+	const generalChannel = svr.channels.cache.find(ch => (ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText);
 
 	if (generalChannel) {
 		defaultChannel = generalChannel;
 	} else {
-		[defaultChannel] = svr.channels.filter(c => c.type === "text")
+		[defaultChannel] = svr.channels.cache.filter(c => c.type === ChannelType.GuildText)
 			.sort((a, b) => a.rawPosition - b.rawPosition);
 	}
 
@@ -192,7 +192,7 @@ controllers.extensions = async (req, { res }) => {
 	const serverExtensionDocuments = serverDocument.extensions;
 
 	const extensionData = await Promise.all(serverExtensionDocuments.map(async serverExtensionDocument => {
-		const extensionDocument = await Gallery.findOne(new ObjectID(serverExtensionDocument._id));
+		const extensionDocument = await Gallery.findOne(new ObjectId(serverExtensionDocument._id));
 		if (!extensionDocument) return null;
 		const obj = await parsers.extensionData(req, extensionDocument, serverExtensionDocument.version);
 		obj.published_version = extensionDocument.published_version;
@@ -218,7 +218,7 @@ controllers.extensions.post = async (req, { res }) => {
 	if (req.body.id && req.body.v) {
 		let id;
 		try {
-			id = new ObjectID(req.body.id);
+			id = new ObjectId(req.body.id);
 		} catch (err) {
 			return res.sendStatus(404);
 		}
@@ -234,13 +234,13 @@ controllers.extensions.post = async (req, { res }) => {
 				serverExtensionDocument.key = req.body.key || versionDocument.key;
 				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 				Object.values(req.svr.channels).forEach(ch => {
-					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === "text") serverExtensionDocument.disabled_channel_ids.push(ch.id);
+					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});
 				break;
 			case "keyword":
 				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 				Object.values(req.svr.channels).forEach(ch => {
-					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === "text") serverExtensionDocument.disabled_channel_ids.push(ch.id);
+					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});
 				serverExtensionDocument.keywords = req.body.keywords ? req.body.keywords.split(",") : versionDocument.keywords;
 				serverExtensionDocument.case_sensitive = Boolean(req.body.caseSensitive);
@@ -284,7 +284,7 @@ controllers.extensionBuilder = async (req, { res }) => {
 				let galleryDocument;
 				try {
 					galleryDocument = await Gallery.findOne({
-						_id: new ObjectID(req.query.extid),
+						_id: new ObjectId(req.query.extid),
 						level: "third",
 					});
 				} catch (err) {
@@ -340,13 +340,13 @@ controllers.extensionBuilder.post = async (req, res) => {
 					serverExtensionDocument.key = versionDocument.key;
 					serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 					Object.values(req.svr.channels).forEach(ch => {
-						if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === "text") serverExtensionDocument.disabled_channel_ids.push(ch.id);
+						if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 					});
 					break;
 				case "keyword":
 					serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 					Object.values(req.svr.channels).forEach(ch => {
-						if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === "text") serverExtensionDocument.disabled_channel_ids.push(ch.id);
+						if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 					});
 					serverExtensionDocument.keywords = versionDocument.keywords;
 					serverExtensionDocument.case_sensitive = versionDocument.case_sensitive;
@@ -389,7 +389,7 @@ controllers.extensionBuilder.post = async (req, res) => {
 			let galleryDocument;
 			try {
 				galleryDocument = await Gallery.findOne({
-					_id: new ObjectID(req.query.extid),
+					_id: new ObjectId(req.query.extid),
 					owner_id: req.user.id,
 				});
 			} catch (err) {

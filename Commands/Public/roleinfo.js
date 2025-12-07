@@ -27,11 +27,11 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { Titlecas
 		}
 		if (descriptions.length === 2 && descriptions[0].length + descriptions[1].length < 2048) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					title: `This guild has ${guildRoles.length} roles`,
 					description: `${descriptions[0]}\n\n${descriptions[1]}`,
-				},
+				}],
 			});
 		}
 
@@ -50,14 +50,14 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { Titlecas
 		} catch (err) {
 			if (err.code === "FAILED_TO_FIND") {
 				return msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						title: "What's that role? 🏷️",
 						description: "I do not know anything about a role with that name.",
 						footer: {
 							text: "You can find a list of all roles by running this command without any arguments.",
 						},
-					},
+					}],
 				});
 			}
 			throw err;
@@ -65,8 +65,8 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { Titlecas
 		const permissions = role.permissions.toArray(false).join(", ");
 		const elements = [
 			`🎨 Color: **${role.color ? role.hexColor.toUpperCase() : "None"}**`,
-			`👥 Members: **${role.members.size}**`,
-			`#⃣ Position: **${msg.guild.roles.size - role.position}**`,
+			`👥 Members: **${role.members.cache.size}**`,
+			`#⃣ Position: **${msg.guild.roles.cache.size - role.position}**`,
 			`🕒 Created: **${moment(role.createdTimestamp).fromNow()}**`,
 		];
 		if (role.mentionable) {
@@ -83,11 +83,11 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { Titlecas
 			elements.push("⚠️ This role grants Administrator permissions which bypasses any other permission or override");
 		}
 		return msg.send({
-			embed: {
+			embeds: [{
 				title: `Information about role ${role.name} :: ${role.id}`,
 				color: role.color || null,
 				description: elements.join("\n"),
-			},
+			}],
 		});
 	}
 };

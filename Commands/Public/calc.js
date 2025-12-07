@@ -7,10 +7,10 @@ module.exports = async ({ client, Constants: { Colors, Text, WorkerTypes, Worker
 				args = args.join(" ");
 				const helpstr = await client.workerManager.getValueFromWorker(WorkerTypes.MATH, { command: MathJS.HELP, data: args });
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.INFO,
 						description: `\`\`\`css\n${helpstr}\`\`\``,
-					},
+					}],
 				});
 			} catch (err) {
 				const description = [
@@ -20,27 +20,27 @@ module.exports = async ({ client, Constants: { Colors, Text, WorkerTypes, Worker
 					"Read more about what it can and can't do by clicking [here](http://mathjs.org/)",
 				].join("\n");
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description,
 						footer: {
 							text: `Make sure you typed it right!`,
 						},
-					},
+					}],
 				});
 			}
 		} else {
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					title: `⌛ Calculating...`,
 					description: `This shouldn't take long!`,
-				},
+				}],
 			});
 			try {
 				const res = await client.workerManager.getValueFromWorker(WorkerTypes.MATH, { command: MathJS.EVAL, data: msg.suffix.trim() });
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						title: `Here is your result!`,
 						author: {
@@ -48,18 +48,18 @@ module.exports = async ({ client, Constants: { Colors, Text, WorkerTypes, Worker
 							url: `http://mathjs.org/`,
 						},
 						description: `\`\`\`css\n${res}\`\`\``,
-					},
+					}],
 				});
 			} catch (err) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.ERR,
 						title: Text.ERROR_TITLE(),
 						description: Text.ERROR_BODY("calc", err),
 						footer: {
 							text: `I'm sorry :(`,
 						},
-					},
+					}],
 				});
 			}
 		}

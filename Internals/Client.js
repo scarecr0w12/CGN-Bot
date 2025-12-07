@@ -1,4 +1,4 @@
-const { Client: DJSClient, Collection } = require("discord.js");
+const { Client: DJSClient, Collection, ChannelType } = require("discord.js");
 const ProcessAsPromised = require("process-as-promised");
 const reload = require("require-reload")(require);
 const dbl = require("dblposter");
@@ -86,7 +86,7 @@ module.exports = class GABClient extends DJSClient {
 			} else if (!(server.members instanceof Collection)) {
 				return `@${server.members[this.user.id].nickname || this.user.username} `;
 			} else {
-				return `@${server.members.get(this.user.id).nickname || this.user.username} `;
+				return `@${server.members.cache.get(this.user.id).nickname || this.user.username} `;
 			}
 		} else {
 			return serverDocument.config.command_prefix;
@@ -410,23 +410,23 @@ module.exports = class GABClient extends DJSClient {
 			string = string.trim();
 
 			if (string.startsWith("<@!")) {
-				foundMember = server.members.get(string.slice(3, -1));
+				foundMember = server.members.cache.get(string.slice(3, -1));
 			} else if (string.startsWith("<@")) {
-				foundMember = server.members.get(string.slice(2, -1));
+				foundMember = server.members.cache.get(string.slice(2, -1));
 			} else if (!isNaN(string) && new RegExp(/^\d+$/).test(string)) {
-				foundMember = server.members.get(string);
+				foundMember = server.members.cache.get(string);
 			} else if (string.startsWith("@")) {
 				string = string.slice(1);
 			}
 			if (string.lastIndexOf("#") === string.length - 5 && !isNaN(string.substring(string.lastIndexOf("#") + 1))) {
-				foundMember = server.members.filter(member => member.user.username === string.substring(0, string.lastIndexOf("#") + 1))
+				foundMember = server.members.cache.filter(member => member.user.username === string.substring(0, string.lastIndexOf("#") + 1))
 					.find(member => member.user.discriminator === string.substring(string.lastIndexOf("#") + 1));
 			}
 			if (!foundMember) {
-				foundMember = server.members.find(member => member.user.username.toLowerCase() === string.toLowerCase());
+				foundMember = server.members.cache.find(member => member.user.username.toLowerCase() === string.toLowerCase());
 			}
 			if (!foundMember) {
-				foundMember = server.members.find(member => member.nickname && member.nickname.toLowerCase() === string.toLowerCase());
+				foundMember = server.members.cache.find(member => member.nickname && member.nickname.toLowerCase() === string.toLowerCase());
 			}
 			if (foundMember) {
 				resolve(foundMember);
@@ -463,11 +463,11 @@ module.exports = class GABClient extends DJSClient {
 				string = string.substring(2, string.length - 1);
 			}
 
-			let ch = server.channels.get(string);
+			let ch = server.channels.cache.get(string);
 			if (ch) {
 				resolve(ch);
 			} else if (!ch) {
-				ch = server.channels.find(channel => channel.name === string);
+				ch = server.channels.cache.find(channel => channel.name === string);
 				if (ch) {
 					resolve(ch);
 				}
@@ -489,15 +489,15 @@ module.exports = class GABClient extends DJSClient {
 				string = string.substring(3, string.length - 1);
 			}
 
-			let r = server.roles.get(string);
+			let r = server.roles.cache.get(string);
 			if (r) {
 				resolve(r);
 			} else if (!r) {
-				r = server.roles.find(role => role.name === string);
+				r = server.roles.cache.find(role => role.name === string);
 				if (r) {
 					resolve(r);
 				} else {
-					r = server.roles.find(role => role.name.toLowerCase() === string.toLowerCase());
+					r = server.roles.cache.find(role => role.name.toLowerCase() === string.toLowerCase());
 					if (r) resolve(r);
 				}
 			}
@@ -529,7 +529,7 @@ module.exports = class GABClient extends DJSClient {
 					}
 					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
-						obj.canClientBan = guild.me.permissions.has("BAN_MEMBERS");
+						obj.canClientBan = guild.members.me.permissions.has(PermissionFlagsBits.BanMembers);
 						obj.memberAboveAffected = true;
 					}
 					return obj;
@@ -547,7 +547,7 @@ module.exports = class GABClient extends DJSClient {
 					}
 					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
-						obj.canClientKick = guild.me.permissions.has("KICK_MEMBERS");
+						obj.canClientKick = guild.members.me.permissions.has(PermissionFlagsBits.KickMembers);
 						obj.memberAboveAffected = true;
 					}
 					return obj;
@@ -565,7 +565,7 @@ module.exports = class GABClient extends DJSClient {
 					}
 					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
-						obj.canClientManage = guild.me.permissions.has("MANAGE_NICKNAMES");
+						obj.canClientManage = guild.members.me.permissions.has(PermissionFlagsBits.ManageNicknames);
 						obj.memberAboveAffected = true;
 					}
 					return obj;
@@ -581,7 +581,7 @@ module.exports = class GABClient extends DJSClient {
 						}
 					}
 					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
-					obj.canClientMute = guild.me.permissions.has("MANAGE_ROLES");
+					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles);
 					return obj;
 				}
 			}
@@ -598,8 +598,9 @@ module.exports = class GABClient extends DJSClient {
 	getGame (userOrMember) {
 		return new Promise(resolve => {
 			const { presence } = userOrMember;
-			if (presence.activity && presence.activity !== null && presence.activity.name) {
-				resolve(presence.activity.name);
+			// Discord.js v14: activities is an array
+			if (presence?.activities?.length > 0 && presence.activities[0].name) {
+				resolve(presence.activities[0].name);
 			} else {
 				resolve("");
 			}
@@ -632,30 +633,30 @@ module.exports = class GABClient extends DJSClient {
 							if (serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.status_messages.member_rank_updated_message.isEnabled) {
 								// Send member_rank_updated_message if necessary
 								if (serverDocument.config.moderation.status_messages.member_rank_updated_message.type === "message") {
-									const ch = server.channels.get(serverDocument.config.moderation.status_messages.member_rank_updated_message.channel_id);
+									const ch = server.channels.cache.get(serverDocument.config.moderation.status_messages.member_rank_updated_message.channel_id);
 									if (ch) {
 										const channelDocument = serverQueryDocument.clone.id("channels", ch.id).val;
 										if (!channelDocument || channelDocument.bot_enabled) {
 											ch.send({
 												content: `${member},`,
-												embed: {
+												embeds: [{
 													color: 0x3669FA,
 													description: `Congratulations, you've leveled up to **${memberDocument.rank}**! 🏆`,
-												},
+												}],
 											});
 										}
 									}
 								} else if (serverDocument.config.moderation.status_messages.member_rank_updated_message.type === "pm") {
 									member.send({
-										embed: {
+										embeds: [{
 											color: 0x3669FA,
 											description: `Congratulations, you've leveled up to **${memberDocument.rank}** on \`${server}\`! 🏆`,
-										},
+										}],
 									});
 								}
 							}
 							// Add 100 GAwesomePoints as reward
-							if (serverDocument.config.commands.points.isEnabled && server.members.size > 2) {
+							if (serverDocument.config.commands.points.isEnabled && server.members.cache.size > 2) {
 								Users.findOne({ _id: member.id })
 									.then(async userDocument => {
 										if (userDocument) {
@@ -669,7 +670,7 @@ module.exports = class GABClient extends DJSClient {
 							}
 							// Assign new rank role if necessary
 							if (rank.role_id) {
-								const role = server.roles.get(rank.role_id);
+								const role = server.roles.cache.get(rank.role_id);
 								if (role) {
 									member.roles.add(role, `Added member to role for leveling up in ranks.`).catch(err => {
 										logger.warn(`Failed to add member "${member.user.tag}" to role "${role.name}" on server "${server}" for rank level up.`, {
@@ -729,7 +730,7 @@ module.exports = class GABClient extends DJSClient {
 
 		// Assign role if necessary
 		if (roleID) {
-			const role = server.roles.get(roleID);
+			const role = server.roles.cache.get(roleID);
 			if (role) {
 				try {
 					await member.roles.add(role, `Added the role to the member due to a violation.`);
@@ -745,25 +746,25 @@ module.exports = class GABClient extends DJSClient {
 			}
 			try {
 				await member.send({
-					embed: {
+					embeds: [{
 						color: 0xFF0000,
 						description: `${userMessage}, so I blocked you from using me on the server.`,
 						footer: {
 							text: `Contact a moderator to resolve this.`,
 						},
-					},
+					}],
 				});
 			} catch (err) {
 				// Whatever
 			}
 			await this.messageBotAdmins(server, serverDocument, {
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					description: `${adminMessage}, so I blocked them from using me on the server.`,
 					footer: {
 						text: failedAction ? `I was unable to ${failedAction} the member. Please check that I have permissions!` : "",
 					},
-				},
+				}],
 			});
 			ModLog.create(server, serverDocument, "Block", member, null, strikeMessage);
 		};
@@ -777,21 +778,21 @@ module.exports = class GABClient extends DJSClient {
 				try {
 					await this.muteMember(channel, member);
 					await member.send({
-						embed: {
+						embeds: [{
 							color: 0xFF0000,
 							description: `${userMessage}, so I muted you in the channel.`,
 							footer: {
 								text: `Contact a moderator to resolve this.`,
 							},
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send DM to user.", { usrid: member.id }, err);
 					});
 					await this.messageBotAdmins(server, serverDocument, {
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `${adminMessage}, so I muted them in the channel.`,
-						},
+						}],
 					});
 					ModLog.create(server, serverDocument, "Mute", member, null, strikeMessage);
 				} catch (err) {
@@ -803,18 +804,18 @@ module.exports = class GABClient extends DJSClient {
 				try {
 					await member.kick(`${adminMessage}, so I kicked them from the server.`);
 					await member.send({
-						embed: {
+						embeds: [{
 							color: 0xFF0000,
 							description: `${userMessage}, so I kicked you from the server. Goodbye.`,
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send DM to user.", { usrid: member.id }, err);
 					});
 					await this.messageBotAdmins(server, serverDocument, {
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `${adminMessage}, so I kicked them from the server.`,
-						},
+						}],
 					});
 					ModLog.create(server, serverDocument, "Kick", member, null, strikeMessage);
 				} catch (err) {
@@ -825,22 +826,22 @@ module.exports = class GABClient extends DJSClient {
 			case "ban": {
 				try {
 					await member.ban({
-						days: 0,
+						deleteMessageSeconds: 0,
 						reason: `${adminMessage}, so I banned them from the server.`,
 					});
 					await member.send({
-						embed: {
+						embeds: [{
 							color: 0xFF0000,
 							description: `${userMessage}, so I banned you from the server. Goodbye.`,
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send DM to user.", { usrid: member.id }, err);
 					});
 					await this.messageBotAdmins(server, serverDocument, {
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `${adminMessage}, so I banned them from the server.`,
-						},
+						}],
 					});
 					ModLog.create(server, serverDocument, "Ban", member, null, strikeMessage);
 				} catch (err) {
@@ -852,18 +853,18 @@ module.exports = class GABClient extends DJSClient {
 			default: {
 				try {
 					await member.send({
-						embed: {
+						embeds: [{
 							color: 0xFF0000,
 							description: `${userMessage}, and the chat moderators have again been notified about this.`,
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send DM to user.", { usrid: member.id }, err);
 					});
 					await this.messageBotAdmins(server, serverDocument, {
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `${adminMessage}, but I didn't do anything about it.`,
-						},
+						}],
 					});
 					ModLog.create(server, serverDocument, "Warning", member, null, strikeMessage);
 				} catch (err) {
@@ -908,7 +909,8 @@ module.exports = class GABClient extends DJSClient {
 	 * To send both a content and an embed, you can provide the content in the messageObject.
 	 */
 	async messageBotAdmins (server, serverDocument, messageObject) {
-		server.members.forEach(async member => {
+		// Discord.js v14: use .cache for collections
+		server.members.cache.forEach(async member => {
 			if (this.getUserBotAdmin(server, serverDocument, member) >= 2 && member.id !== this.user.id && !member.user.bot) {
 				try {
 					await member.send(messageObject);
@@ -926,7 +928,7 @@ module.exports = class GABClient extends DJSClient {
 	 * @returns {Boolean} A boolean depending if the member is muted.
 	 */
 	isMuted (channel, member) {
-		return !channel.permissionsFor(member).has("SEND_MESSAGES", false);
+		return !channel.permissionsFor(member).has(PermissionFlagsBits.SendMessages, false);
 	}
 
 	/**
@@ -937,18 +939,18 @@ module.exports = class GABClient extends DJSClient {
 	hasOverwritePerms (allowedOrDenied) {
 		const PERMS = [
 			"CREATE_INSTANT_INVITE",
-			"MANAGE_CHANNELS",
-			"MANAGE_ROLES",
+			PermissionFlagsBits.ManageChannels,
+			PermissionFlagsBits.ManageRoles,
 			"MANAGE_WEBHOOKS",
-			"VIEW_CHANNEL",
+			PermissionFlagsBits.ViewChannel,
 			"SEND_TTS_MESSAGES",
-			"MANAGE_MESSAGES",
-			"EMBED_LINKS",
-			"ATTACH_FILES",
-			"READ_MESSAGE_HISTORY",
-			"MENTION_EVERYONE",
+			PermissionFlagsBits.ManageMessages,
+			PermissionFlagsBits.EmbedLinks,
+			PermissionFlagsBits.AttachFiles,
+			PermissionFlagsBits.ReadMessageHistory,
+			PermissionFlagsBits.MentionEveryone,
 			"USE_EXTERNAL_EMOJIS",
-			"ADD_REACTIONS",
+			PermissionFlagsBits.AddReactions,
 		];
 		const howMany = [];
 		for (const perm of PERMS) {
@@ -964,11 +966,12 @@ module.exports = class GABClient extends DJSClient {
 	 * @param {String} [reason] Optional reason for the mute
 	 */
 	async muteMember (channel, member, reason = `Muted ${member.user.tag} in #${channel.name}`) {
-		if (!this.isMuted(channel, member) && channel.type === "text") {
+		if (!this.isMuted(channel, member) && channel.type === ChannelType.GuildText) {
 			try {
-				await channel.updateOverwrite(member.id, {
-					SEND_MESSAGES: false,
-				}, reason);
+				// Discord.js v14: use permissionOverwrites.edit instead of updateOverwrite
+				await channel.permissionOverwrites.edit(member.id, {
+					SendMessages: false,
+				}, { reason });
 			} catch (err) {
 				logger.verbose(`Probably missing permissions to mute member in "${channel.guild}".`, { svrid: channel.guild.id, chid: channel.id }, err);
 				// TODO: this.log to the server
@@ -983,16 +986,18 @@ module.exports = class GABClient extends DJSClient {
 	 * @param {String} [reason] Optional reason for the unmute
 	 */
 	async unmuteMember (channel, member, reason = `Unmuted ${member.user.tag} in #${channel.name}`) {
-		if (this.isMuted(channel, member) && channel.type === "text") {
-			const overwrite = channel.permissionOverwrites.get(member.id);
+		if (this.isMuted(channel, member) && channel.type === ChannelType.GuildText) {
+			// Discord.js v14: use .cache for collections
+			const overwrite = channel.permissionOverwrites.cache.get(member.id);
 			if (overwrite) {
 				const allowedPerms = overwrite.allow;
 				const deniedPerms = overwrite.deny;
 				if (this.hasOverwritePerms(allowedPerms) || this.hasOverwritePerms(deniedPerms)) {
 					try {
-						await channel.updateOverwrite(member.id, {
-							SEND_MESSAGES: null,
-						}, reason);
+						// Discord.js v14: use permissionOverwrites.edit instead of updateOverwrite
+						await channel.permissionOverwrites.edit(member.id, {
+							SendMessages: null,
+						}, { reason });
 					} catch (err) {
 						logger.verbose(`Probably missing permissions to unmute member in "${channel.guild}".`, { chid: channel.id, svrid: channel.guild.id }, err);
 						// TODO: this.log to the server

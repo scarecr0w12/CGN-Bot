@@ -11,21 +11,21 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 			let countdownDocument = serverDocument.config.countdown_data.id(event.toLowerCase().trim());
 			if (countdownDocument) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.INFO,
 						title: `__${countdownDocument._id}__ already exists. ⏰`,
 						description: `It expires **${moment(countdownDocument.expiry_timestamp).fromNow()}**`,
-					},
+					}],
 				});
 			} else if (error) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `You've provided an invalid time for the countdown! 😶`,
 						footer: {
 							text: `Please make sure you use the syntax "${msg.guild.commandPrefix}${commandData.name} ${commandData.usage}" when creating countdowns`,
 						},
-					},
+					}],
 				});
 			} else {
 				const expiry = Date.now() + time;
@@ -37,37 +37,37 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 				countdownDocument = serverDocument.config.countdown_data.id(event.toLowerCase().trim());
 				await setCountdown(client, serverDocument, countdownDocument);
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						title: `Got it 👌`,
 						description: `**${countdownDocument._id}** is set to expire **${moment(expiry).fromNow()}**`,
-					},
+					}],
 				});
 			}
 		} else {
 			const countdownDocument = serverDocument.config.countdown_data.id(msg.suffix.trim().toLowerCase());
 			if (countdownDocument) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						description: `\`${countdownDocument._id}\` expires **${moment(countdownDocument.expiry_timestamp).fromNow()}** ⌛️`,
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `That countdown doesn't exist in this server!`,
 						footer: {
 							text: `Use "${msg.guild.commandPrefix}${commandData.name} ${msg.suffix} | <time>" to create it`,
 						},
-					},
+					}],
 				});
 			}
 		}
 	} else {
 		const countdowns = serverDocument.config.countdown_data
-			.filter(countdownDoc => msg.guild.channels.has(countdownDoc.channel_id))
+			.filter(countdownDoc => msg.guild.channels.cache.has(countdownDoc.channel_id))
 			.sort((a, b) => a.expiry_timestamp - b.expiry_timestamp);
 		if (countdowns.length) {
 			const arr = countdowns.map(countdown => [
@@ -86,13 +86,13 @@ module.exports = async ({ client, Constants: { Colors, Text } }, { serverDocumen
 			}).init();
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					description: `There are no countdowns in this server 📅`,
 					footer: {
 						text: `Use "${msg.guild.commandPrefix}${commandData.name} ${commandData.usage}" to start one`,
 					},
-				},
+				}],
 			});
 		}
 	}

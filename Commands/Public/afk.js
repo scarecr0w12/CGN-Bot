@@ -3,47 +3,47 @@ module.exports = async ({ Constants: { Colors } }, { memberDocument, memberQuery
 		if (msg.suffix === ".") {
 			memberQueryDocument.set("afk_message", null);
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.GREEN,
 					title: `Welcome back! 🎊`,
 					description: `I removed your AFK message in this server.`,
 					footer: {
 						text: `You can set a new one by using "${msg.guild.commandPrefix}${commandData.name} <message>"`,
 					},
-				},
+				}],
 			});
 		} else {
 			memberQueryDocument.set("afk_message", msg.suffix);
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.GREEN,
 					description: `Alright, I will now show that message when you are mentioned in chat. 👌`,
 					footer: {
 						text: `Use "${msg.guild.commandPrefix}${commandData.name} ." to remove it`,
 					},
-				},
+				}],
 			});
 		}
 	} else if (memberDocument.afk_message) {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.BLUE,
 				title: `Your current AFK message is:`,
 				description: `${memberDocument.afk_message}`,
 				footer: {
 					text: `Use "${msg.guild.commandPrefix}${commandData.name} <message>" to change it or "${msg.guild.commandPrefix}${commandData.name} ." to remove it.`,
 				},
-			},
+			}],
 		});
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_RED,
 				description: `You don't have an AFK message set right now! ⌨`,
 				footer: {
 					text: `You can set one by using "${msg.guild.commandPrefix}${commandData.name} <message>"`,
 				},
-			},
+			}],
 		});
 	}
 };

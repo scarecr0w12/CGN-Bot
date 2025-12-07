@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 
 module.exports = async ({ Constants: { Colors, Text, APIs } }, { serverDocument }, msg, commandData) => {
@@ -25,11 +25,11 @@ module.exports = async ({ Constants: { Colors, Text, APIs } }, { serverDocument 
 	} else {
 		logger.verbose(`Failed to fetch cat facts...`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id, statusCode, err: statusText });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				title: Text.ERROR_TITLE(),
 				description: `I was unable to fetch your purrfect cat facts...`,
-			},
+			}],
 		});
 	}
 };

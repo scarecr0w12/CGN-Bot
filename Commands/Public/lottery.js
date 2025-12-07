@@ -12,13 +12,13 @@ const moment = require("moment");
 module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { serverDocument, channelDocument, channelQueryDocument, userDocument, userQueryDocument }, msg, commandData) => {
 	const notOngoing = () => {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "There isn't a **GAwesomePoint** lottery going on right now.",
 				footer: {
 					text: `Use "${msg.guild.commandPrefix}${commandData.name} start" to start one.`,
 				},
-			},
+			}],
 		});
 	};
 	if (msg.suffix) {
@@ -27,18 +27,18 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 				if (channelDocument.lottery.isOngoing) {
 					const participantTotal = channelDocument.lottery.participant_ids.filter((ticket, index, array) => index === array.indexOf(ticket)).length;
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							title: "There's already a lottery going on in this channel 🕰",
 							description: `It currently has ${participantTotal} ${participantTotal === 1 ? "person" : "users"} with their eyes on the prize! 👀`,
 							footer: {
 								text: `You must wait for the current lottery to end before you can start a new one.`,
 							},
-						},
+						}],
 					});
 				} else {
 					await msg.channel.send({
-						embed: {
+						embeds: [{
 							color: Colors.PROMPT,
 							title: "What size should this lottery have? 💲",
 							fields: [
@@ -71,23 +71,21 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 							footer: {
 								text: "Multipliers count for ticket prices and the prize, you have 2 minutes to respond. The default is standard.",
 							},
-						},
+						}],
 					});
 
-					let response = (await msg.channel.awaitMessages(res => res.author.id === msg.author.id, {
-						max: 1,
-						time: 120000,
-					})).first();
+					let response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1,
+						time: 120000, })).first();
 
 					if (response && !["massive", "100", "huge", "10", "big", "5", "standard", "2", "small", "1", "massive 🤑", "huge 💳", "big 💰", "standard 💵", "small 💸"].includes(response.content.toLowerCase().trim())) {
 						response.channel.send({
-							embed: {
+							embeds: [{
 								color: Colors.INVALID,
 								description: "That isn't a valid lottery size... 😲",
 								footer: {
 									text: `We will use the default of 2x instead!`,
 								},
-							},
+							}],
 						});
 					}
 					if (!response) response = "2";
@@ -120,25 +118,25 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 					}
 					if (userDocument.points < multiplier && (userDocument.points !== 0 || multiplier !== 1)) {
 						return msg.channel.send({
-							embed: {
+							embeds: [{
 								color: Colors.SOFT_ERR,
 								description: "You aren't rich enough to start this lottery... 🍸",
 								footer: {
 									text: "Try a smaller sized lottery instead",
 								},
-							},
+							}],
 						});
 					}
 					Lotteries.start(client, msg.guild, serverDocument, msg.author, msg.channel, channelDocument, multiplier);
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							title: "GAwesomePoint lottery started! 🌟",
 							description: `Anyone can use \`${msg.guild.commandPrefix}${commandData.name} enroll\` or \`${msg.guild.commandPrefix}${commandData.name} join\` for a chance to win! 🤑`,
 							footer: {
 								text: `The winner will be announced ${moment(channelDocument.lottery.expiry_timestamp).fromNow()}`,
 							},
-						},
+						}],
 					});
 				}
 				break;
@@ -152,35 +150,35 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 						const userTicketCount = channelDocument.lottery.participant_ids.reduce((total, ticket) => total + (ticket === msg.author.id), 0);
 						if (userTicketCount === 5) {
 							msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.SOFT_ERR,
 									description: "You can't buy more than 5 lottery tickets in the same lottery. 🎩",
-								},
+								}],
 							});
 						} else {
 							userQueryDocument.inc("points", -ticketPrice);
 							channelQueryDocument.push("lottery.participant_ids", msg.author.id);
 							msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.SUCCESS,
 									title: "Thank you for purchasing a GAwesomePoint lottery ticket 🎟",
 									description: `That cost you ${ticketPrice} point${ticketPrice === 1 ? "" : "s"} - the winner will be announced ${moment(channelDocument.lottery.expiry_timestamp).fromNow()}.`,
 									footer: {
 										text: `You now have ${userTicketCount + 1} ticket${userTicketCount === 0 ? "" : "s"}. No refunds.`,
 									},
-								},
+								}],
 							});
 						}
 					} else {
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.SOFT_ERR,
 								title: "You're not rich enough to buy a ticket! 😔",
 								description: `You need at least ${ticketPrice} point${ticketPrice === 1 ? "" : "s"}`,
 								footer: {
 									text: `You only have ${userDocument.points} GAwesomePoint${userDocument.points === 1 ? "" : "s"}`,
 								},
-							},
+							}],
 						});
 					}
 				} else {
@@ -195,18 +193,18 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 						const winner = await Lotteries.end(client, msg.guild, serverDocument, msg.channel, channelDocument);
 						if (!winner) {
 							msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.SOFT_ERR,
 									description: "The lottery ended with no winner 😥",
-								},
+								}],
 							});
 						}
 					} else {
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.MISSING_PERMS,
 								description: Text.MISSING_PERMS(),
-							},
+							}],
 						});
 					}
 				} else {
@@ -221,13 +219,13 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 			}
 		}
 	} else if (channelDocument.lottery.isOngoing) {
-		const creator = msg.guild.members.get(channelDocument.lottery.creator_id);
+		const creator = msg.guild.members.cache.get(channelDocument.lottery.creator_id);
 		const participantTotal = channelDocument.lottery.participant_ids.filter((ticket, index, array) => index === array.indexOf(ticket)).length;
 		const ticketPrice = Math.floor(participantTotal * channelDocument.lottery.multiplier);
 		const { multiplier } = channelDocument.lottery;
 		const prize = Math.ceil(channelDocument.lottery.participant_ids.length * channelDocument.lottery.multiplier);
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INFO,
 				title: `GAwesomePoint lottery started by "@__${creator ? client.getName(serverDocument, creator) : "invalid-user"}__" 💸`,
 				fields: [
@@ -265,7 +263,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 				footer: {
 					text: `The winner will be announced ${moment(channelDocument.lottery.expiry_timestamp).fromNow()}`,
 				},
-			},
+			}],
 		});
 	} else {
 		notOngoing();

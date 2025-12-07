@@ -1,4 +1,4 @@
-const request = require("snekfetch");
+const request = require("./Utils/SnekfetchShim");
 
 const apiURL = "https://api.imgur.com/3/";
 

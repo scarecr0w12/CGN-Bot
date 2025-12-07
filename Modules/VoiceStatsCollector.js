@@ -29,11 +29,11 @@ module.exports = {
 		}
 		if (changed) {
 			member.send({
-				embed: {
+				embeds: [{
 					color: Colors.GREEN,
 					title: `Welcome back! 🎊`,
 					description: `I've removed your AFK message.`,
-				},
+				}],
 			}).catch(err => {
 				logger.debug(`Failed to send AFK return message to DM.`, { usrid: member.id }, err);
 			});

@@ -1,4 +1,4 @@
-const fetch = require("chainfetch");
+const fetch = require("../../Modules/Utils/ChainFetchShim");
 
 module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text } }, documents, msg, commandData) => {
 	const number = msg.suffix || "random";
@@ -13,22 +13,22 @@ module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text } }, docume
 
 		if (body && typeof body === "string") {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.RESPONSE,
 					description: body.length < 2048 ? body : `${body.substring(0, 2045)}...`,
-				},
+				}],
 			});
 		}
 	} catch (err) {
 		logger.debug("Failed to fetch number fact for the numfact command.", { svrid: msg.guild.id }, err);
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "Failed to fetch a number fact...",
 				footer: {
 					text: "In hindsight, dividing by zero was a mistake.",
 				},
-			},
+			}],
 		});
 	}
 };

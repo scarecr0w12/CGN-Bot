@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 const auth = require("../../Configurations/auth.js");
-const snekfetch = require("snekfetch");
+const snekfetch = require("./SnekfetchShim");
 
 const isStreamingTwitch = async username => {
 	const { body: { stream }, statusCode } = await snekfetch.get(`https://api.twitch.tv/kraken/streams/${username}?client_id=${auth.tokens.twitchClientID}`);

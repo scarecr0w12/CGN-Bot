@@ -14,14 +14,14 @@ class GuildMemberAdd extends BaseEvent {
 				// Send new_member_message if necessary
 				if (serverDocument.config.moderation.status_messages.new_member_message.isEnabled) {
 					logger.verbose(`Member "${member.user.tag}" joined server "${member.guild}"`, { svrid: member.guild.id, usrid: member.id });
-					const ch = member.guild.channels.get(serverDocument.config.moderation.status_messages.new_member_message.channel_id);
+					const ch = member.guild.channels.cache.get(serverDocument.config.moderation.status_messages.new_member_message.channel_id);
 					if (ch) {
 						const channelDocument = serverDocument.channels[ch.id];
 						if (!channelDocument || channelDocument.bot_enabled) {
 							const message = serverDocument.config.moderation.status_messages.new_member_message.messages.random;
 							if (message) {
 								ch.send({
-									embed: StatusMessages.GUILD_MEMBER_ADD(message, member, serverDocument, this.client),
+									embeds: [StatusMessages.GUILD_MEMBER_ADD(message, member, serverDocument, this.client)],
 								}).catch(err => {
 									logger.debug(`Failed to send StatusMessage for GUILD_MEMBER_ADD.`, { svrid: member.guild.id, chid: ch.id }, err);
 								});
@@ -34,7 +34,7 @@ class GuildMemberAdd extends BaseEvent {
 				if (serverDocument.config.moderation.status_messages.new_member_pm.isEnabled && !member.user.bot) {
 					try {
 						await member.send({
-							embed: {
+							embeds: [{
 								color: 0x00FF00,
 								thumbnail: {
 									url: member.guild.iconURL() || "",
@@ -42,9 +42,9 @@ class GuildMemberAdd extends BaseEvent {
 								title: `Welcome to ${member.guild}!`,
 								description: serverDocument.config.moderation.status_messages.new_member_pm.message_content || "It seems like there's no join message for new members! Have a cookie instead 🍪",
 								footer: {
-									text: `I'm ${this.client.getName(serverDocument, member.guild.members.get(this.client.user.id))} by the way. Learn more by using "${await this.client.getCommandPrefix(member.guild, serverDocument)}help"!`,
+									text: `I'm ${this.client.getName(serverDocument, member.guild.members.cache.get(this.client.user.id))} by the way. Learn more by using "${await this.client.getCommandPrefix(member.guild, serverDocument)}help"!`,
 								},
-							},
+							}],
 						});
 					} catch (err) {
 						logger.verbose(`Failed to send message to member for GUILD_MEMBER_ADD. Either the user has DM's blocked or they blocked me.`, {}, err);
@@ -56,7 +56,7 @@ class GuildMemberAdd extends BaseEvent {
 				let rolesAdded = false;
 
 				await Promise.all(serverDocument.config.moderation.new_member_roles.map(async roleID => {
-					const role = member.guild.roles.get(roleID);
+					const role = member.guild.roles.cache.get(roleID);
 					if (!role) return;
 
 					try {

@@ -1,9 +1,9 @@
 module.exports = async ({ Constants: { Colors } }, documents, msg) => {
 	msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.SUCCESS,
 			description: `${msg.suffix && msg.suffix !== "" ? msg.suffix : "🙊"}`,
-		},
-		disableEveryone: true,
+		}],
+		allowedMentions: { parse: [] },
 	});
 };

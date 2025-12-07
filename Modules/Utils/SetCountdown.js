@@ -6,17 +6,17 @@
  */
 /* eslint-disable require-await*/
 module.exports = async (client, serverDocument, countdownDocument) => {
-	const svr = client.guilds.get(serverDocument._id);
+	const svr = client.guilds.cache.get(serverDocument._id);
 	if (svr) {
-		const ch = svr.channels.get(countdownDocument.channel_id);
+		const ch = svr.channels.cache.get(countdownDocument.channel_id);
 		if (ch) {
 			client.setTimeout(async () => {
 				try {
 					await ch.send({
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `3...2...1... **${countdownDocument._id}**`,
-						},
+						}],
 					});
 					logger.verbose(`Countdown "${countdownDocument._id}" expired.`, { svrid: svr.id, chid: ch.id });
 				} catch (err) {

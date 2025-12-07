@@ -25,14 +25,42 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	// Create a Discord.js Shard Client
 	logger.silly("Creating Discord.js client.");
 	const GABClient = require("./Internals/Client");
+	const { GatewayIntentBits, Partials } = require("discord.js");
 	const client = new GABClient({
 		shards: parseInt(process.env.SHARDS),
-		totalShardCount: parseInt(process.env.SHARD_COUNT),
-		disabledEvents: scope.disabledEvents,
-		messageCacheLifetime: 1800,
-		messageSweepInterval: 900,
-		messageCacheMaxSize: 1000,
-		restTimeOffset: 50,
+		shardCount: parseInt(process.env.SHARD_COUNT),
+		// Discord.js v14 requires explicit intents
+		intents: [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildModeration,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildIntegrations,
+			GatewayIntentBits.GuildWebhooks,
+			GatewayIntentBits.GuildInvites,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.DirectMessageReactions,
+			GatewayIntentBits.MessageContent,
+		],
+		partials: [
+			Partials.Message,
+			Partials.Channel,
+			Partials.Reaction,
+		],
+		// Discord.js v14: sweepers replace message cache options
+		sweepers: {
+			messages: {
+				interval: 900,
+				lifetime: 1800,
+			},
+		},
+		rest: {
+			offset: 50,
+		},
 		debugMode: process.env.NODE_ENV !== "production",
 	});
 
@@ -55,11 +83,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		if (msg.target === "*") {
 			let result = {};
 			if (msg.settings.parse === "noKeys") result = [];
-			let guilds = msg.settings.mutualOnlyTo ? client.guilds.filter(guild => guild.members.has(msg.settings.mutualOnlyTo)) : client.guilds;
+			let guilds = msg.settings.mutualOnlyTo ? client.guilds.cache.filter(guild => guild.members.cache.has(msg.settings.mutualOnlyTo)) : client.guilds;
 
 			const query = msg.settings.findFilter;
 			// eslint-disable-next-line max-len
-			if (query) guilds = guilds.filter(svr => svr.name.toLowerCase().indexOf(query) > -1 || svr.id === query || (svr.members.has(svr.ownerID) && svr.members.get(svr.ownerID).user.username.toLowerCase().includes(query)));
+			if (query) guilds = guilds.filter(svr => svr.name.toLowerCase().indexOf(query) > -1 || svr.id === query || (svr.members.cache.has(svr.ownerID) && svr.members.cache.get(svr.ownerID).user.username.toLowerCase().includes(query)));
 
 			guilds.forEach((val, key) => {
 				try {
@@ -74,7 +102,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			return callback({ target: "*", err: null, result });
 		} else {
 			try {
-				const guild = client.guilds.get(msg.target);
+				const guild = client.guilds.cache.get(msg.target);
 				if (guild) getGuildMessageHandler(guild, msg.settings, callback);
 				else return callback({ target: msg.target, err: 404, result: null });
 			} catch (err) {
@@ -84,24 +112,24 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	client.IPC.on("muteMember", async msg => {
-		const guild = client.guilds.get(msg.guild);
-		const channel = guild.channels.get(msg.channel);
-		const member = guild.members.get(msg.member);
+		const guild = client.guilds.cache.get(msg.guild);
+		const channel = guild.channels.cache.get(msg.channel);
+		const member = guild.members.cache.get(msg.member);
 
 		await client.muteMember(channel, member);
 	});
 
 	client.IPC.on("unmuteMember", async msg => {
-		const guild = client.guilds.get(msg.guild);
-		const channel = guild.channels.get(msg.channel);
-		const member = guild.members.get(msg.member);
+		const guild = client.guilds.cache.get(msg.guild);
+		const channel = guild.channels.cache.get(msg.channel);
+		const member = guild.members.cache.get(msg.member);
 
 		await client.unmuteMember(channel, member);
 	});
 
 	client.IPC.on("createMOTD", async msg => {
 		try {
-			const guild = client.guilds.get(msg.guild);
+			const guild = client.guilds.cache.get(msg.guild);
 			const serverDocument = await Servers.findOne(guild.id);
 
 			MessageOfTheDay(client, guild, serverDocument.config.message_of_the_day, serverDocument.query);
@@ -116,9 +144,9 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 
 	client.IPC.on("createPublicInviteLink", async msg => {
 		const guildID = msg.guild;
-		const guild = client.guilds.get(guildID);
+		const guild = client.guilds.cache.get(guildID);
 		const serverDocument = await Servers.findOne(guild.id);
-		const channel = guild.defaultChannel ? guild.defaultChannel : guild.channels.filter(c => c.type === "text").first();
+		const channel = guild.defaultChannel ? guild.defaultChannel : guild.channels.cache.filter(c => c.type === ChannelType.GuildText).first();
 		if (channel && serverDocument) {
 			const invite = await channel.createInvite({ maxAge: 0 }, "GAwesomeBot Public Server Listing");
 			serverDocument.query.set("config.public_data.server_listing.invite_link", `https://discord.gg/${invite.code}`);
@@ -128,7 +156,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 
 	client.IPC.on("deletePublicInviteLink", async msg => {
 		const guildID = msg.guild;
-		const guild = client.guilds.get(guildID);
+		const guild = client.guilds.cache.get(guildID);
 		const serverDocument = await Servers.findOne(guild.id);
 		if (!serverDocument) return;
 		const invites = await guild.fetchInvites();
@@ -157,7 +185,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	client.IPC.on("leaveGuild", async msg => {
-		const guild = client.guilds.get(msg);
+		const guild = client.guilds.cache.get(msg);
 		if (guild) guild.leave();
 	});
 
@@ -168,9 +196,9 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				svr.defaultChannel.send(payload.message);
 			});
 		} else {
-			const guild = client.guilds.get(payload.guild);
+			const guild = client.guilds.cache.get(payload.guild);
 			let channel;
-			if (guild) channel = guild.channels.get(payload.channel);
+			if (guild) channel = guild.channels.cache.get(payload.channel);
 			if (channel) channel.send(payload.message);
 		}
 	});
@@ -199,8 +227,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		const data = {};
 		data.isFrozen = global.isFrozen;
 		if (!data.isFrozen) {
-			data.users = client.users.size;
-			data.guilds = client.guilds.size;
+			data.users = client.users.cache.size;
+			data.guilds = client.guilds.cache.size;
 			data.ping = Math.floor(client.ws.ping);
 		}
 		data.rss = Math.floor((process.memoryUsage().rss / 1024) / 1024);
@@ -217,8 +245,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	client.IPC.on("modifyActivity", async msg => {
 		switch (msg.activity) {
 			case "trivia": {
-				const svr = client.guilds.get(msg.guild);
-				const ch = client.channels.get(msg.channel);
+				const svr = client.guilds.cache.get(msg.guild);
+				const ch = client.channels.cache.get(msg.channel);
 
 				if (!ch) return;
 
@@ -239,8 +267,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				break;
 			}
 			case "poll": {
-				const svr = client.guilds.get(msg.guild);
-				const ch = svr.channels.get(msg.channel);
+				const svr = client.guilds.cache.get(msg.guild);
+				const ch = svr.channels.cache.get(msg.channel);
 
 				if (!ch) return;
 
@@ -260,8 +288,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				break;
 			}
 			case "giveaway": {
-				const svr = client.guilds.get(msg.guild);
-				const ch = svr.channels.get(msg.channel);
+				const svr = client.guilds.cache.get(msg.guild);
+				const ch = svr.channels.cache.get(msg.channel);
 
 				if (!ch) return;
 
@@ -276,8 +304,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				break;
 			}
 			case "lottery": {
-				const svr = client.guilds.get(msg.guild);
-				const ch = client.channels.get(msg.channel);
+				const svr = client.guilds.cache.get(msg.guild);
+				const ch = client.channels.cache.get(msg.channel);
 
 				if (!ch) return;
 
@@ -315,7 +343,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 
 	client.IPC.on("awaitMessage", async (msg, callback) => {
 		const user = await client.users.fetch(msg.usr, true);
-		let channel = await client.channels.get(msg.ch);
+		let channel = await client.channels.cache.get(msg.ch);
 		if (!channel) channel = user.dmChannel;
 		if (!channel) channel = await user.createDM();
 		return callback((await client.awaitPMMessage(channel, user, msg.timeout ? msg.timeout : undefined, msg.filter ? msg.filter : undefined)).content);
@@ -664,8 +692,10 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			}
 			logger.silly("Received MESSAGE_CREATE event from Discord!", { msgid: msg.id });
 			try {
-				if (msg.guild && !msg.guild.me) await msg.guild.members.fetch(client.user);
-				if (msg.guild && !msg.member && !msg.webhookID) await msg.guild.members.fetch(msg.author);
+				// Discord.js v14: guild.me is now guild.members.me
+				if (msg.guild && !msg.guild.members.me) await msg.guild.members.fetch(client.user);
+				// Discord.js v14: webhookID is now webhookId
+				if (msg.guild && !msg.member && !msg.webhookId) await msg.guild.members.fetch(msg.author);
 				await msg.build();
 				await client.events.onEvent("message", msg, proctime);
 			} catch (err) {

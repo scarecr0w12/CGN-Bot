@@ -1,5 +1,5 @@
 const RegExpMaker = require("./RegExpMaker.js");
-const snekfetch = require("snekfetch");
+const snekfetch = require("./SnekfetchShim");
 const { UserAgent } = require("../../Internals/Constants");
 const { discord, tokens } = require("../../Configurations/auth.js");
 const { gistKey } = tokens;

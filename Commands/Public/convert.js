@@ -15,18 +15,18 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 					switch (type) {
 						case "money": {
 							return msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.RESPONSE,
 									description: `${args[0]}**${args[1].toUpperCase()}** is ${Math.round(result * 100) / 100}**${args[2].toUpperCase()}**`,
-								},
+								}],
 							});
 						}
 						case "unit": {
 							return msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.RESPONSE,
 									description: `${args[0]}**${args[1]}** is ${result}**${args[2]}**`,
-								},
+								}],
 							});
 						}
 					}
@@ -35,29 +35,29 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 				switch (e) {
 					case "FAILED_TO_CONVERT_CURRENCY_OR_UNITS": {
 						return msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.SOFT_ERR,
 								title: `I was unable to convert your currencies or units... 😔`,
 								description: `Please make sure you use the right currency codes or the right units!\nYou can use any standard currency codes or any of [these units](https://github.com/ben-ng/convert-units#supported-units)`,
-							},
+							}],
 						});
 					}
 					case "FAILED_TO_CONVERT_UNITS": {
 						return msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.SOFT_ERR,
 								title: `I was unable to convert your units... 😔`,
 								description: `Please make sure you used the right units! 🔄\nYou can use any of [these units](https://github.com/ben-ng/convert-units#supported-units)`,
-							},
+							}],
 						});
 					}
 					default: {
 						return msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.ERR,
 								title: `An unknown error occured.. This scares me!`,
 								description: `This is the error I received:\`\`\`js\n${e}\`\`\``,
-							},
+							}],
 						});
 					}
 				}

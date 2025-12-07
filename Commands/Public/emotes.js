@@ -10,23 +10,23 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		}
 		if (!parsedEmoji) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INVALID,
 					description: `Your input is not an emoji! 😒`,
-				},
+				}],
 			});
 		} else if (parsedEmoji && !parsedEmoji.id) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INVALID,
 					description: `That's a unicode emoji!`,
 					footer: {
 						text: `This command only works with custom emojis.`,
 					},
-				},
+				}],
 			});
 		} else if (parsedEmoji && parsedEmoji.id) {
-			const globalEmoji = client.emojis.get(parsedEmoji.id);
+			const globalEmoji = client.emojis.cache.get(parsedEmoji.id);
 			if (globalEmoji) {
 				const fields = [
 					{
@@ -43,7 +43,8 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 
 				let rawEmoji;
 				try {
-					rawEmoji = (await client.api.guilds(globalEmoji.guild.id).emojis.get()).find(e => e.id === globalEmoji.id);
+					const guild = await client.guilds.fetch(globalEmoji.guild.id);
+					rawEmoji = await guild.emojis.fetch(globalEmoji.id);
 				} catch (_) {
 					rawEmoji = { user: null };
 				}
@@ -90,7 +91,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 					});
 				}
 
-				if (globalEmoji.roles.size) {
+				if (globalEmoji.roles.cache.size) {
 					fields.push({
 						name: `Roles`,
 						value: `The following roles can use this emoji:\n» ${globalEmoji.roles.sort((a, b) => b.position - a.position).map(r => r.toString()).join("\n» ")}`,
@@ -105,7 +106,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 				}
 
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.RESPONSE,
 						fields,
 						thumbnail: {
@@ -115,11 +116,11 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 							text: `Created at`,
 						},
 						timestamp: globalEmoji.createdAt,
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `I don't know too much about this emoji, but here is everything I can tell you!`,
 						thumbnail: {
@@ -137,13 +138,13 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 								inline: true,
 							},
 						],
-					},
+					}],
 				});
 			}
 		}
 	} else if (msg.guild.emojis.size) {
-		const staticEmojis = msg.guild.emojis.filter(e => !e.animated);
-		const animatedEmojis = msg.guild.emojis.filter(e => e.animated);
+		const staticEmojis = msg.guild.emojis.cache.filter(e => !e.animated);
+		const animatedEmojis = msg.guild.emojis.cache.filter(e => e.animated);
 		const fields = [];
 		staticEmojis.size && fields.push({
 			name: `There ${staticEmojis.size === 1 ? "is" : "are"} ${staticEmojis.size} static emoji${staticEmojis.size === 1 ? "" : "s"} in this server`,
@@ -154,20 +155,20 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 			value: `${animatedEmojis.map(e => `\`:${e.name}:\` » ${e}`).join("\n")}`,
 		});
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INFO,
 				fields,
 				footer: {
 					text: `Want to learn more about an emoji? Run "${msg.guild.commandPrefix}emotes <custom emote>"`,
 				},
-			},
+			}],
 		});
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: `There aren't any custom emojis in this server! 🌋`,
-			},
+			}],
 		});
 	}
 };

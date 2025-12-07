@@ -1,4 +1,4 @@
-const { ObjectID } = require("mongodb");
+const { ObjectId } = require("mongodb");
 const Document = require("./Document");
 const Cursor = require("./Cursor");
 const { Error: GABError } = require("../Internals/Errors");
@@ -52,12 +52,12 @@ module.exports = class Model {
 	async findOneByObjectID (id) {
 		if (typeof id === "string") {
 			try {
-				id = new ObjectID(id);
+				id = new ObjectId(id);
 			} catch (err) {
 				return null;
 			}
 		}
-		if (!id || !(id instanceof ObjectID)) return null;
+		if (!id || !(id instanceof ObjectId)) return null;
 
 		return this.findOne(id);
 	}

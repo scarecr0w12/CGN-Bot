@@ -82,7 +82,7 @@ module.exports = {
 				inline: true,
 			}));
 			ch.send({
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					title: `The poll "${channelDocument.poll.title}" has ended. 🔔`,
 					description: `Here are the results:`,
@@ -91,7 +91,7 @@ module.exports = {
 						text: `${results.winner ? `The winner is... "${results.winner}"! They won out of ${channelDocument.poll.responses.length} vote${channelDocument.poll.responses.length === 1 ? "" : "s"} 🎉
 						` : `The results ended in a tie! Nobody won today :(`}`,
 					},
-				},
+				}],
 			}).catch(err => {
 				logger.debug(`Failed to send Polls message to channel.`, { svrid: serverDocument._id, chid: ch.id }, err);
 			});

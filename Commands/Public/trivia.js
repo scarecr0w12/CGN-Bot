@@ -6,13 +6,13 @@ module.exports = async (main, { serverDocument, channelDocument }, msg, commandD
 		const action = split.shift().toLowerCase().trim();
 		if (action !== "start" && !channelDocument.trivia.isOngoing) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: 0xCC0F16,
 					description: `There isn't an ongoing Trivia Game in this channel. 🍎`,
 					footer: {
 						text: `Use \`${msg.guild.commandPrefix}${commandData.name} start\` to get started.`,
 					},
-				},
+				}],
 			});
 			return;
 		}
@@ -50,21 +50,21 @@ module.exports = async (main, { serverDocument, channelDocument }, msg, commandD
 			});
 		}
 		msg.send({
-			embed: {
+			embeds: [{
 				color: 0x3669FA,
 				description: `Information about the current Trivia Game 🎳`,
 				fields,
-			},
+			}],
 		});
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: 0xCC0F16,
 				description: `Trivia Gaemz! Learn more about them [here](${main.configJS.hostingURL}wiki/Commands#trivia).`,
 				footer: {
 					text: `Use "${msg.guild.commandPrefix}${commandData.name} start" to start a new Trivia Game 🎮`,
 				},
-			},
+			}],
 		});
 	}
 };

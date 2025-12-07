@@ -54,13 +54,13 @@ module.exports = async ({ Constants: { Text, Colors, APIs } }, { serverDocument 
 		} else {
 			logger.debug(`Couldn't find twitter user '${query}' for ${commandData.name} command`, { msg: msg.id, svrid: msg.guild.id });
 			m.edit({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `I couldn't find that user's tweets. They either don't exist, or don't have any public tweets! 🐦`,
 					footer: {
 						text: "Do you think this is an error? Let us know in our support Discord!",
 					},
-				},
+				}],
 			}).catch(() => null);
 		}
 	} else {

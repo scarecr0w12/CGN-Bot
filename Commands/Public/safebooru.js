@@ -1,6 +1,6 @@
 const ArgParser = require("../../Modules/MessageUtils/Parser");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
-const fetch = require("chainfetch");
+const fetch = require("../../Modules/Utils/ChainFetchShim");
 
 module.exports = async ({ Constants: { Colors, Text, APIs, UserAgent, NSFWEmbed }, client }, { serverDocument }, msg, commandData) => {
 	if (!msg.channel.nsfw) {
@@ -65,10 +65,10 @@ module.exports = async ({ Constants: { Colors, Text, APIs, UserAgent, NSFWEmbed 
 		await menu.init();
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "Even Safebooru couldn't find an image! 😥",
-			},
+			}],
 		});
 	}
 };

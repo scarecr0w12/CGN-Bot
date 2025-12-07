@@ -132,7 +132,7 @@ class PaginatedEmbed {
 	get _currentMessageContent () {
 		return {
 			content: this.messageTemplate.content.format(this._getFormatOptions({ content: this.contents[this.currentPage] || "" })),
-			embed: {
+			embeds: [{
 				author: {
 					name: this.messageTemplate.author.format(this._getFormatOptions({ author: this.authors[this.currentPage] || "" })),
 					icon_url: this.messageTemplate.authorIcon,
@@ -154,7 +154,7 @@ class PaginatedEmbed {
 					text: this.messageTemplate.footer.format(this._getFormatOptions({ footer: this.footers[this.currentPage] || "" })),
 					icon_url: this.messageTemplate.footerIcon,
 				},
-			},
+			}],
 		};
 	}
 

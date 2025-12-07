@@ -16,9 +16,9 @@ module.exports = async ({ Constants: { Colors, Text } }, documents, msg, command
 	if (min > max) [min, max] = [max, min];
 	const randNum = Math.floor(Math.random() * (max - min + 1)) + min;
 	msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.SUCCESS,
 			description: `You rolled a ${randNum}! 🎲`,
-		},
+		}],
 	});
 };

@@ -130,9 +130,9 @@ module.exports = class Logger {
 
 	sendSentryError (error, metadata) {
 		if (this.sentry) {
-			this.sentry.withScope(scope => {
-				scope.setLevel((metadata._level === "warn" ? "warning" : metadata._level) || "error");
-				this.sentry.captureException(error);
+			// Sentry v8 compatible error capturing
+			this.sentry.captureException(error, {
+				level: (metadata._level === "warn" ? "warning" : metadata._level) || "error",
 			});
 		}
 	}

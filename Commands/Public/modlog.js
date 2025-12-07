@@ -4,13 +4,13 @@ const ArgParser = require("../../Modules/MessageUtils/Parser");
 module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocument }, msg, commandData) => {
 	if (!msg.suffix) {
 		return msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.BLUE,
 				description: `Modlog is currently ${serverDocument.modlog.isEnabled ? `enabled in <#${serverDocument.modlog.channel_id}>. ⚒` : "disabled. 😺"}`,
 				footer: {
 					text: "The commands that work with my wonderful ModLog feature are: `ban`, `kick`, `mute`, `reason`, `softban`, `unban`, `unmute` and `warn`",
 				},
-			},
+			}],
 		});
 	}
 	const [command, id] = ArgParser.parseQuoteArgs(msg.suffix, msg.suffix.includes("|") ? "|" : " ");
@@ -27,10 +27,10 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 					case "MISSING_MODLOG_CHANNEL":
 					case "MODLOG_ENTRY_NOT_FOUND":
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.SOFT_ERR,
 								description: errorOrID.message,
-							},
+							}],
 						});
 						break;
 					default:
@@ -38,17 +38,17 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 				}
 			} else if (errorOrID !== null) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						description: `Done! Case #${errorOrID} is gone 💨`,
-					},
+					}],
 				});
 			} else {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `Oh no! Something went wrong 🥀`,
-					},
+					}],
 				});
 			}
 			break;
@@ -56,26 +56,26 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 		case "disable": {
 			if (!serverDocument.modlog.isEnabled) {
 				return msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `Moderation Logging is already disabled. ✋`,
-					},
+					}],
 				});
 			}
 			const ID = await ModLog.disable(msg.guild);
 			if (ID === null) {
 				return msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						description: `Oh no! Something went wrong 🥀`,
-					},
+					}],
 				});
 			}
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: `Moderation Logging has now been disabled. ❎`,
-				},
+				}],
 			});
 			break;
 		}
@@ -84,10 +84,10 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 				const channel = await client.channelSearch(id, msg.guild);
 				if (!channel) {
 					return msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: `Unable to find channel \`${id}\` 🚫`,
-						},
+						}],
 					});
 				}
 				const errorOrID = await ModLog.enable(msg.guild, channel);
@@ -97,10 +97,10 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 						case "MISSING_MODLOG_CHANNEL":
 						case "MODLOG_ENTRY_NOT_FOUND":
 							msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.SOFT_ERR,
 									description: errorOrID.message,
-								},
+								}],
 							});
 							break;
 						default:
@@ -108,17 +108,17 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 					}
 				} else if (errorOrID !== null) {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `Moderation Logging has been enabled in <#${channel.id}> 🙌`,
-						},
+						}],
 					});
 				} else {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: `Oh no! Something went wrong 🥀`,
-						},
+						}],
 					});
 				}
 			} else {

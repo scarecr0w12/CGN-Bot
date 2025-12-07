@@ -56,18 +56,18 @@ module.exports = async (client, server, serverDocument, feedDocument) => {
 			});
 			logger.verbose(`${info.length} new in feed "${feedDocument._id}" on server "${server}"`, { svrid: server.id });
 			for (let i = 0; i < feedDocument.streaming.enabled_channel_ids.length; i++) {
-				const channel = server.channels.get(feedDocument.streaming.enabled_channel_ids[i]);
+				const channel = server.channels.cache.get(feedDocument.streaming.enabled_channel_ids[i]);
 				if (channel) {
 					try {
 						await channel.send({
-							embed: {
+							embeds: [{
 								color: 0x3669FA,
 								description: `${info.length} new in feed **${feedDocument._id}**:`,
-							},
+							}],
 						});
 						for (const embed of info) {
 							await channel.send({
-								embed: embed,
+								embeds: [embed],
 							});
 						}
 					} catch (err) {

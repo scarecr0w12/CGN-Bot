@@ -1,4 +1,4 @@
-const fetch = require("chainfetch");
+const fetch = require("../../Modules/Utils/ChainFetchShim");
 
 module.exports = async ({ Constants: { Colors, Text, APIs, UserAgent } }, documents, msg) => {
 	const comicData = await fetch.get(APIs.XKCD(msg.suffix ? msg.suffix : undefined)).set({ "User-Agent": UserAgent, Accept: "application/json" }).onlyBody()
@@ -6,14 +6,14 @@ module.exports = async ({ Constants: { Colors, Text, APIs, UserAgent } }, docume
 
 	if (!comicData) {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: msg.suffix ? `Doh! An XKCD comic with ID ${msg.suffix} wasn't found.` : `Doh! The current XKCD comic couldn't be fetched.`,
-			},
+			}],
 		});
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.RESPONSE,
 				title: comicData.title,
 				image: {
@@ -23,7 +23,7 @@ module.exports = async ({ Constants: { Colors, Text, APIs, UserAgent } }, docume
 					text: msg.suffix ? `#${comicData.num}` : `Latest XKCD Comic | #${comicData.num}`,
 				},
 				timestamp: new Date(`${comicData.year}-${comicData.month}-${comicData.day}`),
-			},
+			}],
 		});
 	}
 };

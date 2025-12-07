@@ -9,18 +9,18 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		}));
 		if (fields.length) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					title: "Here is the current to-do list for this guild:",
 					fields,
-				},
+				}],
 			});
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `❎ The to-do list is empty! Use \`${msg.guild.commandPrefix}${commandData.name} <content>\` to add an item.`,
-				},
+				}],
 			});
 		}
 	};
@@ -39,13 +39,13 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			const ID = generateID();
 			serverQueryDocument.push("config.list_data", { _id: ID, content: msg.suffix });
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: `Added item \`${msg.suffix}\` to the server to-do list 🚀`,
 					footer: {
 						text: `Item has ID ${ID} | Mark as done using ${msg.guild.commandPrefix}${commandData.name} ${ID} "done" | View the full list using ${msg.guild.commandPrefix}${commandData.name}`,
 					},
-				},
+				}],
 			}).then(sendList);
 		} else if (serverDocument.config.list_data.id(parseInt(inputID))) {
 			switch (action) {
@@ -55,20 +55,20 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				case ".":
 					serverQueryDocument.clone.id("config.list_data", parseInt(inputID)).remove();
 					await msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `Removed item **${inputID}** from the to-do list. ❌`,
-						},
+						}],
 					}).then(sendList);
 					return;
 				case "done":
 				case "complete":
 					serverQueryDocument.clone.id("config.list_data", parseInt(inputID)).set(`isCompleted`, !serverDocument.config.list_data.id(parseInt(inputID)).isCompleted);
 					await msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `Marked **${inputID}** as ${serverDocument.config.list_data.id(parseInt(inputID)).isCompleted ? "" : "not "}done!`,
-						},
+						}],
 					}).then(sendList);
 					return;
 				default:
@@ -76,17 +76,17 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 					break;
 			}
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: `Gotcha, list item **${inputID}** has been updated 👑`,
-				},
+				}],
 			}).then(sendList);
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `There is no to-do list item with ID **${inputID}**!`,
-				},
+				}],
 			});
 		}
 	} else {

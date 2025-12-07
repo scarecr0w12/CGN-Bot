@@ -5,7 +5,7 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 		const chname = params[1].trim();
 		if (svrname && chname) {
 			const initMsg = await msg.channel.send({
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					author: {
 						name: client.user.username,
@@ -16,7 +16,7 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 					footer: {
 						text: "Get excited!",
 					},
-				},
+				}],
 			});
 			if (!initMsg) return logger.debug(`Failed to send message for giveaway command to ${msg.author.tag}.`, { usrid: msg.author.id, msgid: msg.id });
 			const relay = () => client.relayCommand("giveaway", { str: svrname, usrid: msg.author.id }, { initMsg: initMsg.id, usrid: msg.author.id, svrname, chname });
@@ -27,7 +27,7 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 				if (relayRes === "multi") errMsg = "Multiple servers were found. Set a unique server nick or use server ID instead of name.";
 				if (relayRes !== true) {
 					initMsg.edit({
-						embed: {
+						embeds: [{
 							author: {
 								name: client.user.username,
 								icon_url: client.user.displayAvatarURL(),
@@ -38,7 +38,7 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 							footer: {
 								text: errMsg,
 							},
-						},
+						}],
 					});
 				}
 			}, 200);
@@ -47,9 +47,9 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 	}
 	logger.silly(`Invalid parameters \`${msg.suffix}\` provided for ${commandData.name}`, { usrid: msg.author.id });
 	await msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.INVALID,
 			description: `🗯 Correct usage is: \`${commandData.name} ${commandData.usage}\``,
-		},
+		}],
 	});
 };

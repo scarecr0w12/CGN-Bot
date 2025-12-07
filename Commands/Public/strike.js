@@ -9,21 +9,21 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 
 		if (!member) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `I couldn't find a matching member in this guild... 🧐`,
-				},
+				}],
 			});
 		}
 		if (member.user.bot || [msg.author.id, client.user.id].includes(member.id) || client.getUserBotAdmin(msg.guild, serverDocument, member) > 0) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.MISSING_PERMS,
 					description: `Sorry, you can't strike **@${client.getName(serverDocument, member)}** ✋`,
 					footer: {
 						text: msg.author.id === member.user.id ? "You cannot strike yourself!" : "Bots and Bot Admins cannot be striked!",
 					},
-				},
+				}],
 			});
 		}
 
@@ -56,7 +56,7 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 		try {
 			const DMChannel = await member.user.createDM();
 			await DMChannel.send({
-				embed: {
+				embeds: [{
 					description: `Tsching! You just received your ${strikeAmount} strike! ⚡`,
 					fields: [
 						{
@@ -71,20 +71,20 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 						},
 					],
 					color: Colors.LIGHT_ORANGE,
-				},
+				}],
 			});
 		} catch (err) {
 			success = false;
 		}
 
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SUCCESS,
 				description: `Feel the thunder! **@${client.getName(serverDocument, member)}** has received their ${strikeAmount} strike! 🚦`,
 				footer: {
 					text: success ? "I also warned them via DM ⚠" : "I tried to warn them via DM, but something went wrong!",
 				},
-			},
+			}],
 		});
 	} else {
 		msg.sendInvalidUsage(commandData, "Who do you want me to strike? 😮");

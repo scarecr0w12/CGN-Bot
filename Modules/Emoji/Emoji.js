@@ -5,7 +5,7 @@ const EmojiUtils = require("./EmojiUtil");
 const Jimp = require("jimp");
 const { read, MIME_PNG, AUTO } = Jimp;
 const { GifCodec, GifFrame, BitmapImage, GifUtil } = require("gifwrap");
-const { get } = require("snekfetch");
+const { get } = require("../Utils/SnekfetchShim");
 
 const codec = new GifCodec();
 

@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 
 module.exports = async ({ Constants: { Colors, Text, APIs, EmptySpace } }, documents, msg, commandData) => {
@@ -32,19 +32,19 @@ module.exports = async ({ Constants: { Colors, Text, APIs, EmptySpace } }, docum
 					break;
 			}
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "What's that? 🤔",
 					description,
-				},
+				}],
 			});
 		} else if (!body.data.children.length) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "Nothing to see here!",
 					description: "There are no posts in this subreddit yet.",
-				},
+				}],
 			});
 		}
 
@@ -76,11 +76,11 @@ module.exports = async ({ Constants: { Colors, Text, APIs, EmptySpace } }, docum
 
 		if (!descriptions.length) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "Hold on a second! 🛑",
 					description: "All results were filtered for being marked NSFW. If you want to see them go to a NSFW channel or ask an Admin to make this channel NSFW.",
-				},
+				}],
 			});
 		}
 		await new PaginatedEmbed(msg, {
@@ -95,11 +95,11 @@ module.exports = async ({ Constants: { Colors, Text, APIs, EmptySpace } }, docum
 	} else {
 		logger.debug(`Failed to fetch Reddit results`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id, statusCode, err: statusText });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.ERROR,
 				title: Text.ERROR_TITLE(),
 				description: `I was unable to fetch results from Reddit!`,
-			},
+			}],
 		});
 	}
 };

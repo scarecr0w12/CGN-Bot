@@ -12,18 +12,18 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 			} catch (err) {
 				logger.verbose(`Couldn't find any Apple app called "${app}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 				results.push({
-					embed: {
+					embeds: [{
 						color: 0xFF0000,
 						description: `There were no results for the app called \`${app}\`. ❌`,
 						footer: {
 							text: `You should try searching for the app again, making sure you spelt it right.`,
 						},
-					},
+					}],
 				});
 			}
 			if (res) {
 				results.push({
-					embed: {
+					embeds: [{
 						color: 0x00FF00,
 						author: {
 							name: `By ${res.artistName}`,
@@ -38,7 +38,7 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 						footer: {
 							text: `Rated ${res.averageUserRating} ⭐ | ${res.formattedPrice.toLowerCase() === "free" ? "This app is free" : `The price of the app is ${res.formattedPrice}`}`,
 						},
-					},
+					}],
 				});
 			}
 		}
@@ -47,10 +47,10 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_RED,
 				description: `[What app would you like to find today...?](https://www.apple.com/itunes/charts/free-apps/) 🤔`,
-			},
+			}],
 		});
 	}
 };

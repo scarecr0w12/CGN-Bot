@@ -21,7 +21,7 @@ class VoteHandler extends BaseEvent {
 
 	async handle (msg) {
 		// Vote based on mention
-		if (this.serverDocument && this.serverDocument.config.commands.points.isEnabled && msg.guild.members.size > 2 &&
+		if (this.serverDocument && this.serverDocument.config.commands.points.isEnabled && msg.guild.members.cache.size > 2 &&
 			!this.serverDocument.config.commands.points.disabled_channel_ids.includes(msg.channel.id) &&
 			msg.content.startsWith("<@") && msg.content.indexOf(">") < msg.content.indexOf(" ") && msg.content.includes(" ") &&
 			msg.content.indexOf(" ") < msg.content.length - 1) {
@@ -78,10 +78,10 @@ class VoteHandler extends BaseEvent {
 								} else {
 									logger.verbose(`User "${msg.author.tag}" does not have enough points to gild "${member.user.tag}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 									msg.channel.send({
-										embed: {
+										embeds: [{
 											color: Colors.SOFT_ERR,
 											description: `Hey ${msg.author}, you don't have enough GAwesomePoints to gild ${member}!`,
-										},
+										}],
 									}).catch(err => {
 										logger.debug(`Failed to send insufficient GAwesomePoints message.`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 									});

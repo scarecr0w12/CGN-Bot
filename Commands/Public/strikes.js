@@ -8,10 +8,10 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 	else member = await client.memberSearch(msg.suffix, msg.guild).catch(() => null);
 	if (!member) {
 		return msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: `I couldn't find a matching member in this guild... 🧐`,
-			},
+			}],
 		});
 	}
 
@@ -22,7 +22,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 	}
 
 	const fields = targetMemberDocument.strikes.map(strikeDocument => {
-		const admin = msg.guild.members.get(strikeDocument.admin);
+		const admin = msg.guild.members.cache.get(strikeDocument.admin);
 		return [{
 			name: "❓ Reason",
 			value: strikeDocument.reason,
@@ -43,10 +43,10 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 
 	if (fields.length === 0) {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.RESPONSE,
 				description: `**${msg.author.id === member.user.id ? "You** don't" : `@${client.getName(serverDocument, member)}** doesn't`} have any strikes ✅`,
-			},
+			}],
 		});
 	} else {
 		const menu = new PaginatedEmbed(msg, {

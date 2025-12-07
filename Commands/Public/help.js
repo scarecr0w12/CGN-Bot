@@ -28,13 +28,13 @@ module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMen
 		}
 		description.length === 0 && description.push(`I'm unable to find any command called \`${msg.suffix.trim().toLowerCase()}\`!`);
 		return msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INFO,
 				description: description.join("\n\n"),
 				footer: {
 					text: `Not what you're looking for? Run "${msg.guild.commandPrefix}help" to see all commands you can run!`,
 				},
-			},
+			}],
 		});
 	}
 
@@ -81,7 +81,7 @@ module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMen
 	}
 
 	new HelpMenu(msg, {
-		embed: {
+		embeds: [{
 			color: Colors.INFO,
 			author: {
 				name: `Welcome to the GAwesomeBot help menu!`,
@@ -109,66 +109,66 @@ module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMen
 			footer: {
 				text: `For a list of commands you can use in PMs with me, just PM me "help", and I'll let you know!`,
 			},
-		},
+		}],
 	}, {
 		withExtensions: pages[HelpMenuEmojis.extension].length > 0,
 		pages: {
 			[HelpMenuEmojis.gab]: {
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_GREEN,
 					title: `GAwesomeBot 🤖`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.gab]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.fun]: {
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_BLUE,
 					title: `Fun 🎪`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.fun]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.mod]: {
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_RED,
 					title: `Moderation ⚒`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.mod]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.media]: {
-				embed: {
+				embeds: [{
 					// Don't ask
 					color: Colors.TRIVIA_START,
 					title: `Search & Media 🎬`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.media]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.nsfw]: {
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_ORANGE,
 					title: `NSFW 👹`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.nsfw]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.stats]: {
-				embed: {
+				embeds: [{
 					color: Colors.YELLOW,
 					title: `Stats & Points ⭐️`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.stats]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.util]: {
-				embed: {
+				embeds: [{
 					color: Colors.BLUE,
 					title: `Utility 🔦`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.util]}\`\`\``,
-				},
+				}],
 			},
 			[HelpMenuEmojis.extension]: {
-				embed: {
+				embeds: [{
 					color: Colors.GREEN,
 					title: `Extensions ⚙️`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.extension]}\`\`\``,
-				},
+				}],
 			},
 		},
 	}).init(240000);

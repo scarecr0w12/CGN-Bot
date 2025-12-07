@@ -38,7 +38,7 @@ const messageHandler = (guild, settings, respond) => {
 	if (settings.fullResolveMembers && settings.fullResolveMembers.constructor === Array) {
 		if (!payload.members) payload.members = {};
 		settings.fullResolveMembers.forEach(member => {
-			const rawMember = member === "OWNER" ? guild.owner : guild.members.get(member);
+			const rawMember = member === "OWNER" ? guild.owner : guild.members.cache.get(member);
 			if (rawMember) {
 				payload.members[rawMember.id] = rawMember.toJSON();
 				payload.members[rawMember.id].user = rawMember.user.toJSON();
@@ -48,11 +48,11 @@ const messageHandler = (guild, settings, respond) => {
 		if (!payload.members) payload.members = {};
 		const query = settings.fullResolveMembers;
 
-		let usr = guild.members.get(query);
+		let usr = guild.members.cache.get(query);
 		if (!usr) {
 			const usernameQuery = query.substring(0, query.lastIndexOf("#") > -1 ? query.lastIndexOf("#") : query.length);
 			const discriminatorQuery = query.indexOf("#") > -1 ? query.substring(query.lastIndexOf("#") + 1) : "";
-			const usrs = guild.members.filter(a => (a.user || a).username === usernameQuery);
+			const usrs = guild.members.cache.filter(a => (a.user || a).username === usernameQuery);
 			if (discriminatorQuery) {
 				usr = usrs.find(a => (a.user || a).discriminator === discriminatorQuery);
 			} else if (usrs.size > 0) {
@@ -84,7 +84,7 @@ class GetGuild {
 	}
 
 	_send (settings) {
-		if (this.client.guilds.has(this.target)) return messageHandler(this.client.guilds.get(this.target), settings, payload => payload.result);
+		if (this.client.guilds.cache.has(this.target)) return messageHandler(this.client.guilds.cache.get(this.target), settings, payload => payload.result);
 		return this.client.IPC.send("getGuild", { target: this.target, settings }).then(msg => {
 			if (msg.err && msg.err !== 404) throw msg.err;
 			if (msg.err && msg.err === 404) return null;

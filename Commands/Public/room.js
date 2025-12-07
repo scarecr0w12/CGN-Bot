@@ -5,15 +5,15 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 	const roomDocument = serverDocument.config.room_data.id(msg.channel.id);
 	if (roomDocument) {
 		const question = await msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.PROMPT,
 				description: `This room was created ${moment(roomDocument.created_timestamp).fromNow()}. Would you like to delete it?`,
-			},
+			}],
 			footer: {
 				text: "You have 1 minute to respond.",
 			},
 		});
-		let response = (await msg.channel.awaitMessages(res => res.author.id === msg.author.id, { max: 1, time: 60000 })).first();
+		let response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1, time: 60000 })).first();
 		if (response) {
 			try {
 				await response.delete();
@@ -27,26 +27,26 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				success = false;
 				logger.debug(`Failed to delete room '${msg.channel.name}' on server '${msg.guild.name}'`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 				question.edit({
-					embed: {
+					embeds: [{
 						color: Colors.LIGHT_ERR,
 						title: "Failed to delete room!",
 						description: "I might be missing sufficient permissions!",
-					},
+					}],
 				});
 			});
 			if (success) serverDocument.query.id("config.room_data", msg.channel.id).remove();
 		} else {
 			await question.edit({
-				embed: {
+				embeds: [{
 					color: Colors.PROMPT,
 					title: "I'll keep the room intact 😅",
 					description: "Do you want to add any members to this channel?",
 					footer: {
 						text: "You have 1 minute to respond.",
 					},
-				},
+				}],
 			});
-			response = (await msg.channel.awaitMessages(res => res.author.id === msg.author.id, { max: 1, time: 60000 })).first();
+			response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1, time: 60000 })).first();
 			if (response) {
 				try {
 					await response.delete();
@@ -56,15 +56,15 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			}
 			if (response && configJS.yesStrings.includes(response.content.toLowerCase().trim())) {
 				await question.edit({
-					embed: {
+					embeds: [{
 						color: Colors.PROMPT,
 						description: "Please send the names of the members you'd like to add.",
 						footer: {
 							text: "You can separate them with '|'",
 						},
-					},
+					}],
 				});
-				response = (await msg.channel.awaitMessages(res => res.author.id === msg.author.id, { max: 1, time: 60000 })).first();
+				response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1, time: 60000 })).first();
 				try {
 					await response.delete();
 				} catch (err) {
@@ -81,27 +81,28 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 						return failed.push(memberQuery);
 					}
 					if (!member || !member.user) return;
-					msg.channel.updateOverwrite(member, {
-						VIEW_CHANNEL: true,
-					}, `Room Management | Command issued by ${msg.member.tag}`).catch(err => {
+					// Discord.js v14: use permissionOverwrites.edit instead of updateOverwrite
+					msg.channel.permissionOverwrites.edit(member, {
+						ViewChannel: true,
+					}, { reason: `Room Management | Command issued by ${msg.member.tag}` }).catch(err => {
 						logger.debug(`Failed to add member '${member.user.username}' to room '${msg.channel.name}' on server '${msg.guild.name}'`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: member.id }, err);
 					});
 				}));
 				question.edit({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						description: "Welcome, new people! 😘",
 						footer: !failed.length ? undefined : {
 							text: `I couldn't find members for ${failed.splice(0, 3).join(", ")}${failed.length > 3 ? " and more" : ""}`,
 						},
-					},
+					}],
 				});
 			} else {
 				question.edit({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						description: "Ok! I won't add any members either.",
-					},
+					}],
 				});
 			}
 		}
@@ -118,7 +119,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				if (member) members.push(member);
 			}));
 
-			if (!serverDocument.config.room_category || !msg.guild.channels.has(serverDocument.config.room_category)) {
+			if (!serverDocument.config.room_category || !msg.guild.channels.cache.has(serverDocument.config.room_category)) {
 				const categoryChannel = await msg.guild.channels.create("Talk Rooms", {
 					reason: "Room Management | Creating room category",
 					type: "category",
@@ -129,7 +130,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			const permissionOverwrites = members.map(member => ({
 				id: member.user.id,
 				type: "member",
-				allow: "VIEW_CHANNEL",
+				allow: PermissionFlagsBits.ViewChannel,
 			}));
 
 			const channel = await msg.guild.channels.create(`talk-room-${Date.now()}`, {
@@ -140,30 +141,30 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				permissionOverwrites: [{
 					id: msg.guild.id,
 					type: "role",
-					deny: "VIEW_CHANNEL",
+					deny: PermissionFlagsBits.ViewChannel,
 				}, {
 					id: msg.author.id,
 					type: "member",
-					allow: "VIEW_CHANNEL",
+					allow: PermissionFlagsBits.ViewChannel,
 				}, ...permissionOverwrites],
 			}).catch(err => {
 				logger.debug(`Failed to create talk room in '${msg.guild.name}'`, { svrid: msg.guild.id, err });
 			});
-			if (channel && channel.type === "text") {
+			if (channel && channel.type === ChannelType.GuildText) {
 				channel.send({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						title: "First! 🐬",
 						description: `Use \`${msg.guild.commandPrefix}${commandData.name}\` to delete this room or add members.`,
-					},
+					}],
 				});
-			} else if (channel && channel.type === "voice") {
+			} else if (channel && channel.type === ChannelType.GuildVoice) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						title: "Room created! 🐬",
 						description: `The room will automatically be deleted once everyone leaves.`,
-					},
+					}],
 				});
 			}
 
@@ -174,13 +175,13 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "This channel isn't a room!",
 				footer: {
 					text: `Create a new room using ${msg.guild.commandPrefix}${commandData.name} ${commandData.usage}`,
 				},
-			},
+			}],
 		});
 	}
 };

@@ -32,13 +32,13 @@ class GuildMemberRemove extends BaseEvent {
 			// Send member_removed_message if necessary
 			if (serverDocument.config.moderation.status_messages.member_removed_message.isEnabled) {
 				logger.verbose(`Member '${member.user.tag}' removed from server '${guild.name}'`, { svrid: guild.id, usrid: member.user.id });
-				const channel = guild.channels.get(serverDocument.config.moderation.status_messages.member_removed_message.channel_id);
+				const channel = guild.channels.cache.get(serverDocument.config.moderation.status_messages.member_removed_message.channel_id);
 				if (channel) {
 					const channelDocument = serverDocument.channels[channel.id];
 					if (!channelDocument || channelDocument.bot_enabled) {
 						const message = serverDocument.config.moderation.status_messages.member_removed_message.messages.random;
 						channel.send({
-							embed: StatusMessages.GUILD_MEMBER_REMOVE(message, member, serverDocument, this.client),
+							embeds: [StatusMessages.GUILD_MEMBER_REMOVE(message, member, serverDocument, this.client)],
 						}).catch(err => {
 							logger.debug(`Failed to send StatusMessage for GUILD_MEMBER_REMOVE.`, { svrid: guild.id, chid: channel.id }, err);
 						});
@@ -51,14 +51,14 @@ class GuildMemberRemove extends BaseEvent {
 				try {
 					const channel = await member.user.createDM();
 					await channel.send({
-						embed: {
+						embeds: [{
 							color: 0x00FF00,
 							thumbnail: {
 								url: member.guild.iconURL() || "",
 							},
 							title: `Before you go!`,
 							description: serverDocument.config.moderation.status_messages.new_member_pm.message_content || "It seems like there's no leave message for members! Have a cookie instead 🍪",
-						},
+						}],
 					});
 				} catch (err) {
 					logger.debug(`Failed to send leave message to ${member.user.tag}! They probably don't share a server with me anymore.`, { svrid: member.guild.id, usrid: member.user.id }, err);

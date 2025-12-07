@@ -92,7 +92,8 @@ class Message {
 		 * ID of the webhook that sent this message.
 		 * @type {?String}
 		 */
-		this.webhookID = msg.webhookID;
+		// Discord.js v14: webhookID is now webhookId
+		this.webhookID = msg.webhookId;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const S = require("../../Modules/String");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 
@@ -68,11 +68,11 @@ module.exports = async ({ Constants: { Colors, NSFWEmbed, Text, APIs, UserAgent 
 			} else {
 				logger.verbose(`No "${commandData.name}" results found for "${query}"`);
 				m.edit({
-					embed: {
+					embeds: [{
 						color: Colors.SOFT_ERR,
 						title: `Nothing was found 😥`,
 						description: `Try again, perhaps this time you find what you desire. ( ͡° ͜ʖ ͡° )`,
-					},
+					}],
 				});
 			}
 		} else {

@@ -5,19 +5,19 @@ const { Colors, Text } = require("../../Internals/Constants");
 module.exports = {
 	find: async (main, filter) => {
 		let server;
-		const checkServer = svr => svr && svr.members.has(filter.usrid);
+		const checkServer = svr => svr && svr.members.cache.has(filter.usrid);
 
-		server = main.client.guilds.find(svr => svr.name === filter.str || svr.name.toLowerCase() === filter.str.toLowerCase());
+		server = main.client.guilds.cache.find(svr => svr.name === filter.str || svr.name.toLowerCase() === filter.str.toLowerCase());
 		if (checkServer(server)) return server.id;
 
-		server = main.client.guilds.get(filter.str);
+		server = main.client.guilds.cache.get(filter.str);
 		if (checkServer(server)) return server.id;
 
 		const userDocument = await Users.findOne(filter.usrid);
 		if (userDocument) {
 			const svrnick = userDocument.server_nicks.id(filter.str.toLowerCase());
 			if (svrnick) {
-				server = main.client.guilds.get(svrnick.server_id);
+				server = main.client.guilds.cache.get(svrnick.server_id);
 				if (checkServer(server)) return server.id;
 			}
 		}
@@ -29,8 +29,8 @@ module.exports = {
 			const usrch = await usr.createDM();
 			let initMsg = await usrch.messages.fetch(params.initMsg);
 
-			const svr = main.client.guilds.get(params.guildid);
-			const member = svr.members.get(usr.id);
+			const svr = main.client.guilds.cache.get(params.guildid);
+			const member = svr.members.cache.get(usr.id);
 			await svr.populateDocument();
 			const { serverDocument } = svr;
 			const serverQueryDocument = serverDocument.query;
@@ -42,17 +42,17 @@ module.exports = {
 				ch = await main.client.channelSearch(params.chname, svr);
 			} catch (err) {
 				return initMsg.edit({
-					embed: {
+					embeds: [{
 						description: "Something went wrong while fetching channel data!",
 						color: Colors.ERROR,
 						footer: {
 							text: `The requested channel was not found on server "${svr}"`,
 						},
-					},
+					}],
 				});
 			}
 
-			if (ch && ch.type === "text") {
+			if (ch && ch.type === ChannelType.GuildText) {
 				let channelDocument = serverDocument.channels[ch.id];
 				if (!channelDocument) {
 					serverQueryDocument.push("channels", { _id: ch.id });
@@ -62,13 +62,13 @@ module.exports = {
 				if (channelDocument.poll.isOngoing) {
 					if (channelDocument.poll.creator_id === usr.id) {
 						initMsg = await initMsg.edit({
-							embed: {
+							embeds: [{
 								color: Colors.INFO,
 								description: `You've already started a poll (called \`${channelDocument.poll.title}\`) in #${ch.name} (${ch}).`,
 								footer: {
 									text: "Would you like to end it now and show the results? | You have 1 minute to respond.",
 								},
-							},
+							}],
 						});
 						let response;
 						try {
@@ -80,19 +80,19 @@ module.exports = {
 						if (response && main.configJS.yesStrings.includes(response.toLowerCase().trim())) {
 							await Polls.end(serverDocument, ch, channelDocument);
 							usrch.send({
-								embed: {
+								embeds: [{
 									color: Colors.SUCCESS,
 									title: "Alright, poll ended. 🍿",
 									description: `See #${ch.name} (${ch}) for the results!`,
-								},
+								}],
 							});
 							serverDocument.save();
 						} else {
 							usrch.send({
-								embed: {
+								embeds: [{
 									color: Colors.RESPONSE,
 									description: `Alright! I'll leave your poll intact. 🐬`,
-								},
+								}],
 							});
 							return true;
 						}
@@ -100,13 +100,13 @@ module.exports = {
 						const voteDocument = channelDocument.poll.responses.id(usr.id);
 						if (voteDocument) {
 							initMsg = await initMsg.edit({
-								embed: {
+								embeds: [{
 									color: 0x3669FA,
 									description: `You've already voted on the poll in #${ch.name} (${ch}).`,
 									footer: {
 										text: "Would you like to erase your vote? | You have 1 minute to respond.",
 									},
-								},
+								}],
 							});
 							let response;
 							try {
@@ -119,20 +119,20 @@ module.exports = {
 								channelQueryDocument.pull("poll.responses", voteDocument._id);
 								serverDocument.save();
 								usrch.send({
-									embed: {
+									embeds: [{
 										color: Colors.SUCCESS,
 										description: `Alright, I removed your vote. 🔪`,
 										footer: {
 											text: `Use "poll ${svr} | #${ch.name}" to vote again, anonymously.`,
 										},
-									},
+									}],
 								});
 							} else {
 								usrch.send({
-									embed: {
+									embeds: [{
 										color: Colors.RESPONSE,
 										description: `Alright! I'll leave your vote as is. 🐬`,
-									},
+									}],
 								});
 								return true;
 							}
@@ -183,22 +183,22 @@ module.exports = {
 							});
 							serverDocument.save();
 							usrch.send({
-								embed: {
+								embeds: [{
 									color: Colors.SUCCESS,
 									description: `I casted your vote for \`${channelDocument.poll.options[vote]}\` 🎈`,
-								},
+								}],
 							});
 						}
 					}
 				} else if (main.client.getUserBotAdmin(svr, serverDocument, member) >= serverDocument.config.commands.poll.admin_level || configJSON.maintainers.includes(usr.id)) {
 					initMsg = await initMsg.edit({
-						embed: {
+						embeds: [{
 							color: Colors.PROMPT,
 							description: "❓ Enter a title or question for the poll.",
 							footer: {
 								text: "You have 1 minute to respond.",
 							},
-						},
+						}],
 					});
 					let title;
 					try {
@@ -209,13 +209,13 @@ module.exports = {
 					if (!title) return;
 					if (title.content) title = title.content;
 					usrch.send({
-						embed: {
+						embeds: [{
 							color: Colors.PROMPT,
 							description: "✍ Please enter the options for your poll (comma-separated):",
 							footer: {
 								text: "Enter `.` to use the default yes/no options. You have 5 minutes to respond.",
 							},
-						},
+						}],
 					});
 					let options;
 					try {
@@ -255,35 +255,35 @@ module.exports = {
 					await serverDocument.save();
 				} else {
 					initMsg.edit({
-						embed: {
+						embeds: [{
 							color: Colors.MISSING_PERMS,
 							description: `🔐 You don't have permission to use this command on ${svr}`,
-						},
+						}],
 					});
 				}
 			} else if (ch) {
 				initMsg.edit({
-					embed: {
+					embeds: [{
 						description: "Something went wrong while fetching channel data!",
 						color: Colors.SOFT_ERR,
 						footer: {
 							text: `The requested channel isn't a valid text channel.`,
 						},
-					},
+					}],
 				});
 			}
 		} catch (err) {
 			logger.warn(`Something went wrong while creating a poll! ()=()`, { usrid: params.usrid, msgid: params.initMsg }, err);
 			if (usr && usr.send) {
 				usr.send({
-					embed: {
+					embeds: [{
 						color: Colors.ERR,
 						title: Text.ERROR_TITLE(),
 						description: `**Error Message**: \`\`\`js\n${err.stack}\`\`\``,
 						footer: {
 							text: `Contact your Server Admin for support!`,
 						},
-					},
+					}],
 				});
 			}
 		}

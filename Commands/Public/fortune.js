@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const leven = require("fast-levenshtein");
 
 module.exports = async ({ Constants: { Colors, APIs, FortuneCategories, Text } }, documents, msg, commandData) => {
@@ -14,39 +14,39 @@ module.exports = async ({ Constants: { Colors, APIs, FortuneCategories, Text } }
 			ENDPOINT = APIs.FORTUNE(choice);
 		} else {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INVALID,
 					title: `That doesn't seem like a valid category...`,
 					description: `Here are the valid categories:\n\n${FortuneCategories.map(cat => `» **${cat}**\n`).join("")}`,
-				},
+				}],
 			});
 		}
 	}
 	await msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.INFO,
 			description: `We're preparing your fortune cookie`,
 			footer: {
 				text: `Please stand by...`,
 			},
-		},
+		}],
 	});
 	try {
 		const res = await get(ENDPOINT).set("Accept", "application/json");
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SUCCESS,
 				title: `Here is your fortune:`,
 				description: `${res.body.fortune}`,
-			},
+			}],
 		});
 	} catch (err) {
 		return msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				title: Text.ERROR_TITLE(),
 				description: `I received this error:\`\`\`js\n${err.body}\`\`\``,
-			},
+			}],
 		});
 	}
 };

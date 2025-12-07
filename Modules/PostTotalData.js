@@ -1,5 +1,5 @@
 const { tokens } = require("../Configurations/auth.js");
-const snekfetch = require("snekfetch");
+const snekfetch = require("./Utils/SnekfetchShim");
 
 module.exports = async client => {
 	const totalAmount = await client.guilds.totalCount;

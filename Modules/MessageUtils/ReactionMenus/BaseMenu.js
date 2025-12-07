@@ -42,14 +42,14 @@ class BaseReactionMenu extends EventEmitter {
 			return this.originalMsg.channel.send(this.results[0]);
 		}
 		this.msg = await this.originalMsg.channel.send({
-			embed: {
+			embeds: [{
 				color: this.template.color,
 				title: this.template.title,
 				description: this.template.description.format({ list: `\`\`\`ini\n${this._currentOptions}\`\`\`` }),
 				footer: {
 					text: this.template.footer ? this.template.footer.format({ current: this.currentPage + 1, total: this.add1 ? this.totalPages + 1 : this.totalPages }) : null,
 				},
-			},
+			}],
 		});
 	}
 
@@ -74,10 +74,10 @@ class BaseReactionMenu extends EventEmitter {
 		}
 		if (reason !== "updateChoice") {
 			this.msg.edit({
-				embed: {
+				embeds: [{
 					color: Colors.LIGHT_ORANGE,
 					description: `You've exited the menu or the menu expired.`,
-				},
+				}],
 			}).catch(err => {
 				logger.debug(`Failed to edit menu message.`, { msgid: this.msg.id }, err);
 			});
@@ -89,14 +89,14 @@ class BaseReactionMenu extends EventEmitter {
 
 	async _changePage () {
 		this.msg = await this.msg.edit({
-			embed: {
+			embeds: [{
 				color: this.template.color,
 				title: this.template.title,
 				description: this.template.description.format({ list: `\`\`\`ini\n${this._currentOptions}\`\`\`` }),
 				footer: {
 					text: this.template.footer ? this.template.footer.format({ current: this.currentPage + 1, total: this.add1 ? this.totalPages + 1 : this.totalPages }) : null,
 				},
-			},
+			}],
 		});
 	}
 

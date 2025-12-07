@@ -38,9 +38,9 @@ module.exports = {
 		if (channelDocument.lottery.isOngoing) {
 			channelQueryDocument.set("lottery.isOngoing", false);
 
-			const participants = channelDocument.lottery.participant_ids.filter(a => svr.members.has(a));
+			const participants = channelDocument.lottery.participant_ids.filter(a => svr.members.cache.has(a));
 			const i = Math.floor(Math.random() * participants.length);
-			const winner = svr.members.get(participants[i]);
+			const winner = svr.members.cache.get(participants[i]);
 			try {
 				if (winner) {
 					const prize = Math.ceil(channelDocument.lottery.participant_ids.length * channelDocument.lottery.multiplier);
@@ -54,14 +54,14 @@ module.exports = {
 					const participantTotal = channelDocument.lottery.participant_ids.filter((ticket, index, array) => index === array.indexOf(ticket)).length;
 					ch.send({
 						content: `${winner},`,
-						embed: {
+						embeds: [{
 							color: Colors.INFO,
 							title: `Congratulations @__${client.getName(serverDocument, winner)}__! 🎊`,
 							description: `You won the lottery for **${prize}** GAwesomePoint${prize === 1 ? "" : "s"} out of ${participantTotal} participant${participantTotal === 1 ? "" : "s"}.`,
 							footer: {
 								text: "Enjoy the cash! 💰",
 							},
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send Lottery message to channel.", { svrid: svr.id, chid: ch.id }, err);
 					});

@@ -2,26 +2,26 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	const handleMissingMember = () => {
 		logger.verbose(`Couldn't find any user or the user doesn't exist so "${commandData.name}" command can't be ran`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_ORANGE,
 				title: `I don't know who that is!`,
 				description: `You can admire my beautiful face instead! 💖`,
 				image: {
 					url: client.user.displayAvatarURL({ size: 512 }),
 				},
-			},
+			}],
 		});
 	};
 
 	const sendAvatarImage = (m, isUserOnly) => {
 		msg.send({
-			embed: {
+			embeds: [{
 				title: `@__${isUserOnly ? m.tag : client.getName(serverDocument, m)}__'s Avatar`,
 				color: Colors.BLUE,
 				image: {
 					url: isUserOnly ? m.displayAvatarURL({ size: 512 }) : m.user.displayAvatarURL({ size: 512 }),
 				},
-			},
+			}],
 		});
 	};
 

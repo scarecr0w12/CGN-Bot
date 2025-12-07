@@ -88,7 +88,7 @@ GAwesomeData.extensions.html = {
 					<label class="label">Channel(s)</label>
 				`;
 			$.get(`/api/servers/${GAwesomeData.extensions.state.data.server.id}/channels`, data => {
-				const channels = Object.values(data).filter(ch => ch.type === "text").sort((a, b) => a.rawPosition - b.rawPosition);
+				const channels = Object.values(data).filter(ch => ch.type === ChannelType.GuildText).sort((a, b) => a.rawPosition - b.rawPosition);
 				channels.forEach(ch => {
 					info += `
 						<label class="checkbox">

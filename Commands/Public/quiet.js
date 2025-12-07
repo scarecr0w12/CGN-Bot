@@ -12,13 +12,13 @@ module.exports = async ({ Constants: { Colors }, client }, { serverDocument, ser
 		const time = parseDuration(msg.suffix);
 		if (time > 3600000) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INVALID,
 					description: "I can't miss you guys for that long!",
 					footer: {
 						text: "Try a shorter duration or no duration at all for an indefinitely long period",
 					},
-				},
+				}],
 			});
 		}
 		responseString = ` for ${moment.duration(time).humanize()}`;
@@ -33,9 +33,9 @@ module.exports = async ({ Constants: { Colors }, client }, { serverDocument, ser
 		channelQueryDocument.set("bot_enabled", false);
 	}
 	msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.SUCCESS,
 			description: `Ok, I'll be quiet${responseString} 😶`,
-		},
+		}],
 	});
 };

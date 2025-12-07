@@ -19,21 +19,21 @@ module.exports = ({ Constants: { Colors, Text }, client }, { serverDocument }, m
 	}
 
 	const sendTranslation = (from, to, res) => msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.RESPONSE,
 			title: `Your ${from} text in ${to}:`,
 			description: `\`\`\`${res}\`\`\``,
 			footer: {
 				text: `Translated using Microsoft Translator. The translated text might not be 100% accurate!`,
 			},
-		},
+		}],
 	});
 	const onFail = (err, src) => {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: `Something went wrong while trying to ${src === null ? "detect your text's language" : `translate your ${src} text`}! 😵`,
-			},
+			}],
 		});
 		if (err) logger.debug(`Failed to ${src === null ? "auto-detect language" : "translate text"} for ${commandData.name} command.`, { svrid: msg.guild.id, chid: msg.channel.id, msgid: msg.id }, err);
 	};

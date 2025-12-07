@@ -4,19 +4,19 @@ const parseDuration = require("parse-duration");
 module.exports = {
 	find: async (main, filter) => {
 		let server;
-		const checkServer = svr => svr && svr.members.has(filter.usrid);
+		const checkServer = svr => svr && svr.members.cache.has(filter.usrid);
 
-		server = main.client.guilds.find(svr => svr.name === filter.str || svr.name.toLowerCase() === filter.str.toLowerCase());
+		server = main.client.guilds.cache.find(svr => svr.name === filter.str || svr.name.toLowerCase() === filter.str.toLowerCase());
 		if (checkServer(server)) return server.id;
 
-		server = main.client.guilds.get(filter.str);
+		server = main.client.guilds.cache.get(filter.str);
 		if (checkServer(server)) return server.id;
 
 		const userDocument = await Users.findOne(filter.usrid);
 		if (userDocument) {
 			const svrnick = userDocument.server_nicks.id(filter.str.toLowerCase());
 			if (svrnick) {
-				server = main.client.guilds.get(svrnick.server_id);
+				server = main.client.guilds.cache.get(svrnick.server_id);
 				if (checkServer(server)) return server.id;
 			}
 		}
@@ -30,8 +30,8 @@ module.exports = {
 			const usrch = await usr.createDM();
 			const initMsg = await usrch.messages.fetch(initMsgID);
 
-			const svr = main.client.guilds.get(guildid);
-			const member = svr.members.get(usr.id);
+			const svr = main.client.guilds.cache.get(guildid);
+			const member = svr.members.cache.get(usr.id);
 			await svr.populateDocument();
 			const { serverDocument } = svr;
 
@@ -42,37 +42,37 @@ module.exports = {
 				ch = await main.client.channelSearch(chname, svr);
 			} catch (err) {
 				initMsg.edit({
-					embed: {
+					embeds: [{
 						description: "Something went wrong while fetching channel data!",
 						color: Colors.SOFT_ERR,
 						footer: {
 							text: `The requested channel was not found on server ${svr.name}`,
 						},
-					},
+					}],
 				});
 			}
 
-			if (ch && ch.type === "text") {
+			if (ch && ch.type === ChannelType.GuildText) {
 				if (main.client.getUserBotAdmin(svr, serverDocument, member) > 0 || configJSON.maintainers.includes(usr.id)) {
-					if (!ch.permissionsFor(usr).has(["VIEW_CHANNEL", "SEND_MESSAGES"])) {
+					if (!ch.permissionsFor(usr).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) {
 						await initMsg.delete();
 						usr && usr.send && usr.send({
-							embed: {
+							embeds: [{
 								color: Colors.MISSING_PERMS,
 								title: `Not today!`,
 								description: `You cannot see or talk in that channel, so I am unable to let you say something in there!`,
 								footer: {
 									text: `How did you even find that channel?!`,
 								},
-							},
+							}],
 						});
 						return;
 					}
 					await initMsg.edit({
-						embed: {
+						embeds: [{
 							color: Colors.PROMPT,
 							description: `What do you want me to say in #${ch.name} on ${svr.name}?`,
-						},
+						}],
 					});
 					let result;
 					try {
@@ -82,53 +82,53 @@ module.exports = {
 					}
 					if (result.content) result = result.content;
 					ch.send({
-						embed: {
+						embeds: [{
 							color: Colors.INFO,
 							author: {
 								name: `${usr.tag} wanted to tell you this!`,
 								iconURL: `${usr.displayAvatarURL()}`,
 							},
 							description: result,
-						},
+						}],
 					});
 					usrch.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `Cool, check #${ch.name} 📢`,
-						},
+						}],
 					});
 				} else {
 					initMsg.edit({
-						embed: {
+						embeds: [{
 							color: Colors.MISSING_PERMS,
 							description: Text.MISSING_PERMS(svr.name),
-						},
+						}],
 					});
 				}
 			} else if (ch) {
 				await initMsg.delete();
 				usrch.send({
-					embed: {
+					embeds: [{
 						description: "Something went wrong while fetching channel data!",
 						color: Colors.SOFT_ERR,
 						footer: {
 							text: `The requested channel isn't a valid text channel.`,
 						},
-					},
+					}],
 				});
 			}
 		} catch (err) {
 			logger.warn(`Something went wrong while saying something! ()=()`, { usrid, msgid: initMsgID }, err);
 			if (usr && usr.send) {
 				usr.send({
-					embed: {
+					embeds: [{
 						color: Colors.ERROR,
 						title: `Something went wrong! 😱`,
 						description: `**Error Message**: \`\`\`js\n${err.stack}\`\`\``,
 						footer: {
 							text: `Contact your Server Admin for support!`,
 						},
-					},
+					}],
 				});
 			}
 		}

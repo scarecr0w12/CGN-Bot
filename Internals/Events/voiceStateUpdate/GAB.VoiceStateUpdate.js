@@ -43,7 +43,7 @@ class VoiceStateUpdate extends BaseEvent {
 	async leftChannel (serverDocument, channel, state) {
 		logger.verbose(`Member ${state.member && state.member.id} left channel ${channel.id}.`, { svrid: serverDocument._id, chid: channel.id, usrid: state.member && state.member.id });
 		const roomDocument = serverDocument.config.room_data.id(channel.id);
-		if (roomDocument && channel.members.size === 0) {
+		if (roomDocument && channel.members.cache.size === 0) {
 			try {
 				await channel.delete();
 				serverDocument.query.pull("config.room_data", channel.id);

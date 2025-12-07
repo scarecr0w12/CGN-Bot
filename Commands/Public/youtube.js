@@ -1,5 +1,5 @@
 const auth = require("../../Configurations/auth.js");
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 
 module.exports = async ({ Constants: { APIs, Colors, Text, UserAgent }, client }, { serverDocument }, msg, commandData) => {
@@ -66,10 +66,10 @@ module.exports = async ({ Constants: { APIs, Colors, Text, UserAgent }, client }
 		}).init();
 	} else {
 		await msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: `No results were found for **${query}**. 😞`,
-			},
+			}],
 		});
 	}
 };

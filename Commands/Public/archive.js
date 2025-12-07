@@ -15,14 +15,14 @@ module.exports = async ({ Constants: { Colors, Text } }, documents, msg, command
 			if (messages.size === 0) throw new Error(`Either there were no messages or I don't have the "Read Message History" permission in this channel`);
 		} catch (err) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.RED,
 					title: `Uh-oh.. I was unable to fetch the message(s)!`,
 					description: `The error message I got was \`\`\`${err}\`\`\``,
 					footer: {
 						text: `Make sure I have "Read Message History" in this channel or that the last ID is valid!`,
 					},
-				},
+				}],
 			});
 		}
 		messages = messages.map(message => ({
@@ -81,20 +81,20 @@ module.exports = async ({ Constants: { Colors, Text } }, documents, msg, command
 			});
 		} catch (err) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: `I was unable to send the archive...`,
 					description: `The error I got was \`\`\`js\n${err.message}\`\`\``,
-				},
+				}],
 			});
 		}
 	} else {
 		logger.debug(`Archive number not provided for "${commandData.name}" command`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_RED,
 				description: `I'll need a number of messages to archive, please! 🔢`,
-			},
+			}],
 		});
 	}
 };

@@ -9,7 +9,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		const isJustUserID = /^\d+$/.test(inputMember);
 		let isGuildMember = false, hasReason = true, member = null;
 		if (isJustUserID) {
-			if (msg.guild.members.has(inputMember)) {
+			if (msg.guild.members.cache.has(inputMember)) {
 				member = msg.guild.member(inputMember);
 				isGuildMember = true;
 			} else {
@@ -34,36 +34,36 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		const { canClientBan, memberAboveAffected } = client.canDoActionOnMember(msg.guild, msg.member, (isGuildMember && member) || null, "ban");
 		if (!canClientBan) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: `I'm sorry, but I can't do that... 😔`,
 					description: `I'm missing permissions to ban that user!\nEither they are above me or I don't have the **Ban Members** permission.`,
-				},
+				}],
 			});
 		}
 		if (!memberAboveAffected) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.MISSING_PERMS,
 					title: `I'm sorry, but I cannot let you do that! 😶`,
 					description: `You cannot ban someone who's above you! That's dumb!`,
-				},
+				}],
 			});
 		}
 		const banned = () => msg.send({
-			embed: {
+			embeds: [{
 				image: {
 					url: serverDocument.config.ban_gif,
 				},
 				color: Colors.SUCCESS,
 				description: `Bye-Bye **@${isGuildMember ? client.getName(serverDocument, member) : `${member.tag}`}** 🔨`,
-			},
+			}],
 		});
 		const dmBanned = async id => {
 			if (isGuildMember) {
 				try {
-					await client.users.get(id).send({
-						embed: {
+					await client.users.cache.get(id).send({
+						embeds: [{
 							color: Colors.RED,
 							description: `Oh snap, you just got banned from \`${msg.guild}\`! 🔨`,
 							fields: [
@@ -81,7 +81,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 							thumbnail: {
 								url: msg.guild.iconURL(),
 							},
-						},
+						}],
 					});
 				} catch (_) {
 					// Too bad
@@ -90,14 +90,14 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		};
 		if (member) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INPUT,
 					title: `Waiting on @__${client.getName(serverDocument, msg.member)}__'s input...`,
 					description: `${isJustUserID ? `Are you sure you want to ban **@${isGuildMember ? `${client.getName(serverDocument, member)} (${member})` : member.tag}**?` : `Are you sure you want to ban **@${client.getName(serverDocument, member)} (${member})**?`}\n\nThey will be banned for\`\`\`css\n${reason}\`\`\``,
 					footer: {
 						text: `They won't be able to join again until they get unbanned!`,
 					},
-				},
+				}],
 			});
 			const collector = msg.channel.createMessageCollector(
 				m => m.author.id === msg.author.id,
@@ -126,23 +126,23 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 						return banned();
 					} else {
 						return msg.send({
-							embed: {
+							embeds: [{
 								description: `Ban canceled! 😓`,
 								color: Colors.INFO,
-							},
+							}],
 						});
 					}
 				}
 			});
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `I couldn't find a matching member in this guild... 🧐`,
 					footer: {
 						text: `If you have a user ID you can run "${msg.guild.commandPrefix}${commandData.name} <ID>" to ban them!`,
 					},
-				},
+				}],
 			});
 		}
 	} else {
@@ -165,13 +165,13 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 						// Meh
 					}
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.LIGHT_RED,
 							description: `Ok! Bye-Bye!`,
 							footer: {
 								text: `Just kidding! I'd never ban you. ❤️`,
 							},
-						},
+						}],
 					});
 				}
 			}

@@ -109,7 +109,7 @@ Constants.Colors = {
 
 /**
  * Various functions that return text displayed to the End User
- * @type {{ERROR_TITLE: (function(): string), ERROR_BODY: (function(string, string): string), ERROR_FOOTER: (function(): string), OWO_ERROR_BODY: (function(): string), INVALID_USAGE: (function(object, string=): string), MISSING_PERMS: (function(string): string), NSFW_INVALID: (function(): string), INVITE: (function(GABClient): {embed: {color: number, title: string, description: string}}), GUILD_VERIFICATION_LEVEL: (function(string): string)}}
+ * @type {{ERROR_TITLE: (function(): string), ERROR_BODY: (function(string, string): string), ERROR_FOOTER: (function(): string), OWO_ERROR_BODY: (function(): string), INVALID_USAGE: (function(object, string=): string), MISSING_PERMS: (function(string): string), NSFW_INVALID: (function(): string), INVITE: (function(GABClient): {embeds: [{color: number, title: string, description: string}}), GUILD_VERIFICATION_LEVEL: (function(string): string)}}
  */
 Constants.Text = {
 	ERROR_TITLE: () => "Something went wrong! 😱",
@@ -120,7 +120,7 @@ Constants.Text = {
 	MISSING_PERMS: serverName => `🔐 You don't have permission to use this command${serverName ? ` on ${serverName}` : "."}`,
 	NSFW_INVALID: () => `You need to give me something to search for! ( ͡° ͜ʖ ͡° )`,
 	INVITE: client => ({
-		embed: {
+		embeds: [{
 			color: Constants.Colors.LIGHT_GREEN,
 			title: `Thanks for choosing me! 😊`,
 			description: [
@@ -133,34 +133,34 @@ Constants.Text = {
 				// eslint-disable-next-line max-len
 				"For the best experience with me, please make sure I have at least `Send Messages`, `Embed Links`, `Add Reactions` and `Manage Messages`! That way you'll be able to use most of my features right away!",
 			].join("\n"),
-		},
+		}],
 	}),
 	THIRD_PARTY_FETCH: description => ({
-		embed: {
+		embeds: [{
 			color: Constants.Colors.INFO,
 			title: `${description && description !== "" ? description : "Fetching data"} ⌛`,
 			description: "Please stand by...",
-		},
+		}],
 	}),
 	EXTENSION_RUN: extensionName => ({
-		embed: {
+		embeds: [{
 			color: Constants.Colors.INFO,
 			title: `Running extension **${extensionName}** ⚙`,
 			description: "Please stand by... ⌛",
 			footer: {
 				text: "Is this message not disappearing within seconds? Contact a Server Admin for help.",
 			},
-		},
+		}],
 	}),
 	EXTENSION_FAIL: extensionName => ({
-		embed: {
+		embeds: [{
 			color: Constants.Colors.ERROR,
 			title: "Something went wrong! ⚙",
 			description: `An error has occurred while executing **${extensionName}**.`,
 			footer: {
 				text: "GAB is most likely not at fault; contact a Server Admin or the Extension Author to resolve this issue.",
 			},
-		},
+		}],
 	}),
 	GUILD_VERIFICATION_LEVEL: level => Constants.GUILD_VERIFICATION_LEVELS[level],
 };
@@ -454,7 +454,7 @@ Constants.Templates = {
 	StreamingTemplate: data => {
 		const color = Constants.Colors[data.type.toUpperCase()] || Constants.Colors.INFO;
 		return {
-			embed: {
+			embeds: [{
 				color,
 				description: `${data.name} started streaming \`${data.game}\` on **${data.type}**\nWatch them by clicking [**here**](${data.url})\n\nHere is a preview of the stream:`,
 				author: {
@@ -465,7 +465,7 @@ Constants.Templates = {
 				image: {
 					url: data.preview,
 				},
-			},
+			}],
 		};
 	},
 };
@@ -660,17 +660,17 @@ Constants.Scopes = {
 
 /**
  * Embed object for NSFW commands in non-NSFW channels
- * @type {{embed: {color: number, title: string, description: string, footer: {text: string}}}}
+ * @type {{embeds: [{color: number, title: string, description: string, footer: {text: string}}}}
  */
 Constants.NSFWEmbed = {
-	embed: {
+	embeds: [{
 		color: Constants.Colors.SOFT_ERR,
 		title: `I'm sorry, but I can't let you do that! 🙄`,
 		description: `You'll have to run this command in a channel that is marked **NSFW**!`,
 		footer: {
 			text: `Ask an Admin to edit this channel and mark it as NSFW.`,
 		},
-	},
+	}],
 };
 
 /**

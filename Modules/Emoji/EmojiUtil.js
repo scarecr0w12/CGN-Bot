@@ -8,7 +8,7 @@ const {
 	},
 } = require("../../Internals/Constants");
 const DJSUtil = require("discord.js/src/util/Util");
-const { get } = require("snekfetch");
+const { get } = require("../Utils/SnekfetchShim");
 
 module.exports = class EmojiUtil {
 	constructor () {

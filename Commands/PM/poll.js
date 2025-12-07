@@ -5,7 +5,7 @@ module.exports = async (main, msg, commandData) => {
 		const chname = params[1].trim();
 		if (svrid && chname) {
 			const initMsg = await msg.channel.send({
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					author: {
 						name: main.client.user.username,
@@ -16,7 +16,7 @@ module.exports = async (main, msg, commandData) => {
 					footer: {
 						text: "Please wait; we're working hard behind the scenes!",
 					},
-				},
+				}],
 			});
 			const relayRes = await main.client.relayCommand("poll", { str: svrid, usrid: msg.author.id }, { initMsg: initMsg.id, usrid: msg.author.id, svrid, chname });
 			let errMsg = "An unknown Error occurred";
@@ -24,7 +24,7 @@ module.exports = async (main, msg, commandData) => {
 			if (relayRes === "multi") errMsg = "Multiple servers were found. Set a unique server nick or use server ID instead of name.";
 			if (relayRes !== true) {
 				initMsg.edit({
-					embed: {
+					embeds: [{
 						author: {
 							name: main.client.user.username,
 							icon_url: main.client.user.displayAvatarURL(),
@@ -35,7 +35,7 @@ module.exports = async (main, msg, commandData) => {
 						footer: {
 							text: errMsg,
 						},
-					},
+					}],
 				});
 			}
 			return;
@@ -43,7 +43,7 @@ module.exports = async (main, msg, commandData) => {
 	}
 	logger.silly(`Invalid parameters \`${msg.suffix}\` provided for ${commandData.name}`, { usrid: msg.author.id });
 	msg.send({
-		embed: {
+		embeds: [{
 			author: {
 				name: main.client.user.username,
 				icon_url: main.client.user.displayAvatarURL(),
@@ -51,6 +51,6 @@ module.exports = async (main, msg, commandData) => {
 			},
 			color: 0xFFFF00,
 			description: `🗯 Correct usage is: \`${commandData.name} ${commandData.usage}\``,
-		},
+		}],
 	});
 };

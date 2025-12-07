@@ -4,7 +4,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 	const commandUses = Object.values(serverDocument.command_usage).reduce((a, b) => a + b, 0);
 	const { guild, guild: { region } } = msg;
 	const created = moment(guild.createdTimestamp).tz("Europe/London");
-	const onlineMembers = guild.members.filter(m => m.presence.status !== "offline").size;
+	const onlineMembers = guild.members.cache.filter(m => m.presence.status !== "offline").size;
 	const regionInfo = (await guild.fetchVoiceRegions()).get(region);
 	const publicData = serverDocument.config.public_data;
 
@@ -34,18 +34,18 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 		inline: true,
 	});
 	const channelsText = [
-		`⌨️ Text: **${guild.channels.filter(c => c.type === "text").size}**`,
-		`🔉 Voice: **${guild.channels.filter(c => c.type === "voice").size}**`,
-		`📁 Categories: **${guild.channels.filter(c => c.type === "category").size}**`,
+		`⌨️ Text: **${guild.channels.cache.filter(c => c.type === ChannelType.GuildText).size}**`,
+		`🔉 Voice: **${guild.channels.cache.filter(c => c.type === ChannelType.GuildVoice).size}**`,
+		`📁 Categories: **${guild.channels.cache.filter(c => c.type === ChannelType.GuildCategory).size}**`,
 	];
 	fields.push({
-		name: `Channel Info [${guild.channels.size}]:`,
+		name: `Channel Info [${guild.channels.cache.size}]:`,
 		value: channelsText.join("\n"),
 		inline: true,
 	});
 	const numbersText = [
 		`👥 Members: **${guild.memberCount}** (of which **${onlineMembers}** ${onlineMembers === 1 ? "is" : "are"} online)`,
-		`🏷 Roles: **${guild.roles.size - 1}**`,
+		`🏷 Roles: **${guild.roles.cache.size - 1}**`,
 		`👌 Custom Emojis: **${guild.emojis.size}**`,
 		`💬 Messages Today: **${serverDocument.messages_today}**`,
 		`🔧 Commands used this week: **${commandUses}**`,
@@ -84,7 +84,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 	}
 
 	msg.send({
-		embed: {
+		embeds: [{
 			author: {
 				name: `Owned by ${guild.owner.user.tag}`,
 				iconURL: guild.owner.user.displayAvatarURL(),
@@ -99,6 +99,6 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 			footer: {
 				text: `This server is on shard ${client.shardID}.`,
 			},
-		},
+		}],
 	});
 };

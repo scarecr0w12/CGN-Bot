@@ -18,13 +18,13 @@ module.exports = class Giveaways {
 				.set("secret", secret)
 				.set("participant_ids", []);
 			channel.send({
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					description: `${user} has started a giveaway called **${title}**! Good luck! 🍻`,
 					footer: {
 						text: `Use "${client.getCommandPrefix(server, serverDocument)}giveaway enroll" or "${client.getCommandPrefix(server, serverDocument)}giveaway join" for a chance to win.`,
 					},
-				},
+				}],
 			}).catch(err => {
 				logger.debug(`Failed to send Giveaway message to channel.`, { svrid: server.id, chid: channel.id }, err);
 			});
@@ -44,7 +44,7 @@ module.exports = class Giveaways {
 				let winner;
 				while (!winner && channelDocument.giveaway.participant_ids.length > 0) {
 					const i = Math.floor(Math.random() * channelDocument.giveaway.participant_ids.length);
-					const member = server.members.get(channelDocument.giveaway.participant_ids[i]);
+					const member = server.members.cache.get(channelDocument.giveaway.participant_ids[i]);
 					if (member) {
 						winner = member;
 					} else {
@@ -54,33 +54,33 @@ module.exports = class Giveaways {
 				channelQueryDocument.set("giveaway.participant_ids", []);
 				if (winner) {
 					channel.send({
-						embed: {
+						embeds: [{
 							color: 0x00FF00,
 							description: `Congratulations **@${client.getName(serverDocument, winner)}**! 🎊`,
 							footer: {
 								text: `You won the giveaway "${channelDocument.giveaway.title}" out of ${channelDocument.giveaway.participant_ids.length} ${channelDocument.giveaway.participant_ids.length === 1 ? "user!" : "users!"}`,
 							},
-						},
+						}],
 					}).catch(err => {
 						logger.debug(`Failed to send Giveaway message to channel.`, { svrid: server.id, chid: channel.id }, err);
 					});
 					winner.send({
-						embed: {
+						embeds: [{
 							color: 0x00FF00,
 							title: "Congratulations! 🎁😁",
 							description: `You won the giveaway in #${channel.name} on **${server}**!\n\nHere is your prize: \`\`\`${channelDocument.giveaway.secret}\`\`\``,
-						},
+						}],
 					}).catch(err => {
 						logger.debug(`Failed to send Giveaway message to DM.`, { svrid: server.id, usrid: winner.id }, err);
 					});
 				}
-				const creator = server.members.get(channelDocument.giveaway.creator_id);
+				const creator = server.members.cache.get(channelDocument.giveaway.creator_id);
 				if (creator) {
 					creator.send({
-						embed: {
+						embeds: [{
 							color: 0x3669FA,
 							description: `Your giveaway "${channelDocument.giveaway.title}" running in #${channel.name} on \`${server}\` has ended.\n${winner ? `The winner was **@${client.getName(serverDocument, winner)}**.` : "Nobody won this time 😕"}`,
-						},
+						}],
 					}).catch(err => {
 						logger.debug(`Failed to send Giveaway message to DM.`, { svrid: server.id, usrid: creator.id }, err);
 					});

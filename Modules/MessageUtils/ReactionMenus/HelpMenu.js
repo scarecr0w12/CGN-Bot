@@ -58,10 +58,10 @@ module.exports = class extends BaseMenu {
 		}
 		const msgid = this.msg.id;
 		this.msg.edit({
-			embed: {
+			embeds: [{
 				color: Colors.LIGHT_ORANGE,
 				description: `You've exited the help menu or it expired.`,
-			},
+			}],
 		}).catch(err => {
 			logger.debug(`Failed to edit menu message.`, { msgid }, err);
 		});

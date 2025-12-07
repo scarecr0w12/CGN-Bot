@@ -22,7 +22,7 @@ class Ready extends BaseEvent {
 		let leftGuilds = 0;
 		if (this.configJSON.guildBlocklist.length) {
 			this.configJSON.guildBlocklist.forEach(guildID => {
-				const guild = this.client.guilds.get(guildID);
+				const guild = this.client.guilds.cache.get(guildID);
 				if (guild) {
 					guild.leave();
 					leftGuilds++;
@@ -204,7 +204,7 @@ class Ready extends BaseEvent {
 		if (serverDocuments) {
 			const promiseArray = [];
 			for (let i = 0; i < serverDocuments.length; i++) {
-				const server = this.client.guilds.get(serverDocuments[i]._id);
+				const server = this.client.guilds.cache.get(serverDocuments[i]._id);
 				if (server) {
 					logger.verbose(`Starting MOTD timer for server ${server}`, { svrid: server.id });
 					promiseArray.push(createMessageOfTheDay(this.client, server, serverDocuments[i].config.message_of_the_day, serverDocuments[i].query));
@@ -221,7 +221,7 @@ class Ready extends BaseEvent {
 		logger.debug("Checking for streamers in servers.");
 		const serverDocuments = await Servers.find({ "config.streamers_data.0": { $exists: true } }).exec();
 		for (const serverDocument of serverDocuments) {
-			const guild = this.client.guilds.get(serverDocument._id);
+			const guild = this.client.guilds.cache.get(serverDocument._id);
 			if (guild) {
 				logger.verbose(`Checking for streamers in server ${guild}`, { svrid: guild.id });
 				if (serverDocument.config.streamers_data.length) {
@@ -254,7 +254,7 @@ class Ready extends BaseEvent {
 			const sendStreamingRSSToServer = async i => {
 				if (i < serverDocuments.length) {
 					const serverDocument = serverDocuments[i];
-					const server = this.client.guilds.get(serverDocument._id);
+					const server = this.client.guilds.cache.get(serverDocument._id);
 					if (server) {
 						logger.verbose(`Setting streaming RSS timers for server ${server}.`, { svrid: server.id });
 						const sendStreamingRSSFeed = async j => {
@@ -301,12 +301,12 @@ class Ready extends BaseEvent {
 		if (serverDocuments) {
 			logger.debug("Setting existing giveaways for servers.");
 			serverDocuments.forEach(serverDocument => {
-				const svr = this.client.guilds.get(serverDocument._id);
+				const svr = this.client.guilds.cache.get(serverDocument._id);
 				if (svr) {
 					logger.verbose(`Setting existing giveaways for server ${svr.id}.`, { svrid: svr.id });
 					Object.values(serverDocument.channels).forEach(channelDocument => {
 						if (channelDocument.giveaway.isOngoing) {
-							const ch = svr.channels.get(channelDocument._id);
+							const ch = svr.channels.cache.get(channelDocument._id);
 							if (ch) {
 								promiseArray.push(Giveaways.endTimedGiveaway(this.client, svr, ch, channelDocument.giveaway.expiry_timestamp));
 							}
@@ -381,10 +381,10 @@ class Ready extends BaseEvent {
 			"config.moderation.autokick_members.isEnabled": true,
 		}).exec();
 		autokickServerDocuments.forEach(serverDocument => {
-			const guild = this.client.guilds.get(serverDocument._id);
+			const guild = this.client.guilds.cache.get(serverDocument._id);
 			if (!guild) return;
 			Object.values(serverDocument.members).forEach(async memberDocument => {
-				const member = guild.members.get(memberDocument._id);
+				const member = guild.members.cache.get(memberDocument._id);
 				if (memberDocument && member && serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.autokick_members.isEnabled && Date.now() - memberDocument.last_active > serverDocument.config.moderation.autokick_members.max_inactivity && !memberDocument.cannotAutokick && this.client.getUserBotAdmin(guild, serverDocument, member) === 0 && member.kickable) {
 					try {
 						await member.kick(`Kicked for inactivity on server.`);

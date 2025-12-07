@@ -1,4 +1,4 @@
-const { get } = require("snekfetch");
+const { get } = require("../../Modules/Utils/SnekfetchShim");
 const auth = require("../../Configurations/auth");
 
 module.exports = async ({ Constants: { APIs, Colors, Text }, client }, documents, msg, commandData) => {
@@ -8,10 +8,10 @@ module.exports = async ({ Constants: { APIs, Colors, Text }, client }, documents
 	}
 	if (!auth.tokens.openWeatherMap) {
 		await msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.SOFT_ERR,
 				description: "The weather command is not available on this bot. 🌧️",
-			},
+			}],
 		});
 	} else {
 		const { body, statusCode } = await get(APIs.WEATHER(auth.tokens.openWeatherMap, msg.suffix)).catch(err => err);
@@ -31,7 +31,7 @@ module.exports = async ({ Constants: { APIs, Colors, Text }, client }, documents
 			if (body.wind && body.wind.speed) fields.push({ name: "💨 Wind", value: `**${body.wind.speed}** meters per second`, inline: true });
 			const description = body.weather[0].description.split(" ").map(word => `${word.charAt(0).toUpperCase()}${word.substring(1)}`).join(" ");
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.RESPONSE,
 					title: `Current weather for ${body.name}, ${body.sys.country}`,
 					description: `**${description}**`,
@@ -39,14 +39,14 @@ module.exports = async ({ Constants: { APIs, Colors, Text }, client }, documents
 					thumbnail: {
 						url: `https://openweathermap.org/img/w/${body.weather[0].icon}.png`,
 					},
-				},
+				}],
 			});
 		} else {
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: `There's a thunderstorm in the server room! ⛈️`,
-				},
+				}],
 			});
 		}
 	}

@@ -5,7 +5,7 @@
 
 const { Error } = require("../Internals/Errors/");
 const { Colors } = require("../Internals/Constants");
-const { GuildMember } = require("discord.js");
+const { GuildMember, ChannelType } = require("discord.js");
 
 module.exports = class ModLog {
 	constructor () {
@@ -45,8 +45,8 @@ module.exports = class ModLog {
 		const serverDocument = await Servers.findOne(guild.id);
 		const serverQueryDocument = serverDocument.query;
 		if (serverDocument && serverDocument.modlog.isEnabled && serverDocument.modlog.channel_id) {
-			const ch = guild.channels.get(serverDocument.modlog.channel_id);
-			if (ch && ch.type === "text") {
+			const ch = guild.channels.cache.get(serverDocument.modlog.channel_id);
+			if (ch && ch.type === ChannelType.GuildText) {
 				let affectedUser;
 				if (member) {
 					affectedUser = ModLog.getUserText(member instanceof GuildMember ? member.user : member);
@@ -58,14 +58,14 @@ module.exports = class ModLog {
 				serverQueryDocument.inc("modlog.current_id");
 				const description = ModLog.getEntryText(serverDocument.modlog.current_id, type, affectedUser, creatorStr, reason);
 				const m = await ch.send({
-					embed: {
+					embeds: [{
 						description,
 						color: Colors.INFO,
 						footer: {
 							text: `${member ? `Use "${guild.commandPrefix}reason ${serverDocument.modlog.current_id} <reason>" to change the reason. | ` : ""}Entry created`,
 						},
 						timestamp: new Date,
-					},
+					}],
 				}).catch(() => null);
 				if (m) {
 					serverQueryDocument.push("modlog.entries", {
@@ -102,20 +102,20 @@ module.exports = class ModLog {
 			if (modlogEntryDocument) {
 				if (data.creator) modlogEntryQueryDocument.set("creator", ModLog.getUserText(data.creator.user));
 				if (data.reason) modlogEntryQueryDocument.set("reason", data.reason);
-				const channel = guild.channels.get(serverDocument.modlog.channel_id);
+				const channel = guild.channels.cache.get(serverDocument.modlog.channel_id);
 
-				if (channel && channel.type === "text") {
+				if (channel && channel.type === ChannelType.GuildText) {
 					const message = await channel.messages.fetch(modlogEntryDocument.message_id).catch();
 					if (message) {
 						await message.edit({
-							embed: {
+							embeds: [{
 								description: ModLog.getEntryText(modlogEntryDocument._id, modlogEntryDocument.type, modlogEntryDocument.affected_user, modlogEntryDocument.creator, modlogEntryDocument.reason),
 								color: Colors.INFO,
 								footer: {
 									text: `Use "${guild.commandPrefix}reason ${serverDocument.modlog.current_id} <reason>" to change the reason. | Entry created`,
 								},
 								timestamp: message.embeds[0].timestamp,
-							},
+							}],
 						});
 						await serverDocument.save();
 						return modlogEntryDocument._id;
@@ -137,8 +137,8 @@ module.exports = class ModLog {
 			const modlogEntryQueryDocument = serverDocument.query.id("modlog.entries", parseInt(id));
 			const modlogEntryDocument = modlogEntryQueryDocument.val;
 			if (modlogEntryDocument) {
-				const channel = guild.channels.get(serverDocument.modlog.channel_id);
-				if (channel && channel.type === "text") {
+				const channel = guild.channels.cache.get(serverDocument.modlog.channel_id);
+				if (channel && channel.type === ChannelType.GuildText) {
 					const message = await channel.messages.fetch(modlogEntryDocument.message_id).catch();
 					if (message) message.delete().catch();
 					modlogEntryQueryDocument.remove();
@@ -165,7 +165,7 @@ module.exports = class ModLog {
 		if (!guild) return null;
 		const serverDocument = await Servers.findOne(guild.id);
 		if (!serverDocument) return null;
-		if (channel && channel.type === "text") {
+		if (channel && channel.type === ChannelType.GuildText) {
 			serverDocument.query.set("modlog.isEnabled", true);
 			serverDocument.query.set("modlog.channel_id", channel.id);
 			await serverDocument.save();

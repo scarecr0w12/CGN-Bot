@@ -2,11 +2,11 @@ const wiki = require("wikijs").default();
 
 module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) => {
 	await msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.INFO,
 			title: `Searching Wikipedia just for you ⌛`,
 			description: `Please stand by...`,
-		},
+		}],
 	});
 	let result;
 	if (!msg.suffix) {
@@ -16,14 +16,14 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 		const search = await wiki.search(msg.suffix, 1);
 		if (!search.results.length) {
 			return msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					title: "What was that again? 📚🤓",
 					description: "Even Wikipedia doesn't seem to know what you're talking about.",
 					footer: {
 						text: "Check for typos or try searching for something else!",
 					},
-				},
+				}],
 			});
 		}
 		result = await wiki.page(search.results[0]);
@@ -39,7 +39,7 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 	// Sometimes wikijs crashes when attempting to grab a main image. If it works, great. If not, too bad.
 	const mainImage = await result.mainImage().catch(() => null);
 	msg.send({
-		embed: {
+		embeds: [{
 			color: Colors.RESPONSE,
 			title: result.raw.title,
 			url: result.raw.fullurl,
@@ -47,6 +47,6 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 			image: {
 				url: mainImage,
 			},
-		},
+		}],
 	});
 };

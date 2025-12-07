@@ -30,23 +30,23 @@ class MaintainerMessageCreate extends BaseEvent {
 					} catch (err) {
 						logger.warn(`Failed to process shared command "${msg.command}"`, { usrid: msg.author.id }, err);
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.ERROR,
 								title: `Something went wrong! 😱`,
 								description: `**Error Message**: \`\`\`js\n${err.stack}\`\`\``,
 								footer: {
 									text: `You should report this on GitHub so we can fix it!`,
 								},
-							},
+							}],
 						});
 					}
 				} else {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.MISSING_PERMS,
 							title: `Sorry, you're not authorized to run this!`,
 							description: `You are unable to run the \`${msg.command}\` command, because you're lacking permissions! 😦`,
-						},
+						}],
 					});
 				}
 			}

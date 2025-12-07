@@ -4,15 +4,15 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 	if (msg.suffix) {
 		const createCount = async name => {
 			const prompt = await msg.channel.send({
-				embed: {
+				embeds: [{
 					color: Colors.PROMPT,
 					description: `I can't find a count called \`${name}\`.\nWould you like to create it? ✏`,
 					footer: {
 						text: "You have 1 minute to respond.",
 					},
-				},
+				}],
 			});
-			const response = (await msg.channel.awaitMessages(res => res.author.id === msg.author.id, { max: 1, time: 60000 })).first();
+			const response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1, time: 60000 })).first();
 			if (response) {
 				try {
 					await response.delete();
@@ -23,13 +23,13 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 			if (response && configJS.yesStrings.includes(response.content.toLowerCase().trim())) {
 				serverQueryDocument.push("config.count_data", { _id: name });
 				prompt.edit({
-					embed: {
+					embeds: [{
 						color: Colors.SUCCESS,
 						description: `Started counting **${name}** 🔢`,
 						footer: {
 							text: `Use "${msg.guild.commandPrefix}${commandData.name} ${name} | +1" to increment the count or "${msg.guild.commandPrefix}${commandData.name} ${name} | ." to stop counting.`,
 						},
-					},
+					}],
 				});
 			}
 		};
@@ -45,11 +45,11 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 						case ".":
 							countQueryDocument.remove();
 							msg.send({
-								embed: {
+								embeds: [{
 									color: Colors.SUCCESS,
 									title: `Poof! 💨 "${countDocument._id}" is gone!`,
 									description: `\`${countDocument._id}\` ended at \`${countDocument.value}\`.`,
-								},
+								}],
 							});
 							return;
 						case "+1":
@@ -67,19 +67,19 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 								break;
 							} else {
 								msg.send({
-									embed: {
+									embeds: [{
 										color: Colors.SOFT_ERR,
 										description: "Sorry, but we're all about positivity here 🙃",
-									},
+									}],
 								});
 								return;
 							}
 					}
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SUCCESS,
 							description: `\`${countDocument._id}\` is now at **${countDocument.value}** ${action}`,
-						},
+						}],
 					});
 				} else {
 					createCount(params[0].toLowerCase());
@@ -92,13 +92,13 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 			const countDocument = serverDocument.config.count_data.id(msg.suffix.toLowerCase().trim());
 			if (countDocument) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: Colors.INFO,
 						description: `\`${countDocument._id}\` is currently at **${countDocument.value}** 📊`,
 						footer: {
 							text: `Use "${msg.guild.commandPrefix}${commandData.name} ${countDocument._id} | +1" to increment the count or "${msg.guild.commandPrefix}${commandData.name} ${countDocument._id} | -1" to subtract from it.`,
 						},
-					},
+					}],
 				});
 			} else {
 				await createCount(msg.suffix.toLowerCase().trim());
@@ -127,13 +127,13 @@ module.exports = async ({ configJS, Constants: { Colors, Text } }, { serverDocum
 			await menu.init();
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					description: `No one on this server is counting anything 📒`,
 					footer: {
 						text: `Use "${msg.guild.commandPrefix}${commandData.name} <name>" to start tallying something`,
 					},
-				},
+				}],
 			});
 		}
 	}

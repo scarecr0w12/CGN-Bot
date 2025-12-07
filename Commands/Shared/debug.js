@@ -36,11 +36,11 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 				value: "Display this help message, overrides any other arguments passed",
 			});
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.INFO,
 					title: `The debug command arguments`,
 					fields,
-				},
+				}],
 			});
 		} else {
 			const fields = [];
@@ -148,31 +148,31 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 			}
 
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.RESPONSE,
 					title: showDefault ? `GAwesomeBot Debug Information` : ``,
 					description: showDefault ? `Currently on shard with ID ${client.shardID}, out of ${process.env.SHARD_COUNT} shards total.
 											\nShard's ${process.release.name} process is using ${Math.ceil(process.memoryUsage().heapTotal / 1000000)}MB RAM, with PID ${process.pid}.
-											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.size} guild${client.guilds.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.` : null,
+											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.cache.size} guild${client.guilds.cache.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.` : null,
 					footer: {
 						text: "Use argument '-h' to learn more about debug",
 					},
 					fields,
-				},
+				}],
 			});
 		}
 	} else {
 		await msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INFO,
 				title: `${client.user.tag} running ${version.valid ? `GAwesomeBot version ${version.metadata.name}` : "an unknown GAwesomeBot version"}`,
 				description: `Currently on shard with ID ${client.shardID}, out of ${process.env.SHARD_COUNT} shards total.
 											\nShard's ${process.release.name} process is using ${Math.ceil(process.memoryUsage().heapTotal / 1000000)}MB RAM, with PID ${process.pid}.
-											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.size} guild${client.guilds.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.`,
+											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.cache.size} guild${client.guilds.cache.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.`,
 				footer: {
 					text: "Use argument '-h' to learn more about debug",
 				},
-			},
+			}],
 		});
 	}
 };

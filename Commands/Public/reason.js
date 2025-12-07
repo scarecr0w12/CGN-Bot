@@ -12,10 +12,10 @@ module.exports = async ({ Constants: { Colors, Text } }, { serverDocument }, msg
 				case "MISSING_MODLOG_CHANNEL":
 				case "MODLOG_ENTRY_NOT_FOUND":
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: result.message,
-						},
+						}],
 					});
 					break;
 				default:
@@ -23,18 +23,18 @@ module.exports = async ({ Constants: { Colors, Text } }, { serverDocument }, msg
 			}
 		} else {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SUCCESS,
 					description: "Reason updated ✅",
-				},
+				}],
 			});
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: Colors.INVALID,
 				description: Text.INVALID_USAGE(commandData, msg.guild.commandPrefix),
-			},
+			}],
 		});
 	}
 };

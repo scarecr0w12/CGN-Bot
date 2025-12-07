@@ -23,7 +23,7 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 	await svr.initialize(["OWNER", req.app.client.user.id]);
 	await svr.fetchProperty("createdAt");
 	if (svr.success) {
-		const owner = req.app.client.users.get(svr.ownerID) || svr.members[svr.ownerID] ? svr.members[svr.ownerID].user : { username: "invalid-user", id: "invalid-user" };
+		const owner = req.app.client.users.cache.get(svr.ownerID) || svr.members[svr.ownerID] ? svr.members[svr.ownerID].user : { username: "invalid-user", id: "invalid-user" };
 		data = {
 			name: svr.name,
 			id: svr.id,
@@ -231,7 +231,7 @@ parsers.commandOptions = (req, command, data) => {
 				.set(`config.commands.${command}.admin_level`, parseInt(data[`${command}-adminLevel`]) || 0)
 				.set(`config.commands.${command}.disabled_channel_ids`, []);
 			Object.values(req.svr.channels).forEach(ch => {
-				if (ch.type === "text") {
+				if (ch.type === ChannelType.GuildText) {
 					if (!data[`${command}-disabled_channel_ids-${ch.id}`]) {
 						serverQueryDocument.push(`config.commands.${command}.disabled_channel_ids`, ch.id);
 					}

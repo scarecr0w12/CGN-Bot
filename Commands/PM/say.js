@@ -5,7 +5,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 		const chname = params[1].trim();
 		if (svrname && chname) {
 			const initMsg = await msg.send({
-				embed: {
+				embeds: [{
 					color: 0x3669FA,
 					author: {
 						name: client.user.username,
@@ -16,7 +16,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 					footer: {
 						text: "Get excited!",
 					},
-				},
+				}],
 			});
 			const relay = () => client.relayCommand("say", { str: svrname, usrid: msg.author.id }, { initMsg: initMsg.id, usrid: msg.author.id, svrname, chname });
 			setTimeout(async () => {
@@ -26,7 +26,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 				if (relayRes === "multi") errMsg = "Multiple servers were found. Set a unique server nick or use server ID instead of name.";
 				if (relayRes !== true) {
 					initMsg.edit({
-						embed: {
+						embeds: [{
 							author: {
 								name: client.user.username,
 								icon_url: client.user.displayAvatarURL(),
@@ -37,7 +37,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 							footer: {
 								text: errMsg,
 							},
-						},
+						}],
 					});
 				}
 			}, 200);

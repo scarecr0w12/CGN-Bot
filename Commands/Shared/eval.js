@@ -38,13 +38,13 @@ module.exports = async (main, msg, commandData) => {
 			result = result.replace(regex, "-- GAB SNIP --");
 			if (result.length <= 1980) {
 				msg.send({
-					embed: {
+					embeds: [{
 						color: 0x00FF00,
 						description: `\`\`\`js\n${result}\`\`\``,
 						footer: {
 							text: `Execution time: ${process.hrtime(hrstart)[0]}s ${Math.floor(process.hrtime(hrstart)[1] / 1000000)}ms`,
 						},
-					},
+					}],
 				});
 			} else {
 				const GistUpload = new Gist(main.client);
@@ -54,33 +54,33 @@ module.exports = async (main, msg, commandData) => {
 					file: "eval_results.js",
 				});
 				res && res.url && msg.send({
-					embed: {
+					embeds: [{
 						color: 0x3669FA,
 						title: `The eval results were too large!`,
 						description: `As such, I've uploaded them to a gist. Check them out [here](${res.url})`,
-					},
+					}],
 				});
 			}
 		} catch (err) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: 0xFF0000,
 					description: `\`\`\`js\n${err.stack}\`\`\``,
 					footer: {
 						text: `Execution time: ${process.hrtime(hrstart)[0]}s ${Math.floor(process.hrtime(hrstart)[1] / 1000000)}ms`,
 					},
-				},
+				}],
 			});
 		}
 	} else {
 		msg.send({
-			embed: {
+			embeds: [{
 				color: 0xFF0000,
 				description: `What would you like to evaluate?`,
 				footer: {
 					text: `Come on, give me something to work with!`,
 				},
-			},
+			}],
 		});
 	}
 };

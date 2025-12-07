@@ -12,7 +12,7 @@ const {
 	Constants,
 } = require("../../index");
 const { LoggingLevels, Colors, UserAgent } = Constants;
-const snekfetch = require("snekfetch");
+const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
 
 class MessageCreate extends BaseEvent {
 	requirements (msg) {
@@ -67,19 +67,19 @@ class MessageCreate extends BaseEvent {
 					}
 				}
 				for (const maintainerID of this.configJSON.maintainers) {
-					let user = this.client.users.get(maintainerID);
+					let user = this.client.users.cache.get(maintainerID);
 					if (!user) {
 						user = await this.client.users.fetch(maintainerID, true);
 					}
 					user.send({
-						embed: {
+						embeds: [{
 							color: Colors.INFO,
 							author: {
 								name: `${msg.author.tag} just sent me a PM!`,
 								icon_url: msg.author.displayAvatarURL(),
 							},
 							description: `${url !== "" ? `The message was too large! You can read it [here](${url}). 📨` : `\`\`\`${msg.content}\`\`\``}`,
-						},
+						}],
 					});
 				}
 			}
@@ -109,11 +109,11 @@ class MessageCreate extends BaseEvent {
 				// Process chatterbot prompt
 				logger.verbose(`Treating "${msg.cleanContent}" as a PM chatterbot prompt`, { usrid: msg.author.id });
 				await msg.send({
-					embed: {
+					embeds: [{
 						title: "Sorry!",
 						description: "The chatterbot is currently unavailable. Please check back later!",
 						color: Colors.SOFT_ERR,
-					},
+					}],
 				});
 			}
 		} else {
@@ -162,10 +162,10 @@ class MessageCreate extends BaseEvent {
 							});
 						}
 						msg.send({
-							embed: {
+							embeds: [{
 								color: Colors.SUCCESS,
 								description: `Hello! I'm back${inAllChannels ? " in all channels" : ""}! 🐬`,
-							},
+							}],
 						});
 						this.client.logMessage(serverDocument, LoggingLevels.INFO, `I was reactivated in ${inAllChannels ? "all channels!" : "a channel."}`, msg.channel.id, msg.author.id);
 						await serverDocument.save();
@@ -190,7 +190,7 @@ class MessageCreate extends BaseEvent {
 					if (userDocument) {
 						// Handle this as a violation
 						let violatorRoleID = null;
-						if (!isNaN(serverDocument.config.moderation.filters.custom_filter.violator_role_id) && !msg.member.roles.has(serverDocument.config.moderation.filters.custom_filter.violator_role_id)) {
+						if (!isNaN(serverDocument.config.moderation.filters.custom_filter.violator_role_id) && !msg.member.roles.cache.has(serverDocument.config.moderation.filters.custom_filter.violator_role_id)) {
 							violatorRoleID = serverDocument.config.moderation.filters.custom_filter.violator_role_id;
 						}
 						this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You used a filtered word in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** used a filtered word (\`${msg.cleanContent}\`) in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Word filter violation ("${msg.cleanContent}") in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.custom_filter.action, violatorRoleID);
@@ -202,7 +202,7 @@ class MessageCreate extends BaseEvent {
 
 				// Mention filter
 				if (serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.filters.mention_filter.isEnabled && !serverDocument.config.moderation.filters.mention_filter.disabled_channel_ids.includes(msg.channel.id) && memberBotAdminLevel < 1) {
-					let totalMentions = msg.mentions.members ? msg.mentions.members.size : msg.mentions.users.size + msg.mentions.roles.size;
+					let totalMentions = msg.mentions.members ? msg.mentions.members.cache.size : msg.mentions.users.cache.size + msg.mentions.roles.cache.size;
 					if (serverDocument.config.moderation.filters.mention_filter.include_everyone && msg.mentions.everyone) totalMentions++;
 
 					// Check if mention count is higher than threshold
@@ -223,7 +223,7 @@ class MessageCreate extends BaseEvent {
 						if (userDocument) {
 							// Handle this as a violation
 							let violatorRoleID = null;
-							if (!isNaN(serverDocument.config.moderation.filters.mention_filter.violator_role_id) && !msg.member.roles.has(serverDocument.config.moderation.filters.mention_filter.violator_role_id)) {
+							if (!isNaN(serverDocument.config.moderation.filters.mention_filter.violator_role_id) && !msg.member.roles.cache.has(serverDocument.config.moderation.filters.mention_filter.violator_role_id)) {
 								violatorRoleID = serverDocument.config.moderation.filters.spam_filter.violator_role_id;
 							}
 							this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You put ${totalMentions} mentions in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** mentioned ${totalMentions} members / roles in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Mention spam (${totalMentions} members / roles) in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.mention_filter.action, violatorRoleID);
@@ -254,14 +254,14 @@ class MessageCreate extends BaseEvent {
 											this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to translate "${msg.cleanContent}" from member "${msg.author.tag}"`, msg.channel.id, msg.author.id);
 										} else {
 											msg.channel.send({
-												embed: {
+												embeds: [{
 													color: Colors.INFO,
 													title: `**@${this.client.getName(serverDocument, msg.member)}** said:`,
 													description: `\`\`\`${translateRes}\`\`\``,
 													footer: {
 														text: `Translated using Microsoft Translator. The translated text might not be 100% accurate!`,
 													},
-												},
+												}],
 											});
 										}
 									});
@@ -301,7 +301,7 @@ class MessageCreate extends BaseEvent {
 									}
 									// Handle this as a violation
 									let violatorRoleID = null;
-									if (!isNaN(serverDocument.config.moderation.filters.nsfw_filter.violator_role_id) && !msg.member.roles.has(serverDocument.config.moderation.filters.nsfw_filter.violator_role_id)) {
+									if (!isNaN(serverDocument.config.moderation.filters.nsfw_filter.violator_role_id) && !msg.member.roles.cache.has(serverDocument.config.moderation.filters.nsfw_filter.violator_role_id)) {
 										violatorRoleID = serverDocument.config.moderation.filters.nsfw_filter.violator_role_id;
 									}
 									this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You tried to fetch NSFW content in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** tried to fetch NSFW content (\`${msg.cleanContent}\`) in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `NSFW filter violation ("${msg.cleanContent}") in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.nsfw_filter.action, violatorRoleID);
@@ -316,14 +316,14 @@ class MessageCreate extends BaseEvent {
 											.filter(c => this.client.getPublicCommand(c))
 											.join(", ");
 										msg.send({
-											embed: {
+											embeds: [{
 												color: Colors.SOFT_ERR,
 												title: `Hold on! ✋`,
 												description: `The command \`${cmd}\` is not implemented yet!\nThis version of GAwesomeBot is still in heavy development and many commands do not work yet. 🚧\nHere are all the commands that are supported right now:\n\`\`\`${commandList}\`\`\``,
 												footer: {
 													text: `Over time more and more commands will be added. Contact your GAB maintainer for more support.`,
 												},
-											},
+											}],
 										});
 									} else {
 										try {
@@ -368,7 +368,7 @@ class MessageCreate extends BaseEvent {
 							this.client.logMessage(serverDocument, LoggingLevels.INFO, `Treating "${msg.cleanContent}" as a tag command`, msg.channel.id, msg.author.id);
 							this.deleteCommandMessage(serverDocument, channelQueryDocument, msg);
 							msg.send(`${serverDocument.config.tags.list.id(msg.command).content}`, {
-								disableEveryone: true,
+								allowedMentions: { parse: [] },
 							});
 							await this.setCooldown(serverDocument, channelDocument, channelQueryDocument);
 						} else {
@@ -409,11 +409,11 @@ class MessageCreate extends BaseEvent {
 							let shouldRunChatterbot = true;
 							if ((msg.content.startsWith(`<@${this.client.user.id}>`) || msg.content.startsWith(`<@!${this.client.user.id}>`)) && msg.content.includes(" ") && msg.content.length > msg.content.indexOf(" ") && !this.client.getSharedCommand(msg.command) && prompt.toLowerCase().trim() === "help") {
 								msg.send({
-									embed: {
+									embeds: [{
 										color: Colors.INFO,
 										title: `Hey there, it seems like you are lost!`,
 										description: `Use \`${msg.guild.commandPrefix}help\` to learn how to use me on this server! 😄`,
-									},
+									}],
 								});
 								shouldRunChatterbot = false;
 							}
@@ -424,19 +424,19 @@ class MessageCreate extends BaseEvent {
 								logger.verbose(`Treating "${msg.cleanContent}" as a chatterbot prompt`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 								this.client.logMessage(serverDocument, LoggingLevels.INFO, `Treating "${msg.cleanContent}" as a chatterbot prompt`, msg.channel.id, msg.author.id);
 								await msg.send({
-									embed: {
+									embeds: [{
 										title: "Sorry!",
 										description: "The chatterbot is currently unavailable. Please check back later!",
 										color: Colors.SOFT_ERR,
-									},
+									}],
 								});
-							} else if (!extensionApplied && msg.mentions.members.find(mention => mention.id === this.client.user.id) && serverDocument.config.tag_reaction.isEnabled && !this.client.getSharedCommand(msg.command)) {
+							} else if (!extensionApplied && msg.mentions.members.cache.find(mention => mention.id === this.client.user.id) && serverDocument.config.tag_reaction.isEnabled && !this.client.getSharedCommand(msg.command)) {
 								const { random } = serverDocument.config.tag_reaction.messages;
 								if (random) {
 									const content = random.replaceAll("@user", `**@${this.client.getName(serverDocument, msg.member)}**`).replaceAll("@mention", `<@!${msg.author.id}>`);
 									msg.send({
 										content,
-										disableEveryone: true,
+										allowedMentions: { parse: [] },
 									}).catch(err => {
 										logger.debug(`Failed to send tag reaction.`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 									});
@@ -492,7 +492,8 @@ class MessageCreate extends BaseEvent {
 	 * @param {Message} msg
 	 */
 	async deleteCommandMessage (serverDocument, channelQueryDocument, msg) {
-		if (serverDocument.config.delete_command_messages && msg.channel.permissionsFor(msg.guild.me).has("MANAGE_MESSAGES")) {
+		// Discord.js v14: guild.me is now guild.members.me
+		if (serverDocument.config.delete_command_messages && msg.channel.permissionsFor(msg.guild.members.me).has(PermissionFlagsBits.ManageMessages)) {
 			channelQueryDocument.set("isMessageDeletedDisabled", true);
 			try {
 				await msg.delete();

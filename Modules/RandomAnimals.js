@@ -1,5 +1,5 @@
 const { Error } = require("../Internals/Errors/");
-const { get } = require("snekfetch");
+const { get } = require("./Utils/SnekfetchShim");
 
 const CAT = `https://aws.random.cat/meow`;
 const DOG = `https://random.dog/woof`;

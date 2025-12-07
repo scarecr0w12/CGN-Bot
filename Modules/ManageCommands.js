@@ -96,7 +96,7 @@ class ManageCommands {
 		this.disableAll.length && this.disableAll.forEach(cmd => {
 			if (this.serverDocument.config.commands.hasOwnProperty(cmd)) {
 				disabledAll.push(cmd);
-				this.serverQueryDocument.set(`config.commands.${cmd}.disabled_channel_ids`, Array.from(this.msg.guild.channels.filter(c => c.type === "text").keys()));
+				this.serverQueryDocument.set(`config.commands.${cmd}.disabled_channel_ids`, Array.from(this.msg.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).keys()));
 			} else if (!invalid.includes(cmd)) { invalid.push(cmd); }
 		});
 		let color = this.Colors.SUCCESS;
@@ -119,19 +119,19 @@ class ManageCommands {
 			value: `» **${invalid.join("**\n» **")}**`,
 		});
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color,
 				fields,
 				footer: {
 					text: invalid.length ? `You cannot disable inexistent commands or extension commands through this command!` : "",
 				},
-			},
+			}],
 		});
 	}
 
 	async listDisabled () {
 		const commandKeys = Object.keys(this.serverDocument.config.commands);
-		const allTextChannels = Array.from(this.msg.guild.channels.filter(c => c.type === "text").keys());
+		const allTextChannels = Array.from(this.msg.guild.channels.cache.filter(c => c.type === ChannelType.GuildText).keys());
 		const allCommands = Object.keys(require("../Configurations/commands").public);
 		const disabled = [], disabledAll = [];
 		commandKeys.forEach(command => {
@@ -153,7 +153,7 @@ class ManageCommands {
 			value: `» **${disabledAll.join("**\n» **")}**`,
 		});
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color: this.Colors.INFO,
 				fields: fields.length ? fields : [
 					{
@@ -161,7 +161,7 @@ class ManageCommands {
 						value: `You can disable some by using \`${this.msg.guild.commandPrefix}${this.commandData.name} ${this.commandData.usage}\`, but why would you do that...?`,
 					},
 				],
-			},
+			}],
 		});
 	}
 
@@ -206,13 +206,13 @@ class ManageCommands {
 			value: `» **${invalid.join("**\n» **")}**`,
 		});
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color,
 				fields,
 				footer: {
 					text: invalid.length ? "You cannot enable inexistent commands or extension commands through this command!" : "",
 				},
-			},
+			}],
 		});
 	}
 
@@ -249,7 +249,7 @@ class ManageCommands {
 			value: enabledString,
 		});
 		this.msg.send({
-			embed: {
+			embeds: [{
 				color: this.Colors.INFO,
 				description: enabledAllString.length ? `**The following commands are enabled in __all__ channels** 🎉\n\n${enabledAllString}` : "",
 				fields: fields.length ? fields : !enabledAllString.length ? [
@@ -261,7 +261,7 @@ class ManageCommands {
 				footer: {
 					text: fields.length ? "" : enabledAllString.length ? "" : "Wait... How did you manage to get this message?!",
 				},
-			},
+			}],
 		});
 	}
 }

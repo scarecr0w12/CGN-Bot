@@ -1,6 +1,6 @@
 const { tokens: { openExchangeRatesKey } } = require("../Configurations/auth");
 const fsn = require("fs-nextra");
-const request = require("snekfetch");
+const request = require("./Utils/SnekfetchShim");
 
 const convertUnits = require("convert-units");
 const money = require("money");

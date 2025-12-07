@@ -22,13 +22,13 @@ module.exports = class Trivia {
 
 		if (channelDocument.trivia.isOngoing) {
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.SOFT_ERR,
 					description: "There is already an ongoing trivia game in this channel, no need to start one 🏏",
 					footer: {
 						text: `Run "${svr.commandPrefix}trivia end" to end the current game`,
 					},
-				},
+				}],
 			}).catch(err => {
 				logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 			});
@@ -39,13 +39,13 @@ module.exports = class Trivia {
 					triviaQueryDocument.set("set_id", set);
 				} else {
 					msg.send({
-						embed: {
+						embeds: [{
 							color: Colors.SOFT_ERR,
 							description: `Trivia set \`${set}\` not found.`,
 							footer: {
 								text: `An Admin can create one in the Admin Console!`,
 							},
-						},
+						}],
 					}).catch(err => {
 						logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 					});
@@ -61,7 +61,7 @@ module.exports = class Trivia {
 				.set("current_question", {});
 			client.logMessage(serverDocument, LoggingLevels.INFO, `User "${member.tag}" just started a trivia game in channel "${ch.name}"`, ch.id, member.id);
 			await msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.TRIVIA_START,
 					description: `Trivia game started by ${member} 🎮`,
 					fields: set === "default" ? undefined : [
@@ -73,7 +73,7 @@ module.exports = class Trivia {
 					footer: {
 						text: `No cheating! Nobody likes cheaters! 👀`,
 					},
-				},
+				}],
 			}).catch(err => {
 				logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 			});
@@ -92,7 +92,7 @@ module.exports = class Trivia {
 					const question = await this.question(set, channelDocument, serverDocument.query.id("channels", channelDocument._id).prop("trivia"));
 					if (question) {
 						ch.send({
-							embed: {
+							embeds: [{
 								color: 0x3669FA,
 								description: questionTitles[Math.floor(Math.random() * questionTitles.length)],
 								fields: [
@@ -108,7 +108,7 @@ module.exports = class Trivia {
 								footer: {
 									text: `${svr.commandPrefix}trivia <answer>`,
 								},
-							},
+							}],
 						}).catch(err => {
 							logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 						});
@@ -122,13 +122,13 @@ module.exports = class Trivia {
 
 			if (channelDocument.trivia.current_question.answer) {
 				await msg.send({
-					embed: {
+					embeds: [{
 						color: 0xff9200,
 						description: `The answer was \`${channelDocument.trivia.current_question.answer}\` 😛`,
 						footer: {
 							text: "Here comes the next one...",
 						},
-					},
+					}],
 				}).catch(err => {
 					logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 				});
@@ -169,7 +169,7 @@ module.exports = class Trivia {
 				if (channelDocument.trivia.current_question.attempts <= 2) {
 					triviaQueryDocument.inc("score");
 					triviaResponderQueryDocument.inc("score");
-					if (serverDocument.config.commands.points.isEnabled && svr.members.size > 2 && !serverDocument.config.commands.points.disabled_channel_ids.includes(ch.id)) {
+					if (serverDocument.config.commands.points.isEnabled && svr.members.cache.size > 2 && !serverDocument.config.commands.points.disabled_channel_ids.includes(ch.id)) {
 						const userDocument = await Users.findOne(usr.id);
 						if (userDocument) {
 							userDocument.query.inc("points", 5);
@@ -179,26 +179,26 @@ module.exports = class Trivia {
 					pointsAwarded = true;
 				}
 				await msg.send({
-					embed: {
+					embeds: [{
 						color: 0x50ff60,
 						description: `${usr} got it right! 🎉 The answer was \`${channelDocument.trivia.current_question.answer}\`.`,
 						footer: {
 							text: pointsAwarded ? `They scored a point!` : `That wasn't worth any points, too bad!`,
 						},
-					},
+					}],
 				});
 				triviaQueryDocument.set("current_question.answer", null);
 				await this.next(client, svr, serverDocument, ch, channelDocument);
 			} else {
 				msg.send({
 					content: `${usr},`,
-					embed: {
+					embeds: [{
 						color: Colors.INVALID,
 						title: `Nope. 🕸`,
 						footer: {
 							text: `Try again! "${svr.commandPrefix}trivia <answer>"`,
 						},
-					},
+					}],
 				});
 			}
 		}
@@ -235,7 +235,7 @@ module.exports = class Trivia {
 				let member;
 
 				while (!member && topResponders.length > 0) {
-					member = svr.members.get(topResponders[0]._id);
+					member = svr.members.cache.get(topResponders[0]._id);
 					if (!member) {
 						topResponders.slice(0, 1);
 					}
@@ -247,14 +247,14 @@ module.exports = class Trivia {
 			}
 
 			msg.send({
-				embed: {
+				embeds: [{
 					color: Colors.TRIVIA_END,
 					title: `Thanks for playing! 🏆`,
 					description: info,
 					footer: {
 						text: `Can't get enough? Run "${svr.commandPrefix}trivia start" to start again!`,
 					},
-				},
+				}],
 			}).catch(err => {
 				logger.debug("Failed to send Trivia message to channel.", { svrid: svr.id, chid: ch.id }, err);
 			});

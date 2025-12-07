@@ -1,4 +1,4 @@
-const { ObjectID } = require("mongodb");
+const { ObjectId } = require("mongodb");
 const showdown = require("showdown");
 const md = new showdown.Converter({
 	tables: true,
@@ -67,7 +67,7 @@ controllers.index = async (req, { res }) => {
 };
 
 controllers.article = async (req, { res }) => {
-	const blogDocument = await Blog.findOne(new ObjectID(req.params.id));
+	const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
 	if (!blogDocument) {
 		renderError(res, "Sorry, that blog doesn't exist!");
 	} else {
@@ -105,7 +105,7 @@ controllers.article.compose = async (req, { res }) => {
 	};
 
 	if (req.params.id) {
-		const blogDocument = await Blog.findOne(new ObjectID(req.params.id));
+		const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
 		if (!blogDocument) {
 			renderPage({});
 		} else {
@@ -123,7 +123,7 @@ controllers.article.compose = async (req, { res }) => {
 
 controllers.article.compose.post = async (req, res) => {
 	if (req.params.id) {
-		const blogDocument = await Blog.findOne(new ObjectID(req.params.id));
+		const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
 		if (!blogDocument) {
 			renderError(res, "Sorry, that blog post was not found.");
 		} else {
@@ -150,7 +150,7 @@ controllers.article.compose.post = async (req, res) => {
 
 controllers.article.react = async (req, res) => {
 	if (req.isAuthenticated()) {
-		const blogDocument = await Blog.findOne(new ObjectID(req.params.id));
+		const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
 		if (!blogDocument) {
 			res.sendStatus(404);
 		} else {
@@ -180,7 +180,7 @@ controllers.article.react = async (req, res) => {
 };
 
 controllers.article.delete = (req, res) => {
-	Blog.delete({ _id: new ObjectID(req.params.id) }).then(() => {
+	Blog.delete({ _id: new ObjectId(req.params.id) }).then(() => {
 		res.sendStatus(200);
 	}).catch(() => res.sendStatus(500));
 };
