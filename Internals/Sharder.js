@@ -58,7 +58,7 @@ class Sharder {
 		});
 		this.logger = logger;
 		this.token = token ? token : process.env.CLIENT_TOKEN;
-		this.host = process.env.GAB_HOST ? process.env.GAB_HOST : undefined;
+		this.host = process.env.SKYNET_HOST ? process.env.SKYNET_HOST : undefined;
 		this.count = count;
 		this.mode = process.env.NODE_ENV === "production" ? "production" : "development";
 		this.SharderIPC = require("./").SharderIPC;
@@ -82,7 +82,7 @@ class Sharder {
 			CLIENT_TOKEN: this.token,
 			SHARDS: id,
 			SHARD_COUNT: this.count,
-			GAB_HOST: this.host,
+			SKYNET_HOST: this.host,
 			NODE_ENV: this.mode,
 		});
 		const shard = new Shard(id, worker.process, this, worker);

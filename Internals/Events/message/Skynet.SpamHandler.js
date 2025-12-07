@@ -83,7 +83,7 @@ class SpamHandler extends BaseEvent {
 						}],
 					});
 
-					// Deduct 25 GAwesomePoints if necessary
+					// Deduct 25 SkynetPoints if necessary
 					if (serverDocument.config.commands.points.isEnabled) {
 						// Get user data
 						const userDocument = await Users.findOne(msg.author.id);

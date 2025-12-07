@@ -1,5 +1,5 @@
 ---
-description: Protocol specification for inter-shard communication and state synchronization in distributed Discord bot deployments
+description: Specifications for cross-shard message routing, state sync, and coordination protocols between bot shards
 ---
 
 # === USER INSTRUCTIONS ===
@@ -47,50 +47,33 @@ $END$
 
 # shard-communication-protocol
 
-The shard communication protocol implements specialized inter-process messaging for distributed Discord bot operations:
+Shard Communication Implementation
 
-## Message Types
+1. Cross-Shard Message Router
+- Custom protocol for routing messages between bot shards
+- Message priority system with 3 levels: critical, standard, optional 
+- Automatic retry logic for failed cross-shard transmissions
+- State synchronization broadcasts for shared resources
 
-1. Guild State Synchronization
-- Specialized message format for cross-shard guild data updates
-- Maintains consistent guild settings across distributed shards
-- Handles guild migration events between shards
-Importance Score: 85
+2. Shard State Management
+- Centralized shard state coordination through master process
+- Shared memory segments for rapid state access
+- Guild (server) ownership mapping across shards
+- Activity state propagation between shards
 
-2. Moderation Actions
-- Cross-shard moderation command synchronization
-- Member status updates (mutes, bans, warns) propagation
-- Distributed strike system coordination
-Importance Score: 80
+3. Command Execution Flow
+- Command routing based on guild location
+- Cross-shard result aggregation for multi-server commands
+- Synchronized command cooldown tracking
+- Distributed rate limit management
 
-3. Activity Updates 
-- Bot presence synchronization across shards
-- Cross-shard statistics aggregation
-- Global command usage tracking
-Importance Score: 75
+Importance Score: 85/100
+The score reflects the critical nature of maintaining state consistency and command execution across a distributed bot system.
 
-4. Extension State Management
-- Extension lifecycle event broadcasting
-- Shared extension configuration updates
-- Cross-shard extension reload coordination
-Importance Score: 85
-
-## Protocol Components
-
-1. Master Process Management
-Path: master.js
-- Centralized shard orchestration
-- IPC message routing and delivery guarantees
-- Shard health monitoring and recovery
-Importance Score: 90
-
-2. Cross-Shard Queries
-- Distributed data request handling
-- Response aggregation from multiple shards
-- Query timeout and retry logic
-Importance Score: 80
-
-The protocol focuses on maintaining consistent state across distributed bot instances while handling Discord-specific requirements for guild management and moderation.
+File Paths:
+master.js - Core shard coordination logic
+Internals/ShardManager.js - Shard lifecycle management
+Modules/CrossShardComm.js - Cross-shard messaging protocol
 
 $END$
 

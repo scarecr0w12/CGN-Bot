@@ -17,7 +17,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument, cha
 							color: Colors.SOFT_ERR,
 							description: `You've already enrolled in the giveaway **${channelDocument.giveaway.title}**. 🤪`,
 							footer: {
-								text: `PM GAwesomeBot (That's me!) "${commandData.name} ${msg.guild.name} | ${msg.channel.name}" to remove your entry.`,
+								text: `PM SkynetBot (That's me!) "${commandData.name} ${msg.guild.name} | ${msg.channel.name}" to remove your entry.`,
 							},
 						}],
 					});
@@ -66,7 +66,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument, cha
 				color: Colors.INFO,
 				description: "There's isn't a giveaway going on in this channel. 👻",
 				footer: {
-					text: `PM GAwesomeBot (That's me!) "${commandData.name} ${msg.channel.guild.name} | #${msg.channel.name}" to start one.`,
+					text: `PM SkynetBot (That's me!) "${commandData.name} ${msg.channel.guild.name} | #${msg.channel.name}" to start one.`,
 				},
 			}],
 		});

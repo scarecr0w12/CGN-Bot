@@ -93,7 +93,7 @@
 									</a>
 									<% } %>
 									<% if (extensionData.level === "gallery" && extensionData.published_version && extensionData.published_version !== extensionConfigDocument.version) { %>
-									<button class="button is-primary is-outlined" onclick="GAwesomeUtil.openExtensionInstaller('<%= extensionData._id %>', <%= extensionData.published_version %>, '<%= serverData.id %>')">
+									<button class="button is-primary is-outlined" onclick="SkynetUtil.openExtensionInstaller('<%= extensionData._id %>', <%= extensionData.published_version %>, '<%= serverData.id %>')">
 										<span class="icon">
 											<i class="fa fa-arrow-circle-up"></i>
 										</span>
@@ -116,14 +116,14 @@
 									</a>
 									<% } %>
 									<% if (extensionData.level === "gallery") { %>
-									<button class="button is-danger is-outlined" onclick="GAwesomeUtil.uninstallExtension('<%= extensionData._id%>')">
+									<button class="button is-danger is-outlined" onclick="SkynetUtil.uninstallExtension('<%= extensionData._id%>')">
 										<span class="icon">
 											<i class="fa fa-times"></i>
 										</span>
 										<span>Uninstall</span>
 									</button>
 									<% } else { %>
-									<button class="button is-danger is-outlined" onclick="GAwesomeUtil.deleteExtension('<%= extensionData._id %>', 'extension-<%= extensionData._id %>')">
+									<button class="button is-danger is-outlined" onclick="SkynetUtil.deleteExtension('<%= extensionData._id %>', 'extension-<%= extensionData._id %>')">
 										<span class="icon">
 											<i class="fa fa-trash"></i>
 										</span>
@@ -200,10 +200,10 @@
 								</div>
 								<div class="field">
 									<div class="control has-addons">
-										<a class="button is-small" onclick="GAwesomeUtil.toggleChannels('disabled_channel_ids-<%= extensionData._id %>', true);">
+										<a class="button is-small" onclick="SkynetUtil.toggleChannels('disabled_channel_ids-<%= extensionData._id %>', true);">
 											<span>Select All</span>
 										</a>
-										<a class="button is-small" onclick="GAwesomeUtil.toggleChannels('disabled_channel_ids-<%= extensionData._id %>', false);">
+										<a class="button is-small" onclick="SkynetUtil.toggleChannels('disabled_channel_ids-<%= extensionData._id %>', false);">
 											<span>Deselect All</span>
 										</a>
 									</div>
@@ -213,7 +213,7 @@
 								<br>
 								<input class="is-hidden" name="id" value="<%= extensionData._id %>">
 								<input class="is-hidden" name="v" value="<%= extensionConfigDocument.version %>">
-								<button id="form-submit" type="submit" class="button is-primary" value="Submit" onclick="GAwesomeUtil.updateExtension($(this));" data-extid="<%= extensionData._id %>">
+								<button id="form-submit" type="submit" class="button is-primary" value="Submit" onclick="SkynetUtil.updateExtension($(this));" data-extid="<%= extensionData._id %>">
 									<span class="icon">
 										<i class="fa fa-check"></i>
 									</span>

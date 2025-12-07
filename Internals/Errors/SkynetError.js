@@ -5,7 +5,7 @@ const kCode = Symbol("code");
 const messages = new Map();
 
 /**
- * Extend an error of some sort into a GABError
+ * Extend an error of some sort into a SkynetError
  */
 
 const makeSkynetError = base => class SkynetError extends base {

@@ -366,7 +366,7 @@ server {
 
     # Proxy settings
     location / {
-        proxy_pass http://gawesomebot;
+        proxy_pass http://skynetbot;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -381,7 +381,7 @@ server {
 
     # WebSocket support for dashboard
     location /socket.io/ {
-        proxy_pass http://gawesomebot;
+        proxy_pass http://skynetbot;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";

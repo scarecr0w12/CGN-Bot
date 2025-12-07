@@ -13,7 +13,7 @@
 		}
 
 		if(newMaintainerUser.val() && <%= isSudoMaintainer %>) {
-			GAwesomeData.HUM = true;
+			SkynetData.HUM = true;
 			$.ajax({
 				type: "POST",
 				url: "<%= currentPage %>",
@@ -29,7 +29,7 @@
 	}
 	</script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -113,7 +113,7 @@
 									<td>
 										<div class="field is-grouped">
 											<div class="control">
-												<button class="button is-small is-danger" name="maintainer-removed" value="<%= maintainer.id %>" onclick="GAwesomeData.HUM = true;"<% if (!isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
+												<button class="button is-small is-danger" name="maintainer-removed" value="<%= maintainer.id %>" onclick="SkynetData.HUM = true;"<% if (!isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
 													<span>Remove</span>
 													<span class="icon is-small">
 														<i class="fa fa-times"></i>
@@ -122,7 +122,7 @@
 											</div>
 											<div class="control">
 												<button class="button is-small <% if (maintainer.isSudoMaintainer) { %>is-warning<% } else { %>is-primary<% } %>" name="maintainer-sudo" value="<%= maintainer.id %>"
-														onclick="GAwesomeData.HUM = true; return confirm('Are you sure<% if (maintainer.isSudoMaintainer) { %> you want to revoke Sudo Powers from <%= maintainer.name%>?<% } else { %> you want to grant <%= maintainer.name%> Sudo Powers?<% } %>');"<% if(!
+														onclick="SkynetData.HUM = true; return confirm('Are you sure<% if (maintainer.isSudoMaintainer) { %> you want to revoke Sudo Powers from <%= maintainer.name%>?<% } else { %> you want to grant <%= maintainer.name%> Sudo Powers?<% } %>');"<% if(!
 																isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
 													<% if (maintainer.isSudoMaintainer) { %>
 														<span>Revoke Sudo</span>
@@ -186,7 +186,7 @@
 						<% } %>
 					</form>
 					<br>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<input name="additional-perms" value="true" style="display: none;">
 						<h4 class="subtitle is-4">
 							Additional Permissions
@@ -273,7 +273,7 @@
 				</div>
 			</div>
 		</div>
-		<script>GAwesomeUtil.setUserAutocomplete();</script>
+		<script>SkynetUtil.setUserAutocomplete();</script>
 	</section>
 
 	<%- include('../partials/footer') %>

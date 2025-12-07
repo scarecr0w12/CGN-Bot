@@ -107,7 +107,7 @@ class Ready extends BaseEvent {
 		};
 		if (configJSON.activity.name === "default") {
 			activity = {
-				name: "https://gawesomebot.com | Shard {shard}".format({ shard: this.client.shardID }),
+				name: "https://skynetbot.net | Shard {shard}".format({ shard: this.client.shardID }),
 				type: ActivityType.Playing,
 				url: null,
 			};

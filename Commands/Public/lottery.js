@@ -14,7 +14,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 		msg.send({
 			embeds: [{
 				color: Colors.SOFT_ERR,
-				description: "There isn't a **GAwesomePoint** lottery going on right now.",
+				description: "There isn't a **SkynetPoint** lottery going on right now.",
 				footer: {
 					text: `Use "${msg.guild.commandPrefix}${commandData.name} start" to start one.`,
 				},
@@ -131,7 +131,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 					msg.send({
 						embeds: [{
 							color: Colors.SUCCESS,
-							title: "GAwesomePoint lottery started! 🌟",
+							title: "SkynetPoint lottery started! 🌟",
 							description: `Anyone can use \`${msg.guild.commandPrefix}${commandData.name} enroll\` or \`${msg.guild.commandPrefix}${commandData.name} join\` for a chance to win! 🤑`,
 							footer: {
 								text: `The winner will be announced ${moment(channelDocument.lottery.expiry_timestamp).fromNow()}`,
@@ -161,7 +161,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 							msg.send({
 								embeds: [{
 									color: Colors.SUCCESS,
-									title: "Thank you for purchasing a GAwesomePoint lottery ticket 🎟",
+									title: "Thank you for purchasing a SkynetPoint lottery ticket 🎟",
 									description: `That cost you ${ticketPrice} point${ticketPrice === 1 ? "" : "s"} - the winner will be announced ${moment(channelDocument.lottery.expiry_timestamp).fromNow()}.`,
 									footer: {
 										text: `You now have ${userTicketCount + 1} ticket${userTicketCount === 0 ? "" : "s"}. No refunds.`,
@@ -176,7 +176,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 								title: "You're not rich enough to buy a ticket! 😔",
 								description: `You need at least ${ticketPrice} point${ticketPrice === 1 ? "" : "s"}`,
 								footer: {
-									text: `You only have ${userDocument.points} GAwesomePoint${userDocument.points === 1 ? "" : "s"}`,
+									text: `You only have ${userDocument.points} SkynetPoint${userDocument.points === 1 ? "" : "s"}`,
 								},
 							}],
 						});
@@ -227,11 +227,11 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 		msg.send({
 			embeds: [{
 				color: Colors.INFO,
-				title: `GAwesomePoint lottery started by "@__${creator ? client.getName(serverDocument, creator) : "invalid-user"}__" 💸`,
+				title: `SkynetPoint lottery started by "@__${creator ? client.getName(serverDocument, creator) : "invalid-user"}__" 💸`,
 				fields: [
 					{
 						name: "Current Ticket Price",
-						value: `${ticketPrice} **GAwesomePoint${ticketPrice === 1 ? "" : "s"}**`,
+						value: `${ticketPrice} **SkynetPoint${ticketPrice === 1 ? "" : "s"}**`,
 						inline: true,
 					},
 					{
@@ -241,7 +241,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 					},
 					{
 						name: `Current Prize`,
-						value: `${prize} **GAwesomePoint${prize === 1 ? "" : "s"}**`,
+						value: `${prize} **SkynetPoint${prize === 1 ? "" : "s"}**`,
 						inline: true,
 					},
 					{

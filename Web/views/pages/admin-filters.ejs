@@ -4,7 +4,7 @@
 	<title><%= serverData.name %> Filters - Skynet Admin Console</title>
 	<%- include('../partials/head') %>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -25,7 +25,7 @@
 							</div>
 						</div>
 					</article>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<h4 class="subtitle is-4">
 							Spam
 						</h4>

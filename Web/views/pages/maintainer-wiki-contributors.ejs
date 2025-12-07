@@ -13,7 +13,7 @@
 		}
 
 		if(newContributorUser.val()) {
-			GAwesomeData.HUM = true;
+			SkynetData.HUM = true;
 			$.ajax({
 				type: "POST",
 				url: "<%= currentPage %>",
@@ -83,7 +83,7 @@
 														<%= configData.wiki_contributors[i].id %>
 													</td>
 													<td>
-														<button class="button is-small is-danger" name="contributor-removed" value="<%= configData.wiki_contributors[i].id %>" onclick="GAwesomeData.HUM = true;"<% if(pageData.showRemove && configData.wiki_contributors[i].isMaintainer) { %> disabled<% } %>>
+														<button class="button is-small is-danger" name="contributor-removed" value="<%= configData.wiki_contributors[i].id %>" onclick="SkynetData.HUM = true;"<% if(pageData.showRemove && configData.wiki_contributors[i].isMaintainer) { %> disabled<% } %>>
 															<span>Remove</span>
 															<span class="icon is-small">
 																<i class="fa fa-times"></i>
@@ -132,7 +132,7 @@
 				</div>
 			</div>
 		</div>
-		<script>GAwesomeUtil.setUserAutocomplete();</script>
+		<script>SkynetUtil.setUserAutocomplete();</script>
 	</section>
 
 	<%- include('../partials/footer') %>

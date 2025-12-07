@@ -20,7 +20,7 @@
 		}
 
 		if(newAdminRole.val() && newAdminLevel.val()) {
-			GAwesomeData.HUM = true;
+			SkynetData.HUM = true;
 			$.ajax({
 				type: "POST",
 				url: "<%= currentPage %>",
@@ -93,7 +93,7 @@
 										<%= admin.level %>
 									</td>
 									<td>
-										<button class="button is-small is-danger" name="<%= admin._id %>" onclick="GAwesomeUtil.dashboard.removeTableElement(this);">
+										<button class="button is-small is-danger" name="<%= admin._id %>" onclick="SkynetUtil.dashboard.removeTableElement(this);">
 											<span>Remove</span>
 											<span class="icon is-small">
 												<i class="fa fa-times"></i>
@@ -138,7 +138,7 @@
 				</div>
 			</div>
 		</div>
-		<script>GAwesomeUtil.setUserAutocomplete('<%= serverData.id %>');</script>
+		<script>SkynetUtil.setUserAutocomplete('<%= serverData.id %>');</script>
 	</section>
 
 	<%- include('../partials/footer') %>

@@ -15,7 +15,7 @@ module.exports = async ({ client, configJS, Utils: { IsURL }, Constants: { Color
 				author: {
 					name: `Profile setup for ${msg.author.tag}`,
 				},
-				title: `Let's setup your GAwesomeBot profile ~~--~~ See it by clicking here`,
+				title: `Let's setup your SkynetBot profile ~~--~~ See it by clicking here`,
 				url: `${configJS.hostingURL}activity/users?q=${encodeURIComponent(`${msg.author.tag}`)}`,
 				thumbnail: {
 					url: msg.author.displayAvatarURL({ size: 64, format: "png" }),

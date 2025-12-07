@@ -1,5 +1,5 @@
 /**
- * Module that is used in the migration of GAB 4.0 databases to GAB 4.1
+ * Module that is used in the migration of Skynet 4.0 databases to Skynet 4.1
  */
 const Driver = require("../Database/Driver");
 const { loadConfigs } = require("../Configurations/env.js");
@@ -85,7 +85,7 @@ module.exports = async () => {
 				await MigrateDocumentsAndCommands();
 				logger.info("Updating data... [3/3]");
 				await migrateChannelsAndMembers();
-				logger.info(`Successfully migrated "${database.db}"! You may now launch GAwesomeBot without the "--migrate" flag.`);
+				logger.info(`Successfully migrated "${database.db}"! You may now launch SkynetBot without the "--migrate" flag.`);
 				process.exit(0);
 				// eslint-disable-next-line
 			} catch (_) {}

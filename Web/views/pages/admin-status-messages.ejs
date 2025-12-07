@@ -20,7 +20,7 @@
             url: '<%= currentPage %>',
             data: data,
             success: function () {
-              GAwesomeUtil.SFS();
+              SkynetUtil.SFS();
               $('#form').submit();
               Turbolinks.visit('');
             }
@@ -32,15 +32,15 @@
         if (data) {
           var toSend = {}
           toSend[data] = 'on'
-          GAwesomeData.HUM = true;
+          SkynetData.HUM = true;
           $.ajax({
             type: 'POST',
             url: '<%= currentPage %>',
             data: toSend,
             success: function () {
               messageNode.remove();
-              GAwesomeUtil.SFS();
-              GAwesomeData.HUM = true;
+              SkynetUtil.SFS();
+              SkynetData.HUM = true;
               $('#form').submit();
               Turbolinks.visit('');
             }
@@ -49,7 +49,7 @@
       }
     </script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 <%- include('../partials/dashboard-header') %>
 <%- include('../partials/dashboard-socket-updates') %>
 
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                 </article>
-                <form id="form" onsubmit="GAwesomeUtil.submitForm(); return false">
+                <form id="form" onsubmit="SkynetUtil.submitForm(); return false">
                     <h4 class="subtitle is-4">
                         Server
                     </h4>
@@ -610,7 +610,7 @@
             </div>
         </div>
     </div>
-    <script>GAwesomeUtil.setUserAutocomplete('<%= serverData.id %>');</script>
+    <script>SkynetUtil.setUserAutocomplete('<%= serverData.id %>');</script>
 </section>
 
 <%- include('../partials/footer') %>

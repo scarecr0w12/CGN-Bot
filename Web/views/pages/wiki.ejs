@@ -22,8 +22,7 @@
 				</h3>
 				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
 				<% if (pageData.mode !== "edit") { %>
-				<% const menuToggleButtonSize = ""; %>
-				<%- include('../partials/menu-toggle') %>
+				<%- include('../partials/menu-toggle', { menuToggleButtonSize: "" }) %>
 				<% } %>
 			</div>
 		</div>
@@ -35,10 +34,10 @@
 					<div id="menu" class="column is-one-quarter">
 						<div class="field has-addons has-addons-centered">
 							<div class="control is-expanded">
-								<input id="search-input" class="input is-primary" type="text" placeholder="I'm looking for..." onkeydown="if (event.keyCode === 13) {GAwesomeUtil.searchWiki(this.value);}" value="<%= pageData.activeSearchQuery %>">
+								<input id="search-input" class="input is-primary" type="text" placeholder="I'm looking for..." onkeydown="if (event.keyCode === 13) {SkynetUtil.searchWiki(this.value);}" value="<%= pageData.activeSearchQuery %>">
 							</div>
 							<div class="control">
-							<a id="search-button" class="button" href="javascript:GAwesomeUtil.searchWiki(document.getElementById('search-input').value);">
+							<a id="search-button" class="button" href="javascript:SkynetUtil.searchWiki(document.getElementById('search-input').value);">
 								<span class="icon is-small">
 									<i class="fa fa-search"></i>
 								</span>
@@ -192,7 +191,7 @@
 
 	<% if (pageData.mode === "page" && pageData.content) { %>
 		<script>
-		GAwesomeUtil.populateWikiSections();
+		SkynetUtil.populateWikiSections();
 		</script>
 	<% } %>
 

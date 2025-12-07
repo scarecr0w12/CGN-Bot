@@ -79,7 +79,7 @@ module.exports = middleware => {
 				const { perm } = req;
 				if (perm === "maintainer" || canDo(perm, req.user.id)) {
 					req.isAuthorized = true;
-					req.level = process.env.GAB_HOST !== req.user.id ? configJSON.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
+					req.level = process.env.SKYNET_HOST !== req.user.id ? configJSON.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
 					res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
 					res.res.template.isHost = req.level === 0;
 					return next();
@@ -146,7 +146,7 @@ module.exports = middleware => {
 				const { perm } = socket.request;
 				if (perm === "maintainer" || canDo(perm, socket.request.user.id)) {
 					socket.request.isAuthorized = true;
-					socket.request.level = process.env.GAB_HOST !== socket.request.user.id ? configJSON.sudoMaintainers.includes(socket.request.user.id) ? 2 : 1 : 0;
+					socket.request.level = process.env.SKYNET_HOST !== socket.request.user.id ? configJSON.sudoMaintainers.includes(socket.request.user.id) ? 2 : 1 : 0;
 					return true;
 				} else {
 					socket.emit("err", { error: 403, fatal: true });

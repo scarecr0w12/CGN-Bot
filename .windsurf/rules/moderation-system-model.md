@@ -1,5 +1,5 @@
 ---
-description: Specification for Discord bot progressive moderation system including strike tracking and infraction management
+description: Documentation for progressive strike/infraction tracking system and automated moderation workflows.
 trigger: model_decision
 ---
 
@@ -65,45 +65,65 @@ $END$
 
 # moderation-system-model
 
-Progressive Moderation System with the following key components:
+The moderation system implements a progressive strike and infraction tracking model with automated escalation rules.
 
-1. Strike Management
-Path: Commands/Public/strikes.js
-- Progressive disciplinary system with configurable thresholds
-- Strike accumulation with automated escalation rules
-- Time-decay system for infractions
-- Server-specific strike configuration
-Importance Score: 85
+Core Components:
 
-2. Automated Moderation Actions
-Path: Internals/Events/message/GAB.SpamHandler.js
-- Graduated response system based on violation severity
-- Message similarity detection for spam identification
-- Automated temporary mutes and bans based on strike count
-- Server-configurable automation rules
-Importance Score: 80
-
-3. Moderation Logging
-Path: Modules/ModLog.js
-- Case tracking system with unique identifiers
-- Detailed audit trail of moderator actions
-- Retroactive reason updates and modification tracking
-- Cross-server infraction history
-Importance Score: 75
-
-4. Infraction Data Model
-- Strike records with severity levels
-- Time-stamped moderation actions
-- User violation history tracking
-- Server-specific infraction thresholds
+1. Strike System (Modules/ModLog.js)
+- Progressive strike accumulation with configurable thresholds
+- Automated escalation based on strike count:
+  - 3 strikes: 24 hour mute
+  - 5 strikes: 7 day ban
+  - 7 strikes: permanent ban
+- Strike decay rules with 30-day expiration
+- Strike categories with weighted severity
 Importance Score: 90
 
-Core business rules:
-- Strike accumulation triggers automated responses
-- Server-specific configuration of strike thresholds
-- Progressive punishment system (warn → mute → kick → ban)
-- Infraction decay based on time and severity
-- Cross-server violation tracking with privacy controls
+2. Infraction Tracking (Web/controllers/dashboard/administration.js)
+- Detailed infraction records with:
+  - Timestamp
+  - Moderator ID
+  - Action type
+  - Duration
+  - Reason
+- Case ID system for cross-referencing
+- Appeal tracking and resolution workflow
+Importance Score: 85
+
+3. Automated Actions (Commands/Public/strike.js)
+- Threshold-based automated punishments
+- Configurable warning messages
+- Notification system for affected users
+- Integration with Discord audit log
+Importance Score: 80
+
+4. Administrative Hierarchy
+- Multi-level moderation permissions (0-3)
+- Role-based access control for mod actions
+- Override capabilities for higher-level mods
+- Audit logging of permission usage
+Importance Score: 75
+
+Key Data Models:
+```
+Infraction {
+  caseId: String
+  userId: String
+  modId: String
+  type: String
+  reason: String
+  timestamp: Date
+  expires: Date
+  active: Boolean
+}
+
+Strike {
+  userId: String
+  count: Number
+  reasons: Array
+  lastStrike: Date
+}
+```
 
 $END$
 

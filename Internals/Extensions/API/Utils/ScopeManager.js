@@ -12,7 +12,7 @@ module.exports = class ScopeManager {
 	 * @returns {Boolean} True if the extension can successfully execute any functions that requires the given scope
 	 */
 	static check (scopes, scope) {
-		if (!scopes.includes(scope)) throw new GABError("MISSING_SCOPES");
+		if (!scopes.includes(scope)) throw new SkynetError("MISSING_SCOPES");
 		return true;
 	}
 

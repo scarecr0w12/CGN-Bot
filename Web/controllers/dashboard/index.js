@@ -27,7 +27,10 @@ controllers.home = async (req, { res }) => {
 				};
 				if (svr.success) {
 					const serverDocument = await Servers.findOne(req.user.guilds[i].id);
-					if (serverDocument) {
+					// SKYNET_HOST always gets admin access
+					if (process.env.SKYNET_HOST === usr.id) {
+						data.isAdmin = true;
+					} else if (serverDocument) {
 						const member = svr.members[usr.id];
 						if (req.app.client.getUserBotAdmin(svr, serverDocument, member) >= 3 || canDo("sudo", usr.id)) {
 							data.isAdmin = true;
@@ -45,7 +48,7 @@ controllers.home = async (req, { res }) => {
 		};
 		addServerData(0, () => {
 			serverData.sort((a, b) => a.name.localeCompare(b.name));
-			if (configJSON.maintainers.includes(req.user.id)) {
+			if (configJSON.maintainers.includes(req.user.id) || process.env.SKYNET_HOST === req.user.id) {
 				serverData.push({
 					name: "Maintainer Console",
 					id: "maintainer",

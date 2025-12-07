@@ -47,7 +47,7 @@ module.exports = class GitHubGist {
 		let res;
 		try {
 			res = await snekfetch.post(this.apiURL).set(this.headers).send({
-				description: `GAwesomeBot (${this.client.user.tag} | ${this.client.user.id})${title ? ` | ${title}` : ""}`,
+				description: `SkynetBot (${this.client.user.tag} | ${this.client.user.id})${title ? ` | ${title}` : ""}`,
 				public: this.public,
 				files: {
 					[file]: {

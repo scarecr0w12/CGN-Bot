@@ -29,7 +29,7 @@
                         <h2 class="title is-2 has-text-centered">
                             <strong>Thank you</strong> for your support!
                         </h2>
-						<% if (configData.charities.length > 0) { %>
+						<% if (configData.charities && configData.charities.length > 0) { %>
 	                        <h5 class="subtitle is-5">
 								<%- configData.donateSubtitle %>
 	                        </h5>
@@ -62,7 +62,7 @@
 							<h5 class="subtitle is-5">
 								By viewing ads, you are supporting us develop and maintain GAB publicly. However, we understand ads can be annoying and ruin the viewing experience. While we attempt to keep our ads as user-friendly as possible, you can disable ads here to prevent seeing them in this browser or enable them to continue supporting us.
 							</h5>
-							<a class="button is-medium is-fullwidth is-outlined <%= adsense.isEnabled ? "is-danger" : "is-success"%>" onclick="GAwesomeUtil.toggleAds('<%= adsense.isEnabled %>');"><%= adsense.isEnabled ? "Disable" : "Enable" %> advertisements and sponsored content</a>
+							<a class="button is-medium is-fullwidth is-outlined <%= adsense.isEnabled ? "is-danger" : "is-success"%>" onclick="SkynetUtil.toggleAds('<%= adsense.isEnabled %>');"><%= adsense.isEnabled ? "Disable" : "Enable" %> advertisements and sponsored content</a>
 						<% } %>
                     </div>
                 </div>

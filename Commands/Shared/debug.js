@@ -14,7 +14,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 				value: "Display information about the current shard process",
 			}, {
 				name: "-v, --version",
-				value: "Display information about the GAwesomeBot version",
+				value: "Display information about the SkynetBot version",
 			}, {
 				name: "-d, --discord, --bot",
 				value: "Show details about the Discord bot user and client",
@@ -23,10 +23,10 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 				value: "Display information about the master process",
 			}, {
 				name: "-o, --os, --operating-system",
-				value: "Display information about the Operating System GAwesomeBot is running on",
+				value: "Display information about the Operating System SkynetBot is running on",
 			}, {
 				name: "--perms",
-				value: "Show your current permissions within GAwesomeBot",
+				value: "Show your current permissions within SkynetBot",
 			}, {
 				name: "--no-general",
 				value: "Hide general debug information and only show data requested via arguments",
@@ -58,13 +58,13 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 			if (args.includes("-v") || args.includes("--version")) {
 				if (!version.valid) {
 					fields.push({
-						name: "GAwesomeBot Version Information",
-						value: `💽 Currently running an unknown version of GAwesomeBot tagged as **${configJSON.version}** on branch **${configJSON.branch}**.`,
+						name: "SkynetBot Version Information",
+						value: `💽 Currently running an unknown version of SkynetBot tagged as **${configJSON.version}** on branch **${configJSON.branch}**.`,
 					});
 				} else {
 					fields.push({
-						name: "GAwesomeBot Version Information",
-						value: `💽 Currently running GAwesomeBot **${version.metadata.name}**, on branch **${version.branch}**
+						name: "SkynetBot Version Information",
+						value: `💽 Currently running SkynetBot **${version.metadata.name}**, on branch **${version.branch}**
 								\n🔄 Version is synced with commit **${version.sha}**, and tagged with unique tag **${version.tag}**`,
 					});
 				}
@@ -72,7 +72,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 			if (args.includes("-d") || args.includes("--discord") || args.includes("--bot")) {
 				fields.push({
 					name: "Bot User Information",
-					value: `🆔 GAwesomeBot is using the bot account **${client.user.tag}**, with ID **${client.user.id}**
+					value: `🆔 SkynetBot is using the bot account **${client.user.tag}**, with ID **${client.user.id}**
 								\n🔌 Connected to Discord with **${Math.floor(client.ws.ping)}ms** latency, for **${Math.floor(client.uptime / 3600000)} hours** so far`,
 				});
 			}
@@ -82,7 +82,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 					name: "Master Process Information",
 					value: `💎 Process is running **${process.release.name} ${process.version}** (located at **${process.execPath}**) with Process ID **${masterData.master.PID}**, node is running from **${process.cwd()}**
 								\n💾 Using a resident set size of **${Math.ceil(masterData.master.rss)}MB**
-								\n🗄 GAwesomeBot's MongoDB has **${masterData.master.users} users**, and **${masterData.master.guilds} guilds** registered. The query took **${masterData.master.ping}** to finish
+								\n🗄 SkynetBot's MongoDB has **${masterData.master.users} users**, and **${masterData.master.guilds} guilds** registered. The query took **${masterData.master.ping}** to finish
 								\n⏲ Process has been running for **${masterData.master.uptime} hours**`,
 				});
 			}
@@ -106,18 +106,18 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 					name: "Operating System Information",
 					value: `🖥 Hosted on **${platform}**, using a ${os.cpus().length}-core processor with ${os.arch()} architecture
 								\n💾 System has a total of **${Math.ceil(os.totalmem() / 1000000)}MB** RAM, of which **${Math.ceil((os.totalmem() - os.freemem()) / 1000000)}MB** is in use
-								\n👤 GAwesomeBot is operated by OS User **${os.userInfo().username}**`,
+								\n👤 SkynetBot is operated by OS User **${os.userInfo().username}**`,
 				});
 			}
 			if (args.includes("--perms")) {
 				const isMaintainer = configJSON.maintainers.includes(msg.author.id);
 				const isSudoMaintainer = configJSON.sudoMaintainers.includes(msg.author.id);
-				const isHost = process.env.GAB_HOST === msg.author.id;
+				const isHost = process.env.SKYNET_HOST === msg.author.id;
 				if (isHost) {
 					fields.push({
 						name: "Your Maintainer Permissions",
 						value: `🔧 You are **the Host**
-									\n⚡ As the current Host, you have unrestricted authority over **all** of GAwesomeBot`,
+									\n⚡ As the current Host, you have unrestricted authority over **all** of SkynetBot`,
 					});
 				} else if (!isMaintainer && !isSudoMaintainer) {
 					fields.push({
@@ -150,7 +150,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 			await msg.send({
 				embeds: [{
 					color: Colors.RESPONSE,
-					title: showDefault ? `GAwesomeBot Debug Information` : ``,
+					title: showDefault ? `SkynetBot Debug Information` : ``,
 					description: showDefault ? `Currently on shard with ID ${client.shardID}, out of ${process.env.SHARD_COUNT} shards total.
 											\nShard's ${process.release.name} process is using ${Math.ceil(process.memoryUsage().heapTotal / 1000000)}MB RAM, with PID ${process.pid}.
 											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.cache.size} guild${client.guilds.cache.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.` : null,
@@ -165,7 +165,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 		await msg.send({
 			embeds: [{
 				color: Colors.INFO,
-				title: `${client.user.tag} running ${version.valid ? `GAwesomeBot version ${version.metadata.name}` : "an unknown GAwesomeBot version"}`,
+				title: `${client.user.tag} running ${version.valid ? `SkynetBot version ${version.metadata.name}` : "an unknown SkynetBot version"}`,
 				description: `Currently on shard with ID ${client.shardID}, out of ${process.env.SHARD_COUNT} shards total.
 											\nShard's ${process.release.name} process is using ${Math.ceil(process.memoryUsage().heapTotal / 1000000)}MB RAM, with PID ${process.pid}.
 											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.cache.size} guild${client.guilds.cache.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.`,

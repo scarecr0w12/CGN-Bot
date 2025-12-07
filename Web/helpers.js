@@ -9,13 +9,13 @@ module.exports = {
 
 	renderUnavailable: (req, res) => res.status(503).render("pages/503.ejs", {}),
 
-	renderError: (res, text, line, code = 500) => res.status(code).render("pages/error.ejs", { error_text: text, error_line: line || configJS.errorLines[Math.floor(Math.random() * configJS.errorLines.length)] }),
+	renderError: (res, text, line, code = 500) => res.status(code).render("pages/error.ejs", { error_text: text, error_line: line || (configJS.errorLines && configJS.errorLines.length ? configJS.errorLines[Math.floor(Math.random() * configJS.errorLines.length)] : "An error occurred") }),
 
-	checkSudoMode: id => configJSON.perms.sudo === 0 ? process.env.GAB_HOST === id : configJSON.perms.sudo === 2 ? configJSON.sudoMaintainers.includes(id) : configJSON.maintainers.includes(id),
+	checkSudoMode: id => configJSON.perms.sudo === 0 ? process.env.SKYNET_HOST === id : configJSON.perms.sudo === 2 ? configJSON.sudoMaintainers.includes(id) : configJSON.maintainers.includes(id),
 
 	fetchMaintainerPrivileges: id => {
 		let permLevel;
-		if (process.env.GAB_HOST === id) permLevel = 0;
+		if (process.env.SKYNET_HOST === id) permLevel = 0;
 		else if (configJSON.sudoMaintainers.includes(id)) permLevel = 2;
 		else if (configJSON.maintainers.includes(id)) permLevel = 1;
 		else return [];

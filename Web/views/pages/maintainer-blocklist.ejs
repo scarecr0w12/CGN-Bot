@@ -13,7 +13,7 @@
 		}
 
 		if (newBlockUser.val()) {
-			GAwesomeData.HUM = true;
+			SkynetData.HUM = true;
 			$.ajax({
 				type: "POST",
 				url: "<%= currentPage %>",
@@ -74,7 +74,7 @@
 										<%= user.id %>
 									</td>
 									<td>
-										<button class="button is-small is-danger" name="block-<%= user.id %>-removed" onclick="GAwesomeData.HUM = true;">
+										<button class="button is-small is-danger" name="block-<%= user.id %>-removed" onclick="SkynetData.HUM = true;">
 											<span>Remove</span>
 											<span class="icon is-small">
 												<i class="fa fa-times"></i>
@@ -123,7 +123,7 @@
 				</div>
 			</div>
 		</div>
-		<script>GAwesomeUtil.setUserAutocomplete();</script>
+		<script>SkynetUtil.setUserAutocomplete();</script>
 	</section>
 
 	<%- include('../partials/footer') %>

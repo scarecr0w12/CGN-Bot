@@ -430,7 +430,7 @@ const commands = {
 		},
 		lottery: {
 			usage: `"start" or "enroll" or "join" or "."`,
-			description: `Hourly GAwesomePoints lottery`,
+			description: `Hourly SkynetPoints lottery`,
 			defaults: {
 				isEnabled: true,
 				isNSFWFiltered: false,

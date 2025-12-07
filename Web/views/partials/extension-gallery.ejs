@@ -30,10 +30,10 @@
 			</h1>
 			<h3 class="subtitle is-3 has-text-centered">Command</h3>
 			<br>
-			Command extensions function just like normal commands, and you have to use them with your configured GAB Prefix.
+			Command extensions function just like normal commands, and you have to use them with your configured Skynet Prefix.
 			<br>
 			<br>
-			Command extensions are useful to add additional functionality to GAB, for example in the form of fetching data from API's, or performing moderation actions within the Discord guild.
+			Command extensions are useful to add additional functionality to Skynet, for example in the form of fetching data from API's, or performing moderation actions within the Discord guild.
 		</div>
 	</div>
 	<button class="modal-close is-large"></button>
@@ -73,7 +73,7 @@
 			Timer extensions are run on a configured interval, which makes them extremely useful for various purposes.
 			<br>
 			<br>
-			These extensions can, for example, poll an API on the configured interval and send the result to Discord, this allows you to connect any web application that responds to REST requests to GAB
+			These extensions can, for example, poll an API on the configured interval and send the result to Discord, this allows you to connect any web application that responds to REST requests to Skynet
 			<br>
 			<br>
 			If you plan to use this type of extension to respond to things happening in Discord, we recommend using <code>event</code> extensions instead.
@@ -157,40 +157,40 @@
 				</div>
 				<footer class="card-footer">
 					<% if (authUser && pageData.serverData.length > 0) { %>
-						<a class="card-footer-item" onclick="GAwesomeUtil.openExtensionInstaller('<%= extension._id %>', <%= extension.version %>);">
+						<a class="card-footer-item" onclick="SkynetUtil.openExtensionInstaller('<%= extension._id %>', <%= extension.version %>);">
 							Install
 						</a>
 					<% } %>
-					<a class="card-footer-item" onclick="GAwesomeUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
+					<a class="card-footer-item" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
 						Source
 					</a>
 					<% if (authUser) { %>
-						<a id="vote-<%= extension._id %>" class="card-footer-item" onclick="GAwesomeUtil.voteExtension('<%= extension._id %>');">
+						<a id="vote-<%= extension._id %>" class="card-footer-item" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
 							<%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
 						</a>
 						<% if (isMaintainer) { %>
 							<% if (pageData.mode === "gallery") { %>
-								<a id="feature-<%= extension._id %>" class="card-footer-item" onclick="GAwesomeUtil.featureExtension('<%= extension._id %>');">
+								<a id="feature-<%= extension._id %>" class="card-footer-item" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
 									<%= extension.featured ? "Unfeature" : "Feature" %>
 								</a>
                     			<% if (authUser.id !== extension.owner.id) { %>
-									<a class="card-footer-item card-footer-item-danger" onclick="GAwesomeUtil.removeExtension('<%= extension._id %>');">
+									<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
 										Remove
 									</a>
 								<% } %>
 							<% } else if (pageData.mode === "queue") { %>
-								<a class="card-footer-item" onclick="GAwesomeUtil.acceptExtension('<%= extension._id %>');">
+								<a class="card-footer-item" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
 									Accept
 								</a>
 								<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
-									<a class="card-footer-item card-footer-item-danger" onclick="GAwesomeUtil.rejectExtension('<%= extension._id %>');">
+									<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
 										Reject
 									</a>
 								<% } %>
 							<% } %>
 						<% } %>
 						<% if (authUser.id === extension.owner.id && extension.level === "gallery") { %>
-							<a class="card-footer-item card-footer-item-danger" onclick="GAwesomeUtil.unpublishExtension('<%= extension._id %>');">
+							<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.unpublishExtension('<%= extension._id %>');">
 								Unpublish
 							</a>
 						<% } %>

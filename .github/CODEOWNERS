@@ -13,7 +13,7 @@
 /Internals/Logger.js    @GilbertGobbels
 /Internals/Sharder.js    @GilbertGobbels
 /Internals/IPC.js    @GilbertGobbels
-/Modules/GAwesomeClient.js    @GilbertGobbels
+/Modules/SkynetClient.js    @GilbertGobbels
 /master.js    @GilbertGobbels
 /package.json    @KingDGrizzle
 /.eslintrc.js    @KingDGrizzle

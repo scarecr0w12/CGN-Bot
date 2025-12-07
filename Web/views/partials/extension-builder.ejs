@@ -1,4 +1,4 @@
-<form id="form" onsubmit="GAwesomeUtil.saveExtension(<%= isGallery %>, '<%- isGallery ? `/extensions/builder?${pageData.extensionData._id ? ('extid=' + pageData.extensionData._id) : ""}` : `/dashboard/${serverData.id}/other/extensions` %>'); return false;">
+<form id="form" onsubmit="SkynetUtil.saveExtension(<%= isGallery %>, '<%- isGallery ? `/extensions/builder?${pageData.extensionData._id ? ('extid=' + pageData.extensionData._id) : ""}` : `/dashboard/${serverData.id}/other/extensions` %>'); return false;">
 	<div class="field">
 		<label class="label">Name</label>
 		<p class="control">
@@ -178,9 +178,9 @@
 				<i class="fa fa-upload"></i>
 			</span>
 			<span>Upload</span>
-			<input id="builder-code-upload" type="file" onchange="GAwesomeUtil.uploadCode(this.files);" style="display: none;">
+			<input id="builder-code-upload" type="file" onchange="SkynetUtil.uploadCode(this.files);" style="display: none;">
 		</label>
-		<a class="button is-small" onclick="GAwesomeUtil.downloadCode();">
+		<a class="button is-small" onclick="SkynetUtil.downloadCode();">
 			<span class="icon is-small">
 				<i class="fa fa-download"></i>
 			</span>
@@ -195,7 +195,7 @@
 		</p>
 	</div>
 	<% if (isGallery && pageData.extensionData._id && pageData.extensionData.state === "saved") { %>
-		<a id="publish-<%= pageData.extensionData._id %>" class="button" onclick="GAwesomeUtil.publishExtension('<%= pageData.extensionData._id %>');">
+		<a id="publish-<%= pageData.extensionData._id %>" class="button" onclick="SkynetUtil.publishExtension('<%= pageData.extensionData._id %>');">
 			<span class="icon is-small">
 				<i class="fa fa-share-alt"></i>
 			</span>
@@ -212,8 +212,7 @@
 		<br>
     <% } %>
 	<hr>
-	<% var formButtonsUnsaved = false; %>
-	<%- include('../partials/form-buttons') %>
+	<%- include('../partials/form-buttons', { formButtonsUnsaved: false }) %>
     <% if (isGallery && pageData.extensionData._id && pageData.extensionData.state === "gallery") { %>
     	<span class="help">Updating the extension will <strong>not</strong> remove the old version from the gallery. Your new version will be in the queue until it has been approved by a Skynet maintainer. Points will be preserved.</span>
     <% } %>

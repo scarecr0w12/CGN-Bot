@@ -72,55 +72,64 @@ $END$
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
 
-Core Business Domain: Discord Bot Management Platform
+Discord Bot Management System
+Importance Score: 85/100
 
-Primary Business Components:
+Core Business Components:
 
-1. Extension Management System (90/100)
-- Custom extension marketplace with approval workflows
-- Versioning and compatibility validation
-- Security scanning and code validation
-- Located in Web/controllers/extensions.js
+1. Activity & Server Management
+- Custom server engagement scoring algorithm using weighted member counts and message activity
+- Server visibility filtering by categories and public status
+- Activity-based automated moderation actions
+Path: Web/controllers/activity.js
 
-2. Multi-Level Authorization Framework (85/100)
-- Role-based permissions with maintainer tiers
-- Guild-specific authorization controls
-- Admin verification system
-- Located in Web/middleware/auth.js
+2. Extension System Architecture
+- Extension lifecycle management with version control
+- Sandboxed execution environment for custom server extensions 
+- Permission-based deployment pipeline
+- State machine: gallery, queue, third-party states
+Path: Web/controllers/extensions.js
 
-3. Dashboard Data Management (80/100)
-- Real-time server statistics processing
-- Server-specific configuration management
-- Centralized dashboard state handling
-- Located in Web/controllers/dashboard/index.js
+3. Moderation Framework 
+- Multi-level administrative hierarchy (0-3)
+- Automated member management with inactivity tracking
+- Progressive strike system with configurable penalties
+- Role-based moderation filters
+Path: Web/controllers/dashboard/administration.js
 
-4. Activity Monitoring (75/100)
-- Server activity tracking with metrics
-- Public server listing functionality
-- Custom filtering algorithms
-- Message counting and monitoring
-- Located in Web/controllers/activity.js
+4. Community Management
+- Virtual currency and points distribution
+- Server-wide statistics and leaderboards
+- Custom rank progression system
+- Poll and giveaway automation
+Path: Commands/Public/points.js
 
-5. Content Management System (70/100)
-- Collaborative wiki with version control
-- Blog management with reactions
-- Change tracking and history
-- Located in Web/controllers/blog.js and wiki.js
+Key Integration Points:
+- Activity scoring feeds into moderation automation
+- Extension system integrates with permission hierarchy
+- Points system connects with rank progression
+- Statistics drive automated moderation actions
 
-Integration Architecture:
+Business Critical Workflows:
+1. Server Activity Monitoring
+- Member engagement tracking
+- Message pattern analysis
+- Voice channel participation metrics
+- Automated response triggers
 
-The platform centers around the Extension Management System, which integrates with:
-- Authorization Framework for access control
-- Dashboard Management for configuration
-- Activity Monitoring for usage metrics
+2. Extension Deployment
+- Validation pipeline
+- Permission verification
+- Version management 
+- Runtime sandboxing
 
-Business workflows connect through the Dashboard Data Management layer, which coordinates:
-- Extension deployment
-- Server configurations
-- Activity tracking
-- Content publishing
+3. Moderation Automation
+- Strike accumulation
+- Penalty enforcement
+- Appeal management
+- Audit logging
 
-The core business value derives from specialized Discord bot management capabilities, particularly the custom extension marketplace and multi-tiered authorization system.
+The system represents a comprehensive Discord server management solution with tight integration between activity tracking, automated moderation, and extensible command handling.
 
 $END$
 

@@ -1,7 +1,7 @@
 const { ObjectId } = require("mongodb");
 const Document = require("./Document");
 const Cursor = require("./Cursor");
-const { Error: GABError } = require("../Internals/Errors");
+const { Error: SkynetError } = require("../Internals/Errors");
 
 module.exports = class Model {
 	/**

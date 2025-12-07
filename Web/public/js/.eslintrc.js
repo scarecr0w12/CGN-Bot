@@ -5,9 +5,9 @@ module.exports = {
 		jquery: true,
 	},
 	globals: {
-		GAwesomeUtil: true,
-		GAwesomeData: true,
-		GAwesomePaths: true,
+		SkynetUtil: true,
+		SkynetData: true,
+		SkynetPaths: true,
 		Turbolinks: true,
 		cm: true,
 		CodeMirror: true,

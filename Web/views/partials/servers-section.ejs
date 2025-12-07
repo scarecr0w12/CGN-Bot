@@ -1,9 +1,9 @@
 <script>
-GAwesomeUtil.searchServers = (query) => {
+SkynetUtil.searchServers = (query) => {
 	Turbolinks.visit("/activity/servers?q=" + encodeURIComponent(query) + "&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>");
 };
 
-GAwesomeUtil.showActivitySelections = () => {
+SkynetUtil.showActivitySelections = () => {
 	document.getElementById("category-select").value = "<%= pageData.selectedCategory %>";
 	document.getElementById("public-select").value = "<%= pageData.isPublicOnly %>";
 	document.getElementById("sort-select").value = "<%= pageData.sortOrder %>";
@@ -50,7 +50,7 @@ GAwesomeUtil.showActivitySelections = () => {
 		<div class="level-item">
 			<div class="field has-addons">
 				<div class="control">
-				<a id="grid-layout-button" class="button" onclick="GAwesomeUtil.switchActivityLayout('grid');">
+				<a id="grid-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('grid');">
 					<span class="icon is-small">
 						<i class="fa fa-th"></i>
 					</span>
@@ -58,7 +58,7 @@ GAwesomeUtil.showActivitySelections = () => {
 				</a>
 				</div>
 				<div class="control">
-				<a id="list-layout-button" class="button" onclick="GAwesomeUtil.switchActivityLayout('list');">
+				<a id="list-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('list');">
 					<span class="icon is-small">
 						<i class="fa fa-th-list"></i>
 					</span>
@@ -104,7 +104,7 @@ GAwesomeUtil.showActivitySelections = () => {
 									</div>
 									<% if (isMaintainer) { %>
 										<div class="column is-one-fifth">
-											<button class="delete is-pulled-right" onclick="GAwesomeUtil.activityBanGuild('<%= server.id %>');" title='Remove "<%= server.name %>" from the activity page'></button>
+											<button class="delete is-pulled-right" onclick="SkynetUtil.activityBanGuild('<%= server.id %>');" title='Remove "<%= server.name %>" from the activity page'></button>
 										</div>
 									<% } %>
 								</div>

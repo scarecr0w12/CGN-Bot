@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git config --global user.email "gawesomebot@kingdgrizzle.ml"
-git config --global user.name "GAwesomeBot"
+git config --global user.email "jacob@thecorehosting.net"
+git config --global user.name "SkynetBot"
 
 git checkout indev-4.0.2
 git add -A

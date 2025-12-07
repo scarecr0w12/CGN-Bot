@@ -1,5 +1,5 @@
 const Query = require("./Query");
-const { Error: GABError } = require("../Internals/Errors");
+const { Error: SkynetError } = require("../Internals/Errors");
 
 const mpath = require("mpath");
 const { ObjectId } = require("mongodb");

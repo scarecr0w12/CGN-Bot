@@ -30,7 +30,7 @@
 					"new-role_id": $("#new-rank-role_id").val()
 				},
 				success: function() {
-					GAwesomeUtil.SFS();
+					SkynetUtil.SFS();
 					$("#form").submit();
 				    Turbolinks.visit('');
 				}
@@ -39,7 +39,7 @@
 	}
 	</script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -58,7 +58,7 @@
 							Ranks <strong>classify members by activity</strong> in both voice and text chat. Each rank you add will have a <strong>maximum activity score</strong> for members to have that rank before they receive the next-highest rank. Activity scores are calculated with this formula: <code>no. messages + minutes active on voice</code>. You can also set ranks to automatically assign a role on the server.
 						</div>
 					</article>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="field" style="overflow-x: scroll;">
                             <%- include("../partials/no-results", { isHidden: configData.ranks_list.length, isSearchQuery: false, description: "All the default ranks are gone! Fill out the form below to add your own rank." }) %>
 							<table class="table is-fullwidth<%= configData.ranks_list.length ? "" : " is-hidden" %>">
@@ -98,7 +98,7 @@
 											<%= rankDocument.members %>
 										</td>
 										<td>
-											<button class="button is-small is-danger" name="<%= rankDocument._id %>" onclick="GAwesomeUtil.dashboard.removeTableElement(this); return false;">
+											<button class="button is-small is-danger" name="<%= rankDocument._id %>" onclick="SkynetUtil.dashboard.removeTableElement(this); return false;">
 												<span>Remove</span>
 												<span class="icon is-small">
 													<i class="fa fa-times"></i>
@@ -109,7 +109,7 @@
 								<% }); %>
 								</tbody>
 							</table>
-							<button class="button is-danger" name="ranks_list-reset" onclick="GAwesomeUtil.isLoading(this); GAwesomeUtil.dashboard.post({ 'ranks_list-reset': true }).then(() => { GAwesomeUtil.isFinished(this); $('.ranks-member-count').html(0); }); return false;">
+							<button class="button is-danger" name="ranks_list-reset" onclick="SkynetUtil.isLoading(this); SkynetUtil.dashboard.post({ 'ranks_list-reset': true }).then(() => { SkynetUtil.isFinished(this); $('.ranks-member-count').html(0); }); return false;">
 								<span>Reset Everyone's Rank</span>
 								<span class="icon is-small">
 									<i class="fa fa-times"></i>

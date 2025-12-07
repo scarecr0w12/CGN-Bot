@@ -4,7 +4,7 @@ const { setupResource } = require("../helpers");
 const middleware = require("../middleware");
 const controllers = require("../controllers");
 
-// GAwesomeBot Data API
+// SkynetBot Data API
 module.exports = router => {
 	// Configure RateLimit
 	router.use("/api/", rateLimit({

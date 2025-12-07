@@ -16,7 +16,7 @@ window.bulma = () => {
 
 	$(".modal-background, .modal-close").click(function handler () {
 		if ($(this).parent().attr("id") === "installer-modal") return;
-		if ($(this).parent().hasClass("command-item-modal")) GAwesomeUtil.dashboard.updateCommandSettings($(this).parent(), $($(this).parent().data("target")));
+		if ($(this).parent().hasClass("command-item-modal")) SkynetUtil.dashboard.updateCommandSettings($(this).parent(), $($(this).parent().data("target")));
 		$("html").removeClass("is-clipped");
 		$(this).parent().removeClass("is-active");
 	});

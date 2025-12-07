@@ -4,7 +4,7 @@ const getCommandHelp = (name, type, usage, description) => [
 	`» ${type} Command **::** **${name}** «`,
 	type !== "PM" ? `\t**Description**: ${description || "No description provided."}` : null,
 	`\t**Usage**: \`${usage || "No usage information provided."}\``,
-	type === "public" ? `\tClick [**here**](https://github.com/GilbertGobbels/GAwesomeBot/wiki/Commands#${name}) for more info.` : null,
+	type === "public" ? `\tClick [**here**](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands#${name}) for more info.` : null,
 ].spliceNullElements().join("\n");
 
 module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMenuEmojis } }, { serverDocument }, msg, commandData) => {
@@ -84,18 +84,18 @@ module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMen
 		embeds: [{
 			color: Colors.INFO,
 			author: {
-				name: `Welcome to the GAwesomeBot help menu!`,
+				name: `Welcome to the SkynetBot help menu!`,
 			},
 			title: `This menu will show you all commands you can run!`,
 			description: [
 				`The prefix is shown in front of all commands, but in case you forgot, it is **${msg.guild.commandPrefix}**.`,
-				`For more information about any command, run \`${msg.guild.commandPrefix}help <command>\`, or head over to our [**wiki**](https://github.com/GilbertGobbels/GAwesomeBot/wiki/Commands).`,
-				`If you need support using GAwesomeBot or got any question, join our [**support server**](${configJS.discordLink})!`,
+				`For more information about any command, run \`${msg.guild.commandPrefix}help <command>\`, or head over to our [**wiki**](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands).`,
+				`If you need support using SkynetBot or got any question, join our [**support server**](${configJS.discordLink})!`,
 				``,
 				`Click a button to see a list of all commands in that category. Here is what each emoji represents:`,
 				``,
 				`ℹ️ **--** This info page`,
-				`🤖 **--** GAwesomeBot Commands`,
+				`🤖 **--** SkynetBot Commands`,
 				`🎪 **--** Fun Commands`,
 				`⚒ **--** Moderation Commands`,
 				`🎬 **--** Search & Media Commands`,
@@ -116,7 +116,7 @@ module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMen
 			[HelpMenuEmojis.gab]: {
 				embeds: [{
 					color: Colors.LIGHT_GREEN,
-					title: `GAwesomeBot 🤖`,
+					title: `SkynetBot 🤖`,
 					description: `\`\`\`css\n${pages[HelpMenuEmojis.gab]}\`\`\``,
 				}],
 			},

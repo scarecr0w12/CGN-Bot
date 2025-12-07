@@ -10,7 +10,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 					author: {
 						name: client.user.username,
 						icon_url: client.user.displayAvatarURL(),
-						url: "https://github.com/GilbertGobbels/GAwesomeBot",
+						url: "https://github.com/GilbertGobbels/SkynetBot",
 					},
 					description: "⌛ Fetching Data...",
 					footer: {
@@ -30,7 +30,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, msg, commandDat
 							author: {
 								name: client.user.username,
 								icon_url: client.user.displayAvatarURL(),
-								url: "https://github.com/GilbertGobbels/GAwesomeBot",
+								url: "https://github.com/GilbertGobbels/SkynetBot",
 							},
 							description: "Something went wrong while fetching server data!",
 							color: Colors.ERROR,

@@ -185,7 +185,7 @@ controllers.options.bot.post = async (req, res) => {
 	configJSON.activity.name = req.body.game;
 	configJSON.activity.type = req.body.type;
 	configJSON.activity.twitchURL = req.body.twitch;
-	if (req.body.game === "gawesomebot.com") {
+	if (req.body.game === "skynetbot.com") {
 		configJSON.activity.name = "default";
 	}
 	if (req.body.status) configJSON.status = req.body.status;
@@ -303,7 +303,7 @@ controllers.management.maintainers.post = async (req, res) => {
 		perms.forEach(perm => {
 			const value = req.body[perm];
 			[, perm] = perm.split("-");
-			if (configJSON.perms[perm] === 0 && process.env.GAB_HOST !== req.user.id) return;
+			if (configJSON.perms[perm] === 0 && process.env.SKYNET_HOST !== req.user.id) return;
 			switch (value) {
 				case "sudo":
 					configJSON.perms[perm] = 2;
@@ -398,7 +398,7 @@ controllers.management.version.post = async (req, res) => {
 controllers.management.version.socket = async socket => {
 	socket.on("disconnect", () => {
 		if (socket.isUpdateFinished || !socket.isUpdating) return;
-		logger.error("Lost connection to Updater client. Shutting down GAB in an attempt to resync states (⇀‸↼‶)");
+		logger.error("Lost connection to Updater client. Shutting down Skynet in an attempt to resync states (⇀‸↼‶)");
 		socket.route.router.app.client.IPC.send("shutdown", { err: true });
 	});
 	socket.on("download", async data => {
@@ -483,7 +483,7 @@ controllers.management.logs.socket = async socket => {
 		socket.emit("logs", data);
 	};
 
-	const tail = new Tail(path.join(__dirname, "../../logs/console.gawesomebot.log"), { useWatchFile: process.platform === "win32" });
+	const tail = new Tail(path.join(__dirname, "../../logs/console.skynetbot.log"), { useWatchFile: process.platform === "win32" });
 
 	tail.on("line", send);
 	tail.watch();

@@ -3,7 +3,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		msg.send({
 			embeds: [{
 				color: Colors.RESPONSE,
-				description: `You have **${userDocument.points}** GAwesomePoint${userDocument.points === 1 ? "" : "s"} ⭐`,
+				description: `You have **${userDocument.points}** SkynetPoint${userDocument.points === 1 ? "" : "s"} ⭐`,
 			}],
 		});
 	} else if (msg.suffix) {
@@ -12,7 +12,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			msg.send({
 				embeds: [{
 					color: Colors.SOFT_ERR,
-					description: `Don't be silly, bots can't have GAwesomePoints! 🤖`,
+					description: `Don't be silly, bots can't have SkynetPoints! 🤖`,
 				}],
 			});
 		} else if (member) {
@@ -21,7 +21,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			msg.send({
 				embeds: [{
 					color: Colors.RESPONSE,
-					description: `**@${client.getName(serverDocument, member)}** has ${targetUserDocument.points} GAwesomePoint${targetUserDocument.points === 1 ? "" : "s"} ⭐`,
+					description: `**@${client.getName(serverDocument, member)}** has ${targetUserDocument.points} SkynetPoint${targetUserDocument.points === 1 ? "" : "s"} ⭐`,
 				}],
 			});
 		} else {
@@ -39,14 +39,14 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			.exec();
 		const fields = userDocuments.map(targetUserDocument => ({
 			name: `**@${client.getName(serverDocument, msg.guild.members.cache.get(targetUserDocument._id))}:**`,
-			value: `${targetUserDocument.points} GAwesomePoint${targetUserDocument.points === 1 ? "" : "s"}`,
+			value: `${targetUserDocument.points} SkynetPoint${targetUserDocument.points === 1 ? "" : "s"}`,
 			inline: true,
 		}));
 		if (fields.length) {
 			msg.send({
 				embeds: [{
 					color: Colors.RESPONSE,
-					title: fields.length === 1 ? `Here is the only member with GAwesomePoints 🌟` : `Here are the ${fields.length} members with the most GAwesomePoints 🌟`,
+					title: fields.length === 1 ? `Here is the only member with SkynetPoints 🌟` : `Here are the ${fields.length} members with the most SkynetPoints 🌟`,
 					fields,
 				}],
 			});
@@ -54,7 +54,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			msg.send({
 				embeds: [{
 					color: Colors.SOFT_ERR,
-					description: "No one on this server has any GAwesomePoints! Use `+1` to upvote the previous message 🌠",
+					description: "No one on this server has any SkynetPoints! Use `+1` to upvote the previous message 🌠",
 				}],
 			});
 		}

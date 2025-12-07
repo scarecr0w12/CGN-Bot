@@ -1,5 +1,5 @@
 ---
-description: Documents extension marketplace workflow including validation, versioning and permissions for Discord bot extensions
+description: Specification for handling extension lifecycle, validation, versioning and permissions in the marketplace system
 trigger: model_decision
 ---
 
@@ -57,59 +57,40 @@ $END$
 
 # extension-management-flow
 
-The extension management system implements specialized workflows for managing Discord bot extensions:
+Importance Score: 85/100
 
-## Extension Management Core
-File: Web/controllers/extensions.js
-Importance Score: 90
+Extension Lifecycle Management:
 
-Key Business Logic:
-- Custom extension validation and approval workflow
-- Version compatibility verification system 
-- Code security scanning and sandboxing
-- Extension gallery with moderation states
-- Permission-based installation controls
+1. Extension States
+- Three primary states: gallery, queue, third-party
+- State transitions controlled by validation pipeline
+- Custom versioning system with semantic version enforcement
+- Installation validation with configuration requirements
 
-## Extension Execution Environment
-File: Internals/Extensions/ExtensionManager.js
-Importance Score: 85
+2. Permission Management
+- Multi-tier access control system for extension management
+- Role-based permissions for publishing and installation
+- Custom validation rules for extension capabilities
+- Maintainer privilege hierarchy with sudo mode
 
-Key Business Logic:
-- Sandboxed execution environment for user extensions
-- Scoped permission system controlling extension capabilities
-- Resource allocation and lifecycle management
-- Version control with acceptance states
-- Extension code integrity verification through hashing
+3. Extension Validation Pipeline
+- Custom validation workflow for new extensions
+- Version compatibility checking
+- Dependency resolution and conflict detection
+- Configuration schema validation
+- Security scanning for malicious code patterns
 
-## Extension Versioning System
-File: Web/helpers.js
-Importance Score: 80
+4. Extension Marketplace Integration
+- Gallery state management for public extensions
+- Queue system for pending approvals
+- Third-party extension tracking
+- Custom deployment pipeline for approved extensions
 
-Key Business Logic:
-- Multi-tier version compatibility checks
-- Extension type-specific validation (commands, keywords, timers, events)
-- Version acceptance state management
-- Scope-based permission controls
-- Extension marketplace categorization
+File Paths:
+/Web/controllers/extensions.js
+/Web/middleware/auth.js
 
-Core Workflows:
-1. Extension Submission:
-- Code validation and security scanning
-- Version compatibility verification
-- Automated testing in sandbox
-- Maintainer review queue
-
-2. Extension Installation:
-- Permission and compatibility checks
-- Server-specific configuration
-- Resource allocation validation
-- Installation state tracking
-
-3. Version Management:
-- Semantic versioning enforcement
-- Breaking change detection
-- Compatibility matrices
-- Update propagation control
+The extension management system implements a sophisticated workflow for handling extension lifecycles, with strong emphasis on security and validation. The permission system integrates with the broader platform authentication while providing extension-specific access controls.
 
 $END$
 

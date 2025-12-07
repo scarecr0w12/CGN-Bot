@@ -52,7 +52,7 @@ const host = (val, configJS, configJSON) => {
 	}
 	if (typeof val !== "string") val = val.toString();
 
-	process.env.GAB_HOST = val;
+	process.env.SKYNET_HOST = val;
 	sudo(val, configJS, configJSON);
 	logger.info(`User with Discord ID ${val} is The Host for the current Skynet session.`, { usrid: val });
 };

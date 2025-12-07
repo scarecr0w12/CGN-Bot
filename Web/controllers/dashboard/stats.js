@@ -91,7 +91,7 @@ controllers.points = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 
 	res.setPageData({
-		page: "admin-gawesome-points.ejs",
+		page: "admin-skynet-points.ejs",
 		channelData: getChannelData(svr),
 		commandDescriptions: {
 			points: client.getPublicCommandMetadata("points").description,

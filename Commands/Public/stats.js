@@ -81,7 +81,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			},
 		}).limit(5).exec();
 
-		const richestMembers = userDocuments ? userDocuments.map(a => `**@${client.getName(serverDocument, msg.guild.members.cache.get(a._id))}**: ${a.points} GAwesomePoint${a.points === 1 ? "" : "s"}`) : [];
+		const richestMembers = userDocuments ? userDocuments.map(a => `**@${client.getName(serverDocument, msg.guild.members.cache.get(a._id))}**: ${a.points} SkynetPoint${a.points === 1 ? "" : "s"}`) : [];
 
 		const fields = [];
 		fields.push({
@@ -103,7 +103,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 
 		msg.send({
 			embeds: [{
-				title: `This week's GAwesomeBot statistics for **${msg.guild.name}**`,
+				title: `This week's SkynetBot statistics for **${msg.guild.name}**`,
 				color: Colors.RESPONSE,
 				fields,
 			}],

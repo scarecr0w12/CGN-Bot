@@ -26,7 +26,7 @@ module.exports = async (req, { res }) => {
 	const userAmount = await req.app.client.users.totalCount;
 	let messageCount = 0;
 	let activeServers = guildAmount;
-	if (result) {
+	if (result && result.length > 0) {
 		messageCount = result[0].total;
 		activeServers = result[0].active;
 	}

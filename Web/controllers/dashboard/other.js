@@ -158,7 +158,7 @@ controllers.public = async (req, { res }) => {
 
 	res.setPageData({
 		page: "admin-public-data.ejs",
-		canUnban: configJSON.maintainers.includes(req.consolemember.user.id) || process.env.GAB_HOST === req.consolemember.user.id,
+		canUnban: configJSON.maintainers.includes(req.consolemember.user.id) || process.env.SKYNET_HOST === req.consolemember.user.id,
 	});
 	res.setConfigData({
 		public_data: serverDocument.config.public_data,

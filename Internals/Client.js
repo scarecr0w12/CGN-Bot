@@ -343,7 +343,7 @@ module.exports = class SkynetClient extends DJSClient {
 			case "eval": {
 				const value = configJSON.perms.eval;
 				switch (value) {
-					case 0: return process.env.GAB_HOST === user.id;
+					case 0: return process.env.SKYNET_HOST === user.id;
 					case 1: {
 						// Maintainers
 						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
@@ -361,7 +361,7 @@ module.exports = class SkynetClient extends DJSClient {
 			case "admin": {
 				const value = configJSON.perms.administration;
 				switch (value) {
-					case 0: return process.env.GAB_HOST === user.id;
+					case 0: return process.env.SKYNET_HOST === user.id;
 					case 1: {
 						// Maintainers
 						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
@@ -378,7 +378,7 @@ module.exports = class SkynetClient extends DJSClient {
 			case "shutdown": {
 				const value = configJSON.perms.shutdown;
 				switch (value) {
-					case 0: return process.env.GAB_HOST === user.id;
+					case 0: return process.env.SKYNET_HOST === user.id;
 					case 1: {
 						// Maintainers
 						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
@@ -506,7 +506,7 @@ module.exports = class SkynetClient extends DJSClient {
 				}
 			}
 
-			reject(new GABError("FAILED_TO_FIND", {}, "role", server, string));
+			reject(new SkynetError("FAILED_TO_FIND", {}, "role", server, string));
 		});
 	}
 
@@ -590,7 +590,7 @@ module.exports = class SkynetClient extends DJSClient {
 				}
 			}
 		} else {
-			throw new GABError("MISSING_ACTION_TYPE");
+			throw new SkynetError("MISSING_ACTION_TYPE");
 		}
 	}
 
@@ -659,7 +659,7 @@ module.exports = class SkynetClient extends DJSClient {
 									});
 								}
 							}
-							// Add 100 GAwesomePoints as reward
+							// Add 100 SkynetPoints as reward
 							if (serverDocument.config.commands.points.isEnabled && server.members.cache.size > 2) {
 								Users.findOne({ _id: member.id })
 									.then(async userDocument => {
@@ -718,7 +718,7 @@ module.exports = class SkynetClient extends DJSClient {
 		roleID = roleID ? roleID.id || roleID : null;
 		this.logMessage(serverDocument, LoggingLevels.INFO, `Handling a violation by member "${member.user.tag}"; ${adminMessage}`, null, member.id);
 
-		// Deduct 50 GAwesomePoints if necessary
+		// Deduct 50 SkynetPoints if necessary
 		if (serverDocument.config.commands.points.isEnabled) {
 			userQueryDocument.inc("points", -50);
 			await userDocument.save().catch(userErr => {
@@ -926,7 +926,7 @@ module.exports = class SkynetClient extends DJSClient {
 	}
 
 	/**
-	 * Check if a user is muted on a server, with or without overwrites
+	 * Checks if a user is muted on a server, with or without overwrites
 	 * @param {Discord.TextChannel} channel The channel to check this on
 	 * @param {Discord.GuildMember} member The member to check this on
 	 * @returns {Boolean} A boolean depending if the member is muted.

@@ -80,10 +80,10 @@ class VoteHandler extends BaseEvent {
 									msg.channel.send({
 										embeds: [{
 											color: Colors.SOFT_ERR,
-											description: `Hey ${msg.author}, you don't have enough GAwesomePoints to gild ${member}!`,
+											description: `Hey ${msg.author}, you don't have enough SkynetPoints to gild ${member}!`,
 										}],
 									}).catch(err => {
-										logger.debug(`Failed to send insufficient GAwesomePoints message.`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
+										logger.debug(`Failed to send insufficient SkynetPoints message.`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 									});
 								}
 							}

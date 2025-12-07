@@ -1,5 +1,5 @@
 ---
-description: Specification for the Discord bot's server activity scoring and ranking algorithm implementation
+description: Rules and documentation for server activity scoring algorithms, formulas and weighted calculations
 ---
 
 # === USER INSTRUCTIONS ===
@@ -50,36 +50,40 @@ $END$
 
 # activity-scoring-algorithm
 
-Server Activity Scoring System:
+The server activity scoring system implements a weighted calculation formula to determine server engagement levels:
 
-1. Message Activity Tracking
-Path: Web/controllers/activity.js
-- Server activity metric collection with customizable weighting
-- Message frequency analysis across channels
-- Active user participation scoring
-Importance Score: 85
+Core Formula:
+```javascript
+activity_score: {
+  $add: [
+    { $multiply: [1.5, "$member_count"] },
+    { $multiply: [0.5, "$messages_today", { $multiply: [0.005, "$member_count"] }] }
+  ]
+}
+```
 
-2. Server Activity Monitoring
-- Public server listing with activity-based sorting
-- Custom server filtering based on activity thresholds 
-- Real-time activity metric updates
-Importance Score: 75
+Key Components:
 
-3. Server Data Management 
-Path: Web/controllers/dashboard/index.js
-- Activity statistic processing for dashboard display
-- Caching system for server activity data
-- Server-specific configuration for activity tracking
-Importance Score: 80
+1. Member Weight Calculation
+- Base member count weighted at 1.5x multiplier
+- Additional 0.005x member count factor applied to message activity
+- Provides balanced emphasis on both total members and per-capita activity
 
-Core Activity Metrics:
-- Message volume with channel-specific weights
-- Active user participation rates
-- Server engagement scores
-- Public visibility ranking
-- Custom filtering algorithms
+2. Message Activity Scoring
+- Daily message count weighted at 0.5x base multiplier
+- Message weight scaled by member count factor
+- Prevents large servers from dominating purely through size
 
-The system places emphasis on accurate activity measurement while providing server administrators with customizable tracking options and public visibility controls.
+File Paths:
+- Web/controllers/activity.js (Primary scoring implementation)
+
+Importance Score: 85/100
+
+The scoring algorithm represents a unique approach to quantifying server engagement through:
+- Balanced weighting between size and activity metrics
+- Per-capita activity scaling
+- Member count influence on message weight calculations
+- Dynamic score adjustment based on daily activity patterns
 
 $END$
 

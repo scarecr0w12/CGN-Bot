@@ -103,11 +103,11 @@
 			<% } else { %>
 				<a href="/dashboard/<%= serverData.id %>/stats-points/ranks">Ranks</a>
 			<% } %>
-			<% if (currentPage === `/dashboard/${serverData.id}/stats-points/gawesome-points`) { %>
+			<% if (currentPage === `/dashboard/${serverData.id}/stats-points/skynet-points`) { %>
             <%- include('../partials/admin-sudo.ejs') %>
-			<a class="is-active" href="#">GAwesomePoints</a>
+			<a class="is-active" href="#">SkynetPoints</a>
 			<% } else { %>
-				<a href="/dashboard/<%= serverData.id %>/stats-points/gawesome-points">GAwesomePoints</a>
+				<a href="/dashboard/<%= serverData.id %>/stats-points/skynet-points">SkynetPoints</a>
 			<% } %>
 		</li>
 	</ul>

@@ -8,6 +8,8 @@ services:
     ports:
       - "8081:8080"
       - "8443:443"
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=mongodb://mongo:27017/
       - DATABASE_NAME=SkynetBot

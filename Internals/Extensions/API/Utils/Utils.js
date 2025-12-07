@@ -122,7 +122,7 @@ class Utils {
 	/**
 	 * Serialize an Error returned from Discord.js for usage within the ECA.
 	 * @param {Error} err - The error to serialize
-	 * @throws {GABError}
+	 * @throws {SkynetError}
 	 */
 	static serializeError (err) {
 		throw new SkynetError("DISCORD_ERROR", err);

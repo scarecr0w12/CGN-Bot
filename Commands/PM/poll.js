@@ -10,7 +10,7 @@ module.exports = async (main, msg, commandData) => {
 					author: {
 						name: main.client.user.username,
 						icon_url: main.client.user.displayAvatarURL(),
-						url: "https://github.com/GilbertGobbels/GAwesomeBot",
+						url: "https://github.com/GilbertGobbels/SkynetBot",
 					},
 					description: "⌛ Preparing Poll...",
 					footer: {
@@ -28,7 +28,7 @@ module.exports = async (main, msg, commandData) => {
 						author: {
 							name: main.client.user.username,
 							icon_url: main.client.user.displayAvatarURL(),
-							url: "https://github.com/GilbertGobbels/GAwesomeBot",
+							url: "https://github.com/GilbertGobbels/SkynetBot",
 						},
 						description: "Something went wrong while fetching server data!",
 						color: 0xFF0000,
@@ -47,7 +47,7 @@ module.exports = async (main, msg, commandData) => {
 			author: {
 				name: main.client.user.username,
 				icon_url: main.client.user.displayAvatarURL(),
-				url: "https://github.com/GilbertGobbels/GAwesomeBot",
+				url: "https://github.com/GilbertGobbels/SkynetBot",
 			},
 			color: 0xFFFF00,
 			description: `🗯 Correct usage is: \`${commandData.name} ${commandData.usage}\``,

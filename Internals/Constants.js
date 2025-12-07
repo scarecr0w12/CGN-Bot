@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 
 /**
- * Constant hardcoded values used by GAB
+ * Constant hardcoded values used by Skynet
  * @namespace
  */
 const Constants = exports;
@@ -35,7 +35,7 @@ Constants.ModLogEntries = {
 };
 
 /**
- * Levels for GABClient.logMessage
+ * Levels for SkynetClient.logMessage
  * @type {{INFO: string, ERROR: string, WARN: string, SAVE: string}}
  */
 Constants.LoggingLevels = {
@@ -407,7 +407,7 @@ Constants.NumberEmojis = {
 /**
  * Emojis that are used in the help menu
  * @property {string} info - Main menu
- * @property {string} gab - GAB commands, like ping
+ * @property {string} skynet - Skynet commands, like ping
  * @property {string} fun - Fun commands
  * @property {string} mod - ~~Communism~~ Moderation commands
  * @property {string} media - Search and Media commands
@@ -418,7 +418,7 @@ Constants.NumberEmojis = {
  */
 Constants.HelpMenuEmojis = {
 	info: "ℹ",
-	gab: "🤖",
+	skynet: "🤖",
 	fun: "🎪",
 	mod: "⚒",
 	media: "🎬",
@@ -436,7 +436,7 @@ Constants.HelpMenuEmojis = {
 Constants.CategoryEmojiMap = {
 	"Extensions ⚙️": "⚙",
 	"Fun 🎪": "🎪",
-	"GAwesomeBot 🤖": "🤖",
+	"SkynetBot 🤖": "🤖",
 	"Moderation ⚒": "⚒",
 	"NSFW 👹": "👹",
 	"Search & Media 🎬": "🎬",
@@ -471,7 +471,7 @@ Constants.Templates = {
 };
 
 /**
- * An object of API endpoints GAB interacts with
+ * An object of API endpoints Skynet interacts with
  * @type {{ANIME: (function(*=): string), CATFACT: (function(*): string), DOGFACT: (function(*): string), E621: (function(*=): string), FORTUNE: (function(*=): string), GIPHY: (function(*, *=, *): string), JOKE: (function(): string), NUMFACT: (function(*): string), REDDIT: (function(*): string), SPOOPYLINK: (function(*): string), URBAN: (function(*=, *=): string)}}
  */
 Constants.APIs = {
@@ -496,7 +496,7 @@ Constants.APIs = {
 };
 
 /**
- * Endpoints of GAB's CENTRAL API. Changing this value is not recommended and will almost certainly cause major issues.
+ * Endpoints of Skynet's CENTRAL API. Changing this value is not recommended and will almost certainly cause major issues.
  * @type {string}
  */
 Constants.CENTRAL = {

@@ -5,12 +5,12 @@
 	<%- include('../partials/head') %>
 
 	<script>
-		GAwesomeData.username = "<%= pageData.exampleUsername %>";
-		GAwesomeData.nickname = "<%= pageData.exampleNickname %>";
-		GAwesomeData.discriminator = "<%= pageData.exampleDiscriminator %>";
+		SkynetData.username = "<%= pageData.exampleUsername %>";
+		SkynetData.nickname = "<%= pageData.exampleNickname %>";
+		SkynetData.discriminator = "<%= pageData.exampleDiscriminator %>";
 	</script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -31,7 +31,7 @@
 							</div>
 						</div>
 					</article>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="box hero is-small">
 							<div class="hero-body">
 								<div class="has-text-centered">

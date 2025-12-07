@@ -1,8 +1,8 @@
 /* eslint-disable max-len */
-const { Traffic, GAwesomeClient } = require("./Modules");
+const { Traffic, SkynetClient } = require("./Modules");
 const { Boot, Sharder } = require("./Internals");
 const { Stopwatch } = require("./Modules/Utils");
-const centralClient = new GAwesomeClient(null);
+const centralClient = new SkynetClient(null);
 
 const database = require("./Database/Driver.js");
 const { loadConfigs } = require("./Configurations/env.js");
@@ -28,17 +28,17 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 
 			logger.silly("Confirming auth.js config values.");
 			if (Object.values(auth.tokens).some(token => token === "")) {
-				logger.warn("You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all GAB features function!");
+				logger.warn("You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!");
 				configWarnings.push("In auth.js, some values have not been filled in correctly. Some commands may not function as expected.");
 			}
 
 			logger.silly("Confirming config.js config values.");
 			if (!configJS.hostingURL || !configJS.oauthLink || (typeof configJS.hostingURL || typeof configJS.oauthLink) !== "string") {
-				logger.warn("Some config.js values have not been configured correctly. GAB may be harder to reach by users.");
+				logger.warn("Some config.js values have not been configured correctly. Skynet may be harder to reach by users.");
 				configWarnings.push("The config.js values hostingURL and/or oauthLink are malformed or empty.");
 			}
 			if (!configJS.secret || !configJS.serverIP || (typeof configJS.secret || typeof configJS.serverIP) !== "string" || !configJS.httpPort || !configJS.httpsPort) {
-				logger.warn("Some config.js values have not been configured correclty. GAB's Web Interface may not work as intended.");
+				logger.warn("Some config.js values have not been configured correclty. Skynet's Web Interface may not work as intended.");
 				configWarnings.push("The config.js values secret, serverIP, httpPort and/or httpsPort are malformed or empty.");
 			}
 			if (configJS.secret === "vFEvmrQl811q2E8CZelg4438l9YFwAYd") {
@@ -46,7 +46,7 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 				configWarnings.push("Your config.js secret value has not been reconfigured. This value is public!");
 			}
 			if ((configJS.httpPort !== "80" || configJS.httpsPort !== "443") && !process.argv.includes("-p") && !process.argv.includes("--proxy")) {
-				logger.warn("You are running GAwesomeBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart GAwesomeBot with the '--proxy' argument.");
+				logger.warn("You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.");
 			}
 
 			logger.silly("Confirming config.json values.");
@@ -54,18 +54,18 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 			try {
 				localVersion = await centralClient.API("versions").branch(configJSON.branch).get(configJSON.version);
 			} catch (err) {
-				logger.error(`Error while fetching GAwesomeBot version metadata.`, {}, err);
+				logger.error(`Error while fetching SkynetBot version metadata.`, {}, err);
 				localVersion = {};
 			}
 			if (!localVersion.valid) {
-				logger.warn(`GAB version ${configJSON.version} was not found on branch ${configJSON.branch}, you may need to reinstall GAB in order to enable Versioning.`);
-				configWarnings.push(`GAwesomeBot ${configJSON.version} is not a valid version on branch ${configJSON.branch}. Versioning has been disabled to avoid update conflicts.`);
+				logger.warn(`Skynet version ${configJSON.version} was not found on branch ${configJSON.branch}, you may need to reinstall Skynet in order to enable Versioning.`);
+				configWarnings.push(`SkynetBot ${configJSON.version} is not a valid version on branch ${configJSON.branch}. Versioning has been disabled to avoid update conflicts.`);
 			}
 
 			logger.silly("Confirming environment setup.");
 			if (process.env.NODE_ENV !== "production") {
-				logger.warn("GAB is running in development mode, this might impact web interface performance. In order to run GAB in production mode, please set the NODE_ENV environment var to production.");
-				configWarnings.push("GAwesomeBot is running in development mode. Set the NODE_ENV environment variable to 'production' to dismiss this warning.");
+				logger.warn("Skynet is running in development mode, this might impact web interface performance. In order to run Skynet in production mode, please set the NODE_ENV environment var to production.");
+				configWarnings.push("SkynetBot is running in development mode. Set the NODE_ENV environment variable to 'production' to dismiss this warning.");
 			}
 
 			logger.silly("Confirming clientToken config value.");
@@ -89,7 +89,7 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 				logger.info(`Getting the recommended shards from Discord...`);
 				const { fetchRecommendedShardCount } = require("discord.js");
 				const result = await fetchRecommendedShardCount(auth.discord.clientToken);
-				logger.info(`GAwesomeBot will spawn ${result} shard(s) as recommended by Discord.`, { shards: result });
+				logger.info(`SkynetBot will spawn ${result} shard(s) as recommended by Discord.`, { shards: result });
 				configJS.shardTotal = result;
 			}
 		}
@@ -316,15 +316,15 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 			// Shard requests all shards to be marked Unavailable
 			sharder.IPC.on("updating", (msg, callback) => sharder.IPC.send("updating", msg, "*").then(callback));
 
-			// Shard requests GAB to shutdown
+			// Shard requests Skynet to shutdown
 			sharder.IPC.on("shutdown", async msg => {
 				if (msg.soft) {
 					if (msg.err) logger.error(`A critical error occurred within a worker, all workers must restart.`);
 					else logger.info(`All workers are being restarted. Expect some lag!`);
 					sharder.shards.forEach(shard => shard.worker.kill());
 				} else {
-					if (msg.err) logger.error(`A critical error occurred within a worker, the master can no longer operate; GAB is shutting down.`);
-					else logger.info(`GAB is shutting down.`);
+					if (msg.err) logger.error(`A critical error occurred within a worker, the master can no longer operate; Skynet is shutting down.`);
+					else logger.info(`Skynet is shutting down.`);
 					sharder.shutdown = true;
 					sharder.cluster.disconnect();
 					process.exit(msg.err ? 1 : 0);

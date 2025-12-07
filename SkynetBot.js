@@ -231,7 +231,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			COMPETING: ActivityType.Competing,
 		};
 		const activity = {};
-		if (!payload.game || payload.game === "gawesomebot.com") activity.name = "https://gawesomebot.com | Shard {shard}".format({ shard: client.shardID });
+		if (!payload.game || payload.game === "skynetbot.net") activity.name = "https://skynetbot.net | Shard {shard}".format({ shard: client.shardID });
 		else activity.name = payload.game.format({ shard: client.shardID, totalShards: client.shard.count });
 		activity.type = activityTypeMap[payload.type] || ActivityType.Playing;
 		activity.url = payload.type === "STREAMING" ? payload.twitchURL : null;

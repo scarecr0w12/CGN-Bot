@@ -22,7 +22,7 @@
 		}
 
 		if(newTagName.val() && newTagContent.val()) {
-			GAwesomeData.HUM = true;
+			SkynetData.HUM = true;
 			$.ajax({
 				type: "POST",
 				url: "<%= currentPage %>",
@@ -32,7 +32,7 @@
 					"new-content": newTagContent.val()
 				},
 				success: function() {
-					GAwesomeData.HUM = true;
+					SkynetData.HUM = true;
 				  	Turbolinks.visit('');
 				}
 			});
@@ -40,7 +40,7 @@
 	}
 	</script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -59,7 +59,7 @@
 							Skynet comes with a <strong>robust tag system</strong> that allows you to save <strong>snippets of text</strong>, identified by a unique label. They're useful for links useful in your server, funny quotes, or temporary notes. You can designate some tags as commands, making them accessible as normal commands using the usual syntax. Locking a tag prevents the tag from being removed using the <code>tag</code> command, admins excluded.
 						</div>
 					</article>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<h4 class="subtitle is-4">
 							General
 						</h4>
@@ -157,7 +157,7 @@
 													</p>
 												</td>
 												<td>
-													<button class="button is-small is-danger" name="<%= tag._id %>" onclick="GAwesomeUtil.dashboard.removeTableElement(this); return false;">
+													<button class="button is-small is-danger" name="<%= tag._id %>" onclick="SkynetUtil.dashboard.removeTableElement(this); return false;">
 														<span>Remove</span>
 														<span class="icon is-small">
 															<i class="fa fa-times"></i>

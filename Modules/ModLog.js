@@ -92,7 +92,7 @@ module.exports = class ModLog {
 	 * @param {Guild} guild
 	 * @param {number} id
 	 * @param {ModLogEntryData} data
-	 * @returns {Promise<number|GABError>} The numeric ID of the ModLog Entry updated, or an error if an expected exception occurred
+	 * @returns {Promise<number|SkynetError>} The numeric ID of the ModLog Entry updated, or an error if an expected exception occurred
 	 */
 	static async update (guild, id, data) {
 		const serverDocument = await Servers.findOne(guild.id);

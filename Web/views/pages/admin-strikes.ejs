@@ -30,7 +30,7 @@
 					"new-reason": newStrikeReason.val()
 				},
 				success: function() {
-					GAwesomeUtil.SFS();
+					SkynetUtil.SFS();
 				  Turbolinks.visit('');
 				}
 			});
@@ -65,7 +65,7 @@
 	}
 	</script>
 </head>
-<body onload="GAwesomeUtil.SFS();">
+<body onload="SkynetUtil.SFS();">
 	<%- include('../partials/dashboard-header') %>
 	<%- include('../partials/dashboard-socket-updates') %>
 
@@ -86,7 +86,7 @@
 							</div>
 						</div>
 					</article>
-					<form id="form" onsubmit="GAwesomeUtil.submitForm(); Turbolinks.visit(''); return false;">
+					<form id="form" onsubmit="SkynetUtil.submitForm(); Turbolinks.visit(''); return false;">
 						<div class="field" style="overflow-x: scroll;">
 							<% if (configData.strikes.length > 0) { %>
 							<table class="table is-fullwidth">
@@ -130,7 +130,7 @@
 											</div>
 											<div class="control">
 											<input type="checkbox" id="strikes-<%= strike.id %>-removeall" name="strikes-<%= strike.id %>-removeall" style="display: none;">
-											<button class="button is-small is-danger" name="strikes-<%= strike.id %>-removeall" onclick="$('#strikes-<%= strike.id %>-removeall').attr('checked', true); GAwesomeUtil.SFS();">
+											<button class="button is-small is-danger" name="strikes-<%= strike.id %>-removeall" onclick="$('#strikes-<%= strike.id %>-removeall').attr('checked', true); SkynetUtil.SFS();">
 												<span>Remove All</span>
 												<span class="icon is-small">
 													<i class="fa fa-times"></i>
@@ -242,7 +242,7 @@
 				</div>
 			</div>
 		</div>
-		<script>GAwesomeUtil.setUserAutocomplete('<%= serverData.id %>');</script>
+		<script>SkynetUtil.setUserAutocomplete('<%= serverData.id %>');</script>
 	</section>
 
 	<%- include('../partials/footer') %>
