@@ -1,4 +1,4 @@
-const RateLimit = require("express-rate-limit");
+const { rateLimit } = require("express-rate-limit");
 
 const { setupResource } = require("../helpers");
 const middleware = require("../middleware");
@@ -7,7 +7,7 @@ const controllers = require("../controllers");
 // GAwesomeBot Data API
 module.exports = router => {
 	// Configure RateLimit
-	router.use("/api/", new RateLimit({
+	router.use("/api/", rateLimit({
 		windowMs: 3600000,
 		max: 150,
 		delayMs: 0,

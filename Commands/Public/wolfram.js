@@ -1,5 +1,6 @@
 const fetch = require("../../Modules/Utils/ChainFetchShim");
-const { tokens: { wolframAppID } } = require("../../Configurations/auth");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth: { tokens: { wolframAppID } } } = loadConfigs();
 
 module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text } }, documents, msg, commandData) => {
 	if (!msg.suffix) {

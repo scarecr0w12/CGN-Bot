@@ -1,12 +1,13 @@
-const { Client: DJSClient, Collection, ChannelType } = require("discord.js");
+const { Client: DJSClient, Collection, ChannelType, MessageType } = require("discord.js");
 const ProcessAsPromised = require("process-as-promised");
 const reload = require("require-reload")(require);
 const dbl = require("dblposter");
-const { readdir } = require("fs-nextra");
+const { readdir } = require("fs/promises");
 const { join } = require("path");
 
 const commands = require("../Configurations/commands.js");
-const auth = require("../Configurations/auth.js");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth } = loadConfigs();
 const Timeouts = require("../Modules/Timeouts/index");
 const { RemoveFormatting } = require("../Modules/Utils/index");
 const {
@@ -40,6 +41,9 @@ module.exports = class GABClient extends DJSClient {
 
 		// Store MOTD timers, and cancel accordingly
 		this.MOTDTimers = new Collection();
+		// Track timers/intervals so they can be cleaned up safely
+		this._timeouts = new Set();
+		this._intervals = new Set();
 
 		this.shardID = process.env.SHARDS;
 
@@ -885,7 +889,7 @@ module.exports = class GABClient extends DJSClient {
 	getUserBotAdmin (server, serverDocument, member) {
 		if (!server || !serverDocument || !member) return -1;
 
-		if (server.ownerID === member.user.id) return 3;
+		if (server.ownerId === member.user.id) return 3;
 
 		let adminLevel = 0;
 		let { roles } = member;

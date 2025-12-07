@@ -23,7 +23,11 @@ const messageHandler = (guild, settings, respond) => {
 		payload = guild.toJSON();
 		payload.memberList = payload.members;
 		payload.members = {};
-		payload.channels = guild.channels.toJSON();
+		payload.channels = guild.channels && guild.channels.cache ? guild.channels.cache.map(ch => ch.toJSON ? ch.toJSON() : {
+			id: ch.id,
+			name: ch.name,
+			type: ch.type,
+		}) : [];
 	}
 
 	if (settings.resolve && settings.resolve.constructor === Array) {
@@ -38,7 +42,7 @@ const messageHandler = (guild, settings, respond) => {
 	if (settings.fullResolveMembers && settings.fullResolveMembers.constructor === Array) {
 		if (!payload.members) payload.members = {};
 		settings.fullResolveMembers.forEach(member => {
-			const rawMember = member === "OWNER" ? guild.owner : guild.members.cache.get(member);
+			const rawMember = member === "OWNER" ? guild.members.cache.get(guild.ownerId) : guild.members.cache.get(member);
 			if (rawMember) {
 				payload.members[rawMember.id] = rawMember.toJSON();
 				payload.members[rawMember.id].user = rawMember.user.toJSON();

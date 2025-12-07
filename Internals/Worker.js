@@ -6,8 +6,9 @@ global.logger = new (require("./Logger"))(`Shard ${Number(process.env.SHARDS)} W
 require("../Modules/Utils/ObjectDefines")();
 
 const { WorkerCommands: { MATHJS: MathJSCommands } } = require("./Constants");
-const configJS = require("../Configurations/config.js");
-const auth = require("../Configurations/auth.js");
+const { GatewayIntentBits, Partials } = require("discord.js");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth, configJS } = loadConfigs();
 const Emoji = require("../Modules/Emoji/Emoji");
 const ExtensionManager = require("./Extensions");
 
@@ -32,6 +33,27 @@ const extensionManager = new ExtensionManager({
 	database: configJS.database,
 	shards: parseInt(process.env.SHARDS),
 	shardCount: parseInt(process.env.SHARD_COUNT),
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildModeration,
+		GatewayIntentBits.GuildEmojisAndStickers,
+		GatewayIntentBits.GuildIntegrations,
+		GatewayIntentBits.GuildWebhooks,
+		GatewayIntentBits.GuildInvites,
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.GuildPresences,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.DirectMessageReactions,
+		GatewayIntentBits.MessageContent,
+	],
+	partials: [
+		Partials.Message,
+		Partials.Channel,
+		Partials.Reaction,
+	],
 });
 
 // #region Math

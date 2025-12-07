@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GAwesomeBot: the best Discord bot!</title>
-	<% include ../partials/head %>
+	<title>Skynet: the best Discord bot!</title>
+	<%- include("../partials/head") %>
 
 	<style type="text/css">
 	@media screen and (max-width: 768px) {
@@ -20,13 +20,13 @@
 <body>
 	<section id="header" class="main-header-section hero is-primary is-fullheight is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include("../partials/header") %>
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
-				<img src="/static/img/icon.png" style="border-radius: 100%;width:200px;">
+				<img src="/static/img/logo.png" style="border-radius: 100%;width:200px;">
 				<h1 id="gawesomebot-title" class="title is-1 is-size-3-mobile" style="font-family: Montserrat;">
-					<span style="display: inline-block;">GAwesomeBot</span>
+					<span style="display: inline-block;">Skynet</span>
 				</h1>
 				<h2 id="gawesomebot-subtitle" class="title is-2 is-size-4-mobile">
 					The best <img id="gawesomebot-discord" src="/static/img/discord-logo.png" style="vertical-align: middle;padding-bottom: 4px;"> bot!
@@ -231,9 +231,9 @@
 						<div class="tile is-parent">
 							<div class="tile is-child">
 								<p class="title is-2">Increase <strong>activity</strong> on <strong>your</strong> server</p>
-								<p class="subtitle is-4">GAwesomeBot provides tons of <strong>in-chat tools</strong>.</p>
+								<p class="subtitle is-4">Skynet provides tons of <strong>in-chat tools</strong>.</p>
 								<p>
-									Whether your server has 5 members or 5000, you can rely on GAwesomeBot to make it enjoyable while doing a great job of moderating annoying people. We've included plenty of powerful, customizable commands as well as a robust extension system, making GAwesomeBot the only bot you'll need for an awesome Discord experience.
+									Whether your server has 5 members or 5000, you can rely on Skynet to make it enjoyable while doing a great job of moderating annoying people. We've included plenty of powerful, customizable commands as well as a robust extension system, making Skynet the only bot you'll need for an awesome Discord experience.
 								</p>
 							</div>
 						</div>
@@ -358,7 +358,7 @@
 			<div class="container has-text-centered">
 				<h2 class="subtitle is-2">
 					<% if (pageData.roundedServerCount === 0) { pageData.roundedServerCount = pageData.rawServerCount } %>
-					There's a reason over <strong><%= pageData.roundedServerCount %></strong> servers trust GAwesomeBot.
+					There's a reason over <strong><%= pageData.roundedServerCount %></strong> servers trust Skynet.
 				</h2>
 				<h3 class="title is-4">
 					It's fun, easy-to-use, and feature-packed.
@@ -385,13 +385,13 @@
 							<div class="card" style="text-align: left;">
 								<div class="card-image">
 									<figure class="image is-square">
-										<img class="developer-card-icon" src="/static/img/gilbert.png" alt="">
+										<img class="developer-card-icon" src="/static/img/logo.png" alt="">
 									</figure>
 								</div>
 								<div class="card-content">
 									<div class="media">
 										<div class="media-content">
-											<p class="title is-3 developer-card-name">Gilbert Gobbels</p>
+											<p class="title is-3 developer-card-name">Scarecr0w12</p>
 											<p class="subtitle is-5 developer-card-role">Project Lead, Developer</p>
 										</div>
 									</div>
@@ -400,59 +400,9 @@
 											<i class="fa fa-cog"></i>
 										</span>
 										<br>
-										<a href="https://github.com/GilbertGobbels">GitHub</a>
+										<a href="https://github.com/Scarecr0w12">GitHub</a>
 										&nbsp;
 										<a href="https://twitter.com/GG142_">Twitter</a>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="column is-one-third">
-							<div class="card" style="text-align: left;">
-								<div class="card-image">
-									<figure class="image is-square">
-										<img class="developer-card-icon" src="/static/img/vlad.png" alt="">
-									</figure>
-								</div>
-								<div class="card-content">
-									<div class="media">
-										<div class="media-content">
-											<p class="title is-3 developer-card-name">King - Vlad</p>
-											<p class="subtitle is-5 developer-card-role">Developer, Support</p>
-										</div>
-									</div>
-
-									<div class="content">
-										Command Wizard <span class="icon">
-											<i class="fa fa-file-text"></i>
-										</span>
-										<br>
-										<a href="https://github.com/KingDGrizzle">GitHub</a>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="column is-one-third">
-							<div class="card" style="text-align: left;">
-								<div class="card-image">
-									<figure class="image is-square">
-										<img class="developer-card-icon" src="/static/img/hilbert.png" alt="">
-									</figure>
-								</div>
-								<div class="card-content">
-									<div class="media">
-										<div class="media-content">
-											<p class="title is-3 developer-card-name" ondblclick="if (this.innerHTML=='HilbertGilbertson') {this.innerHTML = 'GilbertHilbertson'} else {this.innerHTML = 'HilbertGilbertson'}">HilbertGilbertson</p>
-											<p class="subtitle is-5 developer-card-role">Contributor, Support, Wiki</p>
-										</div>
-									</div>
-
-									<div class="content">
-										I refuse to be defined by a quote <span class="icon">
-											<i class="fa fa-question-circle"></i>
-										</span>
-										<br>
-										<a href="https://github.com/HilbertGilbertson">GitHub</a>
 									</div>
 								</div>
 							</div>
@@ -476,10 +426,10 @@
 						<a class="button is-dark is-medium" href="https://discord.gg/gDtzaS2" style="background-color: #7289da;">
 							Discord
 						</a>
-						<a class="button is-light is-medium" href="https://github.com/GilbertGobbels/GAwesomeBot" style="background-color: #fafafa;">
+						<a class="button is-light is-medium" href="https://github.com/Scarecr0w12/CGN-Bot" style="background-color: #fafafa;">
 							GitHub
 						</a>
-						<a class="button is-info is-medium" href="https://twitter.com/GAwesomeBot" style="background-color: #1da1f2;">
+						<a class="button is-info is-medium" href="https://twitter.com/Skynet" style="background-color: #1da1f2;">
 							Twitter
 						</a>
 					</p>
@@ -489,7 +439,7 @@
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include("../partials/footer") %>
+	<%- include("../partials/scroll-top-button") %>
 </body>
 </html>

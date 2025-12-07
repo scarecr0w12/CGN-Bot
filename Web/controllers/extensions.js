@@ -50,7 +50,7 @@ controllers.gallery = async (req, { res }) => {
 			const galleryDocuments = await Gallery.find(matchCriteria).sort({ featured: -1, points: -1, last_updated: -1 }).skip(count * (page - 1))
 				.limit(count)
 				.exec();
-			const pageTitle = `${extensionState.charAt(0).toUpperCase() + extensionState.slice(1)} - GAwesomeBot Extensions`;
+			const pageTitle = `${extensionState.charAt(0).toUpperCase() + extensionState.slice(1)} - Skynet Extensions`;
 			const extensionData = await Promise.all(galleryDocuments.filter(galleryDocument => (galleryDocument.published_version !== null && !isNaN(galleryDocument.published_version)) ||
 				extensionState === "queue")
 				.map(a => parsers.extensionData(req, a, extensionState === "queue" ? a.version : a.published_version)));
@@ -215,7 +215,7 @@ controllers.my = async (req, { res }) => {
 
 			res.setPageData({
 				page: "extensions.ejs",
-				pageTitle: "My GAwesomeBot Extensions",
+				pageTitle: "My Skynet Extensions",
 				serverData: {
 					id: req.user.id,
 				},
@@ -240,7 +240,7 @@ controllers.builder = async (req, { res }) => {
 
 			res.setPageData({
 				page: "extensions.ejs",
-				pageTitle: `${extensionData.name ? `${extensionData.name} - ` : ""}GAwesomeBot Extension Builder`,
+				pageTitle: `${extensionData.name ? `${extensionData.name} - ` : ""}Skynet Extension Builder`,
 				activeSearchQuery: req.query.q,
 				mode: "builder",
 				extensionData,
@@ -460,7 +460,7 @@ controllers.gallery.modify = async (req, res) => {
 					messageOwner(galleryDocument.owner_id, {
 						embeds: [{
 							color: Colors.GREEN,
-							title: `Your extension ${galleryDocument.name} has been accepted ${galleryDocument.level === "third" ? "by maintainers." : "to the GAwesomeBot extension gallery!"} 🎉`,
+							title: `Your extension ${galleryDocument.name} has been accepted ${galleryDocument.level === "third" ? "by maintainers." : "to the Skynet extension gallery!"} 🎉`,
 							description: `View your creation [here](${configJS.hostingURL}extensions/gallery?id=${galleryDocument._id.toString()})!`,
 						}],
 					});
@@ -471,7 +471,7 @@ controllers.gallery.modify = async (req, res) => {
 						messageOwner(galleryDocument.owner_id, {
 							embeds: [{
 								color: Colors.GREEN,
-								title: `Your extension ${galleryDocument.name} has been featured on the GAwesomeBot extension gallery! 🌟`,
+								title: `Your extension ${galleryDocument.name} has been featured on the Skynet extension gallery! 🌟`,
 								description: `View your achievement [here](${configJS.hostingURL}extensions/gallery?id=${galleryDocument._id.toString()})`,
 							}],
 						});
@@ -502,7 +502,7 @@ controllers.gallery.modify = async (req, res) => {
 					messageOwner(galleryDocument.owner_id, {
 						embeds: [{
 							color: Colors.LIGHT_RED,
-							title: `Your extension ${galleryDocument.name} has been ${actionString} ${galleryDocument.level === "third" ? "by maintainers" : "from the GAwesomeBot extension gallery"}.`,
+							title: `Your extension ${galleryDocument.name} has been ${actionString} ${galleryDocument.level === "third" ? "by maintainers" : "from the Skynet extension gallery"}.`,
 							description: `${req.body.reason.replace(/\\n/g, "\n")}`,
 						}],
 					});

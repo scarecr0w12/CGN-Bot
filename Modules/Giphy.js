@@ -1,5 +1,6 @@
 const { get } = require("./Utils/SnekfetchShim");
-const { tokens: { giphyAPI } } = require("../Configurations/auth");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth: { tokens: { giphyAPI } } } = loadConfigs();
 const { APIs } = require("../Internals/Constants");
 const { GABError } = require("../Internals/Errors");
 

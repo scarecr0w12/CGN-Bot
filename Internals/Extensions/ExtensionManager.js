@@ -1,6 +1,6 @@
 const fs = require("fs-nextra");
 const { VM } = require("vm2");
-const DJSClient = require("discord.js").Client;
+const { Client: DJSClient, GatewayIntentBits, Partials } = require("discord.js");
 const { AllowedEvents } = require("../Constants");
 const DB = require("../../Database/Driver");
 const Sandbox = require("./API/Sandbox");
@@ -11,8 +11,29 @@ const EventsHandler = require("./EventsHandler");
  * @class
  */
 class ExtensionManager extends DJSClient {
-	constructor (options) {
-		super(options);
+	constructor (options = {}) {
+		const intents = (options && options.intents) ? options.intents : [
+			GatewayIntentBits.Guilds,
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildModeration,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildIntegrations,
+			GatewayIntentBits.GuildWebhooks,
+			GatewayIntentBits.GuildInvites,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.DirectMessageReactions,
+			GatewayIntentBits.MessageContent,
+		];
+		const partials = (options && options.partials) ? options.partials : [
+			Partials.Message,
+			Partials.Channel,
+			Partials.Reaction,
+		];
+		super({ ...options, intents, partials });
 		/**
 		 * A boolean indicating if this Manager is ready to run extensions.
 		 * @type {boolean}

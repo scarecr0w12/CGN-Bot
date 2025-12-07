@@ -1,10 +1,10 @@
 const moment = require("moment-timezone");
-const DJSUtils = require("discord.js/src/util/Util");
+const { parseEmoji } = require("discord.js");
 
 module.exports = async ({ client, Constants: { Colors } }, documents, msg, commandData) => {
 	if (msg.suffix) {
 		const emoji = msg.suffix.split(/\s+/)[0];
-		let parsedEmoji = DJSUtils.parseEmoji(emoji);
+		let parsedEmoji = parseEmoji(emoji);
 		if (/^\d{17,19}/.test(emoji)) {
 			parsedEmoji = { id: String(emoji), animated: "unknown" };
 		}

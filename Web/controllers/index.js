@@ -35,4 +35,11 @@ controllers.error = (req, res, next) => {
 	else return next();
 };
 
-controllers.add = (req, res) => res.redirect(global.configJS.oauthLink.format({ id: req.app.client.user.id }));
+controllers.add = (req, res) => {
+	const hasConfig = global.configJS && typeof global.configJS.oauthLink === "string";
+	const hasClient = req.app && req.app.client && req.app.client.user && req.app.client.user.id;
+	if (hasConfig && hasClient) {
+		return res.redirect(global.configJS.oauthLink.format({ id: req.app.client.user.id }));
+	}
+	return renderError(res, "Bot invite link is not configured.");
+};

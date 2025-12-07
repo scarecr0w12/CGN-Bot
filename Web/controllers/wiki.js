@@ -59,7 +59,7 @@ module.exports = async (req, { res }) => {
 
 		res.setPageData({
 			page: "wiki.ejs",
-			pageTitle: `Search for "${req.query.q}" - GAwesomeBot Wiki`,
+			pageTitle: `Search for "${req.query.q}" - Skynet Wiki`,
 			pageList: wikiDocuments.map(wikiDocument => wikiDocument._id),
 			mode: "search",
 			title: req.query.q ? `Search for "${req.query.q}"` : "List of all pages",
@@ -96,7 +96,7 @@ module.exports.readArticle = async (req, { res }) => {
 		}
 		res.setPageData({
 			page: "wiki.ejs",
-			pageTitle: `${page._id} - GAwesomeBot Wiki`,
+			pageTitle: `${page._id} - Skynet Wiki`,
 			pageList: wikiDocuments.map(wikiDocument => wikiDocument._id),
 			mode: "page",
 			title: page._id,
@@ -112,7 +112,7 @@ module.exports.edit = async (req, { res }) => {
 	const renderPage = data => {
 		res.setPageData({
 			page: "wiki.ejs",
-			pageTitle: `${data.title ? `Edit ${data.title}` : "New Page"} - GAwesomeBot Wiki`,
+			pageTitle: `${data.title ? `Edit ${data.title}` : "New Page"} - Skynet Wiki`,
 			mode: "edit",
 			...data,
 		});
@@ -197,7 +197,7 @@ module.exports.history = async (req, { res }) => {
 		}
 		res.setPageData({
 			page: "wiki.ejs",
-			pageTitle: `Edit history for ${page._id} - GAwesomeBot Wiki`,
+			pageTitle: `Edit history for ${page._id} - Skynet Wiki`,
 			pageList: wikiDocuments.map(wikiDocument => wikiDocument._id),
 			mode: "history",
 			title: `Edit history for ${page._id}`,

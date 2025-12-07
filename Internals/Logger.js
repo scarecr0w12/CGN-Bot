@@ -7,9 +7,8 @@ require("winston-daily-rotate-file");
 const { Error: GABError, TypeError: GABTypeError, RangeError: GABRangeError } = require("./Errors");
 const { OfficialMode } = require("./Constants");
 
-const auth = require("./../Configurations/auth.js");
-const config = require("./../Configurations/config.js");
-const configJSON = require("./../Configurations/config.json");
+const { loadConfigs } = require("./../Configurations/env.js");
+const { auth, configJS: config, configJSON } = loadConfigs();
 
 const LOGGING_LEVELS = {
 	error: 0,

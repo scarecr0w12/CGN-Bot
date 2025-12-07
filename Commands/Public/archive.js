@@ -1,4 +1,4 @@
-const { MessageAttachment: Attachment } = require("discord.js");
+const { AttachmentBuilder: Attachment } = require("discord.js");
 const moment = require("moment-timezone");
 
 module.exports = async ({ Constants: { Colors, Text } }, documents, msg, commandData) => {
@@ -77,7 +77,7 @@ module.exports = async ({ Constants: { Colors, Text } }, documents, msg, command
 		try {
 			await msg.channel.send({
 				content: `Here you have the last ${messages.length} messages! ✅`,
-				files: [new Attachment(fileBuffer, `archive-${msg.guild.name}-${msg.channel.name}-${Date.now()}.json`)],
+				files: [new Attachment(fileBuffer, { name: `archive-${msg.guild.name}-${msg.channel.name}-${Date.now()}.json` })],
 			});
 		} catch (err) {
 			msg.send({

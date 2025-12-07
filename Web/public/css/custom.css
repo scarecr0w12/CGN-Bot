@@ -32,23 +32,23 @@
 
 /* Pseudo Selection */
 ::selection {
-    background-color: rgba(0, 150, 136, 0.8);
+    background-color: rgba(30, 58, 138, 0.8);
     color: #fff;
 }
 ::-moz-selection {
-    background-color: rgba(0, 150, 136, 0.8);
+    background-color: rgba(30, 58, 138, 0.8);
     color: #fff;
 }
 ::-o-selection {
-    background-color: rgba(0, 150, 136, 0.8);
+    background-color: rgba(30, 58, 138, 0.8);
     color: #fff;
 }
 ::-ms-selection {
-    background-color: rgba(0, 150, 136, 0.8);
+    background-color: rgba(30, 58, 138, 0.8);
     color: #fff;
 }
 ::-webkit-selection {
-    background-color: rgba(0, 150, 136, 0.8);
+    background-color: rgba(30, 58, 138, 0.8);
     color: #fff;
 }
 
@@ -124,10 +124,10 @@ html, body {
     transition: border-bottom-color .30s ease-in-out;
 }
 .navbar-item:hover {
-    border-bottom-color: hsl(171, 100%, 41%);
+    border-bottom-color: #14b8a6;
 }
 .navbar-item.is-tab.is-active {
-    border-bottom-color: hsl(171, 100%, 41%);
+    border-bottom-color: #14b8a6;
     padding-bottom: calc(.5rem - 1px);
 }
 
@@ -147,11 +147,11 @@ html, body {
 }
 
 .menu-list a.is-active {
-    background-color: hsl(171, 100%, 41%);
+    background-color: #1e3a8a;
 }
 
 .message.is-primary {
-    background-color: #ddfff8;
+    background-color: #e8ecfa;
 }
 .message.is-warning {
     background-color: #fff9e1;

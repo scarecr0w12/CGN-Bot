@@ -1,4 +1,5 @@
-const { tokens: { openExchangeRatesKey } } = require("../Configurations/auth");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth: { tokens: { openExchangeRatesKey } } } = loadConfigs();
 const fsn = require("fs-nextra");
 const request = require("./Utils/SnekfetchShim");
 

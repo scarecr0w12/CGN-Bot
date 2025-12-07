@@ -82,7 +82,7 @@ module.exports = async (req, { res }) => {
 			};
 		} else {
 			matchCriteria._id = {
-				$in: (await Utils.GetValue(req.app.client, "guilds.keys()", "arr", "Array.from")).filter(svrid => !configJSON.activityBlocklist.includes(svrid)),
+				$in: (await Utils.GetValue(req.app.client, "guilds.cache.keys()", "arr", "Array.from")).filter(svrid => !configJSON.activityBlocklist.includes(svrid)),
 			};
 		}
 		if (req.query.category !== "All") {

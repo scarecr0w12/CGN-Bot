@@ -5,9 +5,8 @@ const { Stopwatch } = require("./Modules/Utils");
 const centralClient = new GAwesomeClient(null);
 
 const database = require("./Database/Driver.js");
-const auth = require("./Configurations/auth.js");
-const configJS = require("./Configurations/config.js");
-const configJSON	= require("./Configurations/config.json");
+const { loadConfigs } = require("./Configurations/env.js");
+const { auth, configJS, configJSON } = loadConfigs();
 const configWarnings = [];
 const figlet = require("figlet");
 
@@ -88,7 +87,8 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 
 			if (configJS.shardTotal === "auto") {
 				logger.info(`Getting the recommended shards from Discord...`);
-				const result = await require("discord.js").Util.fetchRecommendedShards(auth.discord.clientToken);
+				const { fetchRecommendedShardCount } = require("discord.js");
+				const result = await fetchRecommendedShardCount(auth.discord.clientToken);
 				logger.info(`GAwesomeBot will spawn ${result} shard(s) as recommended by Discord.`, { shards: result });
 				configJS.shardTotal = result;
 			}

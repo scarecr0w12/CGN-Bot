@@ -1,20 +1,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="author" content="GilbertGobbels">
-<meta name="description" content="GAwesomeBot is a fun, easy-to-use, feature-packed bot designed to increase activity on your Discord server">
+<meta name="author" content="Scarecr0w12">
+<meta name="description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="GAwesomeBot">
-<meta property="og:image" content="/static/img/icon.png">
-<meta property="og:description" content="GAwesomeBot is a fun, easy-to-use, feature-packed bot designed to increase activity on your Discord server">
+<meta property="og:title" content="Skynet">
+<meta property="og:image" content="/static/img/logo.png">
+<meta property="og:description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
 
-<meta name="twitter:title" content="GAwesomeBot">
-<meta name="twitter:image" content="/static/img/icon.png">
-<meta name="twitter:description" content="GAwesomeBot is a fun, easy-to-use, feature-packed bot designed to increase activity on your Discord server">
+<meta name="twitter:title" content="Skynet">
+<meta name="twitter:image" content="/static/img/logo.png">
+<meta name="twitter:description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
 
-<link rel="shortcut icon" type="image/png" href="/static/img/icon.png">
-<meta name="theme-color" content="#009688">
+<link rel="shortcut icon" type="image/png" href="/static/img/logo.png">
+<meta name="theme-color" content="#1e3a8a">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.0.3/turbolinks.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
@@ -49,7 +49,7 @@
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
-<script src="/static/js/socket.io-1.4.5.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 <% if (typeof injection !== "undefined" && injection.headScript) { %>
 <script>
@@ -74,4 +74,4 @@
     </script>
 <% } %>
 
-<% include ./head-build.ejs %>
+<%- include("./head-build.ejs") %>

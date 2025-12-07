@@ -1,5 +1,6 @@
 const { get } = require("../../Modules/Utils/SnekfetchShim");
-const auth = require("../../Configurations/auth");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth } = loadConfigs();
 
 module.exports = async ({ Constants: { APIs, Colors, Text }, client }, documents, msg, commandData) => {
 	if (!msg.suffix) {

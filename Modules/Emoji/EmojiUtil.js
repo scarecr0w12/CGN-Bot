@@ -7,7 +7,7 @@ const {
 		UnicodeSkinTone,
 	},
 } = require("../../Internals/Constants");
-const DJSUtil = require("discord.js/src/util/Util");
+const { parseEmoji } = require("discord.js");
 const { get } = require("../Utils/SnekfetchShim");
 
 module.exports = class EmojiUtil {
@@ -16,7 +16,7 @@ module.exports = class EmojiUtil {
 	}
 
 	static async getEmojiMetadata (emoji) {
-		const discordUtilEmoji = DJSUtil.parseEmoji(emoji);
+		const discordUtilEmoji = parseEmoji(emoji);
 		if (discordUtilEmoji && discordUtilEmoji.id && discordUtilEmoji.animated) {
 			return {
 				type: "custom",

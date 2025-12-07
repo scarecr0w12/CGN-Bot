@@ -1,7 +1,8 @@
 const RegExpMaker = require("./RegExpMaker.js");
 const snekfetch = require("./SnekfetchShim");
 const { UserAgent } = require("../../Internals/Constants");
-const { discord, tokens } = require("../../Configurations/auth.js");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth: { discord, tokens } } = loadConfigs();
 const { gistKey } = tokens;
 
 module.exports = class GitHubGist {

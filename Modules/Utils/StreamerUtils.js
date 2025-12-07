@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
-const auth = require("../../Configurations/auth.js");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth } = loadConfigs();
 const snekfetch = require("./SnekfetchShim");
 
 const isStreamingTwitch = async username => {

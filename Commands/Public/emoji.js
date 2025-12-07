@@ -1,4 +1,4 @@
-const { MessageAttachment } = require("discord.js");
+const { AttachmentBuilder } = require("discord.js");
 
 module.exports = async ({ client, Constants: { Colors, Text, WorkerTypes } }, documents, msg, commandData) => {
 	if (msg.suffix) {
@@ -16,7 +16,7 @@ module.exports = async ({ client, Constants: { Colors, Text, WorkerTypes } }, do
 		await m.delete();
 		await msg.channel.send({
 			embeds: [{
-				files: [new MessageAttachment(buffer, `jumbo.${animated ? "gif" : "png"}`)],
+				files: [new AttachmentBuilder(buffer, { name: `jumbo.${animated ? "gif" : "png"}` })],
 				color: Colors.SUCCESS,
 				image: {
 					url: `attachment://jumbo.${animated ? "gif" : "png"}`,

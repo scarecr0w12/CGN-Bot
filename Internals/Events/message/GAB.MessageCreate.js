@@ -12,6 +12,7 @@ const {
 	Constants,
 } = require("../../index");
 const { LoggingLevels, Colors, UserAgent } = Constants;
+const { MessageType, PermissionFlagsBits } = require("discord.js");
 const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
 
 class MessageCreate extends BaseEvent {
@@ -20,7 +21,7 @@ class MessageCreate extends BaseEvent {
 			logger.verbose(`Ignoring message in unpostable channel.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
 		}
-		if (msg.type !== "DEFAULT") {
+		if (msg.type !== MessageType.Default) {
 			logger.verbose(`Ignoring non-standard message.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
 		}
@@ -202,7 +203,7 @@ class MessageCreate extends BaseEvent {
 
 				// Mention filter
 				if (serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.filters.mention_filter.isEnabled && !serverDocument.config.moderation.filters.mention_filter.disabled_channel_ids.includes(msg.channel.id) && memberBotAdminLevel < 1) {
-					let totalMentions = msg.mentions.members ? msg.mentions.members.cache.size : msg.mentions.users.cache.size + msg.mentions.roles.cache.size;
+					let totalMentions = msg.mentions.members ? msg.mentions.members.size : msg.mentions.users.size + msg.mentions.roles.size;
 					if (serverDocument.config.moderation.filters.mention_filter.include_everyone && msg.mentions.everyone) totalMentions++;
 
 					// Check if mention count is higher than threshold
@@ -430,7 +431,7 @@ class MessageCreate extends BaseEvent {
 										color: Colors.SOFT_ERR,
 									}],
 								});
-							} else if (!extensionApplied && msg.mentions.members.cache.find(mention => mention.id === this.client.user.id) && serverDocument.config.tag_reaction.isEnabled && !this.client.getSharedCommand(msg.command)) {
+							} else if (!extensionApplied && msg.mentions.members.find(mention => mention.id === this.client.user.id) && serverDocument.config.tag_reaction.isEnabled && !this.client.getSharedCommand(msg.command)) {
 								const { random } = serverDocument.config.tag_reaction.messages;
 								if (random) {
 									const content = random.replaceAll("@user", `**@${this.client.getName(serverDocument, msg.member)}**`).replaceAll("@mention", `<@!${msg.author.id}>`);

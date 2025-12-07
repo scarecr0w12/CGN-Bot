@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>GAwesomeBot Dashboard</title>
-	<% include ../partials/head %>
+	<title>Skynet Dashboard</title>
+	<%- include("../partials/head") %>
 
 	<script>
 	var mq = window.matchMedia("screen and (max-width: 768px)");
@@ -29,7 +29,7 @@
 <body onload="mediaStyle();">
 	<section id="header" class="main-header-section hero is-primary is-fullheight is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include("../partials/header") %>
 		</div>
 		<div class="hero-body">
 			<div class="container">
@@ -126,7 +126,7 @@
 			<div class="modal-content">
 				<div class="box">
 					<h4 class="title is-4">
-						Make sure to <strong><a href="/dashboard">refresh</a></strong> after adding GAwesomeBot.
+						Make sure to <strong><a href="/dashboard">refresh</a></strong> after adding Skynet.
 					</h4>
 				</div>
 			</div>
@@ -134,7 +134,7 @@
 		<button class="modal-close is-large"></button>
 	</div>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include("../partials/footer") %>
+	<%- include("../partials/scroll-top-button") %>
 </body>
 </html>

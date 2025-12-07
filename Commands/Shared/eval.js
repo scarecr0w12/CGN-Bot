@@ -14,7 +14,8 @@ module.exports = async (main, msg, commandData) => {
 					.replace(/(main\.bot\.token|main\.client\.token|msg\.client\.token)/g, "\"mfaNop\"")
 					.replace(/\.(clientToken|clientSecret|discordList|discordBots|discordBotsOrg|giphyAPI|googleCSEID|googleAPI|imgurClientID|microsoftTranslation|twitchClientID|wolframAppID|openExchangeRatesKey|omdbAPI|gistKey)/g, "mfaNop");
 			}
-			const { discord, tokens } = require("../../Configurations/auth");
+			const { loadConfigs } = require("../../Configurations/env.js");
+			const { auth: { discord, tokens } } = loadConfigs();
 			const censor = [
 				discord.clientSecret,
 				discord.clientToken,

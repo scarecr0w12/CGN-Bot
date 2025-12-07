@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 	<title><%= pageData.pageTitle %></title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold" style="">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
@@ -104,14 +104,14 @@
 	<section id="frame"	class="section is-white">
 		<div class="container">
 			<% if (["gallery", "queue"].includes(pageData.mode)) { %>
-				<% include ../partials/extension-gallery %>
+				<%- include('../partials/extension-gallery') %>
 			<% } else { %>
-				<% include ../partials/dashboard-socket-updates %>
+				<%- include('../partials/dashboard-socket-updates') %>
 				<% if (pageData.mode === "my") { %>
-					<% include ../partials/my-extensions %>
+					<%- include('../partials/my-extensions') %>
 				<% } else if (pageData.mode === "builder") { %>
 					<% const isGallery = true; %>
-					<% include ../partials/extension-builder %>
+					<%- include('../partials/extension-builder') %>
 				<% } %>
 			<% } %>
 		</div>
@@ -135,6 +135,6 @@
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>

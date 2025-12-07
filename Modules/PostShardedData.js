@@ -1,5 +1,6 @@
 const snekfetch = require("./Utils/SnekfetchShim");
-const { tokens } = require("../Configurations/auth.js");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth: { tokens } } = loadConfigs();
 
 module.exports = async client => {
 	// Send server amount to DBots per shard

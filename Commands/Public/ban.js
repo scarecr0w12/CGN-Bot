@@ -10,7 +10,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		let isGuildMember = false, hasReason = true, member = null;
 		if (isJustUserID) {
 			if (msg.guild.members.cache.has(inputMember)) {
-				member = msg.guild.member(inputMember);
+				member = msg.guild.members.cache.get(inputMember);
 				isGuildMember = true;
 			} else {
 				member = await client.users.fetch(inputMember, true);
@@ -99,10 +99,10 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					},
 				}],
 			});
-			const collector = msg.channel.createMessageCollector(
-				m => m.author.id === msg.author.id,
-				{ time: 120000 }
-			);
+			const collector = msg.channel.createMessageCollector({
+				filter: m => m.author.id === msg.author.id,
+				time: 120000
+			});
 			collector.on("collect", async message => {
 				if (message.editedAt) {
 					collector.stop();
@@ -118,9 +118,9 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					if (configJS.yesStrings.includes(message.content.toLowerCase().trim())) {
 						await dmBanned(member.id);
 						if (isGuildMember) {
-							await member.ban({ days, reason: `${reason} | Command issued by @${msg.author.tag}` });
+							await member.ban({ deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.tag}` });
 						} else {
-							await msg.guild.members.ban(member.id, { days, reason: `${reason} | Command issued by @${msg.author.tag}` });
+							await msg.guild.members.ban(member.id, { deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.tag}` });
 						}
 						await CreateModLog(msg.guild, "Ban", member, msg.author, reason);
 						return banned();
@@ -147,10 +147,10 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		}
 	} else {
 		msg.sendInvalidUsage(commandData, "Do you want me to ban you? 😮");
-		const collector = msg.channel.createMessageCollector(
-			m => m.author.id === msg.author.id,
-			{ time: 60000 }
-		);
+		const collector = msg.channel.createMessageCollector({
+			filter: m => m.author.id === msg.author.id,
+			time: 60000
+		});
 		collector.on("collect", async message => {
 			if (message.editedAt) {
 				collector.stop();

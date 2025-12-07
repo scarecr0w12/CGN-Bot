@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= serverData.name %> Stats Collection - GAwesomeBot Admin Console</title>
+	<title><%= serverData.name %> Stats Collection - Skynet Admin Console</title>
 	<% include ../partials/head %>
 
 	<script src="/static/js/form-change-listener.js"></script>
@@ -22,7 +22,7 @@
 					</h1>
 					<article class="message is-primary">
 						<div class="message-body">
-							GAwesomeBot constantly records information about <strong>message, voice, and game activity</strong> on your server. You can view this data in the <code>stats</code> command, on the <a href="/dashboard/<%= serverData.id %>/overview">overview page</a>, and more.
+							Skynet constantly records information about <strong>message, voice, and game activity</strong> on your server. You can view this data in the <code>stats</code> command, on the <a href="/dashboard/<%= serverData.id %>/overview">overview page</a>, and more.
 						</div>
 					</article>
 					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">

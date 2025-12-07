@@ -1,3 +1,4 @@
+const { ActivityType } = require("discord.js");
 /* eslint-disable max-len */
 const BaseEvent = require("../BaseEvent.js");
 const {
@@ -64,7 +65,7 @@ class Ready extends BaseEvent {
 			});
 			if (serverDocument) {
 				try {
-					const channelIDs = [...guild.channels.keys()];
+					const channelIDs = [...guild.channels.cache.keys()];
 					Object.values(serverDocument.channels).forEach(ch => {
 						if (!channelIDs.includes(ch._id)) serverDocument.query.id("channels", ch._id).remove();
 					});
@@ -77,7 +78,7 @@ class Ready extends BaseEvent {
 		};
 
 		const promiseArray = [];
-		this.client.guilds.forEach(guild => promiseArray.push(makeNewDocument(guild)));
+		this.client.guilds.cache.forEach(guild => promiseArray.push(makeNewDocument(guild)));
 		await Promise.all(promiseArray);
 		return newServerDocuments;
 	}
@@ -88,7 +89,7 @@ class Ready extends BaseEvent {
 			logger.debug(`Deleting data for old servers...`);
 			Servers.delete({
 				_id: {
-					$nin: await Utils.GetValue(this.client, "guilds.keys()", "arr", "Array.from"),
+					$nin: await Utils.GetValue(this.client, "guilds.cache.keys()", "arr", "Array.from"),
 				},
 			}).then(() => logger.debug(`Purged all serverDocuments that the bot doesn't know about anymore!`))
 				.catch(err => logger.warn(`Failed to prune old server documents -_-`, {}, err));
@@ -101,18 +102,18 @@ class Ready extends BaseEvent {
 		logger.debug("Setting bots playing activity.");
 		let activity = {
 			name: configJSON.activity.name.format({ shard: this.client.shardID, totalShards: this.client.shard.count }),
-			type: configJSON.activity.type,
+			type: ActivityType[configJSON.activity.type] || ActivityType.Playing,
 			url: configJSON.activity.twitchURL || null,
 		};
 		if (configJSON.activity.name === "default") {
 			activity = {
 				name: "https://gawesomebot.com | Shard {shard}".format({ shard: this.client.shardID }),
-				type: "PLAYING",
+				type: ActivityType.Playing,
 				url: null,
 			};
 		}
 		await this.client.user.setPresence({
-			activity,
+			activities: [activity],
 			status: configJSON.status,
 		});
 		await this.startMessageCount();
@@ -194,7 +195,7 @@ class Ready extends BaseEvent {
 	async startMessageOfTheDay () {
 		const serverDocuments = await Servers.find({
 			_id: {
-				$in: Array.from(this.client.guilds.keys()),
+				$in: Array.from(this.client.guilds.cache.keys()),
 			},
 			"config.message_of_the_day.isEnabled": true,
 		}).exec().catch(err => {
@@ -244,7 +245,7 @@ class Ready extends BaseEvent {
 	async startStreamingRSS () {
 		const serverDocuments = await Servers.find({
 			_id: {
-				$in: Array.from(this.client.guilds.keys()),
+				$in: Array.from(this.client.guilds.cache.keys()),
 			},
 		}).exec().catch(err => {
 			logger.warn(`Failed to get servers from db (-_-*)`, {}, err);
@@ -288,7 +289,7 @@ class Ready extends BaseEvent {
 		const promiseArray = [];
 		const serverDocuments = await Servers.find({
 			_id: {
-				$in: Array.from(this.client.guilds.keys()),
+				$in: Array.from(this.client.guilds.cache.keys()),
 			},
 			channels: {
 				$elemMatch: {
@@ -325,7 +326,7 @@ class Ready extends BaseEvent {
 		const promiseArray = [];
 		const serverDocuments = await Servers.find({
 			_id: {
-				$in: Array.from(this.client.guilds.keys()),
+				$in: Array.from(this.client.guilds.cache.keys()),
 			},
 			"config.countdown_data": {
 				$not: {

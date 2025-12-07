@@ -1,4 +1,5 @@
-const { tokens } = require("../Configurations/auth.js");
+const { loadConfigs } = require("../Configurations/env.js");
+const { auth: { tokens } } = loadConfigs();
 const snekfetch = require("./Utils/SnekfetchShim");
 
 module.exports = async client => {

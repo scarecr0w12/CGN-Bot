@@ -1,4 +1,5 @@
-const { tokens } = require("../../Configurations/auth");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth: { tokens } } = loadConfigs();
 const fetch = require("../../Modules/Utils/ChainFetchShim");
 
 module.exports = async ({ Constants: { Colors, APIs, UserAgent, Text }, auth }, documents, msg, commandData) => {

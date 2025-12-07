@@ -1,4 +1,5 @@
-const auth = require("../../Configurations/auth.js");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth } = loadConfigs();
 const { get } = require("../../Modules/Utils/SnekfetchShim");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 

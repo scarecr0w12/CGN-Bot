@@ -1,6 +1,7 @@
 const { Imgur } = require("../../Modules/index");
 const { IsURL } = require("../../Modules/Utils/index");
-const { tokens: { imgurClientID } } = require("../../Configurations/auth");
+const { loadConfigs } = require("../../Configurations/env.js");
+const { auth: { tokens: { imgurClientID } } } = loadConfigs();
 
 module.exports = async ({ Constants: { Colors, Text } }, { serverDocument }, msg, commandData) => {
 	const imgur = new Imgur(serverDocument.config.custom_api_keys.imgur_client_id || imgurClientID);

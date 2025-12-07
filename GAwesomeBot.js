@@ -9,9 +9,10 @@ const {
 	Boot,
 } = require("./Internals/index");
 
-const configJS = global.configJS = require("./Configurations/config.js");
-global.configJSON = require("./Configurations/config.json");
-const auth = require("./Configurations/auth.js");
+const { loadConfigs } = require("./Configurations/env.js");
+const { auth, configJS, configJSON } = loadConfigs();
+global.configJS = configJS;
+global.configJSON = configJSON;
 
 const scope = { disabledEvents: ["TYPING_START"] };
 Boot({ configJS, configJSON, auth }, scope).then(async () => {

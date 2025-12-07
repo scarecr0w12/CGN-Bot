@@ -57,7 +57,7 @@ controllers.index = async (req, { res }) => {
 			mode: "list",
 			currentPage: page,
 			numPages: Math.ceil(rawCount / (count === 0 ? rawCount : count)),
-			pageTitle: "GAwesomeBot Blog",
+			pageTitle: "Skynet Blog",
 			data: blogPosts,
 		});
 		res.render();
@@ -85,7 +85,7 @@ controllers.article = async (req, { res }) => {
 		res.setPageData({
 			page: "blog.ejs",
 			mode: "article",
-			pageTitle: `${blogDocument.title} - GAwesomeBot Blog`,
+			pageTitle: `${blogDocument.title} - Skynet Blog`,
 			blogPost: data,
 		});
 		res.render();
@@ -96,7 +96,7 @@ controllers.article.compose = async (req, { res }) => {
 	const renderPage = data => {
 		res.setPageData({
 			page: "blog.ejs",
-			pageTitle: `${data.title ? `Edit ${data.title}` : "New Post"} - GAwesomeBot Blog`,
+			pageTitle: `${data.title ? `Edit ${data.title}` : "New Post"} - Skynet Blog`,
 			mode: "compose",
 			data,
 		});

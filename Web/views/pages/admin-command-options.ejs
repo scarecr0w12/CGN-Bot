@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= serverData.name %> Command Options - GAwesomeBot Admin Console</title>
+	<title><%= serverData.name %> Command Options - Skynet Admin Console</title>
 	<% include ../partials/head %>
 	<script src="/static/js/form-change-listener.js"></script>
 </head>
@@ -20,7 +20,7 @@
 					</h1>
 					<article class="message is-primary">
 						<div class="message-body">
-							These settings apply to <strong>all commands</strong>. They define how commands should display information, such as the number of results to show or whether to delete command messages after GAwesomeBot has responded.
+							These settings apply to <strong>all commands</strong>. They define how commands should display information, such as the number of results to show or whether to delete command messages after Skynet has responded.
 						</div>
 					</article>
 					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
@@ -31,7 +31,7 @@
 							<label class="label">Command prefix</label>
 							<p class="control">
 								<input name="command_prefix" class="input is-primary" type="text" value="<%= configData.command_prefix %>" minlength="1" maxlength="10">
-								<span class="help">Plaintext prefix used to activate commands. Type <code>@mention</code> in the box above to use a Discord mention of GAwesomeBot.</span>
+								<span class="help">Plaintext prefix used to activate commands. Type <code>@mention</code> in the box above to use a Discord mention of Skynet.</span>
 							</p>
 						</div>
 						<div class="field">
@@ -39,9 +39,9 @@
 							<p class="control">
 								<label class="checkbox">
 								<input name="delete_command_messages" type="checkbox" <%= configData.delete_command_messages ? "checked" : "" %>>
-									Delete command messages after GAwesomeBot responds
+									Delete command messages after Skynet responds
 								</label>
-								<span class="help">Command messages are those that trigger GAwesomeBot commands; example: <code><%= configData.command_prefix %>cat</code></span>
+								<span class="help">Command messages are those that trigger Skynet commands; example: <code><%= configData.command_prefix %>cat</code></span>
 							</p>
 						</div>
 						<div class="field">
@@ -70,7 +70,7 @@
 								<label class="checkbox">
 								<input name="chatterbot-isEnabled" type="checkbox" <%= configData.chatterbot.isEnabled ? "checked" : "" %>
 									onclick="$('#chatterbot_enabled_channel_ids-options').toggleClass('is-hidden');">
-									Allow members to converse with GAwesomeBot
+									Allow members to converse with Skynet
 								</label>
 								<span class="help">The <a href="http://www.program-o.com/">Program-O</a> chatbot will be used if the bot is mentioned and a command is not being used, e.g. <code><strong>@<%= pageData.botName %></strong> Hello! How are you?</code>.</span>
 								<span id="chatterbot_enabled_channel_ids-options"

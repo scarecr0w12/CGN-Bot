@@ -2,7 +2,8 @@
  * Module that is used in the migration of GAB 4.0 databases to GAB 4.1
  */
 const Driver = require("../Database/Driver");
-const { database } = require("../Configurations/config");
+const { loadConfigs } = require("../Configurations/env.js");
+const { configJS: { database } } = loadConfigs();
 const logger = new (require("../Internals").Logger)("MIGRATION");
 const { public: publicCommands } = require("../Configurations/commands");
 
