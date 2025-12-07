@@ -110,8 +110,7 @@
 				<% if (pageData.mode === "my") { %>
 					<%- include('../partials/my-extensions') %>
 				<% } else if (pageData.mode === "builder") { %>
-					<% const isGallery = true; %>
-					<%- include('../partials/extension-builder') %>
+					<%- include('../partials/extension-builder', { ...locals, isGallery: true }) %>
 				<% } %>
 			<% } %>
 		</div>

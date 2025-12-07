@@ -44,13 +44,13 @@ const commands = {
 		},
 		about: {
 			usage: `[<suggestion> or <bug>]`,
-			description: `Information about GAwesomeBot`,
+			description: `Information about SkynetBot`,
 			defaults: {
 				isEnabled: true,
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `GAwesomeBot 🤖`,
+			category: `SkynetBot 🤖`,
 		},
 		afk: {
 			usage: `[<"."> or <message>]`,
@@ -344,7 +344,7 @@ const commands = {
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `GAwesomeBot 🤖`,
+			category: `SkynetBot 🤖`,
 		},
 		image: {
 			usage: `<query> ["random"]`,
@@ -396,7 +396,7 @@ const commands = {
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `GAwesomeBot 🤖`,
+			category: `SkynetBot 🤖`,
 		},
 		joke: {
 			usage: ``,
@@ -516,7 +516,7 @@ const commands = {
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `GAwesomeBot 🤖`,
+			category: `SkynetBot 🤖`,
 		},
 		playstore: {
 			usage: `<...query>`,

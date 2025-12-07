@@ -38,11 +38,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	// Create a Discord.js Shard Client (v14)
 	console.log("[DEBUG] Creating Discord.js client...");
 	logger.silly("Creating Discord.js client.");
-	console.log("[DEBUG] Requiring GABClient...");
-	const GABClient = require("./Internals/Client");
+	console.log("[DEBUG] Requiring SkynetBotClient...");
+	const SkynetBotClient = require("./Internals/Client");
 	const { GatewayIntentBits, Partials } = require("discord.js");
-	console.log("[DEBUG] GABClient required, now instantiating...");
-	const client = new GABClient({
+	console.log("[DEBUG] SkynetBotClient required, now instantiating...");
+	const client = new SkynetBotClient({
 		shards: parseInt(process.env.SHARDS),
 		shardCount: parseInt(process.env.SHARD_COUNT),
 		// Discord.js v14 requires explicit intents

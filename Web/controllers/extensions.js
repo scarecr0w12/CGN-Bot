@@ -260,7 +260,7 @@ controllers.builder = async (req, { res }) => {
 				});
 				if (galleryDocument) {
 					try {
-						galleryDocument.code = await fs.readFile(`${__dirname}/../../extensions/${galleryDocument.versions.id(galleryDocument.version).code_id}.gabext`);
+						galleryDocument.code = await fs.readFile(`${__dirname}/../../extensions/${galleryDocument.versions.id(galleryDocument.version).code_id}.skyext`);
 					} catch (err) {
 						galleryDocument.code = "";
 					}
@@ -293,7 +293,7 @@ controllers.builder.post = async (req, res) => {
 					sendResponse(true);
 				} else {
 					try {
-						await fs.outputFileAtomic(`${__dirname}/../../extensions/${codeID}.gabext`, req.body.code);
+						await fs.outputFileAtomic(`${__dirname}/../../extensions/${codeID}.skyext`, req.body.code);
 						sendResponse();
 					} catch (error) {
 						logger.warn(`Failed to save extension at ${req.path}`, { usrid: req.user.id }, err);
@@ -361,10 +361,10 @@ controllers.download = async (req, res) => {
 		if (!versionDocument) return res.sendStatus(404);
 		try {
 			res.set({
-				"Content-Disposition": `${"attachment; filename="}${extensionDocument.name}.gabext`,
+				"Content-Disposition": `${"attachment; filename="}${extensionDocument.name}.skyext`,
 				"Content-Type": "text/javascript",
 			});
-			res.sendFile(path.join(__dirname, `../../extensions/${versionDocument.code_id}.gabext`));
+			res.sendFile(path.join(__dirname, `../../extensions/${versionDocument.code_id}.skyext`));
 		} catch (err) {
 			res.sendStatus(500);
 		}
@@ -524,7 +524,7 @@ controllers.gallery.modify = async (req, res) => {
 					dashboardUpdate(req, req.path, req.user.id);
 
 					try {
-						await fs.unlink(`${__dirname}/../../extensions/${galleryDocument.code_id}.gabext`);
+						await fs.unlink(`${__dirname}/../../extensions/${galleryDocument.code_id}.skyext`);
 					} catch (_) {
 						// No-op
 					}

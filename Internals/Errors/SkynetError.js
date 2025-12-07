@@ -8,12 +8,12 @@ const messages = new Map();
  * Extend an error of some sort into a GABError
  */
 
-const makeGABError = base => class GABError extends base {
+const makeSkynetError = base => class SkynetError extends base {
 	constructor (key, meta, ...args) {
 		super(message(key, args));
 		this[kCode] = key;
 		this._meta = meta || {};
-		if (Error.captureStackTrace) Error.captureStackTrace(this, GABError);
+		if (Error.captureStackTrace) Error.captureStackTrace(this, SkynetError);
 	}
 
 	get name () {
@@ -43,7 +43,7 @@ function message (key, args) {
 
 module.exports = {
 	register: (sym, val) =>	messages.set(sym, typeof val === "function" ? val : String(val)),
-	Error: makeGABError(Error),
-	TypeError: makeGABError(TypeError),
-	RangeError: makeGABError(RangeError),
+	Error: makeSkynetError(Error),
+	TypeError: makeSkynetError(TypeError),
+	RangeError: makeSkynetError(RangeError),
 };

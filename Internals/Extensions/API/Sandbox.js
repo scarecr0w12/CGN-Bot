@@ -1,7 +1,7 @@
 const API = require("./index");
 const {
 	Errors: {
-		Error: GABError,
+		Error: SkynetError,
 	},
 	Constants: {
 		Scopes,
@@ -17,7 +17,7 @@ class Sandbox {
 		modules.fetch = { module: "chainfetch" };
 		modules.xmlparser = { module: "xml-parser" };
 
-		// Import global GAwesomeBot variables
+		// Import global SkynetBot variables
 		if (versionDocument.type === "command") {
 			modules.command = {
 				module: () => ({
@@ -76,8 +76,8 @@ class Sandbox {
 
 		this.require = name => {
 			const module = modules[name];
-			if (!module) throw new GABError("UNKNOWN_MODULE", name);
-			if (module.scope && !scopes.includes(module.scope)) throw new GABError("MISSING_SCOPES");
+			if (!module) throw new SkynetError("UNKNOWN_MODULE", name);
+			if (module.scope && !scopes.includes(module.scope)) throw new SkynetError("MISSING_SCOPES");
 			if (module.key && !module.custom) {
 				return require(module.module)[module.key];
 			} else if (!module.custom) {

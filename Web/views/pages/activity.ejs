@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 	<title><%= pageData.pageTitle %> - Skynet Activity</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
@@ -80,9 +80,9 @@
 	<section id="frame" class="section">
 		<div class="container">
 			<% if (pageData.mode === "servers") { %>
-				<% include ../partials/servers-section %>
+				<%- include('../partials/servers-section') %>
 			<% } else { %>
-				<% include ../partials/users-section %>
+				<%- include('../partials/users-section') %>
 			<% } %>
 		</div>
 	</section>
@@ -122,6 +122,6 @@
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>

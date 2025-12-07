@@ -213,7 +213,7 @@
     <% } %>
 	<hr>
 	<% var formButtonsUnsaved = false; %>
-	<% include ../partials/form-buttons %>
+	<%- include('../partials/form-buttons') %>
     <% if (isGallery && pageData.extensionData._id && pageData.extensionData.state === "gallery") { %>
     	<span class="help">Updating the extension will <strong>not</strong> remove the old version from the gallery. Your new version will be in the queue until it has been approved by a Skynet maintainer. Points will be preserved.</span>
     <% } %>

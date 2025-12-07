@@ -114,7 +114,7 @@ Constants.Colors = {
 Constants.Text = {
 	ERROR_TITLE: () => "Something went wrong! 😱",
 	ERROR_BODY: (cmd, stack) => `Something went wrong while executing \`${cmd}\`!${stack ? `\n**Error Message**: \`\`\`js\n${stack}\`\`\`` : ""}`,
-	ERROR_FOOTER: () => "Contact your GAB maintainer for more support.",
+	ERROR_FOOTER: () => "Contact your Skynet maintainer for more support.",
 	OWO_ERROR_BODY: () => "OOPSIE WOOPSIE!! Uwu We made a fucky wucky!! A wittle fucko boingo! The code monkeys at our headquarters are working VEWY HAWD to fix this!",
 	INVALID_USAGE: (commandData, prefix = null) => `🗯 Correct usage is: \`${prefix ? prefix : ""}${commandData.name} ${commandData.usage}\``,
 	MISSING_PERMS: serverName => `🔐 You don't have permission to use this command${serverName ? ` on ${serverName}` : "."}`,
@@ -158,7 +158,7 @@ Constants.Text = {
 			title: "Something went wrong! ⚙",
 			description: `An error has occurred while executing **${extensionName}**.`,
 			footer: {
-				text: "GAB is most likely not at fault; contact a Server Admin or the Extension Author to resolve this issue.",
+				text: "Skynet is most likely not at fault; contact a Server Admin or the Extension Author to resolve this issue.",
 			},
 		}],
 	}),
@@ -500,8 +500,8 @@ Constants.APIs = {
  * @type {string}
  */
 Constants.CENTRAL = {
-	VERSIONING: "https://status.gawesomebot.com/api/versions/",
-	CODEBASE: "https://codeload.github.com/GilbertGobbels/GAwesomeBot/zip/",
+	VERSIONING: "https://status.skynetbot.com/api/versions/",
+	CODEBASE: "https://codeload.github.com/GilbertGobbels/SkynetBot/zip/",
 };
 
 Constants.CODEBASE_TOTAL_CHUNK_SIZE = 10300000;
@@ -510,7 +510,7 @@ Constants.CODEBASE_TOTAL_CHUNK_SIZE = 10300000;
  * Default value of the useragent header on all requests made to third-party endpoints.
  * @type {string}
  */
-Constants.UserAgent = "GAwesomeBot (https://github.com/GilbertGobbels/GAwesomeBot)";
+Constants.UserAgent = "SkynetBot (https://github.com/GilbertGobbels/SkynetBot)";
 
 /**
  * An empty space
@@ -527,7 +527,7 @@ Constants.Perms = {
 	sudo: "🛡 Sudo Mode (Can act as a Server Admin)",
 	management: "🔧 Management (Can access management)",
 	administration: "🗂 Administration (Can manage the Bot User)",
-	shutdown: "🌟 Shutdown (Can manage GAB Processes)",
+	shutdown: "🌟 Shutdown (Can manage Skynet Processes)",
 };
 
 /**
@@ -652,8 +652,8 @@ Constants.Scopes = {
 	},
 	config: {
 		scope: "config",
-		permissionDescription: "Can read, but not modify, this guild's GAB Configuration",
-		authDescription: "Read {SERVER}'s GAB configuration",
+		permissionDescription: "Can read, but not modify, this guild's Skynet Configuration",
+		authDescription: "Read {SERVER}'s Skynet configuration",
 		icon: "fa-cogs",
 	},
 };
@@ -674,7 +674,7 @@ Constants.NSFWEmbed = {
 };
 
 /**
- * JSON Objects that are used as responses to requests to GAB's API
+ * JSON Objects that are used as responses to requests to Skynet's API
  * @type {{servers: {success: function, notFound: function, internalError: function}, users: {success: function, badRequest: function, notFound: function, internalError: function}, extensions: {success: function, notFound: function, internalError: function}}}
  */
 Constants.APIResponses = {

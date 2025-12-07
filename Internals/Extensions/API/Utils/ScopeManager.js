@@ -1,6 +1,6 @@
 const {
 	Errors: {
-		Error: GABError,
+		Error: SkynetError,
 	},
 } = require("../../../index");
 

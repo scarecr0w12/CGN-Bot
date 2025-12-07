@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 	<title><%= serverData.name %> GAwesomePoints - Skynet Admin Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body onload="GAwesomeUtil.SFS();">
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/admin-menu %>
+					<%- include('../partials/admin-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
@@ -26,21 +26,21 @@
 					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% var commandData = configData.commands.points; commandData.name = "points"; commandData.description = pageData.commandDescriptions.points; commandData.category = pageData.commandCategories.points; %>
-						<% include ../partials/admin-command-item %>
+						<%- include('../partials/admin-command-item') %>
 						<% commandData = configData.commands.lottery; commandData.name = "lottery"; commandData.description = pageData.commandDescriptions.lottery; commandData.category = pageData.commandCategories.lottery; %>
-						<% include ../partials/admin-command-item %>
+						<%- include('../partials/admin-command-item') %>
 						</div>
 						<br>
 						<% var formButtonsUnsaved = false; %>
-						<% include ../partials/form-buttons %>
-						<% include ../partials/form-buttons-bar %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
 					</form>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

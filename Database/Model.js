@@ -66,12 +66,12 @@ module.exports = class Model {
 		try {
 			return await this._client[opts.multi ? "updateMany" : "updateOne"](query, operations, opts);
 		} catch (err) {
-			throw new GABError("MONGODB_ERROR", {}, err);
+			throw new SkynetError("MONGODB_ERROR", {}, err);
 		}
 	}
 
 	async insert (data, opts) {
-		if (!data) throw new GABError("GADRIVER_INVALID_PARAMS");
+		if (!data) throw new SkynetError("GADRIVER_INVALID_PARAMS");
 
 		let func = "insertOne";
 		if (Array.isArray(data)) {
@@ -85,7 +85,7 @@ module.exports = class Model {
 		try {
 			return await this._client[func](data, opts);
 		} catch (err) {
-			throw new GABError("MONGODB_ERROR", {}, err);
+			throw new SkynetError("MONGODB_ERROR", {}, err);
 		}
 	}
 
@@ -93,7 +93,7 @@ module.exports = class Model {
 		try {
 			return this._client.deleteMany(query, options);
 		} catch (err) {
-			throw new GABError("MONGODB_ERROR", {}, err);
+			throw new SkynetError("MONGODB_ERROR", {}, err);
 		}
 	}
 

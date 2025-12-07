@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title>Wiki Contributors - <%= serverData.name %> Maintainer Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 	<script>
 	function newWikiContributors() {
 		var newContributorUser = $("#new-contributor-user");
@@ -29,14 +29,14 @@
 	</script>
 </head>
 <body>
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/maintainer-menu %>
+					<%- include('../partials/maintainer-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
@@ -135,7 +135,7 @@
 		<script>GAwesomeUtil.setUserAutocomplete();</script>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

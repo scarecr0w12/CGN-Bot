@@ -2,12 +2,12 @@
  * Discord.js v14 Structure Extensions
  *
  * Discord.js v14 removed Structures.extend, so we use prototype extensions
- * and utility functions instead. This module adds GAB-specific functionality
+ * and utility functions instead. This module adds Skynet-specific functionality
  * to Discord.js structures.
  */
 
 const { Text, Colors } = require("../../Internals/Constants");
-const { Error: GABError } = require("../../Internals/Errors");
+const { Error: SkynetError } = require("../../Internals/Errors");
 const Gag = require("./Gag");
 const { ChannelType, PermissionFlagsBits, EmbedBuilder, AttachmentBuilder, Guild, Message, GuildMember } = require("discord.js");
 
@@ -168,7 +168,7 @@ function extendMessage() {
 				color: Colors.ERROR,
 				title: Text.ERROR_TITLE(),
 				description: !Gag(process.argv.slice(2)).owo ? Text.ERROR_BODY(cmd, stack) : Text.OWO_ERROR_BODY(),
-				footer: { text: `Contact your GAB maintainer for more support.` },
+				footer: { text: `Contact your Skynet maintainer for more support.` },
 			}],
 		});
 	};
@@ -232,10 +232,10 @@ function handleSendError(message, err) {
 				logger.debug(`Failed to edit an unknown message.`, { chid: message.channel.id }, err);
 				return null;
 			default:
-				throw new GABError("UNKNOWN_DISCORD_API_ERROR", { msgid: message.id }, err);
+				throw new SkynetError("UNKNOWN_DISCORD_API_ERROR", { msgid: message.id }, err);
 		}
 	}
-	throw new GABError("UNKNOWN_DISCORD_ERROR", { msgid: message.id }, err);
+	throw new SkynetError("UNKNOWN_DISCORD_ERROR", { msgid: message.id }, err);
 }
 
 /**

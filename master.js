@@ -119,7 +119,7 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 					// Print startup ascii message
 					logger.info(`The best Discord Bot, version ${configJSON.version}, is now ready!`);
 					// Use console.log because winston never lets us have anything fun, MOM
-					figlet("GAwesomeBot", (err, res) => {
+					figlet("SkynetBot", (err, res) => {
 						if (err) {
 							logger.error("", {}, err);
 						} else {

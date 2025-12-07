@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title><%= serverData.name %> RSS Feeds - Skynet Admin Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 
 	<script>
 	function newRss() {
@@ -57,14 +57,14 @@
 	</script>
 </head>
 <body onload="GAwesomeUtil.SFS();">
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/admin-menu %>
+					<%- include('../partials/admin-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
@@ -78,7 +78,7 @@
 					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% const commandData = configData.commands.rss; commandData.name = "rss"; commandData.description = pageData.commandDescriptions.rss; commandData.category = pageData.commandCategories.rss; %>
-						<% include ../partials/admin-command-item %>
+						<%- include('../partials/admin-command-item') %>
 						</div>
 							<div class="field" style="overflow-x: scroll;">
                                 <%- include("../partials/no-results", { isHidden: configData.rss_feeds.length, isSearchQuery: false, description: "You haven't added any RSS feeds yet. Fill out the form below to get started." }) %>
@@ -197,15 +197,15 @@
 							</div>
 							<br>
                             <% var formButtonsUnsaved = false; %>
-                            <% include ../partials/form-buttons %>
-                            <% include ../partials/form-buttons-bar %>
+                            <%- include('../partials/form-buttons') %>
+                            <%- include('../partials/form-buttons-bar') %>
 						</form>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

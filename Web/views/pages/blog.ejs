@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 	<title><%= pageData.pageTitle %></title>
-    <% include ../partials/head %>
+    <%- include('../partials/head') %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
@@ -36,12 +36,12 @@
 		<div class="container">
             <% if (pageData.mode === "article") { %>
                 <% const { blogPost } = pageData; %>
-                <% include ../partials/blog-article %>
+                <%- include('../partials/blog-article') %>
             <% } else if (pageData.mode === "list") { %>
                 <% if (pageData.data.length > 0) { %>
                     <% pageData.data.forEach(blogPost => { %>
 						<div class="box">
-	                        <% include ../partials/blog-article %>
+	                        <%- include('../partials/blog-article') %>
 						</div>
                     <% }); %>
                 <% } else { %>
@@ -74,12 +74,12 @@
                     </div>
                 </nav>
             <% } else if (pageData.mode === "compose") { %>
-                <% include ../partials/blog-composer %>
+                <%- include('../partials/blog-composer') %>
             <% } %>
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

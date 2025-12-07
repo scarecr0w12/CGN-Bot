@@ -1,5 +1,5 @@
 const { Collection } = require("discord.js");
-const { Error: GABError } = require("../../../Errors");
+const { Error: SkynetError } = require("../../../Errors");
 
 class Utils {
 	constructor () {
@@ -86,7 +86,7 @@ class Utils {
 		} else if (typeof content === "object") {
 			editOptions.embed = content;
 		} else if (!content) {
-			throw new GABError("API_ERROR", "Message cannot be edited without content.");
+			throw new SkynetError("API_ERROR", "Message cannot be edited without content.");
 		}
 		return editOptions;
 	}
@@ -125,7 +125,7 @@ class Utils {
 	 * @throws {GABError}
 	 */
 	static serializeError (err) {
-		throw new GABError("DISCORD_ERROR", err);
+		throw new SkynetError("DISCORD_ERROR", err);
 	}
 }
 

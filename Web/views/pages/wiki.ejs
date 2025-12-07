@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 	<title><%= pageData.pageTitle %></title>
-    <% include ../partials/head %>
+    <%- include('../partials/head') %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
@@ -23,7 +23,7 @@
 				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
 				<% if (pageData.mode !== "edit") { %>
 				<% const menuToggleButtonSize = ""; %>
-				<% include ../partials/menu-toggle %>
+				<%- include('../partials/menu-toggle') %>
 				<% } %>
 			</div>
 		</div>
@@ -170,19 +170,19 @@
 					</nav>
 					<div id="frame" class="<%= (pageData.mode === 'page' && pageData.content) ? 'content' : '' %>">
 						<% if (pageData.mode === "search") { %>
-							<% include ../partials/wiki-search-results %>
+							<%- include('../partials/wiki-search-results') %>
 						<% } else if (["page", "history"].includes(pageData.mode)) { %>
 							<% if (pageData.mode === "page" && pageData.content) { %>
 								<%- pageData.content %>
 							<% } else if (pageData.mode === "history" && pageData.updates) { %>
-								<% include ../partials/wiki-edit-history %>
+								<%- include('../partials/wiki-edit-history') %>
 							<% } else { %>
 								<% const activeSearchQuery = pageData.activeSearchQuery; %>
 								<% const mode = pageData.title %>
                         		<%- include("../partials/no-results", { isSearchQuery: true, activeSearchQuery, resetUrl: null, mode }) %>
 							<% } %>
 						<% } else if (pageData.mode === "edit") { %>
-							<% include ../partials/wiki-editor %>
+							<%- include('../partials/wiki-editor') %>
 						<% } %>
 					</div>
 				</div>
@@ -196,7 +196,7 @@
 		</script>
 	<% } %>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

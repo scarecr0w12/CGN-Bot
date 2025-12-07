@@ -2,30 +2,30 @@
 <html lang="en">
 <head>
 	<title><%= pageData.extensionData.name ? (pageData.extensionData.name + " - ") : "" %><%= serverData.name %> Extension Builder - Skynet Admin Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body onload="GAwesomeUtil.SFS();">
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/admin-menu %>
+					<%- include('../partials/admin-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
 						Extension Builder
 					</h1>
 					<% const isGallery = false; %>
-					<% include ../partials/extension-builder %>
+					<%- include('../partials/extension-builder') %>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

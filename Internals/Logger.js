@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const sentry = require("@sentry/node");
 require("winston-daily-rotate-file");
 
-const { Error: GABError, TypeError: GABTypeError, RangeError: GABRangeError } = require("./Errors");
+const { Error: SkynetError, TypeError: SkynetTypeError, RangeError: SkynetRangeError } = require("./Errors");
 const { OfficialMode } = require("./Constants");
 
 const { loadConfigs } = require("./../Configurations/env.js");
@@ -47,7 +47,7 @@ module.exports = class Logger {
 						format.json(),
 					),
 					datePattern: `DD-MM-YYYY`,
-					filename: require("path").join(process.cwd(), `logs/%DATE%.${type === "master" ? "master" : type.replace(/ /g, "-").toLowerCase()}.gawesomebot.log`),
+					filename: require("path").join(process.cwd(), `logs/%DATE%.${type === "master" ? "master" : type.replace(/ /g, "-").toLowerCase()}.skynetbot.log`),
 				}),
 				new transports.File({
 					level: config.consoleLevel,
@@ -58,7 +58,7 @@ module.exports = class Logger {
 						format(this.formatJSON)(),
 						format.json(),
 					),
-					filename: require("path").join(process.cwd(), `logs/console.gawesomebot.log`),
+					filename: require("path").join(process.cwd(), `logs/console.skynetbot.log`),
 				}),
 			],
 		});
@@ -70,7 +70,7 @@ module.exports = class Logger {
 		this.sentry = null;
 		if (config.sentry && config.sentry.dsn) {
 			const sentryConfig = Object.assign({
-				release: `GAB.${configJSON.branch}.${configJSON.version}`,
+				release: `Skynet.${configJSON.branch}.${configJSON.version}`,
 				environment: OfficialMode.includes(auth.discord.clientID) ? "prod" : "development",
 			}, config.sentry);
 			this.info("Connecting this Logger instance with Sentry.", { config: sentryConfig });
@@ -95,7 +95,7 @@ module.exports = class Logger {
 	formatErrorMessage (log, metadata, error) {
 		this.sendSentryError(error, metadata);
 		delete metadata._level;
-		if ([GABError, GABTypeError, GABRangeError].includes(error.constructor)) {
+		if ([SkynetError, SkynetTypeError, SkynetRangeError].includes(error.constructor)) {
 			if (error._meta) Object.assign(metadata, error._meta);
 			delete error._meta;
 		}
@@ -110,7 +110,7 @@ module.exports = class Logger {
 	formatJSON ({ [ERROR_SYMBOL]: error, ...meta }) {
 		delete meta._level;
 		if (error) {
-			if ([GABError, GABTypeError, GABRangeError].includes(error.constructor)) {
+			if ([SkynetError, SkynetTypeError, SkynetRangeError].includes(error.constructor)) {
 				if (error._meta) Object.assign(meta, error._meta);
 				delete error._meta;
 			}

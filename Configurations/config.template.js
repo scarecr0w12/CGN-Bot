@@ -8,7 +8,7 @@ module.exports = {
 	 * The base URL used in links posted by the bot.
 	 * The URL *must* end with a forward slash ("/")
 	 */
-	hostingURL: "https://dev.gawesomebot.com/",
+	hostingURL: "https://dev.skynetbot.com/",
 	/*
 	 * The IP the Web Server should bind to.
 	 * You should probably leave this as "0.0.0.0" which binds to all incoming connections
@@ -37,13 +37,13 @@ module.exports = {
 	 */
 	database: {
 		/*
-		 * The URL pointing to the MongoDB instance GAB should use
+		 * The URL pointing to the MongoDB instance Skynet should use
 		 */
 		URL: "mongodb://localhost:27017/",
 		/*
-		 * The name of the Database GAB should use
+		 * The name of the Database Skynet should use
 		 */
-		db: "gabbe",
+		db: "skynet",
 	},
 	/*
 	 * Connection options for Sentry error reporting.
@@ -96,11 +96,11 @@ module.exports = {
 	/*
 	 * Data to populate the donation list on the /donate web page.
 	 */
-	donateSubtitle: "The GAwesomeBot team currently doesn't accept direct payments. (<a href='/wiki/FAQs#donations'>here's why</a>) Instead, you can use the following methods to support the project!",
+	donateSubtitle: "The SkynetBot team currently doesn't accept direct payments. (<a href='/wiki/FAQs#donations'>here's why</a>) Instead, you can use the following methods to support the project!",
 	donateCharities: [
 		{
 			icon_url: "http://i.imgur.com/1C08tFT.png",
-			donate_url: "https://github.com/GilbertGobbels/GAwesomeBot",
+			donate_url: "https://github.com/GilbertGobbels/SkynetBot",
 			name: "Star us on GitHub!",
 			country: "WW",
 		},
@@ -136,7 +136,7 @@ module.exports = {
 		"sure",
 	],
 	errorLines: [
-		"<strong>Help!</strong> My GAB's on fire!",
+		"<strong>Help!</strong> My Skynet's on fire!",
 		"<strong>Uh-oh</strong>, something went wrong.",
 		"<strong>Snap!</strong> Something hit a snag.",
 		"<strong>Yaikes</strong>, this isn't good.",

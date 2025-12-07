@@ -1,7 +1,7 @@
 const sizeof = require("object-sizeof");
 const {
 	Errors: {
-		Error: GABError,
+		Error: SkynetError,
 	},
 } = require("../../../index");
 let rawExtensionDocument;
@@ -40,7 +40,7 @@ module.exports = class Extension {
 				else Store = JSON.parse(JSON.stringify(rawExtensionDocument.store));
 				Store[key] = value;
 				if (sizeof(Store) > 25000) {
-					throw new GABError("STORAGE_SIZE_MAX");
+					throw new SkynetError("STORAGE_SIZE_MAX");
 				} else {
 					rawExtensionDocument.store = Store;
 					serverDocument.markModified("extensions");
@@ -50,7 +50,7 @@ module.exports = class Extension {
 			get: key => rawExtensionDocument.store[key],
 			delete: async key => {
 				if (!rawExtensionDocument.store) {
-					throw new GABError("STORAGE_EMPTY");
+					throw new SkynetError("STORAGE_EMPTY");
 				} else {
 					const Store = JSON.parse(JSON.stringify(rawExtensionDocument.store));
 					delete Store[key];

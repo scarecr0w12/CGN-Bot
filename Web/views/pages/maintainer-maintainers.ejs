@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title>Maintainers - <%= serverData.name %> Maintainer Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 	<script>
 	function newMaintainer() {
 		let newMaintainerUser = $("#new-maintainer-user");
@@ -30,14 +30,14 @@
 	</script>
 </head>
 <body onload="GAwesomeUtil.SFS();">
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/maintainer-menu %>
+					<%- include('../partials/maintainer-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
@@ -267,8 +267,8 @@
 						</div>
 						<br>
                         <% var formButtonsUnsaved = false; %>
-                        <% include ../partials/form-buttons %>
-                        <% include ../partials/form-buttons-bar %>
+                        <%- include('../partials/form-buttons') %>
+                        <%- include('../partials/form-buttons-bar') %>
 					</form>
 				</div>
 			</div>
@@ -276,7 +276,7 @@
 		<script>GAwesomeUtil.setUserAutocomplete();</script>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

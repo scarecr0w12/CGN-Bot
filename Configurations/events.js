@@ -10,34 +10,34 @@ module.exports = {
 
 	],
 	ready: [
-		"GAB.Ready",
+		"Skynet.Ready",
 	],
 	resumed: [
 
 	],
 	guildCreate: [
-		"GAB.GuildCreate",
+		"Skynet.GuildCreate",
 	],
 	guildDelete: [
-		"GAB.GuildDelete",
+		"Skynet.GuildDelete",
 	],
 	guildUpdate: [
-		"GAB.GuildUpdate",
+		"Skynet.GuildUpdate",
 	],
 	guildUnavailable: [
-		"GAB.GuildUnavailable",
+		"Skynet.GuildUnavailable",
 	],
 	guildAvailable: [
 
 	],
 	guildMemberAdd: [
-		"GAB.GuildMemberAdd",
+		"Skynet.GuildMemberAdd",
 	],
 	guildMemberRemove: [
-		"GAB.GuildMemberRemove",
+		"Skynet.GuildMemberRemove",
 	],
 	guildMemberUpdate: [
-		"GAB.GuildMemberUpdate",
+		"Skynet.GuildMemberUpdate",
 	],
 	guildMemberAvailable: [
 
@@ -52,7 +52,7 @@ module.exports = {
 
 	],
 	roleDelete: [
-		"GAB.RoleDelete",
+		"Skynet.RoleDelete",
 	],
 	roleUpdate: [
 
@@ -67,16 +67,16 @@ module.exports = {
 
 	],
 	guildBanAdd: [
-		"GAB.GuildBanAdd",
+		"Skynet.GuildBanAdd",
 	],
 	guildBanRemove: [
-		"GAB.GuildBanRemove",
+		"Skynet.GuildBanRemove",
 	],
 	channelCreate: [
 
 	],
 	channelDelete: [
-		"GAB.ChannelDelete",
+		"Skynet.ChannelDelete",
 	],
 	channelUpdate: [
 
@@ -85,21 +85,21 @@ module.exports = {
 
 	],
 	message: [
-		"GAB.MessageCreate",
-		"GAB.SpamHandler",
-		"GAB.VoteHandler",
-		"GAB.AFKHandler",
-		"GAB.UsernameHandler",
-		"GAB.SharedCommandMessageHandler",
-		// "GAB.Translation",
-		// "GAB.OtherFilters",
+		"Skynet.MessageCreate",
+		"Skynet.SpamHandler",
+		"Skynet.VoteHandler",
+		"Skynet.AFKHandler",
+		"Skynet.UsernameHandler",
+		"Skynet.SharedCommandMessageHandler",
+		// "Skynet.Translation",
+		// "Skynet.OtherFilters",
 	],
 	messageDelete: [
-		"GAB.MessageDelete",
+		"Skynet.MessageDelete",
 	],
 	messageUpdate: [
-		"GAB.MessageCommandUpdateHandler",
-		"GAB.MessageUpdate",
+		"Skynet.MessageCommandUpdateHandler",
+		"Skynet.MessageUpdate",
 	],
 	messageDeleteBulk: [
 
@@ -114,14 +114,14 @@ module.exports = {
 
 	],
 	userUpdate: [
-		"GAB.UpdateUsername",
-		"GAB.UserUpdate",
+		"Skynet.UpdateUsername",
+		"Skynet.UserUpdate",
 	],
 	presenceUpdate: [
-		"GAB.PresenceUpdate",
+		"Skynet.PresenceUpdate",
 	],
 	voiceStateUpdate: [
-		"GAB.VoiceStateUpdate",
+		"Skynet.VoiceStateUpdate",
 	],
 	disconnect: [
 

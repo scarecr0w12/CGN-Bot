@@ -3,11 +3,13 @@
 These files are crucial to the core functioning of GAB, you can call them the "engine" of GAB, if you will.
 
 #### When do I modify Internals?
+
 It is strongly recommended **to not edit any Internal files** for non-development purposes.
 If you are strictly seeking customization, you should check out the files in the `/Configurations` folder instead.
 *It is possible to edit the Constants.js file to modify some GAB behavior, but make sure you understand what you're doing first*.
 
 #### How do I decide what files are Internals?
+
 If a file;
 * Is crucial to *all* functioning of GAB, or
 * Is crucial to the functioning of another Internal file, or

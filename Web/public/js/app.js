@@ -1,24 +1,24 @@
-/* GAwesomeBot by Gilbert - Available under the GPL V2 License - Some rights reserved - https://github.com/GilbertGobbels/GAwesomeBot */
+/* SkynetBot by Gilbert - Available under the GPL V2 License - Some rights reserved - https://github.com/GilbertGobbels/SkynetBot */
 
 // Namespaces
-const GAwesomeData = {};
-const GAwesomeUtil = {};
-const GAwesomePaths = {};
-const GAwesomeListeners = {};
+const SkynetData = {};
+const SkynetUtil = {};
+const SkynetPaths = {};
+const SkynetListeners = {};
 
-GAwesomeData.activity = { guildData: {} };
-GAwesomeData.blog = { editor: {} };
-GAwesomeData.wiki = { bookmarks: JSON.parse(localStorage.getItem("wiki-bookmarks")) || [], editor: {} };
-GAwesomeData.extensions = {};
-GAwesomeData.timers = [];
-GAwesomeData.dashboard = { servers: {} };
-GAwesomeUtil.dashboard = {};
+SkynetData.activity = { guildData: {} };
+SkynetData.blog = { editor: {} };
+SkynetData.wiki = { bookmarks: JSON.parse(localStorage.getItem("wiki-bookmarks")) || [], editor: {} };
+SkynetData.extensions = {};
+SkynetData.timers = [];
+SkynetData.dashboard = { servers: {} };
+SkynetUtil.dashboard = {};
 
-GAwesomeData.config = {
-	debug: localStorage.getItem("gab:debug") || false,
+SkynetData.config = {
+	debug: localStorage.getItem("skynet:debug") || false,
 };
 
-GAwesomeData.blog.subtitles = [
+SkynetData.blog.subtitles = [
 	"Dolphin Musings",
 	"The fault in our syntax",
 	"How to go viral",
@@ -42,14 +42,14 @@ GAwesomeData.blog.subtitles = [
 	"These really aren't funny",
 ];
 
-GAwesomeData.extensions.html = {
+SkynetData.extensions.html = {
 	start: {
 		"#installer-title": "Installing $EXTNAME",
 		"#installer-subtitle": "Extension Information",
 	},
 	config: {
 		global: () => {
-			GAwesomeData.extensions.state.data.server = GAwesomeData.extensions.servers.find(svr => svr.id === $("#installer-serverSelect").val());
+			SkynetData.extensions.state.data.server = SkynetData.extensions.servers.find(svr => svr.id === $("#installer-serverSelect").val());
 			$("#installer-selector").hide();
 		},
 		"#installer-continue": () => `
@@ -63,10 +63,10 @@ GAwesomeData.extensions.html = {
 			let info = `
 				<div class="box has-text-left">
 				<h4 class="subtitle is-4">
-					Options for <strong>${GAwesomeData.extensions.state.extension.name}</strong>
+					Options for <strong>${SkynetData.extensions.state.extension.name}</strong>
 				</h4>
 				`;
-			if (["keyword", "command"].includes(GAwesomeData.extensions.state.extension.type)) {
+			if (["keyword", "command"].includes(SkynetData.extensions.state.extension.type)) {
 				info += `
 				<div class="field">
 					<label class="label">Permissions</label>
@@ -87,7 +87,7 @@ GAwesomeData.extensions.html = {
 				<div class="field">
 					<label class="label">Channel(s)</label>
 				`;
-			$.get(`/api/servers/${GAwesomeData.extensions.state.data.server.id}/channels`, data => {
+			$.get(`/api/servers/${SkynetData.extensions.state.data.server.id}/channels`, data => {
 				const channels = Object.values(data).filter(ch => ch.type === ChannelType.GuildText).sort((a, b) => a.rawPosition - b.rawPosition);
 				channels.forEach(ch => {
 					info += `
@@ -101,10 +101,10 @@ GAwesomeData.extensions.html = {
 				</div>
 				<div class="field">
 					<div class="control has-addons">
-						<a class="button is-small" onclick="GAwesomeUtil.toggleChannels('installer-disabled_channel_ids', true);">
+						<a class="button is-small" onclick="SkynetUtil.toggleChannels('installer-disabled_channel_ids', true);">
 							<span>Select All</span>
 						</a>
-						<a class="button is-small" onclick="GAwesomeUtil.toggleChannels('installer-disabled_channel_ids', false);">
+						<a class="button is-small" onclick="SkynetUtil.toggleChannels('installer-disabled_channel_ids', false);">
 							<span>Deselect All</span>
 						</a>
 					</div>
@@ -120,15 +120,15 @@ GAwesomeData.extensions.html = {
 	},
 };
 
-GAwesomeUtil.setInterval = (...args) => {
+SkynetUtil.setInterval = (...args) => {
 	const timer = setInterval(...args);
-	GAwesomeData.timers.push(timer);
+	SkynetData.timers.push(timer);
 	return timer;
 };
 
-GAwesomeUtil.reload = () => window.location.reload(true);
-GAwesomeUtil.refresh = () => Turbolinks.visit("");
-GAwesomeUtil.snapshot = tagName => {
+SkynetUtil.reload = () => window.location.reload(true);
+SkynetUtil.refresh = () => Turbolinks.visit("");
+SkynetUtil.snapshot = tagName => {
 	const tag = document.getElementsByTagName(tagName)[0];
 	if (!Turbolinks || !Turbolinks.controller) return;
 	const cache = Turbolinks.controller.cache.snapshots;
@@ -136,35 +136,35 @@ GAwesomeUtil.snapshot = tagName => {
 	return cache[window.location.href];
 };
 
-GAwesomeUtil.log = (msg, level, force) => {
-	if (!GAwesomeData.config.debug && !force) return;
-	if (!msg || typeof msg !== "string" || (level && !["log", "warn", "error"].includes(level))) return console.warn("[GAwesomeBot] [WARN] Invalid Arguments for log()");
-	console[level || "log"](`[GAwesomeBot] [${level === "log" || !level ? "DEBUG" : level.toUpperCase()}] ${msg}`);
+SkynetUtil.log = (msg, level, force) => {
+	if (!SkynetData.config.debug && !force) return;
+	if (!msg || typeof msg !== "string" || (level && !["log", "warn", "error"].includes(level))) return console.warn("[SkynetBot] [WARN] Invalid Arguments for log()");
+	console[level || "log"](`[SkynetBot] [${level === "log" || !level ? "DEBUG" : level.toUpperCase()}] ${msg}`);
 };
-GAwesomeUtil.error = msg => GAwesomeUtil.log(msg, "error", true);
-GAwesomeUtil.warn = msg => GAwesomeUtil.log(msg, "warn", true);
+SkynetUtil.error = msg => SkynetUtil.log(msg, "error", true);
+SkynetUtil.warn = msg => SkynetUtil.log(msg, "warn", true);
 
-GAwesomeUtil.debugDump = () => {
-	GAwesomeUtil.log("[DUMP:INFO] Pass this information to a GAB Support Member and they will assist you further!", "log", true);
-	const { dashboard: { socket }, builder } = GAwesomeData;
-	if (GAwesomeData.dashboard.socket) GAwesomeData.dashboard.socket = {};
-	if (GAwesomeData.builder) GAwesomeData.builder = {};
-	GAwesomeUtil.log(`[DUMP:APPDATA] ${JSON.stringify(GAwesomeData)}`, "log", true);
-	GAwesomeData.dashboard.socket = socket;
-	GAwesomeData.builder = builder;
-	GAwesomeUtil.log(`[DUMP:SESSIONDATA] ${JSON.stringify(localStorage)}`, "log", true);
-	GAwesomeUtil.log(`[DUMP:LIBDATA] ${JSON.stringify({
+SkynetUtil.debugDump = () => {
+	SkynetUtil.log("[DUMP:INFO] Pass this information to a GAB Support Member and they will assist you further!", "log", true);
+	const { dashboard: { socket }, builder } = SkynetData;
+	if (SkynetData.dashboard.socket) SkynetData.dashboard.socket = {};
+	if (SkynetData.builder) SkynetData.builder = {};
+	SkynetUtil.log(`[DUMP:APPDATA] ${JSON.stringify(SkynetData)}`, "log", true);
+	SkynetData.dashboard.socket = socket;
+	SkynetData.builder = builder;
+	SkynetUtil.log(`[DUMP:SESSIONDATA] ${JSON.stringify(localStorage)}`, "log", true);
+	SkynetUtil.log(`[DUMP:LIBDATA] ${JSON.stringify({
 		tl: typeof Turbolinks !== "undefined", io: typeof io !== "undefined", np: typeof NProgress !== "undefined", fs: typeof saveAs !== "undefined",
 		sa: typeof swal !== "undefined", ac: typeof AutoComplete !== "undefined", cm: typeof CodeMirror !== "undefined", md: typeof md5 !== "undefined",
 	})}`, "log", true);
 };
 
-GAwesomeUtil.toggleAds = value => {
+SkynetUtil.toggleAds = value => {
 	document.cookie = `adsPreference=${value !== "true"}; path=/`;
-	GAwesomeUtil.refresh();
+	SkynetUtil.refresh();
 };
 
-GAwesomeUtil.SFS = () => {
+SkynetUtil.SFS = () => {
 	try {
 		// Save builder code if it exists
 		$("#builder-code-box").val(cm.getDoc().getValue());
@@ -172,29 +172,29 @@ GAwesomeUtil.SFS = () => {
 		// No-op
 	}
 	// Set form state to current serialized form
-	GAwesomeData.IFS = $("#form").serialize();
-	GAwesomeData.HUM = true;
+	SkynetData.IFS = $("#form").serialize();
+	SkynetData.HUM = true;
 	// Reset save button
 	$("#form-submit span:nth-child(2)").html("Save");
 	// Update Turbolinks snapshots
-	GAwesomeUtil.snapshot("body");
+	SkynetUtil.snapshot("body");
 };
 
-GAwesomeUtil.submitForm = () => {
+SkynetUtil.submitForm = () => {
 	$("#form-submit").addClass("is-loading");
-	GAwesomeData.HUM = true;
-	if (GAwesomeData.builders) Object.values(GAwesomeData.builders).forEach(a => a.save());
+	SkynetData.HUM = true;
+	if (SkynetData.builders) Object.values(SkynetData.builders).forEach(a => a.save());
 	$.ajax({
 		method: "POST",
 		url: location.pathname + location.search,
 		data: $("#form").serialize(),
 	})
 		.always((data) => {
-			GAwesomeUtil.SFS();
+			SkynetUtil.SFS();
 			const form = $("#form-submit");
 			form.removeClass("is-loading");
 			if (data !== "OK" && data.status !== 200 && data.status !== 302) {
-				GAwesomeUtil.log(`Failed to save dashboard settings. Server returned status ${data.status}.`, "error");
+				SkynetUtil.log(`Failed to save dashboard settings. Server returned status ${data.status}.`, "error");
 				form.find("span:nth-child(1)").html("<i class='fa fa-exclamation'></i>");
 				form.find("span:nth-child(2)").html("Error");
 			} else {
@@ -210,7 +210,7 @@ GAwesomeUtil.submitForm = () => {
 		});
 };
 
-GAwesomeUtil.setUserAutocomplete = svrid => {
+SkynetUtil.setUserAutocomplete = svrid => {
 	const loadAutoComplete = data => new AutoComplete({
 		selector: ".user-autocomplete",
 		minChars: 2,
@@ -220,23 +220,23 @@ GAwesomeUtil.setUserAutocomplete = svrid => {
 		},
 	});
 
-	const cachedData = GAwesomeUtil.dashboard.getCache(svrid, "userlist");
+	const cachedData = SkynetUtil.dashboard.getCache(svrid, "userlist");
 	if (cachedData) return loadAutoComplete(cachedData);
 
 	$.getJSON(`/api/list/users${svrid ? `?svrid=${svrid}` : ""}`, data => {
 		loadAutoComplete(data);
-		GAwesomeUtil.dashboard.setCache(svrid, "userlist", data);
+		SkynetUtil.dashboard.setCache(svrid, "userlist", data);
 	});
 };
 
-GAwesomeUtil.updateHeader = () => {
+SkynetUtil.updateHeader = () => {
 	const currentNavItem = $(`#nav-${window.location.pathname.split("/")[1]}`);
 	if (currentNavItem) {
 		currentNavItem.addClass("is-tab");
 	}
 };
 
-GAwesomeUtil.toggleChannels = (classname, value) => {
+SkynetUtil.toggleChannels = (classname, value) => {
 	const elements = document.getElementsByClassName(classname);
 	const len = elements.length;
 	for (let i = 0; i < len; i++) {
@@ -244,7 +244,7 @@ GAwesomeUtil.toggleChannels = (classname, value) => {
 	}
 };
 
-GAwesomeUtil.switchActivityLayout = type => {
+SkynetUtil.switchActivityLayout = type => {
 	if (!type) {
 		type = localStorage.getItem("servers-layout");
 		if (!type) {
@@ -270,13 +270,13 @@ GAwesomeUtil.switchActivityLayout = type => {
 	}
 };
 
-GAwesomeUtil.activityBanGuild = svrid => {
+SkynetUtil.activityBanGuild = svrid => {
 	if (confirm("Are you sure you want to remove this guild from the activity page? It will no longer be visible on this page.")) {
 		$.post("/dashboard/maintainer/servers/server-list", { removeFromActivity: svrid }).done(() => {
 			const cardContent = $(`#cardContent-${svrid}`);
-			GAwesomeData.activity.guildData[svrid] = cardContent.html();
+			SkynetData.activity.guildData[svrid] = cardContent.html();
 			cardContent.html(`
-				<a class="has-text-centered is-4" href="javascript:GAwesomeUtil.activityUnbanGuild('${svrid}')">
+				<a class="has-text-centered is-4" href="javascript:SkynetUtil.activityUnbanGuild('${svrid}')">
     			<span class="icon">
         		<i class="fa fa-refresh"></i>
     			</span>
@@ -288,22 +288,22 @@ GAwesomeUtil.activityBanGuild = svrid => {
 	}
 };
 
-GAwesomeUtil.activityUnbanGuild = svrid => {
+SkynetUtil.activityUnbanGuild = svrid => {
 	$.post("/dashboard/maintainer/servers/server-list", { unbanFromActivity: svrid }).done(() => {
 		const cardContent = $(`#cardContent-${svrid}`);
 		cardContent.removeClass("has-text-centered");
-		cardContent.html(GAwesomeData.activity.guildData[svrid]);
+		cardContent.html(SkynetData.activity.guildData[svrid]);
 	});
 };
 
-GAwesomeUtil.activityViewportUpdate = mq => {
+SkynetUtil.activityViewportUpdate = mq => {
 	if (window.location.pathname.split("/")[1] !== "activity" && window.location.pathname.split("/")[1] !== "extensions") return;
 	if (mq.matches) {
 		$(".header-search-box").removeClass("is-large");
 		document.getElementById("frame").style.paddingLeft = "15px";
 		document.getElementById("frame").style.paddingRight = "15px";
 		if (window.location.pathname !== "/activity/users") {
-			GAwesomeUtil.switchActivityLayout("list");
+			SkynetUtil.switchActivityLayout("list");
 		}
 	} else {
 		$(".header-search-box").addClass("is-large");
@@ -312,58 +312,58 @@ GAwesomeUtil.activityViewportUpdate = mq => {
 	}
 };
 
-GAwesomeUtil.uploadContent = (uploads, type) => {
+SkynetUtil.uploadContent = (uploads, type) => {
 	if (uploads) {
 		const reader = new FileReader();
 		reader.onload = (event) => {
-			GAwesomeData[type].editor.value(event.target.result);
+			SkynetData[type].editor.value(event.target.result);
 		};
 		reader.readAsText(uploads[0]);
 		document.getElementById("composer-content-upload").value = null;
 	}
 };
 
-GAwesomeUtil.uploadCode = uploads => {
+SkynetUtil.uploadCode = uploads => {
 	if (uploads) {
 		const reader = new FileReader();
 		reader.onload = (event) => {
-			GAwesomeData.builder.getDoc().setValue(event.target.result);
+			SkynetData.builder.getDoc().setValue(event.target.result);
 		};
 		reader.readAsText(uploads[0]);
 		document.getElementById("builder-code-upload").value = null;
 	}
 };
 
-GAwesomeUtil.downloadContent = () => {
+SkynetUtil.downloadContent = () => {
 	const blob = new Blob([document.getElementById("composer-content").value], { type: "text/markdown;charset=utf-8" });
 	saveAs(blob, `${document.getElementById("composer-title").value || "Untitled"}.md`);
 };
 
-GAwesomeUtil.downloadCode = fileName => {
-	const blob = new Blob([GAwesomeData.builder.getValue()], { type: "text/markdown;charset=utf-8" });
+SkynetUtil.downloadCode = fileName => {
+	const blob = new Blob([SkynetData.builder.getValue()], { type: "text/markdown;charset=utf-8" });
 	saveAs(blob, `${fileName || document.getElementById("builder-title").value || "Untitled"}.gabext`);
 };
 
-GAwesomeUtil.loadSource = (extid, extv, extname) => {
-	if (!GAwesomeData.extensions.source) GAwesomeData.extensions.source = {};
-	if (!GAwesomeData.extensions.source[extid]) {
+SkynetUtil.loadSource = (extid, extv, extname) => {
+	if (!SkynetData.extensions.source) SkynetData.extensions.source = {};
+	if (!SkynetData.extensions.source[extid]) {
 		return $.get(`/extensions/${extid}?v=${extv}`, code => {
-			GAwesomeData.extensions.source[extid] = code;
-			return GAwesomeUtil.showSource(extid, extv, extname, code);
+			SkynetData.extensions.source[extid] = code;
+			return SkynetUtil.showSource(extid, extv, extname, code);
 		}, "text");
 	} else {
-		return GAwesomeUtil.showSource(extid, extv, extname, GAwesomeData.extensions.source[extid]);
+		return SkynetUtil.showSource(extid, extv, extname, SkynetData.extensions.source[extid]);
 	}
 };
 
-GAwesomeUtil.showSource = (extid, extv, extname, code) => {
+SkynetUtil.showSource = (extid, extv, extname, code) => {
 	$("#extension-source-download").attr({
 		href: `/extensions/${extid}?v=${extv}`,
 		download: `${extname}.gabext`,
 	});
 	$("#extension-source-name").html(extname);
-	if (!GAwesomeData.builder || !document.body.contains(GAwesomeData.builder.getTextArea())) {
-		GAwesomeData.builder = CodeMirror.fromTextArea(document.getElementById("extension-source-viewer"), {
+	if (!SkynetData.builder || !document.body.contains(SkynetData.builder.getTextArea())) {
+		SkynetData.builder = CodeMirror.fromTextArea(document.getElementById("extension-source-viewer"), {
 			mode: "javascript",
 			lineWrapping: true,
 			lineNumbers: true,
@@ -373,32 +373,32 @@ GAwesomeUtil.showSource = (extid, extv, extname, code) => {
 			theme: "monokai",
 		});
 	}
-	GAwesomeData.builder.setValue(code);
+	SkynetData.builder.setValue(code);
 	$("html").addClass("is-clipped");
 	$("#extension-source-modal").addClass("is-active");
-	setImmediate(() => GAwesomeData.builder.refresh());
+	setImmediate(() => SkynetData.builder.refresh());
 };
 
-GAwesomeUtil.searchWiki = query => {
+SkynetUtil.searchWiki = query => {
 	Turbolinks.visit(`/wiki?q=${encodeURIComponent(query)}`);
 };
 
-GAwesomeUtil.getBookmarkLink = id => `${window.location.pathname.split("/").slice(-1)[0]}#${id}`;
+SkynetUtil.getBookmarkLink = id => `${window.location.pathname.split("/").slice(-1)[0]}#${id}`;
 
-GAwesomeUtil.bookmarkWikiSection = elem => {
-	const link = GAwesomeUtil.getBookmarkLink(elem.parentNode.id);
-	if (GAwesomeData.wiki.bookmarks.indexOf(link) > -1) {
-		GAwesomeData.wiki.bookmarks.splice(GAwesomeData.wiki.bookmarks.indexOf(link), 1);
+SkynetUtil.bookmarkWikiSection = elem => {
+	const link = SkynetUtil.getBookmarkLink(elem.parentNode.id);
+	if (SkynetData.wiki.bookmarks.indexOf(link) > -1) {
+		SkynetData.wiki.bookmarks.splice(SkynetData.wiki.bookmarks.indexOf(link), 1);
 	} else {
-		GAwesomeData.wiki.bookmarks.push(link);
+		SkynetData.wiki.bookmarks.push(link);
 	}
-	localStorage.setItem("wiki-bookmarks", JSON.stringify(GAwesomeData.wiki.bookmarks));
+	localStorage.setItem("wiki-bookmarks", JSON.stringify(SkynetData.wiki.bookmarks));
 
 	$(elem).toggleClass("is-dark is-text");
-	GAwesomeUtil.populateWikiBookmarks();
+	SkynetUtil.populateWikiBookmarks();
 };
 
-GAwesomeUtil.populateWikiSections = () => {
+SkynetUtil.populateWikiSections = () => {
 	let subMenu = "<ul>";
 	const pageSections = document.getElementById("frame").querySelectorAll("h1, h2, h3");
 	for (let i = 0; i < pageSections.length; i++) {
@@ -412,7 +412,7 @@ GAwesomeUtil.populateWikiSections = () => {
 		subMenu += `<a class='heading-shortcut-link' href='#${pageSections[i].id}' data-turbolinks='false'>${pageSections[i].innerHTML}</a></li>`;
 
 		// eslint-disable-next-line max-len
-		pageSections[i].innerHTML += `&nbsp;<a class='button is-text ${pageSections[i].tagName === "H3" ? "is-small" : ""} heading-shortcut-link' style='text-decoration:none;' href='#${pageSections[i].id}' data-turbolinks='false'><i class='fa fa-link'></i></a>&nbsp;<a class='button ${GAwesomeData.wiki.bookmarks.indexOf(GAwesomeUtil.getBookmarkLink(pageSections[i].id)) > -1 ? "is-dark" : "is-text"} ${pageSections[i].tagName === "H3" ? "is-small" : ""}' style='text-decoration:none;' onclick='GAwesomeUtil.bookmarkWikiSection(this);'><i class='fa fa-bookmark'></i></a>`;
+		pageSections[i].innerHTML += `&nbsp;<a class='button is-text ${pageSections[i].tagName === "H3" ? "is-small" : ""} heading-shortcut-link' style='text-decoration:none;' href='#${pageSections[i].id}' data-turbolinks='false'><i class='fa fa-link'></i></a>&nbsp;<a class='button ${SkynetData.wiki.bookmarks.indexOf(SkynetUtil.getBookmarkLink(pageSections[i].id)) > -1 ? "is-dark" : "is-text"} ${pageSections[i].tagName === "H3" ? "is-small" : ""}' style='text-decoration:none;' onclick='SkynetUtil.bookmarkWikiSection(this);'><i class='fa fa-bookmark'></i></a>`;
 	}
 	subMenu += "</ul>";
 	if (pageSections[pageSections.length - 1] && pageSections[pageSections.length - 1].tagName === "H3") {
@@ -428,15 +428,15 @@ GAwesomeUtil.populateWikiSections = () => {
 	});
 };
 
-GAwesomeUtil.populateWikiBookmarks = () => {
-	if (GAwesomeData.wiki.bookmarks.length > 0) {
+SkynetUtil.populateWikiBookmarks = () => {
+	if (SkynetData.wiki.bookmarks.length > 0) {
 		$("#bookmarks-menu").removeClass("is-hidden");
 		$("#menu-spacer").removeClass("is-hidden");
 
-		GAwesomeData.wiki.bookmarks = GAwesomeData.wiki.bookmarks.sort();
+		SkynetData.wiki.bookmarks = SkynetData.wiki.bookmarks.sort();
 		let subMenu = "<ul>";
-		for (let i = 0; i < GAwesomeData.wiki.bookmarks.length; i++) {
-			subMenu += `<li><a href='${GAwesomeData.wiki.bookmarks[i]}' data-turbolinks='false'>${decodeURI(GAwesomeData.wiki.bookmarks[i]).replace("#", " &raquo; ")}</a></li>`;
+		for (let i = 0; i < SkynetData.wiki.bookmarks.length; i++) {
+			subMenu += `<li><a href='${SkynetData.wiki.bookmarks[i]}' data-turbolinks='false'>${decodeURI(SkynetData.wiki.bookmarks[i]).replace("#", " &raquo; ")}</a></li>`;
 		}
 		subMenu += "</ul>";
 
@@ -447,10 +447,10 @@ GAwesomeUtil.populateWikiBookmarks = () => {
 	}
 };
 
-GAwesomeUtil.isLoading = elem => $(elem).addClass("is-loading");
-GAwesomeUtil.isFinished = elem => $(elem).removeClass("is-loading");
+SkynetUtil.isLoading = elem => $(elem).addClass("is-loading");
+SkynetUtil.isFinished = elem => $(elem).removeClass("is-loading");
 
-GAwesomeUtil.publishExtension = extid => {
+SkynetUtil.publishExtension = extid => {
 	if (confirm("Are you sure you want to publish this extension? Everyone will be able to view and use this extension!")) {
 		NProgress.start();
 		$(`#publish-${extid}`).remove();
@@ -466,7 +466,7 @@ GAwesomeUtil.publishExtension = extid => {
 	}
 };
 
-GAwesomeUtil.deleteExtension = (extid, divid) => {
+SkynetUtil.deleteExtension = (extid, divid) => {
 	if (confirm("Are you sure you want to delete this extension? This action is irreversible!")) {
 		NProgress.start();
 		$.ajax({
@@ -479,7 +479,7 @@ GAwesomeUtil.deleteExtension = (extid, divid) => {
 					$(`#delete-${extid}`).parent().parent()
 						.remove();
 				} else {
-					GAwesomeUtil.removeElement($(`#${divid}`), null, null);
+					SkynetUtil.removeElement($(`#${divid}`), null, null);
 				}
 				NProgress.done();
 				NProgress.remove();
@@ -487,11 +487,11 @@ GAwesomeUtil.deleteExtension = (extid, divid) => {
 	}
 };
 
-GAwesomeUtil.saveExtension = (isGallery, URL) => {
+SkynetUtil.saveExtension = (isGallery, URL) => {
 	NProgress.start();
-	GAwesomeData.HUM = true;
+	SkynetData.HUM = true;
 	const extensionData = $("#form").serializeArray();
-	extensionData.find(a => a.name === "code").value = GAwesomeData.builder.getValue();
+	extensionData.find(a => a.name === "code").value = SkynetData.builder.getValue();
 	$.ajax({
 		method: "POST",
 		url: isGallery ? URL : window.location.pathname + window.location.search,
@@ -501,7 +501,7 @@ GAwesomeUtil.saveExtension = (isGallery, URL) => {
 			const form = $("#form-submit");
 			NProgress.done();
 			NProgress.remove();
-			GAwesomeUtil.SFS();
+			SkynetUtil.SFS();
 			if (data !== "OK" && data.status !== 200 && data.status !== 302) {
 				form.find("span:nth-child(1)").html("<i class='fa fa-exclamation'></i>");
 				form.find("span:nth-child(2)").html("Error");
@@ -513,7 +513,7 @@ GAwesomeUtil.saveExtension = (isGallery, URL) => {
 		});
 };
 
-GAwesomeUtil.voteExtension = extid => {
+SkynetUtil.voteExtension = extid => {
 	const voteButton = $(`#vote-${extid}`);
 	const vote = voteButton.html().trim();
 	voteButton.html(vote === "-1" ? "+1" : "-1");
@@ -522,7 +522,7 @@ GAwesomeUtil.voteExtension = extid => {
 	pointCounter.html(vote === "-1" ? Number(pointCounter.html()) - 1 : Number(pointCounter.html()) + 1);
 };
 
-GAwesomeUtil.unpublishExtension = extid => {
+SkynetUtil.unpublishExtension = extid => {
 	if (!confirm("Are you sure you want to unpublish this extension? It will no longer be usable or visible by guilds, points are preserved.")) return;
 	NProgress.start();
 	const card = $(`#card-${extid}`);
@@ -532,7 +532,7 @@ GAwesomeUtil.unpublishExtension = extid => {
 	NProgress.remove();
 };
 
-GAwesomeUtil.rejectExtension = extid => {
+SkynetUtil.rejectExtension = extid => {
 	let reason = prompt("Reason to reject:");
 	if (reason === "") reason = "No reason given.";
 	else if (reason === null) return;
@@ -549,7 +549,7 @@ GAwesomeUtil.rejectExtension = extid => {
 		});
 };
 
-GAwesomeUtil.removeExtension = extid => {
+SkynetUtil.removeExtension = extid => {
 	let reason = prompt("Reason to remove:");
 	if (reason === "") reason = "No reason given.";
 	else if (reason === null) return;
@@ -566,7 +566,7 @@ GAwesomeUtil.removeExtension = extid => {
 		});
 };
 
-GAwesomeUtil.acceptExtension = extid => {
+SkynetUtil.acceptExtension = extid => {
 	NProgress.start();
 	$.post(`/extensions/${extid}/accept`).done(() => {
 		NProgress.done();
@@ -575,7 +575,7 @@ GAwesomeUtil.acceptExtension = extid => {
 	});
 };
 
-GAwesomeUtil.featureExtension = extid => {
+SkynetUtil.featureExtension = extid => {
 	const featureButton = $(`#feature-${extid}`);
 	const featured = featureButton.html().trim() !== "Feature";
 	featureButton.html(featured ? "Feature" : "Unfeature");
@@ -584,17 +584,17 @@ GAwesomeUtil.featureExtension = extid => {
 	featuredTag.html(featured ? "" : "<span class=\"tag is-primary\">Featured</span>&nbsp;");
 };
 
-GAwesomeUtil.openExtensionInstaller = (extid, v, svrid) => {
-	GAwesomeUtil.log("Launching extension installer in window");
+SkynetUtil.openExtensionInstaller = (extid, v, svrid) => {
+	SkynetUtil.log("Launching extension installer in window");
 	const width = window.screen.width - 600;
 	const height = window.screen.height - 800;
-	GAwesomeData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "GAB Extension Installer",
+	SkynetData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "GAB Extension Installer",
 		`height=800,width=600,left=${width / 2},top=${height / 2}`);
-	GAwesomeData.extensions.window.focus();
+	SkynetData.extensions.window.focus();
 };
 
-GAwesomeUtil.installExtension = ({ target }) => {
-	GAwesomeUtil.log("[INSTALLER] Start install");
+SkynetUtil.installExtension = ({ target }) => {
+	SkynetUtil.log("[INSTALLER] Start install");
 
 	const searchParams = new URLSearchParams(window.location.search);
 
@@ -603,25 +603,25 @@ GAwesomeUtil.installExtension = ({ target }) => {
 
 	const data = `${$(".installer-step-form").serialize()}&v=${searchParams.get("v")}`;
 
-	GAwesomeUtil.log(`[INSTALLER] Send POST with form data '${data}'`);
+	SkynetUtil.log(`[INSTALLER] Send POST with form data '${data}'`);
 	$.ajax({
 		method: "POST",
 		url: `/dashboard/${searchParams.get("svrid")}/other/extensions`,
 		data,
 	}).always(res => {
 		if (res !== "OK" && res.status !== 200) {
-			GAwesomeUtil.log(`[INSTALLER] Received non-OK status code from POST request. Response Code: ${res.status}`, "error");
+			SkynetUtil.log(`[INSTALLER] Received non-OK status code from POST request. Response Code: ${res.status}`, "error");
 			swal("Failed to install extension.", "Contact support or try again later.", "error").then(() => button.removeClass("is-loading")).catch();
 		} else {
-			GAwesomeUtil.log("[INSTALLER] POST request successful.");
+			SkynetUtil.log("[INSTALLER] POST request successful.");
 			button.removeClass("is-loading");
 			swal("Successfully installed extension!", "You can now close this window.", "success").then(() => window.close()).catch();
 		}
 	});
 };
 
-GAwesomeUtil.updateExtension = (button) => {
-	GAwesomeUtil.SFS();
+SkynetUtil.updateExtension = (button) => {
+	SkynetUtil.SFS();
 	NProgress.start();
 	button.addClass("is-loading");
 	const extid = button.data("extid");
@@ -642,17 +642,17 @@ GAwesomeUtil.updateExtension = (button) => {
 	});
 };
 
-GAwesomeUtil.uninstallExtension = extid => {
+SkynetUtil.uninstallExtension = extid => {
 	NProgress.start();
 	const element = $(`#extension-${extid}`);
 	const URL = `${window.location.pathname}/${extid}`;
-	GAwesomeUtil.removeElement(element, null, URL);
+	SkynetUtil.removeElement(element, null, URL);
 };
 
-GAwesomePaths.extensions = () => {
+SkynetPaths.extensions = () => {
 	if (window.location.pathname === "/extensions/builder") {
-		setTimeout(() => GAwesomeUtil.SFS(), 0);
-		GAwesomeData.builder = CodeMirror.fromTextArea(document.getElementById("builder-code-box"), {
+		setTimeout(() => SkynetUtil.SFS(), 0);
+		SkynetData.builder = CodeMirror.fromTextArea(document.getElementById("builder-code-box"), {
 			mode: "javascript",
 			lineWrapping: true,
 			lineNumbers: true,
@@ -660,22 +660,22 @@ GAwesomePaths.extensions = () => {
 			styleActiveLine: true,
 			theme: "monokai",
 		});
-		GAwesomeData.builder.refresh();
+		SkynetData.builder.refresh();
 	} else if (window.location.pathname.endsWith("/install")) {
-		$("#installer-submit").click(GAwesomeUtil.installExtension);
+		$("#installer-submit").click(SkynetUtil.installExtension);
 	}
 };
 
-GAwesomeUtil.updateBlogSubtitle = () => {
+SkynetUtil.updateBlogSubtitle = () => {
 	const headerSubtitle = $("#blog-header-subtitle");
-	const newSubtitle = GAwesomeData.blog.subtitles[Math.floor(Math.random() * GAwesomeData.blog.subtitles.length)];
+	const newSubtitle = SkynetData.blog.subtitles[Math.floor(Math.random() * SkynetData.blog.subtitles.length)];
 	headerSubtitle.fadeOut({ duration: 500 }).queue(next => {
 		headerSubtitle.html(newSubtitle);
 		next();
 	}).fadeIn({ duration: 500 });
 };
 
-GAwesomeUtil.dashboardWrapper = func => {
+SkynetUtil.dashboardWrapper = func => {
 	if (window.location.pathname.split("/")[1] !== "dashboard") {
 		return "This function can only be executed within the dashboard.";
 	} else {
@@ -683,47 +683,47 @@ GAwesomeUtil.dashboardWrapper = func => {
 	}
 };
 
-GAwesomeUtil.dashboard.connect = () => GAwesomeUtil.dashboardWrapper(() => {
-	if (GAwesomeData.dashboard.socket) {
-		GAwesomeUtil.log("Closing stale Dashboard socket");
-		GAwesomeData.dashboard.socket.close();
+SkynetUtil.dashboard.connect = () => SkynetUtil.dashboardWrapper(() => {
+	if (SkynetData.dashboard.socket) {
+		SkynetUtil.log("Closing stale Dashboard socket");
+		SkynetData.dashboard.socket.close();
 	}
-	GAwesomeUtil.log("Opening new Dashboard socket");
-	GAwesomeData.dashboard.socket = io(window.location.pathname, { transports: ["websocket"] });
-	GAwesomeData.dashboard.socket.on("update", data => {
-		GAwesomeUtil.log(`Received Socket data: ${JSON.stringify(data)}`);
-		if (!GAwesomeData.HUM && GAwesomeData.dashboard.svrid === data.location && localStorage.getItem("dashboardUpdates") !== "none") {
+	SkynetUtil.log("Opening new Dashboard socket");
+	SkynetData.dashboard.socket = io(window.location.pathname, { transports: ["websocket"] });
+	SkynetData.dashboard.socket.on("update", data => {
+		SkynetUtil.log(`Received Socket data: ${JSON.stringify(data)}`);
+		if (!SkynetData.HUM && SkynetData.dashboard.svrid === data.location && localStorage.getItem("dashboardUpdates") !== "none") {
 			$("html").addClass("is-clipped");
 			$("#update-modal").addClass("is-active");
 		}
 	});
-	GAwesomeData.dashboard.socket.on("err", data => {
-		GAwesomeUtil[data.fatal ? "error" : "warn"](`Dashboard Socket responded with a ${data.error} error code.`);
+	SkynetData.dashboard.socket.on("err", data => {
+		SkynetUtil[data.fatal ? "error" : "warn"](`Dashboard Socket responded with a ${data.error} error code.`);
 	});
-	GAwesomeData.dashboard.socket.on("logs", data => {
+	SkynetData.dashboard.socket.on("logs", data => {
 		const line = `[${data.timestamp}] [${data.level}] ${data.message}`;
-		GAwesomeData.dashboard.terminal.print(line);
+		SkynetData.dashboard.terminal.print(line);
 		$(".Terminal").animate({ scrollTop: $(".Terminal").prop("scrollHeight") }, 500);
 	});
 });
 
-GAwesomeUtil.dashboard.setCache = (svr, key, data, expire = 300) => {
-	if (!GAwesomeData.cache) GAwesomeData.cache = new Map();
-	if (!GAwesomeData.cache.has(svr)) GAwesomeData.cache.set(svr, new Map());
-	GAwesomeData.cache.get(svr).set(key, { data, expireAt: Math.floor(Date.now() / 1000) + expire });
+SkynetUtil.dashboard.setCache = (svr, key, data, expire = 300) => {
+	if (!SkynetData.cache) SkynetData.cache = new Map();
+	if (!SkynetData.cache.has(svr)) SkynetData.cache.set(svr, new Map());
+	SkynetData.cache.get(svr).set(key, { data, expireAt: Math.floor(Date.now() / 1000) + expire });
 };
 
-GAwesomeUtil.dashboard.getCache = (svr, key) => {
-	if (!GAwesomeData.cache || !GAwesomeData.cache.has(svr) || !GAwesomeData.cache.get(svr).has(key)) return undefined;
-	const cache = GAwesomeData.cache.get(svr).get(key);
+SkynetUtil.dashboard.getCache = (svr, key) => {
+	if (!SkynetData.cache || !SkynetData.cache.has(svr) || !SkynetData.cache.get(svr).has(key)) return undefined;
+	const cache = SkynetData.cache.get(svr).get(key);
 	if (cache.expireAt < Math.floor(Date.now() / 1000)) {
-		GAwesomeData.cache.get(svr).delete(key);
+		SkynetData.cache.get(svr).delete(key);
 		return undefined;
 	}
 	return cache.data;
 };
 
-GAwesomeUtil.removeElement = (element, parent, url) => {
+SkynetUtil.removeElement = (element, parent, url) => {
 	const afterDelete = () => {
 		element.fadeOut(400, () => {
 			const onlyChild = element.is(":only-child");
@@ -732,7 +732,7 @@ GAwesomeUtil.removeElement = (element, parent, url) => {
 				if (parent) parent.addClass("is-hidden");
 				$(".no-elements-message").removeClass("is-hidden");
 			}
-			GAwesomeUtil.SFS();
+			SkynetUtil.SFS();
 			NProgress.done();
 			NProgress.remove();
 		});
@@ -748,7 +748,7 @@ GAwesomeUtil.removeElement = (element, parent, url) => {
 	}
 };
 
-GAwesomeUtil.dashboard.removeTableElement = elem => GAwesomeUtil.dashboardWrapper(() => {
+SkynetUtil.dashboard.removeTableElement = elem => SkynetUtil.dashboardWrapper(() => {
 	const button = $(elem);
 	button.addClass("is-loading");
 
@@ -756,10 +756,10 @@ GAwesomeUtil.dashboard.removeTableElement = elem => GAwesomeUtil.dashboardWrappe
 	const table = tableRow.parents("table");
 	const buttonName = button.attr("name");
 
-	GAwesomeUtil.removeElement(tableRow, table, `${window.location.pathname}/${buttonName}`);
+	SkynetUtil.removeElement(tableRow, table, `${window.location.pathname}/${buttonName}`);
 });
 
-GAwesomeUtil.dashboard.updateCommandSettings = (modal, settingsBox) => {
+SkynetUtil.dashboard.updateCommandSettings = (modal, settingsBox) => {
 	// eslint-disable-next-line max-len
 	const generateStr = (adminLevel, channelCount, totalChannelCount) => `${adminLevel === 0 ? channelCount === 0 ? "Dis" : "En" : `Admin level &ge;${adminLevel}${channelCount === 0 ? ", dis" : ", en"}`}abled in ${channelCount - totalChannelCount === 0 || channelCount === 0 ? "all" : channelCount} channel${channelCount - totalChannelCount === 0 || channelCount !== 1 ? "s" : ""}`;
 
@@ -772,7 +772,7 @@ GAwesomeUtil.dashboard.updateCommandSettings = (modal, settingsBox) => {
 	settingsBox.html(overview);
 };
 
-GAwesomeUtil.dashboard.post = payload => new Promise((resolve, reject) => {
+SkynetUtil.dashboard.post = payload => new Promise((resolve, reject) => {
 	$.ajax({
 		url: window.location.pathname,
 		method: "POST",
@@ -781,7 +781,7 @@ GAwesomeUtil.dashboard.post = payload => new Promise((resolve, reject) => {
 		.fail(reject);
 });
 
-GAwesomePaths.landing = () => {
+SkynetPaths.landing = () => {
 	$(".section-shortcut-link").click(function handler () {
 		$("html, body").animate({
 			scrollTop: $(`#${this.href.substring(this.href.lastIndexOf("#") + 1)}`).offset().top,
@@ -789,18 +789,18 @@ GAwesomePaths.landing = () => {
 	});
 };
 
-GAwesomePaths.activity = () => {
-	GAwesomeUtil.activityViewportUpdate(GAwesomeListeners.activityMQL);
+SkynetPaths.activity = () => {
+	SkynetUtil.activityViewportUpdate(SkynetListeners.activityMQL);
 
 	if (window.location.pathname === "/activity/users") {
-		document.getElementById("search-button").href = "javascript:GAwesomeUtil.searchUsers(document.getElementById('search-input').value);";
+		document.getElementById("search-button").href = "javascript:SkynetUtil.searchUsers(document.getElementById('search-input').value);";
 		document.getElementById("search-input").onkeydown = function handler () {
 			if (event.keyCode === 13) {
-				GAwesomeUtil.searchUsers(this.value);
+				SkynetUtil.searchUsers(this.value);
 			}
 		};
 		$.getJSON("/api/list/users", (data) => {
-			GAwesomeData.searchInputAutocomplete = new AutoComplete({
+			SkynetData.searchInputAutocomplete = new AutoComplete({
 				selector: "#search-input",
 				minChars: 2,
 				source: (q, res) => {
@@ -810,16 +810,16 @@ GAwesomePaths.activity = () => {
 			});
 		});
 	} else {
-		GAwesomeData.activity.guildData = {};
-		document.getElementById("search-button").href = "javascript:GAwesomeUtil.searchServers(document.getElementById('search-input').value);";
+		SkynetData.activity.guildData = {};
+		document.getElementById("search-button").href = "javascript:SkynetUtil.searchServers(document.getElementById('search-input').value);";
 		document.getElementById("search-input").setAttribute("list", "servers");
 		document.getElementById("search-input").onkeydown = function handler () {
 			if (event.keyCode === 13) {
-				GAwesomeUtil.searchServers(this.value);
+				SkynetUtil.searchServers(this.value);
 			}
 		};
 		$.getJSON("/api/list/servers", (data) => {
-			GAwesomeData.searchInputAutocomplete = new AutoComplete({
+			SkynetData.searchInputAutocomplete = new AutoComplete({
 				selector: "#search-input",
 				minChars: 2,
 				source: (q, res) => {
@@ -828,18 +828,18 @@ GAwesomePaths.activity = () => {
 				},
 			});
 		});
-		GAwesomeUtil.switchActivityLayout();
-		GAwesomeUtil.showActivitySelections();
+		SkynetUtil.switchActivityLayout();
+		SkynetUtil.showActivitySelections();
 	}
 };
 
-GAwesomePaths.blog = () => {
+SkynetPaths.blog = () => {
 	setTimeout(() => {
-		GAwesomeUtil.SFS();
+		SkynetUtil.SFS();
 	}, 0);
 	const headerSubtitle = $("#blog-header-subtitle");
 	if (headerSubtitle[0]) {
-		GAwesomeUtil.setInterval(GAwesomeUtil.updateBlogSubtitle, 60000);
+		SkynetUtil.setInterval(SkynetUtil.updateBlogSubtitle, 60000);
 	}
 	if (!window.location.toString().endsWith("/compose") && !window.location.toString().endsWith("/new")) return;
 	const converter = new showdown.Converter({
@@ -850,7 +850,7 @@ GAwesomePaths.blog = () => {
 		smoothLivePreview: true,
 		smartIndentationFix: true,
 	});
-	GAwesomeData.blog.editor = new SimpleMDE({
+	SkynetData.blog.editor = new SimpleMDE({
 		element: document.getElementById("composer-content"),
 		forceSync: true,
 		spellChecker: false,
@@ -863,12 +863,12 @@ GAwesomePaths.blog = () => {
 	});
 };
 
-GAwesomePaths.wiki = () => {
+SkynetPaths.wiki = () => {
 	setTimeout(() => {
-		GAwesomeUtil.SFS();
+		SkynetUtil.SFS();
 	}, 0);
-	GAwesomeData.wiki.bookmarks = JSON.parse(localStorage.getItem("wiki-bookmarks")) || [];
-	GAwesomeUtil.populateWikiBookmarks();
+	SkynetData.wiki.bookmarks = JSON.parse(localStorage.getItem("wiki-bookmarks")) || [];
+	SkynetUtil.populateWikiBookmarks();
 	if (!window.location.toString().endsWith("/edit") && !window.location.toString().endsWith("/new")) return;
 	const converter = new showdown.Converter({
 		tables: true,
@@ -878,7 +878,7 @@ GAwesomePaths.wiki = () => {
 		smoothLivePreview: true,
 		smartIndentationFix: true,
 	});
-	GAwesomeData.wiki.editor = new SimpleMDE({
+	SkynetData.wiki.editor = new SimpleMDE({
 		element: document.getElementById("composer-content"),
 		forceSync: true,
 		spellChecker: false,
@@ -891,13 +891,13 @@ GAwesomePaths.wiki = () => {
 	});
 };
 
-GAwesomePaths.dashboard = () => GAwesomeUtil.dashboardWrapper(() => {
+SkynetPaths.dashboard = () => SkynetUtil.dashboardWrapper(() => {
 	$(".close-update-modal").unbind();
 	$(".close-update-modal").click(() => {
 		$("html").removeClass("is-clipped");
 		$("#update-modal").removeClass("is-active");
 	});
-	GAwesomeUtil.dashboard.connect();
+	SkynetUtil.dashboard.connect();
 	const sectionPage = window.location.pathname.split("/")[4];
 	switch (sectionPage) {
 		case "command-options": {
@@ -918,18 +918,18 @@ GAwesomePaths.dashboard = () => GAwesomeUtil.dashboardWrapper(() => {
 			const useNickname = $("#name_display-use_nick");
 			const useDiscriminator = $("#name_display-show_discriminator");
 			useNickname.click(() => {
-				if (useNickname.is(":checked") && GAwesomeData.nickname !== "") {
-					example.text(GAwesomeData.nickname);
+				if (useNickname.is(":checked") && SkynetData.nickname !== "") {
+					example.text(SkynetData.nickname);
 				} else {
-					example.text(GAwesomeData.username);
+					example.text(SkynetData.username);
 				}
 				if (useDiscriminator.is(":checked")) {
-					example.text(`${example.text().trim()}#${GAwesomeData.discriminator}`);
+					example.text(`${example.text().trim()}#${SkynetData.discriminator}`);
 				}
 			});
 			useDiscriminator.click(() => {
 				if (useDiscriminator.is(":checked")) {
-					example.text(`${example.text()}#${GAwesomeData.discriminator}`);
+					example.text(`${example.text()}#${SkynetData.discriminator}`);
 				} else {
 					example.text(example.text().trim().slice(0, -5));
 				}
@@ -938,10 +938,10 @@ GAwesomePaths.dashboard = () => GAwesomeUtil.dashboardWrapper(() => {
 		}
 		case "injection": {
 			const elements = document.getElementsByClassName("code-box");
-			GAwesomeData.builders = {};
+			SkynetData.builders = {};
 			for (let i = 0; i < elements.length; i++) {
 				const element = elements.item(i);
-				GAwesomeData.builders[element.id] = CodeMirror.fromTextArea(element, {
+				SkynetData.builders[element.id] = CodeMirror.fromTextArea(element, {
 					mode: "javascript",
 					lineWrapping: true,
 					lineNumbers: true,
@@ -949,12 +949,12 @@ GAwesomePaths.dashboard = () => GAwesomeUtil.dashboardWrapper(() => {
 					styleActiveLine: true,
 					theme: "monokai",
 				});
-				GAwesomeData.builders[element.id].on("change", () => GAwesomeData.builders[element.id].save());
+				SkynetData.builders[element.id].on("change", () => SkynetData.builders[element.id].save());
 			}
 			break;
 		}
 		case "extension-builder": {
-			GAwesomeData.builder = CodeMirror.fromTextArea(document.getElementById("builder-code-box"), {
+			SkynetData.builder = CodeMirror.fromTextArea(document.getElementById("builder-code-box"), {
 				mode: "javascript",
 				lineWrapping: true,
 				lineNumbers: true,
@@ -967,49 +967,49 @@ GAwesomePaths.dashboard = () => GAwesomeUtil.dashboardWrapper(() => {
 	}
 });
 
-GAwesomeListeners.activityMQL = window.matchMedia("screen and (max-width: 768px)");
-GAwesomeListeners.activityMQL.addListener(GAwesomeUtil.activityViewPortUpdate);
+SkynetListeners.activityMQL = window.matchMedia("screen and (max-width: 768px)");
+SkynetListeners.activityMQL.addListener(SkynetUtil.activityViewPortUpdate);
 
 document.addEventListener("turbolinks:load", () => {
 	try {
-		GAwesomeUtil.log("Start load page JS");
+		SkynetUtil.log("Start load page JS");
 		// Update active navbar item
-		GAwesomeUtil.updateHeader();
+		SkynetUtil.updateHeader();
 
 		// Prepare Bulma Javascript Listeners
 		bulma();
 
 		// Clear old timers
-		GAwesomeData.timers.forEach((timer, index) => {
+		SkynetData.timers.forEach((timer, index) => {
 			clearTimeout(timer);
-			GAwesomeData.timers.splice(index, 1);
+			SkynetData.timers.splice(index, 1);
 		});
 
 		// Initialize forms
-		GAwesomeData.HUM = false;
-		GAwesomeData.IFS = $("#form").serialize();
+		SkynetData.HUM = false;
+		SkynetData.IFS = $("#form").serialize();
 
 		// Close old dashboard socket if still open
-		if (GAwesomeData.dashboard.socket) {
-			GAwesomeUtil.log("Closing stale Dashboard socket");
-			GAwesomeData.dashboard.socket.close();
-			delete GAwesomeData.dashboard.socket;
+		if (SkynetData.dashboard.socket) {
+			SkynetUtil.log("Closing stale Dashboard socket");
+			SkynetData.dashboard.socket.close();
+			delete SkynetData.dashboard.socket;
 		}
 
 		// Find page function
 		// eslint-disable-next-line prefer-destructuring
-		GAwesomeData.section = window.location.pathname.split("/")[1];
-		let func = GAwesomePaths[GAwesomeData.section];
-		if (GAwesomeData.section === "") func = GAwesomePaths.landing;
+		SkynetData.section = window.location.pathname.split("/")[1];
+		let func = SkynetPaths[SkynetData.section];
+		if (SkynetData.section === "") func = SkynetPaths.landing;
 
 		// Execute page function and finish loading bar when done
 		if (func) func();
 		NProgress.done(true);
-		GAwesomeUtil.log(`Finished loading page using ${GAwesomeData.section !== "" ? GAwesomeData.section : "landing"} section handler`);
+		SkynetUtil.log(`Finished loading page using ${SkynetData.section !== "" ? SkynetData.section : "landing"} section handler`);
 	} catch (err) {
 		NProgress.done();
 		NProgress.remove();
-		GAwesomeUtil.error(`An exception occurred while trying to prepare ${location.pathname}: ${err}`);
+		SkynetUtil.error(`An exception occurred while trying to prepare ${location.pathname}: ${err}`);
 		swal("An exception occurred.", err.toString(), "error");
 	}
 });
@@ -1026,7 +1026,7 @@ $(document).on("turbolinks:click", ({ originalEvent }) => {
 
 $(document).on("turbolinks:before-visit", (e) => {
 	const FS = $("#form").serialize();
-	if (GAwesomeData.IFS !== FS) {
+	if (SkynetData.IFS !== FS) {
 		const message = "You have unsaved changes on this page. Are you sure you want to leave this page and discard your changes?";
 		if (!confirm(message)) {
 			e.preventDefault();
@@ -1037,7 +1037,7 @@ $(document).on("turbolinks:before-visit", (e) => {
 });
 $(window).bind("beforeunload", (e) => {
 	const FS = $("#form").serialize();
-	if (GAwesomeData.IFS !== FS) {
+	if (SkynetData.IFS !== FS) {
 		const message = "You have unsaved changes on this page. Do you want to leave this page and discard your changes or stay on this page?";
 		e.returnValue = message;
 		return message;
@@ -1066,11 +1066,11 @@ $(window).scroll(() => {
 
 setInterval(() => {
 	const FS = $("#form").serialize();
-	if (GAwesomeData.IFS !== FS) GAwesomeData.HUM = false;
+	if (SkynetData.IFS !== FS) SkynetData.HUM = false;
 	if ($(window).scrollTop() + $(window).height() <= $(document).height() - 150) {
-		if (GAwesomeData.IFS !== FS && $("#form-buttons").css("display") === "none") {
+		if (SkynetData.IFS !== FS && $("#form-buttons").css("display") === "none") {
 			$("#form-buttons").fadeIn(86);
-		} else if (GAwesomeData.IFS === FS && $("#form-buttons").css("display") !== "none") {
+		} else if (SkynetData.IFS === FS && $("#form-buttons").css("display") !== "none") {
 			$("#form-buttons").fadeOut(86);
 		}
 	}
@@ -1087,7 +1087,7 @@ window.addEventListener("keydown", (e) => {
 	}
 	if (keys.toString().includes(konami)) {
 		keys = [];
-		document.body.innerHTML = document.body.innerHTML.replace(/GAwesomeBot/g, "TacoBot");
+		document.body.innerHTML = document.body.innerHTML.replace(/SkynetBot/g, "TacoBot");
 		document.body.innerHTML = document.body.innerHTML.split("/static/img/icon.png").join("/static/img/tinytaco.png");
 		document.getElementById("header").style.backgroundImage = "url('/static/img/header-bg-taco.jpg')";
 	}
@@ -1106,8 +1106,8 @@ window.addEventListener("keydown", (e) => {
 	}
 	if (md5(keys.toString()) === unknown) {
 		keys = [];
-		document.body.innerHTML = document.body.innerHTML.split("/GilbertGobbels/GAwesomeBot").join("/BitQuote/AwesomeBot");
-		document.body.innerHTML = document.body.innerHTML.replace(/GAwesomeBot/g, "AwesomeBot Neo");
+		document.body.innerHTML = document.body.innerHTML.split("/GilbertGobbels/SkynetBot").join("/BitQuote/AwesomeBot");
+		document.body.innerHTML = document.body.innerHTML.replace(/SkynetBot/g, "AwesomeBot Neo");
 		document.body.innerHTML = document.body.innerHTML.split("/static/img/icon.png").join("/static/img/NEO.png");
 		// eslint-disable-next-line max-len
 		$("#footerText").html('<strong>AwesomeBot NEO</strong> by BitQuote & <a href="https://github.com/BitQuote">BitQuote</a>. Made with <a href="https://github.com/BitQuote">BitQuote</a> and <a href="https://github.com/BitQuote">BitQuote</a>. Site made with <a href="https://github.com/BitQuote">BitQuote</a> and <a href="https://github.com/BitQuote">BitQuote</a>. Artwork by <a href="https://github.com/BitQuote">BitQuote</a> and <a href="https://github.com/BitQuote">BitQuote</a>. All rights reserved by BitQuote.');

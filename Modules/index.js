@@ -1,5 +1,5 @@
 module.exports = {
-	GAwesomeClient: require("./GAwesomeClient.js"),
+	SkynetClient: require("./SkynetClient.js"),
 
 	ConversionHandler: require("./ConversionHandler.js"),
 	Encryption: require("./Encryption"),

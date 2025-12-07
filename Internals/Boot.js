@@ -54,17 +54,17 @@ const host = (val, configJS, configJSON) => {
 
 	process.env.GAB_HOST = val;
 	sudo(val, configJS, configJSON);
-	logger.info(`User with Discord ID ${val} is The Host for the current GAB session.`, { usrid: val });
+	logger.info(`User with Discord ID ${val} is The Host for the current Skynet session.`, { usrid: val });
 };
 
 const safeModeAnnouncement = (val, configJS, configJSON, auth, scope) => {
-	logger.warn("--- SAFE --- GAwesomeBot is now in SAFE MODE. --- SAFE ---");
+	logger.warn("--- SAFE --- SkynetBot is now in SAFE MODE. --- SAFE ---");
 	scope.safeMode = true;
 };
 
 const safeMode = async (val, configJS, configJSON, auth, scope) => {
-	// In Safe Mode, only GawesomeBot Internals are loaded to avoid errors and exceptions.
-	// Because WebServer is not loaded, the primary way to interact with GAwesomeBot is through hooking into the Node.JS runtime with for example the Chrome Debugger.
+	// In Safe Mode, only SkynetBot Internals are loaded to avoid errors and exceptions.
+	// Because WebServer is not loaded, the primary way to interact with SkynetBot is through hooking into the Node.JS runtime with for example the Chrome Debugger.
 	logger.warn("--- SAFE --- Connecting to Database --- SAFE ---");
 	const database = require("../Database/Driver.js");
 	await database.initialize(configJS.database).catch(err => {
@@ -103,7 +103,7 @@ shardBootFunctions.set("safe", safeMode);
 const initializeConsole = () => {
 	const { Logger } = require("../Internals");
 	global.logger = new Logger("master");
-	logger.info(`Logging to ${require("path").join(process.cwd(), `logs/master-gawesomebot.log`)}.`);
+	logger.info(`Logging to ${require("path").join(process.cwd(), `logs/master-skynetbot.log`)}.`);
 };
 
 const initializeShardConsole = () => {

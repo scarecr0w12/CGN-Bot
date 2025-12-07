@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars */
-/* global fetch */
 const specVersion = "1.0";
 
 const { EventEmitter } = require("events");
 const fs = require("fs");
 const https = require("https");
 const path = require("path");
+const fetch = require("./Utils/ChainFetchShim");
 const Unzip = require("adm-zip");
-const { Console, Constants, Errors: { Error: GABError } } = require("../Internals");
+const { Console, Constants, Errors: { Error: SkynetError } } = require("../Internals");
 const { FileExists, PromiseWait } = require("./Utils");
 
 const validateSpecVersion = body => {
@@ -15,7 +15,7 @@ const validateSpecVersion = body => {
 	if (!upstreamVersion) return specVersion;
 	const majorVersion = specVersion.split(".")[0];
 	const majorUpstreamVersion = upstreamVersion.split(".")[0];
-	if (majorVersion !== majorUpstreamVersion) throw GABError("OUTDATED_CENTRAL_SPEC_VERSION");
+	if (majorVersion !== majorUpstreamVersion) throw SkynetError("OUTDATED_CENTRAL_SPEC_VERSION");
 	else return upstreamVersion;
 };
 
@@ -51,23 +51,14 @@ class VersionAPI {
 		} else if (res.status === 404 && res.body) {
 			return new Version({ tag: version, branch: res.body.err === "Branch not found" ? null : this._branch }, false, this);
 		} else {
-			throw new GABError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
+			throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
 		}
 	}
 
 	async _get (URL) {
 		let res;
 		try {
-			// res = await fetch.get(`${this.endpoint}${URL}`).set("User-Agent", Constants.UserAgent);
-			const response = await fetch(`${this.endpoint}${URL}`, {
-				headers: { "User-Agent": Constants.UserAgent },
-			});
-			const body = await response.json().catch(() => null);
-			res = {
-				ok: response.ok,
-				status: response.status,
-				body,
-			};
+			res = await fetch.get(`${this.endpoint}${URL}`).set("User-Agent", Constants.UserAgent);
 		} catch (err) {
 			return err;
 		}
@@ -87,7 +78,7 @@ class Version extends EventEmitter {
 	async check () {
 		if (!this.valid) return { utd: false, current: null };
 		const res = await this.versionAPI._get(`${this.branch}/check?v=${this.tag}`);
-		if (!res.ok && res.status !== 404) throw new GABError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
+		if (!res.ok && res.status !== 404) throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
 		else if (!res.ok && res.status === 404) return { utd: false, current: null };
 		return res.body.data;
 	}
@@ -98,7 +89,7 @@ class Version extends EventEmitter {
 			const fileStream = fs.createWriteStream(path.join(tempFolder, `${this.tag}.zip`));
 			https.get(`${Constants.CENTRAL.CODEBASE}${this.sha}`, res => {
 				const { statusCode } = res;
-				if (statusCode !== 200) reject(new GABError("CENTRAL_DOWNLOAD_ERROR", {}, statusCode));
+				if (statusCode !== 200) reject(new SkynetError("CENTRAL_DOWNLOAD_ERROR", {}, statusCode));
 
 				res.on("data", chunk => {
 					if (onChunk) onChunk(chunk);
@@ -123,7 +114,7 @@ class Version extends EventEmitter {
 	async install () {
 		await this.checkDownload();
 		const downloadedVersionPath = path.join(this._downloadPath, `${this.tag}.zip`);
-		if (!await FileExists(downloadedVersionPath)) throw new GABError("CENTRAL_VERSION_NOT_DOWNLOADED");
+		if (!await FileExists(downloadedVersionPath)) throw new SkynetError("CENTRAL_VERSION_NOT_DOWNLOADED");
 
 		try {
 			this._log("unpack", "Unpacking patch files...");
@@ -133,7 +124,7 @@ class Version extends EventEmitter {
 			this._log("unpack", `An error occurred while unpacking files. ${err.message}`, "error");
 			throw err;
 		}
-		this._downloadPath = path.join(this._downloadPath, `Skynet Bot-${this.sha}`);
+		this._downloadPath = path.join(this._downloadPath, `SkynetBot-${this.sha}`);
 
 		let fileList, configFileList;
 
@@ -172,7 +163,7 @@ class Version extends EventEmitter {
 			this._log("cleanup", "Cleaning up update...");
 			await PromiseWait(50);
 			await this._cleanUpInstall();
-			this._log("cleanup", `Finished updating GAB to version ${this.metadata.name}.`, "success");
+			this._log("cleanup", `Finished updating SkynetBot to version ${this.metadata.name}.`, "success");
 		} catch (err) {
 			this._log("cleanup", `Failed to clean up installation. This is not a fatal exception. ${err.message}`, "warn");
 		}
@@ -239,7 +230,7 @@ class Version extends EventEmitter {
 				verifiedPatches++;
 				this._log("verify", `Verified ${verifiedPatches} patches out of ${fileList.length}...`);
 			} else {
-				throw new GABError("PATCH_CORRUPTED", {}, filePath);
+				throw new SkynetError("PATCH_CORRUPTED", {}, filePath);
 			}
 		}
 		return true;

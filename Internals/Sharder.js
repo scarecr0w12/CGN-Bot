@@ -54,7 +54,7 @@ class Sharder {
 	constructor (token, count, logger) {
 		this.cluster = cluster;
 		this.cluster.setupMaster({
-			exec: "GAwesomeBot.js",
+			exec: "SkynetBot.js",
 		});
 		this.logger = logger;
 		this.token = token ? token : process.env.CLIENT_TOKEN;

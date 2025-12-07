@@ -17,7 +17,7 @@ const {
 		OfficialMode,
 	},
 	Errors: {
-		Error: GABError,
+		Error: SkynetError,
 	},
 	WorkerManager,
 	ShardUtil,
@@ -29,7 +29,7 @@ const privateCommandModules = {};
 const commandModules = {};
 const sharedModules = {};
 
-module.exports = class GABClient extends DJSClient {
+module.exports = class SkynetClient extends DJSClient {
 	constructor (options) {
 		super(options);
 		// Value set once READY triggers
@@ -133,7 +133,7 @@ module.exports = class GABClient extends DJSClient {
 	}
 
 	deleteAwaitPMMessage (channel, user) {
-		this.messageListeners[channel.id][user.id].reject(new GABError("AWAIT_EXPIRED"));
+		this.messageListeners[channel.id][user.id].reject(new SkynetError("AWAIT_EXPIRED"));
 		delete this.messageListeners[channel.id][user.id];
 		if (Object.keys(this.messageListeners[channel.id]).length === 0) delete this.messageListeners[channel.id];
 	}
@@ -337,7 +337,7 @@ module.exports = class GABClient extends DJSClient {
 
 	async canRunSharedCommand (command, user) {
 		command = this.getSharedCommandName(command);
-		if (!(configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id))) throw new GABError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
+		if (!(configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id))) throw new SkynetError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
 		const commandData = this.getSharedCommandMetadata(command);
 		switch (commandData.perm) {
 			case "eval": {
@@ -397,7 +397,7 @@ module.exports = class GABClient extends DJSClient {
 				return true;
 			}
 			default: {
-				throw new GABError("SHARED_INVALID_MODE", {}, commandData.configJSON, command);
+				throw new SkynetError("SHARED_INVALID_MODE", {}, commandData.configJSON, command);
 			}
 		}
 	}
@@ -435,7 +435,7 @@ module.exports = class GABClient extends DJSClient {
 			if (foundMember) {
 				resolve(foundMember);
 			} else {
-				reject(new GABError("FAILED_TO_FIND", {}, "member", server, string));
+				reject(new SkynetError("FAILED_TO_FIND", {}, "member", server, string));
 			}
 		});
 	}
@@ -477,7 +477,7 @@ module.exports = class GABClient extends DJSClient {
 				}
 			}
 
-			reject(new GABError("FAILED_TO_FIND", {}, "channel", server, string));
+			reject(new SkynetError("FAILED_TO_FIND", {}, "channel", server, string));
 		});
 	}
 

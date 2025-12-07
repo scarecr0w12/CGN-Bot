@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 	<title><%= serverData.name %> Maintainer Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body>
-	<% include ../partials/dashboard-header %>
+	<%- include('../partials/dashboard-header') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/maintainer-menu %>
+					<%- include('../partials/maintainer-menu') %>
 				</div>
 				<div class="column">
 					<article class="message is-primary">
@@ -132,8 +132,8 @@
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 	<script>
 	  function parseDate(ts){
 		return new Date(ts).toDateString();

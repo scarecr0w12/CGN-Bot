@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 	<title><%= serverData.name %> Roles - Skynet Admin Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body onload="GAwesomeUtil.SFS();">
-	<% include ../partials/dashboard-header %>
-	<% include ../partials/dashboard-socket-updates %>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
 
 	<section class="section is-white">
 		<div class="container">
 			<div class="columns">
 				<div id="menu" class="column is-one-quarter">
-					<% include ../partials/admin-menu %>
+					<%- include('../partials/admin-menu') %>
 				</div>
 				<div class="column">
 					<h1 class="title">
@@ -28,9 +28,9 @@
 					<form id="form" onsubmit="GAwesomeUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% var commandData = configData.commands.roleinfo; commandData.name = "roleinfo"; commandData.description = pageData.commandDescriptions.roleinfo; commandData.category = pageData.commandCategories.roleinfo; %>
-						<% include ../partials/admin-command-item %>
+						<%- include('../partials/admin-command-item') %>
 						<% commandData = configData.commands.role; commandData.name = "role"; commandData.description = pageData.commandDescriptions.role; commandData.category = pageData.commandCategories.role; %>
-						<% include ../partials/admin-command-item %>
+						<%- include('../partials/admin-command-item') %>
 						</div>
 						<div class="role-options<%= commandData.isEnabled ? '' : ' is-hidden' %>">
 							<div class="field">
@@ -49,15 +49,15 @@
 						</div>
 						<br>
 						<% var formButtonsUnsaved = false; %>
-						<% include ../partials/form-buttons %>
-						<% include ../partials/form-buttons-bar %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
 					</form>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

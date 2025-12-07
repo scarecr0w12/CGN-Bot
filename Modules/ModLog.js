@@ -1,6 +1,6 @@
 /**
  * An object representing the raw data of a ModLog entry
- * @typedef {{ type: string, affected_user: GABGuildMember, creator: GABGuildMember, reason: string, message_id: string }} ModLogEntryData
+ * @typedef {{ type: string, affected_user: SkynetGuildMember, creator: SkynetGuildMember, reason: string, message_id: string }} ModLogEntryData
  */
 
 const { Error } = require("../Internals/Errors/");
@@ -157,9 +157,9 @@ module.exports = class ModLog {
 
 	/**
 	 * Enables ModLog features in a guild and channel
-	 * @param {GABGuild} guild
+	 * @param {SkynetGuild} guild
 	 * @param {Channel} channel
-	 * @returns {Promise<Snowflake|GABError|null>} The Snowflake ID of the channel modlog has been enabled in, if successful. If an expected error occurred, this will return a GABError object
+	 * @returns {Promise<Snowflake|SkynetError|null>} The Snowflake ID of the channel modlog has been enabled in, if successful. If an expected error occurred, this will return a SkynetError object
 	 */
 	static async enable (guild, channel) {
 		if (!guild) return null;
@@ -177,7 +177,7 @@ module.exports = class ModLog {
 
 	/**
 	 * Disables ModLog featuers in a guild
-	 * @param {GABGuild} guild
+	 * @param {SkynetGuild} guild
 	 * @returns {Promise<string|null>} The String ID of the channel modlog was enabled in, if successful.
 	 */
 	static async disable (guild) {

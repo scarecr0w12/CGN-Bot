@@ -2,17 +2,17 @@
 <html lang="en">
 <head>
 	<title><%= serverData.name %> Extensions - Skynet Admin Console</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 </head>
 <body>
-<% include ../partials/dashboard-header %>
-<% include ../partials/dashboard-socket-updates %>
+<%- include('../partials/dashboard-header') %>
+<%- include('../partials/dashboard-socket-updates') %>
 
 <section class="section is-white">
 	<div class="container">
 		<div class="columns">
 			<div id="menu" class="column is-one-quarter">
-				<% include ../partials/admin-menu %>
+				<%- include('../partials/admin-menu') %>
 			</div>
 			<div class="column">
 				<h1 class="title">
@@ -249,7 +249,7 @@
 	</div>
 </section>
 
-<% include ../partials/footer %>
-<% include ../partials/scroll-top-button %>
+<%- include('../partials/footer') %>
+<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<title>Donate to Skynet</title>
-	<% include ../partials/head %>
+	<%- include('../partials/head') %>
 
 	<script>
 	function hideDonate() {
@@ -20,7 +20,7 @@
 	</script>
 	<section id="header" class="main-header-section hero is-primary is-medium is-bold">
 		<div class="hero-head">
-			<% include ../partials/header %>
+			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container">
@@ -82,8 +82,8 @@
 		<br>
 	</section>
 
-	<% include ../partials/footer %>
-	<% include ../partials/scroll-top-button %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 	<!-- Because joke bot wars are fun, *and jokes* -->
 	<script>
 			$('#auttaja-a').on('mouseenter', () => {

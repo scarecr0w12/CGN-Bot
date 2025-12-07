@@ -7,7 +7,7 @@ const {
 } = Utils;
 const {
 	Errors: {
-		Error: GABError,
+		Error: SkynetError,
 	},
 	Constants,
 } = require("../../index");
@@ -46,7 +46,7 @@ class MessageCreate extends BaseEvent {
 		if (!msg.guild) {
 			if (this.client.messageListeners[msg.channel.id] && this.client.messageListeners[msg.channel.id][msg.author.id]) {
 				if (msg.content.toLowerCase().trim() === "quit") {
-					this.client.messageListeners[msg.channel.id][msg.author.id].reject(new GABError("AWAIT_QUIT"));
+					this.client.messageListeners[msg.channel.id][msg.author.id].reject(new SkynetError("AWAIT_QUIT"));
 					this.client.deleteAwaitPMMessage(msg.channel, msg.author);
 				} else if (this.client.messageListeners[msg.channel.id][msg.author.id].filter(msg)) {
 					this.client.messageListeners[msg.channel.id][msg.author.id].resolve(msg);
@@ -320,9 +320,9 @@ class MessageCreate extends BaseEvent {
 											embeds: [{
 												color: Colors.SOFT_ERR,
 												title: `Hold on! ✋`,
-												description: `The command \`${cmd}\` is not implemented yet!\nThis version of GAwesomeBot is still in heavy development and many commands do not work yet. 🚧\nHere are all the commands that are supported right now:\n\`\`\`${commandList}\`\`\``,
+												description: `The command \`${cmd}\` is not implemented yet!\nThis version of SkynetBot is still in heavy development and many commands do not work yet. 🚧\nHere are all the commands that are supported right now:\n\`\`\`${commandList}\`\`\``,
 												footer: {
-													text: `Over time more and more commands will be added. Contact your GAB maintainer for more support.`,
+													text: `Over time more and more commands will be added. Contact your Skynet maintainer for more support.`,
 												},
 											}],
 										});

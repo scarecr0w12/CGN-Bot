@@ -1,4 +1,4 @@
-const { Error: GABError } = require("../Internals/Errors");
+const { Error: SkynetError } = require("../Internals/Errors");
 const Schema = require("./Schema");
 
 const mpath = require("mpath");
