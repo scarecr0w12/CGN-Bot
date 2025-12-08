@@ -105,6 +105,17 @@ html, body {
 .navbar {
     box-shadow: none;
 }
+/* Navbar text colors for transparent navbar on colored hero background */
+.navbar.is-transparent .navbar-item,
+.navbar.is-transparent .navbar-link,
+.navbar.is-transparent .navbar-brand .navbar-item {
+    color: white !important;
+}
+.navbar.is-transparent .navbar-item:hover,
+.navbar.is-transparent .navbar-link:hover {
+    color: #14b8a6 !important;
+    background-color: transparent !important;
+}
 .navbar-item.is-active {
     background-color: transparent !important;
 }

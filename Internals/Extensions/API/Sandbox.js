@@ -14,7 +14,7 @@ class Sandbox {
 		// Import Third-Party Modules
 		modules.rss = { module: "feed-read", key: "get" };
 		modules.moment = { module: "moment" };
-		modules.fetch = { module: "chainfetch" };
+		modules.fetch = { module: "../../../Modules/Utils/ChainFetchShim" };
 		modules.xmlparser = { module: "xml-parser" };
 
 		// Import global SkynetBot variables

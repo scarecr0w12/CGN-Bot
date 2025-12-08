@@ -531,7 +531,7 @@ module.exports = class SkynetClient extends DJSClient {
 							obj.memberAboveAffected = true;
 						}
 					}
-					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
+					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
 						obj.canClientBan = guild.members.me.permissions.has(PermissionFlagsBits.BanMembers);
 						obj.memberAboveAffected = true;
@@ -549,7 +549,7 @@ module.exports = class SkynetClient extends DJSClient {
 							obj.memberAboveAffected = true;
 						}
 					}
-					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
+					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
 						obj.canClientKick = guild.members.me.permissions.has(PermissionFlagsBits.KickMembers);
 						obj.memberAboveAffected = true;
@@ -567,7 +567,7 @@ module.exports = class SkynetClient extends DJSClient {
 							obj.memberAboveAffected = true;
 						}
 					}
-					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
+					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
 					if (affectedUser === null) {
 						obj.canClientManage = guild.members.me.permissions.has(PermissionFlagsBits.ManageNicknames);
 						obj.memberAboveAffected = true;
@@ -584,7 +584,7 @@ module.exports = class SkynetClient extends DJSClient {
 							obj.memberAboveAffected = true;
 						}
 					}
-					if (member.id === guild.ownerID) obj.memberAboveAffected = true;
+					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
 					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles);
 					return obj;
 				}
@@ -1042,7 +1042,11 @@ module.exports = class SkynetClient extends DJSClient {
 	 * @returns {String} A string containing either the Discord URL to the avatar or a static reference to the generic avatar
 	 */
 	getAvatarURL (id, hash, type = "avatars", webp = false) {
-		return hash ? `${this.options.http.cdn}/${type}/${id}/${hash}.${hash.startsWith("a_") ? "gif" : webp ? "webp" : "png"}?size=2048` : "/static/img/discord-icon.png";
+		if (!hash) return "/static/img/discord-icon.png";
+		// Discord.js v14 uses rest.cdn, fallback to hardcoded CDN URL
+		const cdnBase = "https://cdn.discordapp.com";
+		const extension = hash.startsWith("a_") ? "gif" : webp ? "webp" : "png";
+		return `${cdnBase}/${type}/${id}/${hash}.${extension}?size=2048`;
 	}
 
 	/**
@@ -1189,15 +1193,15 @@ module.exports = class SkynetClient extends DJSClient {
 		let messages = 0;
 		let commandMessages = 0;
 
-		for (const channel of this.channels.values()) {
+		for (const channel of this.channels.cache.values()) {
 			if (!channel.messages) continue;
 			channels++;
 
-			for (const message of channel.messages.values()) {
+			for (const message of channel.messages.cache.values()) {
 				if (message.command && now - (message.editedTimestamp || message.createdTimestamp) > commandLifetimeMs) commandMessages++;
 				else if (!message.command && now - (message.editedTimestamp || message.createdTimestamp) > lifetimeMs) messages++;
 				else continue;
-				channel.messages.delete(message.id);
+				channel.messages.cache.delete(message.id);
 			}
 		}
 

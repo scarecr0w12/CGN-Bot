@@ -1,28 +1,28 @@
 const moment = require("moment");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
-const Permissions = require("discord.js/src/util/Permissions.js");
+const { PermissionsBitField, PermissionFlagsBits } = require("discord.js");
 
 const rolesPerPage = 25;
 
 module.exports = async ({ client, Constants: { Colors, Text }, Utils: { TitlecasePermissions } }, documents, msg, commandData) => {
 	if (!msg.suffix) {
-		const guildRoles = [...msg.guild.roles.values()].sort((a, b) => b.position - a.position);
+		const guildRoles = [...msg.guild.roles.cache.values()].sort((a, b) => b.position - a.position);
 		const descriptions = [];
 		for (let i = 0; i < guildRoles.length; i += rolesPerPage) {
 			const roleSegment = guildRoles.slice(i, i + rolesPerPage).join("\n");
 			descriptions.push(`These are the roles on this server:\n\n${i ? `...${i} previous roles\n` : ""}${roleSegment}${i + rolesPerPage < guildRoles.length ? `\n...and ${guildRoles.length - i - rolesPerPage} more` : ""}`);
 		}
 
-		const memberRoles = [...msg.member.roles.values()].sort((a, b) => b.position - a.position);
-		const totalPermissionsBitfield = memberRoles.reduce((a, b) => a | b.permissions, 0); // eslint-disable-line no-bitwise
-		const totalPermissions = new Permissions(totalPermissionsBitfield);
+		const memberRoles = [...msg.member.roles.cache.values()].sort((a, b) => b.position - a.position);
+		const totalPermissionsBitfield = memberRoles.reduce((a, b) => a | b.permissions.bitfield, 0n); // eslint-disable-line no-bitwise
+		const totalPermissions = new PermissionsBitField(totalPermissionsBitfield);
 		for (let i = 0; i < memberRoles.length; i += rolesPerPage) {
 			const roleSegment = memberRoles.slice(i, i + rolesPerPage).join("\n");
 			descriptions.push([
 				`You currently have these roles:\n\n${i ? `...${i} previous roles\n` : ""}${roleSegment}${i + rolesPerPage < memberRoles.length ? `\n...and ${memberRoles.length - i - rolesPerPage} more` : ""}`,
 				"\nYour roles grant you get the following permissions:",
 				totalPermissionsBitfield ? `\`\`\`${TitlecasePermissions(totalPermissions.toArray(false).join(", "))}\`\`\`` : "You do not have any permissions on this server ⁉️",
-				totalPermissions.has(Permissions.FLAGS.ADMINISTRATOR, false) ? "⚠️ You have Administrator permissions which bypasses any other permission or override" : "",
+				totalPermissions.has(PermissionFlagsBits.Administrator, false) ? "⚠️ You have Administrator permissions which bypasses any other permission or override" : "",
 			].join("\n"));
 		}
 		if (descriptions.length === 2 && descriptions[0].length + descriptions[1].length < 2048) {
@@ -79,7 +79,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { Titlecas
 			elements.push("🤖 Managed by an integration");
 		}
 		elements.push(`✅ Permissions:${permissions.length ? `\n\`\`\`${TitlecasePermissions(permissions)}\`\`\`` : " This role does not grant any additional permissions"}`);
-		if (role.permissions.has(Permissions.FLAGS.ADMINISTRATOR, false)) {
+		if (role.permissions.has(PermissionFlagsBits.Administrator, false)) {
 			elements.push("⚠️ This role grants Administrator permissions which bypasses any other permission or override");
 		}
 		return msg.send({

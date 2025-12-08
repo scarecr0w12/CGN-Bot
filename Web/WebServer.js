@@ -201,6 +201,20 @@ exports.open = async (client, auth, configJS, logger) => {
 	});
 
 	require("./routes")(app);
+
+	// Global error handler - must be last
+	app.use((err, req, res, next) => {
+		console.error(`[EXPRESS ERROR] ${req.method} ${req.path}:`, err);
+		logger.error(`Unhandled error on ${req.method} ${req.path}`, { params: req.params, query: req.query }, err);
+		if (res.headersSent) {
+			return next(err);
+		}
+		res.status(500).render("pages/error.ejs", { 
+			error_text: "Something went wrong!", 
+			error_line: "An internal error occurred" 
+		});
+	});
+
 	return { server, httpsServer };
 };
 

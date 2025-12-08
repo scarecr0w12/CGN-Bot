@@ -1,9 +1,8 @@
 const fs = require("fs-nextra");
-const { VM } = require("vm2");
 const { Client: DJSClient, GatewayIntentBits, Partials } = require("discord.js");
 const { AllowedEvents } = require("../Constants");
 const DB = require("../../Database/Driver");
-const Sandbox = require("./API/Sandbox");
+const IsolatedSandbox = require("./API/IsolatedSandbox");
 const EventsHandler = require("./EventsHandler");
 
 /**
@@ -135,7 +134,8 @@ class ExtensionManager extends DJSClient {
 	}
 
 	/**
-	 * Evaluate a string of javascript code in a {Sandbox} with the provided context.
+	 * Evaluate a string of javascript code in an isolated sandbox with the provided context.
+	 * Uses isolated-vm for secure execution (replaces vulnerable vm2).
 	 * @param {string} code
 	 * @param {object} context
 	 * @param {ExtensionManager} context.client
@@ -146,20 +146,25 @@ class ExtensionManager extends DJSClient {
 	 * @param {GABMessage} [context.msg]
 	 * @param {GABGuild} context.guild
 	 * @param {object} [context.event]
-	 * @returns {{ success: boolean, err: ?Error }}
+	 * @returns {Promise<{ success: boolean, err: ?Error }>}
 	 */
 	async runWithContext (code, context) {
+		const sandbox = new IsolatedSandbox(this, context, context.versionDocument.scopes);
 		try {
-			const vm = new VM({
-				timeout: context.versionDocument.timeout,
-				sandbox: new Sandbox(this, context, context.versionDocument.scopes),
-			});
-			await vm.run(`(async () => {\n${code}\n})()`);
-			return { success: true, err: null };
+			await sandbox.initialize(context.versionDocument.timeout || 5000);
+			const result = await sandbox.run(code, context.versionDocument.timeout || 5000);
+			if (!result.success) {
+				logger.debug(`Failed to run ${context.versionDocument.type} extension "${context.extensionDocument.name}"`,
+					{ svrid: context.guild.id, extid: context.extensionDocument._id, v: context.versionDocument._id }, result.err);
+			}
+			return result;
 		} catch (err) {
 			logger.debug(`Failed to run ${context.versionDocument.type} extension "${context.extensionDocument.name}"`,
 				{ svrid: context.guild.id, extid: context.extensionDocument._id, v: context.versionDocument._id }, err);
 			return { success: false, err };
+		} finally {
+			// Always clean up isolate resources
+			sandbox.dispose();
 		}
 	}
 }

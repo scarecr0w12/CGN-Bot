@@ -8,7 +8,7 @@
 				<img id="dashboard-icon" src="<%= serverData.icon %>" style="border-radius: 100%;width: 48px;vertical-align: bottom;" alt="<%= serverData.id %>">
 				<strong><%= serverData.name %></strong> <%= serverData.isMaintainer ? "Maintainer" : "Admin" %> Console
 			</h1>
-			<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
+			<%- include("../partials/adspace", { officialMode: typeof officialMode !== 'undefined' ? officialMode : false, adsEnabled: true }) %>
 		</div>
 	</div>
 	<div class="hero-foot">
@@ -20,8 +20,7 @@
 	            <span>Dashboard</span>
 	        </a>
 	        &nbsp;
-	        <% var menuToggleButtonSize = "is-small"; %>
-	        <%- include('../partials/menu-toggle') %>
+	        <%- include('../partials/menu-toggle', { menuToggleButtonSize: "is-small" }) %>
 	        &nbsp;
 	        <a class="button is-small is-white is-outlined" target="_blank" href="/wiki/Configuration#<%= serverData.isMaintainer ? 'maintainer' : 'admin' %>-console">
 	            <span class="icon is-small">

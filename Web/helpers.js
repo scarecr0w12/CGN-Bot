@@ -124,21 +124,44 @@ module.exports = {
 
 	dashboardUpdate: (req, namespace, location) => req.app.client.IPC.send("dashboardUpdate", { namespace: namespace, location: location, author: req.consolemember ? req.consolemember.id : "SYSTEM" }),
 
-	getRoleData: svr => svr.roles.cache.filter(role => role.name !== "@everyone" && role.name.indexOf("color-") !== 0).map(role => ({
-		name: role.name,
-		id: role.id,
-		color: role.color.toString(16).padStart(6, "0"),
-		position: role.rawPosition,
-	}))
-		.sort((a, b) => b.position - a.position),
+	// Handle both Discord.js Guild objects (with .cache) and GetGuild results (arrays)
+	getRoleData: svr => {
+		const roles = svr.roles.cache ? [...svr.roles.cache.values()] : (Array.isArray(svr.roles) ? svr.roles : []);
+		return roles
+			.filter(role => role.name !== "@everyone" && role.name.indexOf("color-") !== 0)
+			.map(role => ({
+				name: role.name,
+				id: role.id,
+				color: (typeof role.color === "number" ? role.color : 0).toString(16).padStart(6, "0"),
+				position: role.rawPosition || role.position || 0,
+			}))
+			.sort((a, b) => b.position - a.position);
+	},
 
-	getChannelData: (svr, type) => svr.channels.cache.filter(ch => ch.type === (type || "text")).map(ch => ({
-		name: ch.name,
-		id: ch.id,
-		position: ch.rawPosition,
-		rawPosition: ch.rawPosition,
-	}))
-		.sort((a, b) => a.rawPosition - b.rawPosition),
+	// Handle both Discord.js Guild objects (with .cache) and GetGuild results (arrays)
+	getChannelData: (svr, type) => {
+		const { ChannelType } = require("discord.js");
+		const channels = svr.channels.cache ? [...svr.channels.cache.values()] : (Array.isArray(svr.channels) ? svr.channels : []);
+		// In Discord.js v14, channel types are numbers (ChannelType enum)
+		// Support both old string types ("text", "voice") and new ChannelType enum
+		let targetType;
+		if (type === "voice") {
+			targetType = ChannelType.GuildVoice;
+		} else if (type === "text" || type === undefined) {
+			targetType = ChannelType.GuildText;
+		} else {
+			targetType = type;
+		}
+		return channels
+			.filter(ch => ch.type === targetType)
+			.map(ch => ({
+				name: ch.name,
+				id: ch.id,
+				position: ch.rawPosition || ch.position || 0,
+				rawPosition: ch.rawPosition || ch.position || 0,
+			}))
+			.sort((a, b) => a.rawPosition - b.rawPosition);
+	},
 
 	getUserList: list => list.filter(usr => usr.bot !== true).map(usr => `${usr.username}#${usr.discriminator}`).sort(),
 

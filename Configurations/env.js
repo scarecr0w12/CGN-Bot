@@ -47,11 +47,25 @@ const loadConfigs = () => {
 	};
 
 	const baseConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : templateConfigJSON;
+	
+	// Parse comma-separated list from env or use file config
+	const parseList = (envKey, fallback) => {
+		const envVal = process.env[envKey];
+		if (envVal) return envVal.split(",").map(s => s.trim()).filter(Boolean);
+		return fallback || [];
+	};
+
 	const configJSON = {
 		...baseConfigJSON,
 		status: pick("BOT_STATUS", baseConfigJSON.status),
 		branch: pick("BOT_BRANCH", baseConfigJSON.branch),
 		version: pick("BOT_VERSION", baseConfigJSON.version),
+		maintainers: parseList("BOT_MAINTAINERS", baseConfigJSON.maintainers),
+		sudoMaintainers: parseList("BOT_SUDO_MAINTAINERS", baseConfigJSON.sudoMaintainers),
+		wikiContributors: parseList("BOT_WIKI_CONTRIBUTORS", baseConfigJSON.wikiContributors),
+		userBlocklist: parseList("BOT_USER_BLOCKLIST", baseConfigJSON.userBlocklist),
+		guildBlocklist: parseList("BOT_GUILD_BLOCKLIST", baseConfigJSON.guildBlocklist),
+		activityBlocklist: parseList("BOT_ACTIVITY_BLOCKLIST", baseConfigJSON.activityBlocklist),
 		activity: {
 			...baseConfigJSON.activity,
 			name: pick("BOT_ACTIVITY_NAME", baseConfigJSON.activity?.name),

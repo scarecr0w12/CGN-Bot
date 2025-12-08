@@ -93,15 +93,16 @@ class GABResponse {
 	}
 
 	populateDashboard (req) {
-		if (!req.svr.members[req.svr.ownerID]) req.svr.members[req.svr.ownerID] = { user: { username: "invalid-user", id: "invalid-user" } };
+		if (!req.svr.members[req.svr.ownerId]) req.svr.members[req.svr.ownerId] = { user: { username: "invalid-user", id: "invalid-user" } };
 		this.serverData = {
 			name: req.svr.name,
 			id: req.svr.id,
 			icon: req.app.client.getAvatarURL(req.svr.id, req.svr.icon, "icons") || "/static/img/discord-icon.png",
+			isMaintainer: false,
 			owner: {
-				username: req.svr.members[req.svr.ownerID].user.username,
-				id: req.svr.members[req.svr.ownerID].user.id,
-				avatar: req.app.client.getAvatarURL(req.svr.members[req.svr.ownerID].user.id, req.svr.members[req.svr.ownerID].user.avatar) || "/static/img/discord-icon.png",
+				username: req.svr.members[req.svr.ownerId].user.username,
+				id: req.svr.members[req.svr.ownerId].user.id,
+				avatar: req.app.client.getAvatarURL(req.svr.members[req.svr.ownerId].user.id, req.svr.members[req.svr.ownerId].user.avatar) || "/static/img/discord-icon.png",
 			},
 		};
 		this.template.sudo = req.isSudo;

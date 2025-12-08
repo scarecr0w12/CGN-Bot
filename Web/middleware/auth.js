@@ -6,38 +6,63 @@ module.exports = middleware => {
 
 	// Populate a request with Authorization details
 	middleware.authorizeGuildAccess = async (req, res, next) => {
+		console.log("[AUTH] authorizeGuildAccess started");
 		// Do not populate request if authorization is not required
 		if (!req.params.svrid && !req.query.svrid) return next();
 		// Confirm user is authenticated
 		if (req.isAuthenticated()) {
+			console.log("[AUTH] User is authenticated:", req.user.id);
 			// Fetch user data from Discord
 			const usr = await req.app.client.users.fetch(req.user.id, true);
+			console.log("[AUTH] User fetched:", !!usr);
 			if (usr) {
 				// Legacy URL support
 				if (!req.params.svrid && req.query.svrid) req.params.svrid = req.query.svrid;
 				// Get server data from shard that has said server cached
+				console.log("[AUTH] Creating GetGuild for:", req.params.svrid);
 				const svr = new GetGuild(req.app.client, req.params.svrid);
 				await svr.initialize([usr.id, "OWNER", req.app.client.user.id]);
+				console.log("[AUTH] GetGuild initialized, success:", svr.success);
 				// Confirm the svr and usr exist
 				if (svr.success) {
 					// Get server data from Database
+					console.log("[AUTH] Fetching server document");
 					let serverDocument;
 					try {
 						serverDocument = await Servers.findOne(svr.id);
+						console.log("[AUTH] Server document fetched:", !!serverDocument);
 					} catch (err) {
+						console.error("[AUTH] Error fetching server document:", err);
 						if (req.isAPI) return res.sendStatus(500);
 						renderError(res, "Something went wrong while fetching your server data.");
 					}
 					if (!serverDocument) {
-						if (req.isAPI) return res.sendStatus(500);
-						return renderError(res, "Something went wrong while fetching your server data.");
+						console.log("[AUTH] No server document found, creating one...");
+						try {
+							// Create a basic server document without full initialization
+							const newServerDocument = Servers.new({ _id: svr.id });
+							await newServerDocument.save();
+							serverDocument = await Servers.findOne(svr.id);
+							console.log("[AUTH] Server document created:", !!serverDocument);
+						} catch (createErr) {
+							console.error("[AUTH] Failed to create server document:", createErr);
+							if (req.isAPI) return res.sendStatus(500);
+							return renderError(res, "Something went wrong while creating your server data.");
+						}
+						if (!serverDocument) {
+							if (req.isAPI) return res.sendStatus(500);
+							return renderError(res, "Something went wrong while fetching your server data.");
+						}
 					}
 					// Authorize the user's request
 					const member = svr.members[usr.id];
+					console.log("[AUTH] Member found:", !!member);
 					const adminLevel = req.app.client.getUserBotAdmin(svr, serverDocument, member);
+					console.log("[AUTH] Admin level:", adminLevel);
 					if (adminLevel >= 3 || checkSudoMode(usr.id)) {
 						// Populate the request object with Authorization details
 						try {
+							console.log("[AUTH] Populating request object");
 							req.isAuthorized = true;
 							req.isSudo = adminLevel !== 3;
 							req.consolemember = member;
@@ -45,9 +70,12 @@ module.exports = middleware => {
 							req.svr = svr;
 							req.svr.document = serverDocument;
 							req.svr.queryDocument = serverDocument.query;
+							console.log("[AUTH] Calling populateDashboard");
 							res.res.populateDashboard(req);
+							console.log("[AUTH] populateDashboard completed, calling next()");
 							return next();
 						} catch (err) {
+							console.error(`[AUTH ERROR] ${req.method} ${req.path}:`, err);
 							logger.warn(`An error occurred during a ${req.protocol} ${req.method} request on ${req.path} 0.0`, {
 								params: req.params,
 								query: req.query,
@@ -74,34 +102,47 @@ module.exports = middleware => {
 	};
 
 	middleware.authorizeConsoleAccess = (req, res, next) => {
+		console.log("[CONSOLE AUTH] authorizeConsoleAccess called for:", req.path);
+		console.log("[CONSOLE AUTH] User authenticated:", req.isAuthenticated());
 		if (req.isAuthenticated()) {
+			console.log("[CONSOLE AUTH] User ID:", req.user.id);
+			console.log("[CONSOLE AUTH] Maintainers list:", configJSON.maintainers);
+			console.log("[CONSOLE AUTH] Is maintainer:", configJSON.maintainers.includes(req.user.id));
 			if (configJSON.maintainers.includes(req.user.id)) {
 				const { perm } = req;
+				console.log("[CONSOLE AUTH] Permission required:", perm);
 				if (perm === "maintainer" || canDo(perm, req.user.id)) {
 					req.isAuthorized = true;
 					req.level = process.env.SKYNET_HOST !== req.user.id ? configJSON.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
 					res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
 					res.res.template.isHost = req.level === 0;
+					console.log("[CONSOLE AUTH] Access granted, level:", req.level);
 					return next();
 				} else {
+					console.log("[CONSOLE AUTH] Permission denied for perm:", perm);
 					if (req.isAPI) return res.sendStatus(403);
 					res.redirect("/dashboard");
 				}
 			} else {
+				console.log("[CONSOLE AUTH] User is not a maintainer, redirecting");
 				if (req.isAPI) return res.sendStatus(403);
 				res.redirect("/dashboard");
 			}
 		} else {
+			console.log("[CONSOLE AUTH] User not authenticated, redirecting to login");
 			if (req.isAPI) return res.sendStatus(401);
 			res.redirect("/login");
 		}
 	};
 
 	middleware.authorizeDashboardAccess = (req, res, next) => {
+		console.log("[AUTH] authorizeDashboardAccess called for:", req.path);
 		if (!req.params.svrid && !req.query.svrid) {
+			console.log("[AUTH] No svrid found, redirecting");
 			if (req.isAPI) return res.sendStatus(400);
 			return res.redirect("/dashboard");
 		}
+		console.log("[AUTH] Calling authorizeGuildAccess for svrid:", req.params.svrid);
 		middleware.authorizeGuildAccess(req, res, next);
 	};
 

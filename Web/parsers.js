@@ -23,7 +23,7 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 	await svr.initialize(["OWNER", req.app.client.user.id]);
 	await svr.fetchProperty("createdAt");
 	if (svr.success) {
-		const owner = req.app.client.users.cache.get(svr.ownerID) || svr.members[svr.ownerID] ? svr.members[svr.ownerID].user : { username: "invalid-user", id: "invalid-user" };
+		const owner = req.app.client.users.cache.get(svr.ownerId) || svr.members[svr.ownerId] ? svr.members[svr.ownerId].user : { username: "invalid-user", id: "invalid-user" };
 		data = {
 			name: svr.name,
 			id: svr.id,
@@ -56,7 +56,7 @@ parsers.userData = async (req, usr, userDocument) => {
 		discriminator: usr.discriminator,
 		avatar: usr.displayAvatarURL() || "/static/img/discord-icon.png",
 		id: usr.id,
-		status: usr.presence.status,
+		status: usr.presence?.status || "offline",
 		game: await req.app.client.getGame(usr),
 		roundedAccountAge: moment(usr.createdAt).fromNow(),
 		rawAccountAge: moment(usr.createdAt).format(configJS.moment_date_format),
@@ -101,7 +101,7 @@ parsers.userData = async (req, usr, userDocument) => {
 		userProfile.pastNames = userDocument.past_names;
 		userProfile.afkMessage = userDocument.afk_message;
 		for (const svr of mutualServers) {
-			const owner = svr.members[svr.ownerID] || { username: "invalid-user" };
+			const owner = svr.members[svr.ownerId] || { username: "invalid-user" };
 			userProfile.mutualServers.push({
 				name: svr.name,
 				id: svr.id,

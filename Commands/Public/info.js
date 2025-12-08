@@ -2,16 +2,16 @@ const moment = require("moment-timezone");
 
 module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagForRegion } }, { serverDocument }, msg, commandData) => {
 	const commandUses = Object.values(serverDocument.command_usage).reduce((a, b) => a + b, 0);
-	const { guild, guild: { region } } = msg;
+	const { guild } = msg;
 	const created = moment(guild.createdTimestamp).tz("Europe/London");
-	const onlineMembers = guild.members.cache.filter(m => m.presence.status !== "offline").size;
-	const regionInfo = (await guild.fetchVoiceRegions()).get(region);
+	// Discord.js v14: presence can be null for offline members
+	const onlineMembers = guild.members.cache.filter(m => m.presence && m.presence.status !== "offline").size;
+	// Discord.js v14: Voice regions are now per-channel, not per-guild
 	const publicData = serverDocument.config.public_data;
 
 	const fields = [];
 	const generalText = [
 		`**»** Created: ${created.format("DD.MM.YYYY [at] HH:mm:ss")}`,
-		`**»** Voice region: ${regionInfo ? regionInfo.name : region || "Unknown"} ${GetFlagForRegion(region)}${regionInfo && regionInfo.deprecated ? " (DEPRECATED)" : ""}`,
 		`**»** Verification level: ${Text.GUILD_VERIFICATION_LEVEL(guild.verificationLevel)}`,
 	];
 	fields.push({
