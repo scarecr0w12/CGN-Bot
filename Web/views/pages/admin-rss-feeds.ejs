@@ -78,7 +78,7 @@
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% const commandData = configData.commands.rss; commandData.name = "rss"; commandData.description = pageData.commandDescriptions.rss; commandData.category = pageData.commandCategories.rss; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						</div>
 							<div class="field" style="overflow-x: scroll;">
                                 <%- include("../partials/no-results", { isHidden: configData.rss_feeds.length, isSearchQuery: false, description: "You haven't added any RSS feeds yet. Fill out the form below to get started." }) %>

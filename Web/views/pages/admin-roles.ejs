@@ -28,9 +28,9 @@
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% var commandData = configData.commands.roleinfo; commandData.name = "roleinfo"; commandData.description = pageData.commandDescriptions.roleinfo; commandData.category = pageData.commandCategories.roleinfo; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						<% commandData = configData.commands.role; commandData.name = "role"; commandData.description = pageData.commandDescriptions.role; commandData.category = pageData.commandCategories.role; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						</div>
 						<div class="role-options<%= commandData.isEnabled ? '' : ' is-hidden' %>">
 							<div class="field">

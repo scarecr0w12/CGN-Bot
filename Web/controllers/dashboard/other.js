@@ -1,6 +1,7 @@
 const fs = require("fs-nextra");
 const moment = require("moment");
 const { ObjectId } = require("mongodb");
+const { ChannelType } = require("discord.js");
 const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");
 const parsers = require("../../parsers");
@@ -51,7 +52,8 @@ controllers.activities = async (req, { res }) => {
 	await svr.fetchMember(fetchList);
 
 	Object.values(serverDocument.channels).forEach(channelDocument => {
-		const ch = svr.channels.id(channelDocument._id);
+		const channels = Array.isArray(svr.channels) ? svr.channels : (svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {}));
+		const ch = channels.find(c => c.id === channelDocument._id);
 		if (ch) {
 			if (channelDocument.trivia.isOngoing) {
 				ongoingTrivia.push({
@@ -110,13 +112,14 @@ controllers.activities = async (req, { res }) => {
 
 	let defaultChannel;
 
-	const generalChannel = svr.channels.cache.find(ch => (ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText);
+	const allChannels = Array.isArray(svr.channels) ? svr.channels : (svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {}));
+	const generalChannel = allChannels.find(ch => (ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText);
 
 	if (generalChannel) {
 		defaultChannel = generalChannel;
 	} else {
-		[defaultChannel] = svr.channels.cache.filter(c => c.type === ChannelType.GuildText)
-			.sort((a, b) => a.rawPosition - b.rawPosition);
+		[defaultChannel] = allChannels.filter(c => c.type === ChannelType.GuildText)
+			.sort((a, b) => (a.rawPosition || 0) - (b.rawPosition || 0));
 	}
 
 	res.setPageData({

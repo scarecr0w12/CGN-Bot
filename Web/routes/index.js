@@ -10,6 +10,10 @@ const maintainerDashboardRouting = require("./maintainer");
 const debugRouting = require("./debug");
 const setupAPI = require("./api");
 
+const statusRouting = router => {
+	setupPage(router, "/status", [], controllers.status);
+};
+
 const generalRouting = router => {
 	setupPage(router, "/", [], controllers.landing);
 	setupPage(router, "/donate", [], controllers.donate);
@@ -86,6 +90,7 @@ module.exports = app => {
 	});
 
 	generalRouting(routers.general);
+	statusRouting(routers.general);
 	activityRouting(routers.general);
 	galleryRouting(routers.general);
 	wikiRouting(routers.general);

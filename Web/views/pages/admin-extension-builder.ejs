@@ -18,8 +18,7 @@
 					<h1 class="title">
 						Extension Builder
 					</h1>
-					<% const isGallery = false; %>
-					<%- include('../partials/extension-builder') %>
+					<%- include('../partials/extension-builder', { isGallery: false, pageData: pageData, configData: configData, serverData: serverData }) %>
 				</div>
 			</div>
 		</div>

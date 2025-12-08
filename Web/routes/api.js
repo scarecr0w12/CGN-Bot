@@ -14,6 +14,7 @@ module.exports = router => {
 	}));
 
 	setupResource(router, "/", [], controllers.api.status, "get", "public");
+	setupResource(router, "/status", [], controllers.status.api, "get", "public");
 	setupResource(router, "/servers", [], controllers.api.servers, "get", "public");
 	setupResource(router, "/servers/:svrid/channels", [], controllers.api.servers.channels, "get", "authorization");
 	setupResource(router, "/list/servers", [], controllers.api.servers.list, "get", "public");

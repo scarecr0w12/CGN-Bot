@@ -103,7 +103,7 @@
 									<% for (let command of pageData.commandCategories[category]) { %>
 										<% if (command.name !== "stats") { %>
 											<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>
-											<%- include('../partials/admin-command-item') %>
+											<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 										<% } %>
 									<% } %>
 								</div>

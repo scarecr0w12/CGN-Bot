@@ -124,11 +124,20 @@ module.exports = {
 
 	dashboardUpdate: (req, namespace, location) => req.app.client.IPC.send("dashboardUpdate", { namespace: namespace, location: location, author: req.consolemember ? req.consolemember.id : "SYSTEM" }),
 
-	// Handle both Discord.js Guild objects (with .cache) and GetGuild results (arrays)
+	// Handle both Discord.js Guild objects (with .cache) and GetGuild results (arrays/objects)
 	getRoleData: svr => {
-		const roles = svr.roles.cache ? [...svr.roles.cache.values()] : (Array.isArray(svr.roles) ? svr.roles : []);
+		let roles = [];
+		if (svr.roles) {
+			if (svr.roles.cache) {
+				roles = [...svr.roles.cache.values()];
+			} else if (Array.isArray(svr.roles)) {
+				roles = svr.roles;
+			} else if (typeof svr.roles === "object") {
+				roles = Object.values(svr.roles);
+			}
+		}
 		return roles
-			.filter(role => role.name !== "@everyone" && role.name.indexOf("color-") !== 0)
+			.filter(role => role && role.name && role.name !== "@everyone" && role.name.indexOf("color-") !== 0)
 			.map(role => ({
 				name: role.name,
 				id: role.id,

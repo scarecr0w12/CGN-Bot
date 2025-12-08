@@ -18,8 +18,14 @@ const parsers = require("../../parsers");
 const controllers = module.exports;
 
 controllers.admins = async (req, { res }) => {
-	const adminDocuments = req.svr.document.config.admins.filter(adminDocument => req.svr.roles.includes(adminDocument._id));
 	await req.svr.fetchCollection("roles");
+
+	// Get role IDs as array for filtering
+	const roleIds = Array.isArray(req.svr.roles) ?
+		req.svr.roles.map(r => r.id || r) :
+		Object.keys(req.svr.roles || {});
+
+	const adminDocuments = req.svr.document.config.admins.filter(adminDocument => roleIds.includes(adminDocument._id));
 
 	res.setPageData({
 		page: "admin-admins.ejs",
@@ -27,7 +33,9 @@ controllers.admins = async (req, { res }) => {
 	});
 	res.setConfigData({
 		admins: adminDocuments.map(adminDocument => {
-			adminDocument.name = req.svr.roles.cache.find(role => role.id === adminDocument._id).name;
+			const roles = Array.isArray(req.svr.roles) ? req.svr.roles : Object.values(req.svr.roles || {});
+			const role = roles.find(r => (r.id || r) === adminDocument._id);
+			adminDocument.name = role ? role.name : "Unknown Role";
 			return adminDocument;
 		}),
 	});

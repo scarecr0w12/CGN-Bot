@@ -28,9 +28,9 @@
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% var commandData = configData.commands.stats; commandData.name = "stats"; commandData.description = pageData.commandDescriptions.stats; commandData.category = pageData.commandCategories.stats; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						<% commandData = configData.commands.messages; commandData.name = "messages"; commandData.description = pageData.commandDescriptions.messages; commandData.category = pageData.commandCategories.messages; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						</div>
 						<br>
 						<% var formButtonsUnsaved = false; %>

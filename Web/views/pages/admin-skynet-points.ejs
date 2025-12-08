@@ -26,9 +26,9 @@
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% var commandData = configData.commands.points; commandData.name = "points"; commandData.description = pageData.commandDescriptions.points; commandData.category = pageData.commandCategories.points; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						<% commandData = configData.commands.lottery; commandData.name = "lottery"; commandData.description = pageData.commandDescriptions.lottery; commandData.category = pageData.commandCategories.lottery; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						</div>
 						<br>
 						<% var formButtonsUnsaved = false; %>

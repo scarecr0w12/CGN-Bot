@@ -57,7 +57,7 @@
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<div class="command-items">
 						<% const commandData = configData.commands.streamers; commandData.name = "streamers"; commandData.description = pageData.commandDescriptions.streamers; commandData.category = pageData.commandCategories.streamers; %>
-						<%- include('../partials/admin-command-item') %>
+						<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 						</div>
 							<div class="field" style="overflow-x: scroll;">
 								<%- include("../partials/no-results", { isHidden: configData.streamers_data.length, isSearchQuery: false, description: "You haven't added any streamers yet. Enter a username and platform below to add one." }) %>

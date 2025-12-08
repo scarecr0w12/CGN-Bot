@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Status - Skynet</title>
+	<%- include("../partials/head") %>
+	<style>
+		.status-header {
+			padding: 3rem 1.5rem;
+		}
+		.status-badge {
+			display: inline-block;
+			padding: 0.5rem 1.5rem;
+			border-radius: 4px;
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin-bottom: 1rem;
+		}
+		.status-badge.is-success { background-color: #48c774; color: white; }
+		.status-badge.is-warning { background-color: #ffdd57; color: rgba(0,0,0,0.7); }
+		.status-badge.is-danger { background-color: #f14668; color: white; }
+		.status-badge.is-info { background-color: #3298dc; color: white; }
+		.status-badge.is-dark { background-color: #363636; color: white; }
+
+		.monitor-card {
+			margin-bottom: 1rem;
+			border-radius: 6px;
+			overflow: hidden;
+		}
+		.monitor-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 1rem;
+			background: #f5f5f5;
+		}
+		.monitor-name {
+			font-weight: 600;
+			font-size: 1.1rem;
+		}
+		.monitor-status {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+		}
+		.status-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+		}
+		.status-dot.success { background-color: #48c774; }
+		.status-dot.danger { background-color: #f14668; }
+		.status-dot.warning { background-color: #ffdd57; }
+		.status-dot.info { background-color: #3298dc; }
+		.status-dot.dark { background-color: #363636; }
+
+		.monitor-details {
+			padding: 1rem;
+			background: white;
+			border: 1px solid #dbdbdb;
+			border-top: none;
+		}
+		.uptime-bar {
+			display: flex;
+			gap: 2px;
+			height: 30px;
+			margin: 1rem 0;
+		}
+		.uptime-bar-segment {
+			flex: 1;
+			border-radius: 2px;
+			min-width: 4px;
+		}
+		.uptime-bar-segment.up { background-color: #48c774; }
+		.uptime-bar-segment.down { background-color: #f14668; }
+		.uptime-bar-segment.pending { background-color: #ffdd57; }
+		.uptime-bar-segment.maintenance { background-color: #3298dc; }
+		.uptime-bar-segment.unknown { background-color: #dbdbdb; }
+
+		.uptime-stats {
+			display: flex;
+			justify-content: space-between;
+			font-size: 0.9rem;
+			color: #666;
+		}
+		.bot-stats {
+			display: flex;
+			justify-content: center;
+			gap: 3rem;
+			margin-top: 1rem;
+		}
+		.bot-stat {
+			text-align: center;
+		}
+		.bot-stat-value {
+			font-size: 1.5rem;
+			font-weight: 700;
+		}
+		.bot-stat-label {
+			font-size: 0.85rem;
+			color: #666;
+		}
+		.group-title {
+			font-size: 1.25rem;
+			font-weight: 600;
+			margin: 2rem 0 1rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid #dbdbdb;
+		}
+		.no-monitors {
+			text-align: center;
+			padding: 3rem;
+			color: #666;
+		}
+		.last-updated {
+			text-align: center;
+			color: #999;
+			font-size: 0.85rem;
+			margin-top: 2rem;
+		}
+		.incident-banner {
+			background-color: #fff3cd;
+			border: 1px solid #ffc107;
+			border-radius: 4px;
+			padding: 1rem;
+			margin-bottom: 2rem;
+		}
+		.incident-banner h4 {
+			margin: 0 0 0.5rem;
+			color: #856404;
+		}
+		.incident-banner p {
+			margin: 0;
+			color: #856404;
+		}
+	</style>
+</head>
+<body>
+	<%- include("../partials/header") %>
+
+	<section class="hero is-primary status-header">
+		<div class="hero-body">
+			<div class="container has-text-centered">
+				<h1 class="title is-2">System Status</h1>
+				<% if (pageData.uptimeKuma.available) { %>
+					<span class="status-badge is-<%= pageData.uptimeKuma.overallStatus.class %>">
+						<span class="icon"><i class="fa fa-<%= pageData.uptimeKuma.overallStatus.status === 1 ? 'check-circle' : pageData.uptimeKuma.overallStatus.status === 0 ? 'exclamation-circle' : 'info-circle' %>"></i></span>
+						<%= pageData.uptimeKuma.overallStatus.text %>
+					</span>
+				<% } else { %>
+					<span class="status-badge is-dark">
+						<span class="icon"><i class="fa fa-question-circle"></i></span>
+						Status Unavailable
+					</span>
+				<% } %>
+
+				<div class="bot-stats">
+					<div class="bot-stat">
+						<div class="bot-stat-value"><%= pageData.rawServerCount %></div>
+						<div class="bot-stat-label">Servers</div>
+					</div>
+					<div class="bot-stat">
+						<div class="bot-stat-value"><%= pageData.rawUserCount %></div>
+						<div class="bot-stat-label">Users</div>
+					</div>
+					<div class="bot-stat" title="<%= pageData.rawUptime %>">
+						<div class="bot-stat-value"><%= pageData.roundedUptime %></div>
+						<div class="bot-stat-label">Uptime</div>
+					</div>
+					<% if (pageData.uptimeKuma.available) { %>
+					<div class="bot-stat">
+						<div class="bot-stat-value"><%= pageData.uptimeKuma.uptimePercentage %>%</div>
+						<div class="bot-stat-label">Overall Uptime</div>
+					</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<% if (pageData.uptimeKuma.statusPage && pageData.uptimeKuma.statusPage.incident) { %>
+				<div class="incident-banner">
+					<h4><i class="fa fa-exclamation-triangle"></i> Active Incident</h4>
+					<p><%= pageData.uptimeKuma.statusPage.incident.title %></p>
+					<% if (pageData.uptimeKuma.statusPage.incident.content) { %>
+						<p><small><%= pageData.uptimeKuma.statusPage.incident.content %></small></p>
+					<% } %>
+				</div>
+			<% } %>
+
+			<% if (!pageData.uptimeKuma.configured) { %>
+				<div class="no-monitors">
+					<span class="icon is-large"><i class="fa fa-cog fa-3x"></i></span>
+					<h3 class="title is-4">Uptime Monitoring Not Configured</h3>
+					<p>Uptime Kuma integration has not been set up yet.</p>
+				</div>
+			<% } else if (!pageData.uptimeKuma.available) { %>
+				<div class="no-monitors">
+					<span class="icon is-large"><i class="fa fa-plug fa-3x"></i></span>
+					<h3 class="title is-4">Status Page Unavailable</h3>
+					<p>Unable to connect to the status monitoring service. Please check back later.</p>
+				</div>
+			<% } else if (pageData.uptimeKuma.monitors.length === 0) { %>
+				<div class="no-monitors">
+					<span class="icon is-large"><i class="fa fa-server fa-3x"></i></span>
+					<h3 class="title is-4">No Monitors Configured</h3>
+					<p>No services are currently being monitored on the public status page.</p>
+				</div>
+			<% } else { %>
+				<%
+					// Group monitors by their group name
+					const groups = {};
+					pageData.uptimeKuma.monitors.forEach(monitor => {
+						const groupName = monitor.group || 'Services';
+						if (!groups[groupName]) groups[groupName] = [];
+						groups[groupName].push(monitor);
+					});
+				%>
+
+				<% Object.keys(groups).forEach(groupName => { %>
+					<h2 class="group-title"><%= groupName %></h2>
+					<% groups[groupName].forEach(monitor => { %>
+						<div class="card monitor-card">
+							<div class="monitor-header">
+								<span class="monitor-name">
+									<span class="icon"><i class="fa fa-<%= monitor.type === 'http' ? 'globe' : monitor.type === 'ping' ? 'wifi' : monitor.type === 'port' ? 'plug' : 'server' %>"></i></span>
+									<%= monitor.name %>
+								</span>
+								<span class="monitor-status">
+									<span class="status-dot <%= monitor.statusClass %>"></span>
+									<span><%= monitor.statusText %></span>
+									<% if (monitor.ping) { %>
+										<span class="tag is-light"><%= monitor.ping %>ms</span>
+									<% } %>
+								</span>
+							</div>
+							<div class="monitor-details">
+								<div class="uptime-bar" title="Last 50 checks">
+									<% monitor.heartbeats.forEach(hb => { %>
+										<div class="uptime-bar-segment <%= hb.status === 1 ? 'up' : hb.status === 0 ? 'down' : hb.status === 2 ? 'pending' : hb.status === 3 ? 'maintenance' : 'unknown' %>" title="<%= new Date(hb.time).toLocaleString() %>: <%= hb.status === 1 ? 'Up' : hb.status === 0 ? 'Down' : 'Unknown' %><%= hb.ping ? ' (' + hb.ping + 'ms)' : '' %>"></div>
+									<% }) %>
+								</div>
+								<div class="uptime-stats">
+									<span>24h: <strong><%= monitor.uptime24h %>%</strong></span>
+									<span>30d: <strong><%= monitor.uptime30d %>%</strong></span>
+								</div>
+							</div>
+						</div>
+					<% }) %>
+				<% }) %>
+			<% } %>
+
+			<p class="last-updated">
+				Last updated: <%= new Date(pageData.lastUpdated).toLocaleString() %>
+				<br>
+				<small>This page auto-refreshes every 60 seconds</small>
+			</p>
+		</div>
+	</section>
+
+	<%- include("../partials/footer") %>
+
+	<script>
+		// Auto-refresh every 60 seconds
+		setTimeout(() => {
+			window.location.reload();
+		}, 60000);
+	</script>
+</body>
+</html>
