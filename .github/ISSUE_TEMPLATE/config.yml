@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Discord Support
+    url: https://discord.gg/NZwzJ9Q
+    about: Get help with CGN-Bot usage and self-hosting
+  - name: Documentation
+    url: https://github.com/scarecr0w12/CGN-Bot#readme
+    about: Read the documentation before opening an issue
