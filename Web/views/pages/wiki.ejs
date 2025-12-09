@@ -62,19 +62,44 @@
 								<ul id="bookmarks-submenu" class="menu-list"></ul>
 							</span>
 							<% if (pageData.pageList.length > 0) { %>
-								<p class="menu-label">
-									Pages
-								</p>
-								<ul class="menu-list">
-									<% pageData.pageList.forEach(pageListItem => { %>
-										<li>
-											<% var pageName = pageListItem.substring(0, pageListItem.indexOf(".")); %>
-											<a id="menu-<%= pageListItem %>" class="<%= pageListItem === pageData.title ? 'is-active' : '' %>" href="/wiki/<%= pageListItem %>">
-												<%= pageListItem %>
-											</a>
-										</li>
-									<% }); %>
-								</ul>
+								<% 
+									const categories = {
+										"General": ["Home", "Getting-Started", "FAQ"],
+										"Commands": ["Commands", "Commands-Moderation", "Commands-Fun", "Commands-Utility", "Commands-Search", "Commands-Stats"],
+										"Guides": ["Server-Owner-Guide", "Admin-Levels"],
+										"Extensions": ["Extensions"],
+										"Other": []
+									};
+									
+									// Sort pages into categories
+									pageData.pageList.forEach(page => {
+										let found = false;
+										for (const cat in categories) {
+											if (categories[cat].includes(page)) {
+												found = true;
+												break;
+											}
+										}
+										if (!found) categories["Other"].push(page);
+									});
+								%>
+
+								<% for (const [category, pages] of Object.entries(categories)) { %>
+									<% if (pages.length > 0) { %>
+										<p class="menu-label">
+											<%= category %>
+										</p>
+										<ul class="menu-list">
+											<% pages.forEach(pageListItem => { %>
+												<li>
+													<a id="menu-<%= pageListItem %>" class="<%= pageListItem === pageData.title ? 'is-active' : '' %>" href="/wiki/<%= pageListItem %>">
+														<%= pageListItem.replace(/-/g, ' ') %>
+													</a>
+												</li>
+											<% }); %>
+										</ul>
+									<% } %>
+								<% } %>
 							<% } %>
 							<% if (pageData.mode === "page" && pageData.content) { %>
 								<p class="menu-label">

@@ -1,6 +1,6 @@
 const { parseAuthUser, fetchMaintainerPrivileges } = require("../helpers");
 
-class GABResponse {
+class SkynetResponse {
 	constructor (req, res, page) {
 		this.template = {
 			authUser: req.isAuthenticated() ? parseAuthUser(req.user) : null,
@@ -120,7 +120,7 @@ middleware.populateRequest = route => (req, res, next) => {
 	req.debugMode = req.app.get("debug mode");
 
 	// Response object
-	if (route.advanced) res.res = new GABResponse(req, res);
+	if (route.advanced) res.res = new SkynetResponse(req, res);
 	next();
 };
 

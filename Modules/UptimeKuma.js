@@ -40,7 +40,7 @@ class UptimeKumaClient {
 			const response = await fetch(url, {
 				...options,
 				headers: { ...headers, ...options.headers },
-				signal: AbortSignal.timeout(5000),
+				signal: AbortSignal.timeout(30000),
 			});
 
 			if (!response.ok) {

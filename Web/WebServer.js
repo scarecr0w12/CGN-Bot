@@ -69,7 +69,7 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.toobusy.maxLag(200);
 	app.routes = [];
 
-	// We always recommend using a reverse proxy like nginx, so unless you're on port 80, always run GAB with the --proxy option!
+	// We always recommend using a reverse proxy like nginx, so unless you're on port 80, always run Skynet with the --proxy option!
 	if (process.argv.includes("-p") || process.argv.includes("--proxy")) app.enable("trust proxy");
 
 	// Configure global middleware & Server properties
@@ -127,7 +127,7 @@ exports.open = async (client, auth, configJS, logger) => {
 	// connect-mongo v5 uses a different API
 	const sessionStore = MongoStore.create({
 		client: Database.mongoClient,
-		dbName: Database.mongoClient.options?.dbName || "gab",
+		dbName: Database.mongoClient.options?.dbName || "skynet",
 		stringify: false,
 	});
 

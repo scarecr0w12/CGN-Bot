@@ -33,49 +33,71 @@
 		</div>
 		<div class="hero-body">
 			<div class="container">
-				<div class="has-text-centered">
-					<h1 class="title is-1">
-						Welcome, <strong><%= authUser.username %></strong>!
+				<div class="has-text-centered" style="margin-bottom: 2rem;">
+					<div class="hero-floating" style="margin-bottom: 1.5rem;">
+						<img src="<%= authUser.avatar %>" alt="<%= authUser.username %>" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+					</div>
+					<h1 class="title is-2" style="font-weight: 700;">
+						Welcome back, <strong><%= authUser.username %></strong>!
 					</h1>
-					<h3 class="subtitle is-3">
+					<p class="subtitle is-5" style="opacity: 0.9;">
 						<% if (serverData.length > 0) { %>
-							Select a server to configure.
+							Select a server to manage
 						<% } else { %>
-							<span>You don&#39;t have any guilds</span>
-							<span class="icon is-medium">
+							<span>You don't have any guilds yet</span>
+							<span class="icon">
 								<i class="fa fa-meh-o"></i>
 							</span>
 						<% } %>
-					</h3>
+					</p>
 				</div>
-				<br><br><br>
-				<div class="columns">
-					<div class="column is-half is-offset-one-quarter">
-						<% serverData.forEach(server => { %>
+				<div class="columns is-centered">
+					<div class="column is-8 is-10-tablet">
+						<% serverData.forEach((server, index) => { %>
 							<% if (!server.botJoined) { %>
-								<a class="media modal-button arrow-link" data-target="#post-add-modal" target="_blank" href="<%= pageData.rawJoinLink + '&guild_id=' + server.id %>">
+								<a class="server-card modal-button" data-target="#post-add-modal" target="_blank" href="<%= pageData.rawJoinLink + '&guild_id=' + server.id %>" style="animation-delay: <%= index * 0.05 %>s;">
 							<% } else if (!server.isAdmin) { %>
-								<a class="media modal-button arrow-link" data-target="#not-admin-modal">
+								<a class="server-card modal-button" data-target="#not-admin-modal" style="opacity: 0.6; animation-delay: <%= index * 0.05 %>s;">
 							<% } else { %>
-								<a class="media arrow-link" href="/dashboard/<%= server.id %>/<%= server.id === "maintainer" ? "maintainer" : "overview"%>">
+								<a class="server-card" href="/dashboard/<%= server.id %>/<%= server.id === 'maintainer' ? 'maintainer' : 'overview'%>" style="animation-delay: <%= index * 0.05 %>s;">
 							<% } %>
-								<figure class="media-left">
-									<p class="image server-icon is-48x48">
-										<img src="<%= server.icon %>" style="border-radius: 100%;" alt="<%= server.id %>">
+								<img src="<%= server.icon %>" alt="<%= server.id %>" class="server-icon" style="width: 56px; height: 56px; border-radius: 12px; margin-right: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+								<div style="flex: 1;">
+									<h2 style="font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 0.25rem;"><%= server.name %></h2>
+									<p style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">
+										<% if (!server.botJoined) { %>
+											<span class="icon is-small"><i class="fa fa-plus-circle"></i></span> Add Skynet
+										<% } else if (!server.isAdmin) { %>
+											<span class="icon is-small"><i class="fa fa-lock"></i></span> No admin access
+										<% } else { %>
+											<span class="icon is-small"><i class="fa fa-cog"></i></span> Manage server
+										<% } %>
 									</p>
-								</figure>
-								<div class="media-content">
-									<h2 class="subtitle is-2 server-name"><%= server.name %></h2>
 								</div>
 								<% if (server.botJoined && server.isAdmin) { %>
-									<div class="media-right">
-										<span class="icon server-arrow is-primary is-large">
-					                        <i class="fa fa-chevron-right fa-2x"></i>
-					                    </span>
-									</div>
+									<span class="server-arrow" style="color: rgba(255,255,255,0.4); transition: all 0.2s;">
+										<i class="fa fa-chevron-right fa-lg"></i>
+									</span>
+								<% } else if (!server.botJoined) { %>
+									<span style="background: #14b8a6; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+										Add Bot
+									</span>
 								<% } %>
 							</a>
 						<% }); %>
+						
+						<% if (serverData.length === 0) { %>
+							<div style="text-align: center; padding: 3rem; background: rgba(255,255,255,0.1); border-radius: 16px; border: 2px dashed rgba(255,255,255,0.2);">
+								<span class="icon is-large" style="color: rgba(255,255,255,0.3); margin-bottom: 1rem;">
+									<i class="fa fa-server fa-3x"></i>
+								</span>
+								<p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">No servers found</p>
+								<a class="button is-modern is-primary" href="/add">
+									<span class="icon"><i class="fa fa-plus"></i></span>
+									<span>Add Skynet to a Server</span>
+								</a>
+							</div>
+						<% } %>
 					</div>
 				</div>
 			</div>

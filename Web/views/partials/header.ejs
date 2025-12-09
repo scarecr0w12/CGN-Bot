@@ -1,68 +1,60 @@
-    <nav class="navbar is-transparent">
+    <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
         <div class="container">
             <div class="navbar-brand">
-                <a class="navbar-item is-bold is-5" href="/" style="font-family: Montserrat;">
-                    <img src="/static/img/logo.png" style="border-radius: 100%;" height="24" width="24" alt="Skynet logo">
-                    &nbsp;
+                <a class="navbar-item is-bold" href="/" style="font-family: Montserrat; font-weight: 600; font-size: 1.1rem;">
+                    <img src="/static/img/logo.png" style="border-radius: 100%; margin-right: 0.5rem;" height="28" width="28" alt="Skynet logo">
                     Skynet
                 </a>
 
-                <button id="navbar-burger" class="navbar-burger button" onClick="$(this).toggleClass('is-active'); $('#navbar-menu').slideToggle('fast');">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <button id="navbar-burger" class="navbar-burger" aria-label="menu" aria-expanded="false" onClick="$(this).toggleClass('is-active'); $('#navbar-menu').toggleClass('is-active').slideToggle('fast');">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
 
             <div id="navbar-menu" class="navbar-menu">
                 <div class="navbar-end">
-                <a id="nav-status" class="navbar-item is-active" href="/status" title="Status">
+                <a id="nav-status" class="navbar-item" href="/status" title="Status">
                     <span class="icon is-small">
                         <i class="fa fa-heartbeat"></i>
                     </span>
-                    &nbsp;
                     <span>Status</span>
                 </a>
-                <a id="nav-" class="navbar-item is-active" href="/">
+                <a id="nav-home" class="navbar-item" href="/">
                     <span class="icon is-small">
                         <i class="fa fa-home"></i>
                     </span>
-                    &nbsp;
                     <span>Home</span>
                 </a>
-                <a id="nav-activity" class="navbar-item is-active" href="/activity">
+                <a id="nav-activity" class="navbar-item" href="/activity">
                     <span class="icon is-small">
                         <i class="fa fa-comments"></i>
                     </span>
-                    &nbsp;
                     <span>Activity</span>
                 </a>
-                <a id="nav-extensions" class="navbar-item is-active" href="/extensions">
+                <a id="nav-extensions" class="navbar-item" href="/extensions">
                     <span class="icon is-small">
                         <i class="fa fa-bolt"></i>
                     </span>
-                    &nbsp;
                     <span>Extensions</span>
                 </a>
-                <a id="nav-wiki" class="navbar-item is-active" href="/wiki">
+                <a id="nav-wiki" class="navbar-item" href="/wiki">
                     <span class="icon is-small">
                         <i class="fa fa-book"></i>
                     </span>
-                    &nbsp;
                     <span>Wiki</span>
                 </a>
-                <a id="nav-blog" class="navbar-item is-active" href="/blog">
+                <a id="nav-blog" class="navbar-item" href="/blog">
                     <span class="icon is-small">
                         <i class="fa fa-rss"></i>
                     </span>
-                    &nbsp;
                     <span>Blog</span>
                 </a>
-                <a id="nav-donate" class="navbar-item is-active" href="/donate">
+                <a id="nav-donate" class="navbar-item" href="/donate">
                     <span class="icon is-small">
                         <i class="fa fa-gift"></i>
                     </span>
-                    &nbsp;
                     <span>Donate</span>
                 </a>
                 <script>
@@ -72,30 +64,25 @@
                 </script>
 
                 <% if (authUser) { %>
-                <a id="nav-dashboard" class="navbar-item is-active is-flex-centered" href="/dashboard" title="Go to dashboard">
-                    <img class="image is-16x16" src="<%= authUser.avatar %>" style="border-radius: 100%;" alt="<%= authUser.id %>">
-                    &nbsp;
+                <a id="nav-dashboard" class="navbar-item is-flex-centered" href="/dashboard" title="Go to dashboard" style="gap: 0.5rem;">
+                    <img class="image is-24x24" src="<%= authUser.avatar %>" style="border-radius: 100%; border: 2px solid rgba(255,255,255,0.3);" alt="<%= authUser.id %>">
                     <span><%= authUser.username %></span>
                 </a>
                 <% } else { %>
-                <div class="navbar-item control">
-                    <div class="field has-addons">
-                        <p class="control">
-                            <a class="button is-white is-outlined" href="/add">
-                                <span class="icon is-small">
-                                    <i class="fa fa-plus"></i>
-                                </span>
-                                <span>Add</span>
-                            </a>
-                        </p>
-                        <p class="control">
-                            <a class="button is-white is-outlined" href="/login" style="margin-left: 0px;">
-                                <span class="icon is-small">
-                                    <i class="fa fa-sign-in"></i>
-                                </span>
-                                <span>Login</span>
-                            </a>
-                        </p>
+                <div class="navbar-item">
+                    <div class="buttons" style="gap: 0.5rem;">
+                        <a class="button is-small is-rounded" href="/add" style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                            <span class="icon is-small">
+                                <i class="fa fa-plus"></i>
+                            </span>
+                            <span>Add Bot</span>
+                        </a>
+                        <a class="button is-small is-rounded is-primary" href="/login" style="background: #14b8a6; border: none;">
+                            <span class="icon is-small">
+                                <i class="fa fa-sign-in"></i>
+                            </span>
+                            <span>Login</span>
+                        </a>
                     </div>
                 </div>
                 <% } %>

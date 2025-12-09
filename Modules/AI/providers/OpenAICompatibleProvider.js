@@ -104,6 +104,43 @@ class OpenAICompatibleProvider extends BaseProvider {
 	}
 
 	/**
+	 * Generate embeddings
+	 * @param {string} text - Text to embed
+	 * @param {string} model - Embedding model to use
+	 * @returns {Promise<number[]>} Embedding vector
+	 */
+	async embed (text, model = "text-embedding-3-small") {
+		const url = `${this.baseUrl}/embeddings`;
+
+		const headers = {
+			"Content-Type": "application/json",
+		};
+
+		if (this.apiKey) {
+			headers.Authorization = `Bearer ${this.apiKey}`;
+		}
+
+		const body = {
+			input: text,
+			model: model,
+		};
+
+		const response = await fetch(url, {
+			method: "POST",
+			headers,
+			body: JSON.stringify(body),
+		});
+
+		if (!response.ok) {
+			const error = await response.text();
+			throw new Error(`API error: ${response.status} - ${error}`);
+		}
+
+		const data = await response.json();
+		return data.data && data.data[0] ? data.data[0].embedding : null;
+	}
+
+	/**
 	 * List available models
 	 * @returns {Promise<string[]>} Array of model names
 	 */

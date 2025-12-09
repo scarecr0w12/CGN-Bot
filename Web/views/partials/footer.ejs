@@ -1,27 +1,55 @@
-<footer>
+<footer style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: rgba(255,255,255,0.8); padding: 3rem 0 2rem;">
     <div class="container">
-        <br><br>
-        <div class="content has-text-centered">
-            <%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
-            <p id="footerText">
-                <strong>Skynet</strong> by Scarecr0w12. Made with <a href="https://nodejs.org/en/">Node.js</a> and <a href="https://discord.js.org/#/">Discord.js</a>. Site made with <a href="http://bulma.io/">Bulma</a> and <a href="https://jquery.com/">jQuery</a>. Artwork by <a href="http://nanodrivee.github.io/">Nano</a> and <a href="http://fontawesome.io/">Font Awesome</a>. Source licensed under <a href="https://github.com/scarecr0w12/CGN-Bot/blob/indev-4.0.2/LICENSE">GPL v2</a>.
-                <br>
-                <a href="/paperwork">
-                    Privacy Policy
-                </a>
-            </p>
-            <p>
-                <a class="icon" href="https://discord.gg/gDtzaS2" style="padding-top: 3px;">
-                    <i class="fab fa-discord"></i>
-                </a>
-                <a class="icon" href="https://github.com/scarecr0w12/CGN-Bot">
-                    <i class="fa fa-github"></i>
-                </a>
-                <a class="icon" href="https://status.skynetbot.com">
-                    <i class="fa fa-check"></i>
-                </a>
-            </p>
+        <div class="columns">
+            <div class="column is-4">
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <img src="/static/img/logo.png" alt="Skynet" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 0.75rem;">
+                    <span style="font-family: Montserrat; font-weight: 600; font-size: 1.25rem; color: white;">Skynet</span>
+                </div>
+                <p style="font-size: 0.9rem; line-height: 1.7; color: rgba(255,255,255,0.6);">
+                    A powerful Discord bot for server management, moderation, and community engagement.
+                </p>
+            </div>
+            <div class="column is-4">
+                <h4 style="color: white; font-weight: 600; margin-bottom: 1rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">Quick Links</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="/add" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; transition: color 0.2s;">Add to Server</a>
+                    <a href="/wiki" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; transition: color 0.2s;">Documentation</a>
+                    <a href="/extensions" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; transition: color 0.2s;">Extensions</a>
+                    <a href="/paperwork" style="color: rgba(255,255,255,0.7); font-size: 0.9rem; transition: color 0.2s;">Privacy Policy</a>
+                </div>
+            </div>
+            <div class="column is-4">
+                <h4 style="color: white; font-weight: 600; margin-bottom: 1rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em;">Connect</h4>
+                <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem;">
+                    <a href="https://discord.gg/gDtzaS2" target="_blank" rel="noopener" style="width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: white; transition: all 0.2s;" title="Discord">
+                        <i class="fa fa-comments"></i>
+                    </a>
+                    <a href="https://github.com/scarecr0w12/CGN-Bot" target="_blank" rel="noopener" style="width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: white; transition: all 0.2s;" title="GitHub">
+                        <i class="fa fa-github"></i>
+                    </a>
+                    <a href="https://status.skynetbot.com" target="_blank" rel="noopener" style="width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: white; transition: all 0.2s;" title="Status">
+                        <i class="fa fa-check-circle"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <br>
+        
+        <%- include("../partials/adspace", { officialMode: typeof officialMode !== "undefined" ? officialMode : false, adsEnabled: true }) %>
+        
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 2rem; padding-top: 1.5rem;">
+            <div class="columns is-mobile is-vcentered">
+                <div class="column">
+                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5);">
+                        &copy; <%= new Date().getFullYear() %> Skynet by Scarecr0w12. Licensed under <a href="https://github.com/scarecr0w12/CGN-Bot/blob/indev-4.0.2/LICENSE" style="color: #14b8a6;">GPL v2</a>.
+                    </p>
+                </div>
+                <div class="column is-narrow">
+                    <p style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+                        Built with Node.js, Discord.js, Bulma
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>

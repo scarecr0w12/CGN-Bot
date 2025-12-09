@@ -133,25 +133,33 @@ class VectorMemory {
 	 */
 	async generateEmbedding (aiManager, serverDocument, text) {
 		try {
-			const { providerName, providerConfig } = await aiManager.resolveProviderAndModel(serverDocument);
-			const provider = aiManager.buildProvider(providerName, providerConfig);
+			const aiConfig = serverDocument.config.ai || {};
+			const vectorConfig = aiConfig.vectorMemory || {};
+			const providers = aiConfig.providers || {};
 
-			// Use provider's embedding method if available
-			if (typeof provider.embed === "function") {
-				return await provider.embed(text);
+			const providerName = vectorConfig.embeddingProvider || "openai";
+			const embeddingModel = vectorConfig.embeddingModel || "text-embedding-3-small";
+
+			// For OpenAI Compatible provider
+			if (providerName === "openai_compatible") {
+				const providerConfig = providers.openai_compatible;
+				if (providerConfig && providerConfig.baseUrl) {
+					const provider = aiManager.buildProvider("openai_compatible", providerConfig);
+					if (typeof provider.embed === "function") {
+						return await provider.embed(text, embeddingModel);
+					}
+				}
 			}
 
-			// Fallback: Use OpenAI embeddings if available
-			const aiConfig = serverDocument.config.ai || {};
-			const openaiConfig = aiConfig.providers && aiConfig.providers.openai;
+			// Fallback/Default: Use OpenAI embeddings
+			const openaiConfig = providers.openai;
 
 			if (openaiConfig && openaiConfig.apiKey) {
 				const OpenAI = require("openai");
 				const openai = new OpenAI({ apiKey: openaiConfig.apiKey });
 
-				const vectorMemConfig = aiConfig.vectorMemory || {};
 				const response = await openai.embeddings.create({
-					model: vectorMemConfig.embeddingModel || "text-embedding-3-small",
+					model: embeddingModel,
 					input: text,
 				});
 

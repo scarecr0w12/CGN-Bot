@@ -18,6 +18,8 @@ services:
     depends_on:
       - mongo
     volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
       - ./logs:/usr/src/app/logs
       - ./Temp:/usr/src/app/Temp
       - ./.env:/usr/src/app/.env
@@ -31,10 +33,10 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - ./data/mongo:/data/db
 
   uptime-kuma:
-    image: louislam/uptime-kuma:1
+    image: louislam/uptime-kuma:2
     container_name: skynetbot-uptime-kuma
     restart: always
     security_opt:
@@ -42,10 +44,7 @@ services:
     ports:
       - "3001:3001"
     volumes:
-      - uptime-kuma-data:/app/data
+      - ./data/uptime-kuma:/app/data
     environment:
       - UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true
 
-volumes:
-  mongo-data:
-  uptime-kuma-data:

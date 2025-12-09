@@ -25,6 +25,9 @@
 <link href="/static/fonts/icon-discord.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/bulma-7.css">
 <link rel="stylesheet" href="/static/css/extensions.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="/static/css/simplemde.min.css">
 <script src="/static/js/simplemde.min.js"></script>
@@ -52,9 +55,7 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <% if (typeof injection !== "undefined" && injection.headScript) { %>
-<script>
 	<%- injection.headScript %>
-</script>
 <% } %>
 <% if (typeof injection !== "undefined" && injection.pageScript) { %>
 <script>

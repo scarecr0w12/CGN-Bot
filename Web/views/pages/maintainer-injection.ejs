@@ -36,9 +36,9 @@
                 <form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
                     <div class="field">
                         <h4 class="title is-5">Head Script</h4>
-                        <h6 class="subtitle is-6">The Head Script is injected into every page's head tags. Code in the Head Script is only executed on every start of a user session, but not on page changes.</h6>
+                        <h6 class="subtitle is-6">The Head Script is injected into every page's head tags. You can include HTML tags here (e.g. &lt;script&gt;, &lt;style&gt;, &lt;meta&gt;). Code in the Head Script is only executed on every start of a user session, but not on page changes.</h6>
                         <p class="control">
-                            <textarea id="headScript-code-box" class="code-box" name="headScript" style="resize:none;"><%- configData.injection.headScript %></textarea>
+                            <textarea id="headScript-code-box" class="code-box" name="headScript" style="resize:none;"><%= configData.injection.headScript || '' %></textarea>
                         </p>
                     </div>
                     <hr>
@@ -46,7 +46,7 @@
                         <h4 class="title is-5">Page Script</h4>
                         <h6 class="subtitle is-6">The Page Script is executed every time the user visits a new page. All elements in a page have already been loaded and rendered when the Page Script is executed.</h6>
                         <p class="control">
-                            <textarea id="pageScript-code-box" class="code-box" name="pageScript" style="resize:none;"><%- configData.injection.pageScript %></textarea>
+                            <textarea id="pageScript-code-box" class="code-box" name="pageScript" style="resize:none;"><%= configData.injection.pageScript || '' %></textarea>
                         </p>
                     </div>
                     <% var formButtonsUnsaved = false; %>

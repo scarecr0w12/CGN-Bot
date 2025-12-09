@@ -102,20 +102,52 @@
 							<div class="columns">
 								<div class="column">
 									<div class="field">
-										<label class="label">Embedding Model</label>
+										<label class="label">Embedding Provider</label>
 										<div class="control">
-											<div class="select is-primary">
-												<select name="vectorMemory-embeddingModel" id="embedding-model" onchange="updateVectorSize()">
-													<% pageData.embeddingModels.forEach(model => { %>
-														<option value="<%= model.id %>" data-size="<%= model.size %>"
-															<%= configData.ai.vectorMemory.embeddingModel === model.id ? 'selected' : '' %>>
-															<%= model.name %>
-														</option>
-													<% }); %>
+											<div class="select is-primary is-fullwidth">
+												<select name="vectorMemory-embeddingProvider" id="embedding-provider" onchange="toggleEmbeddingProvider()">
+													<option value="openai" <%= configData.ai.vectorMemory.embeddingProvider === 'openai' ? 'selected' : '' %>>OpenAI</option>
+													<option value="openai_compatible" <%= configData.ai.vectorMemory.embeddingProvider === 'openai_compatible' ? 'selected' : '' %>>OpenAI Compatible</option>
 												</select>
 											</div>
 										</div>
-										<p class="help">Uses your OpenAI API key from AI Settings</p>
+										<p class="help" id="provider-help-openai">Uses OpenAI API Key from AI Settings</p>
+										<p class="help" id="provider-help-compatible" style="display: none;">
+											Uses OpenAI Compatible API from AI Settings
+											<% if (!configData.ai.vectorMemory.hasOpenAICompatible) { %>
+												<br><span class="has-text-danger"><i class="fas fa-exclamation-triangle"></i> Not configured!</span> 
+												<a href="settings">Go to AI Settings</a>
+											<% } %>
+										</p>
+									</div>
+								</div>
+								<div class="column">
+									<div class="field">
+										<label class="label">Embedding Model</label>
+										<div class="field has-addons">
+											<div class="control is-expanded">
+												<div class="select is-primary is-fullwidth">
+													<select name="vectorMemory-embeddingModel" id="embedding-model" onchange="updateVectorSize()">
+														<% pageData.embeddingModels.forEach(model => { %>
+															<option value="<%= model.id %>" data-size="<%= model.size %>" class="default-model"
+																<%= configData.ai.vectorMemory.embeddingModel === model.id ? 'selected' : '' %>>
+																<%= model.name %>
+															</option>
+														<% }); %>
+														<% if (configData.ai.vectorMemory.embeddingProvider === 'openai_compatible' && !pageData.embeddingModels.some(m => m.id === configData.ai.vectorMemory.embeddingModel)) { %>
+															<option value="<%= configData.ai.vectorMemory.embeddingModel %>" selected class="custom-loaded">
+																<%= configData.ai.vectorMemory.embeddingModel %> (Saved)
+															</option>
+														<% } %>
+													</select>
+												</div>
+											</div>
+											<div class="control" id="refresh-models-btn" style="display: none;">
+												<button type="button" class="button is-info" onclick="fetchEmbeddingModels()" title="Fetch Models from API">
+													<span class="icon"><i class="fas fa-sync-alt"></i></span>
+												</button>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div class="column">
@@ -123,9 +155,9 @@
 										<label class="label">Vector Size</label>
 										<div class="control">
 											<input name="vectorMemory-vectorSize" id="vector-size" class="input" type="number" 
-												value="<%= configData.ai.vectorMemory.vectorSize %>" readonly>
+												value="<%= configData.ai.vectorMemory.vectorSize %>">
 										</div>
-										<p class="help">Dimensions (auto-set by model)</p>
+										<p class="help">Dimensions (1536, 1024, 768, etc.)</p>
 									</div>
 								</div>
 							</div>
@@ -300,6 +332,15 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
+		// Store default models from server-side
+		const defaultOpenAIModels = <%- JSON.stringify(pageData.embeddingModels) %>;
+		
+		// Initialize on load
+		document.addEventListener('DOMContentLoaded', () => {
+			toggleVectorConfig();
+			toggleEmbeddingProvider(true); // true = initial load
+		});
+
 		function toggleVectorConfig() {
 			const enabled = document.getElementById('vectorMemory-enabled').checked;
 			const config = document.getElementById('vector-config');
@@ -307,11 +348,108 @@
 			config.style.pointerEvents = enabled ? 'auto' : 'none';
 		}
 
+		function toggleEmbeddingProvider(isInitial = false) {
+			const provider = document.getElementById('embedding-provider').value;
+			const helpOpenAI = document.getElementById('provider-help-openai');
+			const helpCompatible = document.getElementById('provider-help-compatible');
+			const refreshBtn = document.getElementById('refresh-models-btn');
+			const modelSelect = document.getElementById('embedding-model');
+			
+			if (provider === 'openai') {
+				helpOpenAI.style.display = 'block';
+				helpCompatible.style.display = 'none';
+				refreshBtn.style.display = 'none';
+				
+				// Restore default OpenAI models if not already there
+				const hasDefaults = Array.from(modelSelect.options).some(opt => opt.classList.contains('default-model'));
+				if (!hasDefaults && !isInitial) {
+					// Save current selection to restore if it matches
+					const currentVal = modelSelect.value;
+					modelSelect.innerHTML = '';
+					
+					defaultOpenAIModels.forEach(model => {
+						const option = document.createElement('option');
+						option.value = model.id;
+						option.text = model.name;
+						option.setAttribute('data-size', model.size);
+						option.classList.add('default-model');
+						if (model.id === currentVal) option.selected = true;
+						modelSelect.appendChild(option);
+					});
+					updateVectorSize();
+				}
+			} else {
+				helpOpenAI.style.display = 'none';
+				helpCompatible.style.display = 'block';
+				refreshBtn.style.display = 'block';
+				
+				// If switching to compatible and list is empty or has defaults, try to fetch
+				// But only if we are not on initial load with a saved custom model
+				const hasDefaults = Array.from(modelSelect.options).some(opt => opt.classList.contains('default-model'));
+				const hasCustom = Array.from(modelSelect.options).some(opt => opt.classList.contains('custom-loaded'));
+				
+				if (!isInitial && hasDefaults) {
+					fetchEmbeddingModels();
+				}
+			}
+		}
+
 		function updateVectorSize() {
 			const select = document.getElementById('embedding-model');
+			if (select.selectedIndex === -1) return;
+			
 			const selectedOption = select.options[select.selectedIndex];
 			const size = selectedOption.getAttribute('data-size');
-			document.getElementById('vector-size').value = size;
+			
+			// Only update if size is known/defined
+			if (size) {
+				document.getElementById('vector-size').value = size;
+			}
+		}
+
+		async function fetchEmbeddingModels() {
+			const provider = document.getElementById('embedding-provider').value;
+			const select = document.getElementById('embedding-model');
+			const refreshBtn = document.getElementById('refresh-models-btn');
+			const btnIcon = refreshBtn.querySelector('i');
+			
+			// Animation
+			btnIcon.classList.add('fa-spin');
+			
+			try {
+				const response = await fetch(`/dashboard/<%= serverData.id %>/ai/models?provider=${provider}`);
+				const data = await response.json();
+				
+				if (data.success && data.models && data.models.length > 0) {
+					// Save current selection
+					const currentVal = select.value;
+					
+					// Clear
+					select.innerHTML = '';
+					
+					data.models.forEach(model => {
+						const option = document.createElement('option');
+						option.value = model;
+						option.text = model;
+						// Dynamic models might not have known size, so we don't set data-size
+						// The user might need to input vector size manually
+						option.classList.add('dynamic-model');
+						if (model === currentVal) option.selected = true;
+						select.appendChild(option);
+					});
+					
+					// If we cleared the size-having options, maybe we should warn or help user?
+					// For now we just let them set size manually if needed.
+					
+					SkynetUtil.notify(`Loaded ${data.models.length} models`, 'success');
+				} else {
+					SkynetUtil.notify(data.error || 'No models found', 'warning');
+				}
+			} catch (err) {
+				SkynetUtil.notify('Failed to fetch models: ' + err.message, 'danger');
+			} finally {
+				btnIcon.classList.remove('fa-spin');
+			}
 		}
 
 		async function testQdrantConnection() {

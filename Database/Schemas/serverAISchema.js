@@ -106,6 +106,11 @@ module.exports = new Schema({
 			default: "",
 		},
 		// Embedding settings
+		embeddingProvider: {
+			type: String,
+			default: "openai",
+			enum: ["openai", "openai_compatible"],
+		},
 		embeddingModel: {
 			type: String,
 			default: "text-embedding-3-small",

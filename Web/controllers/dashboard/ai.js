@@ -370,6 +370,7 @@ controllers.memory = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 	const aiConfig = serverDocument.config.ai || {};
 	const vectorConfig = aiConfig.vectorMemory || {};
+	const providers = aiConfig.providers || {};
 
 	// Get vector memory stats if configured
 	let stats = null;
@@ -403,6 +404,8 @@ controllers.memory = async (req, { res }) => {
 				url: vectorConfig.url || "",
 				apiKey: vectorConfig.apiKey ? "••••••••" : "",
 				hasApiKey: !!vectorConfig.apiKey,
+				embeddingProvider: vectorConfig.embeddingProvider || "openai",
+				hasOpenAICompatible: !!(providers.openai_compatible && providers.openai_compatible.baseUrl),
 				embeddingModel: vectorConfig.embeddingModel || "text-embedding-3-small",
 				vectorSize: vectorConfig.vectorSize || 1536,
 				searchLimit: vectorConfig.searchLimit || 5,
@@ -438,6 +441,7 @@ controllers.memory.post = async (req, res) => {
 		enabled: req.body["vectorMemory-enabled"] === "on",
 		url: (req.body["vectorMemory-url"] || "").trim(),
 		apiKey: finalApiKey,
+		embeddingProvider: req.body["vectorMemory-embeddingProvider"] || "openai",
 		embeddingModel: req.body["vectorMemory-embeddingModel"] || "text-embedding-3-small",
 		vectorSize: parseInt(req.body["vectorMemory-vectorSize"]) || 1536,
 		searchLimit: Math.min(20, Math.max(1, parseInt(req.body["vectorMemory-searchLimit"]) || 5)),

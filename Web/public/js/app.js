@@ -6,6 +6,22 @@ const SkynetUtil = {};
 const SkynetPaths = {};
 const SkynetListeners = {};
 
+// Polyfill for Discord.js ChannelType enum
+const ChannelType = {
+	GuildText: 0,
+	DM: 1,
+	GuildVoice: 2,
+	GroupDM: 3,
+	GuildCategory: 4,
+	GuildAnnouncement: 5,
+	AnnouncementThread: 10,
+	PublicThread: 11,
+	PrivateThread: 12,
+	GuildStageVoice: 13,
+	GuildDirectory: 14,
+	GuildForum: 15,
+};
+
 SkynetData.activity = { guildData: {} };
 SkynetData.blog = { editor: {} };
 SkynetData.wiki = { bookmarks: JSON.parse(localStorage.getItem("wiki-bookmarks")) || [], editor: {} };
@@ -22,11 +38,11 @@ SkynetData.blog.subtitles = [
 	"Dolphin Musings",
 	"The fault in our syntax",
 	"How to go viral",
-	"I wish I were a GAB",
+	"I wish I were a Skynet",
 	"A robot's memoir",
 	"Why do we exist?",
 	"What is love?",
-	"Updating GAB; my story",
+	"Updating Skynet; my story",
 	"What did I ever do to you?",
 	"BitQuote made this happen",
 	"I didn't want this either",
@@ -35,7 +51,7 @@ SkynetData.blog.subtitles = [
 	"What did we mess up today?",
 	"Where are your fingers?",
 	"Beautiful Duwang",
-	"Nominated for best GAB-related blog",
+	"Nominated for best Skynet-related blog",
 	"Add to bookmarks, but only if you want to",
 	"New posts every randomized time period!",
 	"It's like free education",
@@ -145,7 +161,7 @@ SkynetUtil.error = msg => SkynetUtil.log(msg, "error", true);
 SkynetUtil.warn = msg => SkynetUtil.log(msg, "warn", true);
 
 SkynetUtil.debugDump = () => {
-	SkynetUtil.log("[DUMP:INFO] Pass this information to a GAB Support Member and they will assist you further!", "log", true);
+	SkynetUtil.log("[DUMP:INFO] Pass this information to a Skynet Support Member and they will assist you further!", "log", true);
 	const { dashboard: { socket }, builder } = SkynetData;
 	if (SkynetData.dashboard.socket) SkynetData.dashboard.socket = {};
 	if (SkynetData.builder) SkynetData.builder = {};
@@ -341,7 +357,7 @@ SkynetUtil.downloadContent = () => {
 
 SkynetUtil.downloadCode = fileName => {
 	const blob = new Blob([SkynetData.builder.getValue()], { type: "text/markdown;charset=utf-8" });
-	saveAs(blob, `${fileName || document.getElementById("builder-title").value || "Untitled"}.gabext`);
+	saveAs(blob, `${fileName || document.getElementById("builder-title").value || "Untitled"}.skyext`);
 };
 
 SkynetUtil.loadSource = (extid, extv, extname) => {
@@ -359,7 +375,7 @@ SkynetUtil.loadSource = (extid, extv, extname) => {
 SkynetUtil.showSource = (extid, extv, extname, code) => {
 	$("#extension-source-download").attr({
 		href: `/extensions/${extid}?v=${extv}`,
-		download: `${extname}.gabext`,
+		download: `${extname}.skyext`,
 	});
 	$("#extension-source-name").html(extname);
 	if (!SkynetData.builder || !document.body.contains(SkynetData.builder.getTextArea())) {
@@ -412,7 +428,7 @@ SkynetUtil.populateWikiSections = () => {
 		subMenu += `<a class='heading-shortcut-link' href='#${pageSections[i].id}' data-turbolinks='false'>${pageSections[i].innerHTML}</a></li>`;
 
 		// eslint-disable-next-line max-len
-		pageSections[i].innerHTML += `&nbsp;<a class='button is-text ${pageSections[i].tagName === "H3" ? "is-small" : ""} heading-shortcut-link' style='text-decoration:none;' href='#${pageSections[i].id}' data-turbolinks='false'><i class='fa fa-link'></i></a>&nbsp;<a class='button ${SkynetData.wiki.bookmarks.indexOf(SkynetUtil.getBookmarkLink(pageSections[i].id)) > -1 ? "is-dark" : "is-text"} ${pageSections[i].tagName === "H3" ? "is-small" : ""}' style='text-decoration:none;' onclick='SkynetUtil.bookmarkWikiSection(this);'><i class='fa fa-bookmark'></i></a>`;
+		pageSections[i].innerHTML += `<span class='heading-anchors' style='font-size: 0.5em; vertical-align: middle; opacity: 0.5; margin-left: 10px;'><a class='button is-text is-small heading-shortcut-link' style='text-decoration:none;' href='#${pageSections[i].id}' data-turbolinks='false' title='Permalink'><i class='fa fa-link'></i></a> <a class='button ${SkynetData.wiki.bookmarks.indexOf(SkynetUtil.getBookmarkLink(pageSections[i].id)) > -1 ? "is-dark" : "is-text"} is-small' style='text-decoration:none;' onclick='SkynetUtil.bookmarkWikiSection(this);' title='Bookmark'><i class='fa fa-bookmark'></i></a></span>`;
 	}
 	subMenu += "</ul>";
 	if (pageSections[pageSections.length - 1] && pageSections[pageSections.length - 1].tagName === "H3") {
@@ -588,7 +604,7 @@ SkynetUtil.openExtensionInstaller = (extid, v, svrid) => {
 	SkynetUtil.log("Launching extension installer in window");
 	const width = window.screen.width - 600;
 	const height = window.screen.height - 800;
-	SkynetData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "GAB Extension Installer",
+	SkynetData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "Skynet Extension Installer",
 		`height=800,width=600,left=${width / 2},top=${height / 2}`);
 	SkynetData.extensions.window.focus();
 };

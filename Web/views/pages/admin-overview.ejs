@@ -14,89 +14,103 @@
 					<%- include('../partials/admin-menu') %>
 				</div>
 				<div class="column">
-					<article class="message is-primary">
-						<div class="message-header">
-							<p>Welcome to the admin console for <strong><%= serverData.name %></strong>!</p>
+					<article class="message is-primary" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+						<div class="message-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border: none;">
+							<p style="display: flex; align-items: center; gap: 0.5rem;">
+								<span class="icon"><i class="fa fa-dashboard"></i></span>
+								Welcome to <strong><%= serverData.name %></strong>
+							</p>
 						</div>
-						<div class="message-body">
-							The Skynet <strong>admin console</strong> gives you full access to all of the bot's <strong>settings</strong> for this server. Everything from enabling/disabling commands to creating a public server listing to muting a user to building your very own extension. The menu on the left shows the various sections of the admin console, each dedicated to a particular command or feature. This page shows an <strong>overview of this server's activity</strong> in the past week.
+						<div class="message-body" style="background: #f0f4ff; border: none;">
+							<p style="color: #475569; line-height: 1.7;">
+								The Skynet <strong>admin console</strong> gives you full access to all of the bot's <strong>settings</strong> for this server. Use the menu on the left to navigate between different sections. Below is an overview of your server's activity.
+							</p>
 						</div>
 					</article>
-					<section class="hero is-light is-bold" style="border-radius: 3px;">
-						<div class="hero-body">
-							<div class="has-text-centered">
-								<h1 class="title">
-									<strong><%= pageData.memberCount %></strong>
-								</h1>
-								<h2 class="subtitle">
-									<span class="icon">
-					                    <i class="fa fa-user"></i>
-					                </span>
-									members
-								</h2>
+					
+					<!-- Modern Stats Grid -->
+					<div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+						<!-- Members -->
+						<div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+							<div style="width: 48px; height: 48px; margin: 0 auto 0.75rem; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+								<i class="fa fa-users" style="color: white; font-size: 1.25rem;"></i>
 							</div>
-							<br>
-							<div class="has-text-centered">
-								<h1 class="title">
-									@<strong><%= serverData.owner.username %></strong>
-								</h1>
-								<h2 class="subtitle">
-									<img src="<%= serverData.owner.avatar %>" class="is-avatar is-small" alt="<%= serverData.owner.id %>">
-									server owner
-								</h2>
-							</div>
-							<br>
-							<div class="has-text-centered">
-								<h1 class="title">
-									<strong><%= pageData.messagesToday %></strong>
-								</h1>
-								<h2 class="subtitle">
-									<span class="icon">
-					                    <i class="fa fa-comments-o"></i>
-					                </span>
-									message<%= pageData.messagesToday === 1 ? "" : "s" %> today
-								</h2>
-							</div>
-							<% if (pageData.topCommand) { %>
-								<br>
-								<div class="has-text-centered">
-									<h1 class="title">
-										<strong><%= pageData.topCommand %></strong>
-									</h1>
-									<h2 class="subtitle">
-										<span class="icon">
-						                    <i class="fa fa-sort-amount-desc"></i>
-						                </span>
-										most-used command
-									</h2>
-								</div>
-							<% } %>
-							<% if (pageData.topMember) { %>
-								<br>
-								<div class="has-text-centered">
-									<h1 class="title">
-										@<strong><%= pageData.topMember.username %></strong>
-									</h1>
-									<h2 class="subtitle">
-										<img src="<%= pageData.topMember.avatar %>" class="is-avatar is-small" alt="<%= pageData.topMember.id %>">
-										top member
-									</h2>
-								</div>
-							<% } %>
-							<% if (pageData.richestMember) { %>
-								<br>
-								<div class="has-text-centered">
-									<h1 class="title">
-										@<strong><%= pageData.richestMember.username %></strong>
-									</h1>
-									<h2 class="subtitle">
-										<img src="<%= pageData.richestMember.avatar %>" class="is-avatar is-small" alt="<%= pageData.richestMember.id %>">
-										richest member
-									</h2>
-								</div>
-							<% } %>
+							<p style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;"><%= pageData.memberCount %></p>
+							<p style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem;">Members</p>
 						</div>
-					</section>
+						
+						<!-- Messages Today -->
+						<div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+							<div style="width: 48px; height: 48px; margin: 0 auto 0.75rem; background: linear-gradient(135deg, #14b8a6, #0d9488); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+								<i class="fa fa-comments" style="color: white; font-size: 1.25rem;"></i>
+							</div>
+							<p style="font-size: 2rem; font-weight: 700; color: #1e293b; line-height: 1;"><%= pageData.messagesToday %></p>
+							<p style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem;">Messages Today</p>
+						</div>
+						
+						<% if (pageData.topCommand) { %>
+						<!-- Top Command -->
+						<div class="stat-card" style="background: white; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+							<div style="width: 48px; height: 48px; margin: 0 auto 0.75rem; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+								<i class="fa fa-terminal" style="color: white; font-size: 1.25rem;"></i>
+							</div>
+							<p style="font-size: 1.5rem; font-weight: 700; color: #1e293b; line-height: 1;"><%= pageData.topCommand %></p>
+							<p style="font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.25rem;">Top Command</p>
+						</div>
+						<% } %>
+					</div>
+					
+					<!-- Server Info Cards -->
+					<div class="columns">
+						<!-- Server Owner -->
+						<div class="column is-6">
+							<div style="background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+								<img src="<%= serverData.owner.avatar %>" alt="<%= serverData.owner.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #e2e8f0;">
+								<div>
+									<p style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Server Owner</p>
+									<p style="font-weight: 600; color: #1e293b; font-size: 1.1rem;">@<%= serverData.owner.username %></p>
+								</div>
+							</div>
+						</div>
+						
+						<% if (pageData.topMember) { %>
+						<!-- Top Member -->
+						<div class="column is-6">
+							<div style="background: white; border-radius: 12px; padding: 1.25rem; border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 1rem;">
+								<div style="position: relative;">
+									<img src="<%= pageData.topMember.avatar %>" alt="<%= pageData.topMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #14b8a6;">
+									<span style="position: absolute; bottom: -2px; right: -2px; background: #14b8a6; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
+										<i class="fa fa-star"></i>
+									</span>
+								</div>
+								<div>
+									<p style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Top Member</p>
+									<p style="font-weight: 600; color: #1e293b; font-size: 1.1rem;">@<%= pageData.topMember.username %></p>
+								</div>
+							</div>
+						</div>
+						<% } %>
+					</div>
+					
+					<% if (pageData.richestMember) { %>
+					<div class="columns">
+						<!-- Richest Member -->
+						<div class="column is-6">
+							<div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; padding: 1.25rem; border: 1px solid #fcd34d; display: flex; align-items: center; gap: 1rem;">
+								<div style="position: relative;">
+									<img src="<%= pageData.richestMember.avatar %>" alt="<%= pageData.richestMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #f59e0b;">
+									<span style="position: absolute; bottom: -2px; right: -2px; background: #f59e0b; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
+										<i class="fa fa-diamond"></i>
+									</span>
+								</div>
+								<div>
+									<p style="font-size: 0.75rem; color: #92400e; text-transform: uppercase; letter-spacing: 0.05em;">Richest Member</p>
+									<p style="font-weight: 600; color: #78350f; font-size: 1.1rem;">@<%= pageData.richestMember.username %></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% } %>
 				</div>
 			</div>
 		</div>

@@ -8,7 +8,7 @@ module.exports = {
 	 * The base URL used in links posted by the bot.
 	 * The URL *must* end with a forward slash ("/")
 	 */
-	hostingURL: "https://dev.skynetbot.com/",
+	hostingURL: "https://skynetbot.net/",
 	/*
 	 * The IP the Web Server should bind to.
 	 * You should probably leave this as "0.0.0.0" which binds to all incoming connections
@@ -43,7 +43,7 @@ module.exports = {
 		/*
 		 * The name of the Database Skynet should use
 		 */
-		db: "skynet",
+		db: "SkynetBot",
 	},
 	/*
 	 * Connection options for Sentry error reporting.
