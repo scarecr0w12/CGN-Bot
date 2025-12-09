@@ -16,6 +16,7 @@ const discordOAuthScopes = ["identify", "guilds", "email"];
 const toobusy = require("toobusy-js");
 const fsn = require("fs-nextra");
 const reload = require("require-reload")(require);
+const Sentry = require("@sentry/node");
 
 const middleware = require("./middleware");
 const app = express();
@@ -156,6 +157,17 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.use(passport.session());
 	app.passport = passport;
 
+	// Sentry user context middleware - adds user info to Sentry errors
+	app.use((req, res, next) => {
+		if (Sentry.isInitialized() && req.isAuthenticated && req.isAuthenticated() && req.user) {
+			Sentry.setUser({
+				id: req.user.id,
+				username: req.user.username,
+			});
+		}
+		next();
+	});
+
 	// Initialize additional OAuth strategies (Google, GitHub, Twitch, Patreon)
 	require("./passport-strategies")(passport, configJS).catch(err => {
 		logger.warn("Failed to initialize some OAuth strategies", {}, err);
@@ -214,6 +226,12 @@ exports.open = async (client, auth, configJS, logger) => {
 	});
 
 	require("./routes")(app);
+
+	// Sentry error handler - must be before custom error handler
+	// This captures unhandled errors and sends them to Sentry with request context
+	if (Sentry.isInitialized()) {
+		Sentry.setupExpressErrorHandler(app);
+	}
 
 	// Global error handler - must be last
 	app.use((err, req, res, next) => {

@@ -95,6 +95,11 @@
 			<% } else { %>
 			<a href="/dashboard/maintainer/membership/payments">Payment Providers</a>
 			<% } %>
+			<% if (currentPage === "/dashboard/maintainer/membership/users") { %>
+			<a class="is-active" href="#">User Management</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/users">User Management</a>
+			<% } %>
 		</li>
 	</ul>
 	<% } if (accessPrivileges.includes("management")) { %>

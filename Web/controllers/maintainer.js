@@ -577,6 +577,117 @@ controllers.membership.payments.post = async (req, res) => {
 	}
 };
 
+// User Management
+controllers.membership.users = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	const searchResults = [];
+	const query = req.query.q;
+
+	if (query) {
+		// Search by ID or username
+		const directUser = await Users.findOne(query);
+		if (directUser) {
+			const discordUser = await req.app.client.users.fetch(query, true).catch(() => null);
+			searchResults.push({
+				...directUser,
+				username: discordUser?.username || directUser.username || "Unknown",
+				avatar: discordUser?.displayAvatarURL() || null,
+			});
+		} else {
+			// Search by username pattern
+			const users = await Users.find({ username: { $regex: query, $options: "i" } }, 10);
+			for (const user of users) {
+				const discordUser = await req.app.client.users.fetch(user._id, true).catch(() => null);
+				searchResults.push({
+					...user,
+					username: discordUser?.username || user.username || "Unknown",
+					avatar: discordUser?.displayAvatarURL() || null,
+				});
+			}
+		}
+	}
+
+	// Get recent subscription changes
+	const recentSubscriptions = await Users.find(
+		{ "subscription.started_at": { $exists: true } },
+		20,
+		{ "subscription.started_at": -1 },
+	);
+
+	for (const sub of recentSubscriptions) {
+		const discordUser = await req.app.client.users.fetch(sub._id, true).catch(() => null);
+		sub.username = discordUser?.username || sub.username || "Unknown";
+	}
+
+	res.setConfigData({
+		tiers: siteSettings.tiers || [],
+		features: siteSettings.features || [],
+	}).setPageData({
+		query,
+		searchResults,
+		recentSubscriptions,
+		page: "maintainer-users.ejs",
+	}).render();
+};
+
+controllers.membership.users.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const { user_id: userId, tier_id: tierId, expires_at: expiresAt, reason } = req.body;
+	const grantFeatures = req.body["grant_features[]"] || [];
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID required" });
+	}
+
+	try {
+		const TierManager = require("../../Modules/TierManager");
+
+		// Set user tier
+		if (tierId) {
+			const expiration = expiresAt ? new Date(expiresAt) : null;
+			await TierManager.setUserTier(userId, tierId, "manual", expiration, reason || "admin_assigned");
+		}
+
+		// Grant individual features
+		const features = Array.isArray(grantFeatures) ? grantFeatures : [grantFeatures];
+		for (const feature of features.filter(f => f)) {
+			await TierManager.grantFeature(userId, feature);
+		}
+
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to update user tier", { userId }, err);
+		renderError(res, "Failed to update user tier.");
+	}
+};
+
+controllers.membership.users.cancel = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const { user_id: userId } = req.body;
+	if (!userId) {
+		return res.status(400).json({ error: "User ID required" });
+	}
+
+	try {
+		const TierManager = require("../../Modules/TierManager");
+		await TierManager.cancelSubscription(userId, "admin_canceled");
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to cancel subscription", { userId }, err);
+		res.status(500).json({ error: "Failed to cancel subscription" });
+	}
+};
+
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {

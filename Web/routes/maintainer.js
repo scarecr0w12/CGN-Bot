@@ -21,6 +21,8 @@ module.exports = router => {
 	setupConsolePage(router, "/membership/tiers", "administration", [], controllers.console.membership.tiers);
 	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
 	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
+	setupConsolePage(router, "/membership/users", "administration", [], controllers.console.membership.users);
+	router.post("/membership/users/cancel", controllers.console.membership.users.cancel);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);
