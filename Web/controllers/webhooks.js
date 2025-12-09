@@ -273,13 +273,19 @@ controllers.btcpay = async (req, res) => {
 		return res.sendStatus(401);
 	}
 
+	// Use raw body for signature verification (JSON.stringify may change ordering)
+	const rawBody = req.rawBody || JSON.stringify(req.body);
 	const expectedSig = `sha256=${crypto
 		.createHmac("sha256", webhookSecret)
-		.update(JSON.stringify(req.body))
+		.update(rawBody)
 		.digest("hex")}`;
 
 	if (sig !== expectedSig) {
-		logger.warn("BTCPay webhook signature mismatch");
+		logger.warn("BTCPay webhook signature mismatch", {
+			received: sig,
+			expected: expectedSig,
+			hasRawBody: !!req.rawBody,
+		});
 		return res.sendStatus(401);
 	}
 
