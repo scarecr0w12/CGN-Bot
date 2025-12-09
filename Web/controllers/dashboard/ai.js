@@ -580,3 +580,31 @@ controllers.vectorStats = async (req, res) => {
 		});
 	}
 };
+
+/**
+ * AI Personality - System Prompt configuration
+ */
+controllers.personality = async (req, { res }) => {
+	const serverDocument = req.svr.document;
+	const aiConfig = serverDocument.config.ai || {};
+
+	res.setPageData({
+		page: "admin-ai-personality.ejs",
+	});
+
+	res.setConfigData({
+		ai: {
+			systemPrompt: aiConfig.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
+		},
+	});
+
+	res.render();
+};
+
+controllers.personality.post = async (req, res) => {
+	const serverQueryDocument = req.svr.queryDocument;
+
+	serverQueryDocument.set("config.ai.systemPrompt", req.body.systemPrompt ? req.body.systemPrompt.substring(0, 4000) : "");
+
+	save(req, res, true);
+};

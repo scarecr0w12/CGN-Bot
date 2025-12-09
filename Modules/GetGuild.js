@@ -73,7 +73,13 @@ const messageHandler = (guild, settings, respond) => {
 	if (settings.fullResolveMaps) {
 		settings.fullResolveMaps.forEach(collection => {
 			const rawCollection = guild[collection];
-			if (rawCollection && rawCollection.toJSON) payload[collection] = rawCollection.toJSON();
+			if (rawCollection) {
+				if (rawCollection.toJSON) {
+					payload[collection] = rawCollection.toJSON();
+				} else if (rawCollection.cache) {
+					payload[collection] = rawCollection.cache.map(item => item.toJSON ? item.toJSON() : item);
+				}
+			}
 		});
 	}
 

@@ -20,6 +20,13 @@ exports.initialize = async config => {
 		Blog,
 		Wiki,
 		Traffic,
+		GlobalFilters,
+		GlobalRanks,
+		GlobalRSSFeeds,
+		GlobalStatusMessages,
+		GlobalTagReactions,
+		GlobalTags,
+		GlobalTrivia,
 	] = [
 		new Model(db, "servers", require("./Schemas/serverSchema")),
 		new Model(db, "users", require("./Schemas/userSchema")),
@@ -27,12 +34,26 @@ exports.initialize = async config => {
 		new Model(db, "blog", require("./Schemas/blogSchema")),
 		new Model(db, "wiki", require("./Schemas/wikiSchema")),
 		new Model(db, "traffic", require("./Schemas/trafficSchema")),
+		new Model(db, "global_filters", require("./Schemas/globalFilterSchema")),
+		new Model(db, "global_ranks", require("./Schemas/globalRankSchema")),
+		new Model(db, "global_rss_feeds", require("./Schemas/globalRSSFeedSchema")),
+		new Model(db, "global_status_messages", require("./Schemas/globalStatusMessageSchema")),
+		new Model(db, "global_tag_reactions", require("./Schemas/globalTagReactionSchema")),
+		new Model(db, "global_tags", require("./Schemas/globalTagSchema")),
+		new Model(db, "global_trivia", require("./Schemas/globalTriviaSchema")),
 	];
 	addToGlobal("Servers", Servers);
 	addToGlobal("Users", Users);
 	addToGlobal("Gallery", Gallery);
 	addToGlobal("Blog", Blog);
 	addToGlobal("Wiki", Wiki);
+	addToGlobal("GlobalFilters", GlobalFilters);
+	addToGlobal("GlobalRanks", GlobalRanks);
+	addToGlobal("GlobalRSSFeeds", GlobalRSSFeeds);
+	addToGlobal("GlobalStatusMessages", GlobalStatusMessages);
+	addToGlobal("GlobalTagReactions", GlobalTagReactions);
+	addToGlobal("GlobalTags", GlobalTags);
+	addToGlobal("GlobalTrivia", GlobalTrivia);
 	addToGlobal("Client", db);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -41,6 +62,13 @@ exports.initialize = async config => {
 		Blog, blog: Blog,
 		Wiki, wiki: Wiki,
 		Traffic, traffic: Traffic,
+		GlobalFilters, globalFilters: GlobalFilters,
+		GlobalRanks, globalRanks: GlobalRanks,
+		GlobalRSSFeeds, globalRSSFeeds: GlobalRSSFeeds,
+		GlobalStatusMessages, globalStatusMessages: GlobalStatusMessages,
+		GlobalTagReactions, globalTagReactions: GlobalTagReactions,
+		GlobalTags, globalTags: GlobalTags,
+		GlobalTrivia, globalTrivia: GlobalTrivia,
 		client: db,
 		mongoClient,
 	});

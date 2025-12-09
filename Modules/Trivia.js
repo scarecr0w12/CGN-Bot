@@ -1,5 +1,5 @@
-const defaultTriviaSet = require("./../Configurations/trivia.json");
 const levenshtein = require("fast-levenshtein");
+const { get: getDatabase } = require("../Database/Driver");
 const { LoggingLevels, Colors } = require("../Internals/Constants");
 
 const questionTitles = [
@@ -84,9 +84,12 @@ module.exports = class Trivia {
 	static async next (client, svr, serverDocument, ch, channelDocument, msg) {
 		if (channelDocument.trivia.isOngoing) {
 			const doNext = async () => {
-				let set = defaultTriviaSet;
+				let set;
 				if (channelDocument.trivia.set_id !== "default") {
 					set = serverDocument.config.trivia_sets.id(channelDocument.trivia.set_id).items;
+				} else {
+					const DB = getDatabase();
+					set = (await DB.GlobalTrivia.find({}).exec()).map(d => d.toObject());
 				}
 				if (set) {
 					const question = await this.question(set, channelDocument, serverDocument.query.id("channels", channelDocument._id).prop("trivia"));

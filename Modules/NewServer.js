@@ -1,14 +1,35 @@
 /* eslint-disable max-len */
-const defaultRSSFeeds = require("../Configurations/rss_feeds.json");
-const defaultTags = require("../Configurations/tags.json");
-const defaultRanksList = require("../Configurations/ranks.json");
-const defStatusMessages = require("../Configurations/status_messages.json");
-const defTagReactions = require("../Configurations/tag_reactions.json");
+const { get: getDatabase } = require("../Database/Driver");
 const Utils = require("./Utils/");
 const { PermissionFlagsBits } = require("discord.js");
 
 // Set defaults for new server document
 module.exports = async (client, server, serverDocument) => {
+	const DB = getDatabase();
+
+	// Default RSS feed
+	const rssFeedsDocs = await DB.GlobalRSSFeeds.find({}).exec();
+	const defaultRSSFeeds = rssFeedsDocs.map(d => d.toObject());
+
+	// Default Tags
+	const tagsDocs = await DB.GlobalTags.find({}).exec();
+	const defaultTags = tagsDocs.map(d => d.toObject());
+
+	// Default Ranks
+	const ranksDocs = await DB.GlobalRanks.find({}).exec();
+	const defaultRanksList = ranksDocs.map(d => d.toObject());
+
+	// Default Status Messages
+	const statusDocs = await DB.GlobalStatusMessages.find({}).exec();
+	const defStatusMessages = {};
+	statusDocs.forEach(d => {
+		defStatusMessages[d._id] = d.messages;
+	});
+
+	// Default Tag Reactions
+	const reactionDocs = await DB.GlobalTagReactions.find({}).exec();
+	const defTagReactions = reactionDocs.map(d => d.content);
+
 	const serverConfigQueryDocument = serverDocument.query.prop("config");
 	// Default admin roles
 	const serverRoles = server.roles && server.roles.cache ? [...server.roles.cache.values()] : server.roles || [];

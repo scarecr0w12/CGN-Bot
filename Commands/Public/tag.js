@@ -1,6 +1,6 @@
-const defaultTags = require("../../Configurations/tags.json");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 const Gist = require("../../Modules/Utils/GitHubGist");
+const { get: getDatabase } = require("../../Database/Driver");
 
 class TagCommand {
 	constructor ({ client, configJS, Constants: { Colors, Text, LoggingLevels } }, { serverDocument, serverQueryDocument }, msg, commandData) {
@@ -312,7 +312,10 @@ class TagCommand {
 	}
 
 	// Load default tags
-	loadDefaults () {
+	async loadDefaults () {
+		const DB = getDatabase();
+		const tagsDocs = await DB.GlobalTags.find({}).exec();
+		const defaultTags = tagsDocs.map(d => d.toObject());
 		this.serverQueryDocument.set("config.tags.list", defaultTags);
 		this.msg.send({
 			embeds: [{

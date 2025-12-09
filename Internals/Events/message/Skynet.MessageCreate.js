@@ -177,7 +177,7 @@ class MessageCreate extends BaseEvent {
 
 				// TODO: Move this to seperate file
 				// Check if using a filtered word
-				if (checkFiltered(serverDocument, msg.channel, msg.content, false, true)) {
+				if (await checkFiltered(serverDocument, msg.channel, msg.content, false, true)) {
 					// Delete offending message if necessary
 					if (serverDocument.config.moderation.filters.custom_filter.delete_message) {
 						try {
@@ -291,7 +291,7 @@ class MessageCreate extends BaseEvent {
 							const userDocument = await Users.findOne(msg.author.id);
 							if (userDocument) {
 								// NSFW filter for command suffix
-								if (memberBotAdminLevel < 1 && metadata.defaults.isNSFWFiltered && checkFiltered(serverDocument, msg.channel, msg.suffix, true, false)) {
+								if (memberBotAdminLevel < 1 && metadata.defaults.isNSFWFiltered && await checkFiltered(serverDocument, msg.channel, msg.suffix, true, false)) {
 									// Delete offending message if necessary
 									if (serverDocument.config.moderation.filters.nsfw_filter.delete_message) {
 										try {

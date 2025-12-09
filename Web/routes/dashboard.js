@@ -57,6 +57,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/ai/settings", [], controllers.dashboard.ai.settings);
 	setupDashboardPage(router, "/ai/governance", [], controllers.dashboard.ai.governance);
 	setupDashboardPage(router, "/ai/memory", [], controllers.dashboard.ai.memory);
+	setupDashboardPage(router, "/ai/personality", [], controllers.dashboard.ai.personality);
 	router.get("/:svrid/ai/models", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.models);
 	router.post("/:svrid/ai/test-qdrant", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.testQdrant);
 	router.post("/:svrid/ai/clear-vector-memory", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.clearVectorMemory);

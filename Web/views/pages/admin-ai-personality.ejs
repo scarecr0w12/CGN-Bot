@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> AI Personality - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<script src="/static/js/form-change-listener.js"></script>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<i class="fas fa-smile-o"></i> AI Personality
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							Customize the personality and behavior of your AI assistant. This System Prompt is sent to the AI at the start of every conversation context.
+						</div>
+					</article>
+
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
+						<!-- System Prompt -->
+						<div class="field">
+							<label class="label">System Prompt & Instructions</label>
+							<div class="control">
+								<textarea name="systemPrompt" class="textarea is-primary" rows="10" maxlength="4000" placeholder="You are a helpful AI assistant..."><%= configData.ai.systemPrompt %></textarea>
+							</div>
+							<p class="help">Define the AI's personality, tone, constraints, and specific instructions.</p>
+						</div>
+
+						<br>
+						<% var formButtonsUnsaved = false; %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>
