@@ -349,10 +349,6 @@ body {
 }
 
 @media screen and (max-width: 1087px) {
-    .navbar-brand {
-        display: none !important; /* Hide brand if we want just menu, or keep it? usually keep it */
-    }
-    
     /* On mobile, we might want to stack items or scroll? 
        "Regular static menu" usually implies just showing the links. 
        Let's ensure they wrap correctly. */
