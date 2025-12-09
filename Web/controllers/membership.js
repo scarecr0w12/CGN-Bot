@@ -11,7 +11,7 @@ const controllers = module.exports;
 /**
  * Public membership/pricing page
  */
-controllers.pricing = async (req, res) => {
+controllers.pricing = async (req, { res }) => {
 	try {
 		const siteSettings = await TierManager.getSiteSettings();
 		const tiers = siteSettings?.tiers || [];
@@ -25,20 +25,22 @@ controllers.pricing = async (req, res) => {
 			subscription = await TierManager.getUserSubscription(req.user.id);
 		}
 
-		res.render("pages/membership.ejs", {
-			authUser: req.user || null,
-			currentPage: "/membership",
+		res.setPageData({
+			page: "membership.ejs",
 			tiers,
 			features,
 			userTier,
 			subscription,
 		});
+		res.render();
 	} catch (err) {
 		logger.error("Error loading membership page", {}, err);
-		res.status(500).render("pages/error.ejs", {
+		res.setPageData({
+			page: "error.ejs",
 			error_text: "Failed to load membership page",
 			error_line: "Please try again later",
 		});
+		res.render();
 	}
 };
 
@@ -146,11 +148,11 @@ controllers.createCheckout = async (req, res) => {
 /**
  * Handle successful checkout
  */
-controllers.success = async (req, res) => {
+controllers.success = async (req, { res }) => {
 	const sessionId = req.query.session_id;
 
 	if (!sessionId) {
-		return res.redirect("/membership");
+		return res._redirect("/membership");
 	}
 
 	try {
@@ -162,18 +164,18 @@ controllers.success = async (req, res) => {
 			if (session.payment_status === "paid") {
 				// The webhook should handle the subscription activation,
 				// but we can show a success message here
-				return res.render("pages/membership-success.ejs", {
-					authUser: req.user || null,
-					currentPage: "/membership/success",
+				res.setPageData({
+					page: "membership-success.ejs",
 					session,
 				});
+				return res.render();
 			}
 		}
 
-		res.redirect("/membership");
+		res._redirect("/membership");
 	} catch (err) {
 		logger.error("Error verifying checkout session", {}, err);
-		res.redirect("/membership");
+		res._redirect("/membership");
 	}
 };
 
