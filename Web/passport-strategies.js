@@ -11,6 +11,7 @@ const TwitchStrategy = require("passport-twitch-new")?.Strategy;
 const PatreonStrategy = require("passport-patreon")?.Strategy;
 
 const TierManager = require("../Modules/TierManager");
+const TokenEncryption = require("../Modules/TokenEncryption");
 
 /**
  * Initialize additional OAuth strategies
@@ -42,9 +43,8 @@ module.exports = async (passport, configJS) => {
 					email: profile.emails?.[0]?.value,
 					avatar_url: profile.photos?.[0]?.value,
 					linked_at: new Date(),
-					// TODO: encrypt tokens before storing
-					access_token_encrypted: accessToken,
-					refresh_token_encrypted: refreshToken,
+					access_token_encrypted: TokenEncryption.encrypt(accessToken),
+					refresh_token_encrypted: TokenEncryption.encrypt(refreshToken),
 				};
 
 				// Save to user document
@@ -88,8 +88,8 @@ module.exports = async (passport, configJS) => {
 					email: profile.emails?.[0]?.value,
 					avatar_url: profile.photos?.[0]?.value,
 					linked_at: new Date(),
-					access_token_encrypted: accessToken,
-					refresh_token_encrypted: refreshToken,
+					access_token_encrypted: TokenEncryption.encrypt(accessToken),
+					refresh_token_encrypted: TokenEncryption.encrypt(refreshToken),
 				};
 
 				let user = await Users.findOne(req.user.id);
@@ -132,8 +132,8 @@ module.exports = async (passport, configJS) => {
 					email: profile.email,
 					avatar_url: profile.profile_image_url,
 					linked_at: new Date(),
-					access_token_encrypted: accessToken,
-					refresh_token_encrypted: refreshToken,
+					access_token_encrypted: TokenEncryption.encrypt(accessToken),
+					refresh_token_encrypted: TokenEncryption.encrypt(refreshToken),
 				};
 
 				let user = await Users.findOne(req.user.id);
@@ -176,8 +176,8 @@ module.exports = async (passport, configJS) => {
 					email: profile.attributes?.email,
 					avatar_url: profile.attributes?.image_url,
 					linked_at: new Date(),
-					access_token_encrypted: accessToken,
-					refresh_token_encrypted: refreshToken,
+					access_token_encrypted: TokenEncryption.encrypt(accessToken),
+					refresh_token_encrypted: TokenEncryption.encrypt(refreshToken),
 				};
 
 				let user = await Users.findOne(req.user.id);

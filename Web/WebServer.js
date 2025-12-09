@@ -1,5 +1,7 @@
 /* eslint node/exports-style: ["error", "exports"] */
 
+// Must be required before express to catch async errors from route handlers
+require("express-async-errors");
 const express = require("express");
 const http = require("http");
 const https = require("https");
@@ -231,6 +233,9 @@ exports.open = async (client, auth, configJS, logger) => {
 	// This captures unhandled errors and sends them to Sentry with request context
 	if (Sentry.isInitialized()) {
 		Sentry.setupExpressErrorHandler(app);
+		logger.info("Sentry Express error handler initialized for web error tracking");
+	} else {
+		logger.warn("Sentry is not initialized - web errors will not be sent to Sentry");
 	}
 
 	// Global error handler - must be last

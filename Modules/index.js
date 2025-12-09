@@ -21,6 +21,7 @@ module.exports = {
 	StringJS: require("./String"),
 	Temp: require("./Temp"),
 	TierManager: require("./TierManager.js"),
+	TokenEncryption: require("./TokenEncryption.js"),
 	Traffic: require("./Traffic.js"),
 	Trivia: require("./Trivia.js"),
 	Utils: require("./Utils/index"),
