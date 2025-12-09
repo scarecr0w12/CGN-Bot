@@ -104,24 +104,24 @@
 
 	<section class="section">
 		<div class="container">
-			<% if (authUser && userTier) { %>
+			<% if (pageData.userTier) { %>
 			<div class="current-tier-banner">
 				<div class="columns is-vcentered">
 					<div class="column">
 						<p class="is-size-5">Your Current Plan</p>
 						<p class="is-size-3 has-text-weight-bold">
-							<% if (userTier.badge_icon) { %>
-							<span class="icon"><i class="fa <%= userTier.badge_icon %>"></i></span>
+							<% if (pageData.userTier.badge_icon) { %>
+							<span class="icon"><i class="fa <%= pageData.userTier.badge_icon %>"></i></span>
 							<% } %>
-							<%= userTier.name %>
+							<%= pageData.userTier.name %>
 						</p>
-						<% if (subscription && subscription.expires_at) { %>
+						<% if (pageData.subscription && pageData.subscription.expires_at) { %>
 						<p class="is-size-7">
 							<span class="icon"><i class="fa fa-clock"></i></span>
-							<% if (new Date(subscription.expires_at) > new Date()) { %>
-							Active until <%= new Date(subscription.expires_at).toLocaleDateString() %>
+							<% if (new Date(pageData.subscription.expires_at) > new Date()) { %>
+							Active until <%= new Date(pageData.subscription.expires_at).toLocaleDateString() %>
 							<% } else { %>
-							Expired on <%= new Date(subscription.expires_at).toLocaleDateString() %>
+							Expired on <%= new Date(pageData.subscription.expires_at).toLocaleDateString() %>
 							<% } %>
 						</p>
 						<% } %>
@@ -147,7 +147,7 @@
 
 			<!-- Pricing Cards -->
 			<div class="columns is-centered">
-				<% const purchasableTiers = tiers.filter(t => t.is_purchasable).sort((a, b) => a.level - b.level); %>
+				<% const purchasableTiers = (pageData.tiers || []).filter(t => t.is_purchasable).sort((a, b) => a.level - b.level); %>
 				<% purchasableTiers.forEach((tier, index) => { %>
 				<div class="column is-4">
 					<div class="card pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
@@ -172,7 +172,7 @@
 						<div class="pricing-features">
 							<ul class="menu-list">
 								<% tier.features.forEach(featureId => { %>
-								<% const feature = features.find(f => f._id === featureId); %>
+								<% const feature = (pageData.features || []).find(f => f._id === featureId); %>
 								<% if (feature) { %>
 								<li>
 									<span class="icon has-text-success"><i class="fa fa-check"></i></span>
@@ -187,20 +187,20 @@
 						</div>
 
 						<div class="pricing-footer">
-							<% if (authUser) { %>
-								<% if (userTier && userTier._id === tier._id) { %>
+							<% if (template.authUser) { %>
+								<% if (pageData.userTier && pageData.userTier._id === tier._id) { %>
 								<button class="button is-fullwidth" disabled>
 									<span class="icon"><i class="fa fa-check"></i></span>
 									<span>Current Plan</span>
 								</button>
-								<% } else if (userTier && userTier.level >= tier.level) { %>
+								<% } else if (pageData.userTier && pageData.userTier.level >= tier.level) { %>
 								<button class="button is-fullwidth is-warning" disabled>
 									<span>Downgrade not available online</span>
 								</button>
 								<% } else { %>
 								<button class="button is-fullwidth is-primary" onclick="subscribe('<%= tier._id %>')" style="background-color: <%= tier.color || '#3273dc' %>;">
 									<span class="icon"><i class="fa fa-arrow-up"></i></span>
-									<span><%= userTier ? 'Upgrade' : 'Subscribe' %></span>
+									<span><%= pageData.userTier ? 'Upgrade' : 'Subscribe' %></span>
 								</button>
 								<% } %>
 							<% } else { %>
