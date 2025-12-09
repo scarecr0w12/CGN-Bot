@@ -7,6 +7,7 @@ const { Route } = require("./Route");
 
 const dashboardRouting = require("./dashboard");
 const maintainerDashboardRouting = require("./maintainer");
+const accountRouting = require("./account");
 const debugRouting = require("./debug");
 const setupAPI = require("./api");
 
@@ -96,6 +97,7 @@ module.exports = app => {
 	wikiRouting(routers.general);
 	blogRouting(routers.general);
 	officialRouting(routers.general);
+	accountRouting(routers.general);
 	dashboardRouting(routers.dashboard);
 	maintainerDashboardRouting(routers.maintainerDashboard);
 	setupAPI(routers.API);

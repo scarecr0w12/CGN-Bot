@@ -280,10 +280,10 @@ controllers.options.donations.post = async (req, res) => {
 
 	siteSettings.query.set("donateSubtitle", req.body.donateSubtitle || "");
 
-	const names = req.body.name ? (Array.isArray(req.body.name) ? req.body.name : [req.body.name]) : [];
-	const countries = req.body.country ? (Array.isArray(req.body.country) ? req.body.country : [req.body.country]) : [];
-	const donateUrls = req.body.donate_url ? (Array.isArray(req.body.donate_url) ? req.body.donate_url : [req.body.donate_url]) : [];
-	const iconUrls = req.body.icon_url ? (Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url]) : [];
+	const names = req.body.name ? Array.isArray(req.body.name) ? req.body.name : [req.body.name] : [];
+	const countries = req.body.country ? Array.isArray(req.body.country) ? req.body.country : [req.body.country] : [];
+	const donateUrls = req.body.donate_url ? Array.isArray(req.body.donate_url) ? req.body.donate_url : [req.body.donate_url] : [];
+	const iconUrls = req.body.icon_url ? Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url] : [];
 
 	const charities = [];
 	for (let i = 0; i < names.length; i++) {
@@ -339,11 +339,11 @@ controllers.membership.features.post = async (req, res) => {
 		siteSettings = SiteSettings.new({ _id: "main" });
 	}
 
-	const ids = req.body.feature_id ? (Array.isArray(req.body.feature_id) ? req.body.feature_id : [req.body.feature_id]) : [];
-	const names = req.body.feature_name ? (Array.isArray(req.body.feature_name) ? req.body.feature_name : [req.body.feature_name]) : [];
-	const descriptions = req.body.feature_description ? (Array.isArray(req.body.feature_description) ? req.body.feature_description : [req.body.feature_description]) : [];
-	const categories = req.body.feature_category ? (Array.isArray(req.body.feature_category) ? req.body.feature_category : [req.body.feature_category]) : [];
-	const enabledList = req.body.feature_enabled ? (Array.isArray(req.body.feature_enabled) ? req.body.feature_enabled : [req.body.feature_enabled]) : [];
+	const ids = req.body.feature_id ? Array.isArray(req.body.feature_id) ? req.body.feature_id : [req.body.feature_id] : [];
+	const names = req.body.feature_name ? Array.isArray(req.body.feature_name) ? req.body.feature_name : [req.body.feature_name] : [];
+	const descriptions = req.body.feature_description ? Array.isArray(req.body.feature_description) ? req.body.feature_description : [req.body.feature_description] : [];
+	const categories = req.body.feature_category ? Array.isArray(req.body.feature_category) ? req.body.feature_category : [req.body.feature_category] : [];
+	const enabledList = req.body.feature_enabled ? Array.isArray(req.body.feature_enabled) ? req.body.feature_enabled : [req.body.feature_enabled] : [];
 
 	const features = [];
 	for (let i = 0; i < ids.length; i++) {
@@ -397,16 +397,16 @@ controllers.membership.tiers.post = async (req, res) => {
 		siteSettings = SiteSettings.new({ _id: "main" });
 	}
 
-	const ids = req.body.tier_id ? (Array.isArray(req.body.tier_id) ? req.body.tier_id : [req.body.tier_id]) : [];
-	const names = req.body.tier_name ? (Array.isArray(req.body.tier_name) ? req.body.tier_name : [req.body.tier_name]) : [];
-	const levels = req.body.tier_level ? (Array.isArray(req.body.tier_level) ? req.body.tier_level : [req.body.tier_level]) : [];
-	const descriptions = req.body.tier_description ? (Array.isArray(req.body.tier_description) ? req.body.tier_description : [req.body.tier_description]) : [];
-	const colors = req.body.tier_color ? (Array.isArray(req.body.tier_color) ? req.body.tier_color : [req.body.tier_color]) : [];
-	const badges = req.body.tier_badge ? (Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge]) : [];
-	const pricesMonthly = req.body.tier_price_monthly ? (Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly]) : [];
-	const pricesYearly = req.body.tier_price_yearly ? (Array.isArray(req.body.tier_price_yearly) ? req.body.tier_price_yearly : [req.body.tier_price_yearly]) : [];
-	const featuresList = req.body.tier_features ? (Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features]) : [];
-	const purchasableList = req.body.tier_purchasable ? (Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable]) : [];
+	const ids = req.body.tier_id ? Array.isArray(req.body.tier_id) ? req.body.tier_id : [req.body.tier_id] : [];
+	const names = req.body.tier_name ? Array.isArray(req.body.tier_name) ? req.body.tier_name : [req.body.tier_name] : [];
+	const levels = req.body.tier_level ? Array.isArray(req.body.tier_level) ? req.body.tier_level : [req.body.tier_level] : [];
+	const descriptions = req.body.tier_description ? Array.isArray(req.body.tier_description) ? req.body.tier_description : [req.body.tier_description] : [];
+	const colors = req.body.tier_color ? Array.isArray(req.body.tier_color) ? req.body.tier_color : [req.body.tier_color] : [];
+	const badges = req.body.tier_badge ? Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge] : [];
+	const pricesMonthly = req.body.tier_price_monthly ? Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly] : [];
+	const pricesYearly = req.body.tier_price_yearly ? Array.isArray(req.body.tier_price_yearly) ? req.body.tier_price_yearly : [req.body.tier_price_yearly] : [];
+	const featuresList = req.body.tier_features ? Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features] : [];
+	const purchasableList = req.body.tier_purchasable ? Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable] : [];
 	const defaultTier = req.body.tier_default || "";
 
 	const tiers = [];
@@ -476,8 +476,8 @@ controllers.membership.oauth.post = async (req, res) => {
 	siteSettings.query.set("oauth_providers.patreon.isEnabled", req.body.patreon_enabled === "on");
 
 	// Patreon tier mapping
-	const patreonTierIds = req.body.patreon_tier_id ? (Array.isArray(req.body.patreon_tier_id) ? req.body.patreon_tier_id : [req.body.patreon_tier_id]) : [];
-	const patreonLocalTiers = req.body.patreon_local_tier ? (Array.isArray(req.body.patreon_local_tier) ? req.body.patreon_local_tier : [req.body.patreon_local_tier]) : [];
+	const patreonTierIds = req.body.patreon_tier_id ? Array.isArray(req.body.patreon_tier_id) ? req.body.patreon_tier_id : [req.body.patreon_tier_id] : [];
+	const patreonLocalTiers = req.body.patreon_local_tier ? Array.isArray(req.body.patreon_local_tier) ? req.body.patreon_local_tier : [req.body.patreon_local_tier] : [];
 
 	const patreonMapping = [];
 	for (let i = 0; i < patreonTierIds.length; i++) {
@@ -535,9 +535,9 @@ controllers.membership.payments.post = async (req, res) => {
 	siteSettings.query.set("payment_providers.btcpay.isEnabled", req.body.btcpay_enabled === "on");
 
 	// Stripe product mapping
-	const stripeProductIds = req.body.stripe_product_id ? (Array.isArray(req.body.stripe_product_id) ? req.body.stripe_product_id : [req.body.stripe_product_id]) : [];
-	const stripePriceIds = req.body.stripe_price_id ? (Array.isArray(req.body.stripe_price_id) ? req.body.stripe_price_id : [req.body.stripe_price_id]) : [];
-	const stripeTierIds = req.body.stripe_tier_id ? (Array.isArray(req.body.stripe_tier_id) ? req.body.stripe_tier_id : [req.body.stripe_tier_id]) : [];
+	const stripeProductIds = req.body.stripe_product_id ? Array.isArray(req.body.stripe_product_id) ? req.body.stripe_product_id : [req.body.stripe_product_id] : [];
+	const stripePriceIds = req.body.stripe_price_id ? Array.isArray(req.body.stripe_price_id) ? req.body.stripe_price_id : [req.body.stripe_price_id] : [];
+	const stripeTierIds = req.body.stripe_tier_id ? Array.isArray(req.body.stripe_tier_id) ? req.body.stripe_tier_id : [req.body.stripe_tier_id] : [];
 
 	const stripeMapping = [];
 	for (let i = 0; i < stripeProductIds.length; i++) {
@@ -552,8 +552,8 @@ controllers.membership.payments.post = async (req, res) => {
 	siteSettings.query.set("payment_providers.stripe.product_mapping", stripeMapping);
 
 	// PayPal plan mapping
-	const paypalPlanIds = req.body.paypal_plan_id ? (Array.isArray(req.body.paypal_plan_id) ? req.body.paypal_plan_id : [req.body.paypal_plan_id]) : [];
-	const paypalTierIds = req.body.paypal_tier_id ? (Array.isArray(req.body.paypal_tier_id) ? req.body.paypal_tier_id : [req.body.paypal_tier_id]) : [];
+	const paypalPlanIds = req.body.paypal_plan_id ? Array.isArray(req.body.paypal_plan_id) ? req.body.paypal_plan_id : [req.body.paypal_plan_id] : [];
+	const paypalTierIds = req.body.paypal_tier_id ? Array.isArray(req.body.paypal_tier_id) ? req.body.paypal_tier_id : [req.body.paypal_tier_id] : [];
 
 	const paypalMapping = [];
 	for (let i = 0; i < paypalPlanIds.length; i++) {

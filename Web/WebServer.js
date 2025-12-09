@@ -148,6 +148,11 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.use(passport.session());
 	app.passport = passport;
 
+	// Initialize additional OAuth strategies (Google, GitHub, Twitch, Patreon)
+	require("./passport-strategies")(passport, configJS).catch(err => {
+		logger.warn("Failed to initialize some OAuth strategies", {}, err);
+	});
+
 	app.use(middleware.setHeaders);
 
 	app.use(middleware.logRequest);
