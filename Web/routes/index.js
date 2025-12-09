@@ -8,6 +8,7 @@ const { Route } = require("./Route");
 const dashboardRouting = require("./dashboard");
 const maintainerDashboardRouting = require("./maintainer");
 const accountRouting = require("./account");
+const webhookRouting = require("./webhooks");
 const debugRouting = require("./debug");
 const setupAPI = require("./api");
 
@@ -98,6 +99,7 @@ module.exports = app => {
 	blogRouting(routers.general);
 	officialRouting(routers.general);
 	accountRouting(routers.general);
+	webhookRouting(routers.general);
 	dashboardRouting(routers.dashboard);
 	maintainerDashboardRouting(routers.maintainerDashboard);
 	setupAPI(routers.API);

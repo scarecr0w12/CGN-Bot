@@ -87,8 +87,16 @@ exports.open = async (client, auth, configJS, logger) => {
 		parameterLimit: 10000,
 		limit: "5mb",
 	}));
+
+	// JSON parser with raw body capture for webhook signature verification
 	app.use(express.json({
 		limit: "5mb",
+		verify: (req, res, buf) => {
+			// Store raw body for webhook signature verification (Stripe, Patreon)
+			if (req.originalUrl.startsWith("/webhooks/")) {
+				req.rawBody = buf.toString();
+			}
+		},
 	}));
 	app.use(cookieParser());
 
