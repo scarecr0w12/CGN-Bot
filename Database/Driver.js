@@ -27,6 +27,7 @@ exports.initialize = async config => {
 		GlobalTagReactions,
 		GlobalTags,
 		GlobalTrivia,
+		SiteSettings,
 	] = [
 		new Model(db, "servers", require("./Schemas/serverSchema")),
 		new Model(db, "users", require("./Schemas/userSchema")),
@@ -41,6 +42,7 @@ exports.initialize = async config => {
 		new Model(db, "global_tag_reactions", require("./Schemas/globalTagReactionSchema")),
 		new Model(db, "global_tags", require("./Schemas/globalTagSchema")),
 		new Model(db, "global_trivia", require("./Schemas/globalTriviaSchema")),
+		new Model(db, "site_settings", require("./Schemas/siteSettingsSchema")),
 	];
 	addToGlobal("Servers", Servers);
 	addToGlobal("Users", Users);
@@ -54,6 +56,7 @@ exports.initialize = async config => {
 	addToGlobal("GlobalTagReactions", GlobalTagReactions);
 	addToGlobal("GlobalTags", GlobalTags);
 	addToGlobal("GlobalTrivia", GlobalTrivia);
+	addToGlobal("SiteSettings", SiteSettings);
 	addToGlobal("Client", db);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -69,6 +72,7 @@ exports.initialize = async config => {
 		GlobalTagReactions, globalTagReactions: GlobalTagReactions,
 		GlobalTags, globalTags: GlobalTags,
 		GlobalTrivia, globalTrivia: GlobalTrivia,
+		SiteSettings, siteSettings: SiteSettings,
 		client: db,
 		mongoClient,
 	});

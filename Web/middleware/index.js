@@ -173,4 +173,91 @@ middleware.getConsoleSection = (req, res, next) => {
 	next();
 };
 
+// Tier-based feature gating middleware
+const TierManager = require("../../Modules/TierManager");
+
+/**
+ * Middleware to require a specific feature for access
+ * Usage: router.get('/path', middleware.requireFeature('feature_key'), controller)
+ * @param {string} featureKey - The feature ID to check
+ * @returns {Function} Express middleware
+ */
+middleware.requireFeature = featureKey => async (req, res, next) => {
+	if (!req.isAuthenticated()) {
+		if (req.isAPI) return res.sendStatus(401);
+		return res.redirect("/login");
+	}
+
+	const hasAccess = await TierManager.canAccess(req.user.id, featureKey);
+	if (!hasAccess) {
+		if (req.isAPI) return res.status(403).json({ error: "Feature not available for your tier" });
+		return res.status(403).render("pages/error.ejs", {
+			error_text: "Feature Locked",
+			error_line: "This feature is not available for your current subscription tier.",
+		});
+	}
+
+	next();
+};
+
+/**
+ * Middleware to require a minimum tier level for access
+ * Usage: router.get('/path', middleware.requireTierLevel(2), controller)
+ * @param {number} minLevel - Minimum tier level required
+ * @returns {Function} Express middleware
+ */
+middleware.requireTierLevel = minLevel => async (req, res, next) => {
+	if (!req.isAuthenticated()) {
+		if (req.isAPI) return res.sendStatus(401);
+		return res.redirect("/login");
+	}
+
+	const hasLevel = await TierManager.hasMinimumTierLevel(req.user.id, minLevel);
+	if (!hasLevel) {
+		if (req.isAPI) return res.status(403).json({ error: "Insufficient tier level" });
+		return res.status(403).render("pages/error.ejs", {
+			error_text: "Upgrade Required",
+			error_line: "This feature requires a higher subscription tier.",
+		});
+	}
+
+	next();
+};
+
+/**
+ * Middleware to populate user's tier info on the request
+ * Usage: router.get('/path', middleware.populateUserTier, controller)
+ */
+middleware.populateUserTier = async (req, res, next) => {
+	if (req.isAuthenticated()) {
+		try {
+			req.userTier = await TierManager.getUserTier(req.user.id);
+			req.userFeatures = await TierManager.getUserFeatures(req.user.id);
+
+			// Also add to response template if it exists
+			if (res.res?.template) {
+				res.res.template.userTier = req.userTier;
+				res.res.template.userFeatures = Array.from(req.userFeatures);
+			}
+		} catch (err) {
+			logger.warn("Failed to populate user tier", {}, err);
+		}
+	}
+	next();
+};
+
+/**
+ * Middleware to check subscription expiration
+ */
+middleware.checkSubscriptionExpiration = async (req, res, next) => {
+	if (req.isAuthenticated()) {
+		try {
+			await TierManager.checkExpiration(req.user.id);
+		} catch (err) {
+			logger.warn("Failed to check subscription expiration", {}, err);
+		}
+	}
+	next();
+};
+
 require("./auth")(middleware);

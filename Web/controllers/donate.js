@@ -1,7 +1,14 @@
-module.exports = (req, { res }) => {
+module.exports = async (req, { res }) => {
+	const siteSettings = await SiteSettings.findOne("main");
+
+	const charities = siteSettings && siteSettings.charities && siteSettings.charities.length ?
+		siteSettings.charities : configJS.donateCharities;
+	const donateSubtitle = siteSettings && siteSettings.donateSubtitle ?
+		siteSettings.donateSubtitle : configJS.donateSubtitle;
+
 	res.setConfigData({
-		charities: configJS.donateCharities,
-		donateSubtitle: configJS.donateSubtitle,
+		charities,
+		donateSubtitle,
 	});
 
 	res.setPageData("page", "donate.ejs");

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Account Settings</title>
+	<%- include('../partials/head') %>
+	<style>
+		.provider-card {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 1rem;
+			border: 1px solid #dbdbdb;
+			border-radius: 8px;
+			margin-bottom: 1rem;
+		}
+		.provider-card.is-linked {
+			border-color: #48c774;
+			background-color: #f6fff8;
+		}
+		.provider-info {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		.provider-icon {
+			width: 40px;
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.5rem;
+		}
+		.tier-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.5rem 1rem;
+			border-radius: 20px;
+			font-weight: bold;
+		}
+		.feature-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/header') %>
+
+	<section class="section">
+		<div class="container">
+			<h1 class="title">
+				<span class="icon"><i class="fa fa-user-cog"></i></span>
+				Account Settings
+			</h1>
+
+			<% if (success) { %>
+			<article class="message is-success">
+				<div class="message-body">
+					Account linked successfully!
+				</div>
+			</article>
+			<% } %>
+
+			<% if (error) { %>
+			<article class="message is-danger">
+				<div class="message-body">
+					Failed to link account. Please try again.
+				</div>
+			</article>
+			<% } %>
+
+			<div class="columns">
+				<!-- Membership Status -->
+				<div class="column is-half">
+					<div class="box">
+						<h2 class="subtitle">
+							<span class="icon"><i class="fa fa-star"></i></span>
+							Membership Status
+						</h2>
+
+						<% if (userTier) { %>
+						<div class="tier-badge" style="background-color: <%= userTier.color || '#3273dc' %>20; color: <%= userTier.color || '#3273dc' %>; border: 2px solid <%= userTier.color || '#3273dc' %>;">
+							<% if (userTier.badge_icon) { %>
+							<span class="icon"><i class="fa <%= userTier.badge_icon %>"></i></span>
+							<% } %>
+							<span><%= userTier.name %></span>
+						</div>
+						<% if (userTier.description) { %>
+						<p class="mt-3"><%= userTier.description %></p>
+						<% } %>
+						<% } else { %>
+						<p>No active membership tier.</p>
+						<% } %>
+
+						<% if (subscription && subscription.expires_at) { %>
+						<p class="mt-3 has-text-grey">
+							<span class="icon"><i class="fa fa-clock"></i></span>
+							Expires: <%= new Date(subscription.expires_at).toLocaleDateString() %>
+						</p>
+						<% } %>
+
+						<% if (subscription && subscription.source && subscription.source !== 'manual') { %>
+						<p class="has-text-grey">
+							<span class="icon"><i class="fa fa-credit-card"></i></span>
+							Via: <%= subscription.source.charAt(0).toUpperCase() + subscription.source.slice(1) %>
+						</p>
+						<% } %>
+
+						<hr>
+
+						<h3 class="is-size-6 has-text-weight-bold mb-2">Your Features</h3>
+						<% if (userFeatures && userFeatures.length > 0) { %>
+						<div class="feature-list">
+							<% userFeatures.forEach(feature => { %>
+							<span class="tag is-info is-light"><%= feature %></span>
+							<% }); %>
+						</div>
+						<% } else { %>
+						<p class="has-text-grey">No special features unlocked.</p>
+						<% } %>
+					</div>
+
+					<!-- Available Tiers -->
+					<% const purchasableTiers = tiers.filter(t => t.is_purchasable); %>
+					<% if (purchasableTiers.length > 0) { %>
+					<div class="box">
+						<h2 class="subtitle">
+							<span class="icon"><i class="fa fa-arrow-up"></i></span>
+							Upgrade Options
+						</h2>
+						<% purchasableTiers.forEach(tier => { %>
+						<div class="notification" style="border-left: 4px solid <%= tier.color || '#3273dc' %>;">
+							<p class="has-text-weight-bold"><%= tier.name %></p>
+							<p class="is-size-7 has-text-grey"><%= tier.description %></p>
+							<% if (tier.price_monthly > 0) { %>
+							<p class="mt-2">
+								$<%= (tier.price_monthly / 100).toFixed(2) %>/mo
+								<% if (tier.price_yearly > 0) { %>
+								or $<%= (tier.price_yearly / 100).toFixed(2) %>/yr
+								<% } %>
+							</p>
+							<% } %>
+						</div>
+						<% }); %>
+						<p class="has-text-grey is-size-7">Contact support to upgrade your membership.</p>
+					</div>
+					<% } %>
+				</div>
+
+				<!-- Linked Accounts -->
+				<div class="column is-half">
+					<div class="box">
+						<h2 class="subtitle">
+							<span class="icon"><i class="fa fa-link"></i></span>
+							Linked Accounts
+						</h2>
+						<p class="mb-4 has-text-grey">Link additional accounts for extra features and integrations.</p>
+
+						<!-- Discord (Primary - Always Linked) -->
+						<div class="provider-card is-linked">
+							<div class="provider-info">
+								<div class="provider-icon has-text-link">
+									<i class="fab fa-discord"></i>
+								</div>
+								<div>
+									<p class="has-text-weight-bold">Discord</p>
+									<p class="is-size-7 has-text-grey"><%= authUser.username %> (Primary)</p>
+								</div>
+							</div>
+							<span class="tag is-success">Connected</span>
+						</div>
+
+						<% const getLinkedAccount = (provider) => linkedAccounts.find(a => a._id === provider); %>
+
+						<!-- Google -->
+						<% if (oauthProviders.google?.isEnabled) { %>
+						<% const googleAccount = getLinkedAccount('google'); %>
+						<div class="provider-card <%= googleAccount ? 'is-linked' : '' %>">
+							<div class="provider-info">
+								<div class="provider-icon has-text-danger">
+									<i class="fab fa-google"></i>
+								</div>
+								<div>
+									<p class="has-text-weight-bold">Google</p>
+									<% if (googleAccount) { %>
+									<p class="is-size-7 has-text-grey"><%= googleAccount.email || googleAccount.username %></p>
+									<% } else { %>
+									<p class="is-size-7 has-text-grey">Not connected</p>
+									<% } %>
+								</div>
+							</div>
+							<% if (googleAccount) { %>
+							<button class="button is-small is-danger is-outlined" onclick="unlinkAccount('google')">Unlink</button>
+							<% } else { %>
+							<a class="button is-small is-info" href="/auth/google">Link</a>
+							<% } %>
+						</div>
+						<% } %>
+
+						<!-- GitHub -->
+						<% if (oauthProviders.github?.isEnabled) { %>
+						<% const githubAccount = getLinkedAccount('github'); %>
+						<div class="provider-card <%= githubAccount ? 'is-linked' : '' %>">
+							<div class="provider-info">
+								<div class="provider-icon">
+									<i class="fab fa-github"></i>
+								</div>
+								<div>
+									<p class="has-text-weight-bold">GitHub</p>
+									<% if (githubAccount) { %>
+									<p class="is-size-7 has-text-grey"><%= githubAccount.username %></p>
+									<% } else { %>
+									<p class="is-size-7 has-text-grey">Not connected</p>
+									<% } %>
+								</div>
+							</div>
+							<% if (githubAccount) { %>
+							<button class="button is-small is-danger is-outlined" onclick="unlinkAccount('github')">Unlink</button>
+							<% } else { %>
+							<a class="button is-small is-info" href="/auth/github">Link</a>
+							<% } %>
+						</div>
+						<% } %>
+
+						<!-- Twitch -->
+						<% if (oauthProviders.twitch?.isEnabled) { %>
+						<% const twitchAccount = getLinkedAccount('twitch'); %>
+						<div class="provider-card <%= twitchAccount ? 'is-linked' : '' %>">
+							<div class="provider-info">
+								<div class="provider-icon has-text-purple">
+									<i class="fab fa-twitch"></i>
+								</div>
+								<div>
+									<p class="has-text-weight-bold">Twitch</p>
+									<% if (twitchAccount) { %>
+									<p class="is-size-7 has-text-grey"><%= twitchAccount.username %></p>
+									<% } else { %>
+									<p class="is-size-7 has-text-grey">Not connected</p>
+									<% } %>
+								</div>
+							</div>
+							<% if (twitchAccount) { %>
+							<button class="button is-small is-danger is-outlined" onclick="unlinkAccount('twitch')">Unlink</button>
+							<% } else { %>
+							<a class="button is-small is-info" href="/auth/twitch">Link</a>
+							<% } %>
+						</div>
+						<% } %>
+
+						<!-- Patreon -->
+						<% if (oauthProviders.patreon?.isEnabled) { %>
+						<% const patreonAccount = getLinkedAccount('patreon'); %>
+						<div class="provider-card <%= patreonAccount ? 'is-linked' : '' %>">
+							<div class="provider-info">
+								<div class="provider-icon" style="color: #FF424D;">
+									<i class="fab fa-patreon"></i>
+								</div>
+								<div>
+									<p class="has-text-weight-bold">Patreon</p>
+									<% if (patreonAccount) { %>
+									<p class="is-size-7 has-text-grey"><%= patreonAccount.username %></p>
+									<% } else { %>
+									<p class="is-size-7 has-text-grey">Not connected - Link to sync pledges</p>
+									<% } %>
+								</div>
+							</div>
+							<% if (patreonAccount) { %>
+							<button class="button is-small is-danger is-outlined" onclick="unlinkAccount('patreon')">Unlink</button>
+							<% } else { %>
+							<a class="button is-small is-info" href="/auth/patreon">Link</a>
+							<% } %>
+						</div>
+						<% } %>
+
+						<% if (!oauthProviders.google?.isEnabled && !oauthProviders.github?.isEnabled && !oauthProviders.twitch?.isEnabled && !oauthProviders.patreon?.isEnabled) { %>
+						<p class="has-text-grey">No additional OAuth providers are enabled.</p>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+
+	<script>
+	async function unlinkAccount(provider) {
+		if (!confirm(`Are you sure you want to unlink your ${provider} account?`)) {
+			return;
+		}
+
+		try {
+			const response = await fetch(`/account/unlink/${provider}`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+			if (response.ok) {
+				location.reload();
+			} else {
+				alert('Failed to unlink account. Please try again.');
+			}
+		} catch (err) {
+			alert('An error occurred. Please try again.');
+		}
+	}
+	</script>
+</body>
+</html>

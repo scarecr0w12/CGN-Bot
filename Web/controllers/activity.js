@@ -229,7 +229,7 @@ module.exports = async (req, { res }) => {
 			let totalPoints = 0;
 			let publicProfilesCount = 0;
 			let reminderCount = 0;
-			if (userResult) {
+			if (userResult && userResult.length > 0) {
 				[{ totalPoints }] = userResult;
 				[{ publicProfilesCount }] = userResult;
 				[{ reminderCount }] = userResult;

@@ -14,6 +14,15 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/bot-user", "administration", [], controllers.console.options.bot);
 	setupConsolePage(router, "/global-options/homepage", "administration", [], controllers.console.options.homepage);
 	setupConsolePage(router, "/global-options/wiki-contributors", "administration", [], controllers.console.options.contributors);
+	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
+
+	// Membership System (Sudo/Host only)
+	setupConsolePage(router, "/membership/features", "administration", [], controllers.console.membership.features);
+	setupConsolePage(router, "/membership/tiers", "administration", [], controllers.console.membership.tiers);
+	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
+	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
+	setupConsolePage(router, "/membership/users", "administration", [], controllers.console.membership.users);
+	router.post("/membership/users/cancel", controllers.console.membership.users.cancel);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);

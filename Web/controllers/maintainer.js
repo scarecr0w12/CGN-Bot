@@ -254,6 +254,463 @@ controllers.options.contributors.post = async (req, res) => {
 	save(req, res);
 };
 
+controllers.options.donations = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+	}
+
+	res.setConfigData({
+		donateSubtitle: siteSettings.donateSubtitle || configJS.donateSubtitle || "",
+		charities: siteSettings.charities || [],
+	}).setPageData({
+		page: "maintainer-donations.ejs",
+	}).render();
+};
+controllers.options.donations.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	siteSettings.query.set("donateSubtitle", req.body.donateSubtitle || "");
+
+	const names = req.body.name ? Array.isArray(req.body.name) ? req.body.name : [req.body.name] : [];
+	const countries = req.body.country ? Array.isArray(req.body.country) ? req.body.country : [req.body.country] : [];
+	const donateUrls = req.body.donate_url ? Array.isArray(req.body.donate_url) ? req.body.donate_url : [req.body.donate_url] : [];
+	const iconUrls = req.body.icon_url ? Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url] : [];
+
+	const charities = [];
+	for (let i = 0; i < names.length; i++) {
+		if (names[i] && donateUrls[i] && iconUrls[i]) {
+			charities.push({
+				name: names[i],
+				country: countries[i] || "",
+				donate_url: donateUrls[i],
+				icon_url: iconUrls[i],
+			});
+		}
+	}
+	siteSettings.query.set("charities", charities);
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save donation settings", {}, err);
+		renderError(res, "Failed to save donation settings.");
+	}
+};
+
+// ============================================
+// MEMBERSHIP SYSTEM CONTROLLERS
+// ============================================
+
+controllers.membership = {};
+
+// Feature Registry
+controllers.membership.features = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	res.setConfigData({
+		features: siteSettings.features || [],
+	}).setPageData({
+		page: "maintainer-features.ejs",
+	}).render();
+};
+
+controllers.membership.features.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	// Helper to ensure array
+	const toArray = val => val ? Array.isArray(val) ? val : [val] : [];
+
+	// Process predefined features from toggles
+	const ids = toArray(req.body.feature_id);
+	const names = toArray(req.body.feature_name);
+	const descriptions = toArray(req.body.feature_description);
+	const categories = toArray(req.body.feature_category);
+	const enabledList = toArray(req.body.feature_enabled);
+
+	const features = [];
+	for (let i = 0; i < ids.length; i++) {
+		if (ids[i] && names[i]) {
+			features.push({
+				_id: ids[i].toLowerCase().replace(/[^a-z0-9_]/g, "_"),
+				name: names[i],
+				description: descriptions[i] || "",
+				category: categories[i] || "general",
+				isEnabled: enabledList.includes(ids[i]),
+			});
+		}
+	}
+
+	// Process custom features
+	const customIds = toArray(req.body.custom_id);
+	const customNames = toArray(req.body.custom_name);
+	const customDescs = toArray(req.body.custom_desc);
+	const customEnabled = toArray(req.body.custom_enabled);
+
+	for (let i = 0; i < customIds.length; i++) {
+		if (customIds[i] && customNames[i]) {
+			const customId = customIds[i].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+			features.push({
+				_id: customId,
+				name: customNames[i],
+				description: customDescs[i] || "",
+				category: "general",
+				isEnabled: customEnabled.includes(customIds[i]) || customEnabled.includes("new"),
+			});
+		}
+	}
+
+	siteSettings.query.set("features", features);
+
+	try {
+		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		TierManager.invalidateCache();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save features", {}, err);
+		renderError(res, "Failed to save features.");
+	}
+};
+
+// Tiers Configuration
+controllers.membership.tiers = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	res.setConfigData({
+		tiers: siteSettings.tiers || [],
+		features: siteSettings.features || [],
+	}).setPageData({
+		page: "maintainer-tiers.ejs",
+	}).render();
+};
+
+controllers.membership.tiers.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	const ids = req.body.tier_id ? Array.isArray(req.body.tier_id) ? req.body.tier_id : [req.body.tier_id] : [];
+	const names = req.body.tier_name ? Array.isArray(req.body.tier_name) ? req.body.tier_name : [req.body.tier_name] : [];
+	const levels = req.body.tier_level ? Array.isArray(req.body.tier_level) ? req.body.tier_level : [req.body.tier_level] : [];
+	const descriptions = req.body.tier_description ? Array.isArray(req.body.tier_description) ? req.body.tier_description : [req.body.tier_description] : [];
+	const colors = req.body.tier_color ? Array.isArray(req.body.tier_color) ? req.body.tier_color : [req.body.tier_color] : [];
+	const badges = req.body.tier_badge ? Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge] : [];
+	const pricesMonthly = req.body.tier_price_monthly ? Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly] : [];
+	const pricesYearly = req.body.tier_price_yearly ? Array.isArray(req.body.tier_price_yearly) ? req.body.tier_price_yearly : [req.body.tier_price_yearly] : [];
+	const featuresList = req.body.tier_features ? Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features] : [];
+	const purchasableList = req.body.tier_purchasable ? Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable] : [];
+	const defaultTier = req.body.tier_default || "";
+
+	const tiers = [];
+	for (let i = 0; i < ids.length; i++) {
+		if (ids[i] && names[i]) {
+			const tierId = ids[i].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+			tiers.push({
+				_id: tierId,
+				name: names[i],
+				level: parseInt(levels[i]) || 0,
+				description: descriptions[i] || "",
+				color: colors[i] || "#3273dc",
+				badge_icon: badges[i] || "",
+				price_monthly: parseInt(pricesMonthly[i]) || 0,
+				price_yearly: parseInt(pricesYearly[i]) || 0,
+				features: featuresList[i] ? featuresList[i].split(",").filter(f => f) : [],
+				is_purchasable: purchasableList.includes(ids[i]) || purchasableList.includes(`new_${i}`),
+				is_default: defaultTier === ids[i] || defaultTier === `new_${i}`,
+			});
+		}
+	}
+	siteSettings.query.set("tiers", tiers);
+
+	try {
+		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		TierManager.invalidateCache();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save tiers", {}, err);
+		renderError(res, "Failed to save tiers.");
+	}
+};
+
+// OAuth Providers
+controllers.membership.oauth = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	res.setConfigData({
+		oauth_providers: siteSettings.oauth_providers || {},
+		tiers: siteSettings.tiers || [],
+		hostingURL: configJS.hostingURL,
+	}).setPageData({
+		page: "maintainer-oauth.ejs",
+	}).render();
+};
+
+controllers.membership.oauth.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	// Update OAuth provider enabled states
+	siteSettings.query.set("oauth_providers.google.isEnabled", req.body.google_enabled === "on");
+	siteSettings.query.set("oauth_providers.github.isEnabled", req.body.github_enabled === "on");
+	siteSettings.query.set("oauth_providers.twitch.isEnabled", req.body.twitch_enabled === "on");
+	siteSettings.query.set("oauth_providers.patreon.isEnabled", req.body.patreon_enabled === "on");
+
+	// Patreon tier mapping
+	const patreonTierIds = req.body.patreon_tier_id ? Array.isArray(req.body.patreon_tier_id) ? req.body.patreon_tier_id : [req.body.patreon_tier_id] : [];
+	const patreonLocalTiers = req.body.patreon_local_tier ? Array.isArray(req.body.patreon_local_tier) ? req.body.patreon_local_tier : [req.body.patreon_local_tier] : [];
+
+	const patreonMapping = [];
+	for (let i = 0; i < patreonTierIds.length; i++) {
+		if (patreonTierIds[i] && patreonLocalTiers[i]) {
+			patreonMapping.push({
+				_id: patreonTierIds[i],
+				local_tier_id: patreonLocalTiers[i],
+			});
+		}
+	}
+	siteSettings.query.set("oauth_providers.patreon.tier_mapping", patreonMapping);
+
+	try {
+		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		TierManager.invalidateCache();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save OAuth settings", {}, err);
+		renderError(res, "Failed to save OAuth settings.");
+	}
+};
+
+// Payment Providers
+controllers.membership.payments = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	res.setConfigData({
+		payment_providers: siteSettings.payment_providers || {},
+		tiers: siteSettings.tiers || [],
+		hostingURL: configJS.hostingURL,
+	}).setPageData({
+		page: "maintainer-payments.ejs",
+	}).render();
+};
+
+controllers.membership.payments.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	// Update payment provider enabled states
+	siteSettings.query.set("payment_providers.stripe.isEnabled", req.body.stripe_enabled === "on");
+	siteSettings.query.set("payment_providers.paypal.isEnabled", req.body.paypal_enabled === "on");
+	siteSettings.query.set("payment_providers.btcpay.isEnabled", req.body.btcpay_enabled === "on");
+
+	// Stripe product mapping
+	const stripeProductIds = req.body.stripe_product_id ? Array.isArray(req.body.stripe_product_id) ? req.body.stripe_product_id : [req.body.stripe_product_id] : [];
+	const stripePriceIds = req.body.stripe_price_id ? Array.isArray(req.body.stripe_price_id) ? req.body.stripe_price_id : [req.body.stripe_price_id] : [];
+	const stripeTierIds = req.body.stripe_tier_id ? Array.isArray(req.body.stripe_tier_id) ? req.body.stripe_tier_id : [req.body.stripe_tier_id] : [];
+
+	const stripeMapping = [];
+	for (let i = 0; i < stripeProductIds.length; i++) {
+		if (stripeProductIds[i] && stripePriceIds[i] && stripeTierIds[i]) {
+			stripeMapping.push({
+				_id: stripeProductIds[i],
+				stripe_price_id: stripePriceIds[i],
+				tier_id: stripeTierIds[i],
+			});
+		}
+	}
+	siteSettings.query.set("payment_providers.stripe.product_mapping", stripeMapping);
+
+	// PayPal plan mapping
+	const paypalPlanIds = req.body.paypal_plan_id ? Array.isArray(req.body.paypal_plan_id) ? req.body.paypal_plan_id : [req.body.paypal_plan_id] : [];
+	const paypalTierIds = req.body.paypal_tier_id ? Array.isArray(req.body.paypal_tier_id) ? req.body.paypal_tier_id : [req.body.paypal_tier_id] : [];
+
+	const paypalMapping = [];
+	for (let i = 0; i < paypalPlanIds.length; i++) {
+		if (paypalPlanIds[i] && paypalTierIds[i]) {
+			paypalMapping.push({
+				_id: paypalPlanIds[i],
+				tier_id: paypalTierIds[i],
+			});
+		}
+	}
+	siteSettings.query.set("payment_providers.paypal.plan_mapping", paypalMapping);
+
+	try {
+		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		TierManager.invalidateCache();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save payment settings", {}, err);
+		renderError(res, "Failed to save payment settings.");
+	}
+};
+
+// User Management
+controllers.membership.users = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+		siteSettings = await SiteSettings.findOne("main");
+	}
+
+	const searchResults = [];
+	const query = req.query.q;
+
+	if (query) {
+		// Search by ID or username
+		const directUser = await Users.findOne(query);
+		if (directUser) {
+			const discordUser = await req.app.client.users.fetch(query, true).catch(() => null);
+			searchResults.push({
+				...directUser,
+				username: discordUser?.username || directUser.username || "Unknown",
+				avatar: discordUser?.displayAvatarURL() || null,
+			});
+		} else {
+			// Search by username pattern
+			const users = await Users.find({ username: { $regex: query, $options: "i" } }, 10);
+			for (const user of users) {
+				const discordUser = await req.app.client.users.fetch(user._id, true).catch(() => null);
+				searchResults.push({
+					...user,
+					username: discordUser?.username || user.username || "Unknown",
+					avatar: discordUser?.displayAvatarURL() || null,
+				});
+			}
+		}
+	}
+
+	// Get recent subscription changes
+	const recentSubscriptions = await Users.find({ "subscription.started_at": { $exists: true } })
+		.sort({ "subscription.started_at": -1 })
+		.limit(20)
+		.exec();
+
+	for (const sub of recentSubscriptions || []) {
+		const discordUser = await req.app.client.users.fetch(sub._id, true).catch(() => null);
+		sub.username = discordUser?.username || sub.username || "Unknown";
+	}
+
+	res.setConfigData({
+		tiers: siteSettings.tiers || [],
+		features: siteSettings.features || [],
+	}).setPageData({
+		query,
+		searchResults,
+		recentSubscriptions,
+		page: "maintainer-users.ejs",
+	}).render();
+};
+
+controllers.membership.users.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const { user_id: userId, tier_id: tierId, expires_at: expiresAt, reason } = req.body;
+	const grantFeatures = req.body["grant_features[]"] || [];
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID required" });
+	}
+
+	try {
+		const TierManager = require("../../Modules/TierManager");
+
+		// Set user tier
+		if (tierId) {
+			const expiration = expiresAt ? new Date(expiresAt) : null;
+			await TierManager.setUserTier(userId, tierId, "manual", expiration, reason || "admin_assigned");
+		}
+
+		// Grant individual features
+		const features = Array.isArray(grantFeatures) ? grantFeatures : [grantFeatures];
+		for (const feature of features.filter(f => f)) {
+			await TierManager.grantFeature(userId, feature);
+		}
+
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to update user tier", { userId }, err);
+		renderError(res, "Failed to update user tier.");
+	}
+};
+
+controllers.membership.users.cancel = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const { user_id: userId } = req.body;
+	if (!userId) {
+		return res.status(400).json({ error: "User ID required" });
+	}
+
+	try {
+		const TierManager = require("../../Modules/TierManager");
+		await TierManager.cancelSubscription(userId, "admin_canceled");
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to cancel subscription", { userId }, err);
+		res.status(500).json({ error: "Failed to cancel subscription" });
+	}
+};
+
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {

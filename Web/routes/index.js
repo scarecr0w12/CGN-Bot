@@ -7,6 +7,8 @@ const { Route } = require("./Route");
 
 const dashboardRouting = require("./dashboard");
 const maintainerDashboardRouting = require("./maintainer");
+const accountRouting = require("./account");
+const webhookRouting = require("./webhooks");
 const debugRouting = require("./debug");
 const setupAPI = require("./api");
 
@@ -75,6 +77,13 @@ const officialRouting = router => {
 	setupPage(router, "/paperwork", [], controllers.paperwork);
 };
 
+const membershipRouting = router => {
+	setupPage(router, "/membership", [], controllers.membership.pricing);
+	router.routes.push(new Route(router, "/membership/success", [middleware.checkUnavailable], controllers.membership.success, "get", "general"));
+	router.routes.push(new Route(router, "/api/membership/checkout", [middleware.checkUnavailableAPI], controllers.membership.createCheckout, "post", "api"));
+	router.routes.push(new Route(router, "/api/membership/paypal-checkout", [middleware.checkUnavailableAPI], controllers.membership.createPayPalCheckout, "post", "api"));
+};
+
 module.exports = app => {
 	const routers = {
 		general: express.Router(),
@@ -89,6 +98,11 @@ module.exports = app => {
 		routers[ID].app = app;
 	});
 
+	// Test error endpoint for Sentry verification
+	routers.general.get("/test-sentry-error", () => {
+		throw new Error("Test Sentry Error - This is a deliberate test error to verify Sentry integration");
+	});
+
 	generalRouting(routers.general);
 	statusRouting(routers.general);
 	activityRouting(routers.general);
@@ -96,6 +110,9 @@ module.exports = app => {
 	wikiRouting(routers.general);
 	blogRouting(routers.general);
 	officialRouting(routers.general);
+	membershipRouting(routers.general);
+	accountRouting(routers.general);
+	webhookRouting(routers.general);
 	dashboardRouting(routers.dashboard);
 	maintainerDashboardRouting(routers.maintainerDashboard);
 	setupAPI(routers.API);

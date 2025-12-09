@@ -10,14 +10,7 @@ const Unzip = require("adm-zip");
 const { Console, Constants, Errors: { Error: SkynetError } } = require("../Internals");
 const { FileExists, PromiseWait } = require("./Utils");
 
-const validateSpecVersion = body => {
-	const upstreamVersion = body.apiVersion;
-	if (!upstreamVersion) return specVersion;
-	const majorVersion = specVersion.split(".")[0];
-	const majorUpstreamVersion = upstreamVersion.split(".")[0];
-	if (majorVersion !== majorUpstreamVersion) throw SkynetError("OUTDATED_CENTRAL_SPEC_VERSION");
-	else return upstreamVersion;
-};
+const validateSpecVersion = body => specVersion;
 
 class SkynetClient {
 	constructor (botClient) {
@@ -36,7 +29,7 @@ class VersionAPI {
 	constructor (gClient) {
 		this.client = gClient;
 		this._branch = null;
-		this.endpoint = Constants.CENTRAL.VERSIONING;
+		this.endpoint = `${Constants.CENTRAL.GITHUB_API}/repos/${Constants.CENTRAL.REPO_OWNER}/${Constants.CENTRAL.REPO_NAME}`;
 	}
 
 	branch (branch) {
@@ -45,13 +38,18 @@ class VersionAPI {
 	}
 
 	async get (version) {
-		const res = await this._get(`${this._branch}/${version}`);
-		if (res.ok && res.body && !res.body.err) {
-			return new Version(res.body.data, true, this);
-		} else if (res.status === 404 && res.body) {
-			return new Version({ tag: version, branch: res.body.err === "Branch not found" ? null : this._branch }, false, this);
+		// Try to fetch by tag (try with and without 'v' prefix)
+		let res = await this._get(`/releases/tags/${version}`);
+		if (!res.ok && !version.startsWith("v")) {
+			res = await this._get(`/releases/tags/v${version}`);
+		}
+
+		if (res.ok && res.body) {
+			return new Version(res.body, true, this);
+		} else if (res.status === 404) {
+			return new Version({ tag_name: version, name: version, body: "Version not found on GitHub." }, false, this);
 		} else {
-			throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
+			throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.message);
 		}
 	}
 
@@ -60,9 +58,9 @@ class VersionAPI {
 		try {
 			res = await fetch.get(`${this.endpoint}${URL}`).set("User-Agent", Constants.UserAgent);
 		} catch (err) {
-			return err;
+			return { ok: false, status: 500, body: { err: err.message } };
 		}
-		if (res.body && res.body.apiVersion) validateSpecVersion(res.body);
+		// GitHub API doesn't return apiVersion, so we skip validateSpecVersion
 		return res;
 	}
 }
@@ -73,35 +71,63 @@ class Version extends EventEmitter {
 		this._v = remoteVersion;
 		this.valid = valid;
 		this.versionAPI = API;
+
+		this.metadata = {
+			changelog: this._v.body || "No changelog available.",
+			name: this._v.name || this.tag,
+			published_at: this._v.published_at,
+			description: this._v.name || this.tag,
+		};
 	}
 
 	async check () {
 		if (!this.valid) return { utd: false, current: null };
-		const res = await this.versionAPI._get(`${this.branch}/check?v=${this.tag}`);
-		if (!res.ok && res.status !== 404) throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.err);
+		const res = await this.versionAPI._get(`/releases/latest`);
+		if (!res.ok && res.status !== 404) throw new SkynetError("CENTRAL_ERROR", { status: res.status }, res.status, res.body && res.body.message);
 		else if (!res.ok && res.status === 404) return { utd: false, current: null };
-		return res.body.data;
+
+		const latest = res.body;
+		const latestTag = latest.tag_name;
+
+		// Basic tag comparison
+		if (this.tag === latestTag || `v${this.tag}` === latestTag || this.tag === `v${latestTag}`) {
+			return { utd: true, current: new Version(latest, true, this.versionAPI) };
+		} else {
+			return { utd: false, current: new Version(latest, true, this.versionAPI) };
+		}
 	}
 
 	async download (onChunk) {
 		const { path: tempFolder } = await this.versionAPI.client.bot.tempStorage.create({ type: "version", persistent: true, id: this.tag });
 		return new Promise((resolve, reject) => {
 			const fileStream = fs.createWriteStream(path.join(tempFolder, `${this.tag}.zip`));
-			https.get(`${Constants.CENTRAL.CODEBASE}${this.sha}`, res => {
-				const { statusCode } = res;
-				if (statusCode !== 200) reject(new SkynetError("CENTRAL_DOWNLOAD_ERROR", {}, statusCode));
+			const downloadUrl = this._v.zipball_url;
 
-				res.on("data", chunk => {
-					if (onChunk) onChunk(chunk);
-				});
+			const get = (url) => {
+				https.get(url, { headers: { "User-Agent": Constants.UserAgent } }, res => {
+					const { statusCode } = res;
 
-				res.on("end", () => {
-					this._downloadPath = tempFolder;
-					resolve(tempFolder);
-				});
+					if (statusCode >= 300 && statusCode < 400 && res.headers.location) {
+						return get(res.headers.location);
+					}
 
-				res.pipe(fileStream);
-			}).on("error", reject);
+					if (statusCode !== 200) reject(new SkynetError("CENTRAL_DOWNLOAD_ERROR", {}, statusCode));
+
+					res.on("data", chunk => {
+						if (onChunk) onChunk(chunk);
+					});
+
+					res.on("end", () => {
+						this._downloadPath = tempFolder;
+						resolve(tempFolder);
+					});
+
+					res.pipe(fileStream);
+				}).on("error", reject);
+			};
+
+			if (!downloadUrl) reject(new SkynetError("CENTRAL_DOWNLOAD_ERROR_NO_URL", {}, 404));
+			else get(downloadUrl);
 		});
 	}
 
@@ -124,7 +150,14 @@ class Version extends EventEmitter {
 			this._log("unpack", `An error occurred while unpacking files. ${err.message}`, "error");
 			throw err;
 		}
-		this._downloadPath = path.join(this._downloadPath, `SkynetBot-${this.sha}`);
+
+		// Dynamically find the extracted folder (GitHub puts it in Repo-Ref folder)
+		const extractedContents = await fs.promises.readdir(this._downloadPath);
+		const directories = extractedContents.filter(item => item !== `${this.tag}.zip` && fs.statSync(path.join(this._downloadPath, item)).isDirectory());
+
+		if (directories.length === 1) {
+			this._downloadPath = path.join(this._downloadPath, directories[0]);
+		}
 
 		let fileList, configFileList;
 
@@ -181,7 +214,22 @@ class Version extends EventEmitter {
 	}
 
 	async _generateFileList () {
-		const allFiles = this.files;
+		// Recursive file list generation since GitHub zip preserves directory structure
+		const getFiles = async (dir, baseDir = "") => {
+			const dirents = await fs.promises.readdir(dir, { withFileTypes: true });
+			const files = await Promise.all(dirents.map((dirent) => {
+				const res = path.resolve(dir, dirent.name);
+				const relPath = path.join(baseDir, dirent.name);
+				return dirent.isDirectory() ? getFiles(res, relPath) : relPath;
+			}));
+			return Array.prototype.concat(...files);
+		};
+
+		const allFiles = await getFiles(this._downloadPath);
+		// Filter out unrelated files/folders if necessary, but for now take all
+		// Original code had this.files property from API, but GitHub API doesn't give file list.
+		// So we use extracted files.
+
 		const configFiles = allFiles.filter(file => file.startsWith("Configurations/"));
 		const files = allFiles.filter(file => !file.startsWith("Configurations/"));
 		return [files, configFiles];
@@ -204,9 +252,15 @@ class Version extends EventEmitter {
 		const patchLocation = path.join(this._downloadPath, filePath);
 		const patchTarget = path.join(path.join(__dirname, `..`), filePath);
 
+		// Ensure directory exists
+		await fs.promises.mkdir(path.dirname(patchTarget), { recursive: true });
+
 		if (!await FileExists(patchLocation) && await FileExists(patchTarget)) {
-			this._log(configFile ? "patchingc" : "patching", `Unlinking removed file ${filePath}...`);
-			await fs.promises.unlink(patchTarget);
+			// If file exists in target but not in update, do we delete it?
+			// In git based update, yes. But here we iterate over *new* files.
+			// So this condition (!patchLocation && patchTarget) is never met if iterating fileList from update.
+			// To support deletion, we'd need to compare target tree with update tree.
+			// For now, we only overwrite/add.
 		} else if (await FileExists(patchLocation)) {
 			this._log(configFile ? "patchingc" : "patching", `Patching file ${filePath}...`);
 			await fs.promises.copyFile(patchLocation, patchTarget);
@@ -251,24 +305,19 @@ class Version extends EventEmitter {
 	}
 
 	get tag () {
-		return this._v.tag;
+		return this._v.tag_name || this._v.name;
 	}
 
 	get branch () {
-		return this._v.branch;
+		return this._v.target_commitish || this._branch;
 	}
 
 	get sha () {
-		return this._v.sha;
+		// GitHub release doesn't explicitly provide SHA in the root object, but it is in target_commitish sometimes
+		return this._v.target_commitish || "unknown";
 	}
-
-	get files () {
-		return this._v.files;
-	}
-
-	get metadata () {
-		return this._v.metadata;
-	}
+	
+	// 'files' getter was removed because we generate it dynamically now
 }
 
 module.exports = SkynetClient;

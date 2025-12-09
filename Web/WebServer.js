@@ -1,5 +1,7 @@
 /* eslint node/exports-style: ["error", "exports"] */
 
+// Must be required before express to catch async errors from route handlers
+require("express-async-errors");
 const express = require("express");
 const http = require("http");
 const https = require("https");
@@ -16,6 +18,7 @@ const discordOAuthScopes = ["identify", "guilds", "email"];
 const toobusy = require("toobusy-js");
 const fsn = require("fs-nextra");
 const reload = require("require-reload")(require);
+const Sentry = require("@sentry/node");
 
 const middleware = require("./middleware");
 const app = express();
@@ -87,8 +90,16 @@ exports.open = async (client, auth, configJS, logger) => {
 		parameterLimit: 10000,
 		limit: "5mb",
 	}));
+
+	// JSON parser with raw body capture for webhook signature verification
 	app.use(express.json({
 		limit: "5mb",
+		verify: (req, res, buf) => {
+			// Store raw body for webhook signature verification (Stripe, Patreon)
+			if (req.originalUrl.startsWith("/webhooks/")) {
+				req.rawBody = buf.toString();
+			}
+		},
 	}));
 	app.use(cookieParser());
 
@@ -148,6 +159,22 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.use(passport.session());
 	app.passport = passport;
 
+	// Sentry user context middleware - adds user info to Sentry errors
+	app.use((req, res, next) => {
+		if (Sentry.isInitialized() && req.isAuthenticated && req.isAuthenticated() && req.user) {
+			Sentry.setUser({
+				id: req.user.id,
+				username: req.user.username,
+			});
+		}
+		next();
+	});
+
+	// Initialize additional OAuth strategies (Google, GitHub, Twitch, Patreon)
+	require("./passport-strategies")(passport, configJS).catch(err => {
+		logger.warn("Failed to initialize some OAuth strategies", {}, err);
+	});
+
 	app.use(middleware.setHeaders);
 
 	app.use(middleware.logRequest);
@@ -201,6 +228,15 @@ exports.open = async (client, auth, configJS, logger) => {
 	});
 
 	require("./routes")(app);
+
+	// Sentry error handler - must be before custom error handler
+	// This captures unhandled errors and sends them to Sentry with request context
+	if (Sentry.isInitialized()) {
+		Sentry.setupExpressErrorHandler(app);
+		logger.info("Sentry Express error handler initialized for web error tracking");
+	} else {
+		logger.warn("Sentry is not initialized - web errors will not be sent to Sentry");
+	}
 
 	// Global error handler - must be last
 	app.use((err, req, res, next) => {

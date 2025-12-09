@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>User Management - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+	<style>
+		.user-card {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			padding: 1rem;
+			border: 1px solid #dbdbdb;
+			border-radius: 8px;
+			margin-bottom: 1rem;
+		}
+		.user-avatar {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+		}
+		.user-info {
+			flex: 1;
+		}
+		.tier-badge {
+			padding: 0.25rem 0.75rem;
+			border-radius: 20px;
+			font-size: 0.875rem;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-users"></i></span>
+						User Management
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								<p>Search for users by Discord ID or username to manage their membership tier and features.</p>
+							</div>
+						</div>
+					</article>
+
+					<!-- Search Form -->
+					<div class="box">
+						<form id="search-form" method="get" action="<%= currentPage %>">
+							<div class="field has-addons">
+								<div class="control is-expanded">
+									<input class="input" type="text" name="q" placeholder="Enter Discord User ID or username" value="<%= pageData.query || '' %>">
+								</div>
+								<div class="control">
+									<button class="button is-info" type="submit">
+										<span class="icon"><i class="fa fa-search"></i></span>
+										<span>Search</span>
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+
+					<% if (pageData.searchResults && pageData.searchResults.length > 0) { %>
+					<!-- Search Results -->
+					<h2 class="subtitle">Search Results</h2>
+					<% pageData.searchResults.forEach(user => { %>
+					<div class="user-card">
+						<img src="<%= user.avatar || '/static/img/discord-icon.png' %>" class="user-avatar" alt="Avatar">
+						<div class="user-info">
+							<p class="has-text-weight-bold"><%= user.username %></p>
+							<p class="is-size-7 has-text-grey">ID: <%= user._id %></p>
+						</div>
+						<div>
+							<% if (user.subscription && user.subscription.tier_id) { %>
+							<span class="tier-badge" style="background-color: <%= (configData.tiers.find(t => t._id === user.subscription.tier_id) || {}).color || '#3273dc' %>20; color: <%= (configData.tiers.find(t => t._id === user.subscription.tier_id) || {}).color || '#3273dc' %>;">
+								<%= (configData.tiers.find(t => t._id === user.subscription.tier_id) || {}).name || user.subscription.tier_id %>
+							</span>
+							<% } else { %>
+							<span class="tag">No Tier</span>
+							<% } %>
+						</div>
+						<button class="button is-small is-info" onclick="openEditModal('<%= user._id %>', '<%= user.username %>', '<%= user.subscription?.tier_id || '' %>')">
+							<span class="icon"><i class="fa fa-edit"></i></span>
+							<span>Edit</span>
+						</button>
+					</div>
+					<% }); %>
+					<% } else if (pageData.query) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							No users found matching "<%= pageData.query %>"
+						</div>
+					</article>
+					<% } %>
+
+					<!-- Recent Subscriptions -->
+					<% if (pageData.recentSubscriptions && pageData.recentSubscriptions.length > 0) { %>
+					<hr>
+					<h2 class="subtitle">Recent Subscription Changes</h2>
+					<table class="table is-fullwidth is-striped">
+						<thead>
+							<tr>
+								<th>User</th>
+								<th>Tier</th>
+								<th>Source</th>
+								<th>Started</th>
+								<th>Expires</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% pageData.recentSubscriptions.forEach(sub => { %>
+							<tr>
+								<td>
+									<span class="has-text-weight-bold"><%= sub.username %></span>
+									<br><span class="is-size-7 has-text-grey"><%= sub._id %></span>
+								</td>
+								<td>
+									<span class="tier-badge" style="background-color: <%= (configData.tiers.find(t => t._id === sub.subscription?.tier_id) || {}).color || '#3273dc' %>20; color: <%= (configData.tiers.find(t => t._id === sub.subscription?.tier_id) || {}).color || '#3273dc' %>;">
+										<%= (configData.tiers.find(t => t._id === sub.subscription?.tier_id) || {}).name || sub.subscription?.tier_id %>
+									</span>
+								</td>
+								<td><%= sub.subscription?.source || 'N/A' %></td>
+								<td><%= sub.subscription?.started_at ? new Date(sub.subscription.started_at).toLocaleDateString() : 'N/A' %></td>
+								<td><%= sub.subscription?.expires_at ? new Date(sub.subscription.expires_at).toLocaleDateString() : 'Never' %></td>
+								<td>
+									<button class="button is-small is-info" onclick="openEditModal('<%= sub._id %>', '<%= sub.username %>', '<%= sub.subscription?.tier_id || '' %>')">
+										Edit
+									</button>
+								</td>
+							</tr>
+							<% }); %>
+						</tbody>
+					</table>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Edit Modal -->
+	<div class="modal" id="edit-modal">
+		<div class="modal-background" onclick="closeEditModal()"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">Edit User Tier</p>
+				<button class="delete" aria-label="close" onclick="closeEditModal()"></button>
+			</header>
+			<form id="edit-form" method="post" action="<%= currentPage %>">
+				<section class="modal-card-body">
+					<input type="hidden" name="user_id" id="edit-user-id">
+					
+					<div class="field">
+						<label class="label">User</label>
+						<div class="control">
+							<input class="input" type="text" id="edit-username" readonly>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label">Assign Tier</label>
+						<div class="control">
+							<div class="select is-fullwidth">
+								<select name="tier_id" id="edit-tier">
+									<option value="">-- No Tier --</option>
+									<% configData.tiers.forEach(tier => { %>
+									<option value="<%= tier._id %>"><%= tier.name %> (Level <%= tier.level %>)</option>
+									<% }); %>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="field">
+						<label class="label">Expiration</label>
+						<div class="control">
+							<input class="input" type="date" name="expires_at" id="edit-expires">
+						</div>
+						<p class="help">Leave empty for no expiration (lifetime)</p>
+					</div>
+
+					<div class="field">
+						<label class="label">Reason</label>
+						<div class="control">
+							<input class="input" type="text" name="reason" placeholder="e.g., gifted, manual upgrade, support">
+						</div>
+					</div>
+
+					<hr>
+
+					<div class="field">
+						<label class="label">Grant Individual Features</label>
+						<div class="control">
+							<div class="tags">
+								<% configData.features.forEach(feature => { %>
+								<label class="checkbox mr-3">
+									<input type="checkbox" name="grant_features[]" value="<%= feature._id %>">
+									<%= feature.name %>
+								</label>
+								<% }); %>
+							</div>
+						</div>
+						<p class="help">Grant features independently of tier</p>
+					</div>
+				</section>
+				<footer class="modal-card-foot">
+					<button type="submit" class="button is-success">Save Changes</button>
+					<button type="button" class="button" onclick="closeEditModal()">Cancel</button>
+					<button type="button" class="button is-danger is-outlined" onclick="cancelSubscription()">Cancel Subscription</button>
+				</footer>
+			</form>
+		</div>
+	</div>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	function openEditModal(userId, username, currentTier) {
+		document.getElementById('edit-user-id').value = userId;
+		document.getElementById('edit-username').value = username + ' (' + userId + ')';
+		document.getElementById('edit-tier').value = currentTier || '';
+		document.getElementById('edit-modal').classList.add('is-active');
+	}
+
+	function closeEditModal() {
+		document.getElementById('edit-modal').classList.remove('is-active');
+	}
+
+	async function cancelSubscription() {
+		const userId = document.getElementById('edit-user-id').value;
+		if (!confirm('Are you sure you want to cancel this user\'s subscription?')) return;
+
+		try {
+			const response = await fetch('<%= currentPage %>/cancel', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ user_id: userId }),
+			});
+
+			if (response.ok) {
+				location.reload();
+			} else {
+				alert('Failed to cancel subscription');
+			}
+		} catch (err) {
+			alert('An error occurred');
+		}
+	}
+	</script>
+</body>
+</html>

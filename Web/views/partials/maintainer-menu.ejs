@@ -57,6 +57,49 @@
             <% } else { %>
 			<a href="/dashboard/maintainer/global-options/wiki-contributors">Wiki Contributors</a>
             <% } %>
+            <% if (isSudoMaintainer) { %>
+                <% if (currentPage === "/dashboard/maintainer/global-options/donations") { %>
+                <a class="is-active" href="#">Donations</a>
+                <% } else { %>
+                <a href="/dashboard/maintainer/global-options/donations">Donations</a>
+                <% } %>
+            <% } %>
+		</li>
+	</ul>
+	<% } if (isSudoMaintainer && accessPrivileges.includes("administration")) { %>
+	<p class="menu-label">
+		<span class="icon is-small">
+			<i class="fa fa-id-card"></i>
+		</span>
+		Membership
+	</p>
+	<ul class="menu-list">
+		<li>
+			<% if (currentPage === "/dashboard/maintainer/membership/features") { %>
+			<a class="is-active" href="#">Features</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/features">Features</a>
+			<% } %>
+			<% if (currentPage === "/dashboard/maintainer/membership/tiers") { %>
+			<a class="is-active" href="#">Tiers</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/tiers">Tiers</a>
+			<% } %>
+			<% if (currentPage === "/dashboard/maintainer/membership/oauth") { %>
+			<a class="is-active" href="#">OAuth Providers</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/oauth">OAuth Providers</a>
+			<% } %>
+			<% if (currentPage === "/dashboard/maintainer/membership/payments") { %>
+			<a class="is-active" href="#">Payment Providers</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/payments">Payment Providers</a>
+			<% } %>
+			<% if (currentPage === "/dashboard/maintainer/membership/users") { %>
+			<a class="is-active" href="#">User Management</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/membership/users">User Management</a>
+			<% } %>
 		</li>
 	</ul>
 	<% } if (accessPrivileges.includes("management")) { %>

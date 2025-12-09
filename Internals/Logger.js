@@ -69,10 +69,12 @@ module.exports = class Logger {
 
 		this.sentry = null;
 		if (config.sentry && config.sentry.dsn) {
-			const sentryConfig = Object.assign({
+			const sentryConfig = {
+				dsn: config.sentry.dsn,
 				release: `Skynet.${configJSON.branch}.${configJSON.version}`,
-				environment: OfficialMode.includes(auth.discord.clientID) ? "prod" : "development",
-			}, config.sentry);
+				environment: config.sentry.environment || (OfficialMode.includes(auth.discord.clientID) ? "prod" : "development"),
+				tracesSampleRate: config.sentry.tracesSampleRate || 1.0,
+			};
 			this.info("Connecting this Logger instance with Sentry.", { config: sentryConfig });
 			sentry.init(sentryConfig);
 			this.sentry = sentry;
@@ -130,9 +132,11 @@ module.exports = class Logger {
 	sendSentryError (error, metadata) {
 		if (this.sentry) {
 			// Sentry v8 compatible error capturing
-			this.sentry.captureException(error, {
+			const eventId = this.sentry.captureException(error, {
 				level: (metadata._level === "warn" ? "warning" : metadata._level) || "error",
+				extra: metadata,
 			});
+			console.log(`[SENTRY] Captured exception: ${eventId} - ${error.message || error}`);
 		}
 	}
 };

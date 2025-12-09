@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Thank You! - <%= serverData.name %></title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/header') %>
+
+	<section class="hero is-medium is-success">
+		<div class="hero-body">
+			<div class="container has-text-centered">
+				<span class="icon is-large">
+					<i class="fa fa-check-circle fa-3x"></i>
+				</span>
+				<h1 class="title is-1 mt-4">Thank You!</h1>
+				<p class="subtitle">Your membership has been activated successfully.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<div class="columns is-centered">
+				<div class="column is-6 has-text-centered">
+					<div class="box">
+						<p class="is-size-5 mb-4">
+							Your new membership benefits are now active. 
+							It may take a few moments for all features to be available.
+						</p>
+						
+						<div class="buttons is-centered">
+							<a href="/account" class="button is-primary">
+								<span class="icon"><i class="fa fa-user-cog"></i></span>
+								<span>View Account</span>
+							</a>
+							<a href="/dashboard" class="button is-link">
+								<span class="icon"><i class="fa fa-tachometer"></i></span>
+								<span>Go to Dashboard</span>
+							</a>
+						</div>
+
+						<hr>
+
+						<p class="is-size-7 has-text-grey">
+							A confirmation email has been sent to your email address.
+							If you have any questions, please contact support.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>

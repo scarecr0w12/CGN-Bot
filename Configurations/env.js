@@ -38,6 +38,8 @@ const loadConfigs = () => {
 		},
 		sentry: {
 			dsn: pick("SENTRY_DSN", fileConfigJS.sentry?.dsn),
+			environment: pick("SENTRY_ENVIRONMENT", fileConfigJS.sentry?.environment),
+			tracesSampleRate: parseFloat(pick("SENTRY_TRACES_SAMPLE_RATE", fileConfigJS.sentry?.tracesSampleRate)) || 1.0,
 		},
 		consoleLevel: pick("LOG_LEVEL", fileConfigJS.consoleLevel ?? "info"),
 		fileLevel: pick("LOG_FILE_LEVEL", fileConfigJS.fileLevel ?? "info"),
@@ -47,7 +49,7 @@ const loadConfigs = () => {
 	};
 
 	const baseConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : templateConfigJSON;
-	
+
 	// Parse comma-separated list from env or use file config
 	const parseList = (envKey, fallback) => {
 		const envVal = process.env[envKey];
