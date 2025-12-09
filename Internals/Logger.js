@@ -69,10 +69,12 @@ module.exports = class Logger {
 
 		this.sentry = null;
 		if (config.sentry && config.sentry.dsn) {
-			const sentryConfig = Object.assign({
+			const sentryConfig = {
+				dsn: config.sentry.dsn,
 				release: `Skynet.${configJSON.branch}.${configJSON.version}`,
-				environment: OfficialMode.includes(auth.discord.clientID) ? "prod" : "development",
-			}, config.sentry);
+				environment: config.sentry.environment || (OfficialMode.includes(auth.discord.clientID) ? "prod" : "development"),
+				tracesSampleRate: config.sentry.tracesSampleRate || 1.0,
+			};
 			this.info("Connecting this Logger instance with Sentry.", { config: sentryConfig });
 			sentry.init(sentryConfig);
 			this.sentry = sentry;

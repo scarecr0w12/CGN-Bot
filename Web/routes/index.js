@@ -98,6 +98,11 @@ module.exports = app => {
 		routers[ID].app = app;
 	});
 
+	// Test error endpoint for Sentry verification
+	routers.general.get("/test-sentry-error", () => {
+		throw new Error("Test Sentry Error - This is a deliberate test error to verify Sentry integration");
+	});
+
 	generalRouting(routers.general);
 	statusRouting(routers.general);
 	activityRouting(routers.general);
