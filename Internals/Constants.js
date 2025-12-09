@@ -500,8 +500,9 @@ Constants.APIs = {
  * @type {string}
  */
 Constants.CENTRAL = {
-	VERSIONING: "https://status.skynetbot.com/api/versions/",
-	CODEBASE: "https://codeload.github.com/GilbertGobbels/SkynetBot/zip/",
+	REPO_OWNER: "scarecr0w12",
+	REPO_NAME: "CGN-Bot",
+	GITHUB_API: "https://api.github.com",
 };
 
 Constants.CODEBASE_TOTAL_CHUNK_SIZE = 10300000;
@@ -510,7 +511,7 @@ Constants.CODEBASE_TOTAL_CHUNK_SIZE = 10300000;
  * Default value of the useragent header on all requests made to third-party endpoints.
  * @type {string}
  */
-Constants.UserAgent = "SkynetBot (https://github.com/GilbertGobbels/SkynetBot)";
+Constants.UserAgent = "SkynetBot (https://github.com/scarecr0w12/CGN-Bot)";
 
 /**
  * An empty space

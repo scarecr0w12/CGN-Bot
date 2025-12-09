@@ -57,6 +57,13 @@
             <% } else { %>
 			<a href="/dashboard/maintainer/global-options/wiki-contributors">Wiki Contributors</a>
             <% } %>
+            <% if (isSudoMaintainer) { %>
+                <% if (currentPage === "/dashboard/maintainer/global-options/donations") { %>
+                <a class="is-active" href="#">Donations</a>
+                <% } else { %>
+                <a href="/dashboard/maintainer/global-options/donations">Donations</a>
+                <% } %>
+            <% } %>
 		</li>
 	</ul>
 	<% } if (accessPrivileges.includes("management")) { %>

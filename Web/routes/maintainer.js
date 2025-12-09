@@ -14,6 +14,7 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/bot-user", "administration", [], controllers.console.options.bot);
 	setupConsolePage(router, "/global-options/homepage", "administration", [], controllers.console.options.homepage);
 	setupConsolePage(router, "/global-options/wiki-contributors", "administration", [], controllers.console.options.contributors);
+	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);

@@ -5,7 +5,7 @@ module.exports = {
 		es6: true,
 	},
 	parserOptions: {
-		ecmaVersion: 2019,
+		ecmaVersion: 2020,
 		sourceType: "module",
 	},
 	globals: {
@@ -19,6 +19,7 @@ module.exports = {
 		Raw: true,
 		configJS: true,
 		configJSON: true,
+		SiteSettings: true,
 	},
 	plugins: [
 		"promise",

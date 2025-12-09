@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Donation Settings - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						Donation Settings
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								Configure the donation page subtitle and manage the list of charities displayed.
+							</div>
+						</div>
+					</article>
+					<form id="form" action="<%= currentPage %>" method="post">
+						<div class="field">
+							<label class="label">Donate Subtitle</label>
+							<div class="control">
+								<input class="input" type="text" name="donateSubtitle" value="<%= configData.donateSubtitle %>" required>
+							</div>
+						</div>
+						
+						<label class="label">Charities</label>
+						<div class="field" style="overflow-x: auto;">
+							<table class="table is-fullwidth" id="charities-table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Country (Code/Name)</th>
+										<th>Donate URL</th>
+										<th>Icon URL</th>
+										<th style="width: 50px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (configData.charities && configData.charities.length > 0) { %>
+										<% configData.charities.forEach(charity => { %>
+										<tr>
+											<td><input class="input" type="text" name="name[]" value="<%= charity.name %>" required></td>
+											<td><input class="input" type="text" name="country[]" value="<%= charity.country || '' %>"></td>
+											<td><input class="input" type="url" name="donate_url[]" value="<%= charity.donate_url %>" required></td>
+											<td><input class="input" type="url" name="icon_url[]" value="<%= charity.icon_url %>" required></td>
+											<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+										</tr>
+										<% }); %>
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+						
+						<button type="button" class="button is-info" onclick="addCharity(); SkynetData.HUM = true;">
+							<span class="icon"><i class="fa fa-plus"></i></span>
+							<span>Add Charity</span>
+						</button>
+						<br><br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	function addCharity() {
+		$('#charities-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="name[]" value="" required></td>
+				<td><input class="input" type="text" name="country[]" value=""></td>
+				<td><input class="input" type="url" name="donate_url[]" value="" required></td>
+				<td><input class="input" type="url" name="icon_url[]" value="" required></td>
+				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+			</tr>
+		`);
+	}
+	</script>
+</body>
+</html>

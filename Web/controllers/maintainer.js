@@ -254,6 +254,59 @@ controllers.options.contributors.post = async (req, res) => {
 	save(req, res);
 };
 
+controllers.options.donations = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+		await siteSettings.save();
+	}
+
+	res.setConfigData({
+		donateSubtitle: siteSettings.donateSubtitle || configJS.donateSubtitle || "",
+		charities: siteSettings.charities || [],
+	}).setPageData({
+		page: "maintainer-donations.ejs",
+	}).render();
+};
+controllers.options.donations.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+
+	siteSettings.query.set("donateSubtitle", req.body.donateSubtitle || "");
+
+	const names = req.body.name ? (Array.isArray(req.body.name) ? req.body.name : [req.body.name]) : [];
+	const countries = req.body.country ? (Array.isArray(req.body.country) ? req.body.country : [req.body.country]) : [];
+	const donateUrls = req.body.donate_url ? (Array.isArray(req.body.donate_url) ? req.body.donate_url : [req.body.donate_url]) : [];
+	const iconUrls = req.body.icon_url ? (Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url]) : [];
+
+	const charities = [];
+	for (let i = 0; i < names.length; i++) {
+		if (names[i] && donateUrls[i] && iconUrls[i]) {
+			charities.push({
+				name: names[i],
+				country: countries[i] || "",
+				donate_url: donateUrls[i],
+				icon_url: iconUrls[i],
+			});
+		}
+	}
+	siteSettings.query.set("charities", charities);
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save donation settings", {}, err);
+		renderError(res, "Failed to save donation settings.");
+	}
+};
+
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {
