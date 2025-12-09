@@ -1,4 +1,4 @@
-const { Client: DJSClient, Collection, ChannelType, MessageType } = require("discord.js");
+const { Client: DJSClient, Collection, ChannelType, PermissionFlagsBits } = require("discord.js");
 const ProcessAsPromised = require("process-as-promised");
 const reload = require("require-reload")(require);
 const dbl = require("dblposter");
@@ -194,7 +194,7 @@ module.exports = class SkynetClient extends DJSClient {
 	getName (serverDocument, member, ignoreNick = false) {
 		return RemoveFormatting(
 			(serverDocument.config.name_display.use_nick && !ignoreNick ? member.nickname ? member.nickname : member.user.username : member.user.username) +
-			(serverDocument.config.name_display.show_discriminator ? `#${member.user.discriminator}` : "")
+			(serverDocument.config.name_display.show_discriminator ? `#${member.user.discriminator}` : ""),
 		);
 	}
 
@@ -602,12 +602,11 @@ module.exports = class SkynetClient extends DJSClient {
 	getGame (userOrMember) {
 		return new Promise(resolve => {
 			const { presence } = userOrMember;
-			// Discord.js v14: activities is an array
-			if (presence?.activities?.length > 0 && presence.activities[0].name) {
-				resolve(presence.activities[0].name);
-			} else {
-				resolve("");
+			// Discord.js v14: activities is an array; avoid optional chaining for older parsers
+			if (presence && Array.isArray(presence.activities) && presence.activities.length > 0 && presence.activities[0].name) {
+				return resolve(presence.activities[0].name);
 			}
+			resolve("");
 		});
 	}
 
@@ -893,7 +892,10 @@ module.exports = class SkynetClient extends DJSClient {
 
 		let adminLevel = 0;
 		let { roles } = member;
-		if (!(roles instanceof Array)) roles = [...roles.keys()];
+		// discord.js v14: member.roles is a GuildMemberRoleManager with a .cache Collection
+		if (!(roles instanceof Array)) {
+			roles = roles.cache ? [...roles.cache.keys()] : [...roles.keys()];
+		}
 		for (const role of roles) {
 			const adminDocument = serverDocument.config.admins.id(role.id || role);
 			if (adminDocument && adminDocument.level > adminLevel) {

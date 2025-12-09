@@ -143,6 +143,11 @@ middleware.checkUnavailableAPI = (req, res, next) => {
 	next();
 };
 
+middleware.markAsAPI = (req, res, next) => {
+	req.isAPI = true;
+	next();
+};
+
 middleware.enforceProtocol = (req, res, next) => {
 	if (!req.secure) {
 		return res.redirect(`https://${req.hostname}:${global.configJS.httpsPort}${req.url}`);

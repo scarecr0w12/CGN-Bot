@@ -26,5 +26,26 @@
   "injection": {
     "headScript": "",
     "pageScript": ""
+  },
+  "ai": {
+    "defaultProvider": "openai",
+    "defaultModel": {
+      "name": "gpt-4o-mini",
+      "provider": "openai"
+    },
+    "providers": {
+      "openai": {
+        "apiKey": ""
+      },
+      "anthropic": {
+        "apiKey": ""
+      },
+      "groq": {
+        "apiKey": ""
+      },
+      "ollama": {
+        "baseUrl": "http://localhost:11434"
+      }
+    }
   }
 }

@@ -1,4 +1,5 @@
 const Extendable = require("../ExtendableBase");
+const { PermissionFlagsBits } = require("discord.js");
 
 module.exports = class extends Extendable {
 	constructor () {

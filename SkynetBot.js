@@ -728,14 +728,20 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	/**
-	 * INTERACTION_CREATE (slash / context commands scaffold)
+	 * INTERACTION_CREATE (slash / context commands)
 	 */
 	client.on("interactionCreate", async interaction => {
 		if (!interaction.isChatInputCommand()) return;
+		if (!client.slashCommands) {
+			return interaction.reply({
+				content: "Slash commands are still loading. Please try again in a moment.",
+				ephemeral: true,
+			});
+		}
 		try {
-			await interaction.reply({ content: "Slash commands are being migrated. Please use prefix commands for now.", ephemeral: true });
+			await client.slashCommands.handleInteraction(interaction);
 		} catch (err) {
-			logger.warn("Failed to handle interactionCreate scaffold.", { interaction: interaction.commandName }, err);
+			logger.warn("Failed to handle interactionCreate.", { interaction: interaction.commandName }, err);
 		}
 	});
 
@@ -867,6 +873,21 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			console.log("[DEBUG] Starting WebServer...");
 			await logger.silly("Running webserver...");
 			WebServer.open(client, auth, configJS, logger);
+
+			// Initialize slash commands
+			const { SlashCommandHandler } = require("./Internals/SlashCommands");
+			client.slashCommands = new SlashCommandHandler(client);
+			await client.slashCommands.loadCommands();
+			// Register slash commands with Discord (only in production or when explicitly enabled)
+			if (process.env.REGISTER_SLASH_COMMANDS === "true" || process.env.NODE_ENV === "production") {
+				await client.slashCommands.registerCommands(
+					auth.discord.token,
+					auth.discord.clientID,
+					process.env.SLASH_COMMANDS_GUILD_ID || null,
+				);
+			}
+			logger.info("Slash commands initialized!");
+
 			client.isReady = true;
 			console.log("[DEBUG] WebServer started, client is ready!");
 		} catch (err) {

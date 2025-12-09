@@ -141,3 +141,4 @@ controllers.commands = require("./commands");
 controllers.stats = require("./stats");
 controllers.administration = require("./administration");
 controllers.other = require("./other");
+controllers.ai = require("./ai");

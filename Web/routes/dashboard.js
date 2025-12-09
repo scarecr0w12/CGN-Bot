@@ -1,4 +1,5 @@
 const { setupPage, setupDashboardPage } = require("../helpers");
+const middleware = require("../middleware");
 const controllers = require("../controllers");
 
 module.exports = router => {
@@ -51,4 +52,13 @@ module.exports = router => {
 	setupDashboardPage(router, "/other/extensions", [], controllers.dashboard.other.extensions, "extensions");
 	setupDashboardPage(router, "/other/extension-builder", [], controllers.dashboard.other.extensionBuilder);
 	setupDashboardPage(router, "/other/export", [], controllers.dashboard.other.export);
+
+	// AI
+	setupDashboardPage(router, "/ai/settings", [], controllers.dashboard.ai.settings);
+	setupDashboardPage(router, "/ai/governance", [], controllers.dashboard.ai.governance);
+	setupDashboardPage(router, "/ai/memory", [], controllers.dashboard.ai.memory);
+	router.get("/:svrid/ai/models", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.models);
+	router.post("/:svrid/ai/test-qdrant", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.testQdrant);
+	router.post("/:svrid/ai/clear-vector-memory", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.clearVectorMemory);
+	router.get("/:svrid/ai/vector-stats", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.vectorStats);
 };

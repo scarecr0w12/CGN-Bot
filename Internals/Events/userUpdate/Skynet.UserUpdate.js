@@ -7,7 +7,8 @@ class UserUpdate extends BaseEvent {
 	}
 
 	async handle (oldUser, newUser) {
-		this.client.guilds.forEach(guild => {
+		// Discord.js v14: use the guilds cache Collection
+		this.client.guilds.cache.forEach(guild => {
 			if (guild.members.cache.has(newUser.id)) this.sendStatusMessages(guild, oldUser, newUser).catch(() => null);
 		});
 	}

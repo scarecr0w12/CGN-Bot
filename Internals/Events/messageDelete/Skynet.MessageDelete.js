@@ -7,6 +7,24 @@ class MessageDelete extends BaseEvent {
 	}
 
 	async handle (msg) {
+		// Cache message for snipe command
+		if (!this.client.snipes) {
+			this.client.snipes = new Map();
+		}
+		this.client.snipes.set(msg.channel.id, {
+			content: msg.content,
+			author: msg.author,
+			attachments: Array.from(msg.attachments.values()),
+			deletedAt: new Date(),
+		});
+		// Auto-clear snipe after 5 minutes
+		setTimeout(() => {
+			const cached = this.client.snipes.get(msg.channel.id);
+			if (cached && cached.deletedAt.getTime() === this.client.snipes.get(msg.channel.id).deletedAt.getTime()) {
+				this.client.snipes.delete(msg.channel.id);
+			}
+		}, 300000);
+
 		const serverDocument = await Servers.findOne(msg.guild.id);
 		if (!serverDocument) {
 			return logger.debug("Failed to find server data for message deletion.", { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });

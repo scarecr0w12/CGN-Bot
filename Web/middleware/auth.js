@@ -70,9 +70,14 @@ module.exports = middleware => {
 							req.svr = svr;
 							req.svr.document = serverDocument;
 							req.svr.queryDocument = serverDocument.query;
-							console.log("[AUTH] Calling populateDashboard");
-							res.res.populateDashboard(req);
-							console.log("[AUTH] populateDashboard completed, calling next()");
+							// Only call populateDashboard for page requests, not API
+							if (res.res && res.res.populateDashboard) {
+								console.log("[AUTH] Calling populateDashboard");
+								res.res.populateDashboard(req);
+								console.log("[AUTH] populateDashboard completed, calling next()");
+							} else {
+								console.log("[AUTH] API request, skipping populateDashboard");
+							}
 							return next();
 						} catch (err) {
 							console.error(`[AUTH ERROR] ${req.method} ${req.path}:`, err);

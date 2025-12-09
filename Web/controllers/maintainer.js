@@ -374,23 +374,27 @@ controllers.management.injection.post = async (req, res) => {
 };
 
 controllers.management.version = async (req, { res }) => {
-	const version = await req.app.client.central.API("versions").branch(configJSON.branch).get(configJSON.version);
-	if (version && version.metadata) version.metadata.changelog = md.makeHtml(version.metadata.changelog);
-	const checkData = await version.check();
-	if (checkData.current) checkData.current.metadata.changelog = md.makeHtml(checkData.current.metadata.changelog);
-	const isDownloaded = checkData && checkData.current && await version.checkDownload(checkData.current.tag);
+	try {
+		const version = await req.app.client.central.API("versions").branch(configJSON.branch).get(configJSON.version);
+		if (version && version.metadata) version.metadata.changelog = md.makeHtml(version.metadata.changelog);
+		const checkData = await version.check();
+		if (checkData.current) checkData.current.metadata.changelog = md.makeHtml(checkData.current.metadata.changelog);
+		const isDownloaded = checkData && checkData.current && await version.checkDownload(checkData.current.tag);
 
-	res.setPageData({
-		disabled: !version.valid,
-		latestVersion: checkData.current,
-		installedVersion: version,
-		utd: checkData.utd,
-		isDownloaded,
-		page: "maintainer-version.ejs",
-	}).setConfigData({
-		version: configJSON.version,
-		branch: configJSON.branch,
-	}).render();
+		res.setPageData({
+			disabled: !version.valid,
+			latestVersion: checkData.current,
+			installedVersion: version,
+			utd: checkData.utd,
+			isDownloaded,
+			page: "maintainer-version.ejs",
+		}).setConfigData({
+			version: configJSON.version,
+			branch: configJSON.branch,
+		}).render();
+	} catch (err) {
+		renderError(res, "Failed to load version data.", null, 500, err);
+	}
 };
 controllers.management.version.post = async (req, res) => {
 	res.sendStatus(204);
@@ -402,50 +406,61 @@ controllers.management.version.socket = async socket => {
 		socket.route.router.app.client.IPC.send("shutdown", { err: true });
 	});
 	socket.on("download", async data => {
-		if (!data || !data.branch || !data.tag) return socket.emit("err", { error: 400, fatal: false });
-		const version = await socket.route.router.app.client.central.API("versions").branch(data.branch).get(data.tag);
-		if (!version.valid) return socket.emit("err", { error: 404, fatal: false });
-
-		let pushQueue = 0;
-		let finished = false;
-		socket.emit("totalChunks", Constants.CODEBASE_TOTAL_CHUNK_SIZE);
-		const sendChunkQueue = () => {
-			if (finished) return;
-			socket.emit("chunk", pushQueue);
-			pushQueue = 0;
-			setTimeout(sendChunkQueue, Math.floor(Math.random() * 1000));
-		};
-		sendChunkQueue();
 		try {
-			await version.download(({ length }) => {
-				pushQueue += length;
-			});
-		} catch (err) {
-			finished = true;
-			return socket.emit("err", { error: 500, fatal: false });
-		}
+			if (!data || !data.branch || !data.tag) return socket.emit("err", { error: 400, fatal: false });
+			const version = await socket.route.router.app.client.central.API("versions").branch(data.branch).get(data.tag);
+			if (!version.valid) return socket.emit("err", { error: 404, fatal: false });
 
-		finished = true;
-		socket.emit("downloadSuccess");
+			let pushQueue = 0;
+			let finished = false;
+			socket.emit("totalChunks", Constants.CODEBASE_TOTAL_CHUNK_SIZE);
+			const sendChunkQueue = () => {
+				if (finished) return;
+				socket.emit("chunk", pushQueue);
+				pushQueue = 0;
+				setTimeout(sendChunkQueue, Math.floor(Math.random() * 1000));
+			};
+			sendChunkQueue();
+			try {
+				await version.download(({ length }) => {
+					pushQueue += length;
+				});
+			} catch (err) {
+				finished = true;
+				logger.error("Version download failed", { branch: data.branch, tag: data.tag }, err);
+				return socket.emit("err", { error: 500, fatal: false });
+			}
+
+			finished = true;
+			socket.emit("downloadSuccess");
+		} catch (err) {
+			logger.error("Unhandled error in version download socket", { branch: data && data.branch, tag: data && data.tag }, err);
+			socket.emit("err", { error: 500, fatal: false });
+		}
 	});
 	socket.on("install", async data => {
-		const version = await socket.route.router.app.client.central.API("versions").branch(data.branch).get(data.tag);
-		if (!await version.checkDownload()) {
-			return socket.emit("err", { error: 404, fatal: true, message: "That version has not been downloaded yet." });
+		try {
+			const version = await socket.route.router.app.client.central.API("versions").branch(data.branch).get(data.tag);
+			if (!await version.checkDownload()) {
+				return socket.emit("err", { error: 404, fatal: true, message: "That version has not been downloaded yet." });
+			}
+
+			version.on("installLog", log => {
+				socket.emit("installLog", log);
+			});
+			version.on("installFinish", async () => {
+				configJSON.version = version.tag;
+				configJSON.branch = version.branch;
+				socket.request.app = socket.route.router.app;
+				await save(socket.request, null, true, true);
+				socket.emit("installFinish");
+			});
+
+			await version.install();
+		} catch (err) {
+			logger.error("Unhandled error in version install socket", { branch: data && data.branch, tag: data && data.tag }, err);
+			socket.emit("err", { error: 500, fatal: true });
 		}
-
-		version.on("installLog", log => {
-			socket.emit("installLog", log);
-		});
-		version.on("installFinish", async () => {
-			configJSON.version = version.tag;
-			configJSON.branch = version.branch;
-			socket.request.app = socket.route.router.app;
-			await save(socket.request, null, true, true);
-			socket.emit("installFinish");
-		});
-
-		await version.install();
 	});
 };
 

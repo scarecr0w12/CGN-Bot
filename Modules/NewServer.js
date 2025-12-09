@@ -5,12 +5,14 @@ const defaultRanksList = require("../Configurations/ranks.json");
 const defStatusMessages = require("../Configurations/status_messages.json");
 const defTagReactions = require("../Configurations/tag_reactions.json");
 const Utils = require("./Utils/");
+const { PermissionFlagsBits } = require("discord.js");
 
 // Set defaults for new server document
 module.exports = async (client, server, serverDocument) => {
 	const serverConfigQueryDocument = serverDocument.query.prop("config");
 	// Default admin roles
-	server.roles.forEach(role => {
+	const serverRoles = server.roles && server.roles.cache ? [...server.roles.cache.values()] : server.roles || [];
+	serverRoles.forEach(role => {
 		if (role.name !== "@everyone" && !role.managed && role.permissions.has(PermissionFlagsBits.ManageGuild, true) && !serverDocument.config.admins.id(role.id)) {
 			serverConfigQueryDocument.push("admins", {
 				_id: role.id,

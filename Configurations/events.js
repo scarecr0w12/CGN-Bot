@@ -94,6 +94,14 @@ module.exports = {
 		// "Skynet.Translation",
 		// "Skynet.OtherFilters",
 	],
+	messageCreate: [
+		"Skynet.MessageCreate",
+		"Skynet.SpamHandler",
+		"Skynet.VoteHandler",
+		"Skynet.AFKHandler",
+		"Skynet.UsernameHandler",
+		"Skynet.SharedCommandMessageHandler",
+	],
 	messageDelete: [
 		"Skynet.MessageDelete",
 	],

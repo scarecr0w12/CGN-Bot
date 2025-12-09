@@ -1,5 +1,6 @@
 const Schema = require("../Schema");
 const { public: commands } = require("../../Configurations/commands.js");
+const serverAISchema = require("./serverAISchema.js");
 
 // Get command(s) structure for server config schema below
 const getCommands = () => {
@@ -602,4 +603,6 @@ module.exports = new Schema({
 		type: String,
 		default: "https://i.imgur.com/3QPLumg.gif",
 	},
+	// AI configuration
+	ai: serverAISchema,
 });

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> AI Settings - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<script src="/static/js/form-change-listener.js"></script>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<i class="fas fa-robot"></i> AI Assistant Settings
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							Configure your server's AI assistant. Each server uses its own API keys for LLM providers.
+							<strong>API keys are stored securely and never shared.</strong>
+						</div>
+					</article>
+
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
+						<!-- Provider Selection -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-plug"></i> Provider Configuration
+						</h4>
+
+						<div class="field">
+							<label class="label">Default Provider</label>
+							<div class="control">
+								<div class="select is-primary">
+									<select name="defaultProvider" id="defaultProvider" onchange="updateModelOptions()">
+										<% pageData.providers.forEach(provider => { %>
+											<option value="<%= provider.id %>" <%= configData.ai.defaultProvider === provider.id ? 'selected' : '' %>><%= provider.name %></option>
+										<% }); %>
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="field">
+							<label class="label">Default Model</label>
+							<div class="control">
+								<input name="model-name" id="model-name" class="input is-primary" type="text" value="<%= configData.ai.model.name %>" placeholder="e.g., gpt-4o-mini">
+								<input type="hidden" name="model-provider" id="model-provider" value="<%= configData.ai.model.provider %>">
+							</div>
+							<p class="help">Enter the model name. Common models: gpt-4o-mini, claude-3-5-sonnet-20241022, llama-3.1-70b-versatile</p>
+						</div>
+
+						<hr>
+
+						<!-- API Keys Section -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-key"></i> API Keys
+						</h4>
+						<article class="message is-warning">
+							<div class="message-body">
+								<i class="fas fa-shield-alt"></i> API keys are encrypted and stored securely. Only enter a new key if you want to change it.
+							</div>
+						</article>
+
+						<div class="columns">
+							<div class="column">
+								<div class="field">
+									<label class="label">
+										OpenAI API Key
+										<% if (configData.ai.providers.openai.hasKey) { %>
+											<span class="tag is-success is-light"><i class="fas fa-check"></i> Configured</span>
+										<% } %>
+									</label>
+									<div class="control has-icons-left">
+										<input name="providers-openai-apiKey" class="input" type="password" 
+											value="<%= configData.ai.providers.openai.apiKey %>" 
+											placeholder="sk-...">
+										<span class="icon is-small is-left">
+											<i class="fas fa-key"></i>
+										</span>
+									</div>
+									<p class="help">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a></p>
+								</div>
+							</div>
+							<div class="column">
+								<div class="field">
+									<label class="label">
+										Anthropic API Key
+										<% if (configData.ai.providers.anthropic.hasKey) { %>
+											<span class="tag is-success is-light"><i class="fas fa-check"></i> Configured</span>
+										<% } %>
+									</label>
+									<div class="control has-icons-left">
+										<input name="providers-anthropic-apiKey" class="input" type="password" 
+											value="<%= configData.ai.providers.anthropic.apiKey %>" 
+											placeholder="sk-ant-...">
+										<span class="icon is-small is-left">
+											<i class="fas fa-key"></i>
+										</span>
+									</div>
+									<p class="help">Get your key at <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a></p>
+								</div>
+							</div>
+						</div>
+
+						<div class="columns">
+							<div class="column">
+								<div class="field">
+									<label class="label">
+										Groq API Key
+										<% if (configData.ai.providers.groq.hasKey) { %>
+											<span class="tag is-success is-light"><i class="fas fa-check"></i> Configured</span>
+										<% } %>
+									</label>
+									<div class="control has-icons-left">
+										<input name="providers-groq-apiKey" class="input" type="password" 
+											value="<%= configData.ai.providers.groq.apiKey %>" 
+											placeholder="gsk_...">
+										<span class="icon is-small is-left">
+											<i class="fas fa-key"></i>
+										</span>
+									</div>
+									<p class="help">Get your key at <a href="https://console.groq.com/" target="_blank">console.groq.com</a> (Free tier available)</p>
+								</div>
+							</div>
+							<div class="column">
+								<div class="field">
+									<label class="label">Ollama Base URL</label>
+									<div class="control has-icons-left">
+										<input name="providers-ollama-baseUrl" class="input" type="text" 
+											value="<%= configData.ai.providers.ollama.baseUrl %>" 
+											placeholder="http://localhost:11434">
+										<span class="icon is-small is-left">
+											<i class="fas fa-server"></i>
+										</span>
+									</div>
+									<p class="help">For local Ollama server. Download at <a href="https://ollama.ai/" target="_blank">ollama.ai</a></p>
+								</div>
+							</div>
+						</div>
+
+						<details class="mb-4">
+							<summary class="has-text-weight-semibold" style="cursor: pointer;">
+								<i class="fas fa-cog"></i> OpenAI Compatible Provider (Advanced)
+							</summary>
+							<div class="box mt-2">
+								<div class="columns">
+									<div class="column">
+										<div class="field">
+											<label class="label">Base URL</label>
+											<div class="control">
+												<input name="providers-openai_compatible-baseUrl" class="input" type="text" 
+													value="<%= configData.ai.providers.openai_compatible.baseUrl %>" 
+													placeholder="https://api.example.com/v1">
+											</div>
+										</div>
+									</div>
+									<div class="column">
+										<div class="field">
+											<label class="label">API Key (if required)</label>
+											<div class="control">
+												<input name="providers-openai_compatible-apiKey" class="input" type="password" 
+													value="<%= configData.ai.providers.openai_compatible.hasKey ? '••••••••' : '' %>" 
+													placeholder="Optional">
+											</div>
+										</div>
+									</div>
+								</div>
+								<p class="help">For LocalAI, vLLM, Text Generation WebUI, or other OpenAI-compatible APIs.</p>
+							</div>
+						</details>
+
+						<hr>
+
+						<!-- System Prompt -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-comment-dots"></i> System Prompt
+						</h4>
+						<div class="field">
+							<label class="label">AI Personality & Instructions</label>
+							<div class="control">
+								<textarea name="systemPrompt" class="textarea is-primary" rows="4" maxlength="4000" placeholder="You are a helpful AI assistant..."><%= configData.ai.systemPrompt %></textarea>
+							</div>
+							<p class="help">Define the AI's personality and behavior. This is sent with every conversation.</p>
+						</div>
+
+						<hr>
+
+						<!-- Rate Limits -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-tachometer-alt"></i> Rate Limits
+						</h4>
+						<div class="columns">
+							<div class="column">
+								<div class="field">
+									<label class="label">Cooldown (seconds)</label>
+									<div class="control">
+										<input name="rateLimits-cooldownSec" class="input is-primary" type="number" 
+											value="<%= configData.ai.rateLimits.cooldownSec %>" min="0" max="300">
+									</div>
+									<p class="help">Time between AI commands per user</p>
+								</div>
+							</div>
+							<div class="column">
+								<div class="field">
+									<label class="label">Per User (per minute)</label>
+									<div class="control">
+										<input name="rateLimits-perUserPerMin" class="input is-primary" type="number" 
+											value="<%= configData.ai.rateLimits.perUserPerMin %>" min="1" max="60">
+									</div>
+									<p class="help">Max requests per user per minute</p>
+								</div>
+							</div>
+							<div class="column">
+								<div class="field">
+									<label class="label">Per Channel (per minute)</label>
+									<div class="control">
+										<input name="rateLimits-perChannelPerMin" class="input is-primary" type="number" 
+											value="<%= configData.ai.rateLimits.perChannelPerMin %>" min="1" max="120">
+									</div>
+									<p class="help">Max requests per channel per minute</p>
+								</div>
+							</div>
+						</div>
+
+						<hr>
+
+						<!-- Memory Settings -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-brain"></i> Conversation Memory
+						</h4>
+						<div class="columns">
+							<div class="column">
+								<div class="field">
+									<label class="label">History Limit</label>
+									<div class="control">
+										<input name="memory-limit" class="input is-primary" type="number" 
+											value="<%= configData.ai.memory.limit %>" min="1" max="50">
+									</div>
+									<p class="help">Number of message pairs to remember</p>
+								</div>
+							</div>
+							<div class="column">
+								<div class="field">
+									<label class="label">Per-User Memory</label>
+									<div class="control">
+										<label class="checkbox">
+											<input name="memory-perUserEnabled" type="checkbox" 
+												<%= configData.ai.memory.perUserEnabled ? 'checked' : '' %>>
+											Enable separate memory per user
+										</label>
+									</div>
+								</div>
+								<div class="field">
+									<label class="label">Per-User Limit</label>
+									<div class="control">
+										<input name="memory-perUserLimit" class="input is-primary" type="number" 
+											value="<%= configData.ai.memory.perUserLimit %>" min="1" max="20">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<hr>
+
+						<!-- Channel Settings -->
+						<h4 class="subtitle is-4">
+							<i class="fas fa-hashtag"></i> Channel Access
+						</h4>
+						<p class="mb-3">Leave all unchecked to enable AI in all channels, or select specific channels.</p>
+						
+						<div class="columns is-multiline">
+							<% pageData.channelData.forEach(channel => { %>
+								<div class="column is-one-third">
+									<label class="checkbox">
+										<input name="channel-enabled-<%= channel.id %>" type="checkbox"
+											<%= configData.ai.enabledChannels.includes(channel.id) ? 'checked' : '' %>>
+										#<%= channel.name %>
+									</label>
+								</div>
+							<% }); %>
+						</div>
+
+						<br>
+						<% var formButtonsUnsaved = false; %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+		function updateModelOptions() {
+			const provider = document.getElementById('defaultProvider').value;
+			document.getElementById('model-provider').value = provider;
+		}
+	</script>
+</body>
+</html>

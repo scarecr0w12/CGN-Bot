@@ -196,6 +196,34 @@
 	</ul>
 	<p class="menu-label">
         <span class="icon is-small">
+            <i class="fa fa-robot"></i>
+        </span>
+        <span>AI Assistant</span>
+	</p>
+	<ul class="menu-list">
+		<li>
+			<% if (currentPage === `/dashboard/${serverData.id}/ai/settings`) { %>
+            <%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">AI Settings</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/ai/settings">AI Settings</a>
+			<% } %>
+			<% if (currentPage === `/dashboard/${serverData.id}/ai/governance`) { %>
+            <%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">Governance & Usage</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/ai/governance">Governance & Usage</a>
+			<% } %>
+			<% if (currentPage === `/dashboard/${serverData.id}/ai/memory`) { %>
+            <%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">Vector Memory</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/ai/memory">Vector Memory</a>
+			<% } %>
+		</li>
+	</ul>
+	<p class="menu-label">
+        <span class="icon is-small">
             <i class="fa fa-list"></i>
         </span>
         <span>Other</span>

@@ -11,6 +11,7 @@ const {
 	},
 	Constants,
 } = require("../../index");
+const { AIManager } = require("../../../Modules/AI");
 const { LoggingLevels, Colors, UserAgent } = Constants;
 const { MessageType, PermissionFlagsBits } = require("discord.js");
 const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
@@ -408,6 +409,56 @@ class MessageCreate extends BaseEvent {
 								.join(" ")
 								.trim();
 							let shouldRunChatterbot = true;
+							const aiConfig = serverDocument.config.ai || {};
+							const aiEnabledInChannel = () => {
+								const { enabledChannels = [], disabledChannels = [] } = aiConfig;
+								if (disabledChannels.includes(msg.channel.id)) return false;
+								if (enabledChannels.length === 0) return true;
+								return enabledChannels.includes(msg.channel.id);
+							};
+							const isBotMentioned = (msg.mentions.members && msg.mentions.members.has(this.client.user.id)) || msg.mentions.users.has(this.client.user.id);
+
+							// Run AI mention conversation when allowed
+							if (!extensionApplied && isBotMentioned && aiEnabledInChannel() && prompt.length > 0 && !this.client.getSharedCommand(msg.command)) {
+								try {
+									if (!this.client.aiManager) {
+										this.client.aiManager = new AIManager(this.client);
+										await this.client.aiManager.initialize();
+									}
+
+									const rateLimitError = await this.client.aiManager.checkAndRecordUsage(
+										serverDocument,
+										msg.channel,
+										msg.author,
+									);
+									if (rateLimitError) {
+										await msg.channel.send(rateLimitError);
+										return;
+									}
+
+									await msg.channel.sendTyping();
+
+									const response = await this.client.aiManager.chat({
+										serverDocument,
+										channel: msg.channel,
+										user: msg.author,
+										message: prompt,
+										stream: false,
+									});
+
+									const maxLength = 2000;
+									if (response.length > maxLength) {
+										await msg.channel.send(`${response.substring(0, maxLength - 3)}...`);
+									} else {
+										await msg.channel.send(response || "(No response)");
+									}
+								} catch (err) {
+									logger.warn(`AI mention error: ${err.message}`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+									await msg.channel.send(`AI error: ${err.message}`);
+								}
+								shouldRunChatterbot = false;
+							}
+
 							if ((msg.content.startsWith(`<@${this.client.user.id}>`) || msg.content.startsWith(`<@!${this.client.user.id}>`)) && msg.content.includes(" ") && msg.content.length > msg.content.indexOf(" ") && !this.client.getSharedCommand(msg.command) && prompt.toLowerCase().trim() === "help") {
 								msg.send({
 									embeds: [{

@@ -32,6 +32,16 @@ const commands = {
 		},
 	},
 	public: {
+		ai: {
+			usage: `["ask" or "stream" or "clear" or "search" or "stats" or "variables"] [<message or query>]`,
+			description: `AI-powered chat assistant with multi-provider LLM support`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
 		"8ball": {
 			usage: `<question>`,
 			description: `Predicts the answer to a question`,
@@ -902,6 +912,128 @@ const commands = {
 				adminLevel: 0,
 			},
 			category: `Search & Media 🎬`,
+		},
+		starboard: {
+			usage: `["channel" <#channel>] | ["threshold" <number>] | ["emoji" <emoji>] | ["enable" or "disable"]`,
+			description: `Configure the starboard to highlight popular messages with star reactions`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 1,
+			},
+			category: `Moderation ⚒`,
+		},
+		slowmode: {
+			usage: `[<duration> or "off"]`,
+			description: `Set or remove slowmode for the current channel`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 1,
+			},
+			category: `Moderation ⚒`,
+		},
+		softban: {
+			usage: `<user> [<days>] [|] [<reason>]`,
+			description: `Bans and immediately unbans a user to delete their messages`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 2,
+			},
+			category: `Moderation ⚒`,
+		},
+		tempban: {
+			usage: `<user> <duration> [|] [<reason>]`,
+			description: `Temporarily bans a user for a specified duration`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 2,
+			},
+			category: `Moderation ⚒`,
+		},
+		suggest: {
+			usage: `["channel" <#channel>] | ["enable" or "disable"] | <suggestion>`,
+			description: `Submit suggestions or configure the suggestion system`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+			adminExempt: true,
+		},
+		userinfo: {
+			usage: `[<user>]`,
+			aliases: ["whois", "ui"],
+			description: `Displays detailed information about a user`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		lock: {
+			usage: `[<reason>]`,
+			description: `Locks the current channel, preventing everyone from sending messages`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 1,
+			},
+			category: `Moderation ⚒`,
+		},
+		unlock: {
+			usage: `[<reason>]`,
+			description: `Unlocks a previously locked channel`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 1,
+			},
+			category: `Moderation ⚒`,
+		},
+		snipe: {
+			usage: ``,
+			description: `Shows the last deleted message in the channel`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		hug: {
+			usage: `[<user>]`,
+			description: `Give someone a virtual hug!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		pat: {
+			usage: `[<user>]`,
+			description: `Give someone headpats!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		slap: {
+			usage: `[<user>]`,
+			description: `Slap someone (playfully)!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
 		},
 	},
 	shared: {
