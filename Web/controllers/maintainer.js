@@ -640,13 +640,12 @@ controllers.membership.users = async (req, { res }) => {
 	}
 
 	// Get recent subscription changes
-	const recentSubscriptions = await Users.find(
-		{ "subscription.started_at": { $exists: true } },
-		20,
-		{ "subscription.started_at": -1 },
-	);
+	const recentSubscriptions = await Users.find({ "subscription.started_at": { $exists: true } })
+		.sort({ "subscription.started_at": -1 })
+		.limit(20)
+		.exec();
 
-	for (const sub of recentSubscriptions) {
+	for (const sub of recentSubscriptions || []) {
 		const discordUser = await req.app.client.users.fetch(sub._id, true).catch(() => null);
 		sub.username = discordUser?.username || sub.username || "Unknown";
 	}
