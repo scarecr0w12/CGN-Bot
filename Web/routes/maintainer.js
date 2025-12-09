@@ -31,4 +31,19 @@ module.exports = router => {
 	setupConsolePage(router, "/management/version", "management", [], controllers.console.management.version);
 	setupConsolePage(router, "/management/eval", "eval", [], controllers.console.management.eval);
 	setupConsolePage(router, "/management/logs", "management", [], controllers.console.management.logs);
+
+	// Cloudflare Integration (Management level)
+	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);
+	router.get("/infrastructure/cloudflare/analytics", controllers.console.cloudflare.getAnalytics);
+	router.post("/infrastructure/cloudflare/purge-all", controllers.console.cloudflare.purgeAll);
+	router.post("/infrastructure/cloudflare/purge-urls", controllers.console.cloudflare.purgeUrls);
+	router.post("/infrastructure/cloudflare/dev-mode", controllers.console.cloudflare.toggleDevMode);
+	router.post("/infrastructure/cloudflare/security-level", controllers.console.cloudflare.setSecurityLevel);
+	router.post("/infrastructure/cloudflare/under-attack", controllers.console.cloudflare.enableUnderAttack);
+	router.delete("/infrastructure/cloudflare/under-attack", controllers.console.cloudflare.disableUnderAttack);
+	router.get("/infrastructure/cloudflare/settings", controllers.console.cloudflare.getSettings);
+	router.get("/infrastructure/cloudflare/access-rules", controllers.console.cloudflare.listAccessRules);
+	router.post("/infrastructure/cloudflare/block-ip", controllers.console.cloudflare.blockIP);
+	router.delete("/infrastructure/cloudflare/access-rules/:ruleId", controllers.console.cloudflare.deleteAccessRule);
+	router.post("/infrastructure/cloudflare/cache-level", controllers.console.cloudflare.setCacheLevel);
 };

@@ -24,6 +24,13 @@ const loadConfigs = () => {
 	const templateConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : safeRequire("./config.template.json");
 	const fileAuth = safeRequire("./auth.js");
 
+	// Parse comma-separated list from env or use file config
+	const parseList = (envKey, fallback) => {
+		const envVal = process.env[envKey];
+		if (envVal) return envVal.split(",").map(s => s.trim()).filter(Boolean);
+		return fallback || [];
+	};
+
 	const configJS = {
 		...fileConfigJS,
 		shardTotal: pick("SHARD_TOTAL", fileConfigJS.shardTotal ?? "auto"),
@@ -41,6 +48,14 @@ const loadConfigs = () => {
 			environment: pick("SENTRY_ENVIRONMENT", fileConfigJS.sentry?.environment),
 			tracesSampleRate: parseFloat(pick("SENTRY_TRACES_SAMPLE_RATE", fileConfigJS.sentry?.tracesSampleRate)) || 1.0,
 		},
+		cloudflare: {
+			apiToken: pick("CLOUDFLARE_API_TOKEN", fileConfigJS.cloudflare?.apiToken),
+			zoneId: pick("CLOUDFLARE_ZONE_ID", fileConfigJS.cloudflare?.zoneId),
+			accountId: pick("CLOUDFLARE_ACCOUNT_ID", fileConfigJS.cloudflare?.accountId),
+			proxyEnabled: pick("CLOUDFLARE_PROXY_ENABLED", fileConfigJS.cloudflare?.proxyEnabled ?? "true") === "true",
+			requireProxy: pick("CLOUDFLARE_REQUIRE_PROXY", fileConfigJS.cloudflare?.requireProxy ?? "false") === "true",
+			blockedCountries: parseList("CLOUDFLARE_BLOCKED_COUNTRIES", fileConfigJS.cloudflare?.blockedCountries),
+		},
 		consoleLevel: pick("LOG_LEVEL", fileConfigJS.consoleLevel ?? "info"),
 		fileLevel: pick("LOG_FILE_LEVEL", fileConfigJS.fileLevel ?? "info"),
 		secret: pick("SESSION_SECRET", fileConfigJS.secret),
@@ -49,13 +64,6 @@ const loadConfigs = () => {
 	};
 
 	const baseConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : templateConfigJSON;
-
-	// Parse comma-separated list from env or use file config
-	const parseList = (envKey, fallback) => {
-		const envVal = process.env[envKey];
-		if (envVal) return envVal.split(",").map(s => s.trim()).filter(Boolean);
-		return fallback || [];
-	};
 
 	const configJSON = {
 		...baseConfigJSON,

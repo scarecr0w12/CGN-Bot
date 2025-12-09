@@ -962,3 +962,9 @@ controllers.management.logs.socket = async socket => {
 
 	socket.on("disconnect", () => tail.unwatch());
 };
+
+// ============================================
+// CLOUDFLARE INTEGRATION CONTROLLERS
+// ============================================
+
+controllers.cloudflare = require("./cloudflare");
