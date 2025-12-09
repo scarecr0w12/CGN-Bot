@@ -339,38 +339,6 @@ body {
     transition: all var(--transition-base);
 }
 
-/* Force static menu on all devices */
-.navbar-menu {
-    display: flex !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    background: transparent !important;
-    margin-left: auto;
-}
-
-@media screen and (max-width: 1087px) {
-    /* On mobile, we might want to stack items or scroll? 
-       "Regular static menu" usually implies just showing the links. 
-       Let's ensure they wrap correctly. */
-    .navbar-menu {
-        display: flex !important;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .navbar-end {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-    }
-    
-    .navbar-item {
-        display: flex;
-        align-items: center;
-    }
-}
-
 .navbar.is-scrolled {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(10px);
