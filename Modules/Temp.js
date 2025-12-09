@@ -110,14 +110,30 @@ class TemporaryStorage {
 	 * @private
 	 */
 	async _getMetadata () {
-		return JSON.parse(await fs.promises.readFile(path.join(this._temporaryStorage, this._metadataLocation)));
+		const metadataPath = path.join(this._temporaryStorage, this._metadataLocation);
+		try {
+			const data = await fs.promises.readFile(metadataPath, "utf8");
+			return JSON.parse(data) || { entries: [] };
+		} catch (err) {
+			if (err.code === "ENOENT") {
+				// File doesn't exist, create it with empty entries
+				await fs.promises.writeFile(metadataPath, JSON.stringify({ entries: [] }));
+				return { entries: [] };
+			}
+			throw err;
+		}
 	}
 
 	async createStorage () {
 		const storageExists = await fs.promises.access(this._temporaryStorage).then(() => true).catch(() => false);
 		if (!storageExists) {
-			await fs.promises.mkdir(this._temporaryStorage);
-			await fs.promises.writeFile(path.join(this._temporaryStorage, this._metadataLocation), "{}");
+			await fs.promises.mkdir(this._temporaryStorage, { recursive: true });
+		}
+		// Always ensure metadata.json exists
+		const metadataPath = path.join(this._temporaryStorage, this._metadataLocation);
+		const metadataExists = await fs.promises.access(metadataPath).then(() => true).catch(() => false);
+		if (!metadataExists) {
+			await fs.promises.writeFile(metadataPath, JSON.stringify({ entries: [] }));
 		}
 	}
 }

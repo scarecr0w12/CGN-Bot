@@ -21,6 +21,8 @@ const reload = require("require-reload")(require);
 const Sentry = require("@sentry/node");
 
 const middleware = require("./middleware");
+const cloudflareMiddleware = require("./middleware/cloudflare");
+const { initialize: initCloudflare } = require("../Modules/CloudflareService");
 const app = express();
 
 const listen = async configJS => {
@@ -74,6 +76,33 @@ exports.open = async (client, auth, configJS, logger) => {
 
 	// We always recommend using a reverse proxy like nginx, so unless you're on port 80, always run Skynet with the --proxy option!
 	if (process.argv.includes("-p") || process.argv.includes("--proxy")) app.enable("trust proxy");
+
+	// Initialize Cloudflare service and middleware
+	if (configJS.cloudflare?.apiToken && configJS.cloudflare?.zoneId) {
+		initCloudflare(configJS.cloudflare);
+		logger.info("Cloudflare integration initialized");
+	}
+
+	// Apply Cloudflare middleware if proxy is enabled
+	if (configJS.cloudflare?.proxyEnabled) {
+		app.use(cloudflareMiddleware.cloudflareData);
+		app.use(cloudflareMiddleware.securityHeaders);
+
+		// Optionally require Cloudflare proxy (blocks direct access)
+		if (configJS.cloudflare?.requireProxy) {
+			app.use(cloudflareMiddleware.requireCloudflare);
+		}
+
+		// Block specific countries if configured
+		if (configJS.cloudflare?.blockedCountries?.length > 0) {
+			app.use(cloudflareMiddleware.blockCountries(configJS.cloudflare.blockedCountries));
+		}
+
+		logger.info("Cloudflare middleware enabled", {
+			requireProxy: configJS.cloudflare?.requireProxy,
+			blockedCountries: configJS.cloudflare?.blockedCountries?.length || 0,
+		});
+	}
 
 	// Configure global middleware & Server properties
 	app.use(compression());

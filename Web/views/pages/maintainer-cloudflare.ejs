@@ -1,0 +1,460 @@
+<% const sectionTitle = "Cloudflare Integration"; %>
+<%- include("../partials/header") %>
+<section class="section">
+	<div class="container">
+		<div class="columns">
+			<div class="column is-one-quarter">
+				<%- include("../partials/admin-menu", { active: "/dashboard/maintainer/infrastructure/cloudflare" }) %>
+			</div>
+			<div class="column">
+				<div class="card">
+					<header class="card-header">
+						<p class="card-header-title">
+							<span class="icon"><i class="fas fa-cloud"></i></span>
+							<span>Cloudflare Management</span>
+						</p>
+					</header>
+					<div class="card-content">
+						<% if (!pageData.enabled) { %>
+							<div class="notification is-warning">
+								<span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+								<span><%= pageData.message || "Cloudflare integration is not configured. Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID to your environment." %></span>
+							</div>
+							<div class="content">
+								<h5>Setup Instructions</h5>
+								<ol>
+									<li>Log in to your <a href="https://dash.cloudflare.com" target="_blank">Cloudflare Dashboard</a></li>
+									<li>Go to <strong>Profile > API Tokens</strong></li>
+									<li>Create a token with <code>Zone.Cache Purge</code>, <code>Zone.Zone Settings</code>, and <code>Zone.Analytics</code> permissions</li>
+									<li>Copy your Zone ID from the domain overview page</li>
+									<li>Add both values to your <code>.env</code> file</li>
+								</ol>
+							</div>
+						<% } else if (pageData.error) { %>
+							<div class="notification is-danger">
+								<span class="icon"><i class="fas fa-times-circle"></i></span>
+								<span>Error: <%= pageData.error %></span>
+							</div>
+						<% } else { %>
+							<!-- Zone Status -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon has-text-success"><i class="fas fa-check-circle"></i></span>
+									Zone Status
+								</h4>
+								<div class="columns">
+									<div class="column">
+										<strong>Zone Name:</strong> <%= pageData.summary?.zone?.name || "N/A" %>
+									</div>
+									<div class="column">
+										<strong>Status:</strong>
+										<span class="tag <%= pageData.summary?.zone?.status === 'active' ? 'is-success' : 'is-warning' %>">
+											<%= pageData.summary?.zone?.status || "Unknown" %>
+										</span>
+									</div>
+									<div class="column">
+										<strong>Paused:</strong>
+										<span class="tag <%= pageData.summary?.zone?.paused ? 'is-warning' : 'is-success' %>">
+											<%= pageData.summary?.zone?.paused ? "Yes" : "No" %>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Current Settings -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-cog"></i></span>
+									Current Settings
+								</h4>
+								<div class="columns">
+									<div class="column">
+										<strong>Security Level:</strong>
+										<span class="tag is-info"><%= pageData.summary?.settings?.securityLevel || "Unknown" %></span>
+									</div>
+									<div class="column">
+										<strong>Development Mode:</strong>
+										<span class="tag <%= pageData.summary?.settings?.developmentMode === 'on' ? 'is-warning' : 'is-light' %>">
+											<%= pageData.summary?.settings?.developmentMode || "off" %>
+										</span>
+									</div>
+									<div class="column">
+										<strong>Cache Level:</strong>
+										<span class="tag is-light"><%= pageData.summary?.settings?.cacheLevel || "Unknown" %></span>
+									</div>
+								</div>
+							</div>
+
+							<!-- Quick Actions -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-bolt"></i></span>
+									Quick Actions
+								</h4>
+								<div class="buttons">
+									<button class="button is-danger" id="purge-all-btn">
+										<span class="icon"><i class="fas fa-trash"></i></span>
+										<span>Purge All Cache</span>
+									</button>
+									<button class="button is-warning" id="toggle-dev-mode-btn" data-current="<%= pageData.summary?.settings?.developmentMode %>">
+										<span class="icon"><i class="fas fa-code"></i></span>
+										<span>Toggle Dev Mode</span>
+									</button>
+									<button class="button is-dark" id="under-attack-btn">
+										<span class="icon"><i class="fas fa-shield-alt"></i></span>
+										<span>Enable Under Attack Mode</span>
+									</button>
+								</div>
+							</div>
+
+							<!-- Purge Specific URLs -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-link"></i></span>
+									Purge Specific URLs
+								</h4>
+								<div class="field">
+									<label class="label">URLs to Purge (one per line)</label>
+									<div class="control">
+										<textarea class="textarea" id="purge-urls" placeholder="https://example.com/page1&#10;https://example.com/page2"></textarea>
+									</div>
+								</div>
+								<button class="button is-info" id="purge-urls-btn">
+									<span class="icon"><i class="fas fa-eraser"></i></span>
+									<span>Purge URLs</span>
+								</button>
+							</div>
+
+							<!-- Security Level -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-lock"></i></span>
+									Security Level
+								</h4>
+								<div class="field has-addons">
+									<div class="control is-expanded">
+										<div class="select is-fullwidth">
+											<select id="security-level">
+												<option value="off" <%= pageData.summary?.settings?.securityLevel === 'off' ? 'selected' : '' %>>Off</option>
+												<option value="essentially_off" <%= pageData.summary?.settings?.securityLevel === 'essentially_off' ? 'selected' : '' %>>Essentially Off</option>
+												<option value="low" <%= pageData.summary?.settings?.securityLevel === 'low' ? 'selected' : '' %>>Low</option>
+												<option value="medium" <%= pageData.summary?.settings?.securityLevel === 'medium' ? 'selected' : '' %>>Medium</option>
+												<option value="high" <%= pageData.summary?.settings?.securityLevel === 'high' ? 'selected' : '' %>>High</option>
+												<option value="under_attack" <%= pageData.summary?.settings?.securityLevel === 'under_attack' ? 'selected' : '' %>>Under Attack</option>
+											</select>
+										</div>
+									</div>
+									<div class="control">
+										<button class="button is-primary" id="set-security-btn">
+											<span class="icon"><i class="fas fa-save"></i></span>
+											<span>Set Level</span>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Cache Level -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-database"></i></span>
+									Cache Level
+								</h4>
+								<div class="field has-addons">
+									<div class="control is-expanded">
+										<div class="select is-fullwidth">
+											<select id="cache-level">
+												<option value="basic" <%= pageData.summary?.settings?.cacheLevel === 'basic' ? 'selected' : '' %>>Basic</option>
+												<option value="simplified" <%= pageData.summary?.settings?.cacheLevel === 'simplified' ? 'selected' : '' %>>Simplified</option>
+												<option value="aggressive" <%= pageData.summary?.settings?.cacheLevel === 'aggressive' ? 'selected' : '' %>>Aggressive</option>
+											</select>
+										</div>
+									</div>
+									<div class="control">
+										<button class="button is-primary" id="set-cache-btn">
+											<span class="icon"><i class="fas fa-save"></i></span>
+											<span>Set Level</span>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<!-- Analytics Summary -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-chart-line"></i></span>
+									Analytics (Last 24 Hours)
+								</h4>
+								<div class="columns" id="analytics-container">
+									<div class="column has-text-centered">
+										<p class="heading">Loading...</p>
+									</div>
+								</div>
+								<button class="button is-small is-light" id="refresh-analytics-btn">
+									<span class="icon"><i class="fas fa-sync"></i></span>
+									<span>Refresh</span>
+								</button>
+							</div>
+
+							<!-- Block IP -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-ban"></i></span>
+									Block IP Address
+								</h4>
+								<div class="field has-addons">
+									<div class="control is-expanded">
+										<input class="input" type="text" id="block-ip-input" placeholder="Enter IP address to block">
+									</div>
+									<div class="control">
+										<button class="button is-danger" id="block-ip-btn">
+											<span class="icon"><i class="fas fa-ban"></i></span>
+											<span>Block</span>
+										</button>
+									</div>
+								</div>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<% if (pageData.enabled && !pageData.error) { %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const basePath = '/dashboard/maintainer/infrastructure/cloudflare';
+
+	// Load analytics on page load
+	loadAnalytics();
+
+	// Purge All Cache
+	document.getElementById('purge-all-btn').addEventListener('click', async function() {
+		if (!confirm('Are you sure you want to purge the entire cache? This will cause temporary slowdowns.')) return;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/purge-all`, { method: 'POST' });
+			const data = await res.json();
+			if (data.success) {
+				alert('Cache purged successfully!');
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Toggle Dev Mode
+	document.getElementById('toggle-dev-mode-btn').addEventListener('click', async function() {
+		const current = this.dataset.current === 'on';
+		const newState = !current;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/dev-mode`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ enabled: newState })
+			});
+			const data = await res.json();
+			if (data.success) {
+				alert(data.message);
+				location.reload();
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Under Attack Mode
+	document.getElementById('under-attack-btn').addEventListener('click', async function() {
+		if (!confirm('Enable "I\'m Under Attack" mode? This will show a challenge page to all visitors.')) return;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/under-attack`, { method: 'POST' });
+			const data = await res.json();
+			if (data.success) {
+				alert('Under Attack mode enabled!');
+				location.reload();
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Purge URLs
+	document.getElementById('purge-urls-btn').addEventListener('click', async function() {
+		const urls = document.getElementById('purge-urls').value
+			.split('\n')
+			.map(u => u.trim())
+			.filter(u => u);
+
+		if (urls.length === 0) {
+			alert('Please enter at least one URL');
+			return;
+		}
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/purge-urls`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ urls })
+			});
+			const data = await res.json();
+			if (data.success) {
+				alert(data.message);
+				document.getElementById('purge-urls').value = '';
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Set Security Level
+	document.getElementById('set-security-btn').addEventListener('click', async function() {
+		const level = document.getElementById('security-level').value;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/security-level`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ level })
+			});
+			const data = await res.json();
+			if (data.success) {
+				alert(data.message);
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Set Cache Level
+	document.getElementById('set-cache-btn').addEventListener('click', async function() {
+		const level = document.getElementById('cache-level').value;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/cache-level`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ level })
+			});
+			const data = await res.json();
+			if (data.success) {
+				alert(data.message);
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Block IP
+	document.getElementById('block-ip-btn').addEventListener('click', async function() {
+		const ip = document.getElementById('block-ip-input').value.trim();
+
+		if (!ip) {
+			alert('Please enter an IP address');
+			return;
+		}
+
+		if (!confirm(`Block IP address ${ip}?`)) return;
+
+		this.classList.add('is-loading');
+		try {
+			const res = await fetch(`${basePath}/block-ip`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ ip })
+			});
+			const data = await res.json();
+			if (data.success) {
+				alert(data.message);
+				document.getElementById('block-ip-input').value = '';
+			} else {
+				alert('Error: ' + (data.error || 'Unknown error'));
+			}
+		} catch (err) {
+			alert('Request failed: ' + err.message);
+		}
+		this.classList.remove('is-loading');
+	});
+
+	// Refresh Analytics
+	document.getElementById('refresh-analytics-btn').addEventListener('click', loadAnalytics);
+
+	async function loadAnalytics() {
+		const container = document.getElementById('analytics-container');
+		container.innerHTML = '<div class="column has-text-centered"><p class="heading">Loading...</p></div>';
+
+		try {
+			const res = await fetch(`${basePath}/analytics?period=day`);
+			const data = await res.json();
+
+			if (data.error) {
+				container.innerHTML = `<div class="column"><div class="notification is-warning">${data.error}</div></div>`;
+				return;
+			}
+
+			container.innerHTML = `
+				<div class="column has-text-centered">
+					<p class="heading">Total Requests</p>
+					<p class="title">${formatNumber(data.requests?.totalRequests || 0)}</p>
+				</div>
+				<div class="column has-text-centered">
+					<p class="heading">Cache Hit Rate</p>
+					<p class="title">${data.requests?.cacheHitRatio || 0}%</p>
+				</div>
+				<div class="column has-text-centered">
+					<p class="heading">Bandwidth</p>
+					<p class="title">${formatBytes(data.bandwidth?.totalBytes || 0)}</p>
+				</div>
+				<div class="column has-text-centered">
+					<p class="heading">Threats Blocked</p>
+					<p class="title">${formatNumber(data.threats?.totalThreats || 0)}</p>
+				</div>
+			`;
+		} catch (err) {
+			container.innerHTML = `<div class="column"><div class="notification is-danger">Failed to load analytics</div></div>`;
+		}
+	}
+
+	function formatNumber(num) {
+		if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+		if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+		return num.toString();
+	}
+
+	function formatBytes(bytes) {
+		if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
+		if (bytes >= 1048576) return (bytes / 1048576).toFixed(2) + ' MB';
+		if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+		return bytes + ' B';
+	}
+});
+</script>
+<% } %>
+
+<%- include("../partials/footer") %>
