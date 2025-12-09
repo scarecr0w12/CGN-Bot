@@ -30,6 +30,8 @@ module.exports = router => {
 				userFeatures: Array.from(userFeatures),
 				oauthProviders: siteSettings?.oauth_providers || {},
 				tiers: siteSettings?.tiers || [],
+				success: req.query.success || null,
+				error: req.query.error || null,
 			});
 		} catch (err) {
 			logger.error("Error loading account settings", {}, err);

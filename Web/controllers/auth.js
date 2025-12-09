@@ -9,9 +9,11 @@ controllers.buildLoginController = router => router.app.passport.authenticate("d
 });
 
 // Controllers
-controllers.logout = (req, res) => {
-	req.logout();
-	res.redirect("/activity");
+controllers.logout = (req, res, next) => {
+	req.logout(err => {
+		if (err) return next(err);
+		res.redirect("/activity");
+	});
 };
 
 controllers.authenticate = (req, res) => {

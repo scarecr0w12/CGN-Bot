@@ -55,7 +55,7 @@
 				Account Settings
 			</h1>
 
-			<% if (typeof success !== 'undefined' || req?.query?.success) { %>
+			<% if (success) { %>
 			<article class="message is-success">
 				<div class="message-body">
 					Account linked successfully!
@@ -63,7 +63,7 @@
 			</article>
 			<% } %>
 
-			<% if (typeof error !== 'undefined' || req?.query?.error) { %>
+			<% if (error) { %>
 			<article class="message is-danger">
 				<div class="message-body">
 					Failed to link account. Please try again.
