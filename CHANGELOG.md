@@ -5,6 +5,72 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-12-09
+
+### Added
+
+#### Tiered Membership System
+- **TierManager** (`Modules/TierManager.js`) - Feature gating and subscription management with caching
+- **TokenEncryption** (`Modules/TokenEncryption.js`) - Secure OAuth token storage with AES-256-GCM
+- **SubscriptionCheck** (`Modules/Timeouts/SubscriptionCheck.js`) - Automated subscription expiration handling
+- **SiteSettings Schema** - MongoDB schema for site-wide settings (tiers, features, OAuth providers, payment settings)
+- **OAuth Strategies** - Multi-provider authentication: Google, GitHub, Twitch, Patreon
+- **Payment Integrations** - Stripe, PayPal, and BTCPay webhook handlers for subscriptions
+- **Account Settings Page** - User-facing page for managing linked accounts and viewing subscription status
+- **Membership Pricing Page** - Public pricing page with Stripe checkout integration
+- **Maintainer Console Pages**:
+  - Feature Registry - Toggle predefined features by category (Bot, Dashboard, API, General)
+  - Membership Tiers - Configure tier levels, pricing, and feature assignments
+  - User Management - Search users and manually assign tiers
+  - Payment Providers - Configure Stripe, PayPal, BTCPay settings
+  - OAuth Providers - Enable/disable external OAuth providers
+
+#### Cloudflare Integration
+- **CloudflareService** (`Modules/CloudflareService.js`) - Centralized API integration for cache purging, analytics, and security settings
+- **Cloudflare Middleware** (`Web/middleware/cloudflare.js`) - Real IP extraction, country blocking, bot detection
+- **Environment Configuration** - Cloudflare credentials and settings via `.env`
+
+#### Modern UI System
+- **Modern UI Stylesheet** (`Web/public/css/modern-ui.css`) - Consistent design system with stat cards, gradients, and responsive components
+- **Refactored Dashboard** - Server cards with modern styling and hover effects
+- **Admin Overview** - Stats grid with icon cards for members, messages, and top commands
+- **Header/Footer** - Responsive navigation with user dropdown and modern styling
+
+#### Sentry Error Tracking Improvements
+- **Express Error Handler** - Proper integration with `Sentry.setupExpressErrorHandler()`
+- **Async Error Capture** - Added `express-async-errors` for catching unhandled async route errors
+- **User Context Middleware** - Automatically attach Discord user info to Sentry errors
+
+#### Update System Migration
+- **GitHub Releases API** - Migrated from custom versioning API to GitHub Releases
+- **Automatic Updates** - Support for automatic updates via GitHub release downloads
+- **Changelog Integration** - Version metadata includes release notes from GitHub
+
+### Changed
+
+- **Donation Settings** - Migrated from JSON file storage to MongoDB (`SiteSettings` collection)
+- **Activity Controller** - Use `.cache.size` directly for guild/user counts instead of broken IPC calls
+- **Message Counter Reset** - Aligned with UTC midnight instead of bot startup time
+- **User Schema** - Extended with `subscription` and `linked_accounts` fields
+- **Constants** - Updated GitHub repository references to `scarecr0w12/CGN-Bot`
+
+### Fixed
+
+- **Activity Stats Display** - Fixed "0 users / 0 servers" display issue by using correct Discord.js v14 API
+- **Messages Today Reset** - Removed premature reset on bot restart that wiped daily message counts
+- **Activity User Page** - Fixed empty array destructuring error when no users exist
+- **Header Responsiveness** - Fixed mobile menu visibility and toggle behavior
+- **Activity Grid Layout** - Default to visible grid layout without requiring JavaScript
+
+### Dependencies
+
+- Added `express-async-errors` ^3.1.1
+- Added `passport-github2` ^0.1.12
+- Added `passport-google-oauth20` ^2.0.0
+- Added `passport-patreon` ^1.0.1
+- Added `passport-twitch-new` ^0.0.2
+- Added `stripe` ^14.10.0
+
 ## [1.0.0] - 2025-12-07
 
 ### Added
@@ -27,4 +93,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.1.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.1.0
 [1.0.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.0.0
