@@ -4,6 +4,7 @@ const { Encryption, Utils, getGuild, PostTotalData, Traffic, Trivia, Polls, Give
 const { handler: getGuildMessageHandler } = getGuild;
 const { ObjectDefines, MessageOfTheDay } = Utils;
 const Timeouts = require("./Modules/Timeouts/index");
+const SubscriptionCheck = require("./Modules/Timeouts/SubscriptionCheck");
 const {
 	EventHandler,
 	Boot,
@@ -92,7 +93,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	client.traffic = new Traffic(client.IPC, true);
 	client.central = new SkynetClient(client);
 	client.tempStorage = new TemporaryStorage();
-	console.log("[DEBUG] Traffic, Central, and TempStorage initialized");
+	client.subscriptionCheck = new SubscriptionCheck(client);
+	console.log("[DEBUG] Traffic, Central, TempStorage, and SubscriptionCheck initialized");
 
 	client.IPC.on("getGuild", async (msg, callback) => {
 		if (msg.target === "*") {

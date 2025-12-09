@@ -77,6 +77,13 @@ const officialRouting = router => {
 	setupPage(router, "/paperwork", [], controllers.paperwork);
 };
 
+const membershipRouting = router => {
+	setupPage(router, "/membership", [], controllers.membership.pricing);
+	router.routes.push(new Route(router, "/membership/success", [middleware.checkUnavailable], controllers.membership.success, "get", "general"));
+	router.routes.push(new Route(router, "/api/membership/checkout", [middleware.checkUnavailableAPI], controllers.membership.createCheckout, "post", "api"));
+	router.routes.push(new Route(router, "/api/membership/paypal-checkout", [middleware.checkUnavailableAPI], controllers.membership.createPayPalCheckout, "post", "api"));
+};
+
 module.exports = app => {
 	const routers = {
 		general: express.Router(),
@@ -98,6 +105,7 @@ module.exports = app => {
 	wikiRouting(routers.general);
 	blogRouting(routers.general);
 	officialRouting(routers.general);
+	membershipRouting(routers.general);
 	accountRouting(routers.general);
 	webhookRouting(routers.general);
 	dashboardRouting(routers.dashboard);

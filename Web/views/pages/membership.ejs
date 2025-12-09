@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Membership - <%= serverData.name %></title>
+	<%- include('../partials/head') %>
+	<style>
+		.pricing-card {
+			border-radius: 12px;
+			overflow: hidden;
+			transition: transform 0.2s, box-shadow 0.2s;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		.pricing-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+		}
+		.pricing-card.is-featured {
+			border: 3px solid #3273dc;
+		}
+		.pricing-header {
+			padding: 2rem;
+			text-align: center;
+		}
+		.pricing-price {
+			font-size: 3rem;
+			font-weight: 700;
+			line-height: 1;
+		}
+		.pricing-price .currency {
+			font-size: 1.5rem;
+			vertical-align: top;
+		}
+		.pricing-price .period {
+			font-size: 1rem;
+			font-weight: 400;
+			color: #7a7a7a;
+		}
+		.pricing-features {
+			padding: 1.5rem 2rem;
+			flex: 1;
+		}
+		.pricing-features li {
+			padding: 0.5rem 0;
+			border-bottom: 1px solid #f5f5f5;
+		}
+		.pricing-features li:last-child {
+			border-bottom: none;
+		}
+		.pricing-features .icon {
+			margin-right: 0.5rem;
+		}
+		.pricing-footer {
+			padding: 1.5rem 2rem;
+			text-align: center;
+		}
+		.tier-badge-large {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.5rem 1.5rem;
+			border-radius: 30px;
+			font-size: 1.25rem;
+			font-weight: bold;
+		}
+		.current-tier-banner {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			margin-bottom: 2rem;
+		}
+		.billing-toggle {
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+			margin-bottom: 2rem;
+		}
+		.billing-toggle .button {
+			min-width: 120px;
+		}
+		.savings-badge {
+			background: #48c774;
+			color: white;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			font-size: 0.75rem;
+			margin-left: 0.5rem;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/header') %>
+
+	<section class="hero is-medium" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+		<div class="hero-body">
+			<div class="container has-text-centered">
+				<h1 class="title is-1 has-text-white">Membership Plans</h1>
+				<p class="subtitle has-text-white-ter">Unlock exclusive features and support the bot</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<% if (authUser && userTier) { %>
+			<div class="current-tier-banner">
+				<div class="columns is-vcentered">
+					<div class="column">
+						<p class="is-size-5">Your Current Plan</p>
+						<p class="is-size-3 has-text-weight-bold">
+							<% if (userTier.badge_icon) { %>
+							<span class="icon"><i class="fa <%= userTier.badge_icon %>"></i></span>
+							<% } %>
+							<%= userTier.name %>
+						</p>
+						<% if (subscription && subscription.expires_at) { %>
+						<p class="is-size-7">
+							<span class="icon"><i class="fa fa-clock"></i></span>
+							<% if (new Date(subscription.expires_at) > new Date()) { %>
+							Active until <%= new Date(subscription.expires_at).toLocaleDateString() %>
+							<% } else { %>
+							Expired on <%= new Date(subscription.expires_at).toLocaleDateString() %>
+							<% } %>
+						</p>
+						<% } %>
+					</div>
+					<div class="column is-narrow">
+						<a href="/account" class="button is-white is-outlined">
+							<span class="icon"><i class="fa fa-cog"></i></span>
+							<span>Manage Subscription</span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<% } %>
+
+			<!-- Billing Toggle -->
+			<div class="billing-toggle">
+				<button class="button is-medium" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+				<button class="button is-medium is-primary" id="btn-yearly" onclick="setBilling('yearly')">
+					Yearly
+					<span class="savings-badge">Save 15%</span>
+				</button>
+			</div>
+
+			<!-- Pricing Cards -->
+			<div class="columns is-centered">
+				<% const purchasableTiers = tiers.filter(t => t.is_purchasable).sort((a, b) => a.level - b.level); %>
+				<% purchasableTiers.forEach((tier, index) => { %>
+				<div class="column is-4">
+					<div class="card pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
+						<div class="pricing-header" style="background-color: <%= tier.color || '#3273dc' %>20;">
+							<% if (tier.badge_icon) { %>
+							<span class="icon is-large" style="color: <%= tier.color || '#3273dc' %>;"><i class="fa fa-2x <%= tier.badge_icon %>"></i></span>
+							<% } %>
+							<h2 class="title is-3 mt-3" style="color: <%= tier.color || '#3273dc' %>;"><%= tier.name %></h2>
+							<p class="subtitle is-6 has-text-grey"><%= tier.description %></p>
+							
+							<div class="pricing-price" style="color: <%= tier.color || '#3273dc' %>;">
+								<span class="currency">$</span>
+								<span class="monthly-price"><%= (tier.price_monthly / 100).toFixed(0) %></span>
+								<span class="yearly-price" style="display: none;"><%= (tier.price_yearly / 100 / 12).toFixed(0) %></span>
+								<span class="period">/mo</span>
+							</div>
+							<p class="yearly-total is-size-7 has-text-grey" style="display: none;">
+								Billed $<%= (tier.price_yearly / 100).toFixed(2) %>/year
+							</p>
+						</div>
+
+						<div class="pricing-features">
+							<ul class="menu-list">
+								<% tier.features.forEach(featureId => { %>
+								<% const feature = features.find(f => f._id === featureId); %>
+								<% if (feature) { %>
+								<li>
+									<span class="icon has-text-success"><i class="fa fa-check"></i></span>
+									<%= feature.name %>
+								</li>
+								<% } %>
+								<% }); %>
+								<% if (tier.features.length === 0) { %>
+								<li class="has-text-grey">Basic features included</li>
+								<% } %>
+							</ul>
+						</div>
+
+						<div class="pricing-footer">
+							<% if (authUser) { %>
+								<% if (userTier && userTier._id === tier._id) { %>
+								<button class="button is-fullwidth" disabled>
+									<span class="icon"><i class="fa fa-check"></i></span>
+									<span>Current Plan</span>
+								</button>
+								<% } else if (userTier && userTier.level >= tier.level) { %>
+								<button class="button is-fullwidth is-warning" disabled>
+									<span>Downgrade not available online</span>
+								</button>
+								<% } else { %>
+								<button class="button is-fullwidth is-primary" onclick="subscribe('<%= tier._id %>')" style="background-color: <%= tier.color || '#3273dc' %>;">
+									<span class="icon"><i class="fa fa-arrow-up"></i></span>
+									<span><%= userTier ? 'Upgrade' : 'Subscribe' %></span>
+								</button>
+								<% } %>
+							<% } else { %>
+							<a href="/login?redirect=/membership" class="button is-fullwidth is-primary" style="background-color: <%= tier.color || '#3273dc' %>;">
+								<span class="icon"><i class="fa fa-sign-in"></i></span>
+								<span>Login to Subscribe</span>
+							</a>
+							<% } %>
+						</div>
+					</div>
+				</div>
+				<% }); %>
+
+				<% if (purchasableTiers.length === 0) { %>
+				<div class="column is-8">
+					<article class="message is-info">
+						<div class="message-body">
+							<p class="has-text-centered">No membership plans are currently available.</p>
+							<p class="has-text-centered is-size-7 mt-2">Check back later or contact support for more information.</p>
+						</div>
+					</article>
+				</div>
+				<% } %>
+			</div>
+
+			<!-- FAQ Section -->
+			<div class="mt-6">
+				<h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
+				<div class="columns is-centered">
+					<div class="column is-8">
+						<div class="content">
+							<details class="mb-4">
+								<summary class="has-text-weight-bold is-size-5">How do payments work?</summary>
+								<p class="mt-2">We accept payments via Stripe (credit/debit cards) and PayPal. Your subscription will automatically renew unless cancelled.</p>
+							</details>
+							<details class="mb-4">
+								<summary class="has-text-weight-bold is-size-5">Can I cancel anytime?</summary>
+								<p class="mt-2">Yes! You can cancel your subscription at any time from your account settings. You'll keep your benefits until the end of your billing period.</p>
+							</details>
+							<details class="mb-4">
+								<summary class="has-text-weight-bold is-size-5">How do I link my Patreon?</summary>
+								<p class="mt-2">If you're already a Patreon supporter, you can link your Patreon account in <a href="/account">Account Settings</a> to automatically receive your membership benefits.</p>
+							</details>
+							<details class="mb-4">
+								<summary class="has-text-weight-bold is-size-5">What payment methods do you accept?</summary>
+								<p class="mt-2">We accept Visa, Mastercard, American Express, PayPal, and cryptocurrency via BTCPay.</p>
+							</details>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+
+	<script>
+	let billingPeriod = 'yearly';
+
+	function setBilling(period) {
+		billingPeriod = period;
+		
+		document.getElementById('btn-monthly').classList.toggle('is-primary', period === 'monthly');
+		document.getElementById('btn-yearly').classList.toggle('is-primary', period === 'yearly');
+		
+		document.querySelectorAll('.monthly-price').forEach(el => {
+			el.style.display = period === 'monthly' ? '' : 'none';
+		});
+		document.querySelectorAll('.yearly-price').forEach(el => {
+			el.style.display = period === 'yearly' ? '' : 'none';
+		});
+		document.querySelectorAll('.yearly-total').forEach(el => {
+			el.style.display = period === 'yearly' ? '' : 'none';
+		});
+	}
+
+	async function subscribe(tierId) {
+		try {
+			const response = await fetch('/api/membership/checkout', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ tier_id: tierId, billing_period: billingPeriod }),
+			});
+
+			const data = await response.json();
+			
+			if (data.checkout_url) {
+				window.location.href = data.checkout_url;
+			} else if (data.error) {
+				alert(data.error);
+			}
+		} catch (err) {
+			alert('An error occurred. Please try again.');
+		}
+	}
+
+	// Initialize with yearly selected
+	setBilling('yearly');
+	</script>
+</body>
+</html>

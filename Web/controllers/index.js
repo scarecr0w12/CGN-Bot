@@ -16,6 +16,7 @@ controllers.console = require("./maintainer");
 controllers.auth = require("./auth");
 controllers.api = require("./api");
 controllers.debug = require("./debug");
+controllers.membership = require("./membership");
 
 controllers.headerImage = (req, res) => {
 	let headerImage = configJSON.headerImage || "header.png";
