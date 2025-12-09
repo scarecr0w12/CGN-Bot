@@ -3,31 +3,9 @@
 <head>
 	<title>Skynet Dashboard</title>
 	<%- include("../partials/head") %>
-
-	<script>
-	var mq = window.matchMedia("screen and (max-width: 768px)");
-	mq.addListener(mediaStyle);
-	function mediaStyle() {
-		if(mq.matches) {
-			$(".server-icon").removeClass("is-48x48");
-			$(".server-icon").addClass("is-32x32");
-			$(".server-name").removeClass("is-2");
-			$(".server-name").addClass("is-3");
-			$(".server-arrow").removeClass("is-large");
-			$(".server-arrow").addClass("is-medium");
-		} else {
-			$(".server-icon").removeClass("is-32x32");
-			$(".server-icon").addClass("is-48x48");
-			$(".server-name").removeClass("is-3");
-			$(".server-name").addClass("is-2");
-			$(".server-arrow").removeClass("is-medium");
-			$(".server-arrow").addClass("is-large");
-		}
-	}
-	</script>
 </head>
-<body onload="mediaStyle();">
-	<section id="header" class="main-header-section hero is-primary is-fullheight is-bold">
+<body>
+	<section id="header" class="main-header-section hero is-modern is-fullheight is-bold">
 		<div class="hero-head">
 			<%- include("../partials/header") %>
 		</div>
@@ -61,9 +39,9 @@
 							<% } else { %>
 								<a class="server-card" href="/dashboard/<%= server.id %>/<%= server.id === 'maintainer' ? 'maintainer' : 'overview'%>" style="animation-delay: <%= index * 0.05 %>s;">
 							<% } %>
-								<img src="<%= server.icon %>" alt="<%= server.id %>" class="server-icon" style="width: 56px; height: 56px; border-radius: 12px; margin-right: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+								<img src="<%= server.icon %>" alt="<%= server.id %>" class="server-icon">
 								<div style="flex: 1;">
-									<h2 style="font-size: 1.25rem; font-weight: 600; color: white; margin-bottom: 0.25rem;"><%= server.name %></h2>
+									<h2 class="server-name"><%= server.name %></h2>
 									<p style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">
 										<% if (!server.botJoined) { %>
 											<span class="icon is-small"><i class="fa fa-plus-circle"></i></span> Add Skynet
@@ -75,11 +53,11 @@
 									</p>
 								</div>
 								<% if (server.botJoined && server.isAdmin) { %>
-									<span class="server-arrow" style="color: rgba(255,255,255,0.4); transition: all 0.2s;">
+									<span class="server-arrow">
 										<i class="fa fa-chevron-right fa-lg"></i>
 									</span>
 								<% } else if (!server.botJoined) { %>
-									<span style="background: #14b8a6; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+									<span class="tag is-modern">
 										Add Bot
 									</span>
 								<% } %>
@@ -87,7 +65,7 @@
 						<% }); %>
 						
 						<% if (serverData.length === 0) { %>
-							<div style="text-align: center; padding: 3rem; background: rgba(255,255,255,0.1); border-radius: 16px; border: 2px dashed rgba(255,255,255,0.2);">
+							<div class="modern-card-glass has-text-centered" style="padding: 3rem; border-style: dashed;">
 								<span class="icon is-large" style="color: rgba(255,255,255,0.3); margin-bottom: 1rem;">
 									<i class="fa fa-server fa-3x"></i>
 								</span>
@@ -104,21 +82,21 @@
 		</div>
 		<div class="hero-foot">
 			<div class="container has-text-centered">
-				<a class="button is-white is-outlined" href="/login">
+				<a class="button is-white is-outlined is-modern" href="/login">
                     <span class="icon">
                         <i class="fa fa-refresh"></i>
                     </span>
                     <span>Refresh</span>
                 </a>
                 &nbsp;
-				<a class="button is-white is-outlined" target="_blank" href="/wiki/Configuration">
+				<a class="button is-white is-outlined is-modern" target="_blank" href="/wiki/Configuration">
                     <span class="icon">
                         <i class="fa fa-question-circle"></i>
                     </span>
                     <span>Help</span>
                 </a>
                 &nbsp;
-				<a class="button is-white is-outlined" href="/logout">
+				<a class="button is-white is-outlined is-modern" href="/logout">
                     <span class="icon">
                         <i class="fa fa-sign-out"></i>
                     </span>
@@ -133,7 +111,7 @@
 		<div class="modal-background"></div>
 		<div class="modal-container">
 			<div class="modal-content">
-				<div class="box">
+				<div class="box modern-card">
 					<h4 class="title is-4">
 						<strong>You do not have permission to access the admin console for that server.</strong> Ask the owner of the server or other moderators to give you access to the admin console (level 3 admin).
 					</h4>
@@ -146,7 +124,7 @@
 		<div class="modal-background"></div>
 		<div class="modal-container">
 			<div class="modal-content">
-				<div class="box">
+				<div class="box modern-card">
 					<h4 class="title is-4">
 						Make sure to <strong><a href="/dashboard">refresh</a></strong> after adding Skynet.
 					</h4>
