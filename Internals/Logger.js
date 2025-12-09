@@ -130,9 +130,11 @@ module.exports = class Logger {
 	sendSentryError (error, metadata) {
 		if (this.sentry) {
 			// Sentry v8 compatible error capturing
-			this.sentry.captureException(error, {
+			const eventId = this.sentry.captureException(error, {
 				level: (metadata._level === "warn" ? "warning" : metadata._level) || "error",
+				extra: metadata,
 			});
+			console.log(`[SENTRY] Captured exception: ${eventId} - ${error.message || error}`);
 		}
 	}
 };
