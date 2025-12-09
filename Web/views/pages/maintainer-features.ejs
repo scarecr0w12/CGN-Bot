@@ -3,6 +3,48 @@
 <head>
 	<title>Feature Registry - <%= serverData.name %> Maintainer Console</title>
 	<%- include('../partials/head') %>
+	<style>
+		.feature-card {
+			border: 1px solid #dbdbdb;
+			border-radius: 6px;
+			padding: 1rem;
+			margin-bottom: 0.75rem;
+			transition: all 0.2s;
+		}
+		.feature-card:hover {
+			border-color: #3273dc;
+		}
+		.feature-card.is-enabled {
+			border-color: #48c774;
+			background: #f0fff4;
+		}
+		.feature-card .feature-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.feature-card .feature-id {
+			font-family: monospace;
+			background: #f5f5f5;
+			padding: 0.1rem 0.4rem;
+			border-radius: 3px;
+			font-size: 0.85em;
+		}
+		.feature-card.is-enabled .feature-id {
+			background: #c8f7d8;
+		}
+		.category-badge {
+			font-size: 0.75rem;
+			padding: 0.2rem 0.5rem;
+			border-radius: 3px;
+			text-transform: uppercase;
+			font-weight: 600;
+		}
+		.category-bot { background: #3273dc; color: white; }
+		.category-dashboard { background: #ff9f43; color: white; }
+		.category-api { background: #a55eea; color: white; }
+		.category-general { background: #636e72; color: white; }
+	</style>
 </head>
 <body>
 	<%- include('../partials/dashboard-header') %>
@@ -21,80 +63,174 @@
 					</h1>
 					<article class="message is-primary">
 						<div class="message-body">
-							<div class="content">
-								<p>Define gateable features that can be assigned to tiers. Features are referenced by their ID when checking access in code.</p>
-								<p><strong>Categories:</strong> bot, dashboard, api, general</p>
-							</div>
+							<p>Toggle features on/off to make them available for tier assignment. Enabled features can be assigned to membership tiers.</p>
 						</div>
 					</article>
+
 					<form id="form" action="<%= currentPage %>" method="post">
-						<div class="field" style="overflow-x: auto;">
-							<table class="table is-fullwidth" id="features-table">
-								<thead>
-									<tr>
-										<th>Feature ID</th>
-										<th>Display Name</th>
-										<th>Description</th>
-										<th>Category</th>
-										<th style="width: 80px;">Enabled</th>
-										<th style="width: 50px;">Action</th>
-									</tr>
-								</thead>
-								<tbody>
-									<% if (configData.features && configData.features.length > 0) { %>
-										<% configData.features.forEach(feature => { %>
-										<tr>
-											<td><input class="input" type="text" name="feature_id[]" value="<%= feature._id %>" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only"></td>
-											<td><input class="input" type="text" name="feature_name[]" value="<%= feature.name %>" required></td>
-											<td><input class="input" type="text" name="feature_description[]" value="<%= feature.description || '' %>"></td>
-											<td>
-												<div class="select is-fullwidth">
-													<select name="feature_category[]">
-														<option value="general" <%= feature.category === 'general' ? 'selected' : '' %>>General</option>
-														<option value="bot" <%= feature.category === 'bot' ? 'selected' : '' %>>Bot</option>
-														<option value="dashboard" <%= feature.category === 'dashboard' ? 'selected' : '' %>>Dashboard</option>
-														<option value="api" <%= feature.category === 'api' ? 'selected' : '' %>>API</option>
-													</select>
-												</div>
-											</td>
-											<td>
-												<label class="checkbox">
-													<input type="checkbox" name="feature_enabled[]" value="<%= feature._id %>" <%= feature.isEnabled ? 'checked' : '' %>>
-												</label>
-											</td>
-											<td><button type="button" class="button is-danger is-small" onclick="removeFeature(this)">Remove</button></td>
-										</tr>
-										<% }); %>
-									<% } %>
-								</tbody>
-							</table>
+						<!-- Hidden inputs to track selected features -->
+						<div id="selected-features-data"></div>
+
+						<!-- Bot Features -->
+						<h2 class="subtitle"><span class="category-badge category-bot">Bot</span> Bot Features</h2>
+						<div class="columns is-multiline" id="bot-features">
+							<% const botFeatures = [
+								{ _id: 'ai_chat', name: 'AI Chat', description: 'Access to AI chatbot and conversation features' },
+								{ _id: 'ai_images', name: 'AI Images', description: 'Generate AI images with DALL-E or Stable Diffusion' },
+								{ _id: 'custom_commands', name: 'Custom Commands', description: 'Create unlimited custom commands per server' },
+								{ _id: 'advanced_moderation', name: 'Advanced Moderation', description: 'Advanced auto-mod filters and spam detection' },
+								{ _id: 'custom_branding', name: 'Custom Branding', description: 'Remove bot branding from embeds and messages' },
+								{ _id: 'extended_logs', name: 'Extended Logs', description: 'Extended audit logging and log retention' },
+								{ _id: 'voice_features', name: 'Voice Features', description: 'Music, voice stats, and voice channel features' },
+								{ _id: 'auto_roles', name: 'Auto Roles', description: 'Automatic role assignment on join or reaction' },
+							]; %>
+							<% botFeatures.forEach(feat => { %>
+							<% const existing = (configData.features || []).find(f => f._id === feat._id); %>
+							<div class="column is-half">
+								<div class="feature-card <%= existing?.isEnabled ? 'is-enabled' : '' %>" data-feature-id="<%= feat._id %>">
+									<div class="feature-header">
+										<div>
+											<strong><%= feat.name %></strong>
+											<span class="feature-id"><%= feat._id %></span>
+										</div>
+										<label class="switch">
+											<input type="checkbox" class="feature-toggle" data-id="<%= feat._id %>" data-name="<%= feat.name %>" data-desc="<%= feat.description %>" data-category="bot" <%= existing?.isEnabled ? 'checked' : '' %>>
+											<span class="slider round"></span>
+										</label>
+									</div>
+									<p class="is-size-7 has-text-grey mt-2"><%= feat.description %></p>
+								</div>
+							</div>
+							<% }); %>
 						</div>
-						
-						<button type="button" class="button is-info" onclick="addFeature()">
+
+						<!-- Dashboard Features -->
+						<h2 class="subtitle mt-5"><span class="category-badge category-dashboard">Dashboard</span> Dashboard Features</h2>
+						<div class="columns is-multiline" id="dashboard-features">
+							<% const dashboardFeatures = [
+								{ _id: 'premium_dashboard', name: 'Premium Dashboard', description: 'Access to premium dashboard themes and layouts' },
+								{ _id: 'advanced_stats', name: 'Advanced Statistics', description: 'Detailed analytics and server insights' },
+								{ _id: 'export_data', name: 'Export Data', description: 'Export server data and logs to CSV/JSON' },
+								{ _id: 'webhook_integrations', name: 'Webhook Integrations', description: 'Custom webhook integrations for notifications' },
+							]; %>
+							<% dashboardFeatures.forEach(feat => { %>
+							<% const existing = (configData.features || []).find(f => f._id === feat._id); %>
+							<div class="column is-half">
+								<div class="feature-card <%= existing?.isEnabled ? 'is-enabled' : '' %>" data-feature-id="<%= feat._id %>">
+									<div class="feature-header">
+										<div>
+											<strong><%= feat.name %></strong>
+											<span class="feature-id"><%= feat._id %></span>
+										</div>
+										<label class="switch">
+											<input type="checkbox" class="feature-toggle" data-id="<%= feat._id %>" data-name="<%= feat.name %>" data-desc="<%= feat.description %>" data-category="dashboard" <%= existing?.isEnabled ? 'checked' : '' %>>
+											<span class="slider round"></span>
+										</label>
+									</div>
+									<p class="is-size-7 has-text-grey mt-2"><%= feat.description %></p>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+
+						<!-- API Features -->
+						<h2 class="subtitle mt-5"><span class="category-badge category-api">API</span> API Features</h2>
+						<div class="columns is-multiline" id="api-features">
+							<% const apiFeatures = [
+								{ _id: 'api_access', name: 'API Access', description: 'Access to bot REST API endpoints' },
+								{ _id: 'api_webhooks', name: 'API Webhooks', description: 'Receive webhook callbacks for events' },
+								{ _id: 'api_unlimited', name: 'Unlimited API Calls', description: 'No rate limiting on API requests' },
+							]; %>
+							<% apiFeatures.forEach(feat => { %>
+							<% const existing = (configData.features || []).find(f => f._id === feat._id); %>
+							<div class="column is-half">
+								<div class="feature-card <%= existing?.isEnabled ? 'is-enabled' : '' %>" data-feature-id="<%= feat._id %>">
+									<div class="feature-header">
+										<div>
+											<strong><%= feat.name %></strong>
+											<span class="feature-id"><%= feat._id %></span>
+										</div>
+										<label class="switch">
+											<input type="checkbox" class="feature-toggle" data-id="<%= feat._id %>" data-name="<%= feat.name %>" data-desc="<%= feat.description %>" data-category="api" <%= existing?.isEnabled ? 'checked' : '' %>>
+											<span class="slider round"></span>
+										</label>
+									</div>
+									<p class="is-size-7 has-text-grey mt-2"><%= feat.description %></p>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+
+						<!-- General Features -->
+						<h2 class="subtitle mt-5"><span class="category-badge category-general">General</span> General Features</h2>
+						<div class="columns is-multiline" id="general-features">
+							<% const generalFeatures = [
+								{ _id: 'priority_support', name: 'Priority Support', description: 'Fast-track support responses and dedicated help' },
+								{ _id: 'early_access', name: 'Early Access', description: 'Access to beta features before public release' },
+								{ _id: 'no_ads', name: 'Ad-Free Experience', description: 'Remove any promotional messages' },
+								{ _id: 'custom_prefix', name: 'Custom Prefix', description: 'Set a custom command prefix per server' },
+							]; %>
+							<% generalFeatures.forEach(feat => { %>
+							<% const existing = (configData.features || []).find(f => f._id === feat._id); %>
+							<div class="column is-half">
+								<div class="feature-card <%= existing?.isEnabled ? 'is-enabled' : '' %>" data-feature-id="<%= feat._id %>">
+									<div class="feature-header">
+										<div>
+											<strong><%= feat.name %></strong>
+											<span class="feature-id"><%= feat._id %></span>
+										</div>
+										<label class="switch">
+											<input type="checkbox" class="feature-toggle" data-id="<%= feat._id %>" data-name="<%= feat.name %>" data-desc="<%= feat.description %>" data-category="general" <%= existing?.isEnabled ? 'checked' : '' %>>
+											<span class="slider round"></span>
+										</label>
+									</div>
+									<p class="is-size-7 has-text-grey mt-2"><%= feat.description %></p>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+
+						<!-- Custom Features -->
+						<hr>
+						<h2 class="subtitle">
+							<span class="icon"><i class="fa fa-plus-circle"></i></span>
+							Custom Features
+						</h2>
+						<p class="mb-3">Add your own custom features not listed above:</p>
+						<div id="custom-features">
+							<% const predefinedIds = ['ai_chat', 'ai_images', 'custom_commands', 'advanced_moderation', 'custom_branding', 'extended_logs', 'voice_features', 'auto_roles', 'premium_dashboard', 'advanced_stats', 'export_data', 'webhook_integrations', 'api_access', 'api_webhooks', 'api_unlimited', 'priority_support', 'early_access', 'no_ads', 'custom_prefix']; %>
+							<% (configData.features || []).filter(f => !predefinedIds.includes(f._id)).forEach(feat => { %>
+							<div class="box custom-feature-box">
+								<div class="columns is-vcentered">
+									<div class="column is-3">
+										<input class="input" type="text" name="custom_id[]" value="<%= feat._id %>" placeholder="feature_id" pattern="[a-z0-9_]+" required>
+									</div>
+									<div class="column is-3">
+										<input class="input" type="text" name="custom_name[]" value="<%= feat.name %>" placeholder="Display Name" required>
+									</div>
+									<div class="column is-4">
+										<input class="input" type="text" name="custom_desc[]" value="<%= feat.description || '' %>" placeholder="Description">
+									</div>
+									<div class="column is-1 has-text-centered">
+										<label class="checkbox"><input type="checkbox" name="custom_enabled[]" value="<%= feat._id %>" <%= feat.isEnabled ? 'checked' : '' %>></label>
+									</div>
+									<div class="column is-1">
+										<button type="button" class="button is-danger is-small" onclick="$(this).closest('.custom-feature-box').remove(); SkynetData.HUM=true;">
+											<span class="icon"><i class="fa fa-trash"></i></span>
+										</button>
+									</div>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+						<button type="button" class="button is-info is-small" onclick="addCustomFeature()">
 							<span class="icon"><i class="fa fa-plus"></i></span>
-							<span>Add Feature</span>
+							<span>Add Custom Feature</span>
 						</button>
+
 						<br><br>
 						<%- include('../partials/form-buttons') %>
 					</form>
-
-					<hr>
-					<h2 class="subtitle">Common Feature Examples</h2>
-					<div class="content">
-						<table class="table is-bordered is-narrow">
-							<thead>
-								<tr><th>ID</th><th>Name</th><th>Description</th></tr>
-							</thead>
-							<tbody>
-								<tr><td><code>ai_chat</code></td><td>AI Chat</td><td>Access to AI chatbot features</td></tr>
-								<tr><td><code>custom_commands</code></td><td>Custom Commands</td><td>Create unlimited custom commands</td></tr>
-								<tr><td><code>advanced_moderation</code></td><td>Advanced Moderation</td><td>Advanced auto-mod filters</td></tr>
-								<tr><td><code>priority_support</code></td><td>Priority Support</td><td>Fast-track support responses</td></tr>
-								<tr><td><code>custom_branding</code></td><td>Custom Branding</td><td>Remove bot branding from embeds</td></tr>
-								<tr><td><code>api_access</code></td><td>API Access</td><td>Access to bot API endpoints</td></tr>
-							</tbody>
-						</table>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -103,36 +239,67 @@
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
 	
-	<script>
-	function addFeature() {
-		$('#features-table tbody').append(`
-			<tr>
-				<td><input class="input" type="text" name="feature_id[]" value="" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only" placeholder="feature_id"></td>
-				<td><input class="input" type="text" name="feature_name[]" value="" required placeholder="Display Name"></td>
-				<td><input class="input" type="text" name="feature_description[]" value="" placeholder="Description"></td>
-				<td>
-					<div class="select is-fullwidth">
-						<select name="feature_category[]">
-							<option value="general">General</option>
-							<option value="bot">Bot</option>
-							<option value="dashboard">Dashboard</option>
-							<option value="api">API</option>
-						</select>
-					</div>
-				</td>
-				<td>
-					<label class="checkbox">
-						<input type="checkbox" name="feature_enabled[]" value="new" checked>
-					</label>
-				</td>
-				<td><button type="button" class="button is-danger is-small" onclick="removeFeature(this)">Remove</button></td>
-			</tr>
-		`);
-		SkynetData.HUM = true;
-	}
+	<style>
+		.switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+		.switch input { opacity: 0; width: 0; height: 0; }
+		.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; }
+		.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; }
+		input:checked + .slider { background-color: #48c774; }
+		input:checked + .slider:before { transform: translateX(24px); }
+		.slider.round { border-radius: 26px; }
+		.slider.round:before { border-radius: 50%; }
+	</style>
 
-	function removeFeature(btn) {
-		$(btn).closest('tr').remove();
+	<script>
+	// Update hidden form data before submit
+	$('#form').on('submit', function() {
+		$('#selected-features-data').empty();
+		$('.feature-toggle:checked').each(function() {
+			const id = $(this).data('id');
+			const name = $(this).data('name');
+			const desc = $(this).data('desc');
+			const cat = $(this).data('category');
+			$('#selected-features-data').append(`
+				<input type="hidden" name="feature_id[]" value="${id}">
+				<input type="hidden" name="feature_name[]" value="${name}">
+				<input type="hidden" name="feature_description[]" value="${desc}">
+				<input type="hidden" name="feature_category[]" value="${cat}">
+				<input type="hidden" name="feature_enabled[]" value="${id}">
+			`);
+		});
+	});
+
+	// Toggle card styling
+	$('.feature-toggle').on('change', function() {
+		const card = $(this).closest('.feature-card');
+		card.toggleClass('is-enabled', $(this).is(':checked'));
+		SkynetData.HUM = true;
+	});
+
+	function addCustomFeature() {
+		$('#custom-features').append(`
+			<div class="box custom-feature-box">
+				<div class="columns is-vcentered">
+					<div class="column is-3">
+						<input class="input" type="text" name="custom_id[]" placeholder="feature_id" pattern="[a-z0-9_]+" required>
+					</div>
+					<div class="column is-3">
+						<input class="input" type="text" name="custom_name[]" placeholder="Display Name" required>
+					</div>
+					<div class="column is-4">
+						<input class="input" type="text" name="custom_desc[]" placeholder="Description">
+					</div>
+					<div class="column is-1 has-text-centered">
+						<label class="checkbox"><input type="checkbox" name="custom_enabled[]" value="new" checked></label>
+					</div>
+					<div class="column is-1">
+						<button type="button" class="button is-danger is-small" onclick="$(this).closest('.custom-feature-box').remove(); SkynetData.HUM=true;">
+							<span class="icon"><i class="fa fa-trash"></i></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		`);
 		SkynetData.HUM = true;
 	}
 	</script>

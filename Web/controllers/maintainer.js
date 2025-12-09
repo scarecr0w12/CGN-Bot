@@ -339,11 +339,15 @@ controllers.membership.features.post = async (req, res) => {
 		siteSettings = SiteSettings.new({ _id: "main" });
 	}
 
-	const ids = req.body.feature_id ? Array.isArray(req.body.feature_id) ? req.body.feature_id : [req.body.feature_id] : [];
-	const names = req.body.feature_name ? Array.isArray(req.body.feature_name) ? req.body.feature_name : [req.body.feature_name] : [];
-	const descriptions = req.body.feature_description ? Array.isArray(req.body.feature_description) ? req.body.feature_description : [req.body.feature_description] : [];
-	const categories = req.body.feature_category ? Array.isArray(req.body.feature_category) ? req.body.feature_category : [req.body.feature_category] : [];
-	const enabledList = req.body.feature_enabled ? Array.isArray(req.body.feature_enabled) ? req.body.feature_enabled : [req.body.feature_enabled] : [];
+	// Helper to ensure array
+	const toArray = val => val ? Array.isArray(val) ? val : [val] : [];
+
+	// Process predefined features from toggles
+	const ids = toArray(req.body.feature_id);
+	const names = toArray(req.body.feature_name);
+	const descriptions = toArray(req.body.feature_description);
+	const categories = toArray(req.body.feature_category);
+	const enabledList = toArray(req.body.feature_enabled);
 
 	const features = [];
 	for (let i = 0; i < ids.length; i++) {
@@ -353,10 +357,30 @@ controllers.membership.features.post = async (req, res) => {
 				name: names[i],
 				description: descriptions[i] || "",
 				category: categories[i] || "general",
-				isEnabled: enabledList.includes(ids[i]) || enabledList.includes("new"),
+				isEnabled: enabledList.includes(ids[i]),
 			});
 		}
 	}
+
+	// Process custom features
+	const customIds = toArray(req.body.custom_id);
+	const customNames = toArray(req.body.custom_name);
+	const customDescs = toArray(req.body.custom_desc);
+	const customEnabled = toArray(req.body.custom_enabled);
+
+	for (let i = 0; i < customIds.length; i++) {
+		if (customIds[i] && customNames[i]) {
+			const customId = customIds[i].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+			features.push({
+				_id: customId,
+				name: customNames[i],
+				description: customDescs[i] || "",
+				category: "general",
+				isEnabled: customEnabled.includes(customIds[i]) || customEnabled.includes("new"),
+			});
+		}
+	}
+
 	siteSettings.query.set("features", features);
 
 	try {
