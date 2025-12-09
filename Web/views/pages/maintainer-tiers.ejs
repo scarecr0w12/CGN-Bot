@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Membership Tiers - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+	<style>
+		.tier-card {
+			border: 2px solid #dbdbdb;
+			border-radius: 8px;
+			padding: 1.5rem;
+			margin-bottom: 1.5rem;
+			position: relative;
+		}
+		.tier-card.is-default {
+			border-color: #3273dc;
+		}
+		.tier-header {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			margin-bottom: 1rem;
+		}
+		.tier-badge {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: white;
+			font-weight: bold;
+		}
+		.tier-remove {
+			position: absolute;
+			top: 1rem;
+			right: 1rem;
+		}
+		.feature-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-top: 0.5rem;
+		}
+		.feature-tag {
+			cursor: pointer;
+			user-select: none;
+		}
+		.feature-tag.is-selected {
+			background-color: #3273dc;
+			color: white;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-star"></i></span>
+						Membership Tiers
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								<p>Configure membership tiers and assign features to each tier. Users are assigned to tiers based on their subscription status.</p>
+								<p><strong>Tip:</strong> Create a "free" tier as the default for all users. Higher level numbers indicate premium tiers.</p>
+							</div>
+						</div>
+					</article>
+
+					<form id="form" action="<%= currentPage %>" method="post">
+						<div id="tiers-container">
+							<% if (configData.tiers && configData.tiers.length > 0) { %>
+								<% configData.tiers.forEach((tier, index) => { %>
+								<div class="tier-card <%= tier.is_default ? 'is-default' : '' %>" data-index="<%= index %>">
+									<button type="button" class="button is-danger is-small tier-remove" onclick="removeTier(this)">
+										<span class="icon"><i class="fa fa-trash"></i></span>
+									</button>
+									
+									<div class="columns">
+										<div class="column is-3">
+											<div class="field">
+												<label class="label">Tier ID</label>
+												<input class="input" type="text" name="tier_id[]" value="<%= tier._id %>" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only">
+											</div>
+										</div>
+										<div class="column is-3">
+											<div class="field">
+												<label class="label">Display Name</label>
+												<input class="input" type="text" name="tier_name[]" value="<%= tier.name %>" required>
+											</div>
+										</div>
+										<div class="column is-2">
+											<div class="field">
+												<label class="label">Level</label>
+												<input class="input" type="number" name="tier_level[]" value="<%= tier.level %>" min="0" required>
+											</div>
+										</div>
+										<div class="column is-2">
+											<div class="field">
+												<label class="label">Color</label>
+												<input class="input" type="color" name="tier_color[]" value="<%= tier.color || '#3273dc' %>">
+											</div>
+										</div>
+										<div class="column is-2">
+											<div class="field">
+												<label class="label">Badge Icon</label>
+												<input class="input" type="text" name="tier_badge[]" value="<%= tier.badge_icon || '' %>" placeholder="fa-star">
+											</div>
+										</div>
+									</div>
+
+									<div class="columns">
+										<div class="column is-6">
+											<div class="field">
+												<label class="label">Description</label>
+												<input class="input" type="text" name="tier_description[]" value="<%= tier.description || '' %>">
+											</div>
+										</div>
+										<div class="column is-3">
+											<div class="field">
+												<label class="label">Monthly Price (cents)</label>
+												<input class="input" type="number" name="tier_price_monthly[]" value="<%= tier.price_monthly || 0 %>" min="0">
+											</div>
+										</div>
+										<div class="column is-3">
+											<div class="field">
+												<label class="label">Yearly Price (cents)</label>
+												<input class="input" type="number" name="tier_price_yearly[]" value="<%= tier.price_yearly || 0 %>" min="0">
+											</div>
+										</div>
+									</div>
+
+									<div class="columns">
+										<div class="column">
+											<div class="field">
+												<label class="checkbox">
+													<input type="checkbox" name="tier_purchasable[]" value="<%= tier._id %>" <%= tier.is_purchasable ? 'checked' : '' %>>
+													Purchasable (show on pricing page)
+												</label>
+											</div>
+										</div>
+										<div class="column">
+											<div class="field">
+												<label class="checkbox">
+													<input type="radio" name="tier_default" value="<%= tier._id %>" <%= tier.is_default ? 'checked' : '' %>>
+													Default Tier (assigned to new users)
+												</label>
+											</div>
+										</div>
+									</div>
+
+									<div class="field">
+										<label class="label">Included Features</label>
+										<input type="hidden" name="tier_features[]" value="<%= (tier.features || []).join(',') %>" class="tier-features-input">
+										<div class="feature-tags">
+											<% configData.features.forEach(feature => { %>
+											<span class="tag is-medium feature-tag <%= (tier.features || []).includes(feature._id) ? 'is-selected' : '' %>" 
+												  data-feature="<%= feature._id %>"
+												  onclick="toggleFeature(this)">
+												<%= feature.name %>
+											</span>
+											<% }); %>
+										</div>
+										<% if (!configData.features || configData.features.length === 0) { %>
+										<p class="help is-warning">No features defined yet. <a href="/dashboard/maintainer/membership/features">Create features first</a>.</p>
+										<% } %>
+									</div>
+								</div>
+								<% }); %>
+							<% } %>
+						</div>
+
+						<button type="button" class="button is-info" onclick="addTier()">
+							<span class="icon"><i class="fa fa-plus"></i></span>
+							<span>Add Tier</span>
+						</button>
+						<br><br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	const availableFeatures = <%- JSON.stringify(configData.features || []) %>;
+	let tierIndex = <%= (configData.tiers || []).length %>;
+
+	function addTier() {
+		const featureTags = availableFeatures.map(f => 
+			`<span class="tag is-medium feature-tag" data-feature="${f._id}" onclick="toggleFeature(this)">${f.name}</span>`
+		).join('');
+
+		$('#tiers-container').append(`
+			<div class="tier-card" data-index="${tierIndex}">
+				<button type="button" class="button is-danger is-small tier-remove" onclick="removeTier(this)">
+					<span class="icon"><i class="fa fa-trash"></i></span>
+				</button>
+				
+				<div class="columns">
+					<div class="column is-3">
+						<div class="field">
+							<label class="label">Tier ID</label>
+							<input class="input" type="text" name="tier_id[]" value="" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only" placeholder="tier_id">
+						</div>
+					</div>
+					<div class="column is-3">
+						<div class="field">
+							<label class="label">Display Name</label>
+							<input class="input" type="text" name="tier_name[]" value="" required placeholder="Tier Name">
+						</div>
+					</div>
+					<div class="column is-2">
+						<div class="field">
+							<label class="label">Level</label>
+							<input class="input" type="number" name="tier_level[]" value="${tierIndex}" min="0" required>
+						</div>
+					</div>
+					<div class="column is-2">
+						<div class="field">
+							<label class="label">Color</label>
+							<input class="input" type="color" name="tier_color[]" value="#3273dc">
+						</div>
+					</div>
+					<div class="column is-2">
+						<div class="field">
+							<label class="label">Badge Icon</label>
+							<input class="input" type="text" name="tier_badge[]" value="" placeholder="fa-star">
+						</div>
+					</div>
+				</div>
+
+				<div class="columns">
+					<div class="column is-6">
+						<div class="field">
+							<label class="label">Description</label>
+							<input class="input" type="text" name="tier_description[]" value="">
+						</div>
+					</div>
+					<div class="column is-3">
+						<div class="field">
+							<label class="label">Monthly Price (cents)</label>
+							<input class="input" type="number" name="tier_price_monthly[]" value="0" min="0">
+						</div>
+					</div>
+					<div class="column is-3">
+						<div class="field">
+							<label class="label">Yearly Price (cents)</label>
+							<input class="input" type="number" name="tier_price_yearly[]" value="0" min="0">
+						</div>
+					</div>
+				</div>
+
+				<div class="columns">
+					<div class="column">
+						<div class="field">
+							<label class="checkbox">
+								<input type="checkbox" name="tier_purchasable[]" value="new_${tierIndex}">
+								Purchasable (show on pricing page)
+							</label>
+						</div>
+					</div>
+					<div class="column">
+						<div class="field">
+							<label class="checkbox">
+								<input type="radio" name="tier_default" value="new_${tierIndex}">
+								Default Tier (assigned to new users)
+							</label>
+						</div>
+					</div>
+				</div>
+
+				<div class="field">
+					<label class="label">Included Features</label>
+					<input type="hidden" name="tier_features[]" value="" class="tier-features-input">
+					<div class="feature-tags">${featureTags}</div>
+					${availableFeatures.length === 0 ? '<p class="help is-warning">No features defined yet. <a href="/dashboard/maintainer/membership/features">Create features first</a>.</p>' : ''}
+				</div>
+			</div>
+		`);
+		tierIndex++;
+		SkynetData.HUM = true;
+	}
+
+	function removeTier(btn) {
+		$(btn).closest('.tier-card').remove();
+		SkynetData.HUM = true;
+	}
+
+	function toggleFeature(tag) {
+		$(tag).toggleClass('is-selected');
+		updateFeatureInput(tag);
+		SkynetData.HUM = true;
+	}
+
+	function updateFeatureInput(tag) {
+		const card = $(tag).closest('.tier-card');
+		const selected = card.find('.feature-tag.is-selected').map(function() {
+			return $(this).data('feature');
+		}).get();
+		card.find('.tier-features-input').val(selected.join(','));
+	}
+	</script>
+</body>
+</html>

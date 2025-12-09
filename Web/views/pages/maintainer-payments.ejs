@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Payment Providers - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-credit-card"></i></span>
+						Payment Providers
+					</h1>
+					<article class="message is-warning">
+						<div class="message-body">
+							<div class="content">
+								<p><strong>Security:</strong> API keys and secrets must be stored in environment variables.</p>
+								<p>Configure product/plan mappings here to link payments to membership tiers.</p>
+							</div>
+						</div>
+					</article>
+
+					<form id="form" action="<%= currentPage %>" method="post">
+						<!-- Stripe -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-stripe fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">Stripe</p>
+											<p class="subtitle is-7">Credit card & subscription payments</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="stripe_enabled" <%= configData.payment_providers?.stripe?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Webhook URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>webhooks/stripe">
+								<p class="help">Configure this endpoint in your Stripe Dashboard webhooks settings.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>STRIPE_PUBLISHABLE_KEY=pk_live_xxx
+STRIPE_SECRET_KEY=sk_live_xxx
+STRIPE_WEBHOOK_SECRET=whsec_xxx</pre>
+							</div>
+
+							<hr>
+							<h4 class="title is-6">Stripe Product Mapping</h4>
+							<p class="help mb-3">Map Stripe products/prices to local tiers. Find IDs in your Stripe Dashboard.</p>
+							<table class="table is-fullwidth" id="stripe-mapping-table">
+								<thead>
+									<tr>
+										<th>Stripe Product ID</th>
+										<th>Stripe Price ID</th>
+										<th>Local Tier</th>
+										<th style="width: 50px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% const stripeMapping = configData.payment_providers?.stripe?.product_mapping || []; %>
+									<% stripeMapping.forEach(mapping => { %>
+									<tr>
+										<td><input class="input" type="text" name="stripe_product_id[]" value="<%= mapping._id %>"></td>
+										<td><input class="input" type="text" name="stripe_price_id[]" value="<%= mapping.stripe_price_id %>"></td>
+										<td>
+											<div class="select is-fullwidth">
+												<select name="stripe_tier_id[]">
+													<% configData.tiers.forEach(tier => { %>
+													<option value="<%= tier._id %>" <%= mapping.tier_id === tier._id ? 'selected' : '' %>><%= tier.name %></option>
+													<% }); %>
+												</select>
+											</div>
+										</td>
+										<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+							<button type="button" class="button is-small is-info" onclick="addStripeMapping()">
+								<span class="icon"><i class="fa fa-plus"></i></span>
+								<span>Add Mapping</span>
+							</button>
+						</div>
+
+						<!-- PayPal -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-paypal fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">PayPal</p>
+											<p class="subtitle is-7">PayPal subscriptions</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="paypal_enabled" <%= configData.payment_providers?.paypal?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Webhook URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>webhooks/paypal">
+								<p class="help">Configure this endpoint in your PayPal Developer Dashboard.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>PAYPAL_CLIENT_ID=your_client_id
+PAYPAL_CLIENT_SECRET=your_client_secret
+PAYPAL_WEBHOOK_ID=your_webhook_id</pre>
+							</div>
+
+							<hr>
+							<h4 class="title is-6">PayPal Plan Mapping</h4>
+							<p class="help mb-3">Map PayPal subscription plans to local tiers.</p>
+							<table class="table is-fullwidth" id="paypal-mapping-table">
+								<thead>
+									<tr>
+										<th>PayPal Plan ID</th>
+										<th>Local Tier</th>
+										<th style="width: 50px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% const paypalMapping = configData.payment_providers?.paypal?.plan_mapping || []; %>
+									<% paypalMapping.forEach(mapping => { %>
+									<tr>
+										<td><input class="input" type="text" name="paypal_plan_id[]" value="<%= mapping._id %>"></td>
+										<td>
+											<div class="select is-fullwidth">
+												<select name="paypal_tier_id[]">
+													<% configData.tiers.forEach(tier => { %>
+													<option value="<%= tier._id %>" <%= mapping.tier_id === tier._id ? 'selected' : '' %>><%= tier.name %></option>
+													<% }); %>
+												</select>
+											</div>
+										</td>
+										<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+							<button type="button" class="button is-small is-info" onclick="addPayPalMapping()">
+								<span class="icon"><i class="fa fa-plus"></i></span>
+								<span>Add Mapping</span>
+							</button>
+						</div>
+
+						<!-- BTCPay -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-bitcoin fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">BTCPay Server</p>
+											<p class="subtitle is-7">Cryptocurrency payments (Bitcoin, Lightning, etc.)</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="btcpay_enabled" <%= configData.payment_providers?.btcpay?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Webhook URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>webhooks/btcpay">
+								<p class="help">Configure this endpoint in your BTCPay Server store settings.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>BTCPAY_SERVER_URL=https://your-btcpay-server.com
+BTCPAY_STORE_ID=your_store_id
+BTCPAY_API_KEY=your_api_key
+BTCPAY_WEBHOOK_SECRET=your_webhook_secret</pre>
+							</div>
+							<article class="message is-info is-small">
+								<div class="message-body">
+									<p>BTCPay Server allows you to accept Bitcoin, Lightning Network, and other cryptocurrencies without intermediaries.</p>
+									<p><a href="https://btcpayserver.org/" target="_blank">Learn more about BTCPay Server →</a></p>
+								</div>
+							</article>
+						</div>
+
+						<br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	const localTiers = <%- JSON.stringify(configData.tiers || []) %>;
+
+	function addStripeMapping() {
+		const tierOptions = localTiers.map(t => `<option value="${t._id}">${t.name}</option>`).join('');
+		$('#stripe-mapping-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="stripe_product_id[]" value="" placeholder="prod_xxx"></td>
+				<td><input class="input" type="text" name="stripe_price_id[]" value="" placeholder="price_xxx"></td>
+				<td>
+					<div class="select is-fullwidth">
+						<select name="stripe_tier_id[]">${tierOptions}</select>
+					</div>
+				</td>
+				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+			</tr>
+		`);
+		SkynetData.HUM = true;
+	}
+
+	function addPayPalMapping() {
+		const tierOptions = localTiers.map(t => `<option value="${t._id}">${t.name}</option>`).join('');
+		$('#paypal-mapping-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="paypal_plan_id[]" value="" placeholder="P-xxx"></td>
+				<td>
+					<div class="select is-fullwidth">
+						<select name="paypal_tier_id[]">${tierOptions}</select>
+					</div>
+				</td>
+				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+			</tr>
+		`);
+		SkynetData.HUM = true;
+	}
+	</script>
+</body>
+</html>

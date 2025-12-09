@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>OAuth Providers - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-link"></i></span>
+						OAuth Providers
+					</h1>
+					<article class="message is-warning">
+						<div class="message-body">
+							<div class="content">
+								<p><strong>Important:</strong> OAuth credentials (Client ID/Secret) should be stored in environment variables, not in the database.</p>
+								<p>Enable providers here and configure their credentials in your <code>.env</code> file.</p>
+							</div>
+						</div>
+					</article>
+
+					<form id="form" action="<%= currentPage %>" method="post">
+						<!-- Google OAuth -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-google fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">Google</p>
+											<p class="subtitle is-7">Account linking & recovery</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="google_enabled" <%= configData.oauth_providers?.google?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Callback URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>auth/google/callback">
+								<p class="help">Add this URL to your Google Cloud Console OAuth credentials.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>GOOGLE_OAUTH_CLIENT_ID=your_client_id
+GOOGLE_OAUTH_CLIENT_SECRET=your_client_secret</pre>
+							</div>
+						</div>
+
+						<!-- GitHub OAuth -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-github fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">GitHub</p>
+											<p class="subtitle is-7">Developer features & extension publishing</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="github_enabled" <%= configData.oauth_providers?.github?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Callback URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>auth/github/callback">
+								<p class="help">Add this URL to your GitHub OAuth App settings.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>GITHUB_OAUTH_CLIENT_ID=your_client_id
+GITHUB_OAUTH_CLIENT_SECRET=your_client_secret</pre>
+							</div>
+						</div>
+
+						<!-- Twitch OAuth -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-twitch fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">Twitch</p>
+											<p class="subtitle is-7">Streaming integrations</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="twitch_enabled" <%= configData.oauth_providers?.twitch?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Callback URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>auth/twitch/callback">
+								<p class="help">Add this URL to your Twitch Developer Console.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>TWITCH_OAUTH_CLIENT_ID=your_client_id
+TWITCH_OAUTH_CLIENT_SECRET=your_client_secret</pre>
+							</div>
+						</div>
+
+						<!-- Patreon OAuth -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fab fa-patreon fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">Patreon</p>
+											<p class="subtitle is-7">Automatic tier assignment from pledges</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="patreon_enabled" <%= configData.oauth_providers?.patreon?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Callback URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>auth/patreon/callback">
+								<p class="help">Add this URL to your Patreon Developer Portal.</p>
+							</div>
+							<div class="field">
+								<label class="label">Webhook URL</label>
+								<input class="input" type="text" readonly value="<%= configData.hostingURL %>webhooks/patreon">
+								<p class="help">Configure this webhook in Patreon to receive pledge updates.</p>
+							</div>
+							<div class="field">
+								<label class="label">Environment Variables</label>
+								<pre>PATREON_CLIENT_ID=your_client_id
+PATREON_CLIENT_SECRET=your_client_secret
+PATREON_WEBHOOK_SECRET=your_webhook_secret</pre>
+							</div>
+
+							<hr>
+							<h4 class="title is-6">Patreon Tier Mapping</h4>
+							<p class="help mb-3">Map your Patreon tiers to local membership tiers. Patreon Tier IDs can be found in your campaign settings.</p>
+							<table class="table is-fullwidth" id="patreon-mapping-table">
+								<thead>
+									<tr>
+										<th>Patreon Tier ID</th>
+										<th>Local Tier</th>
+										<th style="width: 50px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% const tierMapping = configData.oauth_providers?.patreon?.tier_mapping || []; %>
+									<% tierMapping.forEach(mapping => { %>
+									<tr>
+										<td><input class="input" type="text" name="patreon_tier_id[]" value="<%= mapping._id %>"></td>
+										<td>
+											<div class="select is-fullwidth">
+												<select name="patreon_local_tier[]">
+													<% configData.tiers.forEach(tier => { %>
+													<option value="<%= tier._id %>" <%= mapping.local_tier_id === tier._id ? 'selected' : '' %>><%= tier.name %></option>
+													<% }); %>
+												</select>
+											</div>
+										</td>
+										<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+							<button type="button" class="button is-small is-info" onclick="addPatreonMapping()">
+								<span class="icon"><i class="fa fa-plus"></i></span>
+								<span>Add Mapping</span>
+							</button>
+						</div>
+
+						<br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	const localTiers = <%- JSON.stringify(configData.tiers || []) %>;
+
+	function addPatreonMapping() {
+		const tierOptions = localTiers.map(t => `<option value="${t._id}">${t.name}</option>`).join('');
+		$('#patreon-mapping-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="patreon_tier_id[]" value="" placeholder="Patreon Tier ID"></td>
+				<td>
+					<div class="select is-fullwidth">
+						<select name="patreon_local_tier[]">${tierOptions}</select>
+					</div>
+				</td>
+				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+			</tr>
+		`);
+		SkynetData.HUM = true;
+	}
+	</script>
+</body>
+</html>

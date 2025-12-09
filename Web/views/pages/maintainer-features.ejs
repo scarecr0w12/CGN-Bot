@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Feature Registry - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-puzzle-piece"></i></span>
+						Feature Registry
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								<p>Define gateable features that can be assigned to tiers. Features are referenced by their ID when checking access in code.</p>
+								<p><strong>Categories:</strong> bot, dashboard, api, general</p>
+							</div>
+						</div>
+					</article>
+					<form id="form" action="<%= currentPage %>" method="post">
+						<div class="field" style="overflow-x: auto;">
+							<table class="table is-fullwidth" id="features-table">
+								<thead>
+									<tr>
+										<th>Feature ID</th>
+										<th>Display Name</th>
+										<th>Description</th>
+										<th>Category</th>
+										<th style="width: 80px;">Enabled</th>
+										<th style="width: 50px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (configData.features && configData.features.length > 0) { %>
+										<% configData.features.forEach(feature => { %>
+										<tr>
+											<td><input class="input" type="text" name="feature_id[]" value="<%= feature._id %>" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only"></td>
+											<td><input class="input" type="text" name="feature_name[]" value="<%= feature.name %>" required></td>
+											<td><input class="input" type="text" name="feature_description[]" value="<%= feature.description || '' %>"></td>
+											<td>
+												<div class="select is-fullwidth">
+													<select name="feature_category[]">
+														<option value="general" <%= feature.category === 'general' ? 'selected' : '' %>>General</option>
+														<option value="bot" <%= feature.category === 'bot' ? 'selected' : '' %>>Bot</option>
+														<option value="dashboard" <%= feature.category === 'dashboard' ? 'selected' : '' %>>Dashboard</option>
+														<option value="api" <%= feature.category === 'api' ? 'selected' : '' %>>API</option>
+													</select>
+												</div>
+											</td>
+											<td>
+												<label class="checkbox">
+													<input type="checkbox" name="feature_enabled[]" value="<%= feature._id %>" <%= feature.isEnabled ? 'checked' : '' %>>
+												</label>
+											</td>
+											<td><button type="button" class="button is-danger is-small" onclick="removeFeature(this)">Remove</button></td>
+										</tr>
+										<% }); %>
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+						
+						<button type="button" class="button is-info" onclick="addFeature()">
+							<span class="icon"><i class="fa fa-plus"></i></span>
+							<span>Add Feature</span>
+						</button>
+						<br><br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+
+					<hr>
+					<h2 class="subtitle">Common Feature Examples</h2>
+					<div class="content">
+						<table class="table is-bordered is-narrow">
+							<thead>
+								<tr><th>ID</th><th>Name</th><th>Description</th></tr>
+							</thead>
+							<tbody>
+								<tr><td><code>ai_chat</code></td><td>AI Chat</td><td>Access to AI chatbot features</td></tr>
+								<tr><td><code>custom_commands</code></td><td>Custom Commands</td><td>Create unlimited custom commands</td></tr>
+								<tr><td><code>advanced_moderation</code></td><td>Advanced Moderation</td><td>Advanced auto-mod filters</td></tr>
+								<tr><td><code>priority_support</code></td><td>Priority Support</td><td>Fast-track support responses</td></tr>
+								<tr><td><code>custom_branding</code></td><td>Custom Branding</td><td>Remove bot branding from embeds</td></tr>
+								<tr><td><code>api_access</code></td><td>API Access</td><td>Access to bot API endpoints</td></tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	function addFeature() {
+		$('#features-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="feature_id[]" value="" required pattern="[a-z0-9_]+" title="Lowercase letters, numbers, and underscores only" placeholder="feature_id"></td>
+				<td><input class="input" type="text" name="feature_name[]" value="" required placeholder="Display Name"></td>
+				<td><input class="input" type="text" name="feature_description[]" value="" placeholder="Description"></td>
+				<td>
+					<div class="select is-fullwidth">
+						<select name="feature_category[]">
+							<option value="general">General</option>
+							<option value="bot">Bot</option>
+							<option value="dashboard">Dashboard</option>
+							<option value="api">API</option>
+						</select>
+					</div>
+				</td>
+				<td>
+					<label class="checkbox">
+						<input type="checkbox" name="feature_enabled[]" value="new" checked>
+					</label>
+				</td>
+				<td><button type="button" class="button is-danger is-small" onclick="removeFeature(this)">Remove</button></td>
+			</tr>
+		`);
+		SkynetData.HUM = true;
+	}
+
+	function removeFeature(btn) {
+		$(btn).closest('tr').remove();
+		SkynetData.HUM = true;
+	}
+	</script>
+</body>
+</html>
