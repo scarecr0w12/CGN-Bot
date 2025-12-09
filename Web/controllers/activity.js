@@ -22,8 +22,8 @@ module.exports = async (req, { res }) => {
 			},
 		},
 	}]);
-	const guildAmount = await req.app.client.guilds.totalCount;
-	const userAmount = await req.app.client.users.totalCount;
+	const guildAmount = req.app.client.guilds.cache.size;
+	const userAmount = req.app.client.users.cache.size;
 	let messageCount = 0;
 	let activeServers = guildAmount;
 	if (result && result.length > 0) {

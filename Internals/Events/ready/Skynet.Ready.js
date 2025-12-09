@@ -126,16 +126,21 @@ class Ready extends BaseEvent {
 	async startMessageCount () {
 		logger.debug("Creating messages_today timers.");
 		if (this.client.shardID === "0") {
-			await Servers.update({}, { $set: { messages_today: 0 } }, { multi: true }).catch(err => {
-				logger.warn(`Failed to start message counter...`, {}, err);
-			});
 			const clearMessageCount = () => {
 				logger.debug("Good new 24 hours! Clearing message counters.");
 				Servers.update({}, { $set: { messages_today: 0 } }, { multi: true }).catch(err => {
 					logger.warn(`Failed to reset message counter...`, {}, err);
 				});
 			};
-			this.client.setInterval(clearMessageCount, 86400000);
+			const now = new Date();
+			const night = new Date(
+				Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0)
+			);
+			const msToMidnight = night.getTime() - now.getTime();
+			this.client.setTimeout(() => {
+				clearMessageCount();
+				this.client.setInterval(clearMessageCount, 86400000);
+			}, msToMidnight);
 		}
 		// TODO: Add to array this.startTimerExtensions()
 		await Promise.all([this.resetVoiceStatsCollector(), this.statsCollector(), this.setReminders(), this.setCountdowns(), this.setGiveaways(), this.startStreamingRSS(), this.checkStreamers(), this.startMessageOfTheDay()]);

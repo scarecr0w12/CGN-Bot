@@ -1,5 +1,3 @@
-const GetValue = require("./GetValue.js");
-
 /* eslint-disable max-len */
 module.exports = client => {
 	const properties = 10;
@@ -146,13 +144,13 @@ module.exports = client => {
 		 */
 		Object.defineProperty(client.guilds, "totalCount", {
 			get: async function get () {
-				return GetValue(client, "guilds.size", "int");
+				return client.guilds.cache.size;
 			},
 		});
 
 		Object.defineProperty(client.users, "totalCount", {
 			get: async function get () {
-				return GetValue(client, "users.size", "int");
+				return client.users.cache.size;
 			},
 		});
 	}
