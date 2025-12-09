@@ -102,6 +102,15 @@ exports.open = async (client, auth, configJS, logger) => {
 			requireProxy: configJS.cloudflare?.requireProxy,
 			blockedCountries: configJS.cloudflare?.blockedCountries?.length || 0,
 		});
+	} else {
+		// Fallback: Always extract real IP from common proxy headers
+		app.use((req, res, next) => {
+			req.realIP = req.headers["cf-connecting-ip"] ||
+				req.headers["x-real-ip"] ||
+				(req.headers["x-forwarded-for"] ? req.headers["x-forwarded-for"].split(",")[0].trim() : null) ||
+				req.ip;
+			next();
+		});
 	}
 
 	// Configure global middleware & Server properties

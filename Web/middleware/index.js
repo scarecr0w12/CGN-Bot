@@ -119,6 +119,9 @@ middleware.populateRequest = route => (req, res, next) => {
 	req.isBusy = req.app.toobusy();
 	req.debugMode = req.app.get("debug mode");
 
+	// Real client IP (prefer Cloudflare's extracted IP, fallback to Express)
+	req.clientIP = req.realIP || req.ip;
+
 	// Response object
 	if (route.advanced) res.res = new SkynetResponse(req, res);
 	next();
@@ -163,8 +166,20 @@ middleware.setHeaders = (req, res, next) => {
 };
 
 middleware.logRequest = (req, res, next) => {
-	// eslint-disable-next-line max-len
-	logger.verbose(`Incoming ${req.protocol} ${req.method} on ${req.path}.`, { params: req.params, query: req.query, protocol: req.protocol, method: req.method, path: req.path, useragent: req.header("User-Agent") });
+	// Get real client IP (from Cloudflare middleware or fallback)
+	const clientIP = req.realIP || req.ip;
+
+	logger.verbose(`Incoming ${req.protocol} ${req.method} on ${req.path}.`, {
+		ip: clientIP,
+		params: req.params,
+		query: req.query,
+		protocol: req.protocol,
+		method: req.method,
+		path: req.path,
+		useragent: req.header("User-Agent"),
+		cfRay: req.headers["cf-ray"] || null,
+		country: req.headers["cf-ipcountry"] || null,
+	});
 	next();
 };
 
