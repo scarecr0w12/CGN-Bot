@@ -28,6 +28,20 @@ module.exports = new Schema({
 			required: true,
 		},
 	})],
+	vote_sites: [new Schema({
+		name: {
+			type: String,
+			required: true,
+		},
+		url: {
+			type: String,
+			required: true,
+		},
+		icon_url: {
+			type: String,
+			default: "",
+		},
+	})],
 	homepageMessageHTML: {
 		type: String,
 		default: "",

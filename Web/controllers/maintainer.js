@@ -16,6 +16,25 @@ const { getRoundedUptime, saveMaintainerConsoleOptions: save, getChannelData, ca
 const { GetGuild } = require("../../Modules").getGuild;
 const Constants = require("../../Internals/Constants");
 
+/**
+ * Safely get site settings for READ operations (GET requests).
+ * Returns existing document or null - NEVER creates/saves a new document.
+ * Callers should use configJS defaults when null is returned.
+ */
+const getSiteSettingsForRead = async () => SiteSettings.findOne("main");
+
+/**
+ * Safely get or create site settings for WRITE operations (POST requests).
+ * Returns existing document or creates a new one (but doesn't save it - caller must save after setting data).
+ */
+const getSiteSettingsForWrite = async () => {
+	let siteSettings = await SiteSettings.findOne("main");
+	if (!siteSettings) {
+		siteSettings = SiteSettings.new({ _id: "main" });
+	}
+	return siteSettings;
+};
+
 const controllers = module.exports;
 
 controllers.maintainer = async (req, { res }) => {
@@ -30,7 +49,7 @@ controllers.maintainer = async (req, { res }) => {
 		},
 	}]);
 	let messageCount = 0;
-	if (result) {
+	if (result && result.length > 0 && result[0] && result[0].total) {
 		messageCount = result[0].total;
 	}
 
@@ -257,15 +276,12 @@ controllers.options.contributors.post = async (req, res) => {
 controllers.options.donations = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	res.setConfigData({
-		donateSubtitle: siteSettings.donateSubtitle || configJS.donateSubtitle || "",
-		charities: siteSettings.charities || [],
+		donateSubtitle: siteSettings?.donateSubtitle || configJS.donateSubtitle || "",
+		charities: siteSettings?.charities || [],
 	}).setPageData({
 		page: "maintainer-donations.ejs",
 	}).render();
@@ -273,10 +289,8 @@ controllers.options.donations = async (req, { res }) => {
 controllers.options.donations.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-	}
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
 
 	siteSettings.query.set("donateSubtitle", req.body.donateSubtitle || "");
 
@@ -307,6 +321,58 @@ controllers.options.donations.post = async (req, res) => {
 	}
 };
 
+controllers.options.voteSites = async (req, { res }) => {
+	// READ operation - never create/save, use defaults if not found
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	const siteSettings = await getSiteSettingsForRead();
+
+	const voteSites = (siteSettings?.vote_sites?.length ? siteSettings.vote_sites : configJS.voteSites || [])
+		.map(site => ({
+			name: site.name,
+			url: site.url,
+			icon_url: site.icon_url || "",
+		}));
+
+	res.setConfigData({
+		voteSites,
+	}).setPageData({
+		page: "maintainer-vote-sites.ejs",
+	}).render();
+};
+
+controllers.options.voteSites.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
+
+	const names = req.body.name ? Array.isArray(req.body.name) ? req.body.name : [req.body.name] : [];
+	const urls = req.body.url ? Array.isArray(req.body.url) ? req.body.url : [req.body.url] : [];
+	const iconUrls = req.body.icon_url ? Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url] : [];
+
+	const voteSites = [];
+	for (let i = 0; i < names.length; i++) {
+		if (names[i] && urls[i]) {
+			voteSites.push({
+				name: names[i],
+				url: urls[i],
+				icon_url: iconUrls[i] || "",
+			});
+		}
+	}
+
+	siteSettings.query.set("vote_sites", voteSites);
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save vote site settings", {}, err);
+		renderError(res, "Failed to save vote site settings.");
+	}
+};
+
 // ============================================
 // MEMBERSHIP SYSTEM CONTROLLERS
 // ============================================
@@ -317,15 +383,11 @@ controllers.membership = {};
 controllers.membership.features = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-		siteSettings = await SiteSettings.findOne("main");
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	res.setConfigData({
-		features: siteSettings.features || [],
+		features: siteSettings?.features || [],
 	}).setPageData({
 		page: "maintainer-features.ejs",
 	}).render();
@@ -334,10 +396,8 @@ controllers.membership.features = async (req, { res }) => {
 controllers.membership.features.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-	}
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
 
 	// Helper to ensure array
 	const toArray = val => val ? Array.isArray(val) ? val : [val] : [];
@@ -398,16 +458,12 @@ controllers.membership.features.post = async (req, res) => {
 controllers.membership.tiers = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-		siteSettings = await SiteSettings.findOne("main");
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	res.setConfigData({
-		tiers: siteSettings.tiers || [],
-		features: siteSettings.features || [],
+		tiers: siteSettings?.tiers || [],
+		features: siteSettings?.features || [],
 	}).setPageData({
 		page: "maintainer-tiers.ejs",
 	}).render();
@@ -416,10 +472,8 @@ controllers.membership.tiers = async (req, { res }) => {
 controllers.membership.tiers.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-	}
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
 
 	const ids = req.body.tier_id ? Array.isArray(req.body.tier_id) ? req.body.tier_id : [req.body.tier_id] : [];
 	const names = req.body.tier_name ? Array.isArray(req.body.tier_name) ? req.body.tier_name : [req.body.tier_name] : [];
@@ -469,16 +523,12 @@ controllers.membership.tiers.post = async (req, res) => {
 controllers.membership.oauth = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-		siteSettings = await SiteSettings.findOne("main");
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	res.setConfigData({
-		oauth_providers: siteSettings.oauth_providers || {},
-		tiers: siteSettings.tiers || [],
+		oauth_providers: siteSettings?.oauth_providers || {},
+		tiers: siteSettings?.tiers || [],
 		hostingURL: configJS.hostingURL,
 	}).setPageData({
 		page: "maintainer-oauth.ejs",
@@ -488,10 +538,8 @@ controllers.membership.oauth = async (req, { res }) => {
 controllers.membership.oauth.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-	}
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
 
 	// Update OAuth provider enabled states
 	siteSettings.query.set("oauth_providers.google.isEnabled", req.body.google_enabled === "on");
@@ -529,16 +577,12 @@ controllers.membership.oauth.post = async (req, res) => {
 controllers.membership.payments = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-		siteSettings = await SiteSettings.findOne("main");
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	res.setConfigData({
-		payment_providers: siteSettings.payment_providers || {},
-		tiers: siteSettings.tiers || [],
+		payment_providers: siteSettings?.payment_providers || {},
+		tiers: siteSettings?.tiers || [],
 		hostingURL: configJS.hostingURL,
 	}).setPageData({
 		page: "maintainer-payments.ejs",
@@ -548,10 +592,8 @@ controllers.membership.payments = async (req, { res }) => {
 controllers.membership.payments.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-	}
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
 
 	// Update payment provider enabled states
 	siteSettings.query.set("payment_providers.stripe.isEnabled", req.body.stripe_enabled === "on");
@@ -605,12 +647,8 @@ controllers.membership.payments.post = async (req, res) => {
 controllers.membership.users = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
-	let siteSettings = await SiteSettings.findOne("main");
-	if (!siteSettings) {
-		siteSettings = SiteSettings.new({ _id: "main" });
-		await siteSettings.save();
-		siteSettings = await SiteSettings.findOne("main");
-	}
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
 
 	const searchResults = [];
 	const query = req.query.q;
@@ -653,8 +691,8 @@ controllers.membership.users = async (req, { res }) => {
 	}
 
 	res.setConfigData({
-		tiers: siteSettings.tiers || [],
-		features: siteSettings.features || [],
+		tiers: siteSettings?.tiers || [],
+		features: siteSettings?.features || [],
 	}).setPageData({
 		query,
 		searchResults,

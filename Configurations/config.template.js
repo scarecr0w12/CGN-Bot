@@ -109,6 +109,18 @@ module.exports = {
 	 * These last values can remain untouched.
 	 */
 	moment_date_format: "ddd MMMM Do YYYY [at] H:mm:ss",
+	voteSites: [
+		{
+			name: "top.gg",
+			url: "https://top.gg/bot/{id}/vote",
+			icon_url: "https://top.gg/_next/static/media/topgg-logo.3d5a003d.svg",
+		},
+		{
+			name: "Discord Bot List",
+			url: "https://discordbotlist.com/bots/{id}/upvote",
+			icon_url: "https://discordbotlist.com/favicon-196x196.png",
+		},
+	],
 	voteTriggers: [
 		" +!",
 		" +1",

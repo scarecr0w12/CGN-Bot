@@ -12,7 +12,7 @@ class PresenceUpdate extends BaseEvent {
 	async handle (oldPresence, presence) {
 		const serverDocument = await Servers.findOne(presence.guild.id);
 		if (!serverDocument) {
-			logger.warn(`Could not satisfy PresenceUpdate because ${presence.guild.id} is missing a Document.`, { svrid: presence.guild.id });
+			// Silently skip - guild may not have initialized yet or status messages aren't configured
 			return;
 		}
 		const streamingStatusMessageDocument = serverDocument.config.moderation.status_messages.member_streaming_message;

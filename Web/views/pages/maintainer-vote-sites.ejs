@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Vote Sites - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						Vote Sites
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								Configure the vote site links shown to users (e.g., top.gg, discordbotlist). Only sudo maintainers can update this list.
+							</div>
+						</div>
+					</article>
+					<form id="form" action="<%= currentPage %>" method="post">
+						<label class="label">Vote Sites</label>
+						<div class="field" style="overflow-x: auto;">
+							<table class="table is-fullwidth" id="vote-sites-table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Vote URL</th>
+										<th>Icon URL (optional)</th>
+										<th style="width: 60px;">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% if (configData.voteSites && configData.voteSites.length > 0) { %>
+										<% configData.voteSites.forEach(site => { %>
+										<tr>
+											<td><input class="input" type="text" name="name[]" value="<%= site.name %>" required></td>
+											<td><input class="input" type="url" name="url[]" value="<%= site.url %>" required></td>
+											<td>
+												<input class="input" type="url" name="icon_url[]" value="<%= site.icon_url || '' %>">
+												<% if (site.icon_url) { %>
+												<figure class="image is-24x24" style="margin-top: 0.25rem;">
+													<img src="<%= site.icon_url %>" alt="<%= site.name %> icon" onerror="this.style.display='none';">
+												</figure>
+												<% } %>
+											</td>
+											<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+										</tr>
+										<% }); %>
+									<% } %>
+								</tbody>
+							</table>
+						</div>
+
+						<button type="button" class="button is-info" onclick="addVoteSite(); SkynetData.HUM = true;">
+							<span class="icon"><i class="fa fa-plus"></i></span>
+							<span>Add Vote Site</span>
+						</button>
+						<br><br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	function addVoteSite() {
+		$('#vote-sites-table tbody').append(`
+			<tr>
+				<td><input class="input" type="text" name="name[]" value="" required></td>
+				<td><input class="input" type="url" name="url[]" value="" required></td>
+				<td><input class="input" type="url" name="icon_url[]" value=""></td>
+				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+			</tr>
+		`);
+	}
+	</script>
+</body>
+</html>

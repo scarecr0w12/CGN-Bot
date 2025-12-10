@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2025-12-10
+
+### Added
+
+#### Vote Sites Management
+
+- **Vote Sites Page** (`Web/views/pages/maintainer-vote-sites.ejs`) - Configure external voting sites
+- **Maintainer Controller** - CRUD operations for vote site configuration
+- **Schema Support** - `vote_sites` array in `siteSettingsSchema.js`
+- **Default Sites** - Pre-configured top.gg and Discord Bot List in config template
+- Supports custom name, URL (with `{id}` placeholder), and icon for each site
+
+### Fixed
+
+- **Maintainer Console Crash** - Added null check for empty aggregate results in dashboard stats
+- **PresenceUpdate Log Spam** - Silently skip guilds without server documents instead of logging warnings
+- **Site Settings Data Safety** - Refactored all controllers to prevent accidental blank document creation:
+  - GET requests never create/save documents (use config defaults if not found)
+  - POST requests only create documents when saving actual data
+
 ## [1.2.0] - 2025-12-09
 
 ### Added

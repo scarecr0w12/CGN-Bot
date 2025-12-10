@@ -15,6 +15,7 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/homepage", "administration", [], controllers.console.options.homepage);
 	setupConsolePage(router, "/global-options/wiki-contributors", "administration", [], controllers.console.options.contributors);
 	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
+	setupConsolePage(router, "/global-options/vote-sites", "administration", [], controllers.console.options.voteSites);
 
 	// Membership System (Sudo/Host only)
 	setupConsolePage(router, "/membership/features", "administration", [], controllers.console.membership.features);
