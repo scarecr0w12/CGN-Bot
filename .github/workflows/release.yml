@@ -7,17 +7,24 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release (e.g., v5.1.0)'
+        description: 'Version to release (e.g., v1.2.0)'
         required: true
         type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
   pull-requests: read
+  packages: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,6 +42,7 @@ jobs:
 
       - name: Run lint
         run: npm run lint
+        continue-on-error: false
 
       - name: Get version from tag
         id: version
@@ -83,14 +91,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get version
+      - name: Extract version
         id: version
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-          else
-            VERSION="${GITHUB_REF#refs/tags/}"
-          fi
+          VERSION="${{ needs.release.outputs.version }}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "version_short=${VERSION#v}" >> $GITHUB_OUTPUT
 
@@ -102,5 +106,10 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version_short }}
             ghcr.io/${{ github.repository }}:latest
+          labels: |
+            org.opencontainers.image.title=SkynetBot
+            org.opencontainers.image.version=${{ steps.version.outputs.version_short }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: linux/amd64

@@ -2,26 +2,37 @@ name: CI
 
 on:
   push:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
+    tags-ignore:
+      - 'v*'
   pull_request:
-    branches: [ main, master, development ]
+    branches: [main, master, development]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [24.x]
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '24.x'
           cache: npm
 
       - name: Install dependencies
