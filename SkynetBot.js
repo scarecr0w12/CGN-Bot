@@ -879,7 +879,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			// Register slash commands with Discord (only in production or when explicitly enabled)
 			if (process.env.REGISTER_SLASH_COMMANDS === "true" || process.env.NODE_ENV === "production") {
 				await client.slashCommands.registerCommands(
-					auth.discord.token,
+					auth.discord.clientToken,
 					auth.discord.clientID,
 					process.env.SLASH_COMMANDS_GUILD_ID || null,
 				);

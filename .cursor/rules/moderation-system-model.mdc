@@ -1,5 +1,5 @@
 ---
-description: Documentation for progressive strike/infraction tracking system and automated moderation workflows.
+description: Specification for Discord bot's progressive moderation system including strikes, bans, and infractions
 ---
 
 # === USER INSTRUCTIONS ===
@@ -63,65 +63,50 @@ $END$
 
 # moderation-system-model
 
-The moderation system implements a progressive strike and infraction tracking model with automated escalation rules.
-
-Core Components:
-
-1. Strike System (Modules/ModLog.js)
-- Progressive strike accumulation with configurable thresholds
-- Automated escalation based on strike count:
-  - 3 strikes: 24 hour mute
-  - 5 strikes: 7 day ban
-  - 7 strikes: permanent ban
-- Strike decay rules with 30-day expiration
-- Strike categories with weighted severity
-Importance Score: 90
-
-2. Infraction Tracking (Web/controllers/dashboard/administration.js)
-- Detailed infraction records with:
-  - Timestamp
-  - Moderator ID
-  - Action type
-  - Duration
-  - Reason
-- Case ID system for cross-referencing
-- Appeal tracking and resolution workflow
+Progressive Strike System
+Path: Internals/SlashCommands/commands/strike.js
+- Implements multi-level warning system with configurable thresholds
+- Tracks violation history with reason codes and timestamps
+- Automatic escalation based on strike count/severity
+- Strike expiration with configurable decay periods
+- Integration with role-based mod permissions
 Importance Score: 85
 
-3. Automated Actions (Commands/Public/strike.js)
-- Threshold-based automated punishments
-- Configurable warning messages
-- Notification system for affected users
-- Integration with Discord audit log
+Temporary Ban Management 
+Path: Internals/SlashCommands/commands/tempban.js
+- Duration-based ban system with automatic unbanning
+- Configurable message deletion window (1-7 days)
+- Hierarchical permission validation for mod actions
+- Ban reason tracking and mod action logging
 Importance Score: 80
 
-4. Administrative Hierarchy
-- Multi-level moderation permissions (0-3)
-- Role-based access control for mod actions
-- Override capabilities for higher-level mods
-- Audit logging of permission usage
+Moderation Data Model
+Path: Web/controllers/moderation/schema.js
+- Infraction tracking with severity levels
+- Mod action history with attribution
+- Appeal tracking and processing
+- Strike count aggregation
+- Ban duration calculations
 Importance Score: 75
 
-Key Data Models:
-```
-Infraction {
-  caseId: String
-  userId: String
-  modId: String
-  type: String
-  reason: String
-  timestamp: Date
-  expires: Date
-  active: Boolean
-}
+Key Components:
+1. Progressive Punishment System
+- Strike counting with configurable thresholds
+- Automatic escalation rules
+- Duration-based temporary restrictions
+- Mod override capabilities
 
-Strike {
-  userId: String
-  count: Number
-  reasons: Array
-  lastStrike: Date
-}
-```
+2. Violation Tracking
+- Infraction categorization
+- Timestamp-based history
+- Reason documentation
+- Appeal status tracking
+
+3. Permission Management
+- Role-based mod levels
+- Action hierarchy enforcement
+- Override authorization
+- Audit logging
 
 $END$
 

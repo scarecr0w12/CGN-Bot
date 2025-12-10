@@ -80,64 +80,59 @@ $END$
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
 
-Discord Bot Management System
-Importance Score: 85/100
+Core Business Architecture:
 
-Core Business Components:
+1. AI Integration Subsystem
+Importance Score: 95
+- Multi-provider AI conversation management with OpenAI, Anthropic, Groq
+- Vector memory system for contextual conversation history
+- Usage tracking and budget enforcement
+- Provider-specific rate limiting and quota management
+Path: Modules/AI/*
 
-1. Activity & Server Management
-- Custom server engagement scoring algorithm using weighted member counts and message activity
-- Server visibility filtering by categories and public status
-- Activity-based automated moderation actions
-Path: Web/controllers/activity.js
+2. Community Management Core
+Importance Score: 90
+- Hierarchical moderation system with strike tracking
+- Points-based progression and ranking
+- Temporary room lifecycle management 
+- Custom starboard implementation
+Path: Internals/SlashCommands/*
 
-2. Extension System Architecture
-- Extension lifecycle management with version control
-- Sandboxed execution environment for custom server extensions 
-- Permission-based deployment pipeline
-- State machine: gallery, queue, third-party states
-Path: Web/controllers/extensions.js
+3. Premium Features Platform
+Importance Score: 85
+- Multi-tier subscription management
+- Feature access control and gating
+- Usage quota enforcement
+- Cross-provider webhook integration
+Path: Modules/TierManager.js
 
-3. Moderation Framework 
-- Multi-level administrative hierarchy (0-3)
-- Automated member management with inactivity tracking
-- Progressive strike system with configurable penalties
-- Role-based moderation filters
-Path: Web/controllers/dashboard/administration.js
+4. Server Management Engine 
+Importance Score: 80
+- Custom atomic operations for configuration changes
+- Multi-level admin controls system
+- Automated message handling policies
+- Activity tracking and point accumulation
+Path: Database/Document.js
 
-4. Community Management
-- Virtual currency and points distribution
-- Server-wide statistics and leaderboards
-- Custom rank progression system
-- Poll and giveaway automation
-Path: Commands/Public/points.js
+5. Extension Management System
+Importance Score: 75
+- Secure extension sandbox environment
+- Custom module resolution
+- Permission-based capability management
+- Version control and distribution
+Path: Internals/Extensions/*
 
 Key Integration Points:
-- Activity scoring feeds into moderation automation
-- Extension system integrates with permission hierarchy
-- Points system connects with rank progression
-- Statistics drive automated moderation actions
+- AI provider orchestration with memory management
+- Premium feature access control across subsystems
+- Cross-shard state synchronization
+- Moderation action tracking and enforcement
 
-Business Critical Workflows:
-1. Server Activity Monitoring
-- Member engagement tracking
-- Message pattern analysis
-- Voice channel participation metrics
-- Automated response triggers
-
-2. Extension Deployment
-- Validation pipeline
-- Permission verification
-- Version management 
-- Runtime sandboxing
-
-3. Moderation Automation
-- Strike accumulation
-- Penalty enforcement
-- Appeal management
-- Audit logging
-
-The system represents a comprehensive Discord server management solution with tight integration between activity tracking, automated moderation, and extensible command handling.
+Business Domain Focus:
+- Community management automation
+- AI-powered interaction systems
+- Premium service delivery
+- Extension marketplace operations
 
 $END$
 

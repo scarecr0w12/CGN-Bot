@@ -83,6 +83,12 @@ exports.open = async (client, auth, configJS, logger) => {
 		logger.info("Cloudflare integration initialized");
 	}
 
+	// Initialize BotLists module for vote webhooks and stats posting
+	const BotLists = require("../Modules/BotLists");
+	const botLists = new BotLists(client);
+	app.set("botLists", botLists);
+	botLists.init().catch(err => logger.warn("Failed to initialize BotLists module", {}, err));
+
 	// Apply Cloudflare middleware if proxy is enabled
 	if (configJS.cloudflare?.proxyEnabled) {
 		app.use(cloudflareMiddleware.cloudflareData);

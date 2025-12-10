@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Bot List APIs - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						Bot List API Integrations
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								Connect to top.gg, Discord Bot List, and other bot listing services to automatically post stats and receive vote notifications.
+							</div>
+						</div>
+					</article>
+
+    <form id="form" action="<%= currentPage %>" method="post">
+        <!-- Stats Overview -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-chart-bar"></i></span>
+                Vote Statistics
+            </h5>
+            <div class="columns">
+                <div class="column">
+                    <div class="notification is-info is-light">
+                        <p class="heading">Total Votes</p>
+                        <p class="title"><%= configData.voteStats?.total || 0 %></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="notification is-success is-light">
+                        <p class="heading">top.gg Votes</p>
+                        <p class="title"><%= configData.voteStats?.topgg || 0 %></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="notification is-warning is-light">
+                        <p class="heading">Discord Bot List Votes</p>
+                        <p class="title"><%= configData.voteStats?.discordbotlist || 0 %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- top.gg Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-arrow-up"></i></span>
+                top.gg Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topgg_enabled" <%= configData.bot_lists?.topgg?.isEnabled ? 'checked' : '' %>>
+                        Enable top.gg integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="topgg_api_token" value="<%= configData.bot_lists?.topgg?.api_token || '' %>" placeholder="Your top.gg API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token at <a href="https://top.gg/bot/YOUR_BOT_ID/webhooks" target="_blank">top.gg webhooks page</a></p>
+            </div>
+
+            <div class="field">
+                <label class="label">Webhook Secret</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="topgg_webhook_secret" value="<%= configData.bot_lists?.topgg?.webhook_secret || '' %>" placeholder="Webhook authorization secret">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-shield-alt"></i>
+                    </span>
+                </div>
+                <p class="help">Set this same value in top.gg webhook settings. Webhook URL: <code><%= configData.hostingURL %>/webhooks/topgg</code></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topgg_auto_post" <%= configData.bot_lists?.topgg?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discord Bot List Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-robot"></i></span>
+                Discord Bot List Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="dbl_enabled" <%= configData.bot_lists?.discordbotlist?.isEnabled ? 'checked' : '' %>>
+                        Enable Discord Bot List integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="dbl_api_token" value="<%= configData.bot_lists?.discordbotlist?.api_token || '' %>" placeholder="Your discordbotlist.com API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token in bot settings at <a href="https://discordbotlist.com/" target="_blank">discordbotlist.com</a></p>
+            </div>
+
+            <div class="field">
+                <label class="label">Webhook Secret</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="dbl_webhook_secret" value="<%= configData.bot_lists?.discordbotlist?.webhook_secret || '' %>" placeholder="Webhook authorization secret">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-shield-alt"></i>
+                    </span>
+                </div>
+                <p class="help">Set this same value in DBL webhook settings. Webhook URL: <code><%= configData.hostingURL %>/webhooks/discordbotlist</code></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="dbl_auto_post" <%= configData.bot_lists?.discordbotlist?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vote Rewards Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-gift"></i></span>
+                Vote Rewards
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="rewards_enabled" <%= configData.vote_rewards?.isEnabled ? 'checked' : '' %>>
+                        Enable vote rewards (award points to users who vote)
+                    </label>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Points per Vote</label>
+                        <div class="control">
+                            <input class="input" type="number" name="points_per_vote" value="<%= configData.vote_rewards?.points_per_vote || 100 %>" min="0">
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Weekend Multiplier</label>
+                        <div class="control">
+                            <input class="input" type="number" name="weekend_multiplier" value="<%= configData.vote_rewards?.weekend_multiplier || 2 %>" min="1">
+                        </div>
+                        <p class="help">Points are multiplied by this on weekends</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Notification Channel ID</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" name="notification_channel_id" value="<%= configData.vote_rewards?.notification_channel_id || '' %>" placeholder="Channel ID for vote notifications">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-hashtag"></i>
+                    </span>
+                </div>
+                <p class="help">Leave empty to disable vote notifications</p>
+            </div>
+        </div>
+
+        <!-- Point Redemption Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-exchange-alt"></i></span>
+                Point Redemption for Premium
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="redemption_enabled" <%= configData.vote_rewards?.redemption?.isEnabled ? 'checked' : '' %>>
+                        Allow users to redeem vote points for premium tier time
+                    </label>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Points per Dollar</label>
+                        <div class="control">
+                            <input class="input" type="number" name="points_per_dollar" value="<%= configData.vote_rewards?.redemption?.points_per_dollar || 1000 %>" min="1">
+                        </div>
+                        <p class="help">How many points equal $1 of tier value</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Redeemable Tier</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select name="redeemable_tier_id">
+                                    <option value="">-- Select Tier --</option>
+                                    <% (configData.tiers || []).forEach(tier => { %>
+                                    <option value="<%= tier._id %>" <%= configData.vote_rewards?.redemption?.redeemable_tier_id === tier._id ? 'selected' : '' %>>
+                                        <%= tier.name %> ($<%= tier.price_monthly || 0 %>/month)
+                                    </option>
+                                    <% }); %>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="help">Which tier users can redeem points for</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Minimum Days</label>
+                        <div class="control">
+                            <input class="input" type="number" name="min_redemption_days" value="<%= configData.vote_rewards?.redemption?.min_redemption_days || 7 %>" min="1">
+                        </div>
+                        <p class="help">Minimum days per redemption</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Maximum Days</label>
+                        <div class="control">
+                            <input class="input" type="number" name="max_redemption_days" value="<%= configData.vote_rewards?.redemption?.max_redemption_days || 365 %>" min="1">
+                        </div>
+                        <p class="help">Maximum days per redemption</p>
+                    </div>
+                </div>
+            </div>
+
+            <% 
+            const pointsPerDollar = configData.vote_rewards?.redemption?.points_per_dollar || 1000;
+            const selectedTier = (configData.tiers || []).find(t => t._id === configData.vote_rewards?.redemption?.redeemable_tier_id);
+            const tierPrice = selectedTier?.price_monthly || 5;
+            const pointsPerMonth = pointsPerDollar * tierPrice;
+            const pointsPerVote = configData.vote_rewards?.points_per_vote || 100;
+            const votesPerMonth = Math.ceil(pointsPerMonth / pointsPerVote);
+            %>
+            <article class="message is-info">
+                <div class="message-body">
+                    <strong>Redemption Calculator:</strong><br>
+                    <% if (selectedTier) { %>
+                    • <strong><%= selectedTier.name %></strong> costs $<%= tierPrice %>/month<br>
+                    • At <%= pointsPerDollar.toLocaleString() %> points/$1, one month = <strong><%= pointsPerMonth.toLocaleString() %> points</strong><br>
+                    • At <%= pointsPerVote %> points/vote, that's approximately <strong><%= votesPerMonth %> votes</strong> per month
+                    <% } else { %>
+                    Select a tier above to see redemption calculations.
+                    <% } %>
+                </div>
+            </article>
+        </div>
+
+        <!-- Recent Votes -->
+        <% if (configData.recentVotes && configData.recentVotes.length > 0) { %>
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-history"></i></span>
+                Recent Votes
+            </h5>
+            <div class="table-container">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Site</th>
+                            <th>Points</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% configData.recentVotes.forEach(vote => { %>
+                        <tr>
+                            <td><%= vote.username || vote.user_id %></td>
+                            <td>
+                                <span class="tag <%= vote.site === 'topgg' ? 'is-success' : 'is-warning' %>">
+                                    <%= vote.site === 'topgg' ? 'top.gg' : 'Discord Bot List' %>
+                                </span>
+                                <% if (vote.is_weekend) { %>
+                                <span class="tag is-info">Weekend</span>
+                                <% } %>
+                            </td>
+                            <td><%= vote.points_awarded %></td>
+                            <td><%= new Date(vote.timestamp).toLocaleString() %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="field">
+            <div class="control">
+                <button type="submit" class="button is-primary">
+                    <span class="icon"><i class="fa fa-save"></i></span>
+                    <span>Save Settings</span>
+                </button>
+            </div>
+        </div>
+    </form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>

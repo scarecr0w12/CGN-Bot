@@ -17,13 +17,41 @@ controllers.pricing = async (req, { res }) => {
 		const siteSettings = await TierManager.getSiteSettings();
 		const tiers = siteSettings?.tiers || [];
 		const features = siteSettings?.features || [];
+		const redemptionConfig = siteSettings?.vote_rewards?.redemption || {};
 
 		let userTier = null;
 		let subscription = null;
+		let userPoints = 0;
+		let redemptionInfo = null;
 
 		if (req.isAuthenticated()) {
 			userTier = await TierManager.getUserTier(req.user.id);
 			subscription = await TierManager.getUserSubscription(req.user.id);
+			
+			// Get user's points for redemption
+			const userDoc = await Users.findOne(req.user.id);
+			userPoints = userDoc?.points || 0;
+
+			// Calculate redemption info
+			if (redemptionConfig.isEnabled && redemptionConfig.redeemable_tier_id) {
+				const redeemTier = tiers.find(t => t._id === redemptionConfig.redeemable_tier_id);
+				if (redeemTier) {
+					const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
+					const pricePerMonth = redeemTier.price_monthly || 5;
+					const pointsPerDay = Math.ceil((pricePerMonth / 30) * pointsPerDollar);
+					
+					redemptionInfo = {
+						enabled: true,
+						tier: redeemTier,
+						pointsPerDollar,
+						pointsPerDay,
+						pointsPerMonth: Math.ceil(pricePerMonth * pointsPerDollar),
+						minDays: redemptionConfig.min_redemption_days || 7,
+						maxDays: redemptionConfig.max_redemption_days || 365,
+						affordableDays: Math.floor(userPoints / pointsPerDay),
+					};
+				}
+			}
 		}
 
 		res.setPageData({
@@ -32,6 +60,8 @@ controllers.pricing = async (req, { res }) => {
 			features,
 			userTier,
 			subscription,
+			userPoints,
+			redemptionInfo,
 		});
 		res.render();
 	} catch (err) {
@@ -269,5 +299,163 @@ controllers.createPayPalCheckout = async (req, res) => {
 	} catch (err) {
 		logger.error("Error creating PayPal checkout", { userId: req.user?.id }, err);
 		res.status(500).json({ error: "Failed to create PayPal checkout" });
+	}
+};
+
+/**
+ * Redeem vote points for premium tier time
+ */
+controllers.redeemPoints = async (req, res) => {
+	if (!req.isAuthenticated()) {
+		return res.status(401).json({ error: "You must be logged in to redeem points" });
+	}
+
+	const { days } = req.body;
+	const requestedDays = parseInt(days);
+
+	if (!requestedDays || requestedDays < 1) {
+		return res.status(400).json({ error: "Invalid number of days" });
+	}
+
+	try {
+		const siteSettings = await TierManager.getSiteSettings();
+		const redemptionConfig = siteSettings?.vote_rewards?.redemption;
+
+		// Check if redemption is enabled
+		if (!redemptionConfig?.isEnabled) {
+			return res.status(403).json({ error: "Point redemption is not enabled" });
+		}
+
+		// Validate days range
+		const minDays = redemptionConfig.min_redemption_days || 7;
+		const maxDays = redemptionConfig.max_redemption_days || 365;
+
+		if (requestedDays < minDays) {
+			return res.status(400).json({ error: `Minimum redemption is ${minDays} days` });
+		}
+		if (requestedDays > maxDays) {
+			return res.status(400).json({ error: `Maximum redemption is ${maxDays} days` });
+		}
+
+		// Get the redeemable tier
+		const tierId = redemptionConfig.redeemable_tier_id;
+		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
+
+		if (!tier) {
+			return res.status(400).json({ error: "No tier configured for redemption" });
+		}
+
+		// Calculate points required
+		const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
+		const pricePerMonth = tier.price_monthly || 5;
+		const pricePerDay = pricePerMonth / 30;
+		const dollarCost = pricePerDay * requestedDays;
+		const pointsRequired = Math.ceil(dollarCost * pointsPerDollar);
+
+		// Get user's current points
+		const userDoc = await Users.findOne(req.user.id);
+		const currentPoints = userDoc?.points || 0;
+
+		if (currentPoints < pointsRequired) {
+			return res.status(400).json({
+				error: "Insufficient points",
+				required: pointsRequired,
+				current: currentPoints,
+				shortfall: pointsRequired - currentPoints,
+			});
+		}
+
+		// Deduct points
+		userDoc.query.inc("points", -pointsRequired);
+		await userDoc.save();
+
+		// Calculate expiration
+		const expiresAt = new Date();
+		
+		// If user already has this tier, extend from current expiration
+		const currentTier = await TierManager.getUserTier(req.user.id);
+		if (currentTier?.tier_id === tierId && currentTier?.expires_at && new Date(currentTier.expires_at) > expiresAt) {
+			expiresAt.setTime(new Date(currentTier.expires_at).getTime());
+		}
+		
+		expiresAt.setDate(expiresAt.getDate() + requestedDays);
+
+		// Assign the tier
+		await TierManager.setUserTier(req.user.id, tierId, "vote_redemption", expiresAt, "point_redemption");
+
+		logger.info("User redeemed points for tier", {
+			userId: req.user.id,
+			tierId,
+			days: requestedDays,
+			pointsSpent: pointsRequired,
+			expiresAt,
+		});
+
+		res.json({
+			success: true,
+			tier_name: tier.name,
+			days: requestedDays,
+			points_spent: pointsRequired,
+			points_remaining: currentPoints - pointsRequired,
+			expires_at: expiresAt.toISOString(),
+		});
+	} catch (err) {
+		logger.error("Error redeeming points", { userId: req.user?.id }, err);
+		res.status(500).json({ error: "Failed to redeem points" });
+	}
+};
+
+/**
+ * Get redemption info for authenticated user
+ */
+controllers.getRedemptionInfo = async (req, res) => {
+	if (!req.isAuthenticated()) {
+		return res.status(401).json({ error: "You must be logged in" });
+	}
+
+	try {
+		const siteSettings = await TierManager.getSiteSettings();
+		const redemptionConfig = siteSettings?.vote_rewards?.redemption;
+
+		if (!redemptionConfig?.isEnabled) {
+			return res.json({ enabled: false });
+		}
+
+		const tierId = redemptionConfig.redeemable_tier_id;
+		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
+
+		if (!tier) {
+			return res.json({ enabled: false });
+		}
+
+		// Get user points
+		const userDoc = await Users.findOne(req.user.id);
+		const currentPoints = userDoc?.points || 0;
+
+		// Calculate costs
+		const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
+		const pricePerMonth = tier.price_monthly || 5;
+		const pointsPerMonth = Math.ceil(pricePerMonth * pointsPerDollar);
+		const pointsPerDay = Math.ceil((pricePerMonth / 30) * pointsPerDollar);
+
+		// How many days can user afford?
+		const affordableDays = Math.floor(currentPoints / pointsPerDay);
+
+		res.json({
+			enabled: true,
+			tier_id: tierId,
+			tier_name: tier.name,
+			tier_price_monthly: pricePerMonth,
+			points_per_dollar: pointsPerDollar,
+			points_per_month: pointsPerMonth,
+			points_per_day: pointsPerDay,
+			min_days: redemptionConfig.min_redemption_days || 7,
+			max_days: redemptionConfig.max_redemption_days || 365,
+			user_points: currentPoints,
+			affordable_days: affordableDays,
+		});
+	} catch (err) {
+		logger.error("Error getting redemption info", { userId: req.user?.id }, err);
+		res.status(500).json({ error: "Failed to get redemption info" });
 	}
 };

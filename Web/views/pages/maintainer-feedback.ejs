@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Feedback - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+	<style>
+		.feedback-card {
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+			margin-bottom: 1rem;
+			overflow: hidden;
+		}
+		.feedback-card-header {
+			padding: 1rem;
+			border-bottom: 1px solid #e5e7eb;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.feedback-card-body {
+			padding: 1rem;
+		}
+		.feedback-card-footer {
+			padding: 0.75rem 1rem;
+			background: #f9fafb;
+			border-top: 1px solid #e5e7eb;
+		}
+		.feedback-meta {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+		.feedback-avatar {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+		}
+		.feedback-user {
+			font-weight: 600;
+			color: #374151;
+		}
+		.feedback-time {
+			font-size: 0.8rem;
+			color: #6b7280;
+		}
+		.feedback-message {
+			color: #4b5563;
+			line-height: 1.6;
+			white-space: pre-wrap;
+		}
+		.feedback-url {
+			font-size: 0.8rem;
+			color: #6b7280;
+			margin-top: 0.5rem;
+		}
+		.feedback-url a {
+			color: #3273dc;
+		}
+		.category-badge {
+			display: inline-block;
+			padding: 0.25rem 0.75rem;
+			border-radius: 999px;
+			font-size: 0.75rem;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+		.category-bug { background: #fef2f2; color: #dc2626; }
+		.category-feature { background: #eff6ff; color: #2563eb; }
+		.category-improvement { background: #f0fdf4; color: #16a34a; }
+		.category-question { background: #fefce8; color: #ca8a04; }
+		.category-other { background: #f3f4f6; color: #6b7280; }
+		
+		.status-badge {
+			display: inline-block;
+			padding: 0.25rem 0.75rem;
+			border-radius: 999px;
+			font-size: 0.75rem;
+			font-weight: 600;
+		}
+		.status-new { background: #dbeafe; color: #1d4ed8; }
+		.status-in_progress { background: #fef3c7; color: #d97706; }
+		.status-resolved { background: #d1fae5; color: #059669; }
+		.status-closed { background: #e5e7eb; color: #6b7280; }
+		
+		.filter-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+		.filter-tag {
+			padding: 0.5rem 1rem;
+			border-radius: 999px;
+			font-size: 0.85rem;
+			border: 1px solid #e5e7eb;
+			background: white;
+			color: #374151;
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+		.filter-tag:hover {
+			border-color: #3273dc;
+			color: #3273dc;
+		}
+		.filter-tag.is-active {
+			background: #3273dc;
+			border-color: #3273dc;
+			color: white;
+		}
+		.filter-tag .count {
+			display: inline-block;
+			margin-left: 0.25rem;
+			padding: 0.1rem 0.5rem;
+			background: rgba(0,0,0,0.1);
+			border-radius: 999px;
+			font-size: 0.75rem;
+		}
+		.filter-tag.is-active .count {
+			background: rgba(255,255,255,0.3);
+		}
+		.admin-notes-input {
+			width: 100%;
+			font-size: 0.875rem;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-comments"></i></span>
+						User Feedback
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								Review and manage feedback submitted by users through the floating feedback widget.
+							</div>
+						</div>
+					</article>
+
+					<!-- Category Filters -->
+					<div class="box">
+						<h4 class="subtitle is-6 mb-3">Filter by Category</h4>
+						<div class="filter-tags">
+							<a href="<%= currentPage %>" class="filter-tag <%= !pageData.activeCategory && !pageData.activeStatus ? 'is-active' : '' %>">
+								All
+							</a>
+							<% configData.categories.forEach(cat => { %>
+							<a href="<%= currentPage %>?category=<%= cat %>" class="filter-tag <%= pageData.activeCategory === cat ? 'is-active' : '' %>">
+								<%= cat.charAt(0).toUpperCase() + cat.slice(1) %>
+								<span class="count"><%= configData.categoryCounts[cat] || 0 %></span>
+							</a>
+							<% }); %>
+						</div>
+						
+						<h4 class="subtitle is-6 mb-3">Filter by Status</h4>
+						<div class="filter-tags">
+							<% configData.statuses.forEach(st => { %>
+							<a href="<%= currentPage %>?status=<%= st %>" class="filter-tag <%= pageData.activeStatus === st ? 'is-active' : '' %>">
+								<%= st.replace('_', ' ').charAt(0).toUpperCase() + st.replace('_', ' ').slice(1) %>
+								<span class="count"><%= configData.statusCounts[st] || 0 %></span>
+							</a>
+							<% }); %>
+						</div>
+					</div>
+
+					<!-- Feedback List -->
+					<% if (configData.feedbackItems && configData.feedbackItems.length > 0) { %>
+						<% configData.feedbackItems.forEach(item => { %>
+						<div class="feedback-card" data-id="<%= item._id %>">
+							<div class="feedback-card-header">
+								<div class="feedback-meta">
+									<img src="<%= item.user_avatar %>" alt="" class="feedback-avatar">
+									<div>
+										<span class="feedback-user"><%= item.username %></span>
+										<span class="feedback-time">
+											&bull; <%= new Date(item.created_at).toLocaleDateString() %> at <%= new Date(item.created_at).toLocaleTimeString() %>
+										</span>
+									</div>
+								</div>
+								<div>
+									<span class="category-badge category-<%= item.category %>"><%= item.category %></span>
+									<span class="status-badge status-<%= item.status %>"><%= item.status.replace('_', ' ') %></span>
+								</div>
+							</div>
+							<div class="feedback-card-body">
+								<p class="feedback-message"><%= item.message %></p>
+								<% if (item.page_url) { %>
+								<p class="feedback-url">
+									<strong>Page:</strong> <a href="<%= item.page_url %>" target="_blank"><%= item.page_url %></a>
+								</p>
+								<% } %>
+							</div>
+							<div class="feedback-card-footer">
+								<div class="columns is-mobile is-vcentered">
+									<div class="column is-4">
+										<div class="field">
+											<label class="label is-small">Status</label>
+											<div class="control">
+												<div class="select is-small is-fullwidth">
+													<select class="status-select" data-id="<%= item._id %>">
+														<% configData.statuses.forEach(st => { %>
+														<option value="<%= st %>" <%= item.status === st ? 'selected' : '' %>><%= st.replace('_', ' ') %></option>
+														<% }); %>
+													</select>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="column">
+										<div class="field">
+											<label class="label is-small">Admin Notes</label>
+											<div class="control">
+												<input type="text" class="input is-small admin-notes-input" data-id="<%= item._id %>" value="<%= item.admin_notes || '' %>" placeholder="Internal notes...">
+											</div>
+										</div>
+									</div>
+									<div class="column is-narrow">
+										<div class="field">
+											<label class="label is-small">&nbsp;</label>
+											<div class="control">
+												<button class="button is-danger is-small delete-btn" data-id="<%= item._id %>" title="Delete">
+													<span class="icon"><i class="fa fa-trash"></i></span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<% }); %>
+					<% } else { %>
+					<article class="message is-embedded-message">
+						<div class="message-header">
+							<p>
+								<span class="icon"><i class="fa fa-inbox"></i></span>
+								No Feedback Yet
+							</p>
+						</div>
+						<div class="message-body">
+							No feedback has been submitted yet. The floating feedback widget allows users to send feedback from any page.
+						</div>
+					</article>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		// Status change handler
+		document.querySelectorAll('.status-select').forEach(select => {
+			select.addEventListener('change', async function() {
+				const id = this.dataset.id;
+				const status = this.value;
+				
+				try {
+					const response = await fetch('/dashboard/maintainer/feedback/update', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ id, status })
+					});
+					
+					if (!response.ok) throw new Error('Failed to update');
+					
+					// Update badge
+					const card = this.closest('.feedback-card');
+					const badge = card.querySelector('.status-badge');
+					badge.className = 'status-badge status-' + status;
+					badge.textContent = status.replace('_', ' ');
+				} catch (err) {
+					alert('Failed to update status');
+				}
+			});
+		});
+		
+		// Admin notes handler (debounced)
+		let notesTimeout;
+		document.querySelectorAll('.admin-notes-input').forEach(input => {
+			input.addEventListener('input', function() {
+				const id = this.dataset.id;
+				const notes = this.value;
+				
+				clearTimeout(notesTimeout);
+				notesTimeout = setTimeout(async () => {
+					try {
+						await fetch('/dashboard/maintainer/feedback/update', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ id, admin_notes: notes })
+						});
+					} catch (err) {
+						console.error('Failed to save notes');
+					}
+				}, 500);
+			});
+		});
+		
+		// Delete handler
+		document.querySelectorAll('.delete-btn').forEach(btn => {
+			btn.addEventListener('click', async function() {
+				const id = this.dataset.id;
+				
+				if (!confirm('Are you sure you want to delete this feedback?')) return;
+				
+				try {
+					const response = await fetch('/dashboard/maintainer/feedback/delete', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ id })
+					});
+					
+					if (!response.ok) throw new Error('Failed to delete');
+					
+					// Remove card from DOM
+					const card = this.closest('.feedback-card');
+					card.style.opacity = '0';
+					setTimeout(() => card.remove(), 300);
+				} catch (err) {
+					alert('Failed to delete feedback');
+				}
+			});
+		});
+	});
+	</script>
+</body>
+</html>

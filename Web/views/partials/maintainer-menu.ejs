@@ -6,6 +6,17 @@
             <% } else { %>
 			<a href="/dashboard/maintainer/maintainer">Overview</a>
             <% } %>
+            <% if (currentPage === "/dashboard/maintainer/feedback") { %>
+			<a class="is-active" href="#">
+				<span class="icon is-small"><i class="fa fa-comments"></i></span>
+				Feedback
+			</a>
+            <% } else { %>
+			<a href="/dashboard/maintainer/feedback">
+				<span class="icon is-small"><i class="fa fa-comments"></i></span>
+				Feedback
+			</a>
+            <% } %>
 		</li>
 	</ul>
 	<p class="menu-label">
@@ -67,6 +78,11 @@
                 <a class="is-active" href="#">Vote Sites</a>
                 <% } else { %>
                 <a href="/dashboard/maintainer/global-options/vote-sites">Vote Sites</a>
+                <% } %>
+                <% if (currentPage === "/dashboard/maintainer/global-options/bot-lists") { %>
+                <a class="is-active" href="#">Bot List APIs</a>
+                <% } else { %>
+                <a href="/dashboard/maintainer/global-options/bot-lists">Bot List APIs</a>
                 <% } %>
             <% } %>
 		</li>

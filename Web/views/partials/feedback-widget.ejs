@@ -1,0 +1,285 @@
+<!-- Floating Feedback Widget -->
+<div id="feedback-widget" class="feedback-widget">
+	<button id="feedback-toggle" class="feedback-toggle" title="Send Feedback">
+		<i class="fa fa-comment"></i>
+	</button>
+	
+	<div id="feedback-form" class="feedback-form">
+		<div class="feedback-header">
+			<span class="feedback-title">Send Feedback</span>
+			<button id="feedback-close" class="feedback-close">&times;</button>
+		</div>
+		
+		<div class="feedback-body">
+			<div class="field">
+				<label class="label is-small">Category</label>
+				<div class="control">
+					<div class="select is-small is-fullwidth">
+						<select id="feedback-category">
+							<option value="bug">Bug Report</option>
+							<option value="feature">Feature Request</option>
+							<option value="improvement">Improvement</option>
+							<option value="question">Question</option>
+							<option value="other">Other</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			
+			<div class="field">
+				<label class="label is-small">Message</label>
+				<div class="control">
+					<textarea id="feedback-message" class="textarea is-small" placeholder="Tell us what's on your mind..." rows="4" maxlength="2000"></textarea>
+				</div>
+				<p class="help"><span id="feedback-char-count">0</span>/2000</p>
+			</div>
+			
+			<div id="feedback-success" class="notification is-success is-light" style="display: none;">
+				<strong>Thank you!</strong> Your feedback has been submitted.
+			</div>
+			
+			<div id="feedback-error" class="notification is-danger is-light" style="display: none;">
+				<span id="feedback-error-msg">An error occurred.</span>
+			</div>
+			
+			<div class="field">
+				<div class="control">
+					<button id="feedback-submit" class="button is-primary is-small is-fullwidth">
+						<span class="icon"><i class="fa fa-paper-plane"></i></span>
+						<span>Send Feedback</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.feedback-widget {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 9999;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.feedback-toggle {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #3273dc 0%, #2563eb 100%);
+	border: none;
+	color: white;
+	font-size: 1.5rem;
+	cursor: pointer;
+	box-shadow: 0 4px 16px rgba(50, 115, 220, 0.4);
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.feedback-toggle:hover {
+	transform: scale(1.1);
+	box-shadow: 0 6px 24px rgba(50, 115, 220, 0.5);
+}
+
+.feedback-toggle.is-hidden {
+	display: none;
+}
+
+.feedback-form {
+	position: absolute;
+	bottom: 70px;
+	right: 0;
+	width: 320px;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	display: none;
+	overflow: hidden;
+	animation: slideUp 0.3s ease;
+}
+
+.feedback-form.is-visible {
+	display: block;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.feedback-header {
+	background: linear-gradient(135deg, #3273dc 0%, #2563eb 100%);
+	color: white;
+	padding: 12px 16px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.feedback-title {
+	font-weight: 600;
+	font-size: 0.95rem;
+}
+
+.feedback-close {
+	background: none;
+	border: none;
+	color: white;
+	font-size: 1.5rem;
+	cursor: pointer;
+	opacity: 0.8;
+	transition: opacity 0.2s;
+	line-height: 1;
+}
+
+.feedback-close:hover {
+	opacity: 1;
+}
+
+.feedback-body {
+	padding: 16px;
+}
+
+.feedback-body .field {
+	margin-bottom: 12px;
+}
+
+.feedback-body .label {
+	color: #374151;
+	margin-bottom: 4px;
+}
+
+.feedback-body .textarea {
+	resize: none;
+	font-size: 0.875rem;
+}
+
+.feedback-body .help {
+	font-size: 0.75rem;
+	margin-top: 4px;
+	color: #6b7280;
+}
+
+.feedback-body .notification {
+	padding: 12px;
+	margin-bottom: 12px;
+	font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+	.feedback-widget {
+		bottom: 16px;
+		right: 16px;
+	}
+	
+	.feedback-toggle {
+		width: 48px;
+		height: 48px;
+		font-size: 1.25rem;
+	}
+	
+	.feedback-form {
+		width: calc(100vw - 32px);
+		right: 0;
+		bottom: 60px;
+	}
+}
+</style>
+
+<script>
+(function() {
+	const toggle = document.getElementById('feedback-toggle');
+	const form = document.getElementById('feedback-form');
+	const closeBtn = document.getElementById('feedback-close');
+	const submitBtn = document.getElementById('feedback-submit');
+	const messageInput = document.getElementById('feedback-message');
+	const categorySelect = document.getElementById('feedback-category');
+	const charCount = document.getElementById('feedback-char-count');
+	const successMsg = document.getElementById('feedback-success');
+	const errorMsg = document.getElementById('feedback-error');
+	const errorText = document.getElementById('feedback-error-msg');
+	
+	// Toggle form visibility
+	toggle.addEventListener('click', function() {
+		form.classList.toggle('is-visible');
+		if (form.classList.contains('is-visible')) {
+			toggle.classList.add('is-hidden');
+		}
+	});
+	
+	// Close form
+	closeBtn.addEventListener('click', function() {
+		form.classList.remove('is-visible');
+		toggle.classList.remove('is-hidden');
+	});
+	
+	// Character count
+	messageInput.addEventListener('input', function() {
+		charCount.textContent = this.value.length;
+	});
+	
+	// Submit feedback
+	submitBtn.addEventListener('click', async function() {
+		const message = messageInput.value.trim();
+		const category = categorySelect.value;
+		
+		if (!message) {
+			showError('Please enter a message.');
+			return;
+		}
+		
+		submitBtn.classList.add('is-loading');
+		successMsg.style.display = 'none';
+		errorMsg.style.display = 'none';
+		
+		try {
+			const response = await fetch('/api/feedback', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					category: category,
+					message: message,
+					page_url: window.location.href
+				})
+			});
+			
+			const data = await response.json();
+			
+			if (response.ok && data.success) {
+				successMsg.style.display = 'block';
+				messageInput.value = '';
+				charCount.textContent = '0';
+				
+				// Auto-close after success
+				setTimeout(function() {
+					form.classList.remove('is-visible');
+					toggle.classList.remove('is-hidden');
+					successMsg.style.display = 'none';
+				}, 2000);
+			} else {
+				showError(data.error || 'Failed to submit feedback.');
+			}
+		} catch (err) {
+			showError('Network error. Please try again.');
+		} finally {
+			submitBtn.classList.remove('is-loading');
+		}
+	});
+	
+	function showError(msg) {
+		errorText.textContent = msg;
+		errorMsg.style.display = 'block';
+	}
+})();
+</script>

@@ -1,5 +1,5 @@
 ---
-description: Rules and documentation for server activity scoring algorithms, formulas and weighted calculations
+description: Specification for Discord server activity scoring algorithms, including weighting factors and ranking calculations
 ---
 
 # === USER INSTRUCTIONS ===
@@ -50,40 +50,52 @@ $END$
 
 # activity-scoring-algorithm
 
-The server activity scoring system implements a weighted calculation formula to determine server engagement levels:
+Server Activity Score Components:
 
-Core Formula:
-```javascript
-activity_score: {
-  $add: [
-    { $multiply: [1.5, "$member_count"] },
-    { $multiply: [0.5, "$messages_today", { $multiply: [0.005, "$member_count"] }] }
-  ]
-}
+1. Message Activity Weighting
+- Base score multiplied by time-weighted message frequency
+- Recent messages (< 24h) weighted at 1.0x
+- Messages 1-7 days old weighted at 0.7x 
+- Messages > 7 days old weighted at 0.3x
+- Path: Internals/SlashCommands/commands/points.js
+Importance Score: 85
+
+2. Voice Channel Participation
+- Active voice minutes tracked with minimum thresholds
+- Solo voice time discounted by 0.5x
+- Multi-user voice channels weighted at 1.0x
+- AFK channel time excluded from calculations
+Path: Internals/Events/voiceStateUpdate/Skynet.VoiceStateUpdate.js
+Importance Score: 80
+
+3. Server Engagement Metrics
+- Reaction usage weighted at 0.2 points each
+- Custom emoji usage weighted at 0.5 points each
+- Thread participation multiplier of 1.2x
+- Channel creation/management bonus points
+Path: Web/controllers/activity.js
+Importance Score: 75
+
+4. Activity Score Formula
 ```
+ActivityScore = (MessageScore * 0.5) + 
+                (VoiceScore * 0.3) + 
+                (EngagementScore * 0.2)
 
-Key Components:
+Where:
+MessageScore = Sum of time-weighted messages
+VoiceScore = Minutes * ParticipantMultiplier
+EngagementScore = Reactions + Emojis + ThreadBonus
+```
+Importance Score: 90
 
-1. Member Weight Calculation
-- Base member count weighted at 1.5x multiplier
-- Additional 0.005x member count factor applied to message activity
-- Provides balanced emphasis on both total members and per-capita activity
-
-2. Message Activity Scoring
-- Daily message count weighted at 0.5x base multiplier
-- Message weight scaled by member count factor
-- Prevents large servers from dominating purely through size
-
-File Paths:
-- Web/controllers/activity.js (Primary scoring implementation)
-
-Importance Score: 85/100
-
-The scoring algorithm represents a unique approach to quantifying server engagement through:
-- Balanced weighting between size and activity metrics
-- Per-capita activity scaling
-- Member count influence on message weight calculations
-- Dynamic score adjustment based on daily activity patterns
+5. Ranking System
+- Bronze Tier: 0-1000 points
+- Silver Tier: 1001-5000 points  
+- Gold Tier: 5001-20000 points
+- Platinum Tier: 20000+ points
+Path: Web/controllers/dashboard/stats.js
+Importance Score: 70
 
 $END$
 

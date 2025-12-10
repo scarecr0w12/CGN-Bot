@@ -29,6 +29,7 @@ module.exports = router => {
 	setupResource(router, "/status", [], controllers.status.api, "get", "public");
 	setupResource(router, "/servers", [], controllers.api.servers, "get", "public");
 	setupResource(router, "/extensions", [], controllers.api.extensions, "get", "public");
+	setupResource(router, "/feedback", [], controllers.console.feedback.submit, "post", "public");
 
 	// Protected endpoints (require api_access feature)
 	setupResource(router, "/servers/:svrid/channels", [middleware.requireFeature("api_access")], controllers.api.servers.channels, "get", "authorization");

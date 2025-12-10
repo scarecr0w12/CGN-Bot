@@ -439,3 +439,77 @@ async function handlePatreonPledgeDeleted (data) {
 	await TierManager.cancelSubscription(user._id, "patreon_pledge_deleted");
 	logger.info(`Patreon pledge deleted for user ${user._id}`);
 }
+
+// ============================================
+// BOT LIST VOTE WEBHOOKS
+// ============================================
+
+/**
+ * top.gg Vote Webhook
+ * Receives vote notifications when users vote for the bot on top.gg
+ */
+controllers.topgg = async (req, res) => {
+	try {
+		const siteSettings = await SiteSettings.findOne("main");
+		const config = siteSettings?.bot_lists?.topgg;
+
+		if (!config?.isEnabled) {
+			return res.status(404).json({ error: "Not configured" });
+		}
+
+		// Verify webhook secret
+		const authHeader = req.headers.authorization;
+		if (config.webhook_secret && authHeader !== config.webhook_secret) {
+			logger.warn("top.gg webhook auth failed", { received: authHeader?.substring(0, 10) });
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+
+		// Process the vote
+		const botLists = req.app.get("botLists");
+		if (botLists) {
+			await botLists.processVote("topgg", req.body);
+		} else {
+			logger.warn("BotLists module not initialized");
+		}
+
+		res.status(200).json({ success: true });
+	} catch (err) {
+		logger.error("Error processing top.gg webhook", {}, err);
+		res.status(500).json({ error: "Internal error" });
+	}
+};
+
+/**
+ * Discord Bot List Vote Webhook
+ * Receives vote notifications when users vote for the bot on discordbotlist.com
+ */
+controllers.discordbotlist = async (req, res) => {
+	try {
+		const siteSettings = await SiteSettings.findOne("main");
+		const config = siteSettings?.bot_lists?.discordbotlist;
+
+		if (!config?.isEnabled) {
+			return res.status(404).json({ error: "Not configured" });
+		}
+
+		// Verify webhook secret
+		const authHeader = req.headers.authorization;
+		if (config.webhook_secret && authHeader !== config.webhook_secret) {
+			logger.warn("discordbotlist webhook auth failed", { received: authHeader?.substring(0, 10) });
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+
+		// Process the vote
+		const botLists = req.app.get("botLists");
+		if (botLists) {
+			await botLists.processVote("discordbotlist", req.body);
+		} else {
+			logger.warn("BotLists module not initialized");
+		}
+
+		res.status(200).json({ success: true });
+	} catch (err) {
+		logger.error("Error processing discordbotlist webhook", {}, err);
+		res.status(500).json({ error: "Internal error" });
+	}
+};

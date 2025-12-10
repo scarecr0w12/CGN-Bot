@@ -162,6 +162,74 @@ module.exports = new Schema({
 		}),
 	}),
 
+	// ============================================
+	// BOT LIST INTEGRATIONS
+	// ============================================
+
+	bot_lists: new Schema({
+		topgg: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			webhook_secret: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+		discordbotlist: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			webhook_secret: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+	}),
+
+	// Vote reward settings
+	vote_rewards: new Schema({
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+		points_per_vote: {
+			type: Number,
+			default: 100,
+		},
+		weekend_multiplier: {
+			type: Number,
+			default: 2,
+		},
+		notification_channel_id: String,
+		// Point redemption settings
+		redemption: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			points_per_dollar: {
+				type: Number,
+				default: 1000, // 1000 points = $1
+			},
+			redeemable_tier_id: String, // Which tier can be purchased with points
+			min_redemption_days: {
+				type: Number,
+				default: 7, // Minimum days to redeem at once
+			},
+			max_redemption_days: {
+				type: Number,
+				default: 365, // Maximum days per redemption
+			},
+		}),
+	}),
+
 	// Payment Provider Configuration
 	payment_providers: new Schema({
 		stripe: new Schema({

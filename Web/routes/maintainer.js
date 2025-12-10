@@ -16,6 +16,7 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/wiki-contributors", "administration", [], controllers.console.options.contributors);
 	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
 	setupConsolePage(router, "/global-options/vote-sites", "administration", [], controllers.console.options.voteSites);
+	setupConsolePage(router, "/global-options/bot-lists", "administration", [], controllers.console.options.botLists);
 
 	// Membership System (Sudo/Host only)
 	setupConsolePage(router, "/membership/features", "administration", [], controllers.console.membership.features);
@@ -32,6 +33,11 @@ module.exports = router => {
 	setupConsolePage(router, "/management/version", "management", [], controllers.console.management.version);
 	setupConsolePage(router, "/management/eval", "eval", [], controllers.console.management.eval);
 	setupConsolePage(router, "/management/logs", "management", [], controllers.console.management.logs);
+
+	// Feedback System
+	setupConsolePage(router, "/feedback", "maintainer", [], controllers.console.feedback.list);
+	router.post("/feedback/update", controllers.console.feedback.update);
+	router.post("/feedback/delete", controllers.console.feedback.delete);
 
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);

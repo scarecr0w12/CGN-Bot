@@ -231,6 +231,74 @@
 				<% } %>
 			</div>
 
+			<!-- Point Redemption Section -->
+			<% if (pageData.redemptionInfo?.enabled && authUser) { %>
+			<div class="mt-6" id="redeem-points">
+				<h2 class="title is-3 has-text-centered">
+					<span class="icon"><i class="fa fa-exchange-alt"></i></span>
+					Redeem Vote Points
+				</h2>
+				<div class="columns is-centered">
+					<div class="column is-8">
+						<div class="box">
+							<div class="columns is-vcentered">
+								<div class="column">
+									<p class="title is-4">Your Points: <span class="has-text-primary"><%= pageData.userPoints.toLocaleString() %></span></p>
+									<p class="subtitle is-6">
+										Redeem your vote points for <strong><%= pageData.redemptionInfo.tier.name %></strong> membership time!
+									</p>
+								</div>
+								<div class="column is-narrow">
+									<div class="tags has-addons">
+										<span class="tag is-medium">1 Day</span>
+										<span class="tag is-medium is-primary"><%= pageData.redemptionInfo.pointsPerDay.toLocaleString() %> pts</span>
+									</div>
+									<div class="tags has-addons">
+										<span class="tag is-medium">30 Days</span>
+										<span class="tag is-medium is-primary"><%= pageData.redemptionInfo.pointsPerMonth.toLocaleString() %> pts</span>
+									</div>
+								</div>
+							</div>
+							
+							<% if (pageData.redemptionInfo.affordableDays >= pageData.redemptionInfo.minDays) { %>
+							<hr>
+							<div class="field has-addons">
+								<div class="control is-expanded">
+									<input class="input is-medium" type="number" id="redeem-days" 
+										min="<%= pageData.redemptionInfo.minDays %>" 
+										max="<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %>" 
+										value="<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.minDays) %>"
+										placeholder="Days">
+								</div>
+								<div class="control">
+									<button class="button is-primary is-medium" onclick="redeemPoints()">
+										<span class="icon"><i class="fa fa-gift"></i></span>
+										<span>Redeem</span>
+									</button>
+								</div>
+							</div>
+							<p class="help">
+								You can afford up to <strong><%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %> days</strong> 
+								(min: <%= pageData.redemptionInfo.minDays %>, max: <%= pageData.redemptionInfo.maxDays %>)
+							</p>
+							<p class="help" id="points-cost">
+								Cost: <span id="cost-display"><%= (pageData.redemptionInfo.pointsPerDay * pageData.redemptionInfo.minDays).toLocaleString() %></span> points
+							</p>
+							<% } else { %>
+							<article class="message is-warning">
+								<div class="message-body">
+									You need at least <strong><%= (pageData.redemptionInfo.pointsPerDay * pageData.redemptionInfo.minDays).toLocaleString() %> points</strong> 
+									to redeem (<%= pageData.redemptionInfo.minDays %> days minimum).
+									Vote for the bot to earn more points!
+								</div>
+							</article>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% } %>
+
 			<!-- FAQ Section -->
 			<div class="mt-6">
 				<h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
@@ -304,6 +372,53 @@
 
 	// Initialize with yearly selected
 	setBilling('yearly');
+
+	// Point redemption
+	<% if (pageData.redemptionInfo?.enabled && authUser) { %>
+	const pointsPerDay = <%= pageData.redemptionInfo.pointsPerDay %>;
+	const daysInput = document.getElementById('redeem-days');
+	const costDisplay = document.getElementById('cost-display');
+
+	if (daysInput) {
+		daysInput.addEventListener('input', function() {
+			const days = parseInt(this.value) || 0;
+			const cost = days * pointsPerDay;
+			costDisplay.textContent = cost.toLocaleString();
+		});
+	}
+
+	async function redeemPoints() {
+		const days = parseInt(daysInput.value);
+		if (!days || days < 1) {
+			alert('Please enter a valid number of days');
+			return;
+		}
+
+		const cost = days * pointsPerDay;
+		if (!confirm(`Redeem ${cost.toLocaleString()} points for ${days} days of <%= pageData.redemptionInfo.tier.name %>?`)) {
+			return;
+		}
+
+		try {
+			const response = await fetch('/api/membership/redeem-points', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ days }),
+			});
+
+			const data = await response.json();
+			
+			if (data.success) {
+				alert(`Success! You now have ${data.tier_name} until ${new Date(data.expires_at).toLocaleDateString()}.\n\nPoints remaining: ${data.points_remaining.toLocaleString()}`);
+				window.location.reload();
+			} else {
+				alert(data.error || 'Redemption failed');
+			}
+		} catch (err) {
+			alert('An error occurred. Please try again.');
+		}
+	}
+	<% } %>
 	</script>
 </body>
 </html>

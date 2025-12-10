@@ -1,5 +1,5 @@
 ---
-description: Specifications for cross-shard message routing, state sync, and coordination protocols between bot shards
+description: Specification for implementing custom inter-shard communication protocols and state synchronization between bot shards
 trigger: model_decision
 ---
 
@@ -49,33 +49,48 @@ $END$
 
 # shard-communication-protocol
 
-Shard Communication Implementation
+IMPORTANCE SCORE: 85/100
 
-1. Cross-Shard Message Router
-- Custom protocol for routing messages between bot shards
-- Message priority system with 3 levels: critical, standard, optional 
-- Automatic retry logic for failed cross-shard transmissions
-- State synchronization broadcasts for shared resources
+Shard Communication Protocol:
 
-2. Shard State Management
-- Centralized shard state coordination through master process
-- Shared memory segments for rapid state access
-- Guild (server) ownership mapping across shards
-- Activity state propagation between shards
+1. Message Routing System
+- Custom routing tables for cross-shard message delivery
+- Guild-specific message targeting with shard mapping
+- Automatic rerouting for guild migration between shards
+- Protocol types for different message categories:
+  - GUILD_SYNC - Guild state updates
+  - MEMBER_UPDATE - Member data changes 
+  - COMMAND_BROADCAST - Cross-shard commands
 
-3. Command Execution Flow
-- Command routing based on guild location
-- Cross-shard result aggregation for multi-server commands
-- Synchronized command cooldown tracking
-- Distributed rate limit management
+2. State Synchronization
+- Bidirectional state sync between master and worker shards
+- Custom state merging strategies for:
+  - Guild configurations
+  - Member data
+  - Permission updates
+  - Cross-guild user data
 
-Importance Score: 85/100
-The score reflects the critical nature of maintaining state consistency and command execution across a distributed bot system.
+3. Connection Management
+- Heartbeat system for shard health monitoring
+- Automatic shard reconnection with state recovery
+- Load balancing through dynamic shard assignment
+- Guild migration coordination between shards
 
-File Paths:
-master.js - Core shard coordination logic
-Internals/ShardManager.js - Shard lifecycle management
-Modules/CrossShardComm.js - Cross-shard messaging protocol
+Core Protocol Messages:
+```
+SHARD_READY      -> Shard initialization complete
+SHARD_DISCONNECT -> Graceful shard shutdown
+GUILD_SYNC       -> Guild state synchronization
+STATE_UPDATE     -> Partial state updates
+BROADCAST        -> Cross-shard broadcast
+```
+
+The protocol implements specialized handling for:
+- Guild data consistency across shards
+- Member state synchronization
+- Cross-shard command execution
+- Distributed cache invalidation
+- Real-time state updates
 
 $END$
 

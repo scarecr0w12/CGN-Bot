@@ -93,6 +93,9 @@ const membershipRouting = (router, apiRouter) => {
 	router.routes.push(new Route(router, "/membership/success", [middleware.checkUnavailable], controllers.membership.success, "get", "general"));
 	apiRouter.routes.push(new Route(apiRouter, "/membership/checkout", [middleware.checkUnavailableAPI], controllers.membership.createCheckout, "post", "api"));
 	apiRouter.routes.push(new Route(apiRouter, "/membership/paypal-checkout", [middleware.checkUnavailableAPI], controllers.membership.createPayPalCheckout, "post", "api"));
+	// Point redemption
+	apiRouter.routes.push(new Route(apiRouter, "/membership/redeem-points", [middleware.checkUnavailableAPI], controllers.membership.redeemPoints, "post", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/membership/redemption-info", [middleware.checkUnavailableAPI], controllers.membership.getRedemptionInfo, "get", "api"));
 };
 
 module.exports = app => {

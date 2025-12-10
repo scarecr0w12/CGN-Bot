@@ -373,6 +373,70 @@ controllers.options.voteSites.post = async (req, res) => {
 	}
 };
 
+// Bot List Integrations (API tokens, webhooks, stats posting)
+controllers.options.botLists = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	// READ operation - never create/save, use defaults if not found
+	const siteSettings = await getSiteSettingsForRead();
+
+	// Get recent votes from BotLists module
+	const botLists = req.app.get("botLists");
+	const recentVotes = botLists ? await botLists.getRecentVotes(20) : [];
+	const voteStats = botLists ? await botLists.getVoteStats() : { topgg: 0, discordbotlist: 0, total: 0 };
+
+	res.setConfigData({
+		bot_lists: siteSettings?.bot_lists || {},
+		vote_rewards: siteSettings?.vote_rewards || {},
+		tiers: siteSettings?.tiers || [],
+		recentVotes,
+		voteStats,
+		hostingURL: configJS.hostingURL,
+	}).setPageData({
+		page: "maintainer-bot-lists.ejs",
+	}).render();
+};
+
+controllers.options.botLists.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	// WRITE operation - create if needed (will be saved below with actual data)
+	const siteSettings = await getSiteSettingsForWrite();
+
+	// Update top.gg settings
+	siteSettings.query.set("bot_lists.topgg.isEnabled", req.body.topgg_enabled === "on");
+	siteSettings.query.set("bot_lists.topgg.api_token", req.body.topgg_api_token || "");
+	siteSettings.query.set("bot_lists.topgg.webhook_secret", req.body.topgg_webhook_secret || "");
+	siteSettings.query.set("bot_lists.topgg.auto_post_stats", req.body.topgg_auto_post !== "off");
+
+	// Update discordbotlist settings
+	siteSettings.query.set("bot_lists.discordbotlist.isEnabled", req.body.dbl_enabled === "on");
+	siteSettings.query.set("bot_lists.discordbotlist.api_token", req.body.dbl_api_token || "");
+	siteSettings.query.set("bot_lists.discordbotlist.webhook_secret", req.body.dbl_webhook_secret || "");
+	siteSettings.query.set("bot_lists.discordbotlist.auto_post_stats", req.body.dbl_auto_post !== "off");
+
+	// Update vote rewards settings
+	siteSettings.query.set("vote_rewards.isEnabled", req.body.rewards_enabled === "on");
+	siteSettings.query.set("vote_rewards.points_per_vote", parseInt(req.body.points_per_vote) || 100);
+	siteSettings.query.set("vote_rewards.weekend_multiplier", parseInt(req.body.weekend_multiplier) || 2);
+	siteSettings.query.set("vote_rewards.notification_channel_id", req.body.notification_channel_id || "");
+
+	// Update redemption settings
+	siteSettings.query.set("vote_rewards.redemption.isEnabled", req.body.redemption_enabled === "on");
+	siteSettings.query.set("vote_rewards.redemption.points_per_dollar", parseInt(req.body.points_per_dollar) || 1000);
+	siteSettings.query.set("vote_rewards.redemption.redeemable_tier_id", req.body.redeemable_tier_id || "");
+	siteSettings.query.set("vote_rewards.redemption.min_redemption_days", parseInt(req.body.min_redemption_days) || 7);
+	siteSettings.query.set("vote_rewards.redemption.max_redemption_days", parseInt(req.body.max_redemption_days) || 365);
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save bot list settings", {}, err);
+		renderError(res, "Failed to save bot list settings.");
+	}
+};
+
 // ============================================
 // MEMBERSHIP SYSTEM CONTROLLERS
 // ============================================
@@ -1001,6 +1065,137 @@ controllers.management.logs.socket = async socket => {
 	tail.watch();
 
 	socket.on("disconnect", () => tail.unwatch());
+};
+
+// ============================================
+// FEEDBACK SYSTEM CONTROLLERS
+// ============================================
+
+controllers.feedback = {};
+
+controllers.feedback.list = async (req, { res }) => {
+	const category = req.query.category || "";
+	const status = req.query.status || "";
+
+	// Build filter
+	const filter = {};
+	if (category) filter.category = category;
+	if (status) filter.status = status;
+
+	// Get feedback items sorted by newest first
+	const feedbackItems = await Feedback.find(filter)
+		.sort({ created_at: -1 })
+		.limit(100)
+		.exec();
+
+	// Get counts per category and status
+	const categoryCounts = await Feedback.aggregate([
+		{ $group: { _id: "$category", count: { $sum: 1 } } },
+	]);
+	const statusCounts = await Feedback.aggregate([
+		{ $group: { _id: "$status", count: { $sum: 1 } } },
+	]);
+
+	// Enrich with user data
+	for (const item of feedbackItems) {
+		try {
+			const user = await req.app.client.users.fetch(item.user_id, true).catch(() => null);
+			item.user_avatar = user?.displayAvatarURL() || "/static/img/discord-icon.png";
+			item.username = item.username || user?.username || "Unknown";
+		} catch {
+			item.user_avatar = "/static/img/discord-icon.png";
+		}
+	}
+
+	res.setConfigData({
+		feedbackItems,
+		categoryCounts: categoryCounts.reduce((acc, c) => { acc[c._id] = c.count; return acc; }, {}),
+		statusCounts: statusCounts.reduce((acc, s) => { acc[s._id] = s.count; return acc; }, {}),
+		categories: ["bug", "feature", "improvement", "question", "other"],
+		statuses: ["new", "in_progress", "resolved", "closed"],
+	}).setPageData({
+		activeCategory: category,
+		activeStatus: status,
+		page: "maintainer-feedback.ejs",
+	}).render();
+};
+
+controllers.feedback.update = async (req, res) => {
+	const { id, status, admin_notes: adminNotes } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Feedback ID required" });
+	}
+
+	try {
+		const feedback = await Feedback.findOne(id);
+		if (!feedback) {
+			return res.status(404).json({ error: "Feedback not found" });
+		}
+
+		if (status) feedback.query.set("status", status);
+		if (adminNotes !== undefined) feedback.query.set("admin_notes", adminNotes);
+		feedback.query.set("updated_at", new Date());
+
+		await feedback.save();
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to update feedback", { id }, err);
+		res.status(500).json({ error: "Failed to update feedback" });
+	}
+};
+
+controllers.feedback.delete = async (req, res) => {
+	const { id } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Feedback ID required" });
+	}
+
+	try {
+		await Feedback.delete({ _id: id });
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to delete feedback", { id }, err);
+		res.status(500).json({ error: "Failed to delete feedback" });
+	}
+};
+
+// Public feedback submission (used by floating widget)
+controllers.feedback.submit = async (req, res) => {
+	const { category, message, page_url: pageUrl } = req.body;
+
+	if (!message || !category) {
+		return res.status(400).json({ error: "Category and message are required" });
+	}
+
+	const validCategories = ["bug", "feature", "improvement", "question", "other"];
+	if (!validCategories.includes(category)) {
+		return res.status(400).json({ error: "Invalid category" });
+	}
+
+	try {
+		const feedbackId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const userId = req.isAuthenticated() ? req.user.id : "anonymous";
+		const username = req.isAuthenticated() ? req.user.username : "Anonymous";
+
+		await Feedback.create({
+			_id: feedbackId,
+			user_id: userId,
+			username,
+			category,
+			message: message.substring(0, 2000), // Limit message length
+			page_url: pageUrl || "",
+			status: "new",
+			created_at: new Date(),
+			updated_at: new Date(),
+		});
+
+		res.json({ success: true, id: feedbackId });
+	} catch (err) {
+		logger.error("Failed to submit feedback", {}, err);
+		res.status(500).json({ error: "Failed to submit feedback" });
+	}
 };
 
 // ============================================

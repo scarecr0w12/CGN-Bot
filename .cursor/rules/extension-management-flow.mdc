@@ -1,5 +1,5 @@
 ---
-description: Specification for handling extension lifecycle, validation, versioning and permissions in the marketplace system
+description: Handles marketplace extension validation, versioning, publishing and deployment workflows for Discord bot extensions
 ---
 
 # === USER INSTRUCTIONS ===
@@ -55,40 +55,56 @@ $END$
 
 # extension-management-flow
 
-Importance Score: 85/100
+Core Extension Management Components:
 
-Extension Lifecycle Management:
+1. Extension Marketplace System
+Path: Web/controllers/extensions.js
+- Multi-tier marketplace with free and premium extensions
+- Version control system with semantic versioning enforcement
+- Extension package validation and security scanning
+- Author verification and reputation tracking
+Importance Score: 85
 
-1. Extension States
-- Three primary states: gallery, queue, third-party
-- State transitions controlled by validation pipeline
-- Custom versioning system with semantic version enforcement
-- Installation validation with configuration requirements
+2. Extension Sandbox Environment 
+Path: Internals/Extensions/API/IsolatedSandbox.js
+- Secure extension execution with isolated-vm
+- Memory and CPU usage limits per extension
+- Custom module resolution with allowlist
+- Granular permission system for extension capabilities
+Importance Score: 90
 
-2. Permission Management
-- Multi-tier access control system for extension management
-- Role-based permissions for publishing and installation
-- Custom validation rules for extension capabilities
-- Maintainer privilege hierarchy with sudo mode
+3. Extension Deployment Pipeline
+Path: Internals/Extensions/ExtensionManager.js
+- Automated validation of extension dependencies
+- Cross-instance compatibility verification
+- Extension state management and lifecycle hooks
+- Hot-reload capability with rollback support 
+Importance Score: 80
 
-3. Extension Validation Pipeline
-- Custom validation workflow for new extensions
-- Version compatibility checking
-- Dependency resolution and conflict detection
-- Configuration schema validation
-- Security scanning for malicious code patterns
+Key Extension Workflows:
 
-4. Extension Marketplace Integration
-- Gallery state management for public extensions
-- Queue system for pending approvals
-- Third-party extension tracking
-- Custom deployment pipeline for approved extensions
+1. Publication Flow:
+- Package validation
+- Security scan
+- Version verification
+- Author authentication
+- Distribution preparation
 
-File Paths:
-/Web/controllers/extensions.js
-/Web/middleware/auth.js
+2. Installation Flow:
+- Compatibility check
+- Permission validation
+- Resource allocation
+- Sandbox preparation
+- State initialization
 
-The extension management system implements a sophisticated workflow for handling extension lifecycles, with strong emphasis on security and validation. The permission system integrates with the broader platform authentication while providing extension-specific access controls.
+3. Management Flow:
+- Update detection
+- Version migration
+- Configuration sync
+- Usage monitoring
+- Resource cleanup
+
+The system implements strict security measures through sandboxing while providing flexible extension capabilities. Extension lifecycles are fully managed from publication through deployment and maintenance.
 
 $END$
 
