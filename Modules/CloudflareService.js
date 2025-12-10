@@ -83,7 +83,7 @@ class CloudflareService {
 
 		if (!data.success) {
 			const errorDetails = data.errors?.map(e => `${e.code}: ${e.message}`).join(", ") || "Unknown Cloudflare API error";
-			logger.warn("Cloudflare API error response", { endpoint, errors: data.errors, messages: data.messages });
+			logger.warn("Cloudflare API error response", { endpoint, errors: JSON.stringify(data.errors), messages: JSON.stringify(data.messages) });
 			throw new Error(`Cloudflare API error: ${errorDetails}`);
 		}
 
@@ -174,21 +174,64 @@ class CloudflareService {
 	// ============================================
 
 	/**
-	 * Get zone analytics summary
+	 * Get zone analytics via GraphQL API (replaces deprecated /analytics/dashboard)
 	 * @param {Object} options - Query options
-	 * @param {string} options.since - Start time (ISO 8601 or relative like "-1440" for minutes)
-	 * @param {string} options.until - End time (ISO 8601 or relative)
-	 * @param {boolean} options.continuous - Include continuous data
+	 * @param {number} options.days - Number of days to look back (default: 1)
 	 */
 	async getAnalytics (options = {}) {
-		// Default: last 24 hours
-		const params = new URLSearchParams({
-			since: options.since || "-1440",
-			until: options.until || "0",
-			continuous: options.continuous || "true",
+		const days = options.days || 1;
+		const date = new Date();
+		date.setDate(date.getDate() - days);
+		const sinceDate = date.toISOString().split("T")[0];
+
+		const query = `{
+			viewer {
+				zones(filter: {zoneTag: "${this.zoneId}"}) {
+					httpRequests1dGroups(limit: 10, filter: {date_geq: "${sinceDate}"}) {
+						sum {
+							requests
+							cachedRequests
+							bytes
+							cachedBytes
+							threats
+							pageViews
+						}
+					}
+				}
+			}
+		}`;
+
+		const response = await fetch("https://api.cloudflare.com/client/v4/graphql", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${this.apiToken}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ query }),
 		});
 
-		return this.apiRequest(`/zones/${this.zoneId}/analytics/dashboard?${params}`);
+		const data = await response.json();
+
+		if (data.errors && data.errors.length > 0) {
+			const errorDetails = data.errors.map(e => e.message).join(", ");
+			logger.warn("Cloudflare GraphQL error", { errors: JSON.stringify(data.errors) });
+			throw new Error(`Cloudflare GraphQL error: ${errorDetails}`);
+		}
+
+		// Aggregate results from all days
+		const groups = data.data?.viewer?.zones?.[0]?.httpRequests1dGroups || [];
+		const totals = groups.reduce((acc, group) => {
+			const sum = group.sum || {};
+			acc.requests += sum.requests || 0;
+			acc.cachedRequests += sum.cachedRequests || 0;
+			acc.bytes += sum.bytes || 0;
+			acc.cachedBytes += sum.cachedBytes || 0;
+			acc.threats += sum.threats || 0;
+			acc.pageViews += sum.pageViews || 0;
+			return acc;
+		}, { requests: 0, cachedRequests: 0, bytes: 0, cachedBytes: 0, threats: 0, pageViews: 0 });
+
+		return { result: { totals } };
 	}
 
 	/**
@@ -197,13 +240,13 @@ class CloudflareService {
 	 */
 	async getAnalyticsByPeriod (period = "day") {
 		const periodMap = {
-			day: "-1440",
-			week: "-10080",
-			month: "-43200",
+			day: 1,
+			week: 7,
+			month: 30,
 		};
 
-		const since = periodMap[period] || periodMap.day;
-		return this.getAnalytics({ since });
+		const days = periodMap[period] || periodMap.day;
+		return this.getAnalytics({ days });
 	}
 
 	/**
@@ -214,11 +257,11 @@ class CloudflareService {
 		const totals = analytics.result?.totals || {};
 
 		return {
-			totalBytes: totals.bandwidth?.all || 0,
-			cachedBytes: totals.bandwidth?.cached || 0,
-			uncachedBytes: totals.bandwidth?.uncached || 0,
-			cacheHitRatio: totals.bandwidth?.all > 0 ?
-				((totals.bandwidth?.cached / totals.bandwidth?.all) * 100).toFixed(2) :
+			totalBytes: totals.bytes || 0,
+			cachedBytes: totals.cachedBytes || 0,
+			uncachedBytes: (totals.bytes || 0) - (totals.cachedBytes || 0),
+			cacheHitRatio: totals.bytes > 0 ?
+				((totals.cachedBytes / totals.bytes) * 100).toFixed(2) :
 				0,
 		};
 	}
@@ -231,15 +274,12 @@ class CloudflareService {
 		const totals = analytics.result?.totals || {};
 
 		return {
-			totalRequests: totals.requests?.all || 0,
-			cachedRequests: totals.requests?.cached || 0,
-			uncachedRequests: totals.requests?.uncached || 0,
-			cacheHitRatio: totals.requests?.all > 0 ?
-				((totals.requests?.cached / totals.requests?.all) * 100).toFixed(2) :
+			totalRequests: totals.requests || 0,
+			cachedRequests: totals.cachedRequests || 0,
+			uncachedRequests: (totals.requests || 0) - (totals.cachedRequests || 0),
+			cacheHitRatio: totals.requests > 0 ?
+				((totals.cachedRequests / totals.requests) * 100).toFixed(2) :
 				0,
-			byStatus: totals.requests?.http_status || {},
-			byContentType: totals.requests?.content_type || {},
-			byCountry: totals.requests?.country || {},
 		};
 	}
 
@@ -251,9 +291,7 @@ class CloudflareService {
 		const totals = analytics.result?.totals || {};
 
 		return {
-			totalThreats: totals.threats?.all || 0,
-			byType: totals.threats?.type || {},
-			byCountry: totals.threats?.country || {},
+			totalThreats: totals.threats || 0,
 		};
 	}
 

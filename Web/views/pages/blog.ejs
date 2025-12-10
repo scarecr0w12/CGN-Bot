@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= pageData.pageTitle %></title>
-    <%- include('../partials/head') %>
+	<title><%= pageData.pageTitle %> | Skynet Discord Bot Blog</title>
+	<%
+	// SEO for blog pages
+	if (typeof pageData !== "undefined") {
+		pageData.seo = {
+			title: `${pageData.pageTitle} | Skynet Discord Bot Blog`,
+			description: "Latest news, updates, and announcements for Skynet Discord bot. Stay informed about new features, tips, and community highlights.",
+			keywords: "Discord bot blog, Skynet updates, Discord bot news, Discord server tips, bot announcements",
+			type: "blog"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Blog", url: "/blog" }
+		];
+	}
+	%>
+	<%- include('../partials/head') %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">
@@ -36,12 +51,12 @@
 		<div class="container">
             <% if (pageData.mode === "article") { %>
                 <% const { blogPost } = pageData; %>
-                <%- include('../partials/blog-article') %>
+                <%- include('../partials/blog-article', { blogPost }) %>
             <% } else if (pageData.mode === "list") { %>
                 <% if (pageData.data.length > 0) { %>
                     <% pageData.data.forEach(blogPost => { %>
 						<div class="box">
-	                        <%- include('../partials/blog-article') %>
+	                        <%- include('../partials/blog-article', { blogPost }) %>
 						</div>
                     <% }); %>
                 <% } else { %>

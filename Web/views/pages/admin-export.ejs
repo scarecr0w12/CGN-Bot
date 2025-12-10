@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Export Data - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<script>
+		function exportData(type, format) {
+			const btn = document.getElementById(`export-${type}-${format}`);
+			btn.classList.add('is-loading');
+			
+			fetch(window.location.pathname, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ exportType: type, format: format }),
+			})
+			.then(response => {
+				if (!response.ok) {
+					return response.json().then(err => { throw new Error(err.error); });
+				}
+				const contentDisposition = response.headers.get('Content-Disposition');
+				const filename = contentDisposition?.match(/filename="(.+)"/)?.[1] || `export.${format}`;
+				return response.blob().then(blob => ({ blob, filename }));
+			})
+			.then(({ blob, filename }) => {
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = filename;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				a.remove();
+				btn.classList.remove('is-loading');
+			})
+			.catch(err => {
+				btn.classList.remove('is-loading');
+				SkynetUtil.showToast(err.message || 'Export failed', 'error');
+			});
+		}
+	</script>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						Export Data
+					</h1>
+					
+					<% if (pageData.hasExportAccess) { %>
+					<article class="message is-info">
+						<div class="message-body">
+							<div class="content">
+								Export your server data in JSON or CSV format. This feature allows you to backup your configuration, member data, moderation logs, and more.
+							</div>
+						</div>
+					</article>
+
+					<div class="columns is-multiline">
+						<!-- Config Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-cog"></i></span>
+									Server Configuration
+								</h3>
+								<p class="has-text-grey">Export all server settings including commands, filters, and automation rules.</p>
+								<br>
+								<div class="buttons">
+									<button id="export-config-json" class="button is-primary" onclick="exportData('config', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>JSON</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Members Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-users"></i></span>
+									Member Data
+								</h3>
+								<p class="has-text-grey">Export member points, ranks, and activity data.</p>
+								<br>
+								<div class="buttons">
+									<button id="export-members-json" class="button is-primary" onclick="exportData('members', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>JSON</span>
+									</button>
+									<button id="export-members-csv" class="button is-info" onclick="exportData('members', 'csv')">
+										<span class="icon"><i class="fa fa-file-csv"></i></span>
+										<span>CSV</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Moderation Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-gavel"></i></span>
+									Moderation Logs
+								</h3>
+								<p class="has-text-grey">Export strike history and moderation actions.</p>
+								<br>
+								<div class="buttons">
+									<button id="export-moderation-json" class="button is-primary" onclick="exportData('moderation', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>JSON</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Custom Commands Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-terminal"></i></span>
+									Custom Commands
+								</h3>
+								<p class="has-text-grey">Export all custom tags and commands.</p>
+								<br>
+								<div class="buttons">
+									<button id="export-commands-json" class="button is-primary" onclick="exportData('commands', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>JSON</span>
+									</button>
+									<button id="export-commands-csv" class="button is-info" onclick="exportData('commands', 'csv')">
+										<span class="icon"><i class="fa fa-file-csv"></i></span>
+										<span>CSV</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Stats Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-chart-bar"></i></span>
+									Statistics
+								</h3>
+								<p class="has-text-grey">Export server statistics and usage data.</p>
+								<br>
+								<div class="buttons">
+									<button id="export-stats-json" class="button is-primary" onclick="exportData('stats', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>JSON</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<!-- Full Export -->
+						<div class="column is-half">
+							<div class="box">
+								<h3 class="title is-5">
+									<span class="icon"><i class="fa fa-archive"></i></span>
+									Full Export
+								</h3>
+								<p class="has-text-grey">Export everything in a single file (config, members, stats).</p>
+								<br>
+								<div class="buttons">
+									<button id="export-full-json" class="button is-success" onclick="exportData('full', 'json')">
+										<span class="icon"><i class="fa fa-download"></i></span>
+										<span>Export All (JSON)</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<% } else { %>
+					<article class="message is-warning">
+						<div class="message-header">
+							<span>
+								<span class="icon">
+									<i class="fa fa-lock"></i>
+								</span>
+								&nbsp;Premium Feature
+							</span>
+						</div>
+						<div class="message-body">
+							<div class="content">
+								<p>Data export is a premium feature that allows you to backup and download your server configuration, member data, moderation logs, and more.</p>
+								<p>Upgrade your membership to access this feature.</p>
+								<br>
+								<a href="/membership" class="button is-primary">
+									<span class="icon"><i class="fa fa-star"></i></span>
+									<span>View Membership Plans</span>
+								</a>
+							</div>
+						</div>
+					</article>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

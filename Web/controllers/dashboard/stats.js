@@ -1,5 +1,6 @@
 const { saveAdminConsoleOptions: save, getChannelData, getRoleData } = require("../../helpers");
 const parsers = require("../../parsers");
+const TierManager = require("../../../Modules/TierManager");
 
 const controllers = module.exports;
 
@@ -115,4 +116,74 @@ controllers.points.post = async (req, res) => {
 	parsers.commandOptions(req, "lottery", req.body);
 
 	save(req, res, true);
+};
+
+// Premium Advanced Stats API endpoint
+controllers.analytics = async (req, res) => {
+	// Check if user has advanced_stats feature
+	const hasAdvancedStats = await TierManager.canAccess(req.consolemember.user.id, "advanced_stats");
+	if (!hasAdvancedStats) {
+		return res.status(403).json({ error: "Advanced analytics requires a premium subscription." });
+	}
+
+	const serverDocument = req.svr.document;
+	const members = Object.values(serverDocument.members || {});
+
+	// Calculate advanced statistics
+	const totalPoints = members.reduce((sum, m) => sum + (m.points || 0), 0);
+	const avgPoints = members.length ? Math.round(totalPoints / members.length) : 0;
+
+	// Points distribution
+	const pointsDistribution = {
+		zero: members.filter(m => (m.points || 0) === 0).length,
+		low: members.filter(m => (m.points || 0) > 0 && (m.points || 0) <= 100).length,
+		medium: members.filter(m => (m.points || 0) > 100 && (m.points || 0) <= 500).length,
+		high: members.filter(m => (m.points || 0) > 500 && (m.points || 0) <= 1000).length,
+		elite: members.filter(m => (m.points || 0) > 1000).length,
+	};
+
+	// Top members by points
+	const topMembers = members
+		.filter(m => m.points > 0)
+		.sort((a, b) => (b.points || 0) - (a.points || 0))
+		.slice(0, 10)
+		.map(m => ({ id: m._id, points: m.points, rank: m.rank }));
+
+	// Rank distribution
+	const rankDistribution = {};
+	members.forEach(m => {
+		const rank = m.rank || "No Rank";
+		rankDistribution[rank] = (rankDistribution[rank] || 0) + 1;
+	});
+
+	// Activity metrics
+	const activeMembers = members.filter(m => m.last_active && Date.now() - new Date(m.last_active).getTime() < 7 * 24 * 60 * 60 * 1000).length;
+	const inactiveMembers = members.length - activeMembers;
+
+	// Strike statistics
+	const membersWithStrikes = members.filter(m => m.strikes && m.strikes.length > 0);
+	const totalStrikes = membersWithStrikes.reduce((sum, m) => sum + (m.strikes?.length || 0), 0);
+
+	res.json({
+		overview: {
+			totalMembers: members.length,
+			totalPoints,
+			averagePoints: avgPoints,
+			messagestoday: serverDocument.messages_today || 0,
+		},
+		activity: {
+			activeMembers,
+			inactiveMembers,
+			activityRate: members.length ? Math.round((activeMembers / members.length) * 100) : 0,
+		},
+		moderation: {
+			membersWithStrikes: membersWithStrikes.length,
+			totalStrikes,
+		},
+		distributions: {
+			points: pointsDistribution,
+			ranks: rankDistribution,
+		},
+		leaderboard: topMembers,
+	});
 };

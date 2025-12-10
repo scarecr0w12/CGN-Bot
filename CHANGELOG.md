@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-12-09
+
+### Added
+
+#### Extension Import/Export System
+- **Extension Packages** (`.skypkg`) - Export/import extensions between Skynet instances
+- **Export API** (`GET /extensions/:extid/export`) - Download extension as JSON package
+- **Import API** (`POST /extensions/import`) - Upload and install extension packages
+- **My Extensions UI** - Import modal with file picker and preview
+- **Gallery Export** - Export button in source view modal
+
+#### AI Image Generation
+- **Imagine Command** (`Commands/Public/imagine.js`) - Generate AI images with DALL-E/Stable Diffusion
+- Supports size and style parameters
+- Premium-only with tier gating
+
+#### SEO & Blog System
+- **SEO Controller** (`Web/controllers/seo.js`) - Sitemap generation and SEO utilities
+- **Blog Seeder** (`scripts/seed-blog-posts.js`) - Script to populate blog content
+- Fixed blog post rendering and variable passing
+
+#### Feature Gating Implementation
+- **17 tier-gated features** fully implemented (see `docs/FEATURE_DEVELOPMENT.md`)
+- `BrandingHelper` - Custom embed branding for premium users
+- `ThemeHelper` - Premium dashboard themes
+- `FeatureFlags` - Beta feature opt-in system
+- `WebhookDispatcher` - Custom webhook integrations
+
+#### Dashboard Enhancements
+- **Admin Export Page** (`Web/views/pages/admin-export.ejs`) - Export server data to JSON/CSV
+- **Premium Analytics API** - Advanced server statistics endpoint
+
+### Changed
+
+- **Cloudflare IP Tracking** - Enhanced visitor IP logging with CF-Ray and country
+- **Membership Pricing** - Dynamic yearly pricing based on configurable discount percentage
+- **Nginx Configuration** - Added NAT gateway IP placeholder documentation
+
+### Fixed
+
+- **TemporaryStorage** - Handle missing `metadata.json` gracefully
+- **Blog Posts** - Fixed `blogPost` variable not being passed to partials
+- **Maintainer Console** - Fixed `Users.find()` returning non-iterable Cursor
+- **Sitemap Generator** - Fixed query for non-existent `published` field
+- **Membership Checkout** - Fixed 404 errors for API routes
+- **Script Injector** - Allow raw HTML in head scripts, prevent textarea breakouts
+
+### Dependencies
+
+- No new dependencies
+
+---
+
 ## [1.1.0] - 2025-12-09
 
 ### Added
@@ -93,5 +146,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.2.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.2.0
 [1.1.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.1.0
 [1.0.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.0.0

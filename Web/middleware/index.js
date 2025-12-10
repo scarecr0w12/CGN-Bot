@@ -2,9 +2,14 @@ const { parseAuthUser, fetchMaintainerPrivileges } = require("../helpers");
 
 class SkynetResponse {
 	constructor (req, res, page) {
+		// SEO: Build canonical path (without query strings)
+		const currentPath = `${req.baseUrl}${req.path}`.replace(/\/$/, "") || "/";
+
 		this.template = {
 			authUser: req.isAuthenticated() ? parseAuthUser(req.user) : null,
 			currentPage: `${req.baseUrl}${req.path}`,
+			currentPath: currentPath,
+			hostingURL: req.app.client.configJS.hostingURL,
 			officialMode: req.app.client.officialMode ? true : undefined,
 			adsense: {
 				isEnabled: req.cookies.adsPreference !== "false",

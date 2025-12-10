@@ -73,6 +73,9 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 	console.log("[DEBUG] Discord.js client created");
 
+	client.configJS = configJS;
+	client.configJSON = configJSON;
+
 	ObjectDefines(client);
 
 	console.log("[DEBUG] Connecting to MongoDB...");

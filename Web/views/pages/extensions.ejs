@@ -1,11 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= pageData.pageTitle %></title>
+	<title><%= pageData.pageTitle %> | Skynet Discord Bot Extensions</title>
+	<%
+	// SEO for extensions page
+	if (typeof pageData !== "undefined") {
+		const modeDescriptions = {
+			gallery: "Browse and install free extensions for Skynet Discord bot. Find custom commands, automation scripts, and plugins to enhance your Discord server.",
+			queue: "View pending extensions awaiting approval for the Skynet Discord bot marketplace.",
+			my: "Manage your Skynet Discord bot extensions - create, edit, and publish custom commands and scripts."
+		};
+		pageData.seo = {
+			title: `${pageData.pageTitle} | Skynet Discord Bot Extensions`,
+			description: modeDescriptions[pageData.mode] || modeDescriptions.gallery,
+			keywords: "Discord bot extensions, Discord custom commands, Discord bot plugins, Discord automation, Discord bot scripts, free Discord extensions"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Extensions", url: "/extensions" }
+		];
+		if (pageData.mode !== "gallery") {
+			pageData.breadcrumbs.push({ name: pageData.mode.charAt(0).toUpperCase() + pageData.mode.slice(1), url: `/extensions/${pageData.mode}` });
+		}
+	}
+	%>
 	<%- include('../partials/head') %>
 </head>
 <body>
-	<section id="header" class="main-header-section hero is-primary is-small is-bold" style="">
+	<section id="header" class="main-header-section hero is-primary is-small is-bold">
 		<div class="hero-head">
 			<%- include('../partials/header') %>
 		</div>

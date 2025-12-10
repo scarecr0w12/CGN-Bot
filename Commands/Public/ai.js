@@ -4,10 +4,24 @@
  */
 
 const { AIManager } = require("../../Modules/AI");
+const TierManager = require("../../Modules/TierManager");
 
 module.exports = async (main, documents, msg, commandData) => {
 	const { client, configJS } = main;
 	const { serverDocument } = documents;
+
+	// Check if user has access to ai_chat feature
+	const hasAccess = await TierManager.canAccess(msg.author.id, "ai_chat");
+	if (!hasAccess) {
+		return msg.channel.send({
+			embeds: [{
+				color: 0xFFAA00,
+				title: "Premium Feature",
+				description: "AI Chat requires a premium subscription. Upgrade your membership to access this feature.",
+				footer: { text: "Visit the membership page on our website to learn more." },
+			}],
+		});
+	}
 
 	// Get or create AI manager instance
 	if (!client.aiManager) {

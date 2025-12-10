@@ -17,6 +17,7 @@ controllers.auth = require("./auth");
 controllers.api = require("./api");
 controllers.debug = require("./debug");
 controllers.membership = require("./membership");
+controllers.seo = require("./seo");
 
 controllers.headerImage = (req, res) => {
 	let headerImage = configJSON.headerImage || "header.png";

@@ -1,7 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Status - Skynet</title>
+	<title>Bot Status & Uptime | Skynet Discord Bot</title>
+	<%
+	// SEO for status page
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Bot Status & Uptime | Skynet Discord Bot",
+		description: "Check the current status and uptime of Skynet Discord bot. View shard health, response times, and service availability in real-time.",
+		keywords: "Discord bot status, Skynet uptime, Discord bot health, bot availability, Skynet status page"
+	};
+	pageData.breadcrumbs = [
+		{ name: "Home", url: "/" },
+		{ name: "Status", url: "/status" }
+	];
+	%>
 	<%- include("../partials/head") %>
 	<style>
 		.status-header {

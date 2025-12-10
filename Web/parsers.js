@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+const { ChannelType } = require("discord.js");
 const moment = require("moment");
 const xssFilters = require("xss-filters");
 const showdown = require("showdown");
@@ -178,10 +179,20 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 };
 
 parsers.blogData = async (req, blogDocument) => {
-	const author = await req.app.client.users.fetch(blogDocument.author_id, true) || {
-		id: "invalid-user",
-		username: "invalid-user",
-	};
+	let author;
+	try {
+		author = await req.app.client.users.fetch(blogDocument.author_id, true);
+	} catch (_) {
+		// Ignore error
+	}
+	if (!author) {
+		author = {
+			id: "invalid-user",
+			username: "invalid-user",
+			displayAvatarURL: () => "/static/img/discord-icon.png",
+		};
+	}
+
 	let categoryColor;
 	switch (blogDocument.category) {
 		case "Development":
@@ -200,7 +211,7 @@ parsers.blogData = async (req, blogDocument) => {
 			categoryColor = "is-primary";
 			break;
 	}
-	const avatarURL = (await req.app.client.users.fetch(blogDocument.author_id, true)).displayAvatarURL();
+	const avatarURL = author.displayAvatarURL();
 	return {
 		id: blogDocument._id.toString(),
 		title: blogDocument.title,

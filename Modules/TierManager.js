@@ -403,7 +403,7 @@ const findUserByPaymentCustomer = async (provider, customerId) => {
 
 	// This would need a custom query implementation
 	// For now, we'll need to handle this at the Database level
-	const users = await Database.users.find({ [field]: customerId });
+	const users = await Database.users.find({ [field]: customerId }).exec();
 	return users?.[0] || null;
 };
 

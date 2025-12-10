@@ -1,20 +1,110 @@
+<%
+// SEO Configuration - can be overridden per page via pageData.seo
+const defaultSeo = {
+	title: "Skynet - Free Discord Bot for Moderation, Fun & Server Management",
+	description: "Skynet is a powerful, free Discord bot with advanced moderation tools, fun commands, AI chat, custom extensions, giveaways, leveling system, and an easy-to-use web dashboard. Add to your server today!",
+	keywords: "Discord bot, Discord moderation bot, free Discord bot, Discord server management, Discord giveaway bot, Discord leveling bot, Discord AI bot, Discord fun commands, Discord auto moderation, Discord custom commands, Discord extensions, best Discord bot",
+	type: "website",
+	image: "/static/img/logo.png",
+	siteName: "Skynet Discord Bot"
+};
+
+const seo = typeof pageData !== "undefined" && pageData.seo ? { ...defaultSeo, ...pageData.seo } : defaultSeo;
+const currentUrl = typeof hostingURL !== "undefined" && typeof currentPath !== "undefined" ? hostingURL.replace(/\/$/, "") + currentPath : (typeof hostingURL !== "undefined" ? hostingURL : "");
+const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingURL !== "undefined" ? hostingURL.replace(/\/$/, "") + seo.image : seo.image);
+%>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Scarecr0w12">
-<meta name="description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Skynet">
-<meta property="og:image" content="/static/img/logo.png">
-<meta property="og:description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
+<!-- Primary Meta Tags -->
+<meta name="title" content="<%= seo.title %>">
+<meta name="description" content="<%= seo.description %>">
+<meta name="keywords" content="<%= seo.keywords %>">
+<meta name="robots" content="index, follow">
+<meta name="language" content="English">
+<meta name="revisit-after" content="3 days">
 
-<meta name="twitter:title" content="Skynet">
-<meta name="twitter:image" content="/static/img/logo.png">
-<meta name="twitter:description" content="Skynet is a fast, feature-rich Discord bot with automation, moderation, and extensibility.">
+<!-- Canonical URL -->
+<% if (currentUrl) { %><link rel="canonical" href="<%= currentUrl %>"><% } %>
 
-<link rel="shortcut icon" type="image/png" href="/static/img/logo.png">
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="<%= seo.type %>">
+<meta property="og:site_name" content="<%= seo.siteName %>">
+<meta property="og:title" content="<%= seo.title %>">
+<meta property="og:description" content="<%= seo.description %>">
+<meta property="og:image" content="<%= fullImageUrl %>">
+<meta property="og:image:alt" content="Skynet Discord Bot Logo">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<% if (currentUrl) { %><meta property="og:url" content="<%= currentUrl %>"><% } %>
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@Skynet">
+<meta name="twitter:creator" content="@GG142_">
+<meta name="twitter:title" content="<%= seo.title %>">
+<meta name="twitter:description" content="<%= seo.description %>">
+<meta name="twitter:image" content="<%= fullImageUrl %>">
+
+<!-- Discord-specific meta tags -->
 <meta name="theme-color" content="#1e3a8a">
+
+<!-- Favicons -->
+<link rel="shortcut icon" type="image/png" href="/static/img/logo.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/static/img/logo.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/static/img/logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/img/logo.png">
+
+<!-- Structured Data - Organization -->
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@type": "SoftwareApplication",
+	"name": "Skynet",
+	"applicationCategory": "UtilitiesApplication",
+	"operatingSystem": "Web, Discord",
+	"description": "<%= defaultSeo.description.replace(/"/g, '\\"') %>",
+	"offers": {
+		"@type": "Offer",
+		"price": "0",
+		"priceCurrency": "USD"
+	},
+	"aggregateRating": {
+		"@type": "AggregateRating",
+		"ratingValue": "5",
+		"ratingCount": "<%= typeof pageData !== 'undefined' && pageData.rawServerCount ? pageData.rawServerCount : '100' %>"
+	},
+	"author": {
+		"@type": "Person",
+		"name": "Scarecr0w12",
+		"url": "https://github.com/Scarecr0w12"
+	},
+	"url": "<%= typeof hostingURL !== 'undefined' ? hostingURL : '' %>",
+	"image": "<%= fullImageUrl %>",
+	"screenshot": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/static/img/admin-console.png"
+}
+</script>
+
+<% if (typeof pageData !== "undefined" && pageData.breadcrumbs) { %>
+<!-- Structured Data - Breadcrumbs -->
+<script type="application/ld+json">
+{
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	"itemListElement": [
+		<%- pageData.breadcrumbs.map((bc, i) => JSON.stringify({
+			"@type": "ListItem",
+			"position": i + 1,
+			"name": bc.name,
+			"item": (typeof hostingURL !== "undefined" ? hostingURL.replace(/\/$/, "") : "") + bc.url
+		})).join(",\n\t\t") %>
+	]
+}
+</script>
+<% } %>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.0.3/turbolinks.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>

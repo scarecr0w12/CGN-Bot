@@ -4,6 +4,7 @@
  * Handles public membership pages and checkout flow
  */
 
+const { request } = require("undici");
 const TierManager = require("../../Modules/TierManager");
 
 const controllers = module.exports;
@@ -45,7 +46,7 @@ controllers.pricing = async (req, { res }) => {
 };
 
 /**
- * Create Stripe checkout session
+ * Create Checkout Session (Stripe or BTCPay)
  */
 controllers.createCheckout = async (req, res) => {
 	if (!req.isAuthenticated()) {
@@ -66,79 +67,131 @@ controllers.createCheckout = async (req, res) => {
 			return res.status(400).json({ error: "Invalid or unavailable tier" });
 		}
 
-		// Check if Stripe is configured
-		if (!process.env.STRIPE_SECRET_KEY) {
-			return res.status(503).json({ error: "Payment processing is not configured" });
-		}
+		// Priority 1: Stripe
+		const stripeConfig = siteSettings?.payment_providers?.stripe;
+		if (process.env.STRIPE_SECRET_KEY && stripeConfig?.isEnabled) {
+			const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-		const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-		const paymentProviders = siteSettings?.payment_providers?.stripe;
+			// Find the price ID for this tier
+			const priceMapping = stripeConfig.product_mapping?.find(m => m.tier_id === tierId);
+			let priceId = priceMapping?.stripe_price_id;
 
-		if (!paymentProviders?.isEnabled) {
-			return res.status(503).json({ error: "Stripe payments are not enabled" });
-		}
+			// If no price mapping, create a price dynamically (for testing)
+			if (!priceId) {
+				// Calculate price based on billing period and discount
+				let price = tier.price_monthly;
+				if (billingPeriod === "yearly") {
+					price = tier.price_monthly * 12 * (1 - (tier.yearly_discount || 0) / 100);
+				}
+				price = Math.round(price);
 
-		// Find the price ID for this tier
-		const priceMapping = paymentProviders.product_mapping?.find(m => m.tier_id === tierId);
-		let priceId = priceMapping?.stripe_price_id;
+				if (!price || price <= 0) {
+					return res.status(400).json({ error: "This tier is not available for purchase" });
+				}
 
-		// If no price mapping, create a price dynamically (for testing)
-		if (!priceId) {
-			// Create a product and price on the fly
-			const price = billingPeriod === "yearly" ? tier.price_yearly : tier.price_monthly;
+				const product = await stripe.products.create({
+					name: `${tier.name} Membership`,
+					description: tier.description || `${tier.name} tier subscription`,
+					metadata: { tier_id: tierId },
+				});
 
-			if (!price || price <= 0) {
-				return res.status(400).json({ error: "This tier is not available for purchase" });
+				const stripePrice = await stripe.prices.create({
+					product: product.id,
+					unit_amount: price,
+					currency: "usd",
+					recurring: {
+						interval: billingPeriod === "yearly" ? "year" : "month",
+					},
+					metadata: { tier_id: tierId },
+				});
+
+				priceId = stripePrice.id;
+				logger.info(`Created dynamic Stripe price for tier ${tierId}: ${priceId}`);
 			}
 
-			const product = await stripe.products.create({
-				name: `${tier.name} Membership`,
-				description: tier.description || `${tier.name} tier subscription`,
-				metadata: { tier_id: tierId },
-			});
-
-			const stripePrice = await stripe.prices.create({
-				product: product.id,
-				unit_amount: price,
-				currency: "usd",
-				recurring: {
-					interval: billingPeriod === "yearly" ? "year" : "month",
-				},
-				metadata: { tier_id: tierId },
-			});
-
-			priceId = stripePrice.id;
-			logger.info(`Created dynamic Stripe price for tier ${tierId}: ${priceId}`);
-		}
-
-		// Create checkout session
-		const session = await stripe.checkout.sessions.create({
-			mode: "subscription",
-			payment_method_types: ["card"],
-			line_items: [{
-				price: priceId,
-				quantity: 1,
-			}],
-			success_url: `${configJS.hostingURL}membership/success?session_id={CHECKOUT_SESSION_ID}`,
-			cancel_url: `${configJS.hostingURL}membership`,
-			customer_email: req.user.email || undefined,
-			client_reference_id: req.user.id,
-			metadata: {
-				discord_user_id: req.user.id,
-				tier_id: tierId,
-				billing_period: billingPeriod,
-			},
-			subscription_data: {
+			// Create checkout session
+			const session = await stripe.checkout.sessions.create({
+				mode: "subscription",
+				payment_method_types: ["card"],
+				line_items: [{
+					price: priceId,
+					quantity: 1,
+				}],
+				success_url: `${configJS.hostingURL}membership/success?session_id={CHECKOUT_SESSION_ID}&provider=stripe`,
+				cancel_url: `${configJS.hostingURL}membership`,
+				customer_email: req.user.email || undefined,
+				client_reference_id: req.user.id,
 				metadata: {
 					discord_user_id: req.user.id,
 					tier_id: tierId,
+					billing_period: billingPeriod,
 				},
-			},
-		});
+				subscription_data: {
+					metadata: {
+						discord_user_id: req.user.id,
+						tier_id: tierId,
+					},
+				},
+			});
 
-		logger.info(`Stripe checkout session created for user ${req.user.id}`, { sessionId: session.id, tierId });
+			logger.info(`Stripe checkout session created for user ${req.user.id}`, { sessionId: session.id, tierId });
+			return res.json({ checkout_url: session.url });
+		}
 
-		res.json({ checkout_url: session.url });
+		// Priority 2: BTCPay
+		const btcpayConfig = siteSettings?.payment_providers?.btcpay;
+		const btcpayUrl = process.env.BTCPAY_URL;
+		const btcpayApiKey = process.env.BTCPAY_API_KEY;
+		const btcpayStoreId = process.env.BTCPAY_STORE_ID;
+
+		if (btcpayConfig?.isEnabled && btcpayUrl && btcpayApiKey && btcpayStoreId) {
+			let priceCents = tier.price_monthly;
+			if (billingPeriod === "yearly") {
+				priceCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+			}
+			priceCents = Math.round(priceCents);
+
+			const amount = (priceCents / 100).toFixed(2);
+
+			if (!amount || parseFloat(amount) <= 0) {
+				return res.status(400).json({ error: "This tier is not available for purchase" });
+			}
+
+			const { statusCode, body } = await request(`${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`, {
+				method: "POST",
+				headers: {
+					Authorization: `token ${btcpayApiKey}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					amount: amount,
+					currency: "USD",
+					metadata: {
+						tier_id: tierId,
+						billing_period: billingPeriod,
+						discord_user_id: req.user.id,
+						email: req.user.email || undefined,
+						orderId: `${tierId}-${Date.now()}`,
+					},
+					checkout: {
+						redirectURL: `${configJS.hostingURL}membership/success?session_id={InvoiceId}&provider=btcpay`,
+					},
+				}),
+			});
+
+			const responseData = await body.json();
+
+			if (statusCode !== 200) {
+				logger.error("BTCPay invoice creation failed", { status: statusCode, error: responseData });
+				throw new Error("Failed to create BTCPay invoice");
+			}
+
+			logger.info(`BTCPay invoice created for user ${req.user.id}`, { invoiceId: responseData.id, tierId });
+			return res.json({ checkout_url: responseData.checkoutLink });
+		}
+
+		// No provider configured
+		return res.status(503).json({ error: "Payment processing is not configured" });
 	} catch (err) {
 		logger.error("Error creating checkout session", { userId: req.user?.id }, err);
 		res.status(500).json({ error: "Failed to create checkout session" });

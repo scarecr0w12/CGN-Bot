@@ -148,7 +148,9 @@
 			<!-- Pricing Cards -->
 			<div class="columns is-centered">
 				<% const purchasableTiers = (pageData.tiers || []).filter(t => t.is_purchasable).sort((a, b) => a.level - b.level); %>
-				<% purchasableTiers.forEach((tier, index) => { %>
+				<% purchasableTiers.forEach((tier, index) => { 
+					const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				%>
 				<div class="column is-4">
 					<div class="card pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
 						<div class="pricing-header" style="background-color: <%= tier.color || '#3273dc' %>20;">
@@ -161,11 +163,14 @@
 							<div class="pricing-price" style="color: <%= tier.color || '#3273dc' %>;">
 								<span class="currency">$</span>
 								<span class="monthly-price"><%= (tier.price_monthly / 100).toFixed(0) %></span>
-								<span class="yearly-price" style="display: none;"><%= (tier.price_yearly / 100 / 12).toFixed(0) %></span>
+								<span class="yearly-price" style="display: none;"><%= (yearlyTotalCents / 100 / 12).toFixed(0) %></span>
 								<span class="period">/mo</span>
 							</div>
 							<p class="yearly-total is-size-7 has-text-grey" style="display: none;">
-								Billed $<%= (tier.price_yearly / 100).toFixed(2) %>/year
+								Billed $<%= (yearlyTotalCents / 100).toFixed(2) %>/year
+								<% if (tier.yearly_discount > 0) { %>
+								<span class="has-text-success">(Save <%= tier.yearly_discount %>%)</span>
+								<% } %>
 							</p>
 						</div>
 
@@ -187,7 +192,7 @@
 						</div>
 
 						<div class="pricing-footer">
-							<% if (template.authUser) { %>
+							<% if (authUser) { %>
 								<% if (pageData.userTier && pageData.userTier._id === tier._id) { %>
 								<button class="button is-fullwidth" disabled>
 									<span class="icon"><i class="fa fa-check"></i></span>

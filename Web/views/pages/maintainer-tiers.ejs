@@ -132,8 +132,8 @@
 										</div>
 										<div class="column is-3">
 											<div class="field">
-												<label class="label">Yearly Price (cents)</label>
-												<input class="input" type="number" name="tier_price_yearly[]" value="<%= tier.price_yearly || 0 %>" min="0">
+												<label class="label">Yearly Discount (%)</label>
+												<input class="input" type="number" name="tier_yearly_discount[]" value="<%= tier.yearly_discount || 0 %>" min="0" max="100">
 											</div>
 										</div>
 									</div>
@@ -256,8 +256,8 @@
 					</div>
 					<div class="column is-3">
 						<div class="field">
-							<label class="label">Yearly Price (cents)</label>
-							<input class="input" type="number" name="tier_price_yearly[]" value="0" min="0">
+							<label class="label">Yearly Discount (%)</label>
+							<input class="input" type="number" name="tier_yearly_discount[]" value="0" min="0" max="100">
 						</div>
 					</div>
 				</div>

@@ -16,6 +16,13 @@ const statusRouting = router => {
 	setupPage(router, "/status", [], controllers.status);
 };
 
+const seoRouting = router => {
+	// SEO routes - robots.txt and sitemap.xml
+	router.routes.push(new Route(router, "/robots.txt", [], controllers.seo.robotsTxt, "get", "static"));
+	router.routes.push(new Route(router, "/sitemap.xml", [], controllers.seo.sitemapXml, "get", "static"));
+	router.routes.push(new Route(router, "/sitemap-index.xml", [], controllers.seo.sitemapIndex, "get", "static"));
+};
+
 const generalRouting = router => {
 	setupPage(router, "/", [], controllers.landing);
 	setupPage(router, "/donate", [], controllers.donate);
@@ -81,11 +88,11 @@ const officialRouting = router => {
 	setupPage(router, "/paperwork", [], controllers.paperwork);
 };
 
-const membershipRouting = router => {
+const membershipRouting = (router, apiRouter) => {
 	setupPage(router, "/membership", [], controllers.membership.pricing);
 	router.routes.push(new Route(router, "/membership/success", [middleware.checkUnavailable], controllers.membership.success, "get", "general"));
-	router.routes.push(new Route(router, "/api/membership/checkout", [middleware.checkUnavailableAPI], controllers.membership.createCheckout, "post", "api"));
-	router.routes.push(new Route(router, "/api/membership/paypal-checkout", [middleware.checkUnavailableAPI], controllers.membership.createPayPalCheckout, "post", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/membership/checkout", [middleware.checkUnavailableAPI], controllers.membership.createCheckout, "post", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/membership/paypal-checkout", [middleware.checkUnavailableAPI], controllers.membership.createPayPalCheckout, "post", "api"));
 };
 
 module.exports = app => {
@@ -107,6 +114,7 @@ module.exports = app => {
 		throw new Error("Test Sentry Error - This is a deliberate test error to verify Sentry integration");
 	});
 
+	seoRouting(routers.general);
 	generalRouting(routers.general);
 	statusRouting(routers.general);
 	activityRouting(routers.general);
@@ -114,7 +122,7 @@ module.exports = app => {
 	wikiRouting(routers.general);
 	blogRouting(routers.general);
 	officialRouting(routers.general);
-	membershipRouting(routers.general);
+	membershipRouting(routers.general, routers.API);
 	accountRouting(routers.general);
 	webhookRouting(routers.general);
 	dashboardRouting(routers.dashboard);

@@ -1,3 +1,4 @@
+const { ChannelType } = require("discord.js");
 const moment = require("moment");
 const xssFilters = require("xss-filters");
 const showdown = require("showdown");
@@ -14,6 +15,7 @@ md.setFlavor("github");
 
 const { saveAdminConsoleOptions: save, getChannelData, getRoleData, findQueryUser, createMessageOfTheDay, renderError } = require("../../helpers");
 const parsers = require("../../parsers");
+const TierManager = require("../../../Modules/TierManager");
 
 const controllers = module.exports;
 
@@ -64,10 +66,14 @@ controllers.moderation = async (req, { res }) => {
 	const svr = await req.svr.fetchCollection("roles");
 	const serverDocument = req.svr.document;
 
+	// Check if user has auto_roles feature
+	const hasAutoRoles = await TierManager.canAccess(req.consolemember.user.id, "auto_roles");
+
 	res.setPageData({
 		page: "admin-moderation.ejs",
 		channelData: getChannelData(svr),
 		roleData: getRoleData(svr),
+		hasAutoRoles,
 	});
 	res.setConfigData({
 		moderation: {
@@ -403,6 +409,9 @@ controllers.filters = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 	await svr.fetchCollection("roles");
 
+	// Check if user has advanced_moderation feature
+	const hasAdvancedModeration = await TierManager.canAccess(req.consolemember.user.id, "advanced_moderation");
+
 	const filteredCommands = [];
 	for (const command in serverDocument.config.commands) {
 		const commandData = client.getPublicCommandMetadata(command);
@@ -415,6 +424,7 @@ controllers.filters = async (req, { res }) => {
 		page: "admin-filters.ejs",
 		channelData: getChannelData(svr),
 		roleData: getRoleData(svr),
+		hasAdvancedModeration,
 	});
 	res.setConfigData({
 		moderation: {
@@ -426,6 +436,12 @@ controllers.filters = async (req, { res }) => {
 	res.render();
 };
 controllers.filters.post = async (req, res) => {
+	// Check if user has advanced_moderation feature
+	const hasAdvancedModeration = await TierManager.canAccess(req.consolemember.user.id, "advanced_moderation");
+	if (!hasAdvancedModeration) {
+		return res.status(403).json({ error: "Advanced moderation requires a premium subscription." });
+	}
+
 	const serverDocument = req.svr.document;
 	const serverQueryDocument = req.svr.queryDocument;
 
@@ -576,8 +592,14 @@ controllers.logs = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
 
+	// Check if user has extended_logs feature
+	const hasExtendedLogs = await TierManager.canAccess(req.consolemember.user.id, "extended_logs");
+
+	// Premium users get access to more logs (1000 vs 200)
+	const logLimit = hasExtendedLogs ? 1000 : 200;
+
 	try {
-		let serverLogs = serverDocument.logs.length > 200 ? serverDocument.logs.slice(serverDocument.logs.length - 200) : serverDocument.logs;
+		let serverLogs = serverDocument.logs.length > logLimit ? serverDocument.logs.slice(serverDocument.logs.length - logLimit) : serverDocument.logs;
 		serverLogs = serverLogs.filter(serverLog => (!req.query.q || serverLog.content.toLowerCase().includes(req.query.q.toLowerCase())) && (!req.query.chid || serverLog.channelid === req.query.chid));
 		const fetchList = [];
 		serverLogs.forEach(serverLog => svr.members[serverLog.userid] || fetchList.push(serverLog.userid));
@@ -623,6 +645,9 @@ controllers.logs = async (req, { res }) => {
 			logData: serverLogs.reverse(),
 			searchQuery: req.query.q,
 			channelQuery: req.query.chid,
+			hasExtendedLogs,
+			logLimit,
+			totalLogs: serverDocument.logs.length,
 		});
 		res.render();
 	} catch (err) {

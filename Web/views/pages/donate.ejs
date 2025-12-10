@@ -1,7 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Donate to Skynet</title>
+	<title>Support Skynet | Donate to Keep This Discord Bot Free</title>
+	<%
+	// SEO for donate page
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Support Skynet | Donate to Keep This Discord Bot Free",
+		description: "Support Skynet Discord bot development! Your donations help keep the bot free for everyone and fund new features, server costs, and maintenance.",
+		keywords: "support Discord bot, donate Discord bot, Skynet donation, help Discord bot, fund open source bot"
+	};
+	pageData.breadcrumbs = [
+		{ name: "Home", url: "/" },
+		{ name: "Donate", url: "/donate" }
+	];
+	%>
 	<%- include('../partials/head') %>
 
 	<script>

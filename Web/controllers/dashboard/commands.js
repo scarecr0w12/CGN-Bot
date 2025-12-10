@@ -1,10 +1,19 @@
+const { ChannelType } = require("discord.js");
 const { getChannelData, saveAdminConsoleOptions: save, renderError, findQueryUser } = require("../../helpers");
 const parsers = require("../../parsers");
+const TierManager = require("../../../Modules/TierManager");
+
+// Default limits for custom commands/tags
+const DEFAULT_TAG_LIMIT = 5;
+const UNLIMITED_TAG_THRESHOLD = 1000;
 
 const controllers = module.exports;
 
 controllers.options = async (req, { res }) => {
 	await req.svr.fetchCollection("channels");
+
+	// Check if user has custom_prefix feature
+	const hasCustomPrefix = await TierManager.canAccess(req.consolemember.user.id, "custom_prefix");
 
 	res.setConfigData({
 		chatterbot: req.svr.document.config.chatterbot,
@@ -18,12 +27,19 @@ controllers.options = async (req, { res }) => {
 		page: "admin-command-options.ejs",
 		channelData: getChannelData(req.svr),
 		botName: req.svr.members[req.app.client.user.id].nickname || req.app.client.user.username,
+		hasCustomPrefix,
 	});
 	res.render();
 };
 controllers.options.post = async (req, res) => {
-	if (req.body.command_prefix !== req.app.client.getCommandPrefix(req.svr, req.svr.document)) {
-		req.svr.queryDocument.set("config.command_prefix", req.body.command_prefix);
+	// Check custom_prefix feature before allowing prefix change
+	const currentPrefix = req.app.client.getCommandPrefix(req.svr, req.svr.document);
+	if (req.body.command_prefix !== currentPrefix) {
+		const hasCustomPrefix = await TierManager.canAccess(req.consolemember.user.id, "custom_prefix");
+		if (hasCustomPrefix) {
+			req.svr.queryDocument.set("config.command_prefix", req.body.command_prefix);
+		}
+		// Silently ignore prefix change if user doesn't have feature
 	}
 
 	req.svr.queryDocument.set("config.delete_command_messages", req.body.delete_command_messages === "on")
@@ -270,6 +286,15 @@ controllers.tags.post = async (req, res) => {
 	const serverQueryDocument = req.svr.queryDocument;
 
 	if (req.body["new-name"] && req.body["new-type"] && req.body["new-content"] && !serverDocument.config.tags.list.id(req.body["new-name"])) {
+		// Check custom_commands feature limit
+		const currentCount = serverDocument.config.tags.list.length;
+		const hasUnlimited = await TierManager.canAccess(req.consolemember.user.id, "custom_commands");
+		const limit = hasUnlimited ? UNLIMITED_TAG_THRESHOLD : DEFAULT_TAG_LIMIT;
+
+		if (currentCount >= limit) {
+			return renderError(res, "Tag Limit Reached", `You've reached the maximum of ${limit} custom tags. ${!hasUnlimited ? "Upgrade to premium for unlimited tags." : ""}`, 403);
+		}
+
 		serverQueryDocument.push("config.tags.list", {
 			_id: req.body["new-name"],
 			content: req.body["new-content"],

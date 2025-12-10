@@ -428,7 +428,7 @@ controllers.membership.tiers.post = async (req, res) => {
 	const colors = req.body.tier_color ? Array.isArray(req.body.tier_color) ? req.body.tier_color : [req.body.tier_color] : [];
 	const badges = req.body.tier_badge ? Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge] : [];
 	const pricesMonthly = req.body.tier_price_monthly ? Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly] : [];
-	const pricesYearly = req.body.tier_price_yearly ? Array.isArray(req.body.tier_price_yearly) ? req.body.tier_price_yearly : [req.body.tier_price_yearly] : [];
+	const discountsYearly = req.body.tier_yearly_discount ? Array.isArray(req.body.tier_yearly_discount) ? req.body.tier_yearly_discount : [req.body.tier_yearly_discount] : [];
 	const featuresList = req.body.tier_features ? Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features] : [];
 	const purchasableList = req.body.tier_purchasable ? Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable] : [];
 	const defaultTier = req.body.tier_default || "";
@@ -445,7 +445,7 @@ controllers.membership.tiers.post = async (req, res) => {
 				color: colors[i] || "#3273dc",
 				badge_icon: badges[i] || "",
 				price_monthly: parseInt(pricesMonthly[i]) || 0,
-				price_yearly: parseInt(pricesYearly[i]) || 0,
+				yearly_discount: parseInt(discountsYearly[i]) || 0,
 				features: featuresList[i] ? featuresList[i].split(",").filter(f => f) : [],
 				is_purchasable: purchasableList.includes(ids[i]) || purchasableList.includes(`new_${i}`),
 				is_default: defaultTier === ids[i] || defaultTier === `new_${i}`,
@@ -627,7 +627,9 @@ controllers.membership.users = async (req, { res }) => {
 			});
 		} else {
 			// Search by username pattern
-			const users = await Users.find({ username: { $regex: query, $options: "i" } }, 10);
+			const users = await Users.find({ username: { $regex: query, $options: "i" } })
+				.limit(10)
+				.exec();
 			for (const user of users) {
 				const discordUser = await req.app.client.users.fetch(user._id, true).catch(() => null);
 				searchResults.push({

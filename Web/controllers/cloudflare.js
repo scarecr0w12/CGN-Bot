@@ -49,7 +49,7 @@ async function getStatus (req, { res }) {
 /**
  * Get Cloudflare analytics data
  */
-async function getAnalytics (req, { res }) {
+async function getAnalytics (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -58,13 +58,13 @@ async function getAnalytics (req, { res }) {
 
 	try {
 		const period = req.query.period || "day";
-		const since = period === "week" ? "-10080" : period === "month" ? "-43200" : "-1440";
+		const days = period === "week" ? 7 : period === "month" ? 30 : 1;
 
 		// Try to fetch analytics, but handle permission errors gracefully
 		const results = await Promise.allSettled([
-			cf.getBandwidthStats({ since }),
-			cf.getRequestStats({ since }),
-			cf.getThreatStats({ since }),
+			cf.getBandwidthStats({ days }),
+			cf.getRequestStats({ days }),
+			cf.getThreatStats({ days }),
 		]);
 
 		const [bandwidthResult, requestsResult, threatsResult] = results;
@@ -97,7 +97,7 @@ async function getAnalytics (req, { res }) {
 /**
  * Purge entire cache
  */
-async function purgeAll (req, { res }) {
+async function purgeAll (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -117,7 +117,7 @@ async function purgeAll (req, { res }) {
 /**
  * Purge specific URLs from cache
  */
-async function purgeUrls (req, { res }) {
+async function purgeUrls (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -142,7 +142,7 @@ async function purgeUrls (req, { res }) {
 /**
  * Toggle development mode
  */
-async function toggleDevMode (req, { res }) {
+async function toggleDevMode (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -170,7 +170,7 @@ async function toggleDevMode (req, { res }) {
 /**
  * Set security level
  */
-async function setSecurityLevel (req, { res }) {
+async function setSecurityLevel (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -196,7 +196,7 @@ async function setSecurityLevel (req, { res }) {
 /**
  * Enable "I'm Under Attack" mode
  */
-async function enableUnderAttack (req, { res }) {
+async function enableUnderAttack (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -216,7 +216,7 @@ async function enableUnderAttack (req, { res }) {
 /**
  * Disable "I'm Under Attack" mode
  */
-async function disableUnderAttack (req, { res }) {
+async function disableUnderAttack (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -236,7 +236,7 @@ async function disableUnderAttack (req, { res }) {
 /**
  * Get zone settings
  */
-async function getSettings (req, { res }) {
+async function getSettings (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -255,7 +255,7 @@ async function getSettings (req, { res }) {
 /**
  * List firewall access rules
  */
-async function listAccessRules (req, { res }) {
+async function listAccessRules (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -275,7 +275,7 @@ async function listAccessRules (req, { res }) {
 /**
  * Block an IP address
  */
-async function blockIP (req, { res }) {
+async function blockIP (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -300,7 +300,7 @@ async function blockIP (req, { res }) {
 /**
  * Unblock/delete access rule
  */
-async function deleteAccessRule (req, { res }) {
+async function deleteAccessRule (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -325,7 +325,7 @@ async function deleteAccessRule (req, { res }) {
 /**
  * Set cache level
  */
-async function setCacheLevel (req, { res }) {
+async function setCacheLevel (req, res) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {

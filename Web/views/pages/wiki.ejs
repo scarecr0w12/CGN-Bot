@@ -1,8 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= pageData.pageTitle %></title>
-    <%- include('../partials/head') %>
+	<title><%= pageData.pageTitle %> | Skynet Discord Bot Documentation</title>
+	<%
+	// SEO for wiki pages
+	if (typeof pageData !== "undefined") {
+		const isArticle = pageData.mode === "page" && pageData.content;
+		pageData.seo = {
+			title: `${pageData.pageTitle} | Skynet Discord Bot Documentation`,
+			description: isArticle 
+				? `Learn about ${pageData.title.replace(/-/g, ' ')} - Skynet Discord bot documentation and guides.`
+				: "Skynet Discord bot documentation - comprehensive guides, command references, and tutorials for server setup and configuration.",
+			keywords: `Discord bot documentation, ${pageData.title ? pageData.title.replace(/-/g, ' ') + ', ' : ''}Discord bot guide, Discord bot tutorial, Skynet wiki, Discord server setup`,
+			type: isArticle ? "article" : "website"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Wiki", url: "/wiki" }
+		];
+		if (pageData.title && pageData.title !== "Wiki") {
+			pageData.breadcrumbs.push({ name: pageData.title.replace(/-/g, ' '), url: `/wiki/${pageData.title}` });
+		}
+	}
+	%>
+	<%- include('../partials/head') %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">

@@ -223,10 +223,10 @@
 
 <% if (pageData.enabled && !pageData.error) { %>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
 	const basePath = '/dashboard/maintainer/infrastructure/cloudflare';
 
-	// Load analytics on page load
+	// Load analytics on page load (works with both initial load and Turbolinks)
 	loadAnalytics();
 
 	// Purge All Cache
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
 		return bytes + ' B';
 	}
-});
+})();
 </script>
 <% } %>
 

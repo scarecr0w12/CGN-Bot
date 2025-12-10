@@ -5,6 +5,7 @@ const { ChannelType } = require("discord.js");
 const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");
 const parsers = require("../../parsers");
+const TierManager = require("../../../Modules/TierManager");
 
 const controllers = module.exports;
 
@@ -411,6 +412,124 @@ controllers.extensionBuilder.post = async (req, res) => {
 	}
 };
 
-controllers.export = async (req, res) => {
-	res.json(req.svr.document.config);
+controllers.export = async (req, { res }) => {
+	// Check if user has export_data feature
+	const hasExportAccess = await TierManager.canAccess(req.consolemember.user.id, "export_data");
+
+	res.setPageData({
+		page: "admin-export.ejs",
+		hasExportAccess,
+	});
+	res.render();
+};
+
+controllers.export.post = async (req, res) => {
+	// Check feature access
+	const hasExportAccess = await TierManager.canAccess(req.consolemember.user.id, "export_data");
+	if (!hasExportAccess) {
+		return res.status(403).json({ error: "Export feature requires a premium subscription." });
+	}
+
+	const serverDocument = req.svr.document;
+	const { exportType, format } = req.body;
+
+	let data;
+	let filename;
+
+	switch (exportType) {
+		case "config":
+			data = serverDocument.config;
+			filename = `${req.svr.id}-config`;
+			break;
+
+		case "members":
+			// Export member data (points, ranks, etc.)
+			data = Object.entries(serverDocument.members || {}).map(([id, member]) => ({
+				user_id: id,
+				points: member.points || 0,
+				rank: member.rank || null,
+				afk_message: member.afk_message || null,
+				strikes: member.strikes?.length || 0,
+				last_active: member.last_active || null,
+			}));
+			filename = `${req.svr.id}-members`;
+			break;
+
+		case "moderation":
+			// Export moderation logs
+			data = Object.entries(serverDocument.members || {})
+				.filter(([, member]) => member.strikes?.length > 0)
+				.map(([id, member]) => ({
+					user_id: id,
+					strikes: member.strikes || [],
+				}));
+			filename = `${req.svr.id}-moderation`;
+			break;
+
+		case "commands":
+			// Export custom commands/tags
+			data = serverDocument.config.tags?.list || [];
+			filename = `${req.svr.id}-commands`;
+			break;
+
+		case "stats":
+			// Export server statistics
+			data = {
+				messages_today: serverDocument.messages_today || 0,
+				member_count: Object.keys(serverDocument.members || {}).length,
+				command_usage: serverDocument.command_usage || {},
+				created_at: serverDocument.created_at,
+			};
+			filename = `${req.svr.id}-stats`;
+			break;
+
+		case "full":
+			// Full server document export (sanitized)
+			data = {
+				config: serverDocument.config,
+				members: Object.entries(serverDocument.members || {}).map(([id, member]) => ({
+					user_id: id,
+					points: member.points || 0,
+					rank: member.rank || null,
+					strikes: member.strikes?.length || 0,
+				})),
+				stats: {
+					messages_today: serverDocument.messages_today || 0,
+					member_count: Object.keys(serverDocument.members || {}).length,
+				},
+				exported_at: new Date().toISOString(),
+			};
+			filename = `${req.svr.id}-full-export`;
+			break;
+
+		default:
+			return res.status(400).json({ error: "Invalid export type." });
+	}
+
+	// Format output
+	if (format === "csv" && Array.isArray(data)) {
+		// Convert to CSV
+		if (data.length === 0) {
+			return res.status(400).json({ error: "No data to export." });
+		}
+		const headers = Object.keys(data[0]);
+		const csv = [
+			headers.join(","),
+			...data.map(row => headers.map(h => {
+				const val = row[h];
+				if (typeof val === "object") return JSON.stringify(val).replace(/,/g, ";");
+				if (typeof val === "string") return `"${val.replace(/"/g, '""')}"`;
+				return val;
+			}).join(",")),
+		].join("\n");
+
+		res.setHeader("Content-Type", "text/csv");
+		res.setHeader("Content-Disposition", `attachment; filename="${filename}.csv"`);
+		return res.send(csv);
+	} else {
+		// JSON format
+		res.setHeader("Content-Type", "application/json");
+		res.setHeader("Content-Disposition", `attachment; filename="${filename}.json"`);
+		return res.json(data);
+	}
 };

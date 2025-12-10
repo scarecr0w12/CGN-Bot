@@ -92,6 +92,10 @@ module.exports = new Schema({
 		color: String,
 		price_monthly: Number,
 		price_yearly: Number,
+		yearly_discount: {
+			type: Number,
+			default: 0,
+		},
 		is_purchasable: {
 			type: Boolean,
 			default: false,

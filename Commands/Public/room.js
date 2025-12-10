@@ -1,5 +1,7 @@
 const ArgParser = require("../../Modules/MessageUtils/Parser");
 const moment = require("moment");
+const { ChannelType, PermissionFlagsBits } = require("discord.js");
+const TierManager = require("../../Modules/TierManager");
 
 module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocument, serverQueryDocument }, msg, commandData) => {
 	const roomDocument = serverDocument.config.room_data.id(msg.channel.id);
@@ -110,6 +112,22 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		const args = ArgParser.parseQuoteArgs(msg.suffix);
 		if (["text", "voice"].includes(args[0].toLowerCase())) {
 			const [type] = args.splice(0, 1);
+
+			// Voice rooms require voice_features premium feature
+			if (type === "voice") {
+				const hasVoiceFeatures = await TierManager.canAccess(msg.author.id, "voice_features");
+				if (!hasVoiceFeatures) {
+					return msg.send({
+						embeds: [{
+							color: Colors.SOFT_ERR,
+							title: "Premium Feature",
+							description: "Voice room creation requires a premium subscription.",
+							footer: { text: "Upgrade your membership to create voice rooms." },
+						}],
+					});
+				}
+			}
+
 			const members = [];
 
 			await Promise.all(args.map(async memberQuery => {

@@ -1,9 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title><%= pageData.pageTitle %> - Skynet Activity</title>
+	<title><%= pageData.pageTitle %> | Discord Server Directory - Skynet Bot</title>
+	<%
+	// SEO for activity pages
+	if (typeof pageData !== "undefined") {
+		const modeDescriptions = {
+			servers: `Discover ${pageData.numActiveServers}+ active Discord servers using Skynet bot. Browse public communities, gaming servers, and more.`,
+			users: "Find top Discord users and community members across servers using Skynet Discord bot."
+		};
+		pageData.seo = {
+			title: `${pageData.pageTitle} | Discord Server Directory - Skynet Bot`,
+			description: modeDescriptions[pageData.mode] || modeDescriptions.servers,
+			keywords: "Discord server list, Discord server directory, find Discord servers, Discord communities, public Discord servers, Discord gaming servers"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Activity", url: "/activity" },
+			{ name: pageData.mode.charAt(0).toUpperCase() + pageData.mode.slice(1), url: `/activity/${pageData.mode}` }
+		];
+	}
+	%>
 	<%- include('../partials/head') %>
-
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">
