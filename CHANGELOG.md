@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Extension Import/Export System
+
 - **Extension Packages** (`.skypkg`) - Export/import extensions between Skynet instances
 - **Export API** (`GET /extensions/:extid/export`) - Download extension as JSON package
 - **Import API** (`POST /extensions/import`) - Upload and install extension packages
@@ -17,16 +18,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Gallery Export** - Export button in source view modal
 
 #### AI Image Generation
+
 - **Imagine Command** (`Commands/Public/imagine.js`) - Generate AI images with DALL-E/Stable Diffusion
 - Supports size and style parameters
 - Premium-only with tier gating
 
 #### SEO & Blog System
+
 - **SEO Controller** (`Web/controllers/seo.js`) - Sitemap generation and SEO utilities
 - **Blog Seeder** (`scripts/seed-blog-posts.js`) - Script to populate blog content
 - Fixed blog post rendering and variable passing
 
 #### Feature Gating Implementation
+
 - **17 tier-gated features** fully implemented (see `docs/FEATURE_DEVELOPMENT.md`)
 - `BrandingHelper` - Custom embed branding for premium users
 - `ThemeHelper` - Premium dashboard themes
@@ -34,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebhookDispatcher` - Custom webhook integrations
 
 #### Dashboard Enhancements
+
 - **Admin Export Page** (`Web/views/pages/admin-export.ejs`) - Export server data to JSON/CSV
 - **Premium Analytics API** - Advanced server statistics endpoint
 
@@ -63,6 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 #### Tiered Membership System
+
 - **TierManager** (`Modules/TierManager.js`) - Feature gating and subscription management with caching
 - **TokenEncryption** (`Modules/TokenEncryption.js`) - Secure OAuth token storage with AES-256-GCM
 - **SubscriptionCheck** (`Modules/Timeouts/SubscriptionCheck.js`) - Automated subscription expiration handling
@@ -79,22 +85,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - OAuth Providers - Enable/disable external OAuth providers
 
 #### Cloudflare Integration
+
 - **CloudflareService** (`Modules/CloudflareService.js`) - Centralized API integration for cache purging, analytics, and security settings
 - **Cloudflare Middleware** (`Web/middleware/cloudflare.js`) - Real IP extraction, country blocking, bot detection
 - **Environment Configuration** - Cloudflare credentials and settings via `.env`
 
 #### Modern UI System
+
 - **Modern UI Stylesheet** (`Web/public/css/modern-ui.css`) - Consistent design system with stat cards, gradients, and responsive components
 - **Refactored Dashboard** - Server cards with modern styling and hover effects
 - **Admin Overview** - Stats grid with icon cards for members, messages, and top commands
 - **Header/Footer** - Responsive navigation with user dropdown and modern styling
 
 #### Sentry Error Tracking Improvements
+
 - **Express Error Handler** - Proper integration with `Sentry.setupExpressErrorHandler()`
 - **Async Error Capture** - Added `express-async-errors` for catching unhandled async route errors
 - **User Context Middleware** - Automatically attach Discord user info to Sentry errors
 
 #### Update System Migration
+
 - **GitHub Releases API** - Migrated from custom versioning API to GitHub Releases
 - **Automatic Updates** - Support for automatic updates via GitHub release downloads
 - **Changelog Integration** - Version metadata includes release notes from GitHub

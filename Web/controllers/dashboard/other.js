@@ -53,7 +53,7 @@ controllers.activities = async (req, { res }) => {
 	await svr.fetchMember(fetchList);
 
 	Object.values(serverDocument.channels).forEach(channelDocument => {
-		const channels = Array.isArray(svr.channels) ? svr.channels : (svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {}));
+		const channels = Array.isArray(svr.channels) ? svr.channels : svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {});
 		const ch = channels.find(c => c.id === channelDocument._id);
 		if (ch) {
 			if (channelDocument.trivia.isOngoing) {
@@ -113,7 +113,7 @@ controllers.activities = async (req, { res }) => {
 
 	let defaultChannel;
 
-	const allChannels = Array.isArray(svr.channels) ? svr.channels : (svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {}));
+	const allChannels = Array.isArray(svr.channels) ? svr.channels : svr.channels.cache ? [...svr.channels.cache.values()] : Object.values(svr.channels || {});
 	const generalChannel = allChannels.find(ch => (ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText);
 
 	if (generalChannel) {

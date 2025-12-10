@@ -79,7 +79,7 @@ controllers.overview = async (req, { res }) => {
 			console.log("[OVERVIEW] Processing server overview for:", req.svr && req.svr.id);
 			console.log("[OVERVIEW] req.svr exists:", !!req.svr);
 			console.log("[OVERVIEW] req.svr.document exists:", !!(req.svr && req.svr.document));
-			
+
 			let topCommand;
 			let topCommandUsage = 0;
 			const commandUsage = req.svr.document.command_usage || {};

@@ -16,23 +16,23 @@ const IsObject = input => input && input.constructor === Object;
 /**
  * Extend Guild prototype with GAB-specific methods
  */
-function extendGuild() {
+function extendGuild () {
 	// Add populateDocument method
-	Guild.prototype.populateDocument = async function() {
+	Guild.prototype.populateDocument = async function () {
 		this.serverDocument = await Servers.findOne(this.id);
 		return this.serverDocument;
 	};
 
 	// Add defaultChannel getter
 	Object.defineProperty(Guild.prototype, "defaultChannel", {
-		get: function() {
+		get: function () {
 			if (this.channels.cache.filter(c => c.type === ChannelType.GuildText).size === 0) return null;
 
-			const me = this.members.me;
+			const { me } = this.members;
 			if (!me) return null;
 
 			const generalChannel = this.channels.cache.find(ch =>
-				(ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText
+				(ch.name === "general" || ch.name === "mainchat") && ch.type === ChannelType.GuildText,
 			);
 			if (generalChannel && generalChannel.permissionsFor(me).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) {
 				return generalChannel;
@@ -48,14 +48,14 @@ function extendGuild() {
 
 	// Add commandPrefix getter
 	Object.defineProperty(Guild.prototype, "commandPrefix", {
-		get: function() {
+		get: function () {
 			return this.client.getCommandPrefix(this, this.serverDocument);
 		},
 		configurable: true,
 	});
 
 	// Add channel method
-	Guild.prototype.channel = function(ch) {
+	Guild.prototype.channel = function (ch) {
 		return this.channels.resolve(ch) || null;
 	};
 }
@@ -63,13 +63,13 @@ function extendGuild() {
 /**
  * Extend Message prototype with GAB-specific methods
  */
-function extendMessage() {
+function extendMessage () {
 	// Store responses on message
 	const responseMap = new WeakMap();
 
 	Object.defineProperty(Message.prototype, "responses", {
-		get: function() { return responseMap.get(this) || null; },
-		set: function(val) { responseMap.set(this, val); },
+		get: function () { return responseMap.get(this) || null; },
+		set: function (val) { responseMap.set(this, val); },
 		configurable: true,
 	});
 
@@ -77,7 +77,7 @@ function extendMessage() {
 	const commandObjectMap = new WeakMap();
 
 	// Add build method
-	Message.prototype.build = async function() {
+	Message.prototype.build = async function () {
 		const { content } = this;
 
 		if (this.guild && this.client.isReady) {
@@ -109,7 +109,7 @@ function extendMessage() {
 
 	// Add command getter
 	Object.defineProperty(Message.prototype, "command", {
-		get: function() {
+		get: function () {
 			const obj = commandObjectMap.get(this);
 			return obj ? obj.command || null : null;
 		},
@@ -118,7 +118,7 @@ function extendMessage() {
 
 	// Add suffix getter
 	Object.defineProperty(Message.prototype, "suffix", {
-		get: function() {
+		get: function () {
 			const obj = commandObjectMap.get(this);
 			return obj ? obj.suffix || null : null;
 		},
@@ -126,7 +126,7 @@ function extendMessage() {
 	});
 
 	// Add send method
-	Message.prototype.send = async function(content, options) {
+	Message.prototype.send = async function (content, options) {
 		const _options = handleMessageOptions(content, options);
 
 		if (!this.responses || typeof _options.files !== "undefined") {
@@ -161,7 +161,7 @@ function extendMessage() {
 	};
 
 	// Add sendError method
-	Message.prototype.sendError = function(cmd, stack) {
+	Message.prototype.sendError = function (cmd, stack) {
 		if (!this.client.debugMode) stack = "";
 		return this.send({
 			embeds: [{
@@ -174,7 +174,7 @@ function extendMessage() {
 	};
 
 	// Add sendInvalidUsage method
-	Message.prototype.sendInvalidUsage = function(commandData, title = "", footer = "") {
+	Message.prototype.sendInvalidUsage = function (commandData, title = "", footer = "") {
 		return this.send({
 			embeds: [{
 				color: Colors.INVALID,
@@ -189,9 +189,9 @@ function extendMessage() {
 /**
  * Extend GuildMember prototype with GAB-specific methods
  */
-function extendGuildMember() {
+function extendGuildMember () {
 	Object.defineProperty(GuildMember.prototype, "memberDocument", {
-		get: function() {
+		get: function () {
 			let doc = this.guild.serverDocument?.members?.[this.id];
 			if (!doc && this.guild.serverDocument) {
 				this.guild.serverDocument.query.push("members", { _id: this.id });
@@ -206,7 +206,7 @@ function extendGuildMember() {
 /**
  * Handle message options for Discord.js v14
  */
-function handleMessageOptions(content, options = {}) {
+function handleMessageOptions (content, options = {}) {
 	if (content instanceof EmbedBuilder) {
 		options.embeds = [content];
 	} else if (content instanceof AttachmentBuilder) {
@@ -222,7 +222,7 @@ function handleMessageOptions(content, options = {}) {
 /**
  * Handle send errors
  */
-function handleSendError(message, err) {
+function handleSendError (message, err) {
 	if (err.name === "DiscordAPIError") {
 		switch (err.status) {
 			case 403:

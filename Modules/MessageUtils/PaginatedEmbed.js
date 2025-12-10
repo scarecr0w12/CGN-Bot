@@ -69,7 +69,7 @@ class PaginatedEmbed {
 		if (this.totalPages > 1) {
 			this.collector = this.msg.createReactionCollector(
 				(reaction, user) => user.id === this.authorID && this.pageEmojiArray.includes(reaction.emoji.name),
-				{ time: timeout }
+				{ time: timeout },
 			);
 			await this._prepareReactions();
 			this._startCollector();

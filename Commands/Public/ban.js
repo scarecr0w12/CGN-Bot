@@ -101,7 +101,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 			});
 			const collector = msg.channel.createMessageCollector({
 				filter: m => m.author.id === msg.author.id,
-				time: 120000
+				time: 120000,
 			});
 			collector.on("collect", async message => {
 				if (message.editedAt) {
@@ -149,7 +149,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		msg.sendInvalidUsage(commandData, "Do you want me to ban you? 😮");
 		const collector = msg.channel.createMessageCollector({
 			filter: m => m.author.id === msg.author.id,
-			time: 60000
+			time: 60000,
 		});
 		collector.on("collect", async message => {
 			if (message.editedAt) {

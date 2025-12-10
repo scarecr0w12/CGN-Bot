@@ -49,7 +49,7 @@ module.exports = async () => {
 
 			const oldCommands = Array.from(
 				Object.keys(serverDocument.config.commands)
-					.filter(c => !allCommandsKey.includes(c))
+					.filter(c => !allCommandsKey.includes(c)),
 			);
 
 			if (oldCommands.length) for (const cmd of oldCommands) serverDocument.query.remove(`config.commands.${cmd}`);

@@ -1,3 +1,4 @@
+const { ChannelType } = require("discord.js");
 const { Polls } = require("../../Modules/");
 const PaginatedEmbed = require("../../Modules/MessageUtils/PaginatedEmbed");
 const { Colors, Text } = require("../../Internals/Constants");

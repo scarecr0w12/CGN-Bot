@@ -1,3 +1,4 @@
+const { PermissionFlagsBits } = require("discord.js");
 const { create: CreateModLog } = require("../../Modules/ModLog");
 const ArgParser = require("../../Modules/MessageUtils/Parser");
 

@@ -74,8 +74,10 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 						}],
 					});
 
-					let response = (await msg.channel.awaitMessages({ filter: res => res.author.id === msg.author.id, max: 1,
-						time: 120000, })).first();
+					let response = (await msg.channel.awaitMessages({
+						filter: res => res.author.id === msg.author.id, max: 1,
+						time: 120000,
+					})).first();
 
 					if (response && !["massive", "100", "huge", "10", "big", "5", "standard", "2", "small", "1", "massive 🤑", "huge 💳", "big 💰", "standard 💵", "small 💸"].includes(response.content.toLowerCase().trim())) {
 						response.channel.send({

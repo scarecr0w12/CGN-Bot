@@ -316,7 +316,7 @@ class Version extends EventEmitter {
 		// GitHub release doesn't explicitly provide SHA in the root object, but it is in target_commitish sometimes
 		return this._v.target_commitish || "unknown";
 	}
-	
+
 	// 'files' getter was removed because we generate it dynamically now
 }
 

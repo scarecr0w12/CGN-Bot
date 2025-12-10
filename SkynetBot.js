@@ -23,15 +23,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	console.log("[DEBUG] Loading database driver...");
 	const database = require("./Database/Driver.js");
 	console.log("[DEBUG] Database driver loaded, now loading WebServer...");
-	try {
-		const WebServer = require("./Web/WebServer");
-		console.log("[DEBUG] WebServer loaded successfully");
-	} catch (err) {
-		console.log("[DEBUG] WebServer load FAILED:", err.message);
-		console.log("[DEBUG] Stack:", err.stack);
-		throw err;
-	}
 	const WebServer = require("./Web/WebServer");
+	console.log("[DEBUG] WebServer loaded successfully");
 
 	console.log("[DEBUG] Loading private commands...");
 	const privateCommandFiles = require("./Commands/Private");
@@ -86,13 +79,13 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 	console.log("[DEBUG] MongoDB connected");
 	logger.info("Successfully connected to MongoDB!");
-	
+
 	console.log("[DEBUG] Initializing Discord Events...");
 	logger.silly("Initializing Discord Events.");
 	client.events = new EventHandler(client, configJS);
 	await client.events.init();
 	console.log("[DEBUG] Discord Events initialized");
-	
+
 	client.traffic = new Traffic(client.IPC, true);
 	client.central = new SkynetClient(client);
 	client.tempStorage = new TemporaryStorage();

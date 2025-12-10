@@ -1,3 +1,4 @@
+const { ChannelType, PermissionFlagsBits } = require("discord.js");
 const { Giveaways } = require("../../Modules/");
 const parseDuration = require("parse-duration");
 

@@ -1,3 +1,4 @@
+const { ChannelType } = require("discord.js");
 const moment = require("moment-timezone");
 
 module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagForRegion } }, { serverDocument }, msg, commandData) => {

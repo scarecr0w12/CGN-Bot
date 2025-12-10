@@ -30,7 +30,7 @@ class BaseReactionMenu extends EventEmitter {
 		if (this.options.length > 1 || this.totalPages >= 1) {
 			this.collector = this.msg.createReactionCollector(
 				(reaction, user) => user.id === this.originalMsg.author.id && this.allowedEmojis.includes(reaction.emoji.name),
-				{ time }
+				{ time },
 			);
 			await this.prepareReactions();
 			this.handle();

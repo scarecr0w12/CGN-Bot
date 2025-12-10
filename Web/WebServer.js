@@ -283,9 +283,9 @@ exports.open = async (client, auth, configJS, logger) => {
 		if (res.headersSent) {
 			return next(err);
 		}
-		res.status(500).render("pages/error.ejs", { 
-			error_text: "Something went wrong!", 
-			error_line: "An internal error occurred" 
+		res.status(500).render("pages/error.ejs", {
+			error_text: "Something went wrong!",
+			error_line: "An internal error occurred",
 		});
 	});
 

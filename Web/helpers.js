@@ -159,7 +159,7 @@ module.exports = {
 	// Handle both Discord.js Guild objects (with .cache) and GetGuild results (arrays)
 	getChannelData: (svr, type) => {
 		const { ChannelType } = require("discord.js");
-		const channels = svr.channels.cache ? [...svr.channels.cache.values()] : (Array.isArray(svr.channels) ? svr.channels : []);
+		const channels = svr.channels.cache ? [...svr.channels.cache.values()] : Array.isArray(svr.channels) ? svr.channels : [];
 		// In Discord.js v14, channel types are numbers (ChannelType enum)
 		// Support both old string types ("text", "voice") and new ChannelType enum
 		let targetType;

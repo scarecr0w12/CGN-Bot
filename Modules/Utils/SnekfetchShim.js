@@ -5,7 +5,7 @@
 const Constants = require("../../Internals/Constants");
 
 class SnekfetchShim {
-	constructor(method, url) {
+	constructor (method, url) {
 		this.method = method;
 		this.url = url;
 		this.headers = { "User-Agent": Constants.UserAgent };
@@ -13,14 +13,14 @@ class SnekfetchShim {
 		this.queryParams = {};
 	}
 
-	static get(url) { return new SnekfetchShim("GET", url); }
-	static post(url) { return new SnekfetchShim("POST", url); }
-	static put(url) { return new SnekfetchShim("PUT", url); }
-	static patch(url) { return new SnekfetchShim("PATCH", url); }
-	static delete(url) { return new SnekfetchShim("DELETE", url); }
-	static head(url) { return new SnekfetchShim("HEAD", url); }
+	static get (url) { return new SnekfetchShim("GET", url); }
+	static post (url) { return new SnekfetchShim("POST", url); }
+	static put (url) { return new SnekfetchShim("PUT", url); }
+	static patch (url) { return new SnekfetchShim("PATCH", url); }
+	static delete (url) { return new SnekfetchShim("DELETE", url); }
+	static head (url) { return new SnekfetchShim("HEAD", url); }
 
-	set(key, value) {
+	set (key, value) {
 		if (typeof key === "object") {
 			Object.assign(this.headers, key);
 		} else {
@@ -29,19 +29,19 @@ class SnekfetchShim {
 		return this;
 	}
 
-	query(params) {
+	query (params) {
 		if (typeof params === "object") {
 			Object.assign(this.queryParams, params);
 		}
 		return this;
 	}
 
-	send(data) {
+	send (data) {
 		this.bodyData = data;
 		return this;
 	}
 
-	attach(name, data, filename) {
+	attach (name, data, filename) {
 		// For file uploads - simplified implementation
 		if (!this.formData) {
 			this.formData = new Map();
@@ -50,7 +50,7 @@ class SnekfetchShim {
 		return this;
 	}
 
-	async then(resolve, reject) {
+	async then (resolve, reject) {
 		try {
 			const result = await this._execute();
 			resolve(result);
@@ -59,8 +59,8 @@ class SnekfetchShim {
 		}
 	}
 
-	async _execute() {
-		let url = this.url;
+	async _execute () {
+		let { url } = this;
 
 		// Append query parameters
 		if (Object.keys(this.queryParams).length > 0) {

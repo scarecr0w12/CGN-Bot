@@ -82,7 +82,7 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 
 	// Permission checks
 	const { canClientBan, memberAboveAffected } = client.canDoActionOnMember(msg.guild, msg.member, member, "ban");
-	
+
 	if (!canClientBan) {
 		return msg.send({
 			embeds: [{
@@ -154,7 +154,7 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 						thumbnail: { url: msg.guild.iconURL() },
 					}],
 				});
-			} catch (_) {}
+			} catch { /* Ignore DM send errors */ }
 
 			// Ban the user
 			await member.ban({

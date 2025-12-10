@@ -11,7 +11,7 @@ const EventsHandler = require("./EventsHandler");
  */
 class ExtensionManager extends DJSClient {
 	constructor (options = {}) {
-		const intents = (options && options.intents) ? options.intents : [
+		const intents = options && options.intents ? options.intents : [
 			GatewayIntentBits.Guilds,
 			GatewayIntentBits.GuildMembers,
 			GatewayIntentBits.GuildModeration,
@@ -27,7 +27,7 @@ class ExtensionManager extends DJSClient {
 			GatewayIntentBits.DirectMessageReactions,
 			GatewayIntentBits.MessageContent,
 		];
-		const partials = (options && options.partials) ? options.partials : [
+		const partials = options && options.partials ? options.partials : [
 			Partials.Message,
 			Partials.Channel,
 			Partials.Reaction,

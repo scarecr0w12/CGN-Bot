@@ -134,7 +134,7 @@ class Ready extends BaseEvent {
 			};
 			const now = new Date();
 			const night = new Date(
-				Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0)
+				Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0),
 			);
 			const msToMidnight = night.getTime() - now.getTime();
 			this.client.setTimeout(() => {

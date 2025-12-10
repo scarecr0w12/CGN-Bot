@@ -1,3 +1,4 @@
+const { PermissionFlagsBits } = require("discord.js");
 const ArgParser = require("../../Modules/MessageUtils/Parser");
 
 module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocument }, msg, commandData) => {

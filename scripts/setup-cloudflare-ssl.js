@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Cloudflare + SSL Auto-Configuration Script
- * 
+ *
  * This script automates:
  * 1. Cloudflare DNS record creation/update
  * 2. Let's Encrypt SSL certificate generation
  * 3. Bot configuration updates
- * 
+ *
  * Required environment variables:
  * - CLOUDFLARE_API_TOKEN: Cloudflare API token with DNS edit permissions
  * - CLOUDFLARE_ZONE_ID: Zone ID for your domain
@@ -14,7 +14,7 @@
  * - EMAIL: Email for Let's Encrypt notifications
  */
 
-const { execSync, spawn } = require("child_process");
+const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
@@ -23,7 +23,7 @@ const CERT_PATH = "/etc/letsencrypt/live";
 const BOT_ROOT = path.resolve(__dirname, "..");
 
 class CloudflareSSLSetup {
-	constructor() {
+	constructor () {
 		this.config = {
 			cloudflareToken: process.env.CLOUDFLARE_API_TOKEN || "",
 			cloudflareZoneId: process.env.CLOUDFLARE_ZONE_ID || "",
@@ -33,7 +33,7 @@ class CloudflareSSLSetup {
 		};
 	}
 
-	getPublicIP() {
+	getPublicIP () {
 		try {
 			return execSync("curl -s ifconfig.me || curl -s icanhazip.com", { encoding: "utf8" }).trim();
 		} catch {
@@ -41,7 +41,7 @@ class CloudflareSSLSetup {
 		}
 	}
 
-	async prompt(question) {
+	async prompt (question) {
 		const rl = readline.createInterface({
 			input: process.stdin,
 			output: process.stdout,
@@ -54,7 +54,7 @@ class CloudflareSSLSetup {
 		});
 	}
 
-	async gatherConfig() {
+	async gatherConfig () {
 		console.log("\n🔧 Cloudflare + SSL Auto-Configuration\n");
 		console.log("═".repeat(50));
 
@@ -88,17 +88,15 @@ class CloudflareSSLSetup {
 		console.log(`   Cloudflare Zone: ${this.config.cloudflareZoneId.substring(0, 8)}...`);
 	}
 
-	async setupCloudflare() {
+	async setupCloudflare () {
 		console.log("\n☁️  Configuring Cloudflare DNS...");
 
 		const baseUrl = `https://api.cloudflare.com/client/v4/zones/${this.config.cloudflareZoneId}/dns_records`;
 		const headers = {
-			"Authorization": `Bearer ${this.config.cloudflareToken}`,
+			Authorization: `Bearer ${this.config.cloudflareToken}`,
 			"Content-Type": "application/json",
 		};
 
-		// Extract subdomain and root domain
-		const domainParts = this.config.domain.split(".");
 		const name = this.config.domain;
 
 		// Check if record exists
@@ -146,7 +144,7 @@ class CloudflareSSLSetup {
 		return result;
 	}
 
-	async setupSSL() {
+	async setupSSL () {
 		console.log("\n🔐 Setting up SSL certificate...");
 
 		// Check if certbot is installed
@@ -164,7 +162,7 @@ class CloudflareSSLSetup {
 		}
 
 		const certDir = path.join(CERT_PATH, this.config.domain);
-		
+
 		// Check if certificate already exists
 		if (fs.existsSync(path.join(certDir, "fullchain.pem"))) {
 			console.log("   Existing certificate found, attempting renewal...");
@@ -180,11 +178,11 @@ class CloudflareSSLSetup {
 		// For Cloudflare-proxied domains, use DNS challenge
 		console.log("   Generating certificate using standalone method...");
 		console.log("   ⚠️  Note: Port 80 must be available for verification");
-		
+
 		// Stop any service using port 80 temporarily
 		try {
 			execSync("systemctl stop nginx 2>/dev/null || true", { stdio: "pipe" });
-		} catch {}
+		} catch { /* ignore errors from stopping nginx */ }
 
 		try {
 			const certbotCmd = [
@@ -213,30 +211,27 @@ class CloudflareSSLSetup {
 			// Restart nginx if it was running
 			try {
 				execSync("systemctl start nginx 2>/dev/null || true", { stdio: "pipe" });
-			} catch {}
+			} catch { /* ignore errors from stopping nginx */ }
 		}
 	}
 
-	async updateBotConfig() {
+	async updateBotConfig () {
 		console.log("\n⚙️  Updating bot configuration...");
 
 		const certDir = path.join(CERT_PATH, this.config.domain);
 		const customCertDir = path.join(BOT_ROOT, "certs");
-		
+
 		let certPath, keyPath;
 
 		// Check for Let's Encrypt certs first
 		if (fs.existsSync(path.join(certDir, "fullchain.pem"))) {
 			certPath = path.join(certDir, "fullchain.pem");
 			keyPath = path.join(certDir, "privkey.pem");
-		} 
-		// Check for custom certs
-		else if (fs.existsSync(path.join(customCertDir, `${this.config.domain}.pem`))) {
+		} else if (fs.existsSync(path.join(customCertDir, `${this.config.domain}.pem`))) {
 			certPath = path.join(customCertDir, `${this.config.domain}.pem`);
 			keyPath = path.join(customCertDir, `${this.config.domain}.key`);
-		}
-		// Create placeholder for Cloudflare Origin certs
-		else {
+		} else {
+			// Create placeholder for Cloudflare Origin certs
 			if (!fs.existsSync(customCertDir)) {
 				fs.mkdirSync(customCertDir, { recursive: true });
 			}
@@ -250,7 +245,7 @@ class CloudflareSSLSetup {
 		// Update .env file
 		const envPath = path.join(BOT_ROOT, ".env");
 		let envContent = "";
-		
+
 		if (fs.existsSync(envPath)) {
 			envContent = fs.readFileSync(envPath, "utf8");
 		}
@@ -271,33 +266,33 @@ class CloudflareSSLSetup {
 			}
 		}
 
-		fs.writeFileSync(envPath, envContent.trim() + "\n");
+		fs.writeFileSync(envPath, `${envContent.trim()}\n`);
 		console.log("   ✅ Updated .env with SSL configuration");
 
 		// Create/update config.js if needed
 		const configPath = path.join(BOT_ROOT, "Configurations", "config.js");
 		if (fs.existsSync(configPath)) {
 			let configContent = fs.readFileSync(configPath, "utf8");
-			
+
 			// Update hostingURL
 			configContent = configContent.replace(
 				/hostingURL:\s*["'].*["']/,
-				`hostingURL: "https://${this.config.domain}/"`
+				`hostingURL: "https://${this.config.domain}/"`,
 			);
-			
+
 			// Update cert paths
 			if (certPath && fs.existsSync(certPath)) {
 				configContent = configContent.replace(
 					/cert:\s*["'].*["']/,
-					`cert: "${certPath}"`
+					`cert: "${certPath}"`,
 				);
 				configContent = configContent.replace(
 					/privateKey:\s*["'].*["']/,
-					`privateKey: "${keyPath}"`
+					`privateKey: "${keyPath}"`,
 				);
 				configContent = configContent.replace(
 					/httpsRedirect:\s*(true|false)/,
-					`httpsRedirect: true`
+					`httpsRedirect: true`,
 				);
 			}
 
@@ -308,7 +303,7 @@ class CloudflareSSLSetup {
 		return { certPath, keyPath };
 	}
 
-	generateNginxConfig() {
+	generateNginxConfig () {
 		console.log("\n📝 Generating nginx configuration...");
 
 		const nginxConfig = `# Nginx reverse proxy configuration for ${this.config.domain}
@@ -395,7 +390,7 @@ server {
 
 		const nginxPath = path.join(BOT_ROOT, "nginx", `${this.config.domain}.conf`);
 		const nginxDir = path.dirname(nginxPath);
-		
+
 		if (!fs.existsSync(nginxDir)) {
 			fs.mkdirSync(nginxDir, { recursive: true });
 		}
@@ -409,10 +404,10 @@ server {
 		return nginxPath;
 	}
 
-	async run() {
+	async run () {
 		try {
 			await this.gatherConfig();
-			
+
 			const proceed = await this.prompt("\nProceed with setup? (Y/n): ");
 			if (proceed.toLowerCase() === "n") {
 				console.log("Setup cancelled.");
@@ -424,15 +419,14 @@ server {
 			await this.updateBotConfig();
 			this.generateNginxConfig();
 
-			console.log("\n" + "═".repeat(50));
+			console.log(`\n${"═".repeat(50)}`);
 			console.log("✅ Setup complete!\n");
 			console.log("Next steps:");
 			console.log("1. If using nginx, enable the generated config");
 			console.log("2. Restart the bot: docker compose restart");
-			console.log("3. Verify HTTPS is working: https://" + this.config.domain);
+			console.log(`3. Verify HTTPS is working: https://${this.config.domain}`);
 			console.log("\nCloudflare SSL mode recommendation: Full (strict)");
 			console.log("Set this in Cloudflare Dashboard -> SSL/TLS -> Overview");
-
 		} catch (err) {
 			console.error("\n❌ Setup failed:", err.message);
 			process.exit(1);

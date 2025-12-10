@@ -28,10 +28,10 @@ class IsolatedSandbox {
 
 	/**
 	 * Initialize the isolated environment
-	 * @param {number} timeout - Maximum execution time in milliseconds
+	 * @param {Number} timeout - Maximum execution time in milliseconds
 	 * @returns {Promise<void>}
 	 */
-	async initialize (timeout = 5000) {
+	async initialize (_timeout = 5000) {
 		// Create isolate with memory limit (128MB default)
 		this.isolate = new ivm.Isolate({ memoryLimit: 128 });
 		this.vmContext = await this.isolate.createContext();
@@ -61,9 +61,7 @@ class IsolatedSandbox {
 		await jail.set("__modulesData__", new ivm.ExternalCopy(modulesData).copyInto());
 
 		// Create callbacks for dynamic module resolution
-		const requireCallback = new ivm.Callback((name) => {
-			return this._resolveModule(name);
-		});
+		const requireCallback = new ivm.Callback((name) => this._resolveModule(name));
 		await jail.set("__requireCallback__", requireCallback);
 
 		// Set up the require function in the isolate
@@ -136,14 +134,14 @@ class IsolatedSandbox {
 
 	/**
 	 * Resolve a module by name (called from isolate via callback)
-	 * @param {string} name - Module name
+	 * @param {String} name - Module name
 	 * @returns {*} The resolved module value
 	 * @private
 	 */
 	_resolveModule (name) {
 		const { msg, guild, serverDocument, eventData } = this.context;
-		const scopes = this.scopes;
-		const rawClient = this.rawClient;
+		const { scopes } = this;
+		const { rawClient } = this;
 
 		switch (name) {
 			case "message":
@@ -295,9 +293,9 @@ class IsolatedSandbox {
 
 	/**
 	 * Run code in the isolated environment
-	 * @param {string} code - The code to execute
-	 * @param {number} timeout - Maximum execution time in ms
-	 * @returns {Promise<{success: boolean, err: ?Error}>}
+	 * @param {String} code - The code to execute
+	 * @param {Number} timeout - Maximum execution time in ms
+	 * @returns {Promise<{success: Boolean, err: ?Error}>}
 	 */
 	async run (code, timeout = 5000) {
 		try {

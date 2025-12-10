@@ -41,7 +41,7 @@ module.exports = {
 					title: attr.titles.en || attr.titles.en_jp || attr.canonicalTitle,
 					url: `https://kitsu.io/anime/${anime.id}`,
 					thumbnail: { url: attr.posterImage && attr.posterImage.medium ? attr.posterImage.medium : "" },
-					description: attr.synopsis ? (attr.synopsis.substring(0, 300) + (attr.synopsis.length > 300 ? "..." : "")) : "No synopsis available",
+					description: attr.synopsis ? attr.synopsis.substring(0, 300) + (attr.synopsis.length > 300 ? "..." : "") : "No synopsis available",
 					fields: [
 						{ name: "Type", value: attr.subtype || "Unknown", inline: true },
 						{ name: "Episodes", value: `${attr.episodeCount || "?"}`, inline: true },

@@ -1,3 +1,5 @@
+const { ChannelType, PermissionFlagsBits } = require("discord.js");
+
 module.exports = {
 	addMember: async (guild, voiceChannel, member) => {
 		let channel = guild.channels.cache.find(ch => ch.topic && ch.topic.includes(`gab:voicetext:${voiceChannel.id}`));
