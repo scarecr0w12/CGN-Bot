@@ -88,9 +88,11 @@ module.exports = class SkynetClient extends DJSClient {
 			if (server.me) {
 				return `@${server.me.nickname || this.user.username} `;
 			} else if (!(server.members instanceof Collection)) {
-				return `@${server.members[this.user.id].nickname || this.user.username} `;
+				const member = server.members?.[this.user.id];
+				return `@${member?.nickname || this.user.username} `;
 			} else {
-				return `@${server.members.cache.get(this.user.id).nickname || this.user.username} `;
+				const member = server.members.cache.get(this.user.id);
+				return `@${member?.nickname || this.user.username} `;
 			}
 		} else {
 			return serverDocument.config.command_prefix;

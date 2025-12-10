@@ -143,5 +143,20 @@
             <% } %>
 		</li>
 	</ul>
+	<p class="menu-label">
+		<span class="icon is-small">
+			<i class="fa fa-cloud"></i>
+		</span>
+		Infrastructure
+	</p>
+	<ul class="menu-list">
+		<li>
+			<% if (currentPage === "/dashboard/maintainer/infrastructure/cloudflare") { %>
+			<a class="is-active" href="#">Cloudflare</a>
+			<% } else { %>
+			<a href="/dashboard/maintainer/infrastructure/cloudflare">Cloudflare</a>
+			<% } %>
+		</li>
+	</ul>
 	<% } %>
 </aside>

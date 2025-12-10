@@ -1,4 +1,46 @@
 <form id="form" onsubmit="return false;">
+	<!-- Import Extension Modal -->
+	<div id="import-extension-modal" class="modal">
+		<div class="modal-background" onclick="document.getElementById('import-extension-modal').classList.remove('is-active');"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">Import Extension</p>
+				<button class="delete" aria-label="close" onclick="document.getElementById('import-extension-modal').classList.remove('is-active');"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="field">
+					<label class="label">Upload Extension Package (.skypkg)</label>
+					<div class="file has-name is-fullwidth">
+						<label class="file-label">
+							<input class="file-input" type="file" id="import-file-input" accept=".skypkg,.json" onchange="SkynetUtil.handleExtensionFileSelect(this);">
+							<span class="file-cta">
+								<span class="file-icon">
+									<i class="fa fa-upload"></i>
+								</span>
+								<span class="file-label">Choose a file...</span>
+							</span>
+							<span class="file-name" id="import-file-name">No file selected</span>
+						</label>
+					</div>
+					<p class="help">Select a .skypkg file exported from another Skynet instance</p>
+				</div>
+				<div id="import-preview" class="is-hidden">
+					<hr>
+					<h4 class="title is-5">Extension Preview</h4>
+					<div id="import-preview-content"></div>
+				</div>
+				<div id="import-error" class="notification is-danger is-hidden"></div>
+			</section>
+			<footer class="modal-card-foot">
+				<button id="import-submit-btn" class="button is-success" disabled onclick="SkynetUtil.submitExtensionImport();">
+					<span class="icon"><i class="fa fa-download"></i></span>
+					<span>Import</span>
+				</button>
+				<button class="button" onclick="document.getElementById('import-extension-modal').classList.remove('is-active');">Cancel</button>
+			</footer>
+		</div>
+	</div>
+
 	<div style="overflow-x: scroll;">
 		<% if (pageData.extensions.length > 0) { %>
 			<table class="table is-fullwidth">
@@ -64,6 +106,12 @@
 									</span>
 									<span>Edit</span>
 								</a>
+								<a class="button is-small is-info" href="/extensions/<%= extension._id %>/export" title="Export as portable package">
+									<span class="icon is-small">
+										<i class="fa fa-share-square-o"></i>
+									</span>
+									<span>Export</span>
+								</a>
 								<button id="delete-<%= extension._id %>" class="button is-small is-danger" onclick="SkynetUtil.deleteExtension('<%= extension._id %>'); return false;">
 									<span>Delete</span>
 									<span class="icon is-small">
@@ -93,7 +141,7 @@
 		<% } %>
 	</div>
 	<br>
-	<div class="field">
+	<div class="field is-grouped">
 		<p class="control">
 			<a class="button" href="/extensions/builder">
 				<span class="icon">
@@ -101,6 +149,14 @@
 		    	</span>
 		    	<span>Build an extension</span>
 			</a>
+		</p>
+		<p class="control">
+			<button class="button is-info" onclick="document.getElementById('import-extension-modal').classList.add('is-active');">
+				<span class="icon">
+					<i class="fa fa-upload"></i>
+		    	</span>
+		    	<span>Import Extension</span>
+			</button>
 		</p>
 	</div>
 </form>

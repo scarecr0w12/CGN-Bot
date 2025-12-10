@@ -82,8 +82,9 @@ class CloudflareService {
 		const data = await response.json();
 
 		if (!data.success) {
-			const errorMsg = data.errors?.map(e => e.message).join(", ") || "Unknown Cloudflare API error";
-			throw new Error(`Cloudflare API error: ${errorMsg}`);
+			const errorDetails = data.errors?.map(e => `${e.code}: ${e.message}`).join(", ") || "Unknown Cloudflare API error";
+			logger.warn("Cloudflare API error response", { endpoint, errors: data.errors, messages: data.messages });
+			throw new Error(`Cloudflare API error: ${errorDetails}`);
 		}
 
 		return data;

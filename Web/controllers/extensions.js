@@ -9,6 +9,9 @@ const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateEx
 
 const controllers = module.exports;
 
+// Extension package format version for cross-instance compatibility
+const PACKAGE_VERSION = "1.0";
+
 controllers.gallery = async (req, { res }) => {
 	let count;
 	if (!req.query.count) {
@@ -370,6 +373,164 @@ controllers.download = async (req, res) => {
 		}
 	} else {
 		res.sendStatus(404);
+	}
+};
+
+/**
+ * Export an extension as a portable JSON package that can be imported on another Skynet instance.
+ * Includes metadata and code bundled together.
+ */
+controllers.export = async (req, res) => {
+	let extensionDocument;
+	try {
+		extensionDocument = await Gallery.findOne(new ObjectId(req.params.extid));
+	} catch (err) {
+		return res.sendStatus(500);
+	}
+	if (!extensionDocument) return res.sendStatus(404);
+
+	// Allow owner to export any state, others can only export published extensions
+	const isOwner = req.isAuthenticated() && extensionDocument.owner_id === req.user.id;
+	if (!isOwner && extensionDocument.state === "saved") {
+		return res.sendStatus(404);
+	}
+
+	const versionTag = parseInt(req.query.v) || extensionDocument.published_version || extensionDocument.version;
+	const versionDocument = extensionDocument.versions.id(versionTag);
+	if (!versionDocument) return res.sendStatus(404);
+
+	try {
+		// Read the extension code
+		const code = await fs.readFile(path.join(__dirname, `../../extensions/${versionDocument.code_id}.skyext`), "utf8");
+
+		// Build the portable package
+		const extensionPackage = {
+			package_version: PACKAGE_VERSION,
+			exported_at: new Date().toISOString(),
+			extension: {
+				name: extensionDocument.name,
+				description: extensionDocument.description,
+				version: {
+					type: versionDocument.type,
+					key: versionDocument.key,
+					keywords: versionDocument.keywords,
+					case_sensitive: versionDocument.case_sensitive,
+					interval: versionDocument.interval,
+					usage_help: versionDocument.usage_help,
+					extended_help: versionDocument.extended_help,
+					event: versionDocument.event,
+					scopes: versionDocument.scopes,
+					timeout: versionDocument.timeout,
+				},
+				code: code,
+			},
+			source: {
+				original_id: extensionDocument._id.toString(),
+				original_owner: extensionDocument.owner_id,
+			},
+		};
+
+		res.set({
+			"Content-Disposition": `attachment; filename="${extensionDocument.name.replace(/[^a-zA-Z0-9-_]/g, "_")}.skypkg"`,
+			"Content-Type": "application/json",
+		});
+		res.json(extensionPackage);
+	} catch (err) {
+		logger.warn("Failed to export extension", { extid: req.params.extid }, err);
+		res.sendStatus(500);
+	}
+};
+
+/**
+ * Import an extension from an uploaded JSON package.
+ * Creates a new extension owned by the current user.
+ */
+controllers.import = async (req, res) => {
+	if (!req.isAuthenticated()) return res.sendStatus(401);
+
+	try {
+		const packageData = req.body;
+
+		// Validate package structure
+		if (!packageData || !packageData.extension) {
+			return res.status(400).json({ error: "Invalid extension package format" });
+		}
+
+		const { extension } = packageData;
+		if (!extension.name || !extension.version || !extension.code) {
+			return res.status(400).json({ error: "Extension package missing required fields (name, version, code)" });
+		}
+
+		const { version } = extension;
+		if (!validateExtensionData({
+			type: version.type,
+			key: version.key,
+			keywords: Array.isArray(version.keywords) ? version.keywords.join(",") : version.keywords,
+			interval: version.interval,
+			event: version.event,
+			code: extension.code,
+		})) {
+			return res.status(400).json({ error: "Extension data validation failed" });
+		}
+
+		// Create new extension document
+		const galleryDocument = await Gallery.new();
+		const galleryQueryDocument = galleryDocument.query;
+
+		// Set extension metadata
+		galleryQueryDocument.set("name", extension.name)
+			.set("description", extension.description || "")
+			.set("level", "gallery")
+			.set("state", "saved")
+			.set("owner_id", req.user.id)
+			.set("last_updated", Date.now());
+
+		// Build version data object matching writeExtensionData format
+		const versionData = {
+			_id: 1,
+			accepted: null,
+			type: version.type,
+			key: version.type === "command" ? version.key : null,
+			usage_help: version.type === "command" ? version.usage_help : null,
+			extended_help: version.type === "command" ? version.extended_help : null,
+			keywords: version.keywords || [],
+			case_sensitive: version.case_sensitive || false,
+			interval: version.type === "timer" ? version.interval : null,
+			event: version.type === "event" ? version.event : null,
+			timeout: version.timeout || 5000,
+			scopes: version.scopes || [],
+			code_id: generateCodeID(extension.code),
+		};
+
+		galleryQueryDocument.push("versions", versionData);
+		galleryQueryDocument.set("version", 1);
+
+		// Validate and save
+		const validation = galleryDocument.validate();
+		if (validation) {
+			logger.warn("Failed to validate imported extension data", {}, validation);
+			return res.status(400).json({ error: "Extension data validation failed" });
+		}
+
+		await galleryDocument.save();
+
+		// Save the extension code file
+		await fs.outputFileAtomic(`${__dirname}/../../extensions/${versionData.code_id}.skyext`, extension.code);
+
+		logger.info("Extension imported successfully", {
+			usrid: req.user.id,
+			extid: galleryDocument._id.toString(),
+			name: extension.name,
+		});
+
+		res.json({
+			success: true,
+			extension_id: galleryDocument._id.toString(),
+			message: `Extension "${extension.name}" imported successfully`,
+		});
+	} catch (err) {
+		logger.warn("Failed to import extension", { usrid: req.user.id }, err);
+		res.status(500).json({ error: "Failed to import extension" });
 	}
 };
 

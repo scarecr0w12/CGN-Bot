@@ -43,6 +43,10 @@ const galleryRouting = router => {
 	setupPage(router, "/extensions/builder", [], controllers.extensions.builder, true);
 	setupPage(router, "/extensions/:extid/install", [], controllers.extensions.installer);
 	router.routes.push(new Route(router, "/extensions/builder", [middleware.checkUnavailable], controllers.extensions.builder.post, "post", "general"));
+	// Extension import endpoint (must be before :extid to avoid conflict)
+	router.routes.push(new Route(router, "/extensions/import", [middleware.checkUnavailableAPI], controllers.extensions.import, "post", "general"));
+	// Extension export endpoint (portable package)
+	router.routes.push(new Route(router, "/extensions/:extid/export", [middleware.checkUnavailableAPI], controllers.extensions.export, "get", "general"));
 	router.routes.push(new Route(router, "/extensions/:extid", [middleware.checkUnavailableAPI], controllers.extensions.download, "get", "general"));
 	router.routes.push(new Route(router, "/extensions/:extid/:action", [middleware.checkUnavailableAPI], controllers.extensions.gallery.modify, "post", "general"));
 };

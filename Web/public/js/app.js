@@ -377,6 +377,10 @@ SkynetUtil.showSource = (extid, extv, extname, code) => {
 		href: `/extensions/${extid}?v=${extv}`,
 		download: `${extname}.skyext`,
 	});
+	$("#extension-source-export").attr({
+		href: `/extensions/${extid}/export?v=${extv}`,
+		download: `${extname.replace(/[^a-zA-Z0-9-_]/g, "_")}.skypkg`,
+	});
 	$("#extension-source-name").html(extname);
 	if (!SkynetData.builder || !document.body.contains(SkynetData.builder.getTextArea())) {
 		SkynetData.builder = CodeMirror.fromTextArea(document.getElementById("extension-source-viewer"), {
@@ -663,6 +667,125 @@ SkynetUtil.uninstallExtension = extid => {
 	const element = $(`#extension-${extid}`);
 	const URL = `${window.location.pathname}/${extid}`;
 	SkynetUtil.removeElement(element, null, URL);
+};
+
+// Extension Import Functions
+SkynetData.extensions.pendingImport = null;
+
+SkynetUtil.handleExtensionFileSelect = input => {
+	const file = input.files[0];
+	const fileNameDisplay = document.getElementById("import-file-name");
+	const previewDiv = document.getElementById("import-preview");
+	const previewContent = document.getElementById("import-preview-content");
+	const errorDiv = document.getElementById("import-error");
+	const submitBtn = document.getElementById("import-submit-btn");
+
+	// Reset state
+	errorDiv.classList.add("is-hidden");
+	previewDiv.classList.add("is-hidden");
+	submitBtn.disabled = true;
+	SkynetData.extensions.pendingImport = null;
+
+	if (!file) {
+		fileNameDisplay.textContent = "No file selected";
+		return;
+	}
+
+	fileNameDisplay.textContent = file.name;
+
+	const reader = new FileReader();
+	reader.onload = event => {
+		try {
+			const packageData = JSON.parse(event.target.result);
+
+			// Validate package structure
+			if (!packageData.extension || !packageData.extension.name || !packageData.extension.version || !packageData.extension.code) {
+				throw new Error("Invalid extension package format. Missing required fields.");
+			}
+
+			const ext = packageData.extension;
+			const ver = ext.version;
+
+			// Build preview HTML
+			let previewHTML = `
+				<table class="table is-fullwidth is-narrow">
+					<tbody>
+						<tr><th>Name</th><td>${SkynetUtil.escapeHtml(ext.name)}</td></tr>
+						<tr><th>Type</th><td>${SkynetUtil.escapeHtml(ver.type)}</td></tr>
+						${ver.type === "command" ? `<tr><th>Command Key</th><td>${SkynetUtil.escapeHtml(ver.key || "N/A")}</td></tr>` : ""}
+						${ver.type === "keyword" ? `<tr><th>Keywords</th><td>${SkynetUtil.escapeHtml((ver.keywords || []).join(", "))}</td></tr>` : ""}
+						${ver.type === "timer" ? `<tr><th>Interval</th><td>${ver.interval}ms</td></tr>` : ""}
+						${ver.type === "event" ? `<tr><th>Event</th><td>${SkynetUtil.escapeHtml(ver.event || "N/A")}</td></tr>` : ""}
+						<tr><th>Scopes</th><td>${(ver.scopes || []).length > 0 ? SkynetUtil.escapeHtml(ver.scopes.join(", ")) : "None"}</td></tr>
+						<tr><th>Timeout</th><td>${ver.timeout || 5000}ms</td></tr>
+						<tr><th>Code Size</th><td>${ext.code.length} characters</td></tr>
+					</tbody>
+				</table>
+				${ext.description ? `<p><strong>Description:</strong> ${SkynetUtil.escapeHtml(ext.description)}</p>` : ""}
+			`;
+
+			if (packageData.source) {
+				previewHTML += `<p class="help">Originally from instance: ${SkynetUtil.escapeHtml(packageData.source.original_id || "Unknown")}</p>`;
+			}
+
+			previewContent.innerHTML = previewHTML;
+			previewDiv.classList.remove("is-hidden");
+
+			// Store for submission
+			SkynetData.extensions.pendingImport = packageData;
+			submitBtn.disabled = false;
+		} catch (err) {
+			errorDiv.textContent = `Error parsing file: ${err.message}`;
+			errorDiv.classList.remove("is-hidden");
+		}
+	};
+
+	reader.onerror = () => {
+		errorDiv.textContent = "Failed to read file";
+		errorDiv.classList.remove("is-hidden");
+	};
+
+	reader.readAsText(file);
+};
+
+SkynetUtil.submitExtensionImport = () => {
+	if (!SkynetData.extensions.pendingImport) return;
+
+	const submitBtn = document.getElementById("import-submit-btn");
+	submitBtn.classList.add("is-loading");
+
+	$.ajax({
+		method: "POST",
+		url: "/extensions/import",
+		contentType: "application/json",
+		data: JSON.stringify(SkynetData.extensions.pendingImport),
+	})
+		.done(response => {
+			submitBtn.classList.remove("is-loading");
+			document.getElementById("import-extension-modal").classList.remove("is-active");
+
+			if (response.success) {
+				swal("Import Successful!", response.message, "success").then(() => {
+					Turbolinks.visit("/extensions/my");
+				}).catch(() => {
+					Turbolinks.visit("/extensions/my");
+				});
+			} else {
+				swal("Import Failed", response.error || "Unknown error occurred", "error");
+			}
+		})
+		.fail(xhr => {
+			submitBtn.classList.remove("is-loading");
+			const errorMsg = xhr.responseJSON ? xhr.responseJSON.error : "Failed to import extension";
+			swal("Import Failed", errorMsg, "error");
+		});
+};
+
+SkynetUtil.escapeHtml = text => {
+	if (!text) return "";
+	const div = document.createElement("div");
+	div.textContent = text;
+	return div.innerHTML;
 };
 
 SkynetPaths.extensions = () => {

@@ -1,3 +1,4 @@
+const { ChannelType } = require("discord.js");
 const Gist = require("./Utils/GitHubGist");
 
 class ManageCommands {

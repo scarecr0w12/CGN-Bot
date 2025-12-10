@@ -9,15 +9,16 @@
  */
 
 const { getInstance } = require("../../Modules/CloudflareService");
+// logger is a global defined in Boot.js/Worker.js
 
 /**
  * Get Cloudflare service status and overview
  */
-async function getStatus (req, res) {
+async function getStatus (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
-		return res.res.setPageData({
+		return res.setPageData({
 			page: "maintainer-cloudflare",
 			title: "Cloudflare",
 			enabled: false,
@@ -28,7 +29,7 @@ async function getStatus (req, res) {
 	try {
 		const summary = await cf.getConfigSummary();
 
-		return res.res.setPageData({
+		return res.setPageData({
 			page: "maintainer-cloudflare",
 			title: "Cloudflare",
 			enabled: true,
@@ -36,7 +37,7 @@ async function getStatus (req, res) {
 		}).render();
 	} catch (err) {
 		logger.error("Failed to get Cloudflare status", {}, err);
-		return res.res.setPageData({
+		return res.setPageData({
 			page: "maintainer-cloudflare",
 			title: "Cloudflare",
 			enabled: true,
@@ -48,7 +49,7 @@ async function getStatus (req, res) {
 /**
  * Get Cloudflare analytics data
  */
-async function getAnalytics (req, res) {
+async function getAnalytics (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -57,17 +58,35 @@ async function getAnalytics (req, res) {
 
 	try {
 		const period = req.query.period || "day";
-		const [bandwidth, requests, threats] = await Promise.all([
-			cf.getBandwidthStats({ since: period === "week" ? "-10080" : period === "month" ? "-43200" : "-1440" }),
-			cf.getRequestStats({ since: period === "week" ? "-10080" : period === "month" ? "-43200" : "-1440" }),
-			cf.getThreatStats({ since: period === "week" ? "-10080" : period === "month" ? "-43200" : "-1440" }),
+		const since = period === "week" ? "-10080" : period === "month" ? "-43200" : "-1440";
+
+		// Try to fetch analytics, but handle permission errors gracefully
+		const results = await Promise.allSettled([
+			cf.getBandwidthStats({ since }),
+			cf.getRequestStats({ since }),
+			cf.getThreatStats({ since }),
 		]);
+
+		const [bandwidthResult, requestsResult, threatsResult] = results;
+
+		// Check if all failed with permission error
+		const allFailed = results.every(r => r.status === "rejected");
+		if (allFailed) {
+			const firstError = results[0].reason?.message || "Unknown error";
+			if (firstError.includes("1102") || firstError.includes("Failed to get zone")) {
+				return res.status(403).json({
+					error: "Analytics permission not configured. Add 'Zone → Analytics → Read' to your API token.",
+					permissionError: true,
+				});
+			}
+			return res.status(500).json({ error: firstError });
+		}
 
 		return res.json({
 			period,
-			bandwidth,
-			requests,
-			threats,
+			bandwidth: bandwidthResult.status === "fulfilled" ? bandwidthResult.value : null,
+			requests: requestsResult.status === "fulfilled" ? requestsResult.value : null,
+			threats: threatsResult.status === "fulfilled" ? threatsResult.value : null,
 		});
 	} catch (err) {
 		logger.error("Failed to get Cloudflare analytics", {}, err);
@@ -78,7 +97,7 @@ async function getAnalytics (req, res) {
 /**
  * Purge entire cache
  */
-async function purgeAll (req, res) {
+async function purgeAll (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -98,7 +117,7 @@ async function purgeAll (req, res) {
 /**
  * Purge specific URLs from cache
  */
-async function purgeUrls (req, res) {
+async function purgeUrls (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -123,7 +142,7 @@ async function purgeUrls (req, res) {
 /**
  * Toggle development mode
  */
-async function toggleDevMode (req, res) {
+async function toggleDevMode (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -151,7 +170,7 @@ async function toggleDevMode (req, res) {
 /**
  * Set security level
  */
-async function setSecurityLevel (req, res) {
+async function setSecurityLevel (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -177,7 +196,7 @@ async function setSecurityLevel (req, res) {
 /**
  * Enable "I'm Under Attack" mode
  */
-async function enableUnderAttack (req, res) {
+async function enableUnderAttack (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -197,7 +216,7 @@ async function enableUnderAttack (req, res) {
 /**
  * Disable "I'm Under Attack" mode
  */
-async function disableUnderAttack (req, res) {
+async function disableUnderAttack (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -217,7 +236,7 @@ async function disableUnderAttack (req, res) {
 /**
  * Get zone settings
  */
-async function getSettings (req, res) {
+async function getSettings (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -236,7 +255,7 @@ async function getSettings (req, res) {
 /**
  * List firewall access rules
  */
-async function listAccessRules (req, res) {
+async function listAccessRules (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -256,7 +275,7 @@ async function listAccessRules (req, res) {
 /**
  * Block an IP address
  */
-async function blockIP (req, res) {
+async function blockIP (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -281,7 +300,7 @@ async function blockIP (req, res) {
 /**
  * Unblock/delete access rule
  */
-async function deleteAccessRule (req, res) {
+async function deleteAccessRule (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
@@ -306,7 +325,7 @@ async function deleteAccessRule (req, res) {
 /**
  * Set cache level
  */
-async function setCacheLevel (req, res) {
+async function setCacheLevel (req, { res }) {
 	const cf = getInstance();
 
 	if (!cf.isEnabled()) {
