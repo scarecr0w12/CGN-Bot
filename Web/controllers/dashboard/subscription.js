@@ -15,6 +15,7 @@ const controllers = module.exports;
  */
 controllers.manage = async (req, { res }) => {
 	const { svr } = req;
+	const serverDocument = svr.document;
 
 	try {
 		// Get site settings (tiers, features, etc.)
@@ -73,6 +74,12 @@ controllers.manage = async (req, { res }) => {
 			isOwner,
 			canManageSubscription,
 			yearlyDiscount: siteSettings?.yearly_discount || 20,
+		});
+		// Set minimal configData required for admin-menu partial
+		res.setConfigData({
+			commands: {
+				trivia: serverDocument.config.commands?.trivia || { isEnabled: false },
+			},
 		});
 		res.render();
 	} catch (err) {
