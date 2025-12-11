@@ -4,6 +4,7 @@
  */
 
 const fetch = require("node-fetch");
+const VoteRewardsManager = require("./VoteRewardsManager");
 
 class BotLists {
 	constructor(client) {
@@ -198,27 +199,21 @@ class BotLists {
 		const isWeekend = data.isWeekend || this.isWeekend();
 		let pointsAwarded = 0;
 
+		// Process vote through VoteRewardsManager (new separate point system)
 		if (config.isEnabled) {
-			pointsAwarded = config.points_per_vote || 100;
-			if (isWeekend) {
-				pointsAwarded *= config.weekend_multiplier || 2;
-			}
-
-			// Award points to user
-			const userDoc = await Users.findOne(userId);
-			if (userDoc) {
-				userDoc.query.inc("points", pointsAwarded);
-				await userDoc.save();
-			} else {
-				// Create user document if it doesn't exist
-				const newUser = Users.new({ _id: userId, points: pointsAwarded });
-				await newUser.save();
+			try {
+				const result = await VoteRewardsManager.processVote(userId, site, isWeekend);
+				if (result.success) {
+					pointsAwarded = result.pointsAwarded;
+				}
+			} catch (err) {
+				logger.error("Failed to process vote rewards", { userId, site }, err);
 			}
 		}
 
-		// Record the vote
+		// Record the vote in Votes collection (for history/analytics)
 		const voteId = `${site}_${userId}_${Date.now()}`;
-		const vote = Votes.new({
+		const vote = Database.Votes.new({
 			_id: voteId,
 			user_id: userId,
 			site,
@@ -278,14 +273,20 @@ class BotLists {
 	 * Get vote stats for a user
 	 */
 	async getUserVotes(userId, limit = 50) {
-		return Votes.find({ user_id: userId }).sort({ timestamp: -1 }).limit(limit).exec();
+		return Database.Votes.find({ user_id: userId })
+			.sort({ timestamp: -1 })
+			.limit(limit)
+			.exec();
 	}
 
 	/**
 	 * Get recent votes across all users
 	 */
 	async getRecentVotes(limit = 50) {
-		return Votes.find({}).sort({ timestamp: -1 }).limit(limit).exec();
+		return Database.Votes.find({})
+			.sort({ timestamp: -1 })
+			.limit(limit)
+			.exec();
 	}
 
 	/**
@@ -293,7 +294,7 @@ class BotLists {
 	 */
 	async getRecentVoteCount(userId) {
 		const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
-		return Votes.count({ user_id: userId, timestamp: { $gte: twelveHoursAgo } });
+		return Database.Votes.count({ user_id: userId, timestamp: { $gte: twelveHoursAgo } });
 	}
 
 	/**
@@ -301,9 +302,9 @@ class BotLists {
 	 */
 	async getVoteStats() {
 		const [topggCount, dblCount, totalCount] = await Promise.all([
-			Votes.count({ site: "topgg" }),
-			Votes.count({ site: "discordbotlist" }),
-			Votes.count({}),
+			Database.Votes.count({ site: "topgg" }),
+			Database.Votes.count({ site: "discordbotlist" }),
+			Database.Votes.count({}),
 		]);
 		return { topgg: topggCount, discordbotlist: dblCount, total: totalCount };
 	}

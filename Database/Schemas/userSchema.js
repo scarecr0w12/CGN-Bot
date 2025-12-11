@@ -163,4 +163,32 @@ module.exports = new Schema({
 		paypal_customer_id: String,
 		btcpay_customer_id: String,
 	}),
+
+	// Vote Rewards System (separate from economy/skynet points)
+	// Used by server owners to purchase premium tiers and extensions
+	vote_rewards: new Schema({
+		balance: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		lifetime_earned: {
+			type: Number,
+			default: 0,
+		},
+		lifetime_spent: {
+			type: Number,
+			default: 0,
+		},
+		total_votes: {
+			type: Number,
+			default: 0,
+		},
+		last_vote_at: Date,
+		// Track votes per site for cooldown management
+		site_votes: new Schema({
+			topgg_last: Date,
+			discordbotlist_last: Date,
+		}),
+	}),
 });

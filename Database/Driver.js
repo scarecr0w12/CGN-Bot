@@ -34,6 +34,7 @@ if (databaseType === "mariadb") {
 			Wiki,
 			Traffic,
 			Votes,
+			VoteRewardTransactions,
 			GlobalFilters,
 			GlobalRanks,
 			GlobalRSSFeeds,
@@ -51,6 +52,7 @@ if (databaseType === "mariadb") {
 			new Model(db, "wiki", require("./Schemas/wikiSchema")),
 			new Model(db, "traffic", require("./Schemas/trafficSchema")),
 			new Model(db, "votes", require("./Schemas/votesSchema")),
+			new Model(db, "vote_reward_transactions", require("./Schemas/voteRewardTransactionSchema")),
 			new Model(db, "global_filters", require("./Schemas/globalFilterSchema")),
 			new Model(db, "global_ranks", require("./Schemas/globalRankSchema")),
 			new Model(db, "global_rss_feeds", require("./Schemas/globalRSSFeedSchema")),
@@ -67,6 +69,7 @@ if (databaseType === "mariadb") {
 		addToGlobal("Blog", Blog);
 		addToGlobal("Wiki", Wiki);
 		addToGlobal("Votes", Votes);
+		addToGlobal("VoteRewardTransactions", VoteRewardTransactions);
 		addToGlobal("GlobalFilters", GlobalFilters);
 		addToGlobal("GlobalRanks", GlobalRanks);
 		addToGlobal("GlobalRSSFeeds", GlobalRSSFeeds);
@@ -85,6 +88,7 @@ if (databaseType === "mariadb") {
 			Wiki, wiki: Wiki,
 			Traffic, traffic: Traffic,
 			Votes, votes: Votes,
+			VoteRewardTransactions, voteRewardTransactions: VoteRewardTransactions,
 			GlobalFilters, globalFilters: GlobalFilters,
 			GlobalRanks, globalRanks: GlobalRanks,
 			GlobalRSSFeeds, globalRSSFeeds: GlobalRSSFeeds,

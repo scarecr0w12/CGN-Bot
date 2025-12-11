@@ -87,6 +87,96 @@
 			padding: 2rem;
 			color: #666;
 		}
+		/* Vote Rewards Styles */
+		.vote-balance-card {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			margin-bottom: 1.5rem;
+		}
+		.vote-balance-card .balance-amount {
+			font-size: 2.5rem;
+			font-weight: bold;
+		}
+		.vote-balance-card .balance-label {
+			opacity: 0.9;
+			font-size: 0.9rem;
+		}
+		.vote-site-card {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 1rem;
+			border: 1px solid #dbdbdb;
+			border-radius: 8px;
+			margin-bottom: 0.75rem;
+			transition: all 0.2s ease;
+		}
+		.vote-site-card:hover {
+			border-color: #667eea;
+			box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+		}
+		.vote-site-card.can-vote {
+			border-color: #48c774;
+			background-color: #f6fff8;
+		}
+		.vote-site-info {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		.vote-site-icon {
+			width: 40px;
+			height: 40px;
+			border-radius: 8px;
+			object-fit: cover;
+		}
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 1rem;
+			margin-top: 1rem;
+		}
+		.stat-item {
+			text-align: center;
+			padding: 0.75rem;
+			background: rgba(255,255,255,0.1);
+			border-radius: 8px;
+		}
+		.stat-value {
+			font-size: 1.25rem;
+			font-weight: bold;
+		}
+		.stat-label {
+			font-size: 0.75rem;
+			opacity: 0.8;
+		}
+		.tier-card {
+			border: 1px solid #dbdbdb;
+			border-radius: 8px;
+			padding: 1rem;
+			margin-bottom: 0.75rem;
+		}
+		.tier-card:hover {
+			border-color: #667eea;
+		}
+		.transaction-item {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0.75rem;
+			border-bottom: 1px solid #f0f0f0;
+		}
+		.transaction-item:last-child {
+			border-bottom: none;
+		}
+		.transaction-amount.positive {
+			color: #48c774;
+		}
+		.transaction-amount.negative {
+			color: #f14668;
+		}
 	</style>
 </head>
 <body>
@@ -116,6 +206,22 @@
 			<% } %>
 
 			<div class="columns">
+			<!-- Vote Rewards Section -->
+			<div class="column is-half">
+				<div class="box" id="vote-rewards-section">
+					<h2 class="subtitle">
+						<span class="icon"><i class="fa fa-vote-yea"></i></span>
+						Vote Rewards
+					</h2>
+					<div id="vote-rewards-content">
+						<div class="servers-loading">
+							<span class="icon"><i class="fa fa-spinner fa-spin"></i></span>
+							<span>Loading vote rewards...</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Linked Accounts -->
 			<div class="column is-half">
 					<div class="box">
@@ -306,6 +412,56 @@
 					<span>Delete Profile</span>
 				</button>
 				<button class="button" onclick="closeProfileModal()">Cancel</button>
+			</footer>
+		</div>
+	</div>
+
+	<!-- Redeem Points Modal -->
+	<div id="redeem-modal" class="modal">
+		<div class="modal-background" onclick="closeRedeemModal()"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">
+					<span class="icon"><i class="fa fa-gift"></i></span>
+					<span>Redeem Vote Rewards</span>
+				</p>
+				<button class="delete" aria-label="close" onclick="closeRedeemModal()"></button>
+			</header>
+			<section class="modal-card-body">
+				<div class="notification is-info is-light mb-4">
+					<span class="icon"><i class="fa fa-info-circle"></i></span>
+					<span>Use your vote reward points to purchase premium tier access for your servers.</span>
+				</div>
+				
+				<div id="redeem-servers-list"></div>
+				<div id="redeem-tiers-list"></div>
+			</section>
+			<footer class="modal-card-foot">
+				<button class="button is-success" onclick="confirmRedeem()" id="confirm-redeem-btn">
+					<span class="icon"><i class="fa fa-check"></i></span>
+					<span>Confirm Redemption</span>
+				</button>
+				<button class="button" onclick="closeRedeemModal()">Cancel</button>
+			</footer>
+		</div>
+	</div>
+
+	<!-- Transaction History Modal -->
+	<div id="history-modal" class="modal">
+		<div class="modal-background" onclick="closeHistoryModal()"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">
+					<span class="icon"><i class="fa fa-history"></i></span>
+					<span>Transaction History</span>
+				</p>
+				<button class="delete" aria-label="close" onclick="closeHistoryModal()"></button>
+			</header>
+			<section class="modal-card-body">
+				<div id="history-modal-content"></div>
+			</section>
+			<footer class="modal-card-foot">
+				<button class="button" onclick="closeHistoryModal()">Close</button>
 			</footer>
 		</div>
 	</div>
@@ -569,8 +725,349 @@
 	document.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape') {
 			closeProfileModal();
+			closeRedeemModal();
 		}
 	});
+
+	// ============================================
+	// VOTE REWARDS FUNCTIONALITY
+	// ============================================
+
+	let voteRewardsData = null;
+
+	// Load vote rewards on page load
+	document.addEventListener('DOMContentLoaded', loadVoteRewards);
+
+	async function loadVoteRewards() {
+		const container = document.getElementById('vote-rewards-content');
+		
+		try {
+			const response = await fetch('/account/vote-rewards');
+			if (!response.ok) throw new Error('Failed to fetch vote rewards');
+			
+			voteRewardsData = await response.json();
+			
+			if (!voteRewardsData.isEnabled) {
+				container.innerHTML = `
+					<div class="notification is-info is-light">
+						<span class="icon"><i class="fa fa-info-circle"></i></span>
+						<span>Vote rewards are not currently enabled.</span>
+					</div>
+				`;
+				return;
+			}
+			
+			renderVoteRewards();
+		} catch (err) {
+			console.error('Error loading vote rewards:', err);
+			container.innerHTML = `
+				<div class="notification is-danger is-light">
+					<span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+					<span>Failed to load vote rewards. Please refresh the page.</span>
+				</div>
+			`;
+		}
+	}
+
+	function renderVoteRewards() {
+		const container = document.getElementById('vote-rewards-content');
+		const data = voteRewardsData;
+		
+		const voteSitesHtml = data.voteSites.length > 0 ? data.voteSites.map(site => {
+			const canVoteNow = site.canVote;
+			const cooldownText = canVoteNow ? 'Ready to vote!' : formatTimeRemaining(site.timeRemaining);
+			
+			return `
+				<div class="vote-site-card ${canVoteNow ? 'can-vote' : ''}">
+					<div class="vote-site-info">
+						<img src="${site.icon}" alt="${escapeHtml(site.name)}" class="vote-site-icon" onerror="this.src='/static/img/discord-icon.png'">
+						<div>
+							<p class="has-text-weight-bold">${escapeHtml(site.name)}</p>
+							<p class="is-size-7 has-text-grey">
+								${canVoteNow ? `<span class="has-text-success">+${data.pointsPerVote} points</span>` : cooldownText}
+							</p>
+						</div>
+					</div>
+					<a href="${site.url}" target="_blank" class="button is-small ${canVoteNow ? 'is-success' : 'is-light'}" ${!canVoteNow ? 'disabled' : ''}>
+						<span class="icon"><i class="fa fa-external-link-alt"></i></span>
+						<span>${canVoteNow ? 'Vote Now' : 'Cooldown'}</span>
+					</a>
+				</div>
+			`;
+		}).join('') : '<p class="has-text-grey">No vote sites configured.</p>';
+		
+		container.innerHTML = `
+			<div class="vote-balance-card">
+				<div class="balance-label">Your Vote Rewards Balance</div>
+				<div class="balance-amount">${data.balance.toLocaleString()} <small>points</small></div>
+				<div class="stats-grid">
+					<div class="stat-item">
+						<div class="stat-value">${data.totalVotes}</div>
+						<div class="stat-label">Total Votes</div>
+					</div>
+					<div class="stat-item">
+						<div class="stat-value">${data.lifetimeEarned.toLocaleString()}</div>
+						<div class="stat-label">Earned</div>
+					</div>
+					<div class="stat-item">
+						<div class="stat-value">${data.lifetimeSpent.toLocaleString()}</div>
+						<div class="stat-label">Spent</div>
+					</div>
+				</div>
+			</div>
+			
+			<h4 class="title is-6 mb-3">
+				<span class="icon"><i class="fa fa-star"></i></span>
+				Vote to Earn Points
+			</h4>
+			<p class="is-size-7 has-text-grey mb-3">
+				Vote on these sites to earn ${data.pointsPerVote} points (${data.weekendMultiplier}x on weekends!)
+			</p>
+			${voteSitesHtml}
+			
+			<hr>
+			
+			<div class="buttons">
+				<button class="button is-primary" onclick="openRedeemModal()">
+					<span class="icon"><i class="fa fa-gift"></i></span>
+					<span>Redeem Points</span>
+				</button>
+				<button class="button is-info is-outlined" onclick="viewTransactionHistory()">
+					<span class="icon"><i class="fa fa-history"></i></span>
+					<span>History</span>
+				</button>
+			</div>
+		`;
+	}
+
+	function formatTimeRemaining(ms) {
+		if (!ms) return 'Unknown';
+		const hours = Math.floor(ms / (1000 * 60 * 60));
+		const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+		if (hours > 0) {
+			return `${hours}h ${minutes}m remaining`;
+		}
+		return `${minutes}m remaining`;
+	}
+
+	// Redeem Modal
+	let ownedServers = [];
+	let availableTiers = [];
+
+	async function openRedeemModal() {
+		document.getElementById('redeem-modal').classList.add('is-active');
+		
+		const serversContainer = document.getElementById('redeem-servers-list');
+		const tiersContainer = document.getElementById('redeem-tiers-list');
+		
+		serversContainer.innerHTML = '<div class="servers-loading"><span class="icon"><i class="fa fa-spinner fa-spin"></i></span> Loading servers...</div>';
+		tiersContainer.innerHTML = '';
+		
+		try {
+			const [serversRes, tiersRes] = await Promise.all([
+				fetch('/account/vote-rewards/owned-servers'),
+				fetch('/account/vote-rewards/tiers')
+			]);
+			
+			const serversData = await serversRes.json();
+			const tiersData = await tiersRes.json();
+			
+			ownedServers = serversData.servers || [];
+			availableTiers = tiersData.tiers || [];
+			
+			if (ownedServers.length === 0) {
+				serversContainer.innerHTML = `
+					<div class="notification is-warning is-light">
+						<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+						<span>You don't own any servers where the bot is present.</span>
+					</div>
+				`;
+				return;
+			}
+			
+			renderRedeemServers();
+			renderRedeemTiers(tiersData.minDays, tiersData.maxDays);
+		} catch (err) {
+			console.error('Error loading redeem data:', err);
+			serversContainer.innerHTML = `
+				<div class="notification is-danger is-light">Failed to load data.</div>
+			`;
+		}
+	}
+
+	function renderRedeemServers() {
+		const container = document.getElementById('redeem-servers-list');
+		
+		container.innerHTML = `
+			<label class="label">Select Server</label>
+			<div class="select is-fullwidth">
+				<select id="redeem-server-select" onchange="updateRedeemPreview()">
+					<option value="">-- Select a server --</option>
+					${ownedServers.map(s => `
+						<option value="${s.id}">${escapeHtml(s.name)} (${s.memberCount} members) - Current: ${s.currentTier?.name || 'Free'}</option>
+					`).join('')}
+				</select>
+			</div>
+		`;
+	}
+
+	function renderRedeemTiers(minDays, maxDays) {
+		const container = document.getElementById('redeem-tiers-list');
+		
+		if (availableTiers.length === 0) {
+			container.innerHTML = `
+				<div class="notification is-info is-light">No tiers available for redemption.</div>
+			`;
+			return;
+		}
+		
+		container.innerHTML = `
+			<label class="label mt-4">Select Tier</label>
+			<div class="select is-fullwidth">
+				<select id="redeem-tier-select" onchange="updateRedeemPreview()">
+					<option value="">-- Select a tier --</option>
+					${availableTiers.map(t => `
+						<option value="${t.id}" data-cost-per-day="${t.pointsCostPerDay}">${escapeHtml(t.name)} - ${t.pointsCostPerDay} pts/day</option>
+					`).join('')}
+				</select>
+			</div>
+			
+			<label class="label mt-4">Duration (days)</label>
+			<input type="number" class="input" id="redeem-duration" min="${minDays}" max="${maxDays}" value="${minDays}" onchange="updateRedeemPreview()">
+			<p class="help">Minimum: ${minDays} days, Maximum: ${maxDays} days</p>
+			
+			<div id="redeem-preview" class="mt-4"></div>
+		`;
+	}
+
+	function updateRedeemPreview() {
+		const preview = document.getElementById('redeem-preview');
+		const tierSelect = document.getElementById('redeem-tier-select');
+		const durationInput = document.getElementById('redeem-duration');
+		const serverSelect = document.getElementById('redeem-server-select');
+		
+		if (!tierSelect.value || !durationInput.value || !serverSelect.value) {
+			preview.innerHTML = '';
+			return;
+		}
+		
+		const costPerDay = parseInt(tierSelect.options[tierSelect.selectedIndex].dataset.costPerDay);
+		const duration = parseInt(durationInput.value);
+		const totalCost = costPerDay * duration;
+		const balance = voteRewardsData?.balance || 0;
+		const canAfford = balance >= totalCost;
+		
+		preview.innerHTML = `
+			<div class="notification ${canAfford ? 'is-success' : 'is-danger'} is-light">
+				<p><strong>Total Cost:</strong> ${totalCost.toLocaleString()} points</p>
+				<p><strong>Your Balance:</strong> ${balance.toLocaleString()} points</p>
+				${canAfford ? '' : '<p class="has-text-danger">Insufficient balance!</p>'}
+			</div>
+		`;
+	}
+
+	function closeRedeemModal() {
+		document.getElementById('redeem-modal').classList.remove('is-active');
+	}
+
+	async function confirmRedeem() {
+		const serverSelect = document.getElementById('redeem-server-select');
+		const tierSelect = document.getElementById('redeem-tier-select');
+		const durationInput = document.getElementById('redeem-duration');
+		
+		if (!serverSelect.value || !tierSelect.value || !durationInput.value) {
+			alert('Please select a server, tier, and duration.');
+			return;
+		}
+		
+		const costPerDay = parseInt(tierSelect.options[tierSelect.selectedIndex].dataset.costPerDay);
+		const duration = parseInt(durationInput.value);
+		const totalCost = costPerDay * duration;
+		
+		if (!confirm(`Are you sure you want to spend ${totalCost.toLocaleString()} points for ${duration} days of premium?`)) {
+			return;
+		}
+		
+		const btn = document.getElementById('confirm-redeem-btn');
+		btn.classList.add('is-loading');
+		btn.disabled = true;
+		
+		try {
+			const response = await fetch('/account/vote-rewards/redeem-tier', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					serverId: serverSelect.value,
+					tierId: tierSelect.value,
+					durationDays: duration
+				})
+			});
+			
+			const data = await response.json();
+			
+			if (!response.ok) {
+				throw new Error(data.error || 'Failed to redeem points');
+			}
+			
+			showNotification(`Successfully redeemed ${totalCost.toLocaleString()} points for premium!`, 'success');
+			closeRedeemModal();
+			loadVoteRewards(); // Refresh balance
+		} catch (err) {
+			alert(err.message || 'Failed to redeem points');
+		} finally {
+			btn.classList.remove('is-loading');
+			btn.disabled = false;
+		}
+	}
+
+	async function viewTransactionHistory() {
+		try {
+			const response = await fetch('/account/vote-rewards/history?limit=20');
+			const data = await response.json();
+			
+			const transactions = data.transactions || [];
+			
+			if (transactions.length === 0) {
+				alert('No transaction history yet.');
+				return;
+			}
+			
+			const historyHtml = transactions.map(t => {
+				const isPositive = t.amount > 0;
+				const typeLabels = {
+					vote: 'Vote Reward',
+					purchase: 'Points Purchase',
+					redeem_tier: 'Tier Redemption',
+					redeem_extension: 'Extension Purchase',
+					admin_grant: 'Admin Grant',
+					admin_revoke: 'Admin Revoke',
+					refund: 'Refund'
+				};
+				return `
+					<div class="transaction-item">
+						<div>
+							<p class="has-text-weight-semibold">${typeLabels[t.type] || t.type}</p>
+							<p class="is-size-7 has-text-grey">${new Date(t.timestamp).toLocaleString()}</p>
+						</div>
+						<div class="transaction-amount ${isPositive ? 'positive' : 'negative'}">
+							${isPositive ? '+' : ''}${t.amount.toLocaleString()}
+						</div>
+					</div>
+				`;
+			}).join('');
+			
+			// Show in modal
+			document.getElementById('history-modal-content').innerHTML = historyHtml;
+			document.getElementById('history-modal').classList.add('is-active');
+		} catch (err) {
+			console.error('Error loading history:', err);
+			alert('Failed to load transaction history.');
+		}
+	}
+
+	function closeHistoryModal() {
+		document.getElementById('history-modal').classList.remove('is-active');
+	}
 	</script>
 </body>
 </html>

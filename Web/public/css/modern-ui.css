@@ -1017,3 +1017,80 @@ strong {
     font-size: 0.85em;
 }
 
+/* ===== Collapsible Menu Sections ===== */
+.menu-section {
+    margin-bottom: var(--space-sm);
+}
+
+.menu-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+
+.menu-section-header:hover {
+    background: var(--color-bg-secondary);
+}
+
+.menu-section-header .menu-label {
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.menu-section-header .collapse-icon {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    transition: transform var(--transition-fast);
+    width: 1rem;
+    text-align: center;
+}
+
+.menu-section.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.menu-section-content {
+    overflow: hidden;
+    transition: max-height var(--transition-base), opacity var(--transition-fast);
+    max-height: 500px;
+    opacity: 1;
+}
+
+.menu-section.collapsed .menu-section-content {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* Active section indicator */
+.menu-section.has-active > .menu-section-header {
+    background: var(--color-primary-transparent);
+}
+
+.menu-section.has-active > .menu-section-header .menu-label {
+    color: var(--color-primary);
+}
+
+/* Section count badge */
+.menu-section-header .section-badge {
+    font-size: 0.7rem;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-muted);
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-full);
+    margin-left: auto;
+    margin-right: var(--space-sm);
+}
+
+.menu-section.has-active .section-badge {
+    background: var(--color-primary);
+    color: white;
+}
+

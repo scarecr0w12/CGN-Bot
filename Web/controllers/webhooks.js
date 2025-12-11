@@ -5,8 +5,9 @@
  * to manage subscription lifecycle events.
  */
 
-const TierManager = require("../../Modules/TierManager");
 const crypto = require("crypto");
+const { TierManager } = require("../../Modules/TierManager");
+const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 
 const controllers = module.exports;
 
@@ -70,8 +71,36 @@ controllers.stripe = async (req, res) => {
 
 async function handleStripeCheckoutCompleted (session) {
 	const customerId = session.customer;
-	const serverId = session.metadata?.server_id;
-	const purchasedBy = session.metadata?.discord_user_id;
+	const metadata = session.metadata || {};
+
+	// Check if this is a vote points purchase
+	if (metadata.type === "vote_points_purchase") {
+		const userId = metadata.user_id;
+		const points = parseInt(metadata.points) || 0;
+		const bonusPoints = parseInt(metadata.bonus_points) || 0;
+		const totalPoints = points + bonusPoints;
+		const amountPaid = (session.amount_total || 0) / 100;
+
+		if (!userId || totalPoints <= 0) {
+			logger.warn("Stripe vote points purchase missing data", { sessionId: session.id, metadata });
+			return;
+		}
+
+		await VoteRewardsManager.completePurchase(
+			userId,
+			totalPoints,
+			"stripe",
+			session.id,
+			amountPaid,
+			session.currency?.toUpperCase() || "USD",
+		);
+		logger.info(`Vote points purchase completed: ${userId} received ${totalPoints} points via Stripe`);
+		return;
+	}
+
+	// Regular subscription checkout
+	const serverId = metadata.server_id;
+	const purchasedBy = metadata.discord_user_id;
 
 	if (!serverId) {
 		logger.warn("Stripe checkout missing server_id metadata", { sessionId: session.id });
@@ -317,6 +346,33 @@ controllers.btcpay = async (req, res) => {
 async function handleBTCPayInvoiceSettled (event) {
 	const { invoiceId } = event;
 	const metadata = event.metadata || {};
+
+	// Check if this is a vote points purchase
+	if (metadata.type === "vote_points_purchase") {
+		const userId = metadata.user_id;
+		const points = parseInt(metadata.points) || 0;
+		const bonusPoints = parseInt(metadata.bonus_points) || 0;
+		const totalPoints = points + bonusPoints;
+		const amountPaid = parseFloat(event.amount) || 0;
+
+		if (!userId || totalPoints <= 0) {
+			logger.warn("BTCPay vote points purchase missing data", { invoiceId, metadata });
+			return;
+		}
+
+		await VoteRewardsManager.completePurchase(
+			userId,
+			totalPoints,
+			"btcpay",
+			invoiceId,
+			amountPaid,
+			event.currency || "USD",
+		);
+		logger.info(`Vote points purchase completed: ${userId} received ${totalPoints} points via BTCPay`);
+		return;
+	}
+
+	// Regular subscription/tier purchase
 	const serverId = metadata.server_id;
 	const tierId = metadata.tier_id;
 	const durationDays = parseInt(metadata.duration_days) || 30;

@@ -4,6 +4,7 @@
 
 const { renderError } = require("../helpers");
 const { GetGuild } = require("../../Modules/GetGuild");
+const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 
 module.exports = router => {
 	const { passport } = router.app;
@@ -301,6 +302,387 @@ module.exports = router => {
 		} catch (err) {
 			logger.error("Error deleting server profile", { serverId }, err);
 			res.status(500).json({ error: "Failed to delete profile" });
+		}
+	});
+
+	// ============================================
+	// VOTE REWARDS ROUTES
+	// ============================================
+
+	// Get user's vote rewards info
+	router.get("/account/vote-rewards", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const [voteRewards, settings, voteSites] = await Promise.all([
+				VoteRewardsManager.getUserVoteRewards(req.user.id),
+				VoteRewardsManager.getSettings(),
+				VoteRewardsManager.getVoteSites(),
+			]);
+
+			// Check vote availability for each site
+			const sitesWithStatus = await Promise.all(
+				voteSites.map(async site => {
+					const status = await VoteRewardsManager.canVote(req.user.id, site.id);
+					return { ...site, ...status };
+				}),
+			);
+
+			res.json({
+				balance: voteRewards.balance || 0,
+				lifetimeEarned: voteRewards.lifetime_earned || 0,
+				lifetimeSpent: voteRewards.lifetime_spent || 0,
+				totalVotes: voteRewards.total_votes || 0,
+				lastVoteAt: voteRewards.last_vote_at,
+				isEnabled: settings.isEnabled || false,
+				pointsPerVote: settings.points_per_vote || 100,
+				weekendMultiplier: settings.weekend_multiplier || 2,
+				redemption: settings.redemption || {},
+				voteSites: sitesWithStatus,
+			});
+		} catch (err) {
+			logger.error("Error fetching vote rewards", {}, err);
+			res.status(500).json({ error: "Failed to fetch vote rewards" });
+		}
+	});
+
+	// Get vote rewards transaction history
+	router.get("/account/vote-rewards/history", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+			const transactions = await VoteRewardsManager.getTransactionHistory(req.user.id, limit);
+
+			res.json({ transactions });
+		} catch (err) {
+			logger.error("Error fetching vote rewards history", {}, err);
+			res.status(500).json({ error: "Failed to fetch history" });
+		}
+	});
+
+	// Redeem points for a premium tier on a server
+	router.post("/account/vote-rewards/redeem-tier", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		const { serverId, tierId, durationDays } = req.body;
+
+		if (!serverId || !tierId || !durationDays) {
+			return res.status(400).json({ error: "Missing required fields: serverId, tierId, durationDays" });
+		}
+
+		try {
+			// Verify user is the server owner or has admin permissions
+			const svr = new GetGuild(req.app.client, serverId);
+			await svr.initialize(req.user.id, req.user.id);
+
+			if (!svr.success) {
+				return res.status(403).json({ error: "You are not a member of this server" });
+			}
+
+			// Check if user is server owner
+			if (svr.ownerId !== req.user.id) {
+				return res.status(403).json({ error: "Only server owners can redeem premium tiers" });
+			}
+
+			const result = await VoteRewardsManager.redeemForTier(
+				req.user.id,
+				serverId,
+				tierId,
+				parseInt(durationDays),
+			);
+
+			res.json(result);
+		} catch (err) {
+			logger.error("Error redeeming vote rewards for tier", { serverId, tierId }, err);
+			res.status(400).json({ error: err.message || "Failed to redeem points" });
+		}
+	});
+
+	// Get servers where user is owner (for tier redemption)
+	router.get("/account/vote-rewards/owned-servers", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const TierManager = require("../../Modules/TierManager");
+			const botServers = await GetGuild.getAll(req.app.client, {
+				mutualOnlyTo: req.user.id,
+				fullResolveMembers: ["OWNER"],
+				parse: "noKeys",
+			});
+
+			// Filter to servers where user is owner
+			const ownedServers = await Promise.all(
+				botServers
+					.filter(svr => svr.ownerId === req.user.id)
+					.map(async svr => {
+						const serverTier = await TierManager.getServerTier(svr.id);
+						const subscription = await TierManager.getServerSubscription(svr.id);
+
+						return {
+							id: svr.id,
+							name: svr.name,
+							icon: req.app.client.getAvatarURL(svr.id, svr.icon, "icons"),
+							memberCount: svr.memberCount,
+							currentTier: serverTier,
+							subscription: subscription ? {
+								tierId: subscription.tier_id,
+								expiresAt: subscription.expires_at,
+								source: subscription.source,
+							} : null,
+						};
+					}),
+			);
+
+			res.json({ servers: ownedServers });
+		} catch (err) {
+			logger.error("Error fetching owned servers", {}, err);
+			res.status(500).json({ error: "Failed to fetch servers" });
+		}
+	});
+
+	// Get available tiers for redemption
+	router.get("/account/vote-rewards/tiers", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const TierManager = require("../../Modules/TierManager");
+			const [tiers, settings] = await Promise.all([
+				TierManager.getTiers(),
+				VoteRewardsManager.getSettings(),
+			]);
+
+			const pointsPerDollar = settings.redemption?.points_per_dollar || 1000;
+
+			// Calculate point costs for each tier
+			const tiersWithCosts = tiers
+				.filter(t => t.price_monthly > 0)
+				.map(tier => {
+					const dailyPrice = tier.price_monthly / 30;
+					return {
+						id: tier._id,
+						name: tier.name,
+						description: tier.description,
+						level: tier.level,
+						priceMonthly: tier.price_monthly,
+						pointsCostPerDay: Math.ceil(dailyPrice * pointsPerDollar),
+						pointsCostPerWeek: Math.ceil(dailyPrice * 7 * pointsPerDollar),
+						pointsCostPerMonth: Math.ceil(tier.price_monthly * pointsPerDollar),
+						features: tier.features,
+						color: tier.color,
+						badgeIcon: tier.badge_icon,
+					};
+				});
+
+			res.json({
+				tiers: tiersWithCosts,
+				minDays: settings.redemption?.min_redemption_days || 7,
+				maxDays: settings.redemption?.max_redemption_days || 365,
+			});
+		} catch (err) {
+			logger.error("Error fetching tiers for redemption", {}, err);
+			res.status(500).json({ error: "Failed to fetch tiers" });
+		}
+	});
+
+	// Get point packages for purchase
+	router.get("/account/vote-rewards/packages", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const settings = await VoteRewardsManager.getSettings();
+			const purchaseSettings = settings.purchase || {};
+
+			if (!purchaseSettings.isEnabled) {
+				return res.json({ isEnabled: false, packages: [] });
+			}
+
+			res.json({
+				isEnabled: true,
+				packages: purchaseSettings.packages || [],
+				minAmount: purchaseSettings.min_purchase_amount || 5,
+				maxAmount: purchaseSettings.max_purchase_amount || 100,
+				pointsPerDollar: settings.redemption?.points_per_dollar || 1000,
+			});
+		} catch (err) {
+			logger.error("Error fetching point packages", {}, err);
+			res.status(500).json({ error: "Failed to fetch packages" });
+		}
+	});
+
+	// Purchase a premium extension with vote points
+	router.post("/account/vote-rewards/redeem-extension", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		const { extensionId } = req.body;
+
+		if (!extensionId) {
+			return res.status(400).json({ error: "Missing extensionId" });
+		}
+
+		try {
+			const result = await VoteRewardsManager.redeemForExtension(req.user.id, extensionId);
+			res.json(result);
+		} catch (err) {
+			logger.error("Error purchasing extension", { extensionId }, err);
+			res.status(400).json({ error: err.message || "Failed to purchase extension" });
+		}
+	});
+
+	// Check if user has access to a premium extension
+	router.get("/account/vote-rewards/extension-access/:extensionId", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		try {
+			const hasAccess = await VoteRewardsManager.hasUserPurchasedExtension(
+				req.user.id,
+				req.params.extensionId,
+			);
+			res.json({ hasAccess });
+		} catch (err) {
+			logger.error("Error checking extension access", {}, err);
+			res.status(500).json({ error: "Failed to check access" });
+		}
+	});
+
+	// Create checkout session for point purchase
+	router.post("/account/vote-rewards/purchase", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+
+		const { packageId, customAmount } = req.body;
+
+		try {
+			const TierManager = require("../../Modules/TierManager");
+			const siteSettings = await TierManager.getSiteSettings();
+			const settings = siteSettings?.vote_rewards || {};
+			const purchaseSettings = settings.purchase || {};
+
+			if (!purchaseSettings.isEnabled) {
+				return res.status(400).json({ error: "Point purchases are not enabled" });
+			}
+
+			let amount, points, bonusPoints = 0, description;
+
+			if (packageId) {
+				// Package purchase
+				const pkg = (purchaseSettings.packages || []).find(p => p._id === packageId);
+				if (!pkg) {
+					return res.status(404).json({ error: "Package not found" });
+				}
+				amount = pkg.price;
+				points = pkg.points;
+				bonusPoints = pkg.bonus_points || 0;
+				description = `Vote Points: ${pkg.name || `${points} points`}`;
+			} else if (customAmount) {
+				// Custom amount purchase
+				amount = parseFloat(customAmount);
+				const minAmount = purchaseSettings.min_purchase_amount || 5;
+				const maxAmount = purchaseSettings.max_purchase_amount || 100;
+
+				if (amount < minAmount || amount > maxAmount) {
+					return res.status(400).json({ error: `Amount must be between $${minAmount} and $${maxAmount}` });
+				}
+
+				const pointsPerDollar = settings.redemption?.points_per_dollar || 1000;
+				points = Math.floor(amount * pointsPerDollar);
+				description = `Vote Points: ${points} points`;
+			} else {
+				return res.status(400).json({ error: "Please specify packageId or customAmount" });
+			}
+
+			// Check which payment provider to use
+			const stripeEnabled = siteSettings?.payment_providers?.stripe?.isEnabled && process.env.STRIPE_SECRET_KEY;
+			const btcpayEnabled = siteSettings?.payment_providers?.btcpay?.isEnabled && process.env.BTCPAY_API_KEY;
+
+			if (stripeEnabled) {
+				// Create Stripe checkout session
+				const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+				const session = await stripe.checkout.sessions.create({
+					mode: "payment",
+					payment_method_types: ["card"],
+					line_items: [{
+						price_data: {
+							currency: "usd",
+							product_data: {
+								name: description,
+								description: bonusPoints > 0 ? `Includes ${bonusPoints} bonus points!` : undefined,
+							},
+							unit_amount: Math.round(amount * 100),
+						},
+						quantity: 1,
+					}],
+					metadata: {
+						type: "vote_points_purchase",
+						user_id: req.user.id,
+						points: points.toString(),
+						bonus_points: bonusPoints.toString(),
+						package_id: packageId || "",
+					},
+					success_url: `${process.env.WEB_BASE_URL || `${req.protocol}://${req.get("host")}`}/account?success=points_purchased`,
+					cancel_url: `${process.env.WEB_BASE_URL || `${req.protocol}://${req.get("host")}`}/account?error=purchase_cancelled`,
+				});
+
+				return res.json({ checkoutUrl: session.url, provider: "stripe" });
+			} else if (btcpayEnabled) {
+				// Create BTCPay invoice
+				const fetch = require("node-fetch");
+				const btcpayUrl = process.env.BTCPAY_URL;
+				const btcpayApiKey = process.env.BTCPAY_API_KEY;
+				const btcpayStoreId = process.env.BTCPAY_STORE_ID;
+
+				const invoiceResponse = await fetch(`${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `token ${btcpayApiKey}`,
+					},
+					body: JSON.stringify({
+						amount: amount.toString(),
+						currency: "USD",
+						metadata: {
+							type: "vote_points_purchase",
+							user_id: req.user.id,
+							points: points.toString(),
+							bonus_points: bonusPoints.toString(),
+							package_id: packageId || "",
+						},
+						checkout: {
+							redirectURL: `${process.env.WEB_BASE_URL || `${req.protocol}://${req.get("host")}`}/account?success=points_purchased`,
+						},
+					}),
+				});
+
+				if (!invoiceResponse.ok) {
+					throw new Error("Failed to create BTCPay invoice");
+				}
+
+				const invoice = await invoiceResponse.json();
+				return res.json({ checkoutUrl: invoice.checkoutLink, provider: "btcpay" });
+			} else {
+				return res.status(400).json({ error: "No payment provider configured" });
+			}
+		} catch (err) {
+			logger.error("Error creating point purchase checkout", {}, err);
+			res.status(500).json({ error: "Failed to create checkout session" });
 		}
 	});
 };

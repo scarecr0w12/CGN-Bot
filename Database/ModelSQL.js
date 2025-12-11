@@ -623,7 +623,13 @@ module.exports = class ModelSQL {
 		if (value === undefined) return null;
 		if (value === null) return null;
 		if (value instanceof Date) return value;
-		if (typeof value === "object") return JSON.stringify(value);
+		if (typeof value === "object") {
+			// Handle ObjectId objects (both MariaDBObjectId and MongoDB ObjectId)
+			if (typeof value.toString === "function" && (value._id !== undefined || value.toHexString)) {
+				return value.toString();
+			}
+			return JSON.stringify(value);
+		}
 		return value;
 	}
 

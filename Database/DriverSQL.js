@@ -64,6 +64,7 @@ exports.initialize = async () => {
 		Wiki,
 		Traffic,
 		Votes,
+		VoteRewardTransactions,
 		GlobalFilters,
 		GlobalRanks,
 		GlobalRSSFeeds,
@@ -81,6 +82,7 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "wiki", require("./Schemas/wikiSchema")),
 		new ModelSQL(getPool, "traffic", require("./Schemas/trafficSchema")),
 		new ModelSQL(getPool, "votes", require("./Schemas/votesSchema")),
+		new ModelSQL(getPool, "vote_reward_transactions", require("./Schemas/voteRewardTransactionSchema")),
 		new ModelSQL(getPool, "global_filters", require("./Schemas/globalFilterSchema")),
 		new ModelSQL(getPool, "global_ranks", require("./Schemas/globalRankSchema")),
 		new ModelSQL(getPool, "global_rss_feeds", require("./Schemas/globalRSSFeedSchema")),
@@ -98,6 +100,7 @@ exports.initialize = async () => {
 	addToGlobal("Blog", Blog);
 	addToGlobal("Wiki", Wiki);
 	addToGlobal("Votes", Votes);
+	addToGlobal("VoteRewardTransactions", VoteRewardTransactions);
 	addToGlobal("GlobalFilters", GlobalFilters);
 	addToGlobal("GlobalRanks", GlobalRanks);
 	addToGlobal("GlobalRSSFeeds", GlobalRSSFeeds);
@@ -116,6 +119,7 @@ exports.initialize = async () => {
 		Wiki, wiki: Wiki,
 		Traffic, traffic: Traffic,
 		Votes, votes: Votes,
+		VoteRewardTransactions, voteRewardTransactions: VoteRewardTransactions,
 		GlobalFilters, globalFilters: GlobalFilters,
 		GlobalRanks, globalRanks: GlobalRanks,
 		GlobalRSSFeeds, globalRSSFeeds: GlobalRSSFeeds,

@@ -28,6 +28,23 @@ module.exports = new Schema({
 		default: 0,
 		min: 0,
 	},
+	// Premium extension settings (purchasable with vote reward points)
+	premium: new Schema({
+		is_premium: {
+			type: Boolean,
+			default: false,
+		},
+		price_points: {
+			type: Number,
+			default: 0,
+		},
+		purchases: {
+			type: Number,
+			default: 0,
+		},
+	}),
+	// Track users who have purchased this premium extension
+	purchased_by: [String],
 	owner_id: String,
 	code_id: String,
 	featured: Boolean,

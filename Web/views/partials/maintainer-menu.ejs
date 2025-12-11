@@ -1,183 +1,199 @@
+<%
+// Helper to determine if a path is active
+const isActive = (path) => currentPage === path;
+const basePath = '/dashboard/maintainer';
+
+// Helper for menu item rendering
+const menuItem = (path, label, icon = null) => {
+	const fullPath = `${basePath}/${path}`;
+	const active = isActive(fullPath);
+	const iconHtml = icon ? `<span class="icon is-small"><i class="${icon}"></i></span> ` : '';
+	return active 
+		? `<a class="is-active" href="#">${iconHtml}${label}</a>`
+		: `<a href="${fullPath}">${iconHtml}${label}</a>`;
+};
+
+// Define sections and check active state
+const serversPaths = ['servers/server-list', 'servers/big-message'];
+const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists'];
+const membershipPaths = ['membership/features', 'membership/tiers', 'membership/oauth', 'membership/payments', 'membership/servers'];
+const managementPaths = ['management/maintainers', 'management/shards', 'management/injection', 'management/version', 'management/eval', 'management/logs'];
+const infraPaths = ['infrastructure/cloudflare'];
+
+const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
+%>
 <aside class="menu">
+	<!-- Overview & Feedback (always visible) -->
 	<ul class="menu-list">
 		<li>
-            <% if (currentPage === "/dashboard/maintainer/maintainer") { %>
-			<a class="is-active" href="#">Overview</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/maintainer">Overview</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/feedback") { %>
-			<a class="is-active" href="#">
-				<span class="icon is-small"><i class="fa fa-comments"></i></span>
-				Feedback
-			</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/feedback">
-				<span class="icon is-small"><i class="fa fa-comments"></i></span>
-				Feedback
-			</a>
-            <% } %>
+			<%- menuItem('maintainer', 'Overview') %>
+			<%- menuItem('feedback', 'Feedback', 'fa fa-comments') %>
 		</li>
 	</ul>
-	<p class="menu-label">
-		<span class="icon is-small">
-            <i class="fa fa-server"></i>
-        </span>
-		Servers
-	</p>
-	<ul class="menu-list">
-		<li>
-            <% if (currentPage === "/dashboard/maintainer/servers/server-list") { %>
-			<a class="is-active" href="#">Server List</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/servers/server-list">Server List</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/servers/big-message") { %>
-			<a class="is-active" href="#">BigMessage</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/servers/big-message">BigMessage</a>
-            <% } %>
-		</li>
-	</ul>
+
+	<!-- Servers Section -->
+	<div class="menu-section<%= isInSection(serversPaths) ? ' has-active' : '' %>" data-section="servers">
+		<div class="menu-section-header" onclick="toggleMenuSection('servers')">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="fa fa-server"></i></span>
+				<span>Servers</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<%- menuItem('servers/server-list', 'Server List') %>
+					<%- menuItem('servers/big-message', 'BigMessage') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
 	<% if (accessPrivileges.includes("administration")) { %>
-	<p class="menu-label">
-        <span class="icon is-small">
-            <i class="fa fa-cogs"></i>
-        </span>
-		Global Options
-	</p>
-	<ul class="menu-list">
-		<li>
-            <% if (currentPage === "/dashboard/maintainer/global-options/blocklist") { %>
-			<a class="is-active" href="#">Blocklist</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/global-options/blocklist">Blocklist</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/global-options/bot-user") { %>
-			<a class="is-active" href="#">Bot User</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/global-options/bot-user">Bot User</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/global-options/homepage") { %>
-			<a class="is-active" href="#">Homepage</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/global-options/homepage">Homepage</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/global-options/wiki-contributors") { %>
-			<a class="is-active" href="#">Wiki Contributors</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/global-options/wiki-contributors">Wiki Contributors</a>
-            <% } %>
-            <% if (isSudoMaintainer) { %>
-                <% if (currentPage === "/dashboard/maintainer/global-options/donations") { %>
-                <a class="is-active" href="#">Donations</a>
-                <% } else { %>
-                <a href="/dashboard/maintainer/global-options/donations">Donations</a>
-                <% } %>
-                <% if (currentPage === "/dashboard/maintainer/global-options/vote-sites") { %>
-                <a class="is-active" href="#">Vote Sites</a>
-                <% } else { %>
-                <a href="/dashboard/maintainer/global-options/vote-sites">Vote Sites</a>
-                <% } %>
-                <% if (currentPage === "/dashboard/maintainer/global-options/bot-lists") { %>
-                <a class="is-active" href="#">Bot List APIs</a>
-                <% } else { %>
-                <a href="/dashboard/maintainer/global-options/bot-lists">Bot List APIs</a>
-                <% } %>
-            <% } %>
-		</li>
-	</ul>
-	<% } if (isSudoMaintainer && accessPrivileges.includes("administration")) { %>
-	<p class="menu-label">
-		<span class="icon is-small">
-			<i class="fa fa-id-card"></i>
-		</span>
-		Membership
-	</p>
-	<ul class="menu-list">
-		<li>
-			<% if (currentPage === "/dashboard/maintainer/membership/features") { %>
-			<a class="is-active" href="#">Features</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/membership/features">Features</a>
-			<% } %>
-			<% if (currentPage === "/dashboard/maintainer/membership/tiers") { %>
-			<a class="is-active" href="#">Tiers</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/membership/tiers">Tiers</a>
-			<% } %>
-			<% if (currentPage === "/dashboard/maintainer/membership/oauth") { %>
-			<a class="is-active" href="#">OAuth Providers</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/membership/oauth">OAuth Providers</a>
-			<% } %>
-			<% if (currentPage === "/dashboard/maintainer/membership/payments") { %>
-			<a class="is-active" href="#">Payment Providers</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/membership/payments">Payment Providers</a>
-			<% } %>
-			<% if (currentPage === "/dashboard/maintainer/membership/servers") { %>
-			<a class="is-active" href="#">Server Management</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/membership/servers">Server Management</a>
-			<% } %>
-		</li>
-	</ul>
-	<% } if (accessPrivileges.includes("management")) { %>
-	<p class="menu-label">
-        <span class="icon is-small">
-            <i class="fa fa-wrench"></i>
-        </span>
-		Management
-	</p>
-	<ul class="menu-list">
-		<li>
-            <% if (currentPage === "/dashboard/maintainer/management/maintainers") { %>
-			<a class="is-active" href="#">Maintainers</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/management/maintainers">Maintainers</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/management/shards") { %>
-			<a class="is-active" href="#">Shards</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/management/shards">Shards</a>
-            <% } %>
-			<% if (currentPage === "/dashboard/maintainer/management/injection") { %>
-			<a class="is-active" href="#">Script Injection</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/management/injection">Script Injection</a>
-			<% } %>
-            <% if (currentPage === "/dashboard/maintainer/management/version") { %>
-			<a class="is-active" href="#">Skynet Version</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/management/version">Skynet Version</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/management/eval") { %>
-			<a class="is-active" href="#">Evaluate</a>
-            <% } else if (accessPrivileges.includes("eval")) { %>
-			<a href="/dashboard/maintainer/management/eval">Evaluate</a>
-            <% } %>
-            <% if (currentPage === "/dashboard/maintainer/management/logs") { %>
-			<a class="is-active" href="#">Logs</a>
-            <% } else { %>
-			<a href="/dashboard/maintainer/management/logs">Logs</a>
-            <% } %>
-		</li>
-	</ul>
-	<p class="menu-label">
-		<span class="icon is-small">
-			<i class="fa fa-cloud"></i>
-		</span>
-		Infrastructure
-	</p>
-	<ul class="menu-list">
-		<li>
-			<% if (currentPage === "/dashboard/maintainer/infrastructure/cloudflare") { %>
-			<a class="is-active" href="#">Cloudflare</a>
-			<% } else { %>
-			<a href="/dashboard/maintainer/infrastructure/cloudflare">Cloudflare</a>
-			<% } %>
-		</li>
-	</ul>
+	<!-- Global Options Section -->
+	<div class="menu-section<%= isInSection(globalPaths) ? ' has-active' : '' %>" data-section="global">
+		<div class="menu-section-header" onclick="toggleMenuSection('global')">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="fa fa-cogs"></i></span>
+				<span>Global Options</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<%- menuItem('global-options/blocklist', 'Blocklist') %>
+					<%- menuItem('global-options/bot-user', 'Bot User') %>
+					<%- menuItem('global-options/homepage', 'Homepage') %>
+					<%- menuItem('global-options/wiki-contributors', 'Wiki Contributors') %>
+					<% if (isSudoMaintainer) { %>
+					<%- menuItem('global-options/donations', 'Donations') %>
+					<%- menuItem('global-options/vote-sites', 'Vote Sites') %>
+					<%- menuItem('global-options/bot-lists', 'Bot List APIs') %>
+					<% } %>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<% } %>
+
+	<% if (isSudoMaintainer && accessPrivileges.includes("administration")) { %>
+	<!-- Membership Section -->
+	<div class="menu-section<%= isInSection(membershipPaths) ? ' has-active' : '' %>" data-section="membership">
+		<div class="menu-section-header" onclick="toggleMenuSection('membership')">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="fa fa-id-card"></i></span>
+				<span>Membership</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<%- menuItem('membership/features', 'Features') %>
+					<%- menuItem('membership/tiers', 'Tiers') %>
+					<%- menuItem('membership/oauth', 'OAuth Providers') %>
+					<%- menuItem('membership/payments', 'Payment Providers') %>
+					<%- menuItem('membership/servers', 'Server Management') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<% } %>
+
+	<% if (accessPrivileges.includes("management")) { %>
+	<!-- Management Section -->
+	<div class="menu-section<%= isInSection(managementPaths) ? ' has-active' : '' %>" data-section="management">
+		<div class="menu-section-header" onclick="toggleMenuSection('management')">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="fa fa-wrench"></i></span>
+				<span>Management</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<%- menuItem('management/maintainers', 'Maintainers') %>
+					<%- menuItem('management/shards', 'Shards') %>
+					<%- menuItem('management/injection', 'Script Injection') %>
+					<%- menuItem('management/version', 'Skynet Version') %>
+					<% if (accessPrivileges.includes("eval")) { %>
+					<%- menuItem('management/eval', 'Evaluate') %>
+					<% } %>
+					<%- menuItem('management/logs', 'Logs') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Infrastructure Section -->
+	<div class="menu-section<%= isInSection(infraPaths) ? ' has-active' : '' %>" data-section="infra">
+		<div class="menu-section-header" onclick="toggleMenuSection('infra')">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="fa fa-cloud"></i></span>
+				<span>Infrastructure</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<%- menuItem('infrastructure/cloudflare', 'Cloudflare') %>
+				</li>
+			</ul>
+		</div>
+	</div>
 	<% } %>
 </aside>
+
+<script>
+// Menu section collapse/expand functionality
+function toggleMenuSection(sectionId) {
+	const section = document.querySelector(`.menu-section[data-section="${sectionId}"]`);
+	if (!section) return;
+	
+	section.classList.toggle('collapsed');
+	saveMenuState();
+}
+
+function saveMenuState() {
+	const sections = document.querySelectorAll('.menu-section');
+	const state = {};
+	sections.forEach(section => {
+		const id = section.dataset.section;
+		state[id] = section.classList.contains('collapsed');
+	});
+	localStorage.setItem('maintainerMenuState', JSON.stringify(state));
+}
+
+function loadMenuState() {
+	const saved = localStorage.getItem('maintainerMenuState');
+	if (!saved) {
+		// Default: collapse sections without active items
+		document.querySelectorAll('.menu-section:not(.has-active)').forEach(section => {
+			section.classList.add('collapsed');
+		});
+		return;
+	}
+	
+	try {
+		const state = JSON.parse(saved);
+		document.querySelectorAll('.menu-section').forEach(section => {
+			const id = section.dataset.section;
+			// Always expand section with active item, otherwise use saved state
+			if (section.classList.contains('has-active')) {
+				section.classList.remove('collapsed');
+			} else if (state[id]) {
+				section.classList.add('collapsed');
+			}
+		});
+	} catch (e) {
+		console.error('Failed to load menu state:', e);
+	}
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', loadMenuState);
+</script>

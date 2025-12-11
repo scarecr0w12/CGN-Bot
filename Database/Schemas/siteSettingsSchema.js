@@ -232,6 +232,45 @@ module.exports = new Schema({
 				default: 365, // Maximum days per redemption
 			},
 		}),
+		// Point purchase settings (buy points with money)
+		purchase: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			min_purchase_amount: {
+				type: Number,
+				default: 5, // Minimum $5
+			},
+			max_purchase_amount: {
+				type: Number,
+				default: 100, // Maximum $100
+			},
+			// Point packages for quick purchase
+			packages: [new Schema({
+				_id: {
+					type: String,
+					required: true,
+				},
+				name: String,
+				points: {
+					type: Number,
+					required: true,
+				},
+				price: {
+					type: Number,
+					required: true,
+				},
+				bonus_points: {
+					type: Number,
+					default: 0,
+				},
+				is_featured: {
+					type: Boolean,
+					default: false,
+				},
+			})],
+		}),
 	}),
 
 	// Payment Provider Configuration
