@@ -18,6 +18,9 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
 	setupConsolePage(router, "/global-options/vote-sites", "administration", [], controllers.console.options.voteSites);
 	setupConsolePage(router, "/global-options/bot-lists", "administration", [], controllers.console.options.botLists);
+	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI,
+		(req, res, next) => { req.perm = "administration"; next(); },
+		mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
 
 	// Membership System (Sudo/Host only)
 	setupConsolePage(router, "/membership/features", "administration", [], controllers.console.membership.features);

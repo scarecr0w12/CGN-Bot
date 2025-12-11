@@ -1,0 +1,81 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const patterns = [
+	{ seq: [2, 4, 6, 8], next: 10, hint: 'Even numbers' },
+	{ seq: [1, 4, 9, 16], next: 25, hint: 'Perfect squares' },
+	{ seq: [1, 1, 2, 3, 5], next: 8, hint: 'Fibonacci' },
+	{ seq: [3, 6, 12, 24], next: 48, hint: 'Doubling' },
+	{ seq: [1, 3, 6, 10], next: 15, hint: 'Triangle numbers' },
+	{ seq: [2, 3, 5, 7, 11], next: 13, hint: 'Prime numbers' },
+	{ seq: [1, 8, 27, 64], next: 125, hint: 'Perfect cubes' },
+	{ seq: [100, 81, 64, 49], next: 36, hint: 'Descending squares' },
+];
+
+const emojiPatterns = [
+	{ seq: ['🔴', '🟠', '🟡', '🟢'], next: '🔵', hint: 'Rainbow order' },
+	{ seq: ['🌑', '🌒', '🌓', '🌔'], next: '🌕', hint: 'Moon phases' },
+	{ seq: ['♠️', '♥️', '♦️'], next: '♣️', hint: 'Card suits' },
+];
+
+const stateKey = 'pattern_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim();
+
+if (!game || guess === 'new') {
+	const useEmoji = utils.random.int(0, 2) === 0;
+	const pattern = useEmoji ? utils.random.pick(emojiPatterns) : utils.random.pick(patterns);
+	
+	game = { pattern, isEmoji: useEmoji, attempts: 0 };
+	extension.storage.write(stateKey, game);
+	
+	const seqStr = game.pattern.seq.join(useEmoji ? ' ' : ', ');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔢 Pattern Puzzle',
+			description: '**What comes next?**\n\n' + seqStr + ', **?**',
+			color: embed.colors.BLUE,
+			footer: { text: 'Type: pattern <answer> | pattern hint' },
+		})]
+	});
+	return;
+}
+
+if (guess === 'hint') {
+	message.reply('💡 Hint: ' + game.pattern.hint);
+	return;
+}
+
+if (!guess) {
+	const seqStr = game.pattern.seq.join(game.isEmoji ? ' ' : ', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '🔢 Current Pattern',
+			description: seqStr + ', **?**\nAttempts: ' + game.attempts,
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+game.attempts++;
+const answer = game.isEmoji ? guess : parseInt(guess);
+const correct = String(answer) === String(game.pattern.next);
+
+if (correct) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Correct!',
+			description: 'The answer was **' + game.pattern.next + '**!\n(' + game.pattern.hint + ')\n\nSolved in ' + game.attempts + ' ' + utils.format.pluralize(game.attempts, 'attempt') + '!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	extension.storage.write(stateKey, game);
+	message.reply('❌ Not quite! Try again.');
+}

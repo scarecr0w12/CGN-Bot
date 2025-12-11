@@ -3,145 +3,167 @@
 This document contains all researched extension ideas for the Discord bot.
 Organized by category with command names and descriptions.
 
+## Legend
+
+- ✅ SEEDED - Extension exists and is seeded
+- ❌ BUILT-IN - Duplicates a built-in command (do not implement as extension)
+- ❌ REMOVED - Previously removed for duplicating built-in features
+- (no mark) - Idea for future implementation
+
 ---
 
 ## 🎮 GAMES - Mini Games & Fun
 
 ### Card Games
+
 | Command | Description |
 |---------|-------------|
-| `blackjack` | Classic 21 card game against the bot |
-| `poker` | Texas Hold'em poker with betting |
-| `uno` | UNO card game with multiple players |
-| `war` | Simple War card game |
-| `highlow` | Guess if next card is higher or lower |
+| `blackjack` | Classic 21 card game against the bot ✅ SEEDED |
+| `poker` | Texas Hold'em poker with betting ✅ SEEDED |
+| `uno` | UNO card game with multiple players ✅ SEEDED |
+| `war` | Simple War card game ✅ SEEDED |
+| `highlow` | Guess if next card is higher or lower ✅ SEEDED |
 
 ### Board Games
+
 | Command | Description |
 |---------|-------------|
-| `chess` | Play chess against another user or bot |
-| `checkers` | Classic checkers game |
-| `tictactoe` | 3x3 tic-tac-toe with buttons |
+| `chess` | Play chess against another user or bot ✅ SEEDED |
+| `checkers` | Classic checkers game ✅ SEEDED |
+| `tictactoe` | 3x3 tic-tac-toe with buttons ✅ SEEDED |
 | `connect4` | Drop pieces to get 4 in a row ✅ SEEDED |
 | `battleship` | Naval combat guessing game |
 | `minesweeper` | Generate minesweeper puzzles |
 
 ### Word Games
+
 | Command | Description |
 |---------|-------------|
-| `hangman` | Classic word guessing with ASCII art |
-| `scramble` | Unscramble words fastest |
-| `wordchain` | Each word starts with last letter |
-| `anagram` | Find words from given letters |
+| `hangman` | Classic word guessing with ASCII art ✅ SEEDED |
+| `scramble` | Unscramble words fastest ✅ SEEDED |
+| `wordchain` | Each word starts with last letter ✅ SEEDED |
+| `anagram` | Find words from given letters ✅ SEEDED |
 | `ghost` | Add letters without completing words |
-| `wordle` | Daily word guessing puzzle |
+| `wordle` | Daily word guessing puzzle ✅ SEEDED |
 | `acronym` | Create funny acronym expansions |
 | `reversetype` | Type words backwards fastest |
 
 ### Trivia & Quiz
+
 | Command | Description |
 |---------|-------------|
-| `trivia` | Multi-category trivia with leaderboards |
-| `musicquiz` | Guess songs from audio clips |
-| `flagquiz` | Identify country flags |
+| `trivia` | Multi-category trivia with leaderboards ❌ BUILT-IN |
+| `musicquiz` | Guess songs from lyrics ✅ SEEDED |
+| `flagquiz` | Identify country flags ✅ SEEDED |
 | `moviequiz` | Guess movies from descriptions |
 | `emojiquiz` | Guess words from emoji combos |
 | `quotequiz` | Identify who said famous quotes |
 
 ### Reaction Games
+
 | Command | Description |
 |---------|-------------|
-| `reaction` | Test reaction time in milliseconds |
-| `typerace` | Speed typing competition with WPM |
+| `reaction` | Test reaction time in milliseconds ✅ SEEDED |
+| `typerace` | Speed typing competition with WPM ✅ SEEDED |
 | `emojisimon` | Repeat emoji sequences (Simon Says) |
 | `buttonrush` | Click button before it disappears |
 | `dodge` | React with correct emoji quickly |
 | `mathsnap` | React only to true equations |
 
 ### Social Deduction
+
 | Command | Description |
 |---------|-------------|
-| `mafia` | Classic Mafia/Werewolf game |
-| `spyfall` | Find the spy who doesn't know location |
-| `traitor` | Vote out the traitor among crew |
+| `mafia` | Classic Mafia/Werewolf game ✅ SEEDED |
+| `spyfall` | Find the spy who doesn't know location ✅ SEEDED |
+| `traitor` | Vote out the traitor among crew ✅ SEEDED |
 | `liar` | Detect who has different info |
 | `secretroles` | Hidden role games with win conditions |
 | `alibi` | Murder mystery with alibis |
 
 ### Puzzle Games
+
 | Command | Description |
 |---------|-------------|
-| `riddle` | Solve riddles for points |
-| `mastermind` | Crack the color code |
-| `pattern` | Complete number/emoji sequences |
-| `cipher` | Decode encrypted messages |
-| `escaperoom` | Text-based escape puzzles |
-| `maze` | Navigate text mazes |
+| `riddle` | Solve riddles for points ✅ SEEDED |
+| `mastermind` | Crack the color code ✅ SEEDED |
+| `pattern` | Complete number/emoji sequences ✅ SEEDED |
+| `cipher` | Decode encrypted messages ✅ SEEDED |
+| `escaperoom` | Text-based escape puzzles ✅ SEEDED |
+| `maze` | Navigate text mazes ✅ SEEDED |
 | `nonogram` | Picross/nonogram puzzles |
 | `logicgrid` | Logic deduction puzzles |
 
 ### Party Games
+
 | Command | Description |
 |---------|-------------|
 | `truthordare` | Truth or Dare prompts ✅ SEEDED |
 | `wouldyourather` | Would You Rather questions ✅ SEEDED |
 | `neverhaveiever` | Never Have I Ever game ✅ SEEDED |
 | `thisorthat` | This or That choices ✅ SEEDED |
-| `icebreaker` | Random conversation starters |
-| `hottake` | Controversial discussion topics |
+| `icebreaker` | Random conversation starters ✅ SEEDED |
+| `hottake` | Controversial discussion topics ✅ SEEDED |
 | `debateclash` | Assign pro/con for debates |
-| `captionbattle` | Caption contest for images |
+| `captionbattle` | Caption contest for images ✅ SEEDED |
 
 ### RPG & Adventure
+
 | Command | Description |
 |---------|-------------|
-| `duel` | Turn-based PvP combat |
-| `bossraid` | Server-wide boss battles |
-| `adventure` | Text-based adventure choices |
-| `dungeon` | Dungeon crawler mini-game |
-| `pet` | Virtual pet adoption/training |
-| `towerclimb` | Co-op floor challenges |
+| `duel` | Turn-based PvP combat ✅ SEEDED |
+| `bossraid` | Server-wide boss battles ✅ SEEDED |
+| `adventure` | Text-based adventure choices ✅ SEEDED |
+| `dungeon` | Dungeon crawler mini-game ✅ SEEDED |
+| `hunt` | Hunting mini-game ✅ SEEDED |
+| `pet` | Virtual pet adoption/training ✅ SEEDED |
+| `towerclimb` | Co-op floor challenges ✅ SEEDED |
 
 ### Casino & Gambling
+
 | Command | Description |
 |---------|-------------|
-| `slots` | Slot machine with emojis |
-| `roulette` | Roulette wheel betting |
-| `crash` | Multiplier crash game |
+| `slots` | Slot machine with emojis ✅ SEEDED |
+| `roulette` | Roulette wheel betting ✅ SEEDED |
+| `crash` | Multiplier crash game ✅ SEEDED |
 | `coinflip` | Bet on coin flip ✅ SEEDED |
 | `diceroll` | Dice rolling with bets ✅ SEEDED |
+| `fish` | Go fishing and catch various fish ✅ SEEDED |
 
 ---
 
 ## 💰 ECONOMY & PROGRESSION
 
 ### Currency System
+
 | Command | Description |
 |---------|-------------|
-| `balance` | Check your balance |
-| `daily` | Claim daily rewards with streaks |
-| `work` | Work for random coins |
-| `crime` | Risk crime for bigger rewards |
-| `rob` | Attempt to rob other users |
-| `deposit` | Deposit to bank |
-| `withdraw` | Withdraw from bank |
-| `transfer` | Send money to others |
+| `balance` | Check your balance ✅ SEEDED |
+| `daily` | Claim daily rewards with streaks ✅ SEEDED |
+| `work` | Work for random coins ✅ SEEDED |
+| `crime` | Risk crime for bigger rewards ✅ SEEDED |
+| `rob` | Attempt to rob other users ✅ SEEDED |
+| `deposit` | Deposit to bank ✅ SEEDED |
+| `withdraw` | Withdraw from bank ✅ SEEDED |
+| `transfer` | Send money to others ✅ SEEDED |
 
 ### Shop & Items
+
 | Command | Description |
 |---------|-------------|
-| `shop` | Browse available items |
+| `shop` | Browse available items ✅ SEEDED |
 | `buy` | Purchase items |
 | `sell` | Sell items back |
-| `inventory` | View your items |
+| `inventory` | View your items ✅ SEEDED |
 | `use` | Use consumable items |
 | `gift` | Gift items to others |
 
 ### Progression
+
 | Command | Description |
 |---------|-------------|
-| `rank` | View your XP and level |
-| `leaderboard` | Server XP rankings |
+| `rank` | View your XP and level ❌ BUILT-IN (ranks/points) |
+| `leaderboard` | Server XP rankings ❌ BUILT-IN (ranks/messages) |
 | `quest` | Daily/weekly task system |
 | `achievements` | View unlockable achievements |
 | `badges` | Collectible badge system |
@@ -149,13 +171,14 @@ Organized by category with command names and descriptions.
 | `season` | Seasonal progression track |
 
 ### Advanced Economy
+
 | Command | Description |
 |---------|-------------|
 | `craft` | Combine items into better ones |
 | `upgrade` | Upgrade items/stats |
-| `gacha` | Lootbox/gacha system |
+| `gacha` | Lootbox/gacha system ✅ SEEDED |
 | `trade` | Trade items with others |
-| `auction` | Auction items to highest bidder |
+| `auction` | Auction items to highest bidder ✅ SEEDED |
 | `stocks` | Virtual stock market |
 
 ---
@@ -163,53 +186,58 @@ Organized by category with command names and descriptions.
 ## 🛠️ UTILITIES
 
 ### Time & Reminders
+
 | Command | Description |
 |---------|-------------|
-| `remind` | Set personal reminders |
-| `timer` | Countdown timer |
+| `remind` | Set personal reminders ❌ BUILT-IN (remindme) |
+| `timer` | Countdown timer ✅ SEEDED |
 | `stopwatch` | Stopwatch functionality |
-| `timezone` | Convert between timezones |
-| `countdown` | Countdown to events ✅ SEEDED |
+| `timezone` | Convert between timezones ❌ BUILT-IN (time) |
+| `countdown` | Countdown to events ❌ BUILT-IN |
 
 ### Calculators & Converters
+
 | Command | Description |
 |---------|-------------|
-| `calc` | Math calculator |
-| `convert` | Unit converter |
-| `currency` | Currency conversion |
-| `color` | Color code converter |
+| `calc` | Math calculator ❌ BUILT-IN |
+| `convert` | Unit converter ❌ BUILT-IN |
+| `currency` | Currency conversion ❌ BUILT-IN (convert) |
+| `color` | Color code converter ✅ SEEDED |
 | `base` | Number base converter |
 
 ### Generators
+
 | Command | Description |
 |---------|-------------|
 | `password` | Generate secure passwords |
 | `uuid` | Generate UUIDs |
 | `randomnum` | Generate random numbers ✅ SEEDED |
-| `roll` | Dice notation roller |
-| `pick` | Random picker from list |
+| `roll` | Dice notation roller ❌ BUILT-IN |
+| `pick` | Random picker from list ❌ BUILT-IN (choose) |
 | `shuffle` | Shuffle a list |
 | `teampicker` | Random team assignment ✅ SEEDED |
 
 ### Lookup & Info
+
 | Command | Description |
 |---------|-------------|
-| `define` | Dictionary definitions |
-| `urban` | Urban Dictionary lookup |
-| `wiki` | Wikipedia summaries |
-| `weather` | Weather information |
+| `define` | Dictionary definitions ❌ BUILT-IN (urban) |
+| `urban` | Urban Dictionary lookup ❌ BUILT-IN |
+| `wiki` | Wikipedia summaries ❌ BUILT-IN |
+| `weather` | Weather information ❌ BUILT-IN |
 | `crypto` | Cryptocurrency prices |
 | `stock` | Stock market info |
-| `movie` | Movie/TV information |
+| `movie` | Movie/TV information ❌ BUILT-IN (imdb) |
 | `lyrics` | Song lyrics lookup |
 
 ### Productivity
+
 | Command | Description |
 |---------|-------------|
-| `todo` | Personal todo lists |
+| `todo` | Personal todo lists ❌ BUILT-IN (list) |
 | `notes` | Save personal notes |
 | `pomodoro` | Study/focus timer |
-| `afk` | Set AFK status |
+| `afk` | Set AFK status ❌ BUILT-IN |
 | `snooze` | Temporary DND mode |
 
 ---
@@ -217,21 +245,23 @@ Organized by category with command names and descriptions.
 ## 📊 INFORMATION & STATS
 
 ### User Stats
+
 | Command | Description |
 |---------|-------------|
-| `profile` | View user profile card |
+| `profile` | View user profile card ❌ BUILT-IN |
 | `userstats` | User activity statistics ✅ SEEDED |
-| `serverstats` | Server statistics |
+| `serverstats` | Server statistics ❌ BUILT-IN (info) |
 | `voicetime` | Voice channel time tracking |
-| `messagestats` | Message statistics |
+| `messagestats` | Message statistics ❌ BUILT-IN (messages) |
 
 ### Server Info
+
 | Command | Description |
 |---------|-------------|
-| `serverinfo` | Server information |
-| `roleinfo` | Role details |
+| `serverinfo` | Server information ❌ BUILT-IN (info) |
+| `roleinfo` | Role details ❌ BUILT-IN |
 | `channelinfo` | Channel details |
-| `emojilist` | Server emoji list |
+| `emojilist` | Server emoji list ❌ BUILT-IN (emotes) |
 | `boosters` | Server boost info |
 
 ---
@@ -239,9 +269,10 @@ Organized by category with command names and descriptions.
 ## 🎨 IMAGE & MEDIA
 
 ### Avatar Manipulation
+
 | Command | Description |
 |---------|-------------|
-| `avatar` | Get user avatar |
+| `avatar` | Get user avatar ❌ BUILT-IN |
 | `ship` | Ship two users with heart frame |
 | `wanted` | Wanted poster with avatar |
 | `triggered` | TRIGGERED effect |
@@ -256,6 +287,7 @@ Organized by category with command names and descriptions.
 | `facepalm` | Facepalm overlay |
 
 ### Meme Generation
+
 | Command | Description |
 |---------|-------------|
 | `meme` | Fetch random memes |
@@ -266,6 +298,7 @@ Organized by category with command names and descriptions.
 | `achievement` | Minecraft achievement |
 
 ### Creative
+
 | Command | Description |
 |---------|-------------|
 | `ascii` | Convert image to ASCII |
@@ -280,28 +313,30 @@ Organized by category with command names and descriptions.
 ## 🎭 SOCIAL & FUN
 
 ### Social Features
+
 | Command | Description |
 |---------|-------------|
-| `hug` | Hug another user |
-| `pat` | Pat another user |
-| `slap` | Slap another user |
+| `hug` | Hug another user ❌ BUILT-IN |
+| `pat` | Pat another user ❌ BUILT-IN |
+| `slap` | Slap another user ❌ BUILT-IN |
 | `kiss` | Kiss another user |
 | `poke` | Poke another user |
 | `cuddle` | Cuddle another user |
 | `highfive` | High five another user |
 
 ### Fun Commands
+
 | Command | Description |
 |---------|-------------|
-| `8ball` | Magic 8 ball answers ✅ SEEDED |
-| `fortune` | Fortune cookie |
+| `8ball` | Magic 8 ball answers ❌ BUILT-IN |
+| `fortune` | Fortune cookie ❌ BUILT-IN |
 | `horoscope` | Daily horoscope |
 | `tarot` | Tarot card reading |
 | `rps` | Rock Paper Scissors ✅ SEEDED |
 | `rate` | Rate something 0-10 |
 | `roast` | Playful roasts |
 | `compliment` | Random compliments |
-| `joke` | Random jokes |
+| `joke` | Random jokes ❌ BUILT-IN |
 | `fact` | Random facts ✅ SEEDED |
 | `dadjoke` | Dad jokes |
 | `pickup` | Pickup lines |
@@ -311,6 +346,7 @@ Organized by category with command names and descriptions.
 | `conspiracy` | Funny conspiracy theories |
 
 ### Anonymous Systems
+
 | Command | Description |
 |---------|-------------|
 | `confess` | Anonymous confessions |
@@ -319,6 +355,7 @@ Organized by category with command names and descriptions.
 | `report` | Anonymous reports |
 
 ### Mood & Tracking
+
 | Command | Description |
 |---------|-------------|
 | `mood` | Track daily mood ✅ SEEDED |
@@ -331,20 +368,22 @@ Organized by category with command names and descriptions.
 ## 🔧 SERVER MANAGEMENT
 
 ### Moderation Tools
+
 | Command | Description |
 |---------|-------------|
-| `warn` | Warn users |
-| `mute` | Mute users |
-| `kick` | Kick users |
-| `ban` | Ban users |
-| `softban` | Softban (ban+unban) |
-| `tempban` | Temporary ban |
-| `purge` | Bulk delete messages |
-| `slowmode` | Set channel slowmode |
-| `lock` | Lock channel |
-| `unlock` | Unlock channel |
+| `warn` | Warn users ❌ BUILT-IN (strike) |
+| `mute` | Mute users ❌ BUILT-IN |
+| `kick` | Kick users ❌ BUILT-IN |
+| `ban` | Ban users ❌ BUILT-IN |
+| `softban` | Softban (ban+unban) ❌ BUILT-IN |
+| `tempban` | Temporary ban ❌ BUILT-IN |
+| `purge` | Bulk delete messages ❌ BUILT-IN (nuke) |
+| `slowmode` | Set channel slowmode ❌ BUILT-IN |
+| `lock` | Lock channel ❌ BUILT-IN |
+| `unlock` | Unlock channel ❌ BUILT-IN |
 
 ### Anti-Raid
+
 | Command | Description |
 |---------|-------------|
 | `raidshield` | Enable raid protection |
@@ -353,6 +392,7 @@ Organized by category with command names and descriptions.
 | `accountage` | Require minimum account age |
 
 ### Verification
+
 | Command | Description |
 |---------|-------------|
 | `verify` | Verification system |
@@ -360,36 +400,40 @@ Organized by category with command names and descriptions.
 | `quizverify` | Quiz-based verification |
 
 ### Logging
+
 | Command | Description |
 |---------|-------------|
-| `modlog` | Moderation log |
-| `auditlog` | Audit log viewer |
-| `joinlog` | Member join logging |
-| `messagelog` | Message edit/delete logging |
+| `modlog` | Moderation log ❌ BUILT-IN |
+| `auditlog` | Audit log viewer ❌ BUILT-IN (extended_logs) |
+| `joinlog` | Member join logging ❌ BUILT-IN (extended_logs) |
+| `messagelog` | Message edit/delete logging ❌ BUILT-IN (extended_logs) |
 
 ---
 
 ## 📢 ANNOUNCEMENTS & EVENTS
 
 ### Welcome System
+
 | Command | Description |
 |---------|-------------|
-| `welcome` | Welcome message config |
-| `goodbye` | Leave message config |
+| `welcome` | Welcome message config ❌ REMOVED (duplicates built-in) |
+| `goodbye` | Leave message config ❌ REMOVED (duplicates built-in) |
 | `welcomeimage` | Welcome images |
-| `autorole` | Auto role assignment |
+| `autorole` | Auto role assignment ❌ REMOVED (duplicates tier-locked feature) |
 | `onboarding` | Interactive onboarding |
 
 ### Events
+
 | Command | Description |
 |---------|-------------|
 | `event` | Create server events |
-| `giveaway` | Giveaway system |
-| `poll` | Create polls |
+| `giveaway` | Giveaway system ❌ BUILT-IN |
+| `poll` | Create polls ❌ BUILT-IN |
 | `vote` | Voting system |
 | `raffle` | Raffle system |
 
 ### Scheduled Posts
+
 | Command | Description |
 |---------|-------------|
 | `schedule` | Schedule messages |
@@ -401,6 +445,7 @@ Organized by category with command names and descriptions.
 ## 🔗 INTEGRATIONS
 
 ### Social Media
+
 | Command | Description |
 |---------|-------------|
 | `twitter` | Twitter feed notifications |
@@ -410,6 +455,7 @@ Organized by category with command names and descriptions.
 | `instagram` | Instagram post notifications |
 
 ### Developer Tools
+
 | Command | Description |
 |---------|-------------|
 | `github` | GitHub notifications |
@@ -422,6 +468,7 @@ Organized by category with command names and descriptions.
 ## 📚 CREATIVE & ROLEPLAY
 
 ### Story Tools
+
 | Command | Description |
 |---------|-------------|
 | `storyseed` | Generate story prompts |
@@ -431,6 +478,7 @@ Organized by category with command names and descriptions.
 | `npc` | Generate NPC details |
 
 ### Name Generators
+
 | Command | Description |
 |---------|-------------|
 | `namegen` | Character name generator |
@@ -439,6 +487,7 @@ Organized by category with command names and descriptions.
 | `guildname` | Guild/clan name generator |
 
 ### Character Tools
+
 | Command | Description |
 |---------|-------------|
 | `character` | Character sheet creator |
@@ -451,6 +500,7 @@ Organized by category with command names and descriptions.
 ## 🎵 MUSIC & AUDIO
 
 ### Music Features
+
 | Command | Description |
 |---------|-------------|
 | `play` | Play music |
@@ -465,6 +515,7 @@ Organized by category with command names and descriptions.
 | `loop` | Loop song/queue |
 
 ### Soundboard
+
 | Command | Description |
 |---------|-------------|
 | `soundboard` | Play sound effects |
@@ -475,6 +526,7 @@ Organized by category with command names and descriptions.
 ## 🏆 COMPETITIONS & LEADERBOARDS
 
 ### Leaderboards
+
 | Command | Description |
 |---------|-------------|
 | `xpleaderboard` | XP rankings |
@@ -484,6 +536,7 @@ Organized by category with command names and descriptions.
 | `economyleaderboard` | Wealth rankings |
 
 ### Competitions
+
 | Command | Description |
 |---------|-------------|
 | `challenge` | Create challenges |
@@ -496,6 +549,7 @@ Organized by category with command names and descriptions.
 ## 📋 TICKETS & SUPPORT
 
 ### Ticket System
+
 | Command | Description |
 |---------|-------------|
 | `ticket` | Open support ticket |
@@ -509,9 +563,10 @@ Organized by category with command names and descriptions.
 ## ⭐ STARBOARD & HIGHLIGHTS
 
 ### Starboard
+
 | Command | Description |
 |---------|-------------|
-| `starboard` | Configure starboard |
+| `starboard` | Configure starboard ❌ BUILT-IN |
 | `star` | Manual star message |
 | `starstats` | Starboard statistics |
 | `multistar` | Multiple star thresholds |
@@ -521,6 +576,7 @@ Organized by category with command names and descriptions.
 ## 🎓 EDUCATIONAL
 
 ### Study Tools
+
 | Command | Description |
 |---------|-------------|
 | `flashcard` | Flashcard system |
@@ -529,58 +585,167 @@ Organized by category with command names and descriptions.
 | `formula` | Formula lookup |
 
 ### Language
+
 | Command | Description |
 |---------|-------------|
-| `translate` | Translate text |
+| `translate` | Translate text ❌ BUILT-IN |
 | `conjugate` | Verb conjugation |
 | `wordofday` | Word of the day |
 
 ---
 
-## CURRENTLY SEEDED EXTENSIONS (16)
+## CURRENTLY SEEDED EXTENSIONS
 
-1. ✅ Coin Flip
-2. ✅ 8 Ball Advanced  
-3. ✅ Rock Paper Scissors
-4. ✅ Dice Roll
-5. ✅ Random Number
-6. ✅ Truth or Dare
-7. ✅ Would You Rather
-8. ✅ Never Have I Ever
-9. ✅ This or That
-10. ✅ Fact Generator
-11. ✅ Quote of the Day
-12. ✅ Team Picker
-13. ✅ Connect 4
-14. ✅ Countdown Timer
-15. ✅ Mood Tracker
-16. ✅ User Stats
+> **Note:** Some items previously listed as seeded extensions are now marked as duplicates of built-in commands.
+> Extensions should provide functionality NOT available in built-in commands.
+
+### Commands (Unique - Not duplicating built-in)
+
+1. ✅ Connect 4
+2. ✅ Rock Paper Scissors
+3. ✅ Truth or Dare
+4. ✅ Would You Rather
+5. ✅ Never Have I Ever
+6. ✅ This or That
+7. ✅ 8 Ball Advanced (key: 8ball2 - different from built-in 8ball)
+8. ✅ Coin Flip
+9. ❌ ~~Dice Roll~~ (built-in: roll)
+10. ✅ Random Number
+11. ✅ Team Picker
+12. ❌ ~~Countdown Timer~~ (built-in: countdown)
+13. ✅ User Stats
+14. ✅ Quote of the Day
+15. ✅ Fact Generator
+16. ✅ Mood Tracker
+17. ✅ Akinator
+18. ❌ ~~Trivia~~ (built-in: trivia)
+19. ✅ Hangman
+20. ✅ Blackjack
+21. ✅ Slots
+22. ✅ Daily Reward (economy-integrated)
+23. ❌ ~~Reminder~~ (built-in: remindme)
+24. ✅ Word Chain
+25. ✅ Type Race
+26. ✅ Reaction Test
+27. ✅ Scramble
+28. ✅ Riddle
+29. ❌ ~~Todo List~~ (built-in: list)
+30. ✅ Balance (economy-integrated)
+31. ✅ Work
+32. ❌ ~~Leaderboard~~ (built-in: ranks/messages)
+33. ✅ Pet
+34. ✅ Fish
+35. ✅ Hunt
+36. ✅ Rob
+37. ✅ Gamble (economy-integrated)
+38. ✅ Shop
+39. ✅ Inventory
+40. ❌ ~~Profile~~ (built-in: profile)
+41. ✅ Heist
+42. ❌ ~~Lottery~~ (built-in: lottery)
+43. ✅ Crime
+44. ✅ Give
+45. ❌ ~~Poll~~ (built-in: poll)
+46. ❌ ~~Emoji Info~~ (built-in: emoji)
+47. ✅ Color
+48. ✅ Timer
+49. ✅ Wordle
+50. ✅ Roulette
+51. ✅ Crash
+52. ✅ Mafia
+53. ✅ Adventure
+54. ✅ Dungeon
+55. ✅ Minesweeper
+56. ✅ Battleship
+57. ✅ Auction
+58. ✅ Deposit
+59. ✅ Withdraw
+60. ✅ Dice Duel
+61. ✅ UNO
+62. ✅ Chess (Puzzles)
+63. ✅ Story Chain
+64. ✅ Flashcards
+65. ✅ ASCII Art
+66. ✅ Highlow
+67. ✅ Anagram
+68. ✅ Mastermind
+69. ✅ Duel
+70. ✅ Gacha
+71. ✅ Escape Room
+72. ✅ Poker
+73. ✅ Boss Raid
+74. ✅ Spyfall
+75. ✅ Pattern
+76. ✅ Cipher
+77. ✅ Icebreaker
+78. ✅ War
+79. ✅ Checkers
+80. ✅ TicTacToe
+81. ✅ Music Quiz
+82. ✅ Flag Quiz
+83. ✅ Traitor
+84. ✅ Maze
+85. ✅ Tower Climb
+86. ✅ Hot Take
+87. ✅ Caption Battle
+
+### Unique Seeded Count: 74 (after removing built-in duplicates)
+
+### Events (0)
+
+*All event extensions removed - duplicated built-in features (status_messages, extended_logs, auto_roles, spam_filter)*
+
+### Keywords (4)
+
+1. ✅ Auto Reactions (nice, cool, awesome, etc.)
+2. ✅ Keyword Responder (help, support, etc.)
+3. ✅ Link Detector
+4. ✅ GG Responder
+
+### Timers (4)
+
+1. ✅ Daily Reminder (24h)
+2. ✅ Hourly Stats (1h)
+3. ✅ Bump Reminder (2h)
+4. ✅ Activity Check (30m)
 
 ---
 
 ## PRIORITY RECOMMENDATIONS FOR NEXT BATCH
 
 ### High Priority (Most Requested/Engaging)
-1. **Akinator** - Uses external API, very popular
-2. **Trivia** - Multi-category with leaderboards
-3. **Hangman** - Classic word game
-4. **Daily Rewards** - Economy foundation
-5. **Reminders** - High utility
-6. **Pet System** - Long-term engagement
+
+1. ~~**Wordle**~~ - ✅ SEEDED
+2. ~~**Roulette**~~ - ✅ SEEDED
+3. ~~**Crash**~~ - ✅ SEEDED
+4. ~~**Mafia**~~ - ✅ SEEDED
+5. ~~**Adventure**~~ - ✅ SEEDED
+6. ~~**Dungeon**~~ - ✅ SEEDED
 
 ### Medium Priority (Good Additions)
-7. **Blackjack** - Popular card game
-8. **Slots** - Casino game
-9. **Profile Cards** - User customization
-10. **Leaderboard** - Competition system
-11. **Giveaway** - Server engagement
-12. **Confession** - Anonymous system
 
-### Nice to Have
-13. **Word Chain** - Word game
-14. **Type Race** - Speed typing
-15. **Reaction Test** - Quick reflex game
-16. **Story Chain** - Creative collab
+7. ~~**UNO**~~ - ✅ SEEDED
+8. ~~**Chess**~~ - ✅ SEEDED
+9. ~~**Battleship**~~ - ✅ SEEDED
+10. ~~**Minesweeper**~~ - ✅ SEEDED
+11. ~~**Gacha/Lootbox**~~ - ✅ SEEDED
+12. ~~**Auction**~~ - ✅ SEEDED
+
+### Nice to Have (Next Batch)
+
+13. ~~**Story Chain**~~ - ✅ SEEDED
+14. ~~**Flashcards**~~ - ✅ SEEDED
+15. ~~**Translate**~~ - ❌ BUILT-IN
+16. ~~**ASCII Art**~~ - ✅ SEEDED
+17. ~~**Gacha/Lootbox**~~ - ✅ SEEDED
+18. ~~**Escape Room**~~ - ✅ SEEDED
+19. ~~**Poker**~~ - ✅ SEEDED
+20. ~~**Spyfall**~~ - ✅ SEEDED
+21. ~~**Boss Raid**~~ - ✅ SEEDED
+22. ~~**Pattern**~~ - ✅ SEEDED
+23. ~~**Cipher**~~ - ✅ SEEDED
+24. ~~**Icebreaker**~~ - ✅ SEEDED
+25. ~~**War**~~ - ✅ SEEDED
 
 ---
 
@@ -589,9 +754,10 @@ Organized by category with command names and descriptions.
 ## 🎌 ANIME & MANGA
 
 ### Anime Commands
+
 | Command | Description |
 |---------|-------------|
-| `animesearch` | Search anime by title with MAL/Anilist |
+| `animesearch` | Search anime by title with MAL/Anilist ❌ BUILT-IN (anime) |
 | `animerandom` | Get a random anime recommendation |
 | `animeseason` | Show seasonal anime list |
 | `animeprofile` | Show user's MAL/Anilist profile |
@@ -600,6 +766,7 @@ Organized by category with command names and descriptions.
 | `animeguess` | Guess anime from opening/screenshot |
 
 ### Manga Commands
+
 | Command | Description |
 |---------|-------------|
 | `mangasearch` | Search manga by title |
@@ -614,6 +781,7 @@ Organized by category with command names and descriptions.
 ## 🎮 GAMING INTEGRATIONS
 
 ### Minecraft
+
 | Command | Description |
 |---------|-------------|
 | `mcstatus` | Check Minecraft server status |
@@ -622,6 +790,7 @@ Organized by category with command names and descriptions.
 | `mcnamehistory` | Player name history |
 
 ### Valorant
+
 | Command | Description |
 |---------|-------------|
 | `valorantstats` | Player stats and rank |
@@ -629,6 +798,7 @@ Organized by category with command names and descriptions.
 | `valorantagent` | Agent statistics |
 
 ### League of Legends
+
 | Command | Description |
 |---------|-------------|
 | `lolsummoner` | Summoner profile |
@@ -637,6 +807,7 @@ Organized by category with command names and descriptions.
 | `lolmastery` | Champion mastery stats |
 
 ### Fortnite
+
 | Command | Description |
 |---------|-------------|
 | `fortnitestats` | Player statistics |
@@ -644,6 +815,7 @@ Organized by category with command names and descriptions.
 | `fortnitetrack` | Track player stats |
 
 ### General Gaming
+
 | Command | Description |
 |---------|-------------|
 | `steamprofile` | Steam profile info |
@@ -656,6 +828,7 @@ Organized by category with command names and descriptions.
 ## 💻 DEVELOPER TOOLS
 
 ### Code Tools
+
 | Command | Description |
 |---------|-------------|
 | `coderun` | Execute code in sandbox |
@@ -664,6 +837,7 @@ Organized by category with command names and descriptions.
 | `lint` | Run linter on code |
 
 ### Regex & JSON
+
 | Command | Description |
 |---------|-------------|
 | `regextest` | Test regex patterns |
@@ -673,6 +847,7 @@ Organized by category with command names and descriptions.
 | `jsonpath` | Query JSON with JSONPath |
 
 ### Utilities
+
 | Command | Description |
 |---------|-------------|
 | `http` | Make HTTP requests |
@@ -685,6 +860,7 @@ Organized by category with command names and descriptions.
 ## 🤖 AI FEATURES
 
 ### Chat & Text
+
 | Command | Description |
 |---------|-------------|
 | `aichat` | Chat with AI assistant |
@@ -694,6 +870,7 @@ Organized by category with command names and descriptions.
 | `aiexplain` | Explain code/concepts |
 
 ### Image Generation
+
 | Command | Description |
 |---------|-------------|
 | `aiimage` | Generate image from prompt |
@@ -705,6 +882,7 @@ Organized by category with command names and descriptions.
 ## 📝 TEXT MANIPULATION
 
 ### Fun Text
+
 | Command | Description |
 |---------|-------------|
 | `zalgo` | Glitchy Zalgo text |
@@ -723,6 +901,7 @@ Organized by category with command names and descriptions.
 ## 📊 ADVANCED ANALYTICS
 
 ### Server Stats
+
 | Command | Description |
 |---------|-------------|
 | `serverstats` | Server overview |
@@ -739,6 +918,7 @@ Organized by category with command names and descriptions.
 ## 🔔 NOTIFICATIONS & FEEDS
 
 ### Social Media
+
 | Command | Description |
 |---------|-------------|
 | `twitchnotify` | Twitch live notifications |
@@ -748,6 +928,7 @@ Organized by category with command names and descriptions.
 | `rssfeed` | Custom RSS feeds |
 
 ### Cross-posting
+
 | Command | Description |
 |---------|-------------|
 | `crosspost` | Mirror messages between channels |
@@ -759,6 +940,7 @@ Organized by category with command names and descriptions.
 ## 🎭 ROLE MANAGEMENT
 
 ### Reaction Roles
+
 | Command | Description |
 |---------|-------------|
 | `rolepanel` | Create role selection panel |
@@ -767,6 +949,7 @@ Organized by category with command names and descriptions.
 | `rolemode` | Single/multi select mode |
 
 ### Temporary Roles
+
 | Command | Description |
 |---------|-------------|
 | `temprole` | Give temporary role |
@@ -779,15 +962,17 @@ Organized by category with command names and descriptions.
 ## 🔊 VOICE FEATURES
 
 ### Temp Channels
+
 | Command | Description |
 |---------|-------------|
-| `vchub` | Set up temp voice hub |
+| `vchub` | Set up temp voice hub ❌ BUILT-IN (room) |
 | `vclock` | Lock temp channel |
 | `vcinvite` | Invite to locked channel |
 | `vctransfer` | Transfer ownership |
 | `vcsettings` | Temp channel settings |
 
 ### Voice Tracking
+
 | Command | Description |
 |---------|-------------|
 | `voicestats` | Voice activity stats |
@@ -800,6 +985,7 @@ Organized by category with command names and descriptions.
 ## 📜 LOGGING & AUDIT
 
 ### Logging
+
 | Command | Description |
 |---------|-------------|
 | `logsetup` | Configure logging |
@@ -810,6 +996,7 @@ Organized by category with command names and descriptions.
 | `logignore` | Ignore channels |
 
 ### Audit
+
 | Command | Description |
 |---------|-------------|
 | `audituser` | User action history |
@@ -821,6 +1008,7 @@ Organized by category with command names and descriptions.
 ## 🗳️ POLLS & VOTING
 
 ### Advanced Polls
+
 | Command | Description |
 |---------|-------------|
 | `pollcreate` | Create advanced poll |
@@ -836,9 +1024,10 @@ Organized by category with command names and descriptions.
 ## 💡 SUGGESTIONS & FEEDBACK
 
 ### Suggestion System
+
 | Command | Description |
 |---------|-------------|
-| `suggest` | Submit suggestion |
+| `suggest` | Submit suggestion ❌ BUILT-IN |
 | `suggestanon` | Anonymous suggestion |
 | `suggeststatus` | Update status |
 | `suggestlabel` | Add labels |
@@ -846,6 +1035,7 @@ Organized by category with command names and descriptions.
 | `suggestexport` | Export suggestions |
 
 ### Feedback
+
 | Command | Description |
 |---------|-------------|
 | `feedbackform` | Create feedback form |
@@ -857,15 +1047,17 @@ Organized by category with command names and descriptions.
 ## 😴 AFK & STATUS
 
 ### AFK System
+
 | Command | Description |
 |---------|-------------|
-| `afkset` | Set AFK status |
+| `afkset` | Set AFK status ❌ BUILT-IN (afk) |
 | `afkauto` | Auto-AFK on inactivity |
 | `afklist` | List AFK members |
 | `afklog` | Missed pings while AFK |
 | `afkback` | Clear AFK status |
 
 ### Custom Status
+
 | Command | Description |
 |---------|-------------|
 | `statusset` | Set server status |
@@ -877,15 +1069,17 @@ Organized by category with command names and descriptions.
 ## ⭐ HIGHLIGHTS & PINS
 
 ### Starboard
+
 | Command | Description |
 |---------|-------------|
-| `starboardsetup` | Configure starboard |
+| `starboardsetup` | Configure starboard ❌ BUILT-IN (starboard) |
 | `starboardforce` | Force highlight |
 | `starboardremove` | Remove highlight |
 | `starboardtop` | Top highlights |
 | `starboardstats` | Starboard stats |
 
 ### Pin Management
+
 | Command | Description |
 |---------|-------------|
 | `pinqueue` | Pin nomination queue |
@@ -897,6 +1091,7 @@ Organized by category with command names and descriptions.
 ## 😀 EMOJI MANAGEMENT
 
 ### Emoji Tools
+
 | Command | Description |
 |---------|-------------|
 | `emojiadd` | Add emoji |
@@ -912,6 +1107,7 @@ Organized by category with command names and descriptions.
 ## 💾 BACKUP & RESTORE
 
 ### Server Backup
+
 | Command | Description |
 |---------|-------------|
 | `backupcreate` | Create server backup |
@@ -926,6 +1122,7 @@ Organized by category with command names and descriptions.
 ## 🛡️ ANTI-NUKE
 
 ### Protection
+
 | Command | Description |
 |---------|-------------|
 | `antinukesetup` | Configure protection |
@@ -939,6 +1136,7 @@ Organized by category with command names and descriptions.
 ## 📨 INVITE TRACKING
 
 ### Invite Management
+
 | Command | Description |
 |---------|-------------|
 | `invitecreate` | Create tracked invite |
@@ -953,6 +1151,7 @@ Organized by category with command names and descriptions.
 ## 📁 CHANNEL MANAGEMENT
 
 ### Automation
+
 | Command | Description |
 |---------|-------------|
 | `channeltemplate` | Save/apply templates |
@@ -967,6 +1166,7 @@ Organized by category with command names and descriptions.
 ## ✅ VERIFICATION
 
 ### Member Verification
+
 | Command | Description |
 |---------|-------------|
 | `verifypanel` | Verification panel |
@@ -976,6 +1176,7 @@ Organized by category with command names and descriptions.
 | `verifystatus` | Check status |
 
 ### Onboarding
+
 | Command | Description |
 |---------|-------------|
 | `onboardwelcome` | Welcome flow |
@@ -990,7 +1191,8 @@ Organized by category with command names and descriptions.
 **Categories:** 35+
 **Total Command Ideas:** 400+
 
-### Priority Implementation Order:
+### Priority Implementation Order
+
 1. Games (Trivia, Hangman, Akinator)
 2. Economy (Daily, Shop, Balance)
 3. Utilities (Reminders, Todo, Timer)
@@ -1002,3 +1204,4 @@ Organized by category with command names and descriptions.
 
 *Last Updated: December 2024*
 *Total Ideas: 400+ commands*
+*Built-in duplicates identified: ~50+ commands*

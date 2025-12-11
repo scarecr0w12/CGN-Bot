@@ -1,0 +1,15 @@
+const extension = require('extension');
+const server = require('server');
+
+const tips = [
+	'💡 **Daily Tip:** Remember to take breaks and stay hydrated!',
+	'💡 **Daily Tip:** Be kind to others in chat!',
+	'💡 **Daily Tip:** Check out our rules in #rules!',
+	'💡 **Daily Tip:** Invite your friends to join the server!',
+	'💡 **Daily Tip:** Participate in events to earn rewards!',
+	'💡 **Daily Tip:** Report any issues to our mod team!',
+	'💡 **Daily Tip:** Have fun and enjoy your time here!'
+];
+
+const tip = tips[Math.floor(Math.random() * tips.length)];
+extension.log('Daily tip: ' + tip);

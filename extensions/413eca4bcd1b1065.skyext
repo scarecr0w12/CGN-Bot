@@ -1,0 +1,131 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const colors = ['🔴', '🟡', '🟢', '🔵'];
+const colorNames = ['red', 'yellow', 'green', 'blue'];
+const values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Skip', 'Reverse', '+2'];
+
+const stateKey = 'uno_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const args = command.suffix.trim().toLowerCase().split(/\s+/);
+const action = args[0];
+
+function createCard() {
+	return {
+		color: utils.random.int(0, 3),
+		value: utils.random.pick(values),
+	};
+}
+
+function cardToString(card) {
+	return colors[card.color] + ' ' + card.value;
+}
+
+function canPlay(card, topCard) {
+	return card.color === topCard.color || card.value === topCard.value;
+}
+
+if (!game || action === 'new') {
+	const playerHand = Array(7).fill().map(() => createCard());
+	const botHand = Array(7).fill().map(() => createCard());
+	game = {
+		playerHand,
+		botHand,
+		topCard: createCard(),
+		turn: 'player',
+	};
+	extension.storage.write(stateKey, game);
+	
+	const handStr = game.playerHand.map((c, i) => (i + 1) + '. ' + cardToString(c)).join('\n');
+	message.reply({
+		embeds: [embed.create({
+			title: '🎴 UNO - New Game!',
+			description: '**Top Card:** ' + cardToString(game.topCard) + '\n\n**Your Hand:**\n' + handStr,
+			color: embed.colors.GOLD,
+			footer: { text: 'Play: uno play <#> | Draw: uno draw' },
+		})]
+	});
+	return;
+}
+
+if (action === 'status' || !action) {
+	const handStr = game.playerHand.map((c, i) => (i + 1) + '. ' + cardToString(c)).join('\n');
+	message.reply({
+		embeds: [embed.create({
+			title: '🎴 UNO Status',
+			description: '**Top Card:** ' + cardToString(game.topCard) + '\n\n**Your Hand (' + game.playerHand.length + '):**\n' + handStr + '\n\n**Bot Cards:** ' + game.botHand.length,
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (action === 'draw') {
+	game.playerHand.push(createCard());
+	extension.storage.write(stateKey, game);
+	message.reply('📥 Drew a card: ' + cardToString(game.playerHand[game.playerHand.length - 1]));
+	return;
+}
+
+if (action === 'play') {
+	const cardIndex = parseInt(args[1]) - 1;
+	if (isNaN(cardIndex) || cardIndex < 0 || cardIndex >= game.playerHand.length) {
+		message.reply('❌ Invalid card number!');
+		return;
+	}
+	
+	const card = game.playerHand[cardIndex];
+	if (!canPlay(card, game.topCard)) {
+		message.reply('❌ Cannot play ' + cardToString(card) + ' on ' + cardToString(game.topCard));
+		return;
+	}
+	
+	game.topCard = card;
+	game.playerHand.splice(cardIndex, 1);
+	
+	if (game.playerHand.length === 0) {
+		extension.storage.write(stateKey, null);
+		message.reply({
+			embeds: [embed.create({
+				title: '🎉 UNO - You Win!',
+				description: 'Congratulations! You played all your cards!',
+				color: embed.colors.SUCCESS,
+			})]
+		});
+		return;
+	}
+	
+	// Bot turn
+	const playable = game.botHand.findIndex(c => canPlay(c, game.topCard));
+	if (playable !== -1) {
+		game.topCard = game.botHand[playable];
+		game.botHand.splice(playable, 1);
+	} else {
+		game.botHand.push(createCard());
+	}
+	
+	if (game.botHand.length === 0) {
+		extension.storage.write(stateKey, null);
+		message.reply({
+			embeds: [embed.create({
+				title: '😢 UNO - Bot Wins!',
+				description: 'The bot played all its cards first!',
+				color: embed.colors.ERROR,
+			})]
+		});
+		return;
+	}
+	
+	extension.storage.write(stateKey, game);
+	const handStr = game.playerHand.map((c, i) => (i + 1) + '. ' + cardToString(c)).join('\n');
+	message.reply({
+		embeds: [embed.create({
+			title: '🎴 UNO',
+			description: '**Top Card:** ' + cardToString(game.topCard) + '\n\n**Your Hand:**\n' + handStr + '\n\n**Bot Cards:** ' + game.botHand.length,
+			color: embed.colors.GOLD,
+		})]
+	});
+}

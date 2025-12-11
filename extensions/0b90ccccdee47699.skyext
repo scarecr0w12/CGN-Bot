@@ -1,0 +1,12 @@
+const message = require('message');
+const extension = require('extension');
+const utils = require('utils');
+
+const responses = [
+	'Need help? Check out our #help channel or use the `/help` command!',
+	'Looking for assistance? Our support team is here to help!',
+	'Have a question? Feel free to ask in #support!'
+];
+
+const response = utils.random.pick(responses);
+extension.log('Help keyword triggered by: ' + message.author.username);

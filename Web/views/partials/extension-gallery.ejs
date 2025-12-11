@@ -1,3 +1,292 @@
+<style>
+/* Extension Gallery Styles */
+.ext-gallery-filters {
+	background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+	border-radius: 12px;
+	padding: 1.25rem;
+	margin-bottom: 1.5rem;
+	box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.ext-filter-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	align-items: center;
+	justify-content: space-between;
+}
+.ext-category-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.ext-category-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 1rem;
+	border-radius: 50px;
+	font-size: 0.9rem;
+	font-weight: 500;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	border: 2px solid transparent;
+	background: rgba(255,255,255,0.08);
+	color: rgba(255,255,255,0.7);
+}
+.ext-category-pill:hover {
+	background: rgba(255,255,255,0.15);
+	color: #fff;
+	transform: translateY(-1px);
+}
+.ext-category-pill.is-active {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: #fff;
+	border-color: transparent;
+	box-shadow: 0 3px 10px rgba(102,126,234,0.4);
+}
+.ext-category-pill .pill-count {
+	background: rgba(0,0,0,0.2);
+	padding: 0.1rem 0.5rem;
+	border-radius: 50px;
+	font-size: 0.75rem;
+}
+.ext-sort-dropdown .select select {
+	background: rgba(255,255,255,0.1);
+	border: 1px solid rgba(255,255,255,0.2);
+	color: #fff;
+	border-radius: 8px;
+	padding-right: 2.5rem;
+}
+.ext-sort-dropdown .select::after {
+	border-color: #fff !important;
+}
+.ext-sort-dropdown .select select:hover {
+	border-color: rgba(255,255,255,0.4);
+}
+.ext-sort-dropdown label {
+	color: rgba(255,255,255,0.7);
+	font-size: 0.85rem;
+	margin-right: 0.5rem;
+}
+
+/* Card Grid */
+.ext-card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 1.5rem;
+}
+.ext-card {
+	background: #fff;
+	border-radius: 12px;
+	overflow: hidden;
+	box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+	transition: all 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid #eee;
+}
+.ext-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.ext-card-header {
+	padding: 1.25rem 1.25rem 0.75rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 0.75rem;
+}
+.ext-card-title {
+	font-size: 1.15rem;
+	font-weight: 600;
+	color: #1a1a2e;
+	margin: 0;
+	line-height: 1.3;
+}
+.ext-card-badges {
+	display: flex;
+	gap: 0.4rem;
+	flex-wrap: wrap;
+	margin-top: 0.5rem;
+}
+.ext-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.2rem 0.6rem;
+	border-radius: 4px;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+}
+.ext-badge-featured {
+	background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+	color: #fff;
+}
+.ext-badge-type {
+	background: #e8eaf6;
+	color: #3949ab;
+}
+.ext-badge-type.command { background: #e3f2fd; color: #1565c0; }
+.ext-badge-type.keyword { background: #fff3e0; color: #ef6c00; }
+.ext-badge-type.timer { background: #f3e5f5; color: #7b1fa2; }
+.ext-badge-type.event { background: #e8f5e9; color: #2e7d32; }
+.ext-badge-version {
+	background: #f5f5f5;
+	color: #666;
+}
+.ext-card-type-icon {
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1rem;
+	flex-shrink: 0;
+}
+.ext-card-type-icon.command { background: #e3f2fd; color: #1565c0; }
+.ext-card-type-icon.keyword { background: #fff3e0; color: #ef6c00; }
+.ext-card-type-icon.timer { background: #f3e5f5; color: #7b1fa2; }
+.ext-card-type-icon.event { background: #e8f5e9; color: #2e7d32; }
+
+.ext-card-body {
+	padding: 0 1.25rem 1rem;
+	flex-grow: 1;
+}
+.ext-card-description {
+	color: #666;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	margin: 0;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.ext-card-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1.25rem;
+	background: #fafafa;
+	border-top: 1px solid #eee;
+}
+.ext-card-author {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-grow: 1;
+	min-width: 0;
+}
+.ext-card-author img {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+.ext-card-author-info {
+	min-width: 0;
+}
+.ext-card-author-name {
+	font-size: 0.8rem;
+	font-weight: 500;
+	color: #333;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.ext-card-updated {
+	font-size: 0.7rem;
+	color: #999;
+}
+.ext-card-points {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+	background: linear-gradient(135deg, #ffd54f 0%, #ffb300 100%);
+	color: #5d4037;
+	padding: 0.3rem 0.6rem;
+	border-radius: 50px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	flex-shrink: 0;
+}
+.ext-card-footer {
+	display: flex;
+	border-top: 1px solid #eee;
+}
+.ext-card-action {
+	flex: 1;
+	padding: 0.75rem;
+	text-align: center;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: #667eea;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	background: none;
+	border: none;
+	border-right: 1px solid #eee;
+}
+.ext-card-action:last-child {
+	border-right: none;
+}
+.ext-card-action:hover {
+	background: #f5f7ff;
+	color: #4c5fd5;
+}
+.ext-card-action.danger {
+	color: #e53935;
+}
+.ext-card-action.danger:hover {
+	background: #ffebee;
+}
+/* Empty state */
+.ext-empty-state {
+	text-align: center;
+	padding: 4rem 2rem;
+	background: #fafafa;
+	border-radius: 12px;
+	border: 2px dashed #ddd;
+}
+.ext-empty-icon {
+	font-size: 3rem;
+	color: #ccc;
+	margin-bottom: 1rem;
+}
+.ext-empty-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: #666;
+	margin-bottom: 0.5rem;
+}
+.ext-empty-text {
+	color: #999;
+	margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+	.ext-filter-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.ext-category-pills {
+		justify-content: center;
+	}
+	.ext-sort-dropdown {
+		justify-content: center;
+		display: flex;
+	}
+	.ext-card-grid {
+		grid-template-columns: 1fr;
+	}
+}
+</style>
+
 <div id="typeDescription-event" class="modal">
 	<div class="modal-background"></div>
 	<div class="modal-content">
@@ -83,8 +372,70 @@
 </div>
 
 <div id="extensions-gallery">
+	<%
+	const categoryFilter = pageData.categoryFilter || 'all';
+	const sortOption = pageData.sortOption || 'featured';
+	const categoryCounts = pageData.categoryCounts || { all: 0, command: 0, keyword: 0, timer: 0, event: 0 };
+	
+	const buildFilterUrl = (category, sort) => {
+		const params = new URLSearchParams();
+		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
+		if (category && category !== 'all') params.set('category', category);
+		if (sort && sort !== 'featured') params.set('sort', sort);
+		const queryString = params.toString();
+		return `/extensions/${pageData.mode}${queryString ? '?' + queryString : ''}`;
+	};
+	
+	const typeIcons = { command: 'magic', keyword: 'key', timer: 'clock-o', event: 'code' };
+	const typeLabels = { command: 'Commands', keyword: 'Keywords', timer: 'Timers', event: 'Events' };
+	%>
+
+	<!-- Filters and Sorting -->
+	<div class="ext-gallery-filters">
+		<div class="ext-filter-row">
+			<div class="ext-category-pills">
+				<a href="<%= buildFilterUrl('all', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'all' ? 'is-active' : '' %>">
+					<i class="fa fa-th-large"></i>
+					All
+					<span class="pill-count"><%= categoryCounts.all %></span>
+				</a>
+				<a href="<%= buildFilterUrl('command', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'command' ? 'is-active' : '' %>">
+					<i class="fa fa-magic"></i>
+					Commands
+					<span class="pill-count"><%= categoryCounts.command %></span>
+				</a>
+				<a href="<%= buildFilterUrl('keyword', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'keyword' ? 'is-active' : '' %>">
+					<i class="fa fa-key"></i>
+					Keywords
+					<span class="pill-count"><%= categoryCounts.keyword %></span>
+				</a>
+				<a href="<%= buildFilterUrl('timer', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'timer' ? 'is-active' : '' %>">
+					<i class="fa fa-clock-o"></i>
+					Timers
+					<span class="pill-count"><%= categoryCounts.timer %></span>
+				</a>
+				<a href="<%= buildFilterUrl('event', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'event' ? 'is-active' : '' %>">
+					<i class="fa fa-code"></i>
+					Events
+					<span class="pill-count"><%= categoryCounts.event %></span>
+				</a>
+			</div>
+			<div class="ext-sort-dropdown">
+				<label><i class="fa fa-sort"></i> Sort:</label>
+				<div class="select is-small">
+					<select onchange="window.location.href = this.value">
+						<option value="<%= buildFilterUrl(categoryFilter, 'featured') %>" <%= sortOption === 'featured' ? 'selected' : '' %>>Featured</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'popular') %>" <%= sortOption === 'popular' ? 'selected' : '' %>>Most Popular</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'newest') %>" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'oldest') %>" <%= sortOption === 'oldest' ? 'selected' : '' %>>Oldest</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'name') %>" <%= sortOption === 'name' ? 'selected' : '' %>>Name (A-Z)</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
 	<% if (pageData.mode === "queue") { %>
-	<article class="message is-danger" title="Even Speedwagon is afraid!">
+	<article class="message is-danger" title="Even Speedwagon is afraid!" style="margin-bottom: 1.5rem;">
 		<div class="message-body">
 			<div class="has-text-centered">
 				<h5 class="title is-5 is-danger-colored">
@@ -97,113 +448,101 @@
 					</span>
 				</h5>
 			</div>
-			<br>
 			<div class="content">
 				Extensions in the <strong>Gallery Queue</strong> have not been tested or approved by <strong>Skynet Maintainers</strong>. Extensions from the queue may cause harm to your server or contain offensive or otherwise dangerous content. Skynet Maintainers are not responsible for any actions taken by unapproved extensions. <strong>You're on your own, kid.</strong>
 			</div>
 		</div>
 	</article>
 	<% } %>
+
 	<% if (pageData.extensions.length > 0) { %>
-	<div class="columns">
-	<% pageData.extensions.forEach((extension, i) => { %>
-		<div id="card-<%= extension._id %>" class="column is-one-third">
-			<div class="card is-fullwidth">
-				<header class="card-header">
-					<p class="card-header-title">
-						<%= extension.name %>
-						&nbsp;
+	<!-- Extension Card Grid -->
+	<div class="ext-card-grid">
+		<% pageData.extensions.forEach((extension) => { %>
+		<div id="card-<%= extension._id %>" class="ext-card">
+			<div class="ext-card-header">
+				<div>
+					<h3 class="ext-card-title"><%= extension.name %></h3>
+					<div class="ext-card-badges">
+						<% if (extension.featured) { %>
+						<span id="featured-<%= extension._id %>" class="ext-badge ext-badge-featured">
+							<i class="fa fa-star"></i> Featured
+						</span>
+						<% } %>
+						<span class="ext-badge ext-badge-type <%= extension.type %>" title="<%= extension.typeDescription %>">
+							<i class="fa fa-<%= extension.typeIcon %>"></i> <%= extension.type %>
+						</span>
 						<% if (extension.version !== 1) { %>
-							<span class="tag is-info">V<%= extension.version %></span>
-							&nbsp;
+						<span class="ext-badge ext-badge-version">v<%= extension.version %></span>
 						<% } %>
 						<% if (extension.level === "third") { %>
-							<span class="tag is-danger">Local Extension</span>
-							&nbsp;
+						<span class="ext-badge" style="background:#ffebee;color:#c62828;">Local</span>
 						<% } %>
-						<span id="featured-<%= extension._id %>">
-							<% if (extension.featured) { %>
-								<span class="tag is-primary">Featured</span>
-								&nbsp;
-							<% } %>
-						</span>
-						<span class="tag is-warning">
-							<span id="points-<%= extension._id %>"><%= extension.points %></span>
-							&nbsp;
-							<span class="icon is-small">
-		                        <i class="fa fa-star"></i>
-		                    </span>
-						</span>
-					</p>
-					<span class="card-header-icon modal-button" title="<%= extension.typeDescription %>" data-target="#typeDescription-<%= extension.type %>">
-						<i class="fa fa-<%= extension.typeIcon %>"></i>
-					</span>
-				</header>
-				<div class="card-content" style="max-height: 155px;overflow-y: scroll;">
-					<div class="content">
-						<%- extension.description %>
-					</div>
-					<div class="media">
-						<div class="media-left">
-							<figure class="image is-32x32">
-								<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.id %>">
-							</figure>
-						</div>
-						<div class="media-content">
-							<p class="title is-5"><%= extension.owner.name + "#" + extension.owner.discriminator %></p>
-							<p class="subtitle is-6" title="<%= extension.rawLastUpdated %>">Last updated <strong><%= extension.relativeLastUpdated %></strong></p>
-						</div>
 					</div>
 				</div>
-				<footer class="card-footer">
-					<% if (authUser && pageData.serverData.length > 0) { %>
-						<a class="card-footer-item" onclick="SkynetUtil.openExtensionInstaller('<%= extension._id %>', <%= extension.version %>);">
-							Install
-						</a>
-					<% } %>
-					<a class="card-footer-item" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
-						Source
+				<div class="ext-card-type-icon <%= extension.type %>" title="<%= extension.typeDescription %>">
+					<i class="fa fa-<%= extension.typeIcon %>"></i>
+				</div>
+			</div>
+			<div class="ext-card-body">
+				<p class="ext-card-description"><%- extension.description %></p>
+			</div>
+			<div class="ext-card-meta">
+				<div class="ext-card-author">
+					<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.name %>">
+					<div class="ext-card-author-info">
+						<div class="ext-card-author-name"><%= extension.owner.name %></div>
+						<div class="ext-card-updated" title="<%= extension.rawLastUpdated %>"><%= extension.relativeLastUpdated %></div>
+					</div>
+				</div>
+				<div class="ext-card-points" title="<%= extension.points %> points">
+					<span id="points-<%= extension._id %>"><%= extension.points %></span>
+					<i class="fa fa-star"></i>
+				</div>
+			</div>
+			<div class="ext-card-footer">
+				<% if (authUser && pageData.serverData && pageData.serverData.length > 0) { %>
+				<a class="ext-card-action" onclick="SkynetUtil.openExtensionInstaller('<%= extension._id %>', <%= extension.version %>);">
+					<i class="fa fa-download"></i> Install
+				</a>
+				<% } %>
+				<a class="ext-card-action" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
+					<i class="fa fa-code"></i> Source
+				</a>
+				<% if (authUser) { %>
+				<a id="vote-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
+					<i class="fa fa-thumbs-up"></i> <%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
+				</a>
+				<% } %>
+				<% if (authUser && isMaintainer) { %>
+					<% if (pageData.mode === "gallery") { %>
+					<a id="feature-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
+						<i class="fa fa-star"></i> <%= extension.featured ? "Unfeature" : "Feature" %>
 					</a>
-					<% if (authUser) { %>
-						<a id="vote-<%= extension._id %>" class="card-footer-item" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
-							<%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
-						</a>
-						<% if (isMaintainer) { %>
-							<% if (pageData.mode === "gallery") { %>
-								<a id="feature-<%= extension._id %>" class="card-footer-item" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
-									<%= extension.featured ? "Unfeature" : "Feature" %>
-								</a>
-                    			<% if (authUser.id !== extension.owner.id) { %>
-									<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
-										Remove
-									</a>
-								<% } %>
-							<% } else if (pageData.mode === "queue") { %>
-								<a class="card-footer-item" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
-									Accept
-								</a>
-								<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
-									<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
-										Reject
-									</a>
-								<% } %>
-							<% } %>
-						<% } %>
-						<% if (authUser.id === extension.owner.id && extension.level === "gallery") { %>
-							<a class="card-footer-item card-footer-item-danger" onclick="SkynetUtil.unpublishExtension('<%= extension._id %>');">
-								Unpublish
-							</a>
-						<% } %>
+					<% if (authUser.id !== extension.owner.id) { %>
+					<a class="ext-card-action danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
+						<i class="fa fa-trash"></i> Remove
+					</a>
 					<% } %>
-				</footer>
+					<% } else if (pageData.mode === "queue") { %>
+					<a class="ext-card-action" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
+						<i class="fa fa-check"></i> Accept
+					</a>
+					<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
+					<a class="ext-card-action danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
+						<i class="fa fa-times"></i> Reject
+					</a>
+					<% } %>
+					<% } %>
+				<% } %>
+				<% if (authUser && authUser.id === extension.owner.id && extension.level === "gallery") { %>
+				<a class="ext-card-action danger" onclick="SkynetUtil.unpublishExtension('<%= extension._id %>');">
+					<i class="fa fa-eye-slash"></i> Unpublish
+				</a>
+				<% } %>
 			</div>
 		</div>
-
-		<% if (i % 3 === 2 && i !== pageData.extensions.length - 1 && i !== 0) { %>
-			</div>
-			<div class="columns">
-		<% } %>
-	<% }); %>
+		<% }); %>
 	</div>
 	<div id="extension-source-modal" class="modal">
 		<div class="modal-background"></div>
@@ -230,52 +569,82 @@
 		<button class="modal-close"></button>
 	</div>
 <% } else { %>
-	<% const resetUrl = "/extensions/" + pageData.mode; %>
-	<%- include("../partials/no-results", { isSearchQuery: true, activeSearchQuery: pageData.activeSearchQuery, resetUrl, mode: pageData.mode }) %>
+	<!-- Empty State -->
+	<div class="ext-empty-state">
+		<div class="ext-empty-icon">
+			<i class="fa fa-puzzle-piece"></i>
+		</div>
+		<h3 class="ext-empty-title">No extensions found</h3>
+		<p class="ext-empty-text">
+			<% if (pageData.activeSearchQuery) { %>
+				No extensions match your search "<%= pageData.activeSearchQuery %>".
+			<% } else if (categoryFilter !== 'all') { %>
+				No <%= categoryFilter %> extensions available yet.
+			<% } else { %>
+				The gallery is empty. Be the first to publish an extension!
+			<% } %>
+		</p>
+		<% if (pageData.activeSearchQuery || categoryFilter !== 'all') { %>
+		<a href="/extensions/<%= pageData.mode %>" class="button is-primary">
+			<span class="icon"><i class="fa fa-refresh"></i></span>
+			<span>Clear Filters</span>
+		</a>
+		<% } else if (authUser) { %>
+		<a href="/extensions/builder" class="button is-primary">
+			<span class="icon"><i class="fa fa-plus"></i></span>
+			<span>Create Extension</span>
+		</a>
+		<% } %>
+	</div>
 <% } %>
 <% if (pageData.numPages > 1) { %>
+	<%
+	const buildPaginationUrl = (pageNum) => {
+		const params = new URLSearchParams();
+		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
+		if (categoryFilter && categoryFilter !== 'all') params.set('category', categoryFilter);
+		if (sortOption && sortOption !== 'featured') params.set('sort', sortOption);
+		if (pageData.itemsPerPage) params.set('count', pageData.itemsPerPage);
+		params.set('page', pageNum);
+		return `/extensions/${pageData.mode}?${params.toString()}`;
+	};
+	%>
 	<br>
-	<nav class="pagination is-centered">
+	<nav class="pagination is-centered" style="margin-top: 1.5rem;">
 		<ul class="pagination-list">
 			<% if (pageData.currentPage > 2) { %>
 				<li>
-					<a class="button pagination-link" href="/extensions/<%= pageData.mode %>?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=1">
-						1
-					</a>
+					<a class="button pagination-link" href="<%= buildPaginationUrl(1) %>">1</a>
 				</li>
 			<% } %>
 			<% if (pageData.currentPage > 3) { %>
-				<li>
-					<span class="pagination-ellipsis">...</span>
-				</li>
+				<li><span class="pagination-ellipsis">...</span></li>
 			<% } %>
 			<% if (pageData.currentPage > 1) { %>
 				<li>
-					<a class="button pagination-link" href="/extensions/<%= pageData.mode %>?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage - 1 %>">
+					<a class="button pagination-link" href="<%= buildPaginationUrl(pageData.currentPage - 1) %>">
 						<%= pageData.currentPage - 1 %>
 					</a>
 				</li>
 			<% } %>
 			<li>
-				<a class="button is-primary pagination-link" href="/extensions/<%= pageData.mode %>?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>">
+				<a class="button is-primary pagination-link" href="<%= buildPaginationUrl(pageData.currentPage) %>">
 					<%= pageData.currentPage %>
 				</a>
 			</li>
 			<% if (pageData.currentPage < pageData.numPages) { %>
 				<li>
-					<a class="button pagination-link" href="/extensions/<%= pageData.mode %>?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage + 1 %>">
+					<a class="button pagination-link" href="<%= buildPaginationUrl(pageData.currentPage + 1) %>">
 						<%= pageData.currentPage + 1 %>
 					</a>
 				</li>
 			<% } %>
-			<% if(pageData.currentPage < pageData.numPages - 2) { %>
-				<li>
-					<span class="pagination-ellipsis">...</span>
-				</li>
+			<% if (pageData.currentPage < pageData.numPages - 2) { %>
+				<li><span class="pagination-ellipsis">...</span></li>
 			<% } %>
 			<% if (pageData.currentPage < pageData.numPages - 1) { %>
 				<li>
-					<a class="button pagination-link" href="/extensions/<%= pageData.mode %>?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.numPages %>">
+					<a class="button pagination-link" href="<%= buildPaginationUrl(pageData.numPages) %>">
 						<%= pageData.numPages %>
 					</a>
 				</li>

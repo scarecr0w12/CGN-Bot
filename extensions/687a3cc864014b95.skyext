@@ -1,0 +1,73 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const songs = [
+	{ lyrics: "Is this the real life? Is this just fantasy?", answer: "BOHEMIAN RHAPSODY", artist: "Queen" },
+	{ lyrics: "Hello, it's me. I was wondering if after all these years...", answer: "HELLO", artist: "Adele" },
+	{ lyrics: "We're no strangers to love. You know the rules and so do I", answer: "NEVER GONNA GIVE YOU UP", artist: "Rick Astley" },
+	{ lyrics: "Just a small town girl, living in a lonely world", answer: "DON'T STOP BELIEVIN", artist: "Journey" },
+	{ lyrics: "I got my mind on my money and my money on my mind", answer: "GIN AND JUICE", artist: "Snoop Dogg" },
+	{ lyrics: "Cause baby you're a firework, come on show em what you're worth", answer: "FIREWORK", artist: "Katy Perry" },
+	{ lyrics: "We will, we will rock you!", answer: "WE WILL ROCK YOU", artist: "Queen" },
+	{ lyrics: "I came in like a wrecking ball", answer: "WRECKING BALL", artist: "Miley Cyrus" },
+	{ lyrics: "Hello from the other side", answer: "HELLO", artist: "Adele" },
+	{ lyrics: "I'm on the highway to hell", answer: "HIGHWAY TO HELL", artist: "AC/DC" },
+];
+
+const stateKey = 'musicquiz_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toUpperCase();
+
+if (!game || guess === 'NEW') {
+	const song = utils.random.pick(songs);
+	game = { song, attempts: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎵 Music Quiz',
+			description: '**Guess the song!**\n\n*"' + song.lyrics + '"*',
+			color: embed.colors.PURPLE,
+			footer: { text: 'Type: musicquiz <song title> | musicquiz hint' },
+		})]
+	});
+	return;
+}
+
+if (guess === 'HINT') {
+	message.reply('💡 Artist: **' + game.song.artist + '**');
+	return;
+}
+
+if (!guess) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎵 Current Quiz',
+			description: '*"' + game.song.lyrics + '"*\nAttempts: ' + game.attempts,
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+game.attempts++;
+
+const answer = game.song.answer.replace(/[^A-Z0-9]/g, '');
+const userGuess = guess.replace(/[^A-Z0-9]/g, '');
+
+if (userGuess.includes(answer) || answer.includes(userGuess)) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 Correct!',
+			description: '**' + game.song.answer + '** by ' + game.song.artist + '\n\nGuessed in ' + game.attempts + ' attempts!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	extension.storage.write(stateKey, game);
+	message.reply('❌ Not quite! Try again.');
+}

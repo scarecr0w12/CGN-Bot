@@ -1,0 +1,96 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const words = ['DISCORD', 'GAMING', 'SECRET', 'PUZZLE', 'CIPHER', 'ENIGMA', 'RIDDLE', 'DECODE'];
+
+function caesarShift(text, shift) {
+	return text.split('').map(c => {
+		if (c >= 'A' && c <= 'Z') {
+			return String.fromCharCode(((c.charCodeAt(0) - 65 + shift) % 26) + 65);
+		}
+		return c;
+	}).join('');
+}
+
+function reverseText(text) {
+	return text.split('').reverse().join('');
+}
+
+function atbash(text) {
+	return text.split('').map(c => {
+		if (c >= 'A' && c <= 'Z') {
+			return String.fromCharCode(90 - (c.charCodeAt(0) - 65));
+		}
+		return c;
+	}).join('');
+}
+
+const stateKey = 'cipher_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toUpperCase();
+
+if (!game || guess === 'NEW') {
+	const word = utils.random.pick(words);
+	const cipherType = utils.random.int(0, 2);
+	let encoded, hint;
+	
+	if (cipherType === 0) {
+		const shift = utils.random.int(1, 25);
+		encoded = caesarShift(word, shift);
+		hint = 'Caesar cipher (shift ' + shift + ')';
+	} else if (cipherType === 1) {
+		encoded = reverseText(word);
+		hint = 'Reversed text';
+	} else {
+		encoded = atbash(word);
+		hint = 'Atbash cipher (A↔Z)';
+	}
+	
+	game = { word, encoded, hint, cipherType, attempts: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔐 Cipher Challenge',
+			description: '**Decode this message:**\n\n`' + encoded + '`',
+			color: embed.colors.PURPLE,
+			footer: { text: 'Type: cipher <answer> | cipher hint' },
+		})]
+	});
+	return;
+}
+
+if (guess === 'HINT') {
+	message.reply('💡 Hint: ' + game.hint);
+	return;
+}
+
+if (!guess) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔐 Current Cipher',
+			description: '`' + game.encoded + '`\nAttempts: ' + game.attempts,
+			color: embed.colors.PURPLE,
+		})]
+	});
+	return;
+}
+
+game.attempts++;
+
+if (guess === game.word) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🔓 Decoded!',
+			description: 'The message was **' + game.word + '**!\n(' + game.hint + ')\n\nCracked in ' + game.attempts + ' ' + utils.format.pluralize(game.attempts, 'attempt') + '!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	extension.storage.write(stateKey, game);
+	message.reply('❌ Wrong! Keep trying.');
+}

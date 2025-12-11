@@ -1,0 +1,47 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const symbolData = [
+	{ item: '🍒', weight: 30 },
+	{ item: '🍋', weight: 25 },
+	{ item: '🍊', weight: 20 },
+	{ item: '🍇', weight: 15 },
+	{ item: '💎', weight: 7 },
+	{ item: '7️⃣', weight: 2 },
+	{ item: '⭐', weight: 1 }
+];
+
+const reel1 = utils.random.weighted(symbolData);
+const reel2 = utils.random.weighted(symbolData);
+const reel3 = utils.random.weighted(symbolData);
+
+const payouts = {
+	'🍒': 3, '🍋': 5, '🍊': 7, '🍇': 10, '💎': 25, '7️⃣': 100, '⭐': 50
+};
+
+let result = '';
+let color = embed.colors.DEFAULT;
+
+if (reel1 === reel2 && reel2 === reel3) {
+	const multiplier = payouts[reel1];
+	result = '🎉 ' + utils.discord.bold('JACKPOT!') + ' Three ' + reel1 + ' = ' + utils.discord.bold(multiplier + 'x') + ' payout!';
+	color = reel1 === '7️⃣' ? embed.colors.GOLD : embed.colors.SUCCESS;
+} else if (reel1 === reel2 || reel2 === reel3 || reel1 === reel3) {
+	result = '😊 ' + utils.discord.bold('Two of a kind!') + ' Small win!';
+	color = embed.colors.BLUE;
+} else {
+	result = '😔 No match. Better luck next time!';
+	color = embed.colors.ERROR;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎰 Slot Machine',
+		description: '━━━━━━━━━━━━━━━\n' +
+			'▶️ | ' + reel1 + ' | ' + reel2 + ' | ' + reel3 + ' | ◀️\n' +
+			'━━━━━━━━━━━━━━━\n\n' + result,
+		color: color,
+		footer: { text: 'Spin again to try your luck!' }
+	})]
+});

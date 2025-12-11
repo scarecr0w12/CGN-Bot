@@ -19,18 +19,11 @@ module.exports = router => {
 			const siteSettings = await TierManager.getSiteSettings();
 			const userDoc = await Users.findOne(req.user.id);
 
-			const userTier = await TierManager.getUserTier(req.user.id);
-			const userFeatures = await TierManager.getUserFeatures(req.user.id);
-
 			res.render("pages/account-settings.ejs", {
 				authUser: req.user,
 				currentPage: "/account",
 				linkedAccounts: userDoc?.linked_accounts || [],
-				subscription: userDoc?.subscription || {},
-				userTier: userTier,
-				userFeatures: Array.from(userFeatures),
 				oauthProviders: siteSettings?.oauth_providers || {},
-				tiers: siteSettings?.tiers || [],
 				success: req.query.success || null,
 				error: req.query.error || null,
 			});

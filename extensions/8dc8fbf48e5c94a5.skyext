@@ -1,0 +1,87 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const words = [
+	"APPLE", "BEACH", "BRAIN", "BREAD", "BRUSH", "CHAIR", "CHEST", "CHORD",
+	"CLICK", "CLOCK", "CLOUD", "DANCE", "DIARY", "DRINK", "DRIVE", "EARTH",
+	"FEAST", "FIELD", "FRUIT", "GLASS", "GRAPE", "GREEN", "GHOST", "HEART",
+	"HOUSE", "JUICE", "LIGHT", "LEMON", "MELON", "MONEY", "MUSIC", "NIGHT",
+	"OCEAN", "PARTY", "PHONE", "PIANO", "PILOT", "PLANE", "PLANT", "PLATE",
+	"POWER", "RADIO", "RIVER", "ROBOT", "SHIRT", "SHOES", "SNAKE", "SPACE",
+	"SPOON", "STORM", "TABLE", "TOAST", "TIGER", "TRAIN", "WATER", "WATCH",
+	"WHALE", "WORLD", "WRITE", "YOUTH", "ZEBRA"
+];
+
+const today = new Date().toISOString().slice(0, 10);
+const seed = parseInt(today.replace(/-/g, ''));
+const wordIndex = seed % words.length;
+const targetWord = words[wordIndex];
+
+const userId = message.author.id;
+const userStateKey = 'wordle_' + userId + '_' + today;
+let userState = extension.storage.get(userStateKey) || { guesses: [], solved: false };
+
+const guess = command.suffix.trim().toUpperCase();
+
+if (userState.solved) {
+	message.reply('🎉 You already solved today\'s Wordle! Come back tomorrow.');
+	return;
+}
+
+if (userState.guesses.length >= 6) {
+	message.reply('❌ You used all your guesses! The word was: **' + targetWord + '**');
+	return;
+}
+
+if (!guess) {
+	renderBoard(userState.guesses, targetWord, false);
+	return;
+}
+
+if (guess.length !== 5 || !/^[A-Z]+$/.test(guess)) {
+	message.reply('❌ Please enter a valid 5-letter word!');
+	return;
+}
+
+userState.guesses.push(guess);
+
+if (guess === targetWord) {
+	userState.solved = true;
+	renderBoard(userState.guesses, targetWord, true);
+} else if (userState.guesses.length >= 6) {
+	renderBoard(userState.guesses, targetWord, false, true);
+} else {
+	renderBoard(userState.guesses, targetWord, false);
+}
+
+extension.storage.write(userStateKey, userState);
+
+function renderBoard(guesses, target, won, lost = false) {
+	let board = '';
+	for (const g of guesses) {
+		let line = '';
+		for (let i = 0; i < 5; i++) {
+			const letter = g[i];
+			if (letter === target[i]) line += '🟩 ';
+			else if (target.includes(letter)) line += '🟨 ';
+			else line += '⬛ ';
+		}
+		line += '  ' + g.split('').join(' ');
+		board += line + '\n';
+	}
+	for (let i = guesses.length; i < 6; i++) {
+		board += '⬜ ⬜ ⬜ ⬜ ⬜\n';
+	}
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📅 Daily Wordle ' + today,
+			description: board,
+			color: won ? embed.colors.SUCCESS : (lost ? embed.colors.ERROR : embed.colors.BLUE),
+			footer: { text: won ? 'Solved in ' + guesses.length + '/6!' : (lost ? 'The word was: ' + target : 'Guess ' + (guesses.length + 1) + '/6') },
+		})]
+	});
+}

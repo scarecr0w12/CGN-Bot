@@ -1,0 +1,100 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const colors = { R: '🔴', G: '🟢', B: '🔵', Y: '🟡', P: '🟣', O: '🟠' };
+const colorKeys = Object.keys(colors);
+
+const stateKey = 'mastermind_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toUpperCase().replace(/\s/g, '');
+
+if (!game || guess === 'NEW') {
+	const code = Array(4).fill().map(() => utils.random.pick(colorKeys));
+	game = { code, guesses: [], maxGuesses: 10 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎯 Mastermind',
+			description: 'I\'ve created a secret 4-color code!\n\n**Colors:** 🔴R 🟢G 🔵B 🟡Y 🟣P 🟠O\n\nGuess with: `mastermind RGBY`\n\n⚫ = Right color, right spot\n⚪ = Right color, wrong spot',
+			color: embed.colors.PURPLE,
+			footer: { text: 'You have 10 guesses' },
+		})]
+	});
+	return;
+}
+
+if (guess.length !== 4 || !guess.split('').every(c => colorKeys.includes(c))) {
+	message.reply('❌ Enter 4 colors: R, G, B, Y, P, or O (e.g., `mastermind RGBY`)');
+	return;
+}
+
+const guessArr = guess.split('');
+let exact = 0, partial = 0;
+const codeUsed = [...game.code];
+const guessUsed = [...guessArr];
+
+// Check exact matches
+for (let i = 0; i < 4; i++) {
+	if (guessArr[i] === game.code[i]) {
+		exact++;
+		codeUsed[i] = null;
+		guessUsed[i] = null;
+	}
+}
+
+// Check partial matches
+for (let i = 0; i < 4; i++) {
+	if (guessUsed[i]) {
+		const idx = codeUsed.indexOf(guessUsed[i]);
+		if (idx !== -1) {
+			partial++;
+			codeUsed[idx] = null;
+		}
+	}
+}
+
+const feedback = '⚫'.repeat(exact) + '⚪'.repeat(partial) + '⬜'.repeat(4 - exact - partial);
+const display = guessArr.map(c => colors[c]).join('');
+
+game.guesses.push({ guess: display, feedback });
+
+if (exact === 4) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 You Cracked the Code!',
+			description: 'The code was: ' + game.code.map(c => colors[c]).join('') + '\n\nSolved in **' + game.guesses.length + '** guesses!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+	return;
+}
+
+if (game.guesses.length >= game.maxGuesses) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '😢 Game Over',
+			description: 'The code was: ' + game.code.map(c => colors[c]).join(''),
+			color: embed.colors.ERROR,
+		})]
+	});
+	return;
+}
+
+extension.storage.write(stateKey, game);
+
+const history = game.guesses.slice(-5).map((g, i) => g.guess + ' ' + g.feedback).join('\n');
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 Mastermind',
+		description: '**Recent Guesses:**\n' + history,
+		color: embed.colors.BLUE,
+		footer: { text: 'Guesses: ' + game.guesses.length + '/' + game.maxGuesses + ' | ⚫=exact ⚪=partial' },
+	})]
+});

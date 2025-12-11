@@ -360,6 +360,42 @@ SkynetUtil.downloadCode = fileName => {
 	saveAs(blob, `${fileName || document.getElementById("builder-title").value || "Untitled"}.skyext`);
 };
 
+SkynetUtil.formatCode = () => {
+	if (!SkynetData.builder) return;
+	const code = SkynetData.builder.getValue();
+	try {
+		// Basic formatting: fix indentation
+		let indentLevel = 0;
+		const lines = code.split("\n");
+		const formattedLines = lines.map(line => {
+			const trimmed = line.trim();
+			if (trimmed.endsWith("}") || trimmed.endsWith("});") || trimmed.startsWith("}")) {
+				indentLevel = Math.max(0, indentLevel - 1);
+			}
+			const indented = "\t".repeat(indentLevel) + trimmed;
+			if (trimmed.endsWith("{") || trimmed.endsWith("=> {")) {
+				indentLevel++;
+			}
+			return indented;
+		});
+		const formatted = formattedLines.join("\n");
+		SkynetData.builder.setValue(formatted);
+	} catch (err) {
+		console.warn("Format failed:", err);
+	}
+};
+
+SkynetUtil.updateCodeStats = () => {
+	if (!SkynetData.builder) return;
+	const code = SkynetData.builder.getValue();
+	const lines = code.split("\n").length;
+	const chars = code.length;
+	const statsEl = document.getElementById("code-stats");
+	if (statsEl) {
+		statsEl.textContent = `Lines: ${lines} | Characters: ${chars}`;
+	}
+};
+
 SkynetUtil.loadSource = (extid, extv, extname) => {
 	if (!SkynetData.extensions.source) SkynetData.extensions.source = {};
 	if (!SkynetData.extensions.source[extid]) {
@@ -798,8 +834,31 @@ SkynetPaths.extensions = () => {
 			fixedGutter: true,
 			styleActiveLine: true,
 			theme: "monokai",
+			tabSize: 2,
+			indentWithTabs: true,
+			matchBrackets: true,
+			autoCloseBrackets: true,
+			foldGutter: true,
+			gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+			extraKeys: {
+				"Ctrl-S": () => { SkynetUtil.SFS(); $("#form").submit(); },
+				"Cmd-S": () => { SkynetUtil.SFS(); $("#form").submit(); },
+				"Ctrl-/": "toggleComment",
+				"Cmd-/": "toggleComment",
+				"Ctrl-D": cm => {
+					const cursor = cm.getCursor();
+					const line = cm.getLine(cursor.line);
+					cm.replaceRange(`${line}\n${line}`, { line: cursor.line, ch: 0 }, { line: cursor.line, ch: line.length });
+				},
+				"Ctrl-Shift-F": () => SkynetUtil.formatCode(),
+				"Cmd-Shift-F": () => SkynetUtil.formatCode(),
+			},
+		});
+		SkynetData.builder.on("change", () => {
+			SkynetUtil.updateCodeStats();
 		});
 		SkynetData.builder.refresh();
+		SkynetUtil.updateCodeStats();
 	} else if (window.location.pathname.endsWith("/install")) {
 		$("#installer-submit").click(SkynetUtil.installExtension);
 	}
@@ -1100,7 +1159,30 @@ SkynetPaths.dashboard = () => SkynetUtil.dashboardWrapper(() => {
 				fixedGutter: true,
 				styleActiveLine: true,
 				theme: "monokai",
+				tabSize: 2,
+				indentWithTabs: true,
+				matchBrackets: true,
+				autoCloseBrackets: true,
+				foldGutter: true,
+				gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+				extraKeys: {
+					"Ctrl-S": () => { SkynetUtil.SFS(); $("#form").submit(); },
+					"Cmd-S": () => { SkynetUtil.SFS(); $("#form").submit(); },
+					"Ctrl-/": "toggleComment",
+					"Cmd-/": "toggleComment",
+					"Ctrl-D": cm => {
+						const cursor = cm.getCursor();
+						const line = cm.getLine(cursor.line);
+						cm.replaceRange(`${line}\n${line}`, { line: cursor.line, ch: 0 }, { line: cursor.line, ch: line.length });
+					},
+					"Ctrl-Shift-F": () => SkynetUtil.formatCode(),
+					"Cmd-Shift-F": () => SkynetUtil.formatCode(),
+				},
 			});
+			SkynetData.builder.on("change", () => {
+				SkynetUtil.updateCodeStats();
+			});
+			SkynetUtil.updateCodeStats();
 			break;
 		}
 	}

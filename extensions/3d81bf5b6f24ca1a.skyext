@@ -1,0 +1,89 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const flags = [
+	{ emoji: '🇺🇸', country: 'UNITED STATES', alt: ['USA', 'AMERICA'] },
+	{ emoji: '🇬🇧', country: 'UNITED KINGDOM', alt: ['UK', 'BRITAIN', 'ENGLAND'] },
+	{ emoji: '🇯🇵', country: 'JAPAN', alt: [] },
+	{ emoji: '🇫🇷', country: 'FRANCE', alt: [] },
+	{ emoji: '🇩🇪', country: 'GERMANY', alt: [] },
+	{ emoji: '🇮🇹', country: 'ITALY', alt: [] },
+	{ emoji: '🇪🇸', country: 'SPAIN', alt: [] },
+	{ emoji: '🇧🇷', country: 'BRAZIL', alt: [] },
+	{ emoji: '🇨🇦', country: 'CANADA', alt: [] },
+	{ emoji: '🇦🇺', country: 'AUSTRALIA', alt: [] },
+	{ emoji: '🇲🇽', country: 'MEXICO', alt: [] },
+	{ emoji: '🇰🇷', country: 'SOUTH KOREA', alt: ['KOREA'] },
+	{ emoji: '🇷🇺', country: 'RUSSIA', alt: [] },
+	{ emoji: '🇨🇳', country: 'CHINA', alt: [] },
+	{ emoji: '🇮🇳', country: 'INDIA', alt: [] },
+	{ emoji: '🇸🇪', country: 'SWEDEN', alt: [] },
+	{ emoji: '🇳🇴', country: 'NORWAY', alt: [] },
+	{ emoji: '🇳🇱', country: 'NETHERLANDS', alt: ['HOLLAND'] },
+	{ emoji: '🇵🇱', country: 'POLAND', alt: [] },
+	{ emoji: '🇹🇷', country: 'TURKEY', alt: [] },
+];
+
+const stateKey = 'flagquiz_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toUpperCase();
+
+if (!game || guess === 'NEW') {
+	const flag = utils.random.pick(flags);
+	game = { flag, score: game?.score || 0, streak: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🏳️ Flag Quiz',
+			description: 'Which country is this flag?\n\n' + flag.emoji + ' ' + flag.emoji + ' ' + flag.emoji,
+			color: embed.colors.BLUE,
+			footer: { text: 'Score: ' + game.score + ' | Streak: ' + game.streak },
+		})]
+	});
+	return;
+}
+
+if (guess === 'SKIP') {
+	const answer = game.flag.country;
+	game.streak = 0;
+	const flag = utils.random.pick(flags);
+	game.flag = flag;
+	extension.storage.write(stateKey, game);
+	
+	message.reply('⏭️ Skipped! It was **' + answer + '**\n\nNext flag: ' + flag.emoji);
+	return;
+}
+
+if (!guess) {
+	message.reply(game.flag.emoji + ' ' + game.flag.emoji + ' ' + game.flag.emoji + '\nType: `flagquiz <country>`');
+	return;
+}
+
+const correct = guess === game.flag.country || game.flag.alt.includes(guess);
+
+if (correct) {
+	game.score++;
+	game.streak++;
+	const bonus = game.streak >= 3 ? ' 🔥 ' + game.streak + ' streak!' : '';
+	
+	const flag = utils.random.pick(flags);
+	game.flag = flag;
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Correct!' + bonus,
+			description: 'Next flag:\n\n' + flag.emoji + ' ' + flag.emoji + ' ' + flag.emoji,
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Score: ' + game.score + ' | Streak: ' + game.streak },
+		})]
+	});
+} else {
+	game.streak = 0;
+	extension.storage.write(stateKey, game);
+	message.reply('❌ Wrong! Try again or `flagquiz skip`');
+}

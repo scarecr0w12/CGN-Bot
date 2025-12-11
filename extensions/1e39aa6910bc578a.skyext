@@ -1,0 +1,55 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const mentions = message.mentions;
+const args = command.suffix.trim().split(/\s+/);
+
+let numTeams = 2;
+if (args[0] && !isNaN(parseInt(args[0]))) {
+	numTeams = parseInt(args[0]);
+}
+
+if (mentions.length < 2) {
+	message.reply({
+		embeds: [embed.create({
+			title: '👥 Team Picker',
+			description: 'Mention at least 2 users to create teams!\n\n' +
+				'Usage: `' + command.prefix + command.key + ' [number of teams] @user1 @user2 @user3...`',
+			color: embed.colors.ERROR
+		})]
+	});
+} else {
+	numTeams = utils.math.clamp(numTeams, 2, mentions.length);
+	
+	// Shuffle mentions
+	const shuffled = utils.random.shuffle([...mentions]);
+	
+	// Distribute into teams
+	const teams = [];
+	for (let i = 0; i < numTeams; i++) {
+		teams.push([]);
+	}
+	shuffled.forEach((user, i) => {
+		teams[i % numTeams].push(user);
+	});
+	
+	let description = '';
+	const teamEmojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⚪', '🟤'];
+	teams.forEach((team, i) => {
+		const emoji = teamEmojis[i % teamEmojis.length];
+		description += emoji + ' ' + utils.discord.bold('Team ' + (i + 1)) + '\n';
+		description += team.map(u => '• ' + u.username).join('\n');
+		description += '\n\n';
+	});
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '👥 Team Picker',
+			description: description,
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Teams randomly generated!' }
+		})]
+	});
+}

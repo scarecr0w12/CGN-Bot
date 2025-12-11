@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const timeArg = command.arguments[0];
+const reminderText = command.arguments.slice(1).join(' ');
+
+if (!timeArg || !reminderText) {
+	message.reply({
+		embeds: [embed.create({
+			title: '⏰ Reminder',
+			description: utils.discord.bold('Usage:') + ' `' + command.prefix + 'remind <time> <message>`\n\n' +
+				utils.discord.bold('Time formats:') + '\n' +
+				'• `10m` - 10 minutes\n' +
+				'• `2h` - 2 hours\n' +
+				'• `1d` - 1 day\n\n' +
+				utils.discord.bold('Example:') + ' `' + command.prefix + 'remind 30m Check the pizza`',
+			color: embed.colors.BLUE
+		})]
+	});
+} else {
+	const timeMatch = timeArg.match(/^(\d+)(m|h|d)$/i);
+	if (!timeMatch) {
+		message.reply('❌ Invalid time format! Use like: 10m, 2h, 1d');
+	} else {
+		const amount = parseInt(timeMatch[1]);
+		const unit = timeMatch[2].toLowerCase();
+		const unitName = utils.format.pluralize(amount, unit === 'm' ? 'minute' : unit === 'h' ? 'hour' : 'day');
+		
+		const seconds = amount * (unit === 'm' ? 60 : unit === 'h' ? 3600 : 86400);
+		const timestamp = utils.time.add(utils.time.now(), seconds, 's');
+		
+		message.reply({
+			embeds: [embed.create({
+				title: '⏰ Reminder Set!',
+				description: utils.discord.bold('Reminder:') + ' ' + reminderText + '\n\n' +
+					utils.discord.bold('When:') + ' ' + utils.time.discord(timestamp, 'R') + ' (' + utils.time.discord(timestamp, 'f') + ')',
+				color: embed.colors.SUCCESS,
+				footer: { text: 'I\'ll remind you in ' + amount + ' ' + unitName + '!' }
+			})]
+		});
+	}
+}

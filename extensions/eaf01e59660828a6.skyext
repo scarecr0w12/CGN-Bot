@@ -1,0 +1,68 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const questions = {
+	fun: [
+		"If you could have any superpower, what would it be?",
+		"What's the weirdest food combination you enjoy?",
+		"If you were a pizza topping, what would you be?",
+		"What's your go-to karaoke song?",
+		"If you could live in any fictional world, where?",
+		"What's the most useless talent you have?",
+		"If animals could talk, which would be the rudest?",
+		"What's your spirit animal and why?",
+	],
+	deep: [
+		"What's something you've changed your mind about?",
+		"What's a lesson you learned the hard way?",
+		"What would you tell your younger self?",
+		"What's something you're grateful for today?",
+		"If you could master any skill instantly, what?",
+		"What's a fear you've overcome?",
+		"What does success mean to you?",
+		"What's the best advice you've received?",
+	],
+	gaming: [
+		"What's your most played game ever?",
+		"Favorite video game soundtrack?",
+		"Most frustrating game you've ever played?",
+		"What game do you wish you could play for the first time again?",
+		"Favorite boss fight of all time?",
+		"What game character do you relate to most?",
+		"Your hottest gaming take?",
+		"What game deserves a sequel/remake?",
+	],
+	random: [
+		"How do you like your eggs?",
+		"What's the last thing you searched on the internet?",
+		"Do you fold or scrunch?",
+		"What's your typing speed?",
+		"Morning person or night owl?",
+		"What's your phone wallpaper?",
+		"Last song you listened to?",
+		"What's in your pocket/nearby right now?",
+	],
+};
+
+const category = command.suffix.trim().toLowerCase();
+const validCategories = Object.keys(questions);
+
+if (category && !validCategories.includes(category)) {
+	message.reply('❌ Categories: ' + validCategories.join(', '));
+	return;
+}
+
+const pool = category ? questions[category] : Object.values(questions).flat();
+const question = utils.random.pick(pool);
+const emoji = { fun: '🎉', deep: '💭', gaming: '🎮', random: '🎲' };
+
+message.reply({
+	embeds: [embed.create({
+		title: (category ? emoji[category] + ' ' : '❄️ ') + 'Icebreaker',
+		description: '**' + question + '**',
+		color: embed.colors.BLUE,
+		footer: { text: category ? utils.text.capitalize(category) : 'Random | Categories: fun, deep, gaming, random' },
+	})]
+});

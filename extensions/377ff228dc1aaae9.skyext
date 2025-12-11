@@ -1,0 +1,46 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const embed = require('embed');
+const utils = require('utils');
+
+const args = command.suffix.trim().split(/\s+/);
+const price = parseInt(args.pop());
+const item = args.join(' ');
+
+if (!item || isNaN(price) || price <= 0) {
+	message.reply('❌ Usage: `auction <item name> <starting price>`');
+	return;
+}
+
+const auctionKey = 'auction_' + message.channel.id;
+const existing = extension.storage.get(auctionKey);
+
+if (existing && Date.now() - existing.startTime < 300000) {
+	message.reply('❌ An auction is already active in this channel!');
+	return;
+}
+
+const auction = {
+	item: item,
+	startPrice: price,
+	currentBid: price,
+	highestBidder: null,
+	host: message.author.id,
+	startTime: Date.now(),
+};
+
+extension.storage.write(auctionKey, auction);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔨 Auction Started!',
+		description: '**Item:** ' + item + '\n' +
+			'**Starting Price:** ' + utils.format.number(price) + ' points\n\n' +
+			'Type `bid <amount>` to place a bid!\n' +
+			'Auction ends in 5 minutes.',
+		color: embed.colors.GOLD,
+		footer: { text: 'Hosted by ' + message.author.username },
+		timestamp: new Date().toISOString(),
+	})]
+});

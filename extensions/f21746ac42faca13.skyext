@@ -1,0 +1,42 @@
+const message = require('message');
+const command = require('command');
+
+const categories = {
+	general: [
+		{ q: "What is the capital of France?", a: ["paris"], points: 10 },
+		{ q: "How many continents are there?", a: ["7", "seven"], points: 10 },
+		{ q: "What is the largest planet in our solar system?", a: ["jupiter"], points: 15 },
+		{ q: "What year did World War II end?", a: ["1945"], points: 15 },
+		{ q: "What is the chemical symbol for gold?", a: ["au"], points: 20 }
+	],
+	science: [
+		{ q: "What is the speed of light in km/s (approximately)?", a: ["300000", "299792"], points: 25 },
+		{ q: "What is H2O commonly known as?", a: ["water"], points: 10 },
+		{ q: "How many bones are in the adult human body?", a: ["206"], points: 20 },
+		{ q: "What planet is known as the Red Planet?", a: ["mars"], points: 10 }
+	],
+	history: [
+		{ q: "Who was the first President of the United States?", a: ["george washington", "washington"], points: 10 },
+		{ q: "In what year did the Titanic sink?", a: ["1912"], points: 15 },
+		{ q: "Who painted the Mona Lisa?", a: ["leonardo da vinci", "da vinci", "leonardo"], points: 15 }
+	]
+};
+
+const utils = require('utils');
+const embed = require('embed');
+
+const category = command.arguments[0]?.toLowerCase() || 'general';
+const questionList = categories[category] || categories.general;
+const question = utils.random.pick(questionList);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧠 Trivia Time!',
+		description: utils.discord.bold('Category:') + ' ' + utils.text.capitalize(category) + '\n\n' +
+			utils.discord.bold('Question:') + ' ' + question.q + '\n\n' +
+			'💰 ' + utils.discord.bold('Points:') + ' ' + question.points + '\n\n' +
+			utils.discord.italic('Type your answer in chat!'),
+		color: embed.colors.PURPLE,
+		footer: { text: 'You have 30 seconds to answer!' }
+	})]
+});

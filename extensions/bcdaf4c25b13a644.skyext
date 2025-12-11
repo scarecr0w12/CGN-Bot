@@ -1,0 +1,14 @@
+const event = require('event');
+const extension = require('extension');
+const server = require('server');
+
+const member = event.data;
+
+// Configure your auto-role ID here
+const AUTO_ROLE_ID = extension.getField('role_id') || null;
+
+if (AUTO_ROLE_ID) {
+	extension.log('Would assign role ' + AUTO_ROLE_ID + ' to ' + member.user?.username);
+} else {
+	extension.log('No auto-role configured');
+}

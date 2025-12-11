@@ -1,0 +1,109 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const rooms = [
+	{
+		name: 'The Locked Office',
+		description: 'You wake up in a dusty office. The door is locked.',
+		items: ['desk', 'painting', 'bookshelf', 'safe'],
+		hints: {
+			desk: 'A wooden desk with a drawer. Inside is a torn note: "The code is the year the company was founded."',
+			painting: 'A painting of mountains. The frame says "Est. 1987".',
+			bookshelf: 'Old books. One titled "Company History" has a key taped inside!',
+			safe: 'A small safe requiring a 4-digit code.',
+		},
+		solution: { item: 'safe', code: '1987' },
+		keyItem: 'bookshelf',
+	},
+];
+
+const stateKey = 'escape_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const args = command.suffix.trim().toLowerCase().split(/\s+/);
+const action = args[0];
+
+if (!game || action === 'new') {
+	const room = utils.random.pick(rooms);
+	game = { room, inventory: [], examined: [], solved: false };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🚪 ' + room.name,
+			description: room.description + '\n\n**You can see:** ' + room.items.join(', ') + '\n\n*Commands: look <item>, take <item>, use <item> <code>*',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (action === 'look') {
+	const item = args[1];
+	if (!item) {
+		message.reply('👀 **Room:** ' + game.room.description + '\n**Items:** ' + game.room.items.join(', '));
+		return;
+	}
+	
+	if (!game.room.items.includes(item)) {
+		message.reply('❓ You don\'t see a ' + item + ' here.');
+		return;
+	}
+	
+	const hint = game.room.hints[item];
+	if (!game.examined.includes(item)) game.examined.push(item);
+	extension.storage.write(stateKey, game);
+	
+	message.reply('🔍 **' + utils.text.capitalize(item) + ':** ' + hint);
+	return;
+}
+
+if (action === 'take') {
+	const item = args[1];
+	if (item === game.room.keyItem && !game.inventory.includes('key')) {
+		game.inventory.push('key');
+		extension.storage.write(stateKey, game);
+		message.reply('✅ You found a **key** in the ' + item + '!');
+	} else {
+		message.reply('❌ Nothing useful to take there.');
+	}
+	return;
+}
+
+if (action === 'use') {
+	const item = args[1];
+	const code = args[2];
+	
+	if (item === game.room.solution.item) {
+		if (code === game.room.solution.code) {
+			game.solved = true;
+			extension.storage.write(stateKey, null);
+			
+			message.reply({
+				embeds: [embed.create({
+					title: '🎉 ESCAPED!',
+					description: 'The ' + item + ' opens with code ' + code + '!\nYou find a key and unlock the door!\n\n**You escaped!**',
+					color: embed.colors.SUCCESS,
+				})]
+			});
+		} else {
+			message.reply('❌ Wrong code! The ' + item + ' doesn\'t open.');
+		}
+		return;
+	}
+	
+	message.reply('❓ You can\'t use that.');
+}
+
+if (!action) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🚪 ' + game.room.name,
+			description: '**Inventory:** ' + (game.inventory.length ? game.inventory.join(', ') : 'Empty') + '\n**Examined:** ' + game.examined.join(', '),
+			color: embed.colors.BLUE,
+			footer: { text: 'Commands: look, look <item>, take <item>, use <item> <code>' },
+		})]
+	});
+}

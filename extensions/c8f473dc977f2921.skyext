@@ -1,0 +1,140 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const gameKey = 'traitor_' + message.channel.id;
+let game = extension.storage.get(gameKey);
+const args = command.suffix.trim().split(/\s+/);
+const action = args[0]?.toLowerCase();
+
+if (action === 'start') {
+	if (game && game.state === 'playing') {
+		message.reply('❌ Game in progress!');
+		return;
+	}
+	
+	game = {
+		state: 'lobby',
+		players: [message.author.id],
+		host: message.author.id,
+	};
+	extension.storage.write(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔪 Traitor - Lobby',
+			description: 'A new game is starting!\n\n`traitor join` to join\n`traitor begin` to start (host)\n\n**Players:** 1 (need 4+)',
+			color: embed.colors.PURPLE,
+		})]
+	});
+	return;
+}
+
+if (action === 'join') {
+	if (!game || game.state !== 'lobby') {
+		message.reply('❌ No lobby. Use `traitor start`');
+		return;
+	}
+	if (game.players.includes(message.author.id)) {
+		message.reply('✅ Already joined!');
+		return;
+	}
+	game.players.push(message.author.id);
+	extension.storage.write(gameKey, game);
+	message.reply('✅ ' + message.author.username + ' joined! (' + game.players.length + ' players)');
+	return;
+}
+
+if (action === 'begin') {
+	if (!game || game.host !== message.author.id) {
+		message.reply('❌ Only the host can start!');
+		return;
+	}
+	if (game.players.length < 4) {
+		message.reply('❌ Need 4+ players!');
+		return;
+	}
+	
+	const traitorIdx = utils.random.int(0, game.players.length - 1);
+	game.state = 'playing';
+	game.traitor = game.players[traitorIdx];
+	game.votes = {};
+	game.round = 1;
+	extension.storage.write(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔪 Game Started!',
+			description: 'The traitor has been chosen!\n\nDiscuss and vote with `traitor vote @user`\n\n**Players:** ' + game.players.length,
+			color: embed.colors.ERROR,
+			footer: { text: 'Round ' + game.round + ' | One traitor among you...' },
+		})]
+	});
+	return;
+}
+
+if (action === 'vote' && game?.state === 'playing') {
+	if (!game.players.includes(message.author.id)) {
+		message.reply('❌ You\'re not in this game!');
+		return;
+	}
+	
+	const mention = command.suffix.match(/<@!?(\d+)>/);
+	if (!mention) {
+		message.reply('❌ Vote: `traitor vote @user`');
+		return;
+	}
+	
+	const target = mention[1];
+	if (!game.players.includes(target)) {
+		message.reply('❌ That player isn\'t in the game!');
+		return;
+	}
+	
+	game.votes[message.author.id] = target;
+	extension.storage.write(gameKey, game);
+	
+	const voteCount = Object.keys(game.votes).length;
+	message.reply('🗳️ Vote recorded! (' + voteCount + '/' + game.players.length + ')');
+	
+	if (voteCount === game.players.length) {
+		const counts = {};
+		Object.values(game.votes).forEach(v => counts[v] = (counts[v] || 0) + 1);
+		const eliminated = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+		
+		const wasTraitor = eliminated === game.traitor;
+		extension.storage.write(gameKey, null);
+		
+		message.reply({
+			embeds: [embed.create({
+				title: wasTraitor ? '✅ Crew Wins!' : '🔪 Traitor Wins!',
+				description: utils.discord.userMention(eliminated) + ' was eliminated!\n\n' +
+					(wasTraitor ? 'They were the traitor!' : 'They were innocent! The traitor was ' + utils.discord.userMention(game.traitor)),
+				color: wasTraitor ? embed.colors.SUCCESS : embed.colors.ERROR,
+			})]
+		});
+	}
+	return;
+}
+
+if (action === 'status' && game) {
+	const voters = Object.keys(game.votes).length;
+	message.reply({
+		embeds: [embed.create({
+			title: '🔪 Traitor - Status',
+			description: '**State:** ' + game.state + '\n**Players:** ' + game.players.length + '\n**Votes:** ' + voters + '/' + game.players.length,
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔪 Traitor',
+		description: '**Commands:**\n`traitor start` - Create lobby\n`traitor join` - Join lobby\n`traitor begin` - Start game\n`traitor vote @user` - Vote someone out',
+		color: embed.colors.PURPLE,
+	})]
+});

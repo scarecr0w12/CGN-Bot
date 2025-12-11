@@ -1,0 +1,19 @@
+const event = require('event');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const message = event.data;
+if (!message.content || message.author?.bot) return;
+
+const logEmbed = embed.create({
+	title: '🗑️ Message Deleted',
+	description: utils.discord.bold('Author:') + ' ' + utils.discord.mention(message.author?.id, 'user') + '\n' +
+		utils.discord.bold('Channel:') + ' ' + utils.discord.mention(message.channelId, 'channel') + '\n\n' +
+		utils.discord.bold('Content:') + '\n' + (message.content || utils.discord.italic('No content')),
+	color: embed.colors.ERROR,
+	timestamp: new Date().toISOString(),
+	footer: { text: 'Message ID: ' + message.id }
+});
+
+extension.log('Deleted message logged from: ' + message.author?.username);

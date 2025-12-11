@@ -1,0 +1,43 @@
+const message = require('message');
+
+const facts = [
+	"Honey never spoils. Archaeologists have found 3000-year-old honey in Egyptian tombs that was still edible!",
+	"A group of flamingos is called a 'flamboyance'.",
+	"Octopuses have three hearts and blue blood.",
+	"Bananas are berries, but strawberries aren't.",
+	"The shortest war in history lasted 38 to 45 minutes between Britain and Zanzibar.",
+	"Cows have best friends and get stressed when separated.",
+	"A jiffy is an actual unit of time: 1/100th of a second.",
+	"The inventor of the Pringles can is buried in one.",
+	"Scotland's national animal is the unicorn.",
+	"There are more possible chess games than atoms in the observable universe.",
+	"Sharks are older than trees.",
+	"The moon has moonquakes.",
+	"A day on Venus is longer than its year.",
+	"Cleopatra lived closer to the moon landing than to the construction of the Great Pyramid.",
+	"The human brain uses the same amount of power as a 10-watt light bulb.",
+	"Dolphins have names for each other.",
+	"Wombat poop is cube-shaped.",
+	"The Eiffel Tower can grow 6 inches taller in summer due to heat expansion.",
+	"A single cloud can weigh more than 1 million pounds.",
+	"The first computer programmer was a woman named Ada Lovelace.",
+	"Your nose can remember 50,000 different scents.",
+	"Hot water freezes faster than cold water (Mpemba effect).",
+	"The longest hiccuping spree lasted 68 years.",
+	"A snail can sleep for 3 years.",
+	"The fingerprints of koalas are nearly identical to humans."
+];
+
+const utils = require('utils');
+const embed = require('embed');
+
+const fact = utils.random.pick(facts);
+
+message.reply({
+	embeds: [embed.create({
+		title: '💡 Did You Know?',
+		description: fact,
+		color: embed.colors.GOLD,
+		footer: { text: 'Random Fact Generator' }
+	})]
+});

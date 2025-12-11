@@ -1,0 +1,81 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const storyKey = 'story_' + message.channel.id;
+let story = extension.storage.get(storyKey);
+const args = command.suffix.trim().split(/\s+/);
+const action = args[0]?.toLowerCase();
+
+if (action === 'new') {
+	story = { sentences: [], contributors: [], lastAuthor: null };
+	extension.storage.write(storyKey, story);
+	message.reply({
+		embeds: [embed.create({
+			title: '📖 New Story Started!',
+			description: 'A blank page awaits...\n\nAdd the first sentence with:\n`story add Once upon a time...`',
+			color: embed.colors.GREEN,
+		})]
+	});
+	return;
+}
+
+if (!story) {
+	message.reply('📖 No story in progress. Start one with `story new`');
+	return;
+}
+
+if (action === 'view' || !action) {
+	if (story.sentences.length === 0) {
+		message.reply('📖 The story is empty! Add the first sentence.');
+		return;
+	}
+	
+	const storyText = story.sentences.join(' ');
+	const contributors = utils.array.unique(story.contributors);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📖 Story So Far',
+			description: storyText,
+			color: embed.colors.BLUE,
+			footer: { text: story.sentences.length + ' sentences by ' + contributors.length + ' contributors' },
+		})]
+	});
+	return;
+}
+
+if (action === 'add') {
+	const sentence = args.slice(1).join(' ');
+	
+	if (!sentence || sentence.length < 5) {
+		message.reply('❌ Please provide a sentence (at least 5 characters)');
+		return;
+	}
+	
+	if (sentence.length > 200) {
+		message.reply('❌ Sentence too long! Max 200 characters.');
+		return;
+	}
+	
+	if (story.lastAuthor === message.author.id) {
+		message.reply('⏳ Let someone else add to the story first!');
+		return;
+	}
+	
+	story.sentences.push(sentence);
+	story.contributors.push(message.author.id);
+	story.lastAuthor = message.author.id;
+	extension.storage.write(storyKey, story);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '✏️ Sentence Added!',
+			description: '"' + sentence + '"\n\n*- ' + message.author.username + '*',
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Story now has ' + story.sentences.length + ' sentences' },
+		})]
+	});
+}

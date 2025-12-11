@@ -1,0 +1,8 @@
+const message = require('message');
+const extension = require('extension');
+const utils = require('utils');
+
+const reactions = ['👍', '🔥', '✨', '💯', '🙌'];
+const reaction = utils.random.pick(reactions);
+
+extension.log('Would react with ' + reaction + ' to message from ' + message.author.username);

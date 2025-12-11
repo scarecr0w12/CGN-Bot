@@ -1,0 +1,122 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const bosses = [
+	{ name: 'Ancient Dragon', hp: 5000, emoji: '🐉', reward: 500 },
+	{ name: 'Shadow Lord', hp: 3000, emoji: '👹', reward: 300 },
+	{ name: 'Crystal Golem', hp: 4000, emoji: '💎', reward: 400 },
+	{ name: 'Demon King', hp: 6000, emoji: '😈', reward: 600 },
+];
+
+const raidKey = 'raid_' + message.channel.id;
+let raid = extension.storage.get(raidKey);
+const action = command.arguments[0]?.toLowerCase();
+
+if (action === 'start' || (!raid && !action)) {
+	if (raid && raid.hp > 0) {
+		message.reply('⚔️ A raid is already active! Use `raid join` to participate.');
+		return;
+	}
+	
+	const boss = utils.random.pick(bosses);
+	raid = {
+		boss: boss.name,
+		emoji: boss.emoji,
+		maxHp: boss.hp,
+		hp: boss.hp,
+		reward: boss.reward,
+		participants: {},
+		startTime: Date.now(),
+	};
+	extension.storage.write(raidKey, raid);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: raid.emoji + ' RAID BOSS: ' + boss.name,
+			description: '**HP:** ' + utils.format.number(boss.hp) + '\n' +
+				'**Reward Pool:** ' + boss.reward + ' points\n\n' +
+				'Type `raid join` to join!\nType `raid attack` to attack!',
+			color: embed.colors.ERROR,
+		})]
+	});
+	return;
+}
+
+if (!raid || raid.hp <= 0) {
+	message.reply('🏰 No active raid. Use `raid start` to summon a boss!');
+	return;
+}
+
+if (action === 'join') {
+	if (raid.participants[message.author.id]) {
+		message.reply('✅ You\'re already in this raid!');
+		return;
+	}
+	
+	raid.participants[message.author.id] = { damage: 0, attacks: 0 };
+	extension.storage.write(raidKey, raid);
+	
+	message.reply('⚔️ ' + message.author.username + ' joined the raid! (' + Object.keys(raid.participants).length + ' raiders)');
+	return;
+}
+
+if (action === 'attack') {
+	if (!raid.participants[message.author.id]) {
+		raid.participants[message.author.id] = { damage: 0, attacks: 0 };
+	}
+	
+	const participant = raid.participants[message.author.id];
+	const damage = utils.random.int(50, 150);
+	
+	participant.damage += damage;
+	participant.attacks++;
+	raid.hp -= damage;
+	
+	if (raid.hp <= 0) {
+		raid.hp = 0;
+		const totalDamage = Object.values(raid.participants).reduce((sum, p) => sum + p.damage, 0);
+		
+		let rewards = '';
+		for (const [id, p] of Object.entries(raid.participants)) {
+			const share = Math.floor((p.damage / totalDamage) * raid.reward);
+			if (share > 0) {
+				economy.addPoints(id, share, 'Raid reward');
+				rewards += utils.discord.userMention(id) + ': ' + share + ' pts\n';
+			}
+		}
+		
+		extension.storage.write(raidKey, null);
+		
+		message.reply({
+			embeds: [embed.create({
+				title: '🎉 BOSS DEFEATED!',
+				description: raid.emoji + ' ' + raid.boss + ' has been slain!\n\n**Rewards:**\n' + rewards,
+				color: embed.colors.SUCCESS,
+			})]
+		});
+		return;
+	}
+	
+	extension.storage.write(raidKey, raid);
+	
+	const hpPercent = Math.round((raid.hp / raid.maxHp) * 100);
+	message.reply('⚔️ ' + message.author.username + ' dealt **' + damage + '** damage! ' + raid.emoji + ' HP: ' + hpPercent + '%');
+	return;
+}
+
+if (action === 'status') {
+	const hpBar = utils.format.progressBar(raid.hp, raid.maxHp);
+	const raiders = Object.keys(raid.participants).length;
+	
+	message.reply({
+		embeds: [embed.create({
+			title: raid.emoji + ' ' + raid.boss,
+			description: '**HP:** ' + utils.format.number(raid.hp) + '/' + utils.format.number(raid.maxHp) + '\n' + hpBar + '\n\n**Raiders:** ' + raiders,
+			color: embed.colors.GOLD,
+		})]
+	});
+}

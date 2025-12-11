@@ -1,0 +1,28 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const riddles = [
+	{ q: "What has keys but no locks?", a: "keyboard" },
+	{ q: "What has hands but can't clap?", a: "clock" },
+	{ q: "What has a head and a tail but no body?", a: "coin" },
+	{ q: "What gets wetter the more it dries?", a: "towel" },
+	{ q: "What can you catch but not throw?", a: "cold" },
+	{ q: "What has many teeth but can't bite?", a: "comb" },
+	{ q: "What runs but never walks?", a: "water" },
+	{ q: "What has words but never speaks?", a: "book" },
+	{ q: "What has a ring but no finger?", a: "phone" },
+	{ q: "I have cities, but no houses. I have mountains, but no trees. What am I?", a: "map" }
+];
+
+const riddle = utils.random.pick(riddles);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🤔 Riddle Me This...',
+		description: utils.discord.bold(riddle.q) + '\n\n' +
+			utils.discord.italic('Think carefully and type your answer!'),
+		color: embed.colors.PURPLE,
+		footer: { text: 'Hint: The answer is a single word' }
+	})]
+});

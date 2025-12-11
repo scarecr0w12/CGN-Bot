@@ -108,6 +108,18 @@
 			<% } else { %>
 				<a href="/dashboard/<%= serverData.id %>/stats-points/skynet-points">SkynetPoints</a>
 			<% } %>
+			<% if (currentPage === `/dashboard/${serverData.id}/stats-points/economy`) { %>
+            <%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#"><span class="icon is-small"><i class="fas fa-coins"></i></span> Economy</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/stats-points/economy"><span class="icon is-small"><i class="fas fa-coins"></i></span> Economy</a>
+			<% } %>
+			<% if (currentPage === `/dashboard/${serverData.id}/stats-points/economy-stats`) { %>
+            <%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#"><span class="icon is-small"><i class="fas fa-chart-line"></i></span> Economy Stats</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/stats-points/economy-stats"><span class="icon is-small"><i class="fas fa-chart-line"></i></span> Economy Stats</a>
+			<% } %>
 			<% if (currentPage === `/dashboard/${serverData.id}/stats-points/advanced-stats`) { %>
             <%- include('../partials/admin-sudo.ejs') %>
 			<a class="is-active" href="#"><span class="icon is-small"><i class="fas fa-crown"></i></span> Advanced Stats</a>

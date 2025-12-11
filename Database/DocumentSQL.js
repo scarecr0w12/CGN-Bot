@@ -45,7 +45,35 @@ module.exports = class DocumentSQL {
 		 */
 		this._doc = doc;
 
+		// Add .id() method to arrays for MongoDB compatibility
+		this._addIdMethodToArrays(this._doc);
+
 		Object.assign(this, this._doc);
+	}
+
+	/**
+	 * Recursively adds an .id() method to arrays for MongoDB subdocument compatibility
+	 * @param {Object} obj The object to process
+	 * @private
+	 */
+	_addIdMethodToArrays (obj) {
+		if (!obj || typeof obj !== "object") return;
+
+		for (const key of Object.keys(obj)) {
+			const value = obj[key];
+			if (Array.isArray(value)) {
+				// Add .id() method to find subdocument by _id
+				if (!value.id) {
+					value.id = function (id) {
+						return this.find(item => item && item._id === id) || null;
+					};
+				}
+				// Recursively process array items
+				value.forEach(item => this._addIdMethodToArrays(item));
+			} else if (value && typeof value === "object") {
+				this._addIdMethodToArrays(value);
+			}
+		}
 	}
 
 	/**

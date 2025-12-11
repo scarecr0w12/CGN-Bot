@@ -149,6 +149,26 @@
                     </label>
                 </div>
             </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="dbl_sync_commands" <%= configData.bot_lists?.discordbotlist?.sync_commands ? 'checked' : '' %>>
+                        Sync slash commands on startup
+                    </label>
+                </div>
+                <p class="help">Automatically post your bot's slash commands to discordbotlist.com when the bot starts</p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button type="button" class="button is-info is-small" id="sync-commands-btn" <%= !configData.bot_lists?.discordbotlist?.isEnabled || !configData.bot_lists?.discordbotlist?.api_token ? 'disabled' : '' %>>
+                        <span class="icon"><i class="fa fa-sync"></i></span>
+                        <span>Sync Commands Now</span>
+                    </button>
+                </div>
+                <p class="help">Manually sync slash commands to discordbotlist.com</p>
+            </div>
         </div>
 
         <!-- Vote Rewards Configuration -->
@@ -342,5 +362,62 @@
 	</section>
 
 	<%- include('../partials/footer') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const syncBtn = document.getElementById('sync-commands-btn');
+		if (syncBtn) {
+			syncBtn.addEventListener('click', async function() {
+				const btn = this;
+				const originalHTML = btn.innerHTML;
+				btn.disabled = true;
+				btn.innerHTML = '<span class="icon"><i class="fa fa-spinner fa-spin"></i></span><span>Syncing...</span>';
+
+				try {
+					const response = await fetch('/dashboard/maintainer/global-options/bot-lists/sync-commands', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					});
+
+					const data = await response.json();
+
+					if (data.success) {
+						btn.classList.remove('is-info');
+						btn.classList.add('is-success');
+						btn.innerHTML = '<span class="icon"><i class="fa fa-check"></i></span><span>' + data.message + '</span>';
+						setTimeout(() => {
+							btn.classList.remove('is-success');
+							btn.classList.add('is-info');
+							btn.innerHTML = originalHTML;
+							btn.disabled = false;
+						}, 3000);
+					} else {
+						btn.classList.remove('is-info');
+						btn.classList.add('is-danger');
+						btn.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Error: ' + (data.error || 'Unknown error') + '</span>';
+						setTimeout(() => {
+							btn.classList.remove('is-danger');
+							btn.classList.add('is-info');
+							btn.innerHTML = originalHTML;
+							btn.disabled = false;
+						}, 5000);
+					}
+				} catch (err) {
+					btn.classList.remove('is-info');
+					btn.classList.add('is-danger');
+					btn.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Network error</span>';
+					setTimeout(() => {
+						btn.classList.remove('is-danger');
+						btn.classList.add('is-info');
+						btn.innerHTML = originalHTML;
+						btn.disabled = false;
+					}, 3000);
+				}
+			});
+		}
+	});
+	</script>
 </body>
 </html>

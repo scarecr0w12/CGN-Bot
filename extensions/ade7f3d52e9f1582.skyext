@@ -1,0 +1,115 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const suits = ['♠️', '♥️', '♦️', '♣️'];
+const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+function createDeck() {
+	const deck = [];
+	for (const suit of suits) {
+		for (const rank of ranks) {
+			deck.push({ rank, suit, value: ranks.indexOf(rank) });
+		}
+	}
+	return utils.random.shuffle(deck);
+}
+
+function cardStr(card) {
+	return card.rank + card.suit;
+}
+
+const stateKey = 'war_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const action = command.suffix.trim().toLowerCase();
+
+if (!game || action === 'new') {
+	const deck = createDeck();
+	const mid = Math.floor(deck.length / 2);
+	game = {
+		playerDeck: deck.slice(0, mid),
+		botDeck: deck.slice(mid),
+		round: 0,
+	};
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ War!',
+			description: 'Cards dealt!\n\n**Your cards:** ' + game.playerDeck.length + '\n**Bot cards:** ' + game.botDeck.length + '\n\nType `war play` to flip!',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (action === 'play' || action === 'flip') {
+	if (game.playerDeck.length === 0 || game.botDeck.length === 0) {
+		const won = game.playerDeck.length > 0;
+		extension.storage.write(stateKey, null);
+		
+		if (won) {
+			economy.addPoints(message.author.id, 50, 'War victory');
+			message.reply({
+				embeds: [embed.create({
+					title: '🎉 You Win!',
+					description: 'You collected all the cards!\n+50 points!',
+					color: embed.colors.SUCCESS,
+				})]
+			});
+		} else {
+			message.reply({
+				embeds: [embed.create({
+					title: '😢 Bot Wins',
+					description: 'The bot collected all your cards!',
+					color: embed.colors.ERROR,
+				})]
+			});
+		}
+		return;
+	}
+	
+	const playerCard = game.playerDeck.shift();
+	const botCard = game.botDeck.shift();
+	game.round++;
+	
+	let result, color;
+	if (playerCard.value > botCard.value) {
+		game.playerDeck.push(playerCard, botCard);
+		result = '✅ You win this round!';
+		color = embed.colors.SUCCESS;
+	} else if (playerCard.value < botCard.value) {
+		game.botDeck.push(playerCard, botCard);
+		result = '❌ Bot wins this round!';
+		color = embed.colors.ERROR;
+	} else {
+		// War!
+		game.playerDeck.push(playerCard);
+		game.botDeck.push(botCard);
+		result = '⚔️ WAR! Cards returned (tie)';
+		color = embed.colors.GOLD;
+	}
+	
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ War - Round ' + game.round,
+			description: '**You:** ' + cardStr(playerCard) + '\n**Bot:** ' + cardStr(botCard) + '\n\n' + result + '\n\n📊 You: ' + game.playerDeck.length + ' | Bot: ' + game.botDeck.length,
+			color: color,
+		})]
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚔️ War Status',
+		description: '**Your cards:** ' + game.playerDeck.length + '\n**Bot cards:** ' + game.botDeck.length + '\n**Round:** ' + game.round,
+		color: embed.colors.BLUE,
+		footer: { text: 'Type: war play to flip cards' },
+	})]
+});

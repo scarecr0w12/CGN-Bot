@@ -1,0 +1,7 @@
+const message = require('message');
+const extension = require('extension');
+
+// This is a placeholder - real implementation would have actual filter words
+extension.log('Profanity filter triggered - message from: ' + message.author.username);
+
+// Would delete message and warn user

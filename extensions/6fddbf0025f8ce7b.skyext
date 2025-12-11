@@ -1,0 +1,9 @@
+const message = require('message');
+const extension = require('extension');
+
+const urlRegex = /https?:\/\/[^\s]+/gi;
+const links = message.content.match(urlRegex) || [];
+
+if (links.length > 0) {
+	extension.log('Links detected from ' + message.author.username + ': ' + links.join(', '));
+}

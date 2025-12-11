@@ -1,0 +1,16 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const isHeads = utils.random.bool();
+const result = isHeads ? 'Heads' : 'Tails';
+const emoji = isHeads ? '👑' : '🦅';
+
+message.reply({
+	embeds: [embed.create({
+		title: '🪙 Coin Flip',
+		description: emoji + ' ' + utils.discord.bold(result + '!'),
+		color: isHeads ? embed.colors.GOLD : embed.colors.DEFAULT,
+		footer: { text: 'The coin has spoken!' }
+	})]
+});

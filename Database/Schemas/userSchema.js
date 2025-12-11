@@ -11,6 +11,57 @@ module.exports = new Schema({
 		type: Number,
 		default: 1,
 	},
+
+	// Economy system
+	economy: new Schema({
+		wallet: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		bank: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		bank_capacity: {
+			type: Number,
+			default: 5000,
+		},
+		daily_last_claimed: Date,
+		daily_streak: {
+			type: Number,
+			default: 0,
+		},
+		rob_last_attempt: Date,
+		total_earned: {
+			type: Number,
+			default: 0,
+		},
+		total_lost: {
+			type: Number,
+			default: 0,
+		},
+		inventory: [new Schema({
+			_id: {
+				type: String,
+				required: true,
+			},
+			item_id: {
+				type: String,
+				required: true,
+			},
+			quantity: {
+				type: Number,
+				default: 1,
+				min: 1,
+			},
+			acquired_at: {
+				type: Date,
+				default: Date.now,
+			},
+		})],
+	}),
 	afk_message: String,
 	server_nicks: [new Schema({
 		_id: {

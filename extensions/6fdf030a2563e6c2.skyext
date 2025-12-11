@@ -1,0 +1,24 @@
+const event = require('event');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const member = event.data;
+const user = member.user;
+const createdAt = new Date(user?.createdTimestamp || Date.now());
+const accountAge = utils.time.daysBetween(createdAt, new Date());
+
+const isNewAccount = accountAge < 7;
+const warningText = isNewAccount ? '⚠️ ' + utils.discord.bold('New Account Warning!') : '';
+
+const logMessage = embed.create({
+	title: '📥 Member Joined',
+	description: utils.discord.mention(member.id, 'user') + ' joined the server\n\n' +
+		utils.discord.bold('Username:') + ' ' + (user?.username || 'Unknown') + '\n' +
+		utils.discord.bold('Account Age:') + ' ' + accountAge + ' days\n' +
+		warningText,
+	color: isNewAccount ? embed.colors.GOLD : embed.colors.SUCCESS,
+	timestamp: new Date().toISOString()
+});
+
+extension.log('Member joined: ' + user?.username + ' (account age: ' + accountAge + ' days)');

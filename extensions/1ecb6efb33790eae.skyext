@@ -1,0 +1,17 @@
+const event = require('event');
+const extension = require('extension');
+
+const member = event.data;
+const welcomeMessages = [
+	"Welcome to the server, {user}! 🎉",
+	"Hey {user}, glad to have you here! 👋",
+	"{user} just joined! Everyone say hi! 🙌",
+	"A wild {user} appeared! Welcome! ✨",
+	"Welcome aboard, {user}! Enjoy your stay! 🚀"
+];
+
+const message = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)]
+	.replace('{user}', '<@' + member.id + '>');
+
+// Would send to configured channel
+extension.log('Would welcome: ' + member.user?.username);

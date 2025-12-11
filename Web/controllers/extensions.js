@@ -26,22 +26,37 @@ controllers.gallery = async (req, { res }) => {
 		page = parseInt(req.query.page);
 	}
 
+	// Sort options
+	const sortOption = req.query.sort || "featured";
+	const sortMap = {
+		featured: { featured: -1, points: -1, last_updated: -1 },
+		popular: { points: -1, last_updated: -1 },
+		newest: { last_updated: -1 },
+		oldest: { last_updated: 1 },
+		name: { name: 1 },
+	};
+	const sortCriteria = sortMap[sortOption] || sortMap.featured;
+
+	// Category filter (extension type)
+	const categoryFilter = req.query.category;
+	const validCategories = ["command", "keyword", "timer", "event"];
+
 	const renderPage = async (upvotedData, serverData) => {
 		const extensionState = req.path.substring(req.path.lastIndexOf("/") + 1);
 		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && configJSON.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
 		try {
-			let rawCount = await Gallery.count({
+			// Base criteria for counting
+			const baseCriteria = {
 				state: { $in: ["version_queue", extensionState] },
 				level: { $in: extensionLevel },
-			});
+			};
+
+			let rawCount = await Gallery.count(baseCriteria);
 			if (!rawCount) {
 				rawCount = 0;
 			}
 
-			const matchCriteria = {
-				state: { $in: ["version_queue", extensionState] },
-				level: { $in: extensionLevel },
-			};
+			const matchCriteria = { ...baseCriteria };
 			if (req.query.id) {
 				matchCriteria._id = new ObjectId(req.query.id);
 			} else if (req.query.q) {
@@ -52,13 +67,38 @@ controllers.gallery = async (req, { res }) => {
 				];
 			}
 
-			const galleryDocuments = await Gallery.find(matchCriteria).sort({ featured: -1, points: -1, last_updated: -1 }).skip(count * (page - 1))
+			// Get all extensions first, then filter by category client-side since type is in versions subdocument
+			const galleryDocuments = await Gallery.find(matchCriteria).sort(sortCriteria).skip(count * (page - 1))
 				.limit(count)
 				.exec();
 			const pageTitle = `${extensionState.charAt(0).toUpperCase() + extensionState.slice(1)} - Skynet Extensions`;
-			const extensionData = await Promise.all(galleryDocuments.filter(galleryDocument => (galleryDocument.published_version !== null && !isNaN(galleryDocument.published_version)) ||
+			let extensionData = await Promise.all(galleryDocuments.filter(galleryDocument => (galleryDocument.published_version !== null && !isNaN(galleryDocument.published_version)) ||
 				extensionState === "queue")
 				.map(a => parsers.extensionData(req, a, extensionState === "queue" ? a.version : a.published_version)));
+
+			// Count extensions by category for filter badges (from all matching docs, not just paginated)
+			const allGalleryDocs = await Gallery.find(matchCriteria).exec();
+			const allExtData = await Promise.all(allGalleryDocs.filter(doc => (doc.published_version !== null && !isNaN(doc.published_version)) ||
+				extensionState === "queue")
+				.map(a => parsers.extensionData(req, a, extensionState === "queue" ? a.version : a.published_version)));
+
+			const categoryCounts = {
+				all: allExtData.length,
+				command: 0,
+				keyword: 0,
+				timer: 0,
+				event: 0,
+			};
+			allExtData.forEach(ext => {
+				if (categoryCounts[ext.type] !== undefined) {
+					categoryCounts[ext.type]++;
+				}
+			});
+
+			// Filter by category if specified
+			if (categoryFilter && validCategories.includes(categoryFilter)) {
+				extensionData = extensionData.filter(ext => ext.type === categoryFilter);
+			}
 
 			res.setPageData({
 				page: "extensions.ejs",
@@ -72,6 +112,9 @@ controllers.gallery = async (req, { res }) => {
 				numPages: Math.ceil(rawCount / (count === 0 ? rawCount : count)),
 				extensions: extensionData,
 				upvotedData,
+				sortOption,
+				categoryFilter: categoryFilter || "all",
+				categoryCounts,
 			});
 
 			res.render();
@@ -261,12 +304,14 @@ controllers.builder = async (req, { res }) => {
 		if (req.query.extid) {
 			try {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectId(req.query.extid),
+					_id: req.query.extid,
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {
 					try {
-						galleryDocument.code = await fs.readFile(`${__dirname}/../../extensions/${galleryDocument.versions.id(galleryDocument.version).code_id}.skyext`);
+						const versionDoc = galleryDocument.versions.id(galleryDocument.version);
+						const codePath = `${__dirname}/../../extensions/${versionDoc.code_id}.skyext`;
+						galleryDocument.code = require("fs").readFileSync(codePath, "utf8");
 					} catch (err) {
 						galleryDocument.code = "";
 					}
@@ -335,7 +380,7 @@ controllers.builder.post = async (req, res) => {
 
 			if (req.query.extid) {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectId(req.query.extid),
+					_id: req.query.extid,
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {

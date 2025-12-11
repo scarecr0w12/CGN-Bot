@@ -1,0 +1,51 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/\s+/);
+const timeArg = args[0] || '';
+const eventName = args.slice(1).join(' ') || 'Countdown';
+
+// Parse time
+let seconds = 0;
+const timeMatch = timeArg.match(/^(\d+)([smhd])$/i);
+
+if (!timeMatch) {
+	message.reply({
+		embeds: [embed.create({
+			title: '⏰ Countdown Timer',
+			description: 'Invalid time format!\n\n' +
+				'Usage: `' + command.prefix + command.key + ' <time> [event]`\n\n' +
+				utils.discord.bold('Time formats:') + '\n' +
+				'• `30s` - 30 seconds\n' +
+				'• `5m` - 5 minutes\n' +
+				'• `2h` - 2 hours\n' +
+				'• `1d` - 1 day',
+			color: embed.colors.ERROR
+		})]
+	});
+} else {
+	const value = parseInt(timeMatch[1]);
+	const unit = timeMatch[2].toLowerCase();
+	
+	switch (unit) {
+		case 's': seconds = value; break;
+		case 'm': seconds = value * 60; break;
+		case 'h': seconds = value * 3600; break;
+		case 'd': seconds = value * 86400; break;
+	}
+	
+	// Calculate end time
+	const endTimestamp = utils.time.add(utils.time.now(), seconds, 's');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⏰ ' + eventName,
+			description: utils.discord.bold('Ends:') + ' ' + utils.time.discord(endTimestamp, 'R') + '\n' +
+				utils.discord.bold('At:') + ' ' + utils.time.discord(endTimestamp, 'F'),
+			color: embed.colors.BLUE,
+			footer: { text: 'Set by ' + message.author.username }
+		})]
+	});
+}

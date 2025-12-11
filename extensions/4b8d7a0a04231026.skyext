@@ -1,0 +1,111 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const stateKey = 'duel_' + message.channel.id;
+let duel = extension.storage.get(stateKey);
+const action = command.suffix.trim().toLowerCase();
+
+function hpBar(hp, max) {
+	const filled = Math.round((hp / max) * 10);
+	return '🟥'.repeat(filled) + '⬛'.repeat(10 - filled) + ' ' + hp + '/' + max;
+}
+
+if (!duel) {
+	// Check for mention to start duel
+	const mentionMatch = command.suffix.match(/<@!?(\d+)>/);
+	if (!mentionMatch) {
+		message.reply('⚔️ Challenge someone! Usage: `duel @user`');
+		return;
+	}
+	
+	const opponentId = mentionMatch[1];
+	if (opponentId === message.author.id) {
+		message.reply('❌ You can\'t duel yourself!');
+		return;
+	}
+	
+	duel = {
+		players: {
+			[message.author.id]: { hp: 100, maxHp: 100, defending: false },
+			[opponentId]: { hp: 100, maxHp: 100, defending: false },
+		},
+		turn: message.author.id,
+		opponent: opponentId,
+		challenger: message.author.id,
+	};
+	extension.storage.write(stateKey, duel);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ Duel Started!',
+			description: utils.discord.userMention(message.author.id) + ' vs ' + utils.discord.userMention(opponentId) + '\n\n' +
+				'**' + message.author.username + ':** ' + hpBar(100, 100) + '\n' +
+				'**Opponent:** ' + hpBar(100, 100) + '\n\n' +
+				'It\'s ' + utils.discord.userMention(message.author.id) + '\'s turn!\n\nActions: `duel attack` | `duel defend` | `duel heal`',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (duel.turn !== message.author.id) {
+	message.reply('⏳ It\'s not your turn!');
+	return;
+}
+
+const player = duel.players[message.author.id];
+const opponentId = Object.keys(duel.players).find(id => id !== message.author.id);
+const opponent = duel.players[opponentId];
+
+// Reset defending
+player.defending = false;
+
+if (action === 'attack') {
+	let damage = utils.random.int(15, 25);
+	if (opponent.defending) {
+		damage = Math.floor(damage * 0.5);
+		opponent.defending = false;
+	}
+	opponent.hp = Math.max(0, opponent.hp - damage);
+	message.reply('⚔️ You dealt **' + damage + '** damage!');
+} else if (action === 'defend') {
+	player.defending = true;
+	message.reply('🛡️ You raise your shield! (50% damage reduction next hit)');
+} else if (action === 'heal') {
+	const heal = utils.random.int(10, 20);
+	player.hp = Math.min(player.maxHp, player.hp + heal);
+	message.reply('💚 You healed for **' + heal + '** HP!');
+} else {
+	message.reply('❌ Invalid action! Use: `duel attack`, `duel defend`, or `duel heal`');
+	return;
+}
+
+// Check for winner
+if (opponent.hp <= 0) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🏆 Victory!',
+			description: utils.discord.userMention(message.author.id) + ' wins the duel!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+	return;
+}
+
+// Switch turn
+duel.turn = opponentId;
+extension.storage.write(stateKey, duel);
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚔️ Duel',
+		description: '**You:** ' + hpBar(player.hp, player.maxHp) + '\n' +
+			'**Opponent:** ' + hpBar(opponent.hp, opponent.maxHp) + '\n\n' +
+			'It\'s ' + utils.discord.userMention(opponentId) + '\'s turn!',
+		color: embed.colors.BLUE,
+	})]
+});

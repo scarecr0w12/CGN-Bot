@@ -1,0 +1,111 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const enemies = [
+	{ name: 'Slime', hp: 20, dmg: 5, reward: 10 },
+	{ name: 'Goblin', hp: 30, dmg: 8, reward: 15 },
+	{ name: 'Skeleton', hp: 40, dmg: 10, reward: 20 },
+	{ name: 'Orc', hp: 50, dmg: 12, reward: 25 },
+	{ name: 'Demon', hp: 70, dmg: 15, reward: 35 },
+	{ name: 'Dragon', hp: 100, dmg: 20, reward: 50 },
+];
+
+const stateKey = 'tower_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const action = command.arguments[0]?.toLowerCase();
+
+if (!game || action === 'new') {
+	game = { floor: 0, hp: 100, maxHp: 100, totalReward: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🗼 Tower Climb',
+			description: 'You stand at the base of the tower...\n\n❤️ HP: ' + game.hp + '/' + game.maxHp + '\n🏛️ Floor: ' + game.floor + '\n\n`tower climb` to ascend!',
+			color: embed.colors.PURPLE,
+		})]
+	});
+	return;
+}
+
+if (action === 'status' || !action) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🗼 Tower Status',
+			description: '❤️ HP: ' + game.hp + '/' + game.maxHp + '\n🏛️ Floor: ' + game.floor + '\n💰 Rewards: ' + game.totalReward,
+			color: embed.colors.BLUE,
+			footer: { text: 'tower climb | tower rest | tower leave' },
+		})]
+	});
+	return;
+}
+
+if (action === 'rest') {
+	const heal = utils.random.int(10, 25);
+	game.hp = Math.min(game.maxHp, game.hp + heal);
+	extension.storage.write(stateKey, game);
+	message.reply('💤 You rest and recover **' + heal + '** HP! (HP: ' + game.hp + '/' + game.maxHp + ')');
+	return;
+}
+
+if (action === 'leave') {
+	if (game.totalReward > 0) {
+		economy.addPoints(message.author.id, game.totalReward, 'Tower rewards');
+	}
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🚪 Left the Tower',
+			description: 'You escaped with your loot!\n\n🏛️ Floors cleared: ' + game.floor + '\n💰 Rewards: ' + game.totalReward + ' points',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (action === 'climb') {
+	game.floor++;
+	const enemyIdx = Math.min(Math.floor(game.floor / 3), enemies.length - 1);
+	const enemy = { ...enemies[enemyIdx] };
+	enemy.hp += game.floor * 2;
+	enemy.dmg += Math.floor(game.floor / 2);
+	enemy.reward += game.floor * 2;
+	
+	// Combat
+	while (enemy.hp > 0 && game.hp > 0) {
+		const playerDmg = utils.random.int(10, 20);
+		enemy.hp -= playerDmg;
+		if (enemy.hp > 0) {
+			game.hp -= enemy.dmg;
+		}
+	}
+	
+	if (game.hp <= 0) {
+		extension.storage.write(stateKey, null);
+		message.reply({
+			embeds: [embed.create({
+				title: '💀 Defeated!',
+				description: 'The ' + enemy.name + ' was too strong...\n\n🏛️ Reached floor: ' + game.floor + '\n💰 Rewards lost!',
+				color: embed.colors.ERROR,
+			})]
+		});
+		return;
+	}
+	
+	game.totalReward += enemy.reward;
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ Floor ' + game.floor + ' - Victory!',
+			description: 'Defeated ' + enemy.name + '!\n\n❤️ HP: ' + game.hp + '/' + game.maxHp +
+			'\n💰 +' + enemy.reward + ' (Total: ' + game.totalReward + ')\n\n*Continue or leave?*',
+			color: embed.colors.SUCCESS,
+			footer: { text: 'tower climb | tower rest | tower leave' },
+		})]
+	});
+}

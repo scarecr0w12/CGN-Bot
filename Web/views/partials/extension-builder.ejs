@@ -142,50 +142,128 @@
 	</span>
 	<hr>
 	<div class="field">
-		<label class="label">Scopes</label>
-		<% Object.values(pageData.scopes).forEach(scope => { %>
-		<label class="checkbox" title="<%= scope.permissionDescription %>">
-			<input name="scope_<%= scope.scope %>" type="checkbox" <%= pageData.versionData.scopes ? (pageData.versionData.scopes.includes(scope.scope) ? "checked" : "") : "" %>>
-			<code><%= scope.scope %></code>
+		<label class="label">
+			<i class="fa fa-shield-alt"></i> Scopes
+			<span class="tag is-info is-light ml-2">Permissions your extension needs</span>
 		</label>
-		<br>
-		<% }); %>
+		<span class="help mb-3">Select the capabilities your extension requires. Only request what you need - fewer scopes means easier approval.</span>
+		
+		<%
+		// Group scopes by category
+		const scopeCategories = {
+			messages: { label: 'Messages', icon: 'fa-comment-alt', description: 'Read and send messages' },
+			members: { label: 'Members', icon: 'fa-users', description: 'Access member information' },
+			roles: { label: 'Roles', icon: 'fa-user-tag', description: 'Manage server roles' },
+			channels: { label: 'Channels', icon: 'fa-hashtag', description: 'Access channel settings' },
+			guild: { label: 'Server', icon: 'fa-server', description: 'Server-wide settings' },
+			moderation: { label: 'Moderation', icon: 'fa-gavel', description: 'Moderation actions' },
+			economy: { label: 'Economy', icon: 'fa-coins', description: 'Points and ranks' },
+			data: { label: 'Data & Config', icon: 'fa-database', description: 'Storage and configuration' },
+			network: { label: 'Network', icon: 'fa-globe', description: 'External requests' },
+			advanced: { label: 'Advanced', icon: 'fa-cog', description: 'Advanced features' },
+		};
+		
+		// Group scopes
+		const groupedScopes = {};
+		Object.values(pageData.scopes).forEach(scope => {
+			const cat = scope.category || 'advanced';
+			if (!groupedScopes[cat]) groupedScopes[cat] = [];
+			groupedScopes[cat].push(scope);
+		});
+		%>
+		
+		<div class="scopes-container">
+			<% Object.entries(scopeCategories).forEach(([catKey, catInfo]) => { 
+				if (groupedScopes[catKey] && groupedScopes[catKey].length > 0) { %>
+			<div class="scope-category box mb-3" style="padding: 1rem;">
+				<div class="scope-category-header mb-2" style="cursor: pointer;" onclick="$(this).parent().find('.scope-category-body').slideToggle(200); $(this).find('.toggle-icon').toggleClass('fa-chevron-down fa-chevron-up');">
+					<span class="icon-text">
+						<span class="icon has-text-primary"><i class="fa <%= catInfo.icon %>"></i></span>
+						<strong><%= catInfo.label %></strong>
+						<span class="tag is-light ml-2"><%= groupedScopes[catKey].length %></span>
+						<span class="icon is-small ml-auto"><i class="fa fa-chevron-down toggle-icon"></i></span>
+					</span>
+					<p class="help mb-0"><%= catInfo.description %></p>
+				</div>
+				<div class="scope-category-body columns is-multiline" style="margin-top: 0.5rem;">
+					<% groupedScopes[catKey].forEach(scope => { %>
+					<div class="column is-half-tablet is-one-third-desktop">
+						<label class="checkbox scope-item" style="display: flex; align-items: flex-start; padding: 0.5rem; border-radius: 4px; background: var(--bulma-scheme-main-bis, #f5f5f5);">
+							<input name="scope_<%= scope.scope %>" type="checkbox" style="margin-right: 0.5rem; margin-top: 0.2rem;" <%= pageData.versionData.scopes ? (pageData.versionData.scopes.includes(scope.scope) ? "checked" : "") : "" %>>
+							<span>
+								<code class="has-text-weight-semibold"><%= scope.scope %></code>
+								<br>
+								<small class="has-text-grey"><%= scope.permissionDescription %></small>
+							</span>
+						</label>
+					</div>
+					<% }); %>
+				</div>
+			</div>
+			<% } }); %>
+		</div>
 	</div>
+	
 	<div class="field">
 		<label class="label">Timeout</label>
 		<p class="control">
 			<input name="timeout" class="input is-primary" type="number" value="<%- pageData.versionData.timeout || 5000 %>" min="100" max="10000" required>
-			<span class="help">The amount of milliseconds that your extension can run between 100 and 10000. If your extension takes longer to execute than the timeout, it will be killed.</span>
+			<span class="help">Maximum execution time in milliseconds (100-10000). Extensions exceeding this will be terminated.</span>
 		</p>
 	</div>
+	
+	<hr>
+	
 	<div class="field">
 		<label class="label">
-			Code
-			&nbsp;
-			<a class="button is-small" href="/wiki/Extensions#javascriptapi" target="_blank">
-				<span class="icon is-small">
-		        	<i class="fa fa-book"></i>
-		    	</span>
-		    	<span>Extension API Docs</span>
-			</a>
+			<i class="fa fa-code"></i> Code Editor
 		</label>
-		<p class="control">
+		<div class="level is-mobile mb-2">
+			<div class="level-left">
+				<div class="level-item">
+					<div class="buttons are-small">
+						<label class="button is-primary is-outlined">
+							<span class="icon is-small"><i class="fa fa-upload"></i></span>
+							<span>Upload</span>
+							<input id="builder-code-upload" type="file" accept=".js,.skyext,.txt" onchange="SkynetUtil.uploadCode(this.files);" style="display: none;">
+						</label>
+						<a class="button is-primary is-outlined" onclick="SkynetUtil.downloadCode();">
+							<span class="icon is-small"><i class="fa fa-download"></i></span>
+							<span>Download</span>
+						</a>
+						<a class="button is-info is-outlined" onclick="SkynetUtil.formatCode();" title="Format code (Ctrl+Shift+F)">
+							<span class="icon is-small"><i class="fa fa-align-left"></i></span>
+							<span>Format</span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="level-right">
+				<div class="level-item">
+					<a class="button is-small is-link is-outlined" href="/wiki/Extensions#javascriptapi" target="_blank">
+						<span class="icon is-small"><i class="fa fa-book"></i></span>
+						<span>API Docs</span>
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="code-editor-wrapper" style="border: 1px solid #dbdbdb; border-radius: 4px; overflow: hidden;">
 			<textarea id="builder-code-box" name="code" style="resize:none"><%- pageData.extensionData.code %></textarea>
-		</p>
-		<br>
-		<label class="button is-small">
-			<span class="icon is-small">
-				<i class="fa fa-upload"></i>
-			</span>
-			<span>Upload</span>
-			<input id="builder-code-upload" type="file" onchange="SkynetUtil.uploadCode(this.files);" style="display: none;">
-		</label>
-		<a class="button is-small" onclick="SkynetUtil.downloadCode();">
-			<span class="icon is-small">
-				<i class="fa fa-download"></i>
-			</span>
-			<span>Download</span>
-		</a>
+		</div>
+		<div class="level is-mobile mt-2">
+			<div class="level-left">
+				<span class="help">
+					<strong>Shortcuts:</strong> 
+					<code>Ctrl+S</code> Save &bull; 
+					<code>Ctrl+/</code> Comment &bull; 
+					<code>Ctrl+D</code> Duplicate line &bull;
+					<code>Ctrl+F</code> Find
+				</span>
+			</div>
+			<div class="level-right">
+				<span class="help" id="code-stats">Lines: 0 | Characters: 0</span>
+			</div>
+		</div>
 	</div>
 	<hr>
 	<div class="field">

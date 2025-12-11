@@ -1,0 +1,86 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const stateKey = 'battleship_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const input = command.suffix.trim().toUpperCase();
+
+if (!game || input === 'RESET') {
+	const ships = [];
+	while (ships.length < 5) {
+		const r = utils.random.int(0, 4);
+		const c = utils.random.int(0, 4);
+		if (!ships.some((s) => s.r === r && s.c === c)) {
+			ships.push({ r, c });
+		}
+	}
+	game = { ships, hits: [], misses: [], moves: 0 };
+	extension.storage.write(stateKey, game);
+	
+	if (input === 'RESET') {
+		message.reply('🔄 Game reset! New ships placed.');
+		return;
+	}
+}
+
+if (!input || input === 'RESET') {
+	message.reply('🚢 **Battleship**\nGuess a coordinate like `battleship A1`\nType `battleship reset` to start over.');
+	return;
+}
+
+if (!/^[A-E][1-5]$/.test(input)) {
+	message.reply('❌ Invalid coordinate! Use A-E and 1-5 (e.g. A1, C3)');
+	return;
+}
+
+const r = input.charCodeAt(0) - 65;
+const c = parseInt(input[1]) - 1;
+const coord = input;
+
+if (game.hits.includes(coord) || game.misses.includes(coord)) {
+	message.reply('⚠️ You already guessed ' + coord + '!');
+	return;
+}
+
+game.moves++;
+const hit = game.ships.some((s) => s.r === r && s.c === c);
+
+if (hit) {
+	game.hits.push(coord);
+} else {
+	game.misses.push(coord);
+}
+
+extension.storage.write(stateKey, game);
+
+const rows = ['A', 'B', 'C', 'D', 'E'];
+let board = '⬛1️⃣2️⃣3️⃣4️⃣5️⃣\n';
+for (let i = 0; i < 5; i++) {
+	board += ['🇦', '🇧', '🇨', '🇩', '🇪'][i];
+	for (let j = 0; j < 5; j++) {
+		const cellCoord = rows[i] + (j + 1);
+		if (game.hits.includes(cellCoord)) board += '💥';
+		else if (game.misses.includes(cellCoord)) board += '🌊';
+		else board += '⬜';
+	}
+	board += '\n';
+}
+
+const won = game.hits.length === 5;
+const status = hit ? '💥 **HIT!**' : '🌊 **MISS**';
+
+message.reply({
+	embeds: [embed.create({
+		title: won ? '🎉 Victory!' : '🚢 Battleship',
+		description: board + '\n' + (won ? 'You sunk all ships in **' + game.moves + '** moves!' : status + ' at ' + coord),
+		color: won ? embed.colors.SUCCESS : (hit ? embed.colors.GOLD : embed.colors.BLUE),
+		footer: { text: 'Hits: ' + game.hits.length + '/5 | Moves: ' + game.moves },
+	})]
+});
+
+if (won) {
+	extension.storage.write(stateKey, null);
+}

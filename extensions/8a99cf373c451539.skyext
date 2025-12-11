@@ -1,0 +1,129 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const prompts = [
+	"When you realize tomorrow is Monday...",
+	"That face when the WiFi disconnects...",
+	"Me explaining my hobbies to normal people...",
+	"POV: You just woke up from a nap...",
+	"When the food arrives at the restaurant...",
+	"My last brain cell during exams...",
+	"When someone says 'we need to talk'...",
+	"Me pretending to understand the conversation...",
+];
+
+const gameKey = 'caption_' + message.channel.id;
+let game = extension.storage.get(gameKey);
+const args = command.suffix.trim().split(/\s+/);
+const action = args[0]?.toLowerCase();
+
+if (action === 'start' || action === 'new') {
+	const prompt = utils.random.pick(prompts);
+	game = { prompt, captions: [], votes: {}, phase: 'submit' };
+	extension.storage.write(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📸 Caption Battle!',
+			description: '**Prompt:**\n*"' + prompt + '"*\n\nSubmit your caption with:\n`caption submit Your funny caption here`',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (!game) {
+	message.reply('📸 No active caption battle. Start one with `caption start`');
+	return;
+}
+
+if (action === 'submit' && game.phase === 'submit') {
+	const caption = args.slice(1).join(' ');
+	if (!caption || caption.length < 3) {
+		message.reply('❌ Please provide a caption!');
+		return;
+	}
+	if (caption.length > 150) {
+		message.reply('❌ Caption too long! Max 150 characters.');
+		return;
+	}
+	if (game.captions.some(c => c.author === message.author.id)) {
+		message.reply('❌ You already submitted a caption!');
+		return;
+	}
+	
+	game.captions.push({ text: caption, author: message.author.id, votes: 0 });
+	extension.storage.write(gameKey, game);
+	
+	message.reply('✅ Caption submitted! (' + game.captions.length + ' total)');
+	return;
+}
+
+if (action === 'voting' && game.phase === 'submit') {
+	if (game.captions.length < 2) {
+		message.reply('❌ Need at least 2 captions to vote!');
+		return;
+	}
+	game.phase = 'vote';
+	extension.storage.write(gameKey, game);
+	
+	const list = game.captions.map((c, i) => (i + 1) + '. "' + c.text + '"').join('\n');
+	message.reply({
+		embeds: [embed.create({
+			title: '🗳️ Voting Time!',
+			description: '**Prompt:** "' + game.prompt + '"\n\n' + list + '\n\nVote: `caption vote <number>`',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (action === 'vote' && game.phase === 'vote') {
+	const num = parseInt(args[1]) - 1;
+	if (isNaN(num) || num < 0 || num >= game.captions.length) {
+		message.reply('❌ Invalid choice! Pick 1-' + game.captions.length);
+		return;
+	}
+	if (game.captions[num].author === message.author.id) {
+		message.reply('❌ You can\'t vote for yourself!');
+		return;
+	}
+	if (game.votes[message.author.id] !== undefined) {
+		message.reply('❌ You already voted!');
+		return;
+	}
+	
+	game.votes[message.author.id] = num;
+	game.captions[num].votes++;
+	extension.storage.write(gameKey, game);
+	
+	message.reply('✅ Vote recorded!');
+	return;
+}
+
+if (action === 'end') {
+	const winner = game.captions.sort((a, b) => b.votes - a.votes)[0];
+	extension.storage.write(gameKey, null);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🏆 Winner!',
+			description: '**"' + winner.text + '"**\n\n' + winner.votes + ' votes!\nBy: ' + utils.discord.userMention(winner.author),
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (action === 'status' || !action) {
+	message.reply({
+		embeds: [embed.create({
+			title: '📸 Caption Battle',
+			description: '**Prompt:** "' + game.prompt + '"\n**Phase:** ' + game.phase + '\n**Captions:** ' + game.captions.length,
+			color: embed.colors.BLUE,
+		})]
+	});
+}
