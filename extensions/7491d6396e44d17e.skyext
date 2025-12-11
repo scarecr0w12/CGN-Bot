@@ -1,0 +1,66 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const stateKey = 'adventure_' + message.author.id;
+let state = extension.storage.get(stateKey);
+const choice = parseInt(command.suffix.trim());
+
+const encounters = [
+	{
+		text: "You wake up in a dark forest. A path splits ahead.",
+		options: ["Take the left path into the mist", "Take the right path toward distant lights"],
+		next: [1, 2],
+	},
+	{
+		text: "The mist thickens. You hear growling nearby. A wolf appears!",
+		options: ["Try to run away", "Stand your ground"],
+		results: ["You escaped! But you're lost...", "The wolf respects your courage and leaves."],
+	},
+	{
+		text: "You reach a small village. An old woman offers you a potion.",
+		options: ["Drink the potion", "Politely decline"],
+		results: ["You feel stronger! +10 HP", "She nods wisely. 'Trust is earned.'"],
+	},
+];
+
+if (!state || !choice) {
+	state = { step: 0, hp: 100 };
+	extension.storage.write(stateKey, state);
+	const enc = encounters[0];
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🗺️ Adventure Begins!',
+			description: enc.text + '\n\n' +
+				'**Choose:**\n' +
+				'1️⃣ ' + enc.options[0] + '\n' +
+				'2️⃣ ' + enc.options[1],
+			color: embed.colors.GREEN,
+			footer: { text: 'HP: ' + state.hp + ' | Type: adventure 1 or adventure 2' },
+		})]
+	});
+	return;
+}
+
+if (choice !== 1 && choice !== 2) {
+	message.reply('❌ Choose 1 or 2!');
+	return;
+}
+
+const enc = encounters[Math.min(state.step, encounters.length - 1)];
+const result = enc.results ? enc.results[choice - 1] : 'You continue your journey...';
+state.step++;
+
+extension.storage.write(stateKey, state);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🗺️ Adventure',
+		description: '**You chose:** ' + enc.options[choice - 1] + '\n\n' + result,
+		color: embed.colors.GOLD,
+		footer: { text: 'HP: ' + state.hp + ' | Step: ' + state.step },
+	})]
+});

@@ -1,0 +1,36 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const words = [
+	{ word: "PROGRAMMING", hint: "Writing code" },
+	{ word: "JAVASCRIPT", hint: "Popular web language" },
+	{ word: "DISCORD", hint: "Chat platform" },
+	{ word: "COMPUTER", hint: "Electronic device" },
+	{ word: "KEYBOARD", hint: "Input device" },
+	{ word: "DEVELOPER", hint: "Code writer" },
+	{ word: "DATABASE", hint: "Data storage" },
+	{ word: "INTERNET", hint: "Global network" },
+	{ word: "SOFTWARE", hint: "Computer programs" },
+	{ word: "ALGORITHM", hint: "Step-by-step procedure" }
+];
+
+const chosen = utils.random.pick(words);
+let scrambled = utils.random.shuffle(chosen.word.split('')).join('');
+
+// Make sure it's actually scrambled
+while (scrambled === chosen.word) {
+	scrambled = utils.random.shuffle(chosen.word.split('')).join('');
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔀 Word Scramble',
+		description: utils.discord.bold('Unscramble this word:') + '\n\n' +
+			'📝 `' + scrambled + '`\n\n' +
+			'💡 ' + utils.discord.bold('Hint:') + ' ' + chosen.hint + '\n\n' +
+			utils.discord.italic('Type your answer in chat!'),
+		color: embed.colors.BLUE,
+		footer: { text: 'First correct answer wins!' }
+	})]
+});

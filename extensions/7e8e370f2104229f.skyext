@@ -1,0 +1,60 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const choices = ['rock', 'paper', 'scissors'];
+const emojis = { rock: '🪨', paper: '📄', scissors: '✂️' };
+const suffix = command.suffix.toLowerCase().trim();
+
+// Parse user choice
+let userChoice = null;
+for (const c of choices) {
+	if (suffix.startsWith(c)) {
+		userChoice = c;
+		break;
+	}
+}
+
+if (!userChoice) {
+	message.reply({
+		embeds: [embed.create({
+			title: '✂️ Rock Paper Scissors',
+			description: 'Usage: `' + command.prefix + command.key + ' <rock|paper|scissors>`\n\n' +
+				'🪨 ' + utils.discord.bold('Rock') + ' beats Scissors\n' +
+				'📄 ' + utils.discord.bold('Paper') + ' beats Rock\n' +
+				'✂️ ' + utils.discord.bold('Scissors') + ' beats Paper',
+			color: embed.colors.PURPLE
+		})]
+	});
+} else {
+	// Bot makes choice
+	const botChoice = utils.random.pick(choices);
+	
+	let result, color;
+	if (userChoice === botChoice) {
+		result = "It's a tie! 🤝";
+		color = embed.colors.GOLD;
+	} else if (
+		(userChoice === 'rock' && botChoice === 'scissors') ||
+		(userChoice === 'paper' && botChoice === 'rock') ||
+		(userChoice === 'scissors' && botChoice === 'paper')
+	) {
+		result = 'You win! 🎉';
+		color = embed.colors.SUCCESS;
+	} else {
+		result = 'You lose! 😢';
+		color = embed.colors.ERROR;
+	}
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '✂️ Rock Paper Scissors',
+			description: 
+				utils.discord.bold('You:') + ' ' + emojis[userChoice] + ' ' + utils.text.capitalize(userChoice) + '\n' +
+				utils.discord.bold('Bot:') + ' ' + emojis[botChoice] + ' ' + utils.text.capitalize(botChoice) + '\n\n' +
+				utils.discord.bold(result),
+			color: color
+		})]
+	});
+}

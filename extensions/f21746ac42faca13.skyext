@@ -22,18 +22,21 @@ const categories = {
 	]
 };
 
+const utils = require('utils');
+const embed = require('embed');
+
 const category = command.arguments[0]?.toLowerCase() || 'general';
-const questions = categories[category] || categories.general;
-const question = questions[Math.floor(Math.random() * questions.length)];
+const questionList = categories[category] || categories.general;
+const question = utils.random.pick(questionList);
 
 message.reply({
-	embeds: [{
+	embeds: [embed.create({
 		title: '🧠 Trivia Time!',
-		description: '**Category:** ' + (category.charAt(0).toUpperCase() + category.slice(1)) + '\n\n' +
-			'**Question:** ' + question.q + '\n\n' +
-			'💰 **Points:** ' + question.points + '\n\n' +
-			'*Type your answer in chat!*',
-		color: 0x9b59b6,
+		description: utils.discord.bold('Category:') + ' ' + utils.text.capitalize(category) + '\n\n' +
+			utils.discord.bold('Question:') + ' ' + question.q + '\n\n' +
+			'💰 ' + utils.discord.bold('Points:') + ' ' + question.points + '\n\n' +
+			utils.discord.italic('Type your answer in chat!'),
+		color: embed.colors.PURPLE,
 		footer: { text: 'You have 30 seconds to answer!' }
-	}]
+	})]
 });

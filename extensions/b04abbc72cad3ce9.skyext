@@ -1,0 +1,89 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const embed = require('embed');
+const utils = require('utils');
+
+const action = command.arguments[0]?.toLowerCase();
+const lobbyKey = 'mafia_lobby_' + message.channel.id;
+let lobby = extension.storage.get(lobbyKey);
+
+if (action === 'start') {
+	if (lobby && lobby.state === 'forming') {
+		message.reply('❌ Game already forming! Type `mafia join` to join.');
+		return;
+	}
+	
+	lobby = {
+		state: 'forming',
+		players: [message.author.id],
+		host: message.author.id,
+		startTime: Date.now(),
+	};
+	extension.storage.write(lobbyKey, lobby);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Mafia Game Forming!',
+			description: 'A new game of Mafia is starting!\n\n' +
+				'Type `' + command.prefix + 'mafia join` to join!\n\n' +
+				'**Players:** 1/10\n' +
+				'**Minimum:** 4 players required',
+			color: embed.colors.BLUE,
+			footer: { text: 'Host: ' + message.author.username },
+		})]
+	});
+} else if (action === 'join') {
+	if (!lobby || lobby.state !== 'forming') {
+		message.reply('❌ No game forming. Use `mafia start` to create one.');
+		return;
+	}
+	
+	if (lobby.players.includes(message.author.id)) {
+		message.reply('⚠️ You already joined!');
+		return;
+	}
+	
+	if (lobby.players.length >= 10) {
+		message.reply('❌ Game is full (10/10 players)!');
+		return;
+	}
+	
+	lobby.players.push(message.author.id);
+	extension.storage.write(lobbyKey, lobby);
+	
+	const playerList = lobby.players.map((p) => utils.discord.userMention(p)).join(', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Joined Mafia Game!',
+			description: '**Players (' + lobby.players.length + '/10):**\n' + playerList,
+			color: embed.colors.GREEN,
+		})]
+	});
+} else if (action === 'status') {
+	if (!lobby) {
+		message.reply('No active game. Use `mafia start` to begin.');
+		return;
+	}
+	const playerList = lobby.players.map((p) => utils.discord.userMention(p)).join(', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Mafia Game Status',
+			description: '**State:** ' + utils.text.capitalize(lobby.state) + '\n' +
+				'**Players (' + lobby.players.length + '):**\n' + playerList,
+			color: embed.colors.BLUE,
+		})]
+	});
+} else {
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Mafia Help',
+			description: '**Commands:**\n' +
+				'`mafia start` - Start a new game lobby\n' +
+				'`mafia join` - Join the current lobby\n' +
+				'`mafia status` - View current game status\n\n' +
+				'*Note: Full game logic requires 4+ players.*',
+			color: embed.colors.DEFAULT,
+		})]
+	});
+}

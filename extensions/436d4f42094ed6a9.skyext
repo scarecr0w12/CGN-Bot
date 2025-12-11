@@ -1,0 +1,67 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const takes = {
+	food: [
+		"Pineapple on pizza is actually good",
+		"Cereal is a soup",
+		"Hot dogs are sandwiches",
+		"Water is the best drink, no exceptions",
+		"Breakfast food is better for dinner",
+		"Ketchup on eggs is acceptable",
+		"Ranch goes with everything",
+		"Burnt food has superior flavor",
+	],
+	gaming: [
+		"Mobile games are real games",
+		"Graphics don't matter, gameplay does",
+		"Easy mode is valid",
+		"Multiplayer games are overrated",
+		"Old games were harder, not better",
+		"DLC is fine if done right",
+		"Battle royales peaked years ago",
+		"Console vs PC debates are pointless",
+	],
+	life: [
+		"Mornings are better than nights",
+		"Cats are better than dogs",
+		"Working from home is superior",
+		"Social media does more harm than good",
+		"Books are better than movies",
+		"Summer is the worst season",
+		"Being alone is underrated",
+		"Small talk is actually important",
+	],
+	media: [
+		"Remakes are usually unnecessary",
+		"The book is always better",
+		"Subtitles should always be on",
+		"Spoilers don't ruin movies",
+		"Critics are out of touch",
+		"Prequels are harder to make than sequels",
+		"Animation is an art form, not a genre",
+		"Reboots can be better than originals",
+	],
+};
+
+const category = command.suffix.trim().toLowerCase();
+const categories = Object.keys(takes);
+
+if (category && !categories.includes(category)) {
+	message.reply('❌ Categories: ' + categories.join(', '));
+	return;
+}
+
+const pool = category ? takes[category] : Object.values(takes).flat();
+const take = utils.random.pick(pool);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔥 Hot Take',
+		description: '**' + take + '**\n\nAgree or disagree? 👍 👎',
+		color: embed.colors.ERROR,
+		footer: { text: category || 'Random | Categories: food, gaming, life, media' },
+	})]
+});

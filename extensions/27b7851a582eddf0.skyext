@@ -1,0 +1,78 @@
+const message = require('message');
+const command = require('command');
+const economy = require('economy');
+const embed = require('embed');
+const utils = require('utils');
+
+const args = command.suffix.trim().split(/\s+/);
+const betAmount = parseInt(args[0]);
+const betType = args[1]?.toLowerCase();
+
+if (!betAmount || isNaN(betAmount) || betAmount <= 0) {
+	message.reply('❌ Usage: `roulette <amount> <red|black|green|0-36>`');
+	return;
+}
+
+if (!betType) {
+	message.reply('❌ Please specify what to bet on: red, black, green, or a number (0-36)');
+	return;
+}
+
+let payout = 0;
+let winningNumbers = [];
+
+const redNumbers = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
+const blackNumbers = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
+
+if (betType === 'red') {
+	payout = 2;
+	winningNumbers = redNumbers;
+} else if (betType === 'black') {
+	payout = 2;
+	winningNumbers = blackNumbers;
+} else if (betType === 'green') {
+	payout = 14;
+	winningNumbers = [0];
+} else {
+	const num = parseInt(betType);
+	if (!isNaN(num) && num >= 0 && num <= 36) {
+		payout = 36;
+		winningNumbers = [num];
+	} else {
+		message.reply('❌ Invalid bet type! Choose red, black, green, or 0-36.');
+		return;
+	}
+}
+
+const userData = economy.getSelf();
+if (userData.rankScore < betAmount) {
+	message.reply('❌ Insufficient funds! You have ' + utils.format.number(userData.rankScore) + ' points.');
+	return;
+}
+
+const result = utils.random.int(0, 36);
+let color = 'green';
+if (redNumbers.includes(result)) color = 'red';
+else if (blackNumbers.includes(result)) color = 'black';
+
+const colorEmoji = { red: '🔴', black: '⚫', green: '🟢' };
+const won = winningNumbers.includes(result);
+
+let description = 'The wheel spins... ' + colorEmoji[color] + ' **' + result + '**\n\n';
+
+if (won) {
+	const winnings = betAmount * payout;
+	economy.addPoints(message.author.id, winnings, 'Roulette win');
+	description += '🎉 **YOU WIN!**\nPayout: ' + payout + 'x\nWinnings: +' + utils.format.number(winnings) + ' points';
+} else {
+	economy.removePoints(message.author.id, betAmount, 'Roulette loss');
+	description += '😢 **YOU LOSE**\nLost: -' + utils.format.number(betAmount) + ' points';
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎰 Roulette',
+		description: description,
+		color: won ? embed.colors.SUCCESS : embed.colors.ERROR,
+	})]
+});

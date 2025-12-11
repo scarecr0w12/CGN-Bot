@@ -1,0 +1,14 @@
+const message = require('message');
+const command = require('command');
+
+const seconds = Math.min(60, Math.max(1, parseInt(command.arguments[0]) || 30));
+
+message.reply({
+	embeds: [{
+		title: '⏱️ Timer Started!',
+		description: 'Counting down from **' + seconds + ' seconds**...\n\n' +
+			'⏰ Timer will end <t:' + Math.floor(Date.now()/1000 + seconds) + ':R>',
+		color: 0xe74c3c,
+		footer: { text: 'Note: This shows the relative time - actual callback not implemented' }
+	}]
+});

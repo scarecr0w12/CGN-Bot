@@ -1,0 +1,81 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const puzzles = [
+	{
+		name: "Scholar's Mate",
+		board: '♜♞♝♛♚♝♞♜\n♟♟♟♟♟♟♟♟\n........\n........\n....♙...\n........\n♙♙♙♙.♙♙♙\n♖♘♗♕♔♗♘♖',
+		solution: 'f1c4',
+		hint: 'Attack f7 with the bishop',
+	},
+	{
+		name: "Back Rank Mate",
+		board: '....♜.♚.\n........\n........\n........\n........\n........\n........\n♖...♔...', 
+		solution: 'a1a8',
+		hint: 'Use the rook to deliver checkmate',
+	},
+	{
+		name: "Fork the King and Queen",
+		board: '..♚.....\n........\n....♛...\n........\n........\n....♘...\n........\n....♔...',
+		solution: 'e3d5',
+		hint: 'The knight can attack two pieces at once',
+	},
+];
+
+const stateKey = 'chess_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const move = command.suffix.trim().toLowerCase();
+
+if (!game || move === 'new') {
+	const puzzle = utils.random.pick(puzzles);
+	game = { puzzle: puzzle, attempts: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '♟️ Chess Puzzle: ' + puzzle.name,
+			description: '```\n' + puzzle.board + '\n```\n\n**Find the best move!**\nFormat: `chess e2e4`',
+			color: embed.colors.BLUE,
+			footer: { text: 'Hint: ' + puzzle.hint },
+		})]
+	});
+	return;
+}
+
+if (!move) {
+	message.reply({
+		embeds: [embed.create({
+			title: '♟️ Current Puzzle: ' + game.puzzle.name,
+			description: '```\n' + game.puzzle.board + '\n```\n\nAttempts: ' + game.attempts,
+			color: embed.colors.BLUE,
+			footer: { text: 'Hint: ' + game.puzzle.hint },
+		})]
+	});
+	return;
+}
+
+game.attempts++;
+
+if (move === game.puzzle.solution) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Correct!',
+			description: 'You solved the puzzle in **' + game.attempts + '** ' + utils.format.pluralize(game.attempts, 'attempt') + '!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	extension.storage.write(stateKey, game);
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Not quite...',
+			description: 'That\'s not the best move. Try again!\nAttempts: ' + game.attempts,
+			color: embed.colors.ERROR,
+			footer: { text: 'Hint: ' + game.puzzle.hint },
+		})]
+	});
+}

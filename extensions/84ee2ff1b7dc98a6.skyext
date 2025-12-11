@@ -1,0 +1,26 @@
+const message = require('message');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const statsKey = 'stats_' + target.id;
+let stats = extension.storage.get(statsKey);
+
+if (!stats) {
+	stats = { games_played: 0, messages: 0, commands: 0 };
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '📊 User Stats',
+		description: utils.discord.bold('User:') + ' ' + target.username,
+		fields: [
+			{ name: '🎮 Games Played', value: utils.format.number(stats.games_played || 0), inline: true },
+			{ name: '💬 Messages', value: utils.format.number(stats.messages || 0), inline: true },
+			{ name: '⚡ Commands', value: utils.format.number(stats.commands || 0), inline: true }
+		],
+		color: embed.colors.PURPLE,
+		thumbnail: { url: target.avatarURL || '' }
+	})]
+});

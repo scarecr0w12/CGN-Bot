@@ -1,0 +1,121 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const stateKey = 'ttt_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const pos = parseInt(command.suffix.trim());
+
+function renderBoard(board) {
+	const symbols = { X: '❌', O: '⭕', '': '⬜' };
+	let str = '';
+	for (let i = 0; i < 9; i++) {
+		str += board[i] ? symbols[board[i]] : (i + 1) + '️⃣';
+		if ((i + 1) % 3 === 0) str += '\n';
+	}
+	return str;
+}
+
+function checkWin(board, player) {
+	const wins = [
+		[0, 1, 2], [3, 4, 5], [6, 7, 8],
+		[0, 3, 6], [1, 4, 7], [2, 5, 8],
+		[0, 4, 8], [2, 4, 6],
+	];
+	return wins.some(([a, b, c]) => board[a] === player && board[b] === player && board[c] === player);
+}
+
+function botMove(board) {
+	// Try to win
+	for (let i = 0; i < 9; i++) {
+		if (!board[i]) {
+			board[i] = 'O';
+			if (checkWin(board, 'O')) return i;
+			board[i] = '';
+		}
+	}
+	// Block player
+	for (let i = 0; i < 9; i++) {
+		if (!board[i]) {
+			board[i] = 'X';
+			if (checkWin(board, 'X')) { board[i] = ''; return i; }
+			board[i] = '';
+		}
+	}
+	// Take center or random
+	if (!board[4]) return 4;
+	const empty = board.map((v, i) => v ? -1 : i).filter(i => i >= 0);
+	return utils.random.pick(empty);
+}
+
+if (!game || isNaN(pos)) {
+	game = { board: Array(9).fill(''), turn: 'X' };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '⭕ Tic-Tac-Toe',
+			description: renderBoard(game.board) + '\nYou are ❌. Pick 1-9!',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (pos < 1 || pos > 9 || game.board[pos - 1]) {
+	message.reply('❌ Invalid position! Choose an empty spot 1-9.');
+	return;
+}
+
+game.board[pos - 1] = 'X';
+
+if (checkWin(game.board, 'X')) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 You Win!',
+			description: renderBoard(game.board),
+			color: embed.colors.SUCCESS,
+		})]
+	});
+	return;
+}
+
+if (!game.board.includes('')) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🤝 Draw!',
+			description: renderBoard(game.board),
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+const botPos = botMove(game.board);
+game.board[botPos] = 'O';
+
+if (checkWin(game.board, 'O')) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '😢 Bot Wins!',
+			description: renderBoard(game.board),
+			color: embed.colors.ERROR,
+		})]
+	});
+	return;
+}
+
+extension.storage.write(stateKey, game);
+
+message.reply({
+	embeds: [embed.create({
+		title: '⭕ Tic-Tac-Toe',
+		description: renderBoard(game.board) + '\nYour turn! Pick 1-9.',
+		color: embed.colors.BLUE,
+	})]
+});

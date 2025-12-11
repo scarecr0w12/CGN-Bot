@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Economy - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fas fa-coins"></i></span>
+						Economy System
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							The economy system lets users earn, spend, and manage virtual coins. Users can claim daily rewards, deposit/withdraw from their bank, gamble, rob other users, and purchase items from the shop. The economy is <strong>user-based</strong> (global across servers), but commands can be enabled/disabled per server.
+						</div>
+					</article>
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
+						<div class="command-items">
+							<h2 class="subtitle">💵 Core Economy Commands</h2>
+							<% var commandData = configData.commands.balance; commandData.name = "balance"; commandData.description = pageData.commandDescriptions.balance; commandData.category = pageData.commandCategories.balance; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.daily; commandData.name = "daily"; commandData.description = pageData.commandDescriptions.daily; commandData.category = pageData.commandCategories.daily; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.deposit; commandData.name = "deposit"; commandData.description = pageData.commandDescriptions.deposit; commandData.category = pageData.commandCategories.deposit; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.withdraw; commandData.name = "withdraw"; commandData.description = pageData.commandDescriptions.withdraw; commandData.category = pageData.commandCategories.withdraw; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.give; commandData.name = "give"; commandData.description = pageData.commandDescriptions.give; commandData.category = pageData.commandCategories.give; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+
+							<h2 class="subtitle mt-5">🎰 Gambling Commands</h2>
+							<% commandData = configData.commands.gamble; commandData.name = "gamble"; commandData.description = pageData.commandDescriptions.gamble; commandData.category = pageData.commandCategories.gamble; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.slots; commandData.name = "slots"; commandData.description = pageData.commandDescriptions.slots; commandData.category = pageData.commandCategories.slots; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.rob; commandData.name = "rob"; commandData.description = pageData.commandDescriptions.rob; commandData.category = pageData.commandCategories.rob; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+
+							<h2 class="subtitle mt-5">🛒 Shop & Inventory Commands</h2>
+							<% commandData = configData.commands.shop; commandData.name = "shop"; commandData.description = pageData.commandDescriptions.shop; commandData.category = pageData.commandCategories.shop; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.inventory; commandData.name = "inventory"; commandData.description = pageData.commandDescriptions.inventory; commandData.category = pageData.commandCategories.inventory; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+							
+							<% commandData = configData.commands.auction; commandData.name = "auction"; commandData.description = pageData.commandDescriptions.auction; commandData.category = pageData.commandCategories.auction; %>
+							<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
+						</div>
+						<br>
+						<% var formButtonsUnsaved = false; %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

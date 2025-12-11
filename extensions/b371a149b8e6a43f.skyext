@@ -1,0 +1,29 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const notation = command.suffix.trim() || '1d6';
+const result = utils.random.dice(notation);
+
+if (result.rolls.length === 0) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎲 Dice Roll',
+			description: 'Invalid dice notation! Use format like `2d6` or `1d20+5`',
+			color: embed.colors.ERROR
+		})]
+	});
+} else {
+	const rollEmbed = embed.create({
+		title: '🎲 Dice Roll',
+		color: embed.colors.PURPLE,
+		fields: [
+			{ name: 'Notation', value: utils.discord.inlineCode(notation), inline: true },
+			{ name: 'Rolls', value: result.rolls.join(', '), inline: true },
+			{ name: 'Total', value: utils.discord.bold(String(result.total)), inline: true }
+		],
+		footer: { text: 'May luck be on your side!' }
+	});
+	message.reply({ embeds: [rollEmbed] });
+}

@@ -1,0 +1,113 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const deckKey = 'flashcards_' + message.author.id;
+let deck = extension.storage.get(deckKey) || { cards: [], studying: null };
+const args = command.suffix.trim().split('|').map(s => s.trim());
+const action = args[0]?.toLowerCase();
+
+if (action === 'add') {
+	const front = args[1];
+	const back = args[2];
+	
+	if (!front || !back) {
+		message.reply('❌ Usage: `flashcards add | front text | back text`');
+		return;
+	}
+	
+	if (deck.cards.length >= 50) {
+		message.reply('❌ Deck is full! Max 50 cards.');
+		return;
+	}
+	
+	deck.cards.push({ front, back, correct: 0, attempts: 0 });
+	extension.storage.write(deckKey, deck);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📝 Card Added!',
+			description: '**Front:** ' + front + '\n**Back:** ' + back,
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Deck size: ' + deck.cards.length },
+		})]
+	});
+	return;
+}
+
+if (action === 'list') {
+	if (deck.cards.length === 0) {
+		message.reply('📚 No flashcards yet! Add some with `flashcards add | front | back`');
+		return;
+	}
+	
+	const list = deck.cards.slice(0, 10).map((c, i) => 
+		(i + 1) + '. ' + utils.text.truncate(c.front, 30) + ' → ' + utils.text.truncate(c.back, 30)
+	).join('\n');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📚 Your Flashcards',
+			description: list,
+			color: embed.colors.BLUE,
+			footer: { text: 'Showing ' + Math.min(10, deck.cards.length) + ' of ' + deck.cards.length },
+		})]
+	});
+	return;
+}
+
+if (action === 'study') {
+	if (deck.cards.length === 0) {
+		message.reply('📚 No flashcards to study! Add some first.');
+		return;
+	}
+	
+	const card = utils.random.pick(deck.cards);
+	deck.studying = deck.cards.indexOf(card);
+	extension.storage.write(deckKey, deck);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎓 Study Time!',
+			description: '**Question:**\n' + card.front + '\n\n*Think of the answer, then type `flashcards reveal`*',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (action === 'reveal') {
+	if (deck.studying === null) {
+		message.reply('❓ Not studying! Use `flashcards study` first.');
+		return;
+	}
+	
+	const card = deck.cards[deck.studying];
+	deck.studying = null;
+	extension.storage.write(deckKey, deck);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '💡 Answer',
+			description: '**Question:** ' + card.front + '\n\n**Answer:** ' + card.back,
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Use: flashcards study for another card' },
+		})]
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '📚 Flashcards Help',
+		description: '**Commands:**\n' +
+			'`flashcards add | front | back` - Add a card\n' +
+			'`flashcards list` - View your cards\n' +
+			'`flashcards study` - Study a random card\n' +
+			'`flashcards reveal` - Show the answer',
+		color: embed.colors.BLUE,
+		footer: { text: 'Your deck: ' + deck.cards.length + ' cards' },
+	})]
+});

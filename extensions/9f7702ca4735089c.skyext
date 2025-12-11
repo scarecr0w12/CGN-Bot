@@ -1,0 +1,46 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const tiles = ['⬛', '⬜', '🚪', '💀', '💰', '🧪', '⚔️'];
+const weights = [
+	{ item: '⬜', weight: 40 },
+	{ item: '⬛', weight: 25 },
+	{ item: '🚪', weight: 10 },
+	{ item: '💀', weight: 10 },
+	{ item: '💰', weight: 8 },
+	{ item: '🧪', weight: 4 },
+	{ item: '⚔️', weight: 3 },
+];
+
+let map = '';
+let monsters = 0, loot = 0;
+
+for (let i = 0; i < 5; i++) {
+	for (let j = 0; j < 5; j++) {
+		if (i === 2 && j === 2) {
+			map += '👤 ';
+		} else {
+			const tile = utils.random.weighted(weights);
+			map += tile + ' ';
+			if (tile === '💀') monsters++;
+			if (tile === '💰') loot++;
+		}
+	}
+	map += '\n';
+}
+
+const floor = utils.random.int(1, 10);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🏰 Dungeon - Floor ' + floor,
+		description: map + '\n' +
+			'**Stats:**\n' +
+			'💀 Monsters: ' + monsters + '\n' +
+			'💰 Loot: ' + loot,
+		color: embed.colors.PURPLE,
+		footer: { text: '👤 You | ⬜ Empty | 🚪 Door | 💀 Monster | 💰 Loot | 🧪 Potion | ⚔️ Weapon' },
+	})]
+});

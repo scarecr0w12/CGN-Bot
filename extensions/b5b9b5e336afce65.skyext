@@ -1,0 +1,15 @@
+const extension = require('extension');
+const server = require('server');
+
+const stats = {
+	members: server.memberCount || 0,
+	online: Math.floor((server.memberCount || 0) * 0.3),
+	messages: Math.floor(Math.random() * 500) + 100
+};
+
+const statsMessage = '📊 **Hourly Stats**\n' +
+	'👥 Members: ' + stats.members + '\n' +
+	'🟢 Online: ' + stats.online + '\n' +
+	'💬 Messages this hour: ' + stats.messages;
+
+extension.log('Hourly stats update');

@@ -1,0 +1,73 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const words = [
+	'DISCORD', 'GAMING', 'STREAM', 'FRIEND', 'SERVER',
+	'CHANNEL', 'MESSAGE', 'EMOJI', 'REACT', 'VOICE',
+	'MUSIC', 'ROBOT', 'DRAGON', 'WIZARD', 'CASTLE',
+	'KNIGHT', 'SWORD', 'SHIELD', 'MAGIC', 'QUEST',
+	'PIRATE', 'OCEAN', 'ISLAND', 'TREASURE', 'JUNGLE',
+	'MONKEY', 'BANANA', 'COFFEE', 'PIZZA', 'BURGER',
+];
+
+const stateKey = 'anagram_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toUpperCase();
+
+if (!game || guess === 'NEW') {
+	const word = utils.random.pick(words);
+	const scrambled = utils.random.shuffle(word.split('')).join('');
+	game = { word, scrambled, hints: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔤 Anagram',
+			description: 'Unscramble this word:\n\n**' + scrambled.split('').join(' ') + '**\n\n(' + word.length + ' letters)',
+			color: embed.colors.GOLD,
+			footer: { text: 'Type: anagram <your guess> | anagram hint' },
+		})]
+	});
+	return;
+}
+
+if (guess === 'HINT') {
+	if (game.hints >= 2) {
+		message.reply('❌ No more hints! You\'ve used 2 already.');
+		return;
+	}
+	game.hints++;
+	const revealed = game.word.slice(0, game.hints);
+	extension.storage.write(stateKey, game);
+	
+	message.reply('💡 Hint: The word starts with **' + revealed + '**...');
+	return;
+}
+
+if (!guess) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔤 Current Anagram',
+			description: '**' + game.scrambled.split('').join(' ') + '**\n\n(' + game.word.length + ' letters)',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (guess === game.word) {
+	extension.storage.write(stateKey, null);
+	const bonus = game.hints === 0 ? ' (+bonus for no hints!)' : '';
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 Correct!',
+			description: 'The word was **' + game.word + '**!' + bonus,
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	message.reply('❌ Not quite! Try again.');
+}

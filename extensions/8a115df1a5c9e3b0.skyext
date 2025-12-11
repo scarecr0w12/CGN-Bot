@@ -1,0 +1,117 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const mazes = [
+	{
+		grid: [
+			'#########',
+			'#S  #   #',
+			'### # # #',
+			'#   # # #',
+			'# ### # #',
+			'#     # #',
+			'##### # #',
+			'#      E#',
+			'#########',
+		],
+		start: { r: 1, c: 1 },
+		end: { r: 7, c: 7 },
+	},
+	{
+		grid: [
+			'#######',
+			'#S#   #',
+			'# # # #',
+			'#   # #',
+			'### # #',
+			'#    E#',
+			'#######',
+		],
+		start: { r: 1, c: 1 },
+		end: { r: 5, c: 5 },
+	},
+];
+
+const stateKey = 'maze_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const dir = command.suffix.trim().toLowerCase();
+
+function renderMaze(maze, pos) {
+	let str = '';
+	for (let r = 0; r < maze.grid.length; r++) {
+		for (let c = 0; c < maze.grid[r].length; c++) {
+			if (r === pos.r && c === pos.c) str += '😀';
+			else if (r === maze.end.r && c === maze.end.c) str += '🏁';
+			else if (maze.grid[r][c] === '#') str += '⬛';
+			else str += '⬜';
+		}
+		str += '\n';
+	}
+	return str;
+}
+
+if (!game || dir === 'new') {
+	const maze = utils.random.pick(mazes);
+	game = { maze, pos: { ...maze.start }, moves: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🔲 Maze',
+			description: renderMaze(game.maze, game.pos),
+			color: embed.colors.BLUE,
+			footer: { text: 'Controls: w=up, a=left, s=down, d=right | Reach 🏁!' },
+		})]
+	});
+	return;
+}
+
+const moves = { w: [-1, 0], a: [0, -1], s: [1, 0], d: [0, 1] };
+if (!moves[dir]) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔲 Maze',
+			description: renderMaze(game.maze, game.pos),
+			color: embed.colors.BLUE,
+			footer: { text: 'Moves: ' + game.moves + ' | w/a/s/d to move' },
+		})]
+	});
+	return;
+}
+
+const [dr, dc] = moves[dir];
+const nr = game.pos.r + dr;
+const nc = game.pos.c + dc;
+
+if (game.maze.grid[nr]?.[nc] === '#' || !game.maze.grid[nr]) {
+	message.reply('🧱 Blocked! Try another direction.');
+	return;
+}
+
+game.pos = { r: nr, c: nc };
+game.moves++;
+
+if (nr === game.maze.end.r && nc === game.maze.end.c) {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 Maze Complete!',
+			description: renderMaze(game.maze, game.pos) + '\nCompleted in **' + game.moves + '** moves!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+	return;
+}
+
+extension.storage.write(stateKey, game);
+message.reply({
+	embeds: [embed.create({
+		title: '🔲 Maze',
+		description: renderMaze(game.maze, game.pos),
+		color: embed.colors.BLUE,
+		footer: { text: 'Moves: ' + game.moves },
+	})]
+});

@@ -1,0 +1,181 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const locations = [
+	'Beach', 'Hospital', 'School', 'Restaurant', 'Airport',
+	'Bank', 'Casino', 'Circus', 'Movie Theater', 'Space Station',
+	'Pirate Ship', 'Submarine', 'Zoo', 'Museum', 'Supermarket',
+];
+
+const gameKey = 'spyfall_' + message.channel.id;
+let game = extension.storage.get(gameKey);
+const args = command.suffix.trim().split(/\s+/);
+const action = args[0]?.toLowerCase();
+
+if (action === 'start') {
+	if (game && game.state === 'playing') {
+		message.reply('❌ Game already in progress!');
+		return;
+	}
+	
+	game = {
+		state: 'lobby',
+		players: [message.author.id],
+		host: message.author.id,
+		startTime: Date.now(),
+	};
+	extension.storage.write(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Spyfall - Lobby',
+			description: 'A game is starting!\n\nType `spyfall join` to join!\nHost types `spyfall begin` when ready.\n\n**Players:** 1 (need 3+)',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (action === 'join') {
+	if (!game || game.state !== 'lobby') {
+		message.reply('❌ No lobby open. Use `spyfall start`');
+		return;
+	}
+	
+	if (game.players.includes(message.author.id)) {
+		message.reply('✅ You already joined!');
+		return;
+	}
+	
+	game.players.push(message.author.id);
+	extension.storage.write(gameKey, game);
+	
+	message.reply('✅ ' + message.author.username + ' joined! (' + game.players.length + ' players)');
+	return;
+}
+
+if (action === 'begin') {
+	if (!game || game.state !== 'lobby') {
+		message.reply('❌ No lobby to start.');
+		return;
+	}
+	
+	if (message.author.id !== game.host) {
+		message.reply('❌ Only the host can start!');
+		return;
+	}
+	
+	if (game.players.length < 3) {
+		message.reply('❌ Need at least 3 players!');
+		return;
+	}
+	
+	const location = utils.random.pick(locations);
+	const spyIndex = utils.random.int(0, game.players.length - 1);
+	
+	game.state = 'playing';
+	game.location = location;
+	game.spy = game.players[spyIndex];
+	game.votes = {};
+	extension.storage.write(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Spyfall Started!',
+			description: 'Roles have been assigned!\n\n**Location:** (check your DMs)\n**Players:** ' + game.players.length +
+			'\n\nAsk questions to find the spy!\nSpy: `spyfall guess <location>`\nOthers: `spyfall vote @user`',
+			color: embed.colors.GREEN,
+			footer: { text: 'Possible locations: ' + locations.slice(0, 8).join(', ') + '...' },
+		})]
+	});
+	return;
+}
+
+if (action === 'guess' && game?.state === 'playing') {
+	if (message.author.id !== game.spy) {
+		message.reply('❌ Only the spy can guess!');
+		return;
+	}
+	
+	const guess = args.slice(1).join(' ').toLowerCase();
+	const correct = guess === game.location.toLowerCase();
+	
+	extension.storage.write(gameKey, null);
+	
+	if (correct) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🕵️ Spy Wins!',
+				description: 'The spy (' + utils.discord.userMention(game.spy) + ') correctly guessed **' + game.location + '**!',
+				color: embed.colors.ERROR,
+			})]
+		});
+	} else {
+		message.reply({
+			embeds: [embed.create({
+				title: '✅ Spy Loses!',
+				description: 'The spy guessed wrong!\nLocation was: **' + game.location + '**\nSpy was: ' + utils.discord.userMention(game.spy),
+				color: embed.colors.SUCCESS,
+			})]
+		});
+	}
+	return;
+}
+
+if (action === 'vote' && game?.state === 'playing') {
+	const mention = command.suffix.match(/<@!?(\d+)>/);
+	if (!mention) {
+		message.reply('❌ Vote for someone: `spyfall vote @user`');
+		return;
+	}
+	
+	const target = mention[1];
+	game.votes[message.author.id] = target;
+	extension.storage.write(gameKey, game);
+	
+	message.reply('🗳️ ' + message.author.username + ' voted!');
+	
+	// Check if all voted
+	if (Object.keys(game.votes).length === game.players.length) {
+		const counts = {};
+		Object.values(game.votes).forEach(v => counts[v] = (counts[v] || 0) + 1);
+		const accused = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+		
+		extension.storage.write(gameKey, null);
+		
+		if (accused === game.spy) {
+			message.reply({
+				embeds: [embed.create({
+					title: '✅ Spy Caught!',
+					description: utils.discord.userMention(game.spy) + ' was the spy!\nLocation: **' + game.location + '**',
+					color: embed.colors.SUCCESS,
+				})]
+			});
+		} else {
+			message.reply({
+				embeds: [embed.create({
+					title: '😈 Spy Wins!',
+					description: 'Wrong person accused!\nThe spy was: ' + utils.discord.userMention(game.spy) + '\nLocation: **' + game.location + '**',
+					color: embed.colors.ERROR,
+				})]
+			});
+		}
+	}
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🕵️ Spyfall',
+		description: '**Commands:**\n' +
+			'`spyfall start` - Create a game lobby\n' +
+			'`spyfall join` - Join the lobby\n' +
+			'`spyfall begin` - Start the game (host)\n' +
+			'`spyfall vote @user` - Vote for the spy\n' +
+			'`spyfall guess <location>` - Spy guesses location',
+		color: embed.colors.BLUE,
+	})]
+});

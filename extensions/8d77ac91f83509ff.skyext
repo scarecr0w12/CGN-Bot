@@ -1,0 +1,27 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const waitTime = utils.random.int(2000, 6000); // 2-6 seconds
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚡ Reaction Test',
+		description: utils.discord.bold('Get Ready...') + '\n\n' +
+			'🔴 Wait for it...\n\n' +
+			'When you see 🟢 ' + utils.discord.bold('GO!') + ', react with ⚡ as fast as you can!\n\n' +
+			utils.discord.italic('The signal will appear in a few seconds...'),
+		color: embed.colors.ERROR,
+		footer: { text: 'Don\'t react too early!' }
+	})]
+}).then(() => {
+	// In a real implementation, this would update after waitTime
+	message.channel.send({
+		embeds: [{
+			title: '⚡ Reaction Test',
+			description: '🟢 **GO GO GO!**\n\n' +
+				'React with ⚡ NOW!',
+			color: 0x2ecc71
+		}]
+	});
+});

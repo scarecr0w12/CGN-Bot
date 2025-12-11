@@ -1,0 +1,26 @@
+const message = require('message');
+const command = require('command');
+
+const timeArg = command.arguments[0] || '10m';
+const reminderText = command.arguments.slice(1).join(' ') || 'No reminder text set';
+
+// Parse time (simplified)
+const timeMatch = timeArg.match(/(\d+)(m|h|d)/);
+if (!timeMatch) {
+	message.reply('❌ Invalid time format! Use: 10m, 1h, or 1d');
+	return;
+}
+
+const amount = parseInt(timeMatch[1]);
+const unit = timeMatch[2];
+const unitNames = { m: 'minute', h: 'hour', d: 'day' };
+
+message.reply({
+	embeds: [{
+		title: '⏰ Reminder Set!',
+		description: 'I\'ll remind you in **' + amount + ' ' + unitNames[unit] + (amount > 1 ? 's' : '') + '**\n\n' +
+			'📝 ' + reminderText,
+		color: 0x9b59b6,
+		footer: { text: 'Note: This is a demo - real reminders would persist' }
+	}]
+});

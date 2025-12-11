@@ -1,0 +1,38 @@
+const message = require('message');
+const command = require('command');
+
+const words = [
+	"javascript", "discord", "programming", "computer", "keyboard",
+	"database", "algorithm", "function", "variable", "developer",
+	"python", "typescript", "framework", "library", "server",
+	"network", "internet", "browser", "website", "application"
+];
+
+const hangmanStages = [
+	'```\n  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========```',
+	'```\n  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========```'
+];
+
+const utils = require('utils');
+const embed = require('embed');
+
+const word = utils.random.pick(words);
+const display = word.split('').map(() => '_').join(' ');
+
+message.reply({
+	embeds: [embed.create({
+		title: '📝 Hangman',
+		description: hangmanStages[0] + '\n\n' +
+			utils.discord.bold('Word:') + ' `' + display + '`\n\n' +
+			utils.discord.bold('Letters guessed:') + ' None yet\n' +
+			utils.discord.bold('Remaining guesses:') + ' 6\n\n' +
+			utils.discord.italic('Guess a letter by typing it in chat!'),
+		color: embed.colors.ERROR,
+		footer: { text: 'Word has ' + word.length + ' letters' }
+	})]
+});

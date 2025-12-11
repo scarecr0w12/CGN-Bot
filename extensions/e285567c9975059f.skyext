@@ -1,0 +1,141 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const stateKey = 'checkers_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const args = command.suffix.trim().toLowerCase().split(/\s+/);
+const action = args[0];
+
+function createBoard() {
+	const board = Array(8).fill().map(() => Array(8).fill(null));
+	for (let r = 0; r < 3; r++) {
+		for (let c = 0; c < 8; c++) {
+			if ((r + c) % 2 === 1) board[r][c] = 'b';
+		}
+	}
+	for (let r = 5; r < 8; r++) {
+		for (let c = 0; c < 8; c++) {
+			if ((r + c) % 2 === 1) board[r][c] = 'r';
+		}
+	}
+	return board;
+}
+
+function renderBoard(board) {
+	const cols = '  a b c d e f g h';
+	let str = cols + '\n';
+	for (let r = 0; r < 8; r++) {
+		str += (8 - r) + ' ';
+		for (let c = 0; c < 8; c++) {
+			const p = board[r][c];
+			if (p === 'r') str += '🔴';
+			else if (p === 'R') str += '🔵';
+			else if (p === 'b') str += '⚫';
+			else if (p === 'B') str += '⚪';
+			else str += ((r + c) % 2 === 1 ? '🟫' : '🟨');
+		}
+		str += ' ' + (8 - r) + '\n';
+	}
+	return str + cols;
+}
+
+function parsePos(pos) {
+	if (!pos || pos.length !== 2) return null;
+	const c = pos.charCodeAt(0) - 97;
+	const r = 8 - parseInt(pos[1]);
+	if (c < 0 || c > 7 || r < 0 || r > 7) return null;
+	return { r, c };
+}
+
+if (!game || action === 'new') {
+	game = { board: createBoard(), turn: 'r' };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Checkers',
+			description: renderBoard(game.board) + '\n\n🔴 You vs ⚫ Bot\nYour move! `checkers move a3 b4`',
+			color: embed.colors.GOLD,
+		})]
+	});
+	return;
+}
+
+if (action === 'status' || !action) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Checkers',
+			description: renderBoard(game.board),
+			color: embed.colors.BLUE,
+			footer: { text: game.turn === 'r' ? 'Your turn (🔴)' : 'Bot thinking...' },
+		})]
+	});
+	return;
+}
+
+if (action === 'move') {
+	const from = parsePos(args[1]);
+	const to = parsePos(args[2]);
+	
+	if (!from || !to) {
+		message.reply('❌ Invalid move! Format: `checkers move a3 b4`');
+		return;
+	}
+	
+	const piece = game.board[from.r][from.c];
+	if (!piece || !['r', 'R'].includes(piece)) {
+		message.reply('❌ No valid piece at that position!');
+		return;
+	}
+	
+	const dr = to.r - from.r;
+	const dc = Math.abs(to.c - from.c);
+	
+	if (dc !== 1 && dc !== 2) {
+		message.reply('❌ Invalid move distance!');
+		return;
+	}
+	
+	game.board[to.r][to.c] = piece;
+	game.board[from.r][from.c] = null;
+	
+	if (dc === 2) {
+		const jr = from.r + dr / 2;
+		const jc = from.c + (to.c - from.c) / 2;
+		game.board[jr][jc] = null;
+	}
+	
+	if (to.r === 0 && piece === 'r') game.board[to.r][to.c] = 'R';
+	
+	// Simple bot move
+	let moved = false;
+	for (let r = 0; r < 8 && !moved; r++) {
+		for (let c = 0; c < 8 && !moved; c++) {
+			const bp = game.board[r][c];
+			if (bp === 'b' || bp === 'B') {
+				const nr = r + 1;
+				for (const nc of [c - 1, c + 1]) {
+					if (nc >= 0 && nc < 8 && nr < 8 && !game.board[nr][nc]) {
+						game.board[nr][nc] = nr === 7 ? 'B' : bp;
+						game.board[r][c] = null;
+						moved = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Checkers',
+			description: renderBoard(game.board) + '\n\n✅ Move made!' + (moved ? ' Bot moved.' : ''),
+			color: embed.colors.GREEN,
+		})]
+	});
+}

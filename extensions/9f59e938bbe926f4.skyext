@@ -1,0 +1,87 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+const suits = ['♠️', '♥️', '♦️', '♣️'];
+
+function cardValue(card) {
+	return cards.indexOf(card);
+}
+
+function drawCard() {
+	return { rank: utils.random.pick(cards), suit: utils.random.pick(suits) };
+}
+
+const stateKey = 'highlow_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const guess = command.suffix.trim().toLowerCase();
+
+if (!game || guess === 'new') {
+	const card = drawCard();
+	game = { card, streak: 0 };
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🃏 High/Low',
+			description: '**Current Card:** ' + game.card.rank + game.card.suit + '\n\nWill the next card be **higher** or **lower**?\n\n`highlow high` or `highlow low`',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (guess !== 'high' && guess !== 'low') {
+	message.reply({
+		embeds: [embed.create({
+			title: '🃏 High/Low',
+			description: '**Current Card:** ' + game.card.rank + game.card.suit + '\nStreak: ' + game.streak + '\n\n`highlow high` or `highlow low`\n`highlow cash` to collect ' + (game.streak * 10) + ' points',
+			color: embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (guess === 'cash' && game.streak > 0) {
+	const reward = game.streak * 10;
+	economy.addPoints(message.author.id, reward, 'Highlow cashout');
+	extension.storage.write(stateKey, null);
+	message.reply('💰 Cashed out **' + reward + '** points with a ' + game.streak + ' streak!');
+	return;
+}
+
+const newCard = drawCard();
+const oldValue = cardValue(game.card.rank);
+const newValue = cardValue(newCard.rank);
+
+let won = false;
+if (guess === 'high' && newValue > oldValue) won = true;
+if (guess === 'low' && newValue < oldValue) won = true;
+if (newValue === oldValue) won = true; // Tie = win
+
+if (won) {
+	game.card = newCard;
+	game.streak++;
+	extension.storage.write(stateKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Correct!',
+			description: '**New Card:** ' + newCard.rank + newCard.suit + '\n**Streak:** ' + game.streak + ' 🔥\n\nKeep going or `highlow cash` for ' + (game.streak * 10) + ' points!',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	extension.storage.write(stateKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Wrong!',
+			description: 'The card was ' + newCard.rank + newCard.suit + '\n\nStreak lost: ' + game.streak,
+			color: embed.colors.ERROR,
+		})]
+	});
+}

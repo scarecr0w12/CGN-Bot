@@ -1,0 +1,57 @@
+const message = require('message');
+const command = require('command');
+
+const positive = [
+	"It is certain.", "It is decidedly so.", "Without a doubt.",
+	"Yes definitely.", "You may rely on it.", "As I see it, yes.",
+	"Most likely.", "Outlook good.", "Yes.", "Signs point to yes.",
+	"Absolutely!", "100%!", "The stars align in your favor.",
+	"Fortune smiles upon you.", "All signs point to yes!"
+];
+
+const neutral = [
+	"Reply hazy, try again.", "Ask again later.",
+	"Better not tell you now.", "Cannot predict now.",
+	"Concentrate and ask again.", "The crystal ball is foggy...",
+	"Perhaps...", "The answer is unclear.", "Fate has not decided.",
+	"The spirits are undecided."
+];
+
+const negative = [
+	"Don't count on it.", "My reply is no.", "My sources say no.",
+	"Outlook not so good.", "Very doubtful.", "Absolutely not.",
+	"The answer is a resounding no.", "Not in a million years.",
+	"I wouldn't bet on it.", "The signs say no.",
+	"That's a hard no.", "Nope.", "Not gonna happen."
+];
+
+const utils = require('utils');
+const embed = require('embed');
+
+const question = command.suffix.trim();
+
+if (!question) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎱 Magic 8-Ball',
+			description: 'You must ask a question!\n\nUsage: `' + command.prefix + command.key + ' Will I win the lottery?`',
+			color: embed.colors.DEFAULT
+		})]
+	});
+} else {
+	const allAnswers = [...positive, ...neutral, ...negative];
+	const answer = utils.random.pick(allAnswers);
+	
+	let color = embed.colors.GOLD;
+	if (positive.includes(answer)) color = embed.colors.SUCCESS;
+	else if (negative.includes(answer)) color = embed.colors.ERROR;
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎱 Magic 8-Ball',
+			description: utils.discord.bold('Q:') + ' ' + question + '\n\n' + utils.discord.bold('A:') + ' ' + answer,
+			color: color,
+			footer: { text: 'The 8-ball has spoken!' }
+		})]
+	});
+}

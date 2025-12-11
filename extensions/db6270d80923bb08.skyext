@@ -1,0 +1,32 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const sentences = [
+	"The quick brown fox jumps over the lazy dog.",
+	"Pack my box with five dozen liquor jugs.",
+	"How vexingly quick daft zebras jump!",
+	"The five boxing wizards jump quickly.",
+	"Sphinx of black quartz, judge my vow.",
+	"Two driven jocks help fax my big quiz.",
+	"Programming is the art of telling a computer what to do.",
+	"Discord is a great platform for communities.",
+	"Practice makes perfect when it comes to typing.",
+	"Speed and accuracy are both important in typing."
+];
+
+const sentence = utils.random.pick(sentences);
+const wordCount = utils.text.words(sentence).length;
+
+message.reply({
+	embeds: [embed.create({
+		title: '⌨️ Type Race!',
+		description: utils.discord.bold('Type this sentence as fast as you can:') + '\n\n' +
+			utils.discord.codeBlock(sentence) + '\n' +
+			'📝 ' + utils.discord.bold('Words:') + ' ' + wordCount + '\n' +
+			'📏 ' + utils.discord.bold('Characters:') + ' ' + sentence.length + '\n\n' +
+			utils.discord.italic('The timer starts NOW! Type the sentence exactly as shown.'),
+		color: embed.colors.ERROR,
+		footer: { text: 'First to type it correctly wins!' }
+	})]
+});

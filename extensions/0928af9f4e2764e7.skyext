@@ -1,0 +1,27 @@
+const message = require('message');
+const command = require('command');
+
+const colorArg = (command.arguments[0] || '#3498db').replace('#', '');
+const namedColors = {
+	red: 'e74c3c', blue: '3498db', green: '2ecc71', yellow: 'f1c40f',
+	purple: '9b59b6', orange: 'e67e22', pink: 'ff6b9d', cyan: '1abc9c',
+	white: 'ffffff', black: '000000', gray: '95a5a6', gold: 'ffd700'
+};
+
+const hexColor = namedColors[colorArg.toLowerCase()] || colorArg;
+const colorInt = parseInt(hexColor, 16);
+
+if (isNaN(colorInt)) {
+	message.reply('❌ Invalid color! Use hex (#ff0000) or names (red, blue, etc.)');
+	return;
+}
+
+message.reply({
+	embeds: [{
+		title: '🎨 Color Preview',
+		description: '**Hex:** #' + hexColor.toUpperCase() + '\n' +
+			'**RGB:** ' + ((colorInt >> 16) & 255) + ', ' + ((colorInt >> 8) & 255) + ', ' + (colorInt & 255),
+		color: colorInt,
+		thumbnail: { url: 'https://singlecolorimage.com/get/' + hexColor + '/100x100' }
+	}]
+});

@@ -1,0 +1,15 @@
+const event = require('event');
+const extension = require('extension');
+
+const member = event.data;
+const goodbyeMessages = [
+	"Goodbye {user}, we'll miss you! 👋",
+	"{user} has left the server. Farewell! 😢",
+	"See you around, {user}! 🌟",
+	"{user} just left. Hope to see them again! 💫"
+];
+
+const message = goodbyeMessages[Math.floor(Math.random() * goodbyeMessages.length)]
+	.replace('{user}', member.user?.username || 'Unknown');
+
+extension.log('Would say goodbye to: ' + member.user?.username);

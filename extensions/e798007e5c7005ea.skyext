@@ -1,0 +1,131 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const suits = ['♠', '♥', '♦', '♣'];
+const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+
+function createDeck() {
+	const deck = [];
+	for (const suit of suits) {
+		for (const rank of ranks) {
+			deck.push({ rank, suit, value: ranks.indexOf(rank) });
+		}
+	}
+	return utils.random.shuffle(deck);
+}
+
+function cardStr(card) {
+	const red = ['♥', '♦'].includes(card.suit);
+	return card.rank + card.suit;
+}
+
+function handStr(cards) {
+	return cards.map(cardStr).join(' ');
+}
+
+function scoreHand(cards) {
+	const values = cards.map(c => c.value).sort((a, b) => b - a);
+	const suitCounts = {};
+	const rankCounts = {};
+	
+	cards.forEach(c => {
+		suitCounts[c.suit] = (suitCounts[c.suit] || 0) + 1;
+		rankCounts[c.value] = (rankCounts[c.value] || 0) + 1;
+	});
+	
+	const isFlush = Object.values(suitCounts).some(v => v >= 5);
+	const counts = Object.values(rankCounts).sort((a, b) => b - a);
+	
+	if (counts[0] === 4) return { score: 7, name: 'Four of a Kind' };
+	if (counts[0] === 3 && counts[1] === 2) return { score: 6, name: 'Full House' };
+	if (isFlush) return { score: 5, name: 'Flush' };
+	if (counts[0] === 3) return { score: 3, name: 'Three of a Kind' };
+	if (counts[0] === 2 && counts[1] === 2) return { score: 2, name: 'Two Pair' };
+	if (counts[0] === 2) return { score: 1, name: 'Pair' };
+	return { score: 0, name: 'High Card' };
+}
+
+const stateKey = 'poker_' + message.author.id;
+let game = extension.storage.get(stateKey);
+const args = command.suffix.trim().toLowerCase().split(/\s+/);
+const action = args[0];
+
+if (action === 'bet' || !game) {
+	const bet = parseInt(args[1]) || 50;
+	const userData = economy.getSelf();
+	
+	if (userData.rankScore < bet) {
+		message.reply('❌ Not enough points! You have ' + userData.rankScore);
+		return;
+	}
+	
+	const deck = createDeck();
+	const playerHand = [deck.pop(), deck.pop()];
+	const botHand = [deck.pop(), deck.pop()];
+	const community = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
+	
+	game = { playerHand, botHand, community, bet, deck };
+	extension.storage.write(stateKey, game);
+	
+	economy.removePoints(message.author.id, bet, 'Poker bet');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🃏 Texas Hold\'em',
+			description: '**Your Hand:** ' + handStr(playerHand) + '\n' +
+				'**Community:** ' + handStr(community.slice(0, 3)) + ' 🂠 🂠\n\n' +
+				'**Pot:** ' + (bet * 2) + ' points\n\n' +
+				'`poker call` to see the showdown\n`poker fold` to forfeit',
+			color: embed.colors.GREEN,
+		})]
+	});
+	return;
+}
+
+if (action === 'fold') {
+	extension.storage.write(stateKey, null);
+	message.reply('📤 You folded. Better luck next time!');
+	return;
+}
+
+if (action === 'call') {
+	const allCards = [...game.community];
+	const playerScore = scoreHand([...game.playerHand, ...allCards]);
+	const botScore = scoreHand([...game.botHand, ...allCards]);
+	
+	extension.storage.write(stateKey, null);
+	
+	const won = playerScore.score > botScore.score || 
+		(playerScore.score === botScore.score && game.playerHand[0].value > game.botHand[0].value);
+	
+	if (won) {
+		const winnings = game.bet * 2;
+		economy.addPoints(message.author.id, winnings, 'Poker win');
+		
+		message.reply({
+			embeds: [embed.create({
+				title: '🎉 You Win!',
+				description: '**Your Hand:** ' + handStr(game.playerHand) + ' - **' + playerScore.name + '**\n' +
+					'**Bot Hand:** ' + handStr(game.botHand) + ' - **' + botScore.name + '**\n' +
+					'**Community:** ' + handStr(game.community) + '\n\n' +
+					'💰 Won: ' + winnings + ' points!',
+				color: embed.colors.SUCCESS,
+			})]
+		});
+	} else {
+		message.reply({
+			embeds: [embed.create({
+				title: '😢 Bot Wins',
+				description: '**Your Hand:** ' + handStr(game.playerHand) + ' - **' + playerScore.name + '**\n' +
+					'**Bot Hand:** ' + handStr(game.botHand) + ' - **' + botScore.name + '**\n' +
+					'**Community:** ' + handStr(game.community) + '\n\n' +
+					'Lost: ' + game.bet + ' points',
+				color: embed.colors.ERROR,
+			})]
+		});
+	}
+}

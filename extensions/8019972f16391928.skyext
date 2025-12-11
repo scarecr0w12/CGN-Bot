@@ -1,0 +1,34 @@
+const message = require('message');
+const extension = require('extension');
+
+// Akinator-style questions for guessing
+const questions = [
+	"Is your character real (not fictional)?",
+	"Is your character male?",
+	"Is your character from a video game?",
+	"Is your character from an anime/manga?",
+	"Is your character a superhero?",
+	"Is your character alive today?",
+	"Is your character American?",
+	"Is your character a musician?",
+	"Is your character an actor/actress?",
+	"Is your character from a movie?"
+];
+
+const utils = require('utils');
+const embed = require('embed');
+
+const randomQ = utils.random.pick(questions);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧞 Akinator',
+		description: utils.discord.bold('Think of a character...') + ' (real or fictional)\n\n' +
+			'I will ask you questions to guess who you\'re thinking of!\n\n' +
+			utils.discord.bold('Question:') + ' ' + randomQ + '\n\n' +
+			'React with:\n✅ Yes | ❌ No | 🤷 Don\'t Know | 👍 Probably Yes | 👎 Probably No',
+		color: embed.colors.SUCCESS,
+		thumbnail: { url: 'https://en.akinator.com/bundles/elokencesite/images/akinator.png' },
+		footer: { text: 'Think of your answer and react!' }
+	})]
+});

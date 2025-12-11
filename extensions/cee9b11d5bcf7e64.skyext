@@ -1,0 +1,56 @@
+const message = require('message');
+const command = require('command');
+const economy = require('economy');
+const embed = require('embed');
+const utils = require('utils');
+
+const args = command.suffix.trim().split(/\s+/);
+const betAmount = parseInt(args[0]);
+const cashout = parseFloat(args[1]);
+
+if (!betAmount || !cashout || isNaN(betAmount) || isNaN(cashout) || betAmount <= 0 || cashout <= 1.0) {
+	message.reply('❌ Usage: `crash <bet> <cashout_multiplier>` (e.g. crash 100 2.0)');
+	return;
+}
+
+const userData = economy.getSelf();
+if (userData.rankScore < betAmount) {
+	message.reply('❌ Insufficient funds! You have ' + utils.format.number(userData.rankScore) + ' points.');
+	return;
+}
+
+const houseEdge = 0.04;
+const r = Math.random();
+let crashPoint = Math.floor(100 / (1 - r + houseEdge) * 0.01 * 100) / 100;
+if (crashPoint < 1.00) crashPoint = 1.00;
+
+const won = crashPoint >= cashout;
+
+if (won) {
+	const winnings = Math.floor(betAmount * cashout);
+	const profit = winnings - betAmount;
+	economy.addPoints(message.author.id, profit, 'Crash win');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🚀 Crash - You Win!',
+			description: utils.format.progressBar(cashout, crashPoint * 1.2) + '\n\n' +
+				'Crashed at: **' + crashPoint.toFixed(2) + 'x**\n' +
+				'You cashed out at: **' + cashout.toFixed(2) + 'x**\n\n' +
+				'💰 Profit: **+' + utils.format.number(profit) + '** points',
+			color: embed.colors.SUCCESS,
+		})]
+	});
+} else {
+	economy.removePoints(message.author.id, betAmount, 'Crash loss');
+	message.reply({
+		embeds: [embed.create({
+			title: '💥 Crash - Busted!',
+			description: utils.format.progressBar(crashPoint, cashout) + '\n\n' +
+				'Crashed at: **' + crashPoint.toFixed(2) + 'x**\n' +
+				'Your target: **' + cashout.toFixed(2) + 'x**\n\n' +
+				'💸 Lost: **-' + utils.format.number(betAmount) + '** points',
+			color: embed.colors.ERROR,
+		})]
+	});
+}

@@ -1,0 +1,42 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const questions = [
+	["Dogs", "Cats"],
+	["Morning", "Night"],
+	["Coffee", "Tea"],
+	["Summer", "Winter"],
+	["Beach", "Mountains"],
+	["Books", "Movies"],
+	["Sweet", "Savory"],
+	["Android", "iPhone"],
+	["PC", "Console"],
+	["Texting", "Calling"],
+	["City", "Countryside"],
+	["Rain", "Sun"],
+	["Netflix", "YouTube"],
+	["Early bird", "Night owl"],
+	["Cooking", "Ordering in"],
+	["Marvel", "DC"],
+	["Pizza", "Burgers"],
+	["Chocolate", "Vanilla"],
+	["Introvert", "Extrovert"],
+	["Adventure", "Relaxation"],
+	["Past", "Future"],
+	["Fame", "Fortune"],
+	["Love", "Career"],
+	["Window seat", "Aisle seat"],
+	["Hot food", "Cold food"]
+];
+
+const q = utils.random.pick(questions);
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚡ This or That',
+		description: utils.discord.bold(q[0]) + ' or ' + utils.discord.bold(q[1]) + '?',
+		color: embed.colors.GREEN,
+		footer: { text: 'No "both" or "neither" allowed!' }
+	})]
+});

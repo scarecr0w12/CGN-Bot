@@ -1,9 +1,14 @@
 /**
- * The GAB Extension Code API.
+ * The Skynet Extension Code API.
  * @namespace API
  */
 module.exports = {
+	// Modules
 	Client: require("./Modules/Client"),
+	Extension: require("./Modules/Extension"),
+	Utils: require("./Modules/Utils"),
+
+	// Structures
 	Message: require("./Structures/Message"),
 	User: require("./Structures/User"),
 	Guild: require("./Structures/Guild"),
@@ -12,6 +17,7 @@ module.exports = {
 	Emoji: require("./Structures/Emoji"),
 	Embed: require("./Structures/Embed"),
 
-	Extension: require("./Modules/Extension"),
+	// Utilities
 	ScopeManager: require("./Utils/ScopeManager"),
+	APIUtils: require("./Utils/Utils"),
 };

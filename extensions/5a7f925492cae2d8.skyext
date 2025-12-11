@@ -1,0 +1,125 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const characters = [
+	{ name: 'Common Knight', rarity: '⭐', rate: 50, emoji: '🛡️' },
+	{ name: 'Forest Archer', rarity: '⭐', rate: 50, emoji: '🏹' },
+	{ name: 'Fire Mage', rarity: '⭐⭐', rate: 25, emoji: '🔥' },
+	{ name: 'Ice Wizard', rarity: '⭐⭐', rate: 25, emoji: '❄️' },
+	{ name: 'Shadow Ninja', rarity: '⭐⭐⭐', rate: 15, emoji: '🥷' },
+	{ name: 'Holy Paladin', rarity: '⭐⭐⭐', rate: 15, emoji: '⚔️' },
+	{ name: 'Dragon Rider', rarity: '⭐⭐⭐⭐', rate: 8, emoji: '🐉' },
+	{ name: 'Phoenix Queen', rarity: '⭐⭐⭐⭐', rate: 8, emoji: '🔶' },
+	{ name: 'Cosmic Emperor', rarity: '⭐⭐⭐⭐⭐', rate: 3, emoji: '👑' },
+	{ name: 'Void Goddess', rarity: '⭐⭐⭐⭐⭐', rate: 1, emoji: '🌌' },
+];
+
+const collectionKey = 'gacha_' + message.author.id;
+let collection = extension.storage.get(collectionKey) || { chars: [], pity: 0, lastDaily: 0 };
+const action = command.arguments[0]?.toLowerCase();
+
+const PULL_COST = 100;
+
+if (action === 'daily') {
+	const now = Date.now();
+	const day = 24 * 60 * 60 * 1000;
+	if (now - collection.lastDaily < day) {
+		const remaining = day - (now - collection.lastDaily);
+		const hours = Math.floor(remaining / (60 * 60 * 1000));
+		message.reply('⏰ Daily pull available in **' + hours + '** hours!');
+		return;
+	}
+	
+	collection.lastDaily = now;
+	const weights = characters.map(c => ({ item: c, weight: c.rate }));
+	const pulled = utils.random.weighted(weights);
+	
+	if (!collection.chars.includes(pulled.name)) {
+		collection.chars.push(pulled.name);
+	}
+	extension.storage.write(collectionKey, collection);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎁 Daily Pull!',
+			description: pulled.emoji + ' **' + pulled.name + '**\n' + pulled.rarity,
+			color: pulled.rarity.length >= 4 ? embed.colors.GOLD : embed.colors.BLUE,
+		})]
+	});
+	return;
+}
+
+if (action === 'collection' || action === 'col') {
+	if (collection.chars.length === 0) {
+		message.reply('📦 Your collection is empty! Use `gacha pull` or `gacha daily`');
+		return;
+	}
+	
+	const list = collection.chars.slice(0, 15).map(name => {
+		const char = characters.find(c => c.name === name);
+		return char ? char.emoji + ' ' + name + ' ' + char.rarity : name;
+	}).join('\n');
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '📦 Your Collection',
+			description: list,
+			color: embed.colors.PURPLE,
+			footer: { text: collection.chars.length + '/' + characters.length + ' collected' },
+		})]
+	});
+	return;
+}
+
+if (action === 'pull') {
+	const userData = economy.getSelf();
+	if (userData.rankScore < PULL_COST) {
+		message.reply('❌ Not enough points! Need ' + PULL_COST + ', have ' + userData.rankScore);
+		return;
+	}
+	
+	economy.removePoints(message.author.id, PULL_COST, 'Gacha pull');
+	collection.pity++;
+	
+	// Pity system: guaranteed 4+ star at 50 pulls
+	let pulled;
+	if (collection.pity >= 50) {
+		const rares = characters.filter(c => c.rarity.length >= 4);
+		pulled = utils.random.pick(rares);
+		collection.pity = 0;
+	} else {
+		const weights = characters.map(c => ({ item: c, weight: c.rate }));
+		pulled = utils.random.weighted(weights);
+		if (pulled.rarity.length >= 4) collection.pity = 0;
+	}
+	
+	const isNew = !collection.chars.includes(pulled.name);
+	if (isNew) collection.chars.push(pulled.name);
+	extension.storage.write(collectionKey, collection);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '✨ Gacha Pull!',
+			description: pulled.emoji + ' **' + pulled.name + '**\n' + pulled.rarity + (isNew ? '\n\n🆕 **NEW!**' : ''),
+			color: pulled.rarity.length >= 4 ? embed.colors.GOLD : embed.colors.BLUE,
+			footer: { text: 'Pity: ' + collection.pity + '/50 | Collection: ' + collection.chars.length + '/' + characters.length },
+		})]
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '✨ Gacha System',
+		description: '**Commands:**\n' +
+			'`gacha pull` - Pull for ' + PULL_COST + ' points\n' +
+			'`gacha daily` - Free daily pull\n' +
+			'`gacha collection` - View your collection\n\n' +
+			'**Rarities:** ⭐ Common → ⭐⭐⭐⭐⭐ Legendary',
+		color: embed.colors.PURPLE,
+	})]
+});

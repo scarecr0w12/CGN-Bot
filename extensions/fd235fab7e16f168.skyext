@@ -1,0 +1,10 @@
+const extension = require('extension');
+
+const reminders = [
+	'🔔 **Bump Reminder!** Help us grow by bumping the server!',
+	'📢 Time to bump! Use the bump command to help us grow!',
+	'⏰ Bump time! Your support helps us reach more people!'
+];
+
+const reminder = reminders[Math.floor(Math.random() * reminders.length)];
+extension.log('Bump reminder: ' + reminder);

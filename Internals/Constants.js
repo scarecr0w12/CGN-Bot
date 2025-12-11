@@ -567,95 +567,187 @@ Constants.AllowedEvents = [
  * @type object
  */
 Constants.Scopes = {
+	// Moderation scopes
 	ban: {
 		scope: "ban",
 		permissionDescription: "Can ban members from this guild",
 		authDescription: "Ban guild members",
 		icon: "fa-gavel",
+		category: "moderation",
 	},
 	kick: {
 		scope: "kick",
 		permissionDescription: "Can kick members from this guild",
 		authDescription: "Kick guild members",
 		icon: "fa-gavel",
+		category: "moderation",
 	},
+	// Role scopes
 	roles_read: {
 		scope: "roles_read",
 		permissionDescription: "Can read this guild's role list",
 		authDescription: "Read guild roles",
 		icon: "fa-flag",
+		category: "roles",
 	},
 	roles_manage: {
 		scope: "roles_manage",
 		permissionDescription: "Can modify this guild's roles and assign roles to members",
 		authDescription: "Modify and assign guild roles",
 		icon: "fa-flag",
+		category: "roles",
 	},
+	// Channel scopes
 	channels_read: {
 		scope: "channels_read",
 		permissionDescription: "Can access information about this guild's channels such as pinned messages or descriptions",
 		authDescription: "Read guild channel settings, descriptions and pinned messages",
 		icon: "fa-comments",
+		category: "channels",
 	},
 	channels_manage: {
 		scope: "channels_manage",
 		permissionDescription: "Can modify this guild's channels",
 		authDescription: "Modify guild channels and pin messages",
 		icon: "fa-comments",
+		category: "channels",
 	},
+	// Guild scopes
 	guild_read: {
 		scope: "guild_read",
 		permissionDescription: "Can access this guild's settings",
 		authDescription: "Read guild settings",
 		icon: "fa-home",
+		category: "guild",
 	},
 	guild_manage: {
 		scope: "guild_manage",
 		permissionDescription: "Can modify this guild's settings",
 		authDescription: "Modify guild settings",
 		icon: "fa-home",
+		category: "guild",
 	},
+	// Member scopes
 	members_read: {
 		scope: "members_read",
 		permissionDescription: "Can access this guild's member list",
 		authDescription: "Read the guild member list",
 		icon: "fa-users",
+		category: "members",
 	},
 	members_manage: {
 		scope: "members_manage",
 		permissionDescription: "Can modify this guild's member list, for example by purging or managing nicknames",
 		authDescription: "Manage guild members and purge the member list",
 		icon: "fa-users",
+		category: "members",
 	},
+	// Message scopes
 	messages_read: {
 		scope: "messages_read",
 		permissionDescription: "Can read previous messages in the channel this extension was executed in",
 		authDescription: "Read messages in the channel that ran the extension",
 		icon: "fa-search",
+		category: "messages",
 	},
 	messages_global: {
 		scope: "messages_global",
 		permissionDescription: "Can read previous messages in all channels",
 		authDescription: "Read messages in all channels",
 		icon: "fa-globe",
+		category: "messages",
 	},
 	messages_write: {
 		scope: "messages_write",
 		permissionDescription: "Can write messages in all channels. The extension can always write messages in the channel it was executed in",
 		authDescription: "Send messages in all channels",
 		icon: "fa-paper-plane",
+		category: "messages",
 	},
 	messages_manage: {
 		scope: "messages_manage",
 		permissionDescription: "Can manage all messages in the channels where the extension can read messages",
 		authDescription: "Delete messages",
 		icon: "fa-trash",
+		category: "messages",
 	},
+	// Config scope
 	config: {
 		scope: "config",
 		permissionDescription: "Can read, but not modify, this guild's Skynet Configuration",
 		authDescription: "Read {SERVER}'s Skynet configuration",
 		icon: "fa-cogs",
+		category: "data",
+	},
+	economy_manage: {
+		scope: "economy_manage",
+		permissionDescription: "Can modify member points/rank scores in this guild's economy system",
+		authDescription: "Modify member economy points",
+		icon: "fa-coins",
+		category: "economy",
+	},
+	economy_read: {
+		scope: "economy_read",
+		permissionDescription: "Can read member points/rank scores and leaderboard data",
+		authDescription: "Read economy data and leaderboards",
+		icon: "fa-chart-line",
+		category: "economy",
+	},
+	storage: {
+		scope: "storage",
+		permissionDescription: "Can store and retrieve persistent data for this extension",
+		authDescription: "Store extension data persistently",
+		icon: "fa-database",
+		category: "data",
+	},
+	http_request: {
+		scope: "http_request",
+		permissionDescription: "Can make HTTP requests to external APIs",
+		authDescription: "Make external HTTP requests",
+		icon: "fa-globe",
+		category: "network",
+	},
+	embed_links: {
+		scope: "embed_links",
+		permissionDescription: "Can send rich embeds with links and images",
+		authDescription: "Send rich embeds",
+		icon: "fa-link",
+		category: "messages",
+	},
+	reactions: {
+		scope: "reactions",
+		permissionDescription: "Can add and manage reactions on messages",
+		authDescription: "Add and manage reactions",
+		icon: "fa-smile",
+		category: "messages",
+	},
+	threads: {
+		scope: "threads",
+		permissionDescription: "Can create and manage threads in channels",
+		authDescription: "Create and manage threads",
+		icon: "fa-code-branch",
+		category: "channels",
+	},
+	webhooks: {
+		scope: "webhooks",
+		permissionDescription: "Can create and use webhooks for sending messages",
+		authDescription: "Use webhooks",
+		icon: "fa-plug",
+		category: "advanced",
+	},
+	timeout: {
+		scope: "timeout",
+		permissionDescription: "Can timeout members (communication disabled)",
+		authDescription: "Timeout members",
+		icon: "fa-clock",
+		category: "moderation",
+	},
+	modlog: {
+		scope: "modlog",
+		permissionDescription: "Can read and write to the moderation log",
+		authDescription: "Access moderation log",
+		icon: "fa-clipboard-list",
+		category: "moderation",
 	},
 };
 

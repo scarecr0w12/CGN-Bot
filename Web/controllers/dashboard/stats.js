@@ -118,6 +118,130 @@ controllers.points.post = async (req, res) => {
 	save(req, res, true);
 };
 
+controllers.economy = async (req, { res }) => {
+	const { client } = req.app;
+	const { svr } = req;
+	const serverDocument = req.svr.document;
+
+	const economyCommands = ["balance", "daily", "deposit", "withdraw", "give", "gamble", "slots", "rob", "shop", "inventory", "auction"];
+	const commandDescriptions = {};
+	const commandCategories = {};
+	const commands = {};
+
+	// Default command config for new economy commands
+	const defaultCommandConfig = {
+		isEnabled: true,
+		admin_level: 0,
+		disabled_channel_ids: [],
+	};
+
+	economyCommands.forEach(cmd => {
+		const metadata = client.getPublicCommandMetadata(cmd);
+		if (metadata) {
+			commandDescriptions[cmd] = metadata.description;
+			commandCategories[cmd] = metadata.category;
+			// Use existing config or provide defaults for new commands
+			commands[cmd] = serverDocument.config.commands[cmd] || { ...defaultCommandConfig };
+		}
+	});
+
+	res.setPageData({
+		page: "admin-economy.ejs",
+		channelData: getChannelData(svr),
+		commandDescriptions,
+		commandCategories,
+	});
+	res.setConfigData({ commands });
+	res.render();
+};
+controllers.economy.post = async (req, res) => {
+	const economyCommands = ["balance", "daily", "deposit", "withdraw", "give", "gamble", "slots", "rob", "shop", "inventory", "auction"];
+	economyCommands.forEach(cmd => {
+		parsers.commandOptions(req, cmd, req.body);
+	});
+
+	save(req, res, true);
+};
+
+controllers.economyStats = async (req, { res }) => {
+	const { client } = req.app;
+	const { svr } = req;
+
+	// Fetch all members in this server who have economy data
+	const memberIds = Object.keys(svr.members || {});
+	const usersWithEconomy = [];
+
+	// Fetch user documents for members in this server
+	for (const memberId of memberIds) {
+		try {
+			const userDoc = await Users.findOne(memberId);
+			if (userDoc && userDoc.economy && (userDoc.economy.wallet > 0 || userDoc.economy.bank > 0)) {
+				const member = svr.members[memberId];
+				const discordUser = member?.user || await client.users.fetch(memberId).catch(() => null);
+
+				usersWithEconomy.push({
+					id: memberId,
+					username: discordUser?.username || `User ${memberId.slice(-4)}`,
+					avatar: discordUser ? client.getAvatarURL(discordUser.id, discordUser.avatar) || "/static/img/discord-icon.png" : "/static/img/discord-icon.png",
+					wallet: userDoc.economy.wallet || 0,
+					bank: userDoc.economy.bank || 0,
+					netWorth: (userDoc.economy.wallet || 0) + (userDoc.economy.bank || 0),
+					totalEarned: userDoc.economy.total_earned || 0,
+					totalLost: userDoc.economy.total_lost || 0,
+				});
+			}
+		} catch (err) {
+			// Skip users that can't be fetched
+		}
+	}
+
+	// Sort by net worth for leaderboard
+	const leaderboard = usersWithEconomy
+		.sort((a, b) => b.netWorth - a.netWorth)
+		.slice(0, 25);
+
+	// Calculate statistics
+	const totalCoins = usersWithEconomy.reduce((sum, u) => sum + u.wallet, 0);
+	const totalBanked = usersWithEconomy.reduce((sum, u) => sum + u.bank, 0);
+	const totalNetWorth = usersWithEconomy.reduce((sum, u) => sum + u.netWorth, 0);
+	const averageNetWorth = usersWithEconomy.length > 0 ? Math.round(totalNetWorth / usersWithEconomy.length) : 0;
+
+	// Wealth distribution
+	const distribution = {
+		poor: usersWithEconomy.filter(u => u.netWorth < 1000).length,
+		middle: usersWithEconomy.filter(u => u.netWorth >= 1000 && u.netWorth < 10000).length,
+		rich: usersWithEconomy.filter(u => u.netWorth >= 10000 && u.netWorth < 50000).length,
+		wealthy: usersWithEconomy.filter(u => u.netWorth >= 50000).length,
+	};
+
+	// Top earners and losers
+	const topEarners = usersWithEconomy
+		.filter(u => u.totalEarned > 0)
+		.sort((a, b) => b.totalEarned - a.totalEarned)
+		.slice(0, 5);
+
+	const topLosers = usersWithEconomy
+		.filter(u => u.totalLost > 0)
+		.sort((a, b) => b.totalLost - a.totalLost)
+		.slice(0, 5);
+
+	res.setPageData({
+		page: "admin-economy-stats.ejs",
+		stats: {
+			totalCoins,
+			totalBanked,
+			usersWithEconomy: usersWithEconomy.length,
+			averageNetWorth,
+			distribution,
+		},
+		leaderboard,
+		topEarners,
+		topLosers,
+		recentActivity: topEarners.length > 0 || topLosers.length > 0,
+	});
+	res.render();
+};
+
 // Premium Advanced Stats Page
 controllers.advancedStats = async (req, { res }) => {
 	const hasAdvancedStats = await TierManager.canAccess(req.svr.id, "advanced_stats");

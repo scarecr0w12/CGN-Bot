@@ -1,0 +1,21 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const exampleWords = ['apple', 'elephant', 'tiger', 'rabbit', 'turtle'];
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔗 Word Chain',
+		description: utils.discord.bold('How to Play:') + '\n' +
+			'1. Someone starts with any word\n' +
+			'2. Next person says a word starting with the LAST letter\n' +
+			'3. No repeating words!\n\n' +
+			utils.discord.bold('Example:') + '\n' +
+			exampleWords.map((w, i) => '• ' + w + (i < exampleWords.length - 1 ? ' → ' + utils.discord.bold(w[w.length-1].toUpperCase()) + '...' : '')).join('\n') +
+			'\n\n' + utils.discord.bold('Starting word:') + ' 🎯 ' + utils.discord.bold('DISCORD') + '\n\n' +
+			utils.discord.italic('Type a word starting with ') + utils.discord.bold('D') + utils.discord.italic(' to continue!'),
+		color: embed.colors.PURPLE,
+		footer: { text: 'Think fast! You have 30 seconds!' }
+	})]
+});

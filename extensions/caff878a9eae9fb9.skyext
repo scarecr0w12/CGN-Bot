@@ -1,0 +1,17 @@
+const event = require('event');
+const extension = require('extension');
+
+const message = event.data;
+if (!message.content || message.author?.bot) return;
+
+const logEmbed = {
+	title: '🗑️ Message Deleted',
+	description: '**Author:** <@' + message.author?.id + '>\n' +
+		'**Channel:** <#' + message.channelId + '>\n\n' +
+		'**Content:**\n' + (message.content || '*No content*'),
+	color: 0xe74c3c,
+	timestamp: new Date().toISOString(),
+	footer: { text: 'Message ID: ' + message.id }
+};
+
+extension.log('Deleted message logged from: ' + message.author?.username);

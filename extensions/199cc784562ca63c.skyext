@@ -1,0 +1,9 @@
+const message = require('message');
+const extension = require('extension');
+const utils = require('utils');
+
+const celebrations = ['🎉', '🎊', '🏆', '👏', '🙌'];
+const randomCelebration = utils.random.pick(celebrations);
+
+extension.log('GG! Celebrating with ' + message.author.username);
+// Would react with celebration emoji
