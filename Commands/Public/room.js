@@ -113,16 +113,16 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		if (["text", "voice"].includes(args[0].toLowerCase())) {
 			const [type] = args.splice(0, 1);
 
-			// Voice rooms require voice_features premium feature
+			// Voice rooms require voice_features premium feature (premium is per-server)
 			if (type === "voice") {
-				const hasVoiceFeatures = await TierManager.canAccess(msg.author.id, "voice_features");
+				const hasVoiceFeatures = await TierManager.canAccess(msg.guild.id, "voice_features");
 				if (!hasVoiceFeatures) {
 					return msg.send({
 						embeds: [{
 							color: Colors.SOFT_ERR,
 							title: "Premium Feature",
 							description: "Voice room creation requires a premium subscription.",
-							footer: { text: "Upgrade your membership to create voice rooms." },
+							footer: { text: "Upgrade your server's membership to create voice rooms." },
 						}],
 					});
 				}

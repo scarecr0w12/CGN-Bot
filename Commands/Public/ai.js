@@ -10,8 +10,8 @@ module.exports = async (main, documents, msg, commandData) => {
 	const { client, configJS } = main;
 	const { serverDocument } = documents;
 
-	// Check if user has access to ai_chat feature
-	const hasAccess = await TierManager.canAccess(msg.author.id, "ai_chat");
+	// Check if server has access to ai_chat feature (premium is per-server)
+	const hasAccess = await TierManager.canAccess(msg.guild.id, "ai_chat");
 	if (!hasAccess) {
 		return msg.channel.send({
 			embeds: [{

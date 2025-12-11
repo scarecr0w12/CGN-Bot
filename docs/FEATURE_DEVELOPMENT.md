@@ -4,13 +4,18 @@ This document tracks the implementation status of tier-gated features in the mem
 
 ## Overview
 
-The Feature Registry (`/maintainer/membership/features`) defines features that can be assigned to membership tiers. Currently, all features are **placeholders** - the infrastructure exists but no actual feature gating is implemented.
+**IMPORTANT: Premium features are per-SERVER, not per-user.**
+
+When a server administrator purchases a premium subscription, that subscription is attached to the server (guild), and all members of that server benefit from the premium features while using the bot in that server's context.
+
+The Feature Registry (`/maintainer/membership/features`) defines features that can be assigned to membership tiers.
 
 ### Infrastructure Status: ✅ Ready
 
-- `Modules/TierManager.js` - Full tier/feature management API
-- `Web/middleware/index.js` - `requireFeature()` and `requireTierLevel()` middleware
-- `Database/Schemas/siteSettingsSchema.js` - Feature and tier storage
+- `Modules/TierManager.js` - Full tier/feature management API (server-based)
+- `Web/middleware/index.js` - `requireFeature()` and `requireTierLevel()` middleware (checks server context)
+- `Database/Schemas/serverSchema.js` - Server subscription storage
+- `Database/Schemas/siteSettingsSchema.js` - Feature and tier definitions
 
 ---
 
@@ -388,9 +393,10 @@ router.get('/premium-page',
 const TierManager = require('../../Modules/TierManager');
 
 async execute(client, msg, args) {
-  const hasAccess = await TierManager.canAccess(msg.author.id, 'ai_chat');
+  // Premium is per-server - use guild ID, not user ID
+  const hasAccess = await TierManager.canAccess(msg.guild.id, 'ai_chat');
   if (!hasAccess) {
-    return msg.reply('This feature requires a premium subscription.');
+    return msg.reply('This feature requires a premium subscription for this server.');
   }
   // ... rest of command
 }
@@ -403,9 +409,10 @@ async execute(client, msg, args) {
 const TierManager = require('../../Modules/TierManager');
 
 controllers.premiumFeature = async (req, res) => {
-  const hasAccess = await TierManager.canAccess(req.user.id, 'advanced_stats');
+  // Premium is per-server - use server ID from request
+  const hasAccess = await TierManager.canAccess(req.svr.id, 'advanced_stats');
   if (!hasAccess) {
-    return res.status(403).json({ error: 'Premium feature' });
+    return res.status(403).json({ error: 'Premium feature requires server subscription' });
   }
   // ... rest of controller
 };
@@ -449,8 +456,37 @@ controllers.premiumFeature = async (req, res) => {
 
 ---
 
-*Last Updated: December 9, 2024*
+*Last Updated: December 10, 2024*
 
 ## Implementation Complete!
 
 All 17 tier-gated features have been implemented (2 UI-Only features excluded from count).
+
+---
+
+## Architecture Change: Per-Server Premium
+
+### December 10, 2024
+
+Migrated from per-user to per-server premium model:
+
+**Schema Changes:**
+- Added `subscription` field to `serverSchema.js` (mirrors user subscription structure)
+- Added `payment_ids` to servers for payment provider webhooks
+
+**TierManager Changes:**
+- `canAccess(serverId, featureKey)` - Now checks server's subscription
+- `getServerTier(serverId)` - Get server's current tier
+- `getServerFeatures(serverId)` - Get server's effective features
+- `setServerTier(serverId, ...)` - Set server's subscription tier
+- Deprecated user-based functions (kept for backward compatibility)
+
+**Updated Files:**
+- `Modules/TierManager.js` - Server-based access checks
+- `Web/middleware/index.js` - Middleware uses `req.svr.id`
+- `Web/controllers/dashboard/*.js` - All use `req.svr.id`
+- `Commands/Public/ai.js`, `imagine.js`, `room.js` - Use `msg.guild.id`
+- `Modules/Utils/ThemeHelper.js` - Server-based theme access
+- `Modules/Utils/BrandingHelper.js` - Server-based branding
+- `Modules/Utils/FeatureFlags.js` - Server-based beta features
+- `Modules/WebhookDispatcher.js` - Server-based webhook access

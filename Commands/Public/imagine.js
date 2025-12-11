@@ -6,8 +6,8 @@
 const TierManager = require("../../Modules/TierManager");
 
 module.exports = async ({ Constants: { Colors }, client, configJS }, { serverDocument }, msg, commandData) => {
-	// Check if user has ai_images feature
-	const hasImageAccess = await TierManager.canAccess(msg.author.id, "ai_images");
+	// Check if server has ai_images feature (premium is per-server)
+	const hasImageAccess = await TierManager.canAccess(msg.guild.id, "ai_images");
 	if (!hasImageAccess) {
 		return msg.send({
 			embeds: [{

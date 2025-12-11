@@ -10,6 +10,51 @@ module.exports = new Schema({
 		type: Date,
 		default: Date.now,
 	},
+
+	// Server Subscription/Tier information (premium is per-server, not per-user)
+	subscription: new Schema({
+		tier_id: {
+			type: String,
+			default: "free",
+		},
+		source: {
+			type: String,
+			enum: ["manual", "stripe", "paypal", "btcpay", "patreon", "gift", "system"],
+			default: "manual",
+		},
+		external_subscription_id: String,
+		// User who purchased/manages the subscription
+		purchased_by: String,
+		started_at: Date,
+		expires_at: Date,
+		is_active: {
+			type: Boolean,
+			default: true,
+		},
+		// Features granted/revoked at the server level
+		granted_features: [String],
+		revoked_features: [String],
+		// Subscription history
+		history: [new Schema({
+			tier_id: {
+				type: String,
+				required: true,
+			},
+			source: String,
+			purchased_by: String,
+			started_at: Date,
+			ended_at: Date,
+			reason: String,
+		})],
+	}),
+
+	// Payment provider customer IDs for webhook lookups (server-level)
+	payment_ids: new Schema({
+		stripe_customer_id: String,
+		paypal_customer_id: String,
+		btcpay_customer_id: String,
+	}),
+
 	config: require("./serverConfigSchema.js"),
 	extensions: [require("./serverGallerySchema.js")],
 	members: require("./serverMembersSchema.js"),

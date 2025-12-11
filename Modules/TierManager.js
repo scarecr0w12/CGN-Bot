@@ -1,10 +1,13 @@
 /**
  * TierManager - Handles tier-based feature gating and subscription management
  *
+ * IMPORTANT: Premium features are per-SERVER, not per-user.
+ * All access checks should use serverId, not userId.
+ *
  * This module provides utilities for:
- * - Checking if a user can access a specific feature
- * - Getting user's effective features (tier features + granted - revoked)
- * - Managing tier assignments and subscription history
+ * - Checking if a server can access a specific feature
+ * - Getting server's effective features (tier features + granted - revoked)
+ * - Managing server tier assignments and subscription history
  * - Caching tier/feature configurations for performance
  */
 
@@ -91,9 +94,17 @@ const getFeature = async featureId => {
 };
 
 /**
- * Get user's subscription data
- * @param {string} userId - Discord user ID
+ * Get server's subscription data
+ * @param {string} serverId - Discord server/guild ID
  * @returns {Promise<Object|null>}
+ */
+const getServerSubscription = async serverId => {
+	const server = await Servers.findOne(serverId);
+	return server?.subscription || null;
+};
+
+/**
+ * @deprecated Use getServerSubscription instead - premium is per-server
  */
 const getUserSubscription = async userId => {
 	const user = await Users.findOne(userId);
@@ -101,12 +112,12 @@ const getUserSubscription = async userId => {
 };
 
 /**
- * Get user's current tier
- * @param {string} userId - Discord user ID
+ * Get server's current tier
+ * @param {string} serverId - Discord server/guild ID
  * @returns {Promise<Object>}
  */
-const getUserTier = async userId => {
-	const subscription = await getUserSubscription(userId);
+const getServerTier = async serverId => {
+	const subscription = await getServerSubscription(serverId);
 	const tierId = subscription?.tier_id || "free";
 
 	// Check if subscription is expired
@@ -125,14 +136,34 @@ const getUserTier = async userId => {
 };
 
 /**
- * Get user's effective features (tier features + granted - revoked)
- * @param {string} userId - Discord user ID
+ * @deprecated Use getServerTier instead - premium is per-server
+ */
+const getUserTier = async userId => {
+	const subscription = await getUserSubscription(userId);
+	const tierId = subscription?.tier_id || "free";
+
+	if (subscription?.expires_at && new Date(subscription.expires_at) < new Date()) {
+		return getDefaultTier();
+	}
+
+	if (subscription && !subscription.is_active) {
+		return getDefaultTier();
+	}
+
+	const tier = await getTier(tierId);
+	if (tier) return tier;
+	return getDefaultTier();
+};
+
+/**
+ * Get server's effective features (tier features + granted - revoked)
+ * @param {string} serverId - Discord server/guild ID
  * @returns {Promise<Set<string>>}
  */
-const getUserFeatures = async userId => {
-	const user = await Users.findOne(userId);
-	const subscription = user?.subscription || {};
-	const tier = await getUserTier(userId);
+const getServerFeatures = async serverId => {
+	const server = await Servers.findOne(serverId);
+	const subscription = server?.subscription || {};
+	const tier = await getServerTier(serverId);
 
 	// Start with tier features
 	const features = new Set(tier?.features || []);
@@ -151,41 +182,105 @@ const getUserFeatures = async userId => {
 };
 
 /**
- * Check if user can access a specific feature
- * @param {string} userId - Discord user ID
+ * @deprecated Use getServerFeatures instead - premium is per-server
+ */
+const getUserFeatures = async userId => {
+	const user = await Users.findOne(userId);
+	const subscription = user?.subscription || {};
+	const tier = await getUserTier(userId);
+
+	const features = new Set(tier?.features || []);
+
+	if (subscription.granted_features) {
+		subscription.granted_features.forEach(f => features.add(f));
+	}
+
+	if (subscription.revoked_features) {
+		subscription.revoked_features.forEach(f => features.delete(f));
+	}
+
+	return features;
+};
+
+/**
+ * Check if a server can access a specific feature
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} featureKey - Feature ID to check
  * @returns {Promise<boolean>}
  */
-const canAccess = async (userId, featureKey) => {
+const canAccess = async (serverId, featureKey) => {
 	// Check if feature exists and is enabled globally
 	const feature = await getFeature(featureKey);
 	if (!feature || !feature.isEnabled) {
 		return false;
 	}
 
-	const userFeatures = await getUserFeatures(userId);
-	return userFeatures.has(featureKey);
+	const serverFeatures = await getServerFeatures(serverId);
+	return serverFeatures.has(featureKey);
 };
 
 /**
- * Check if user has at least a certain tier level
- * @param {string} userId - Discord user ID
+ * Check if server has at least a certain tier level
+ * @param {string} serverId - Discord server/guild ID
  * @param {number} requiredLevel - Minimum tier level required
  * @returns {Promise<boolean>}
  */
-const hasMinimumTierLevel = async (userId, requiredLevel) => {
-	const tier = await getUserTier(userId);
+const hasMinimumTierLevel = async (serverId, requiredLevel) => {
+	const tier = await getServerTier(serverId);
 	return (tier?.level || 0) >= requiredLevel;
 };
 
 /**
- * Set user's tier
- * @param {string} userId - Discord user ID
+ * Set server's tier
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} tierId - Tier ID to assign
  * @param {string} source - Source of assignment ('manual', 'stripe', etc.)
  * @param {Date|null} expiresAt - Expiration date (null for lifetime)
  * @param {string} reason - Reason for change
+ * @param {string|null} purchasedBy - User ID who purchased this subscription
  * @returns {Promise<Object>}
+ */
+const setServerTier = async (serverId, tierId, source = "manual", expiresAt = null, reason = "assigned", purchasedBy = null) => {
+	const server = await Servers.findOne(serverId);
+	if (!server) {
+		return null; // Server must exist
+	}
+
+	const oldSubscription = server.subscription || {};
+	const now = new Date();
+
+	// Add to history if there was a previous tier
+	if (oldSubscription.tier_id && oldSubscription.tier_id !== tierId) {
+		const historyEntry = {
+			tier_id: oldSubscription.tier_id,
+			source: oldSubscription.source,
+			purchased_by: oldSubscription.purchased_by,
+			started_at: oldSubscription.started_at,
+			ended_at: now,
+			reason: reason,
+		};
+
+		const history = oldSubscription.history || [];
+		history.push(historyEntry);
+		server.query.set("subscription.history", history);
+	}
+
+	// Update subscription
+	server.query.set("subscription.tier_id", tierId);
+	server.query.set("subscription.source", source);
+	server.query.set("subscription.started_by", now);
+	server.query.set("subscription.expires_at", expiresAt);
+	server.query.set("subscription.is_active", true);
+	if (purchasedBy) {
+		server.query.set("subscription.purchased_by", purchasedBy);
+	}
+
+	await server.save();
+	return server;
+};
+
+/**
+ * @deprecated Use setServerTier instead - premium is per-server
  */
 const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, reason = "assigned") => {
 	let user = await Users.findOne(userId);
@@ -196,7 +291,6 @@ const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, 
 	const oldSubscription = user.subscription || {};
 	const now = new Date();
 
-	// Add to history if there was a previous tier
 	if (oldSubscription.tier_id && oldSubscription.tier_id !== tierId) {
 		const historyEntry = {
 			tier_id: oldSubscription.tier_id,
@@ -211,7 +305,6 @@ const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, 
 		user.query.set("subscription.history", history);
 	}
 
-	// Update subscription
 	user.query.set("subscription.tier_id", tierId);
 	user.query.set("subscription.source", source);
 	user.query.set("subscription.started_at", now);
@@ -223,79 +316,79 @@ const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, 
 };
 
 /**
- * Grant a specific feature to a user
- * @param {string} userId - Discord user ID
+ * Grant a specific feature to a server
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} featureKey - Feature ID to grant
  * @returns {Promise<Object>}
  */
-const grantFeature = async (userId, featureKey) => {
-	let user = await Users.findOne(userId);
-	if (!user) {
-		user = Users.new({ _id: userId });
+const grantFeature = async (serverId, featureKey) => {
+	const server = await Servers.findOne(serverId);
+	if (!server) {
+		return null; // Server must exist
 	}
 
-	const granted = user.subscription?.granted_features || [];
+	const granted = server.subscription?.granted_features || [];
 	if (!granted.includes(featureKey)) {
 		granted.push(featureKey);
-		user.query.set("subscription.granted_features", granted);
+		server.query.set("subscription.granted_features", granted);
 	}
 
 	// Remove from revoked if present
-	const revoked = user.subscription?.revoked_features || [];
+	const revoked = server.subscription?.revoked_features || [];
 	const revokedIndex = revoked.indexOf(featureKey);
 	if (revokedIndex > -1) {
 		revoked.splice(revokedIndex, 1);
-		user.query.set("subscription.revoked_features", revoked);
+		server.query.set("subscription.revoked_features", revoked);
 	}
 
-	await user.save();
-	return user;
+	await server.save();
+	return server;
 };
 
 /**
- * Revoke a specific feature from a user
- * @param {string} userId - Discord user ID
+ * Revoke a specific feature from a server
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} featureKey - Feature ID to revoke
  * @returns {Promise<Object>}
  */
-const revokeFeature = async (userId, featureKey) => {
-	let user = await Users.findOne(userId);
-	if (!user) {
-		user = Users.new({ _id: userId });
+const revokeFeature = async (serverId, featureKey) => {
+	const server = await Servers.findOne(serverId);
+	if (!server) {
+		return null; // Server must exist
 	}
 
-	const revoked = user.subscription?.revoked_features || [];
+	const revoked = server.subscription?.revoked_features || [];
 	if (!revoked.includes(featureKey)) {
 		revoked.push(featureKey);
-		user.query.set("subscription.revoked_features", revoked);
+		server.query.set("subscription.revoked_features", revoked);
 	}
 
 	// Remove from granted if present
-	const granted = user.subscription?.granted_features || [];
+	const granted = server.subscription?.granted_features || [];
 	const grantedIndex = granted.indexOf(featureKey);
 	if (grantedIndex > -1) {
 		granted.splice(grantedIndex, 1);
-		user.query.set("subscription.granted_features", granted);
+		server.query.set("subscription.granted_features", granted);
 	}
 
-	await user.save();
-	return user;
+	await server.save();
+	return server;
 };
 
 /**
- * Check and handle expired subscriptions for a user
- * @param {string} userId - Discord user ID
+ * Check and handle expired subscriptions for a server
+ * @param {string} serverId - Discord server/guild ID
  * @returns {Promise<boolean>} - True if subscription was expired
  */
-const checkExpiration = async userId => {
-	const user = await Users.findOne(userId);
-	if (!user?.subscription) return false;
+const checkExpiration = async serverId => {
+	const server = await Servers.findOne(serverId);
+	if (!server?.subscription) return false;
 
-	const { expires_at, is_active } = user.subscription;
+	const { expires_at, is_active } = server.subscription;
 
 	if (is_active && expires_at && new Date(expires_at) < new Date()) {
 		const defaultTier = await getDefaultTier();
-		await setUserTier(userId, defaultTier?._id || "free", "system", null, "expired");
+		await setServerTier(serverId, defaultTier?._id || "free", "system", null, "expired");
 		return true;
 	}
 
@@ -303,14 +396,14 @@ const checkExpiration = async userId => {
 };
 
 /**
- * Cancel user's subscription
- * @param {string} userId - Discord user ID
+ * Cancel server's subscription
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} reason - Reason for cancellation
  * @returns {Promise<Object>}
  */
-const cancelSubscription = async (userId, reason = "cancelled") => {
+const cancelSubscription = async (serverId, reason = "cancelled") => {
 	const defaultTier = await getDefaultTier();
-	return setUserTier(userId, defaultTier?._id || "free", "manual", null, reason);
+	return setServerTier(serverId, defaultTier?._id || "free", "system", null, reason);
 };
 
 /**
@@ -358,16 +451,16 @@ const getTierByPaymentProduct = async (provider, productId) => {
 };
 
 /**
- * Link a user's payment customer ID
- * @param {string} userId - Discord user ID
+ * Link a server's payment customer ID
+ * @param {string} serverId - Discord server/guild ID
  * @param {string} provider - Payment provider
  * @param {string} customerId - Customer ID from provider
  * @returns {Promise<Object>}
  */
-const linkPaymentCustomer = async (userId, provider, customerId) => {
-	let user = await Users.findOne(userId);
-	if (!user) {
-		user = Users.new({ _id: userId });
+const linkPaymentCustomer = async (serverId, provider, customerId) => {
+	const server = await Servers.findOne(serverId);
+	if (!server) {
+		return null; // Server must exist
 	}
 
 	const fieldMap = {
@@ -378,20 +471,20 @@ const linkPaymentCustomer = async (userId, provider, customerId) => {
 
 	const field = fieldMap[provider];
 	if (field) {
-		user.query.set(`payment_ids.${field}`, customerId);
-		await user.save();
+		server.query.set(`payment_ids.${field}`, customerId);
+		await server.save();
 	}
 
-	return user;
+	return server;
 };
 
 /**
- * Find user by payment customer ID
+ * Find server by payment customer ID
  * @param {string} provider - Payment provider
  * @param {string} customerId - Customer ID from provider
  * @returns {Promise<Object|null>}
  */
-const findUserByPaymentCustomer = async (provider, customerId) => {
+const findServerByPaymentCustomer = async (provider, customerId) => {
 	const fieldMap = {
 		stripe: "payment_ids.stripe_customer_id",
 		paypal: "payment_ids.paypal_customer_id",
@@ -401,10 +494,8 @@ const findUserByPaymentCustomer = async (provider, customerId) => {
 	const field = fieldMap[provider];
 	if (!field) return null;
 
-	// This would need a custom query implementation
-	// For now, we'll need to handle this at the Database level
-	const users = await Database.users.find({ [field]: customerId }).exec();
-	return users?.[0] || null;
+	const servers = await Database.servers.find({ [field]: customerId }).exec();
+	return servers?.[0] || null;
 };
 
 module.exports = {
@@ -419,15 +510,15 @@ module.exports = {
 	getFeatures,
 	getFeature,
 
-	// User tier/feature checks
-	getUserTier,
-	getUserFeatures,
-	getUserSubscription,
+	// Server tier/feature checks (PRIMARY - premium is per-server)
+	getServerTier,
+	getServerFeatures,
+	getServerSubscription,
 	canAccess,
 	hasMinimumTierLevel,
 
-	// User tier management
-	setUserTier,
+	// Server tier management
+	setServerTier,
 	grantFeature,
 	revokeFeature,
 	checkExpiration,
@@ -438,7 +529,13 @@ module.exports = {
 	getPaymentProvider,
 	getTierByPaymentProduct,
 
-	// Payment customer linking
+	// Payment customer linking (server-level)
 	linkPaymentCustomer,
-	findUserByPaymentCustomer,
+	findServerByPaymentCustomer,
+
+	// @deprecated - User-level functions kept for backward compatibility
+	getUserTier,
+	getUserFeatures,
+	getUserSubscription,
+	setUserTier,
 };

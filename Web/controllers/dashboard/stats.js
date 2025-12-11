@@ -120,8 +120,8 @@ controllers.points.post = async (req, res) => {
 
 // Premium Advanced Stats API endpoint
 controllers.analytics = async (req, res) => {
-	// Check if user has advanced_stats feature
-	const hasAdvancedStats = await TierManager.canAccess(req.consolemember.user.id, "advanced_stats");
+	// Check if server has advanced_stats feature (premium is per-server)
+	const hasAdvancedStats = await TierManager.canAccess(req.svr.id, "advanced_stats");
 	if (!hasAdvancedStats) {
 		return res.status(403).json({ error: "Advanced analytics requires a premium subscription." });
 	}

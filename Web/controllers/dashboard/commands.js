@@ -12,8 +12,8 @@ const controllers = module.exports;
 controllers.options = async (req, { res }) => {
 	await req.svr.fetchCollection("channels");
 
-	// Check if user has custom_prefix feature
-	const hasCustomPrefix = await TierManager.canAccess(req.consolemember.user.id, "custom_prefix");
+	// Check if server has custom_prefix feature (premium is per-server)
+	const hasCustomPrefix = await TierManager.canAccess(req.svr.id, "custom_prefix");
 
 	res.setConfigData({
 		chatterbot: req.svr.document.config.chatterbot,
@@ -35,7 +35,7 @@ controllers.options.post = async (req, res) => {
 	// Check custom_prefix feature before allowing prefix change
 	const currentPrefix = req.app.client.getCommandPrefix(req.svr, req.svr.document);
 	if (req.body.command_prefix !== currentPrefix) {
-		const hasCustomPrefix = await TierManager.canAccess(req.consolemember.user.id, "custom_prefix");
+		const hasCustomPrefix = await TierManager.canAccess(req.svr.id, "custom_prefix");
 		if (hasCustomPrefix) {
 			req.svr.queryDocument.set("config.command_prefix", req.body.command_prefix);
 		}
@@ -288,7 +288,7 @@ controllers.tags.post = async (req, res) => {
 	if (req.body["new-name"] && req.body["new-type"] && req.body["new-content"] && !serverDocument.config.tags.list.id(req.body["new-name"])) {
 		// Check custom_commands feature limit
 		const currentCount = serverDocument.config.tags.list.length;
-		const hasUnlimited = await TierManager.canAccess(req.consolemember.user.id, "custom_commands");
+		const hasUnlimited = await TierManager.canAccess(req.svr.id, "custom_commands");
 		const limit = hasUnlimited ? UNLIMITED_TAG_THRESHOLD : DEFAULT_TAG_LIMIT;
 
 		if (currentCount >= limit) {

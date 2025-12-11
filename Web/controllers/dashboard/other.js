@@ -413,8 +413,8 @@ controllers.extensionBuilder.post = async (req, res) => {
 };
 
 controllers.export = async (req, { res }) => {
-	// Check if user has export_data feature
-	const hasExportAccess = await TierManager.canAccess(req.consolemember.user.id, "export_data");
+	// Check if server has export_data feature (premium is per-server)
+	const hasExportAccess = await TierManager.canAccess(req.svr.id, "export_data");
 
 	res.setPageData({
 		page: "admin-export.ejs",
@@ -424,8 +424,8 @@ controllers.export = async (req, { res }) => {
 };
 
 controllers.export.post = async (req, res) => {
-	// Check feature access
-	const hasExportAccess = await TierManager.canAccess(req.consolemember.user.id, "export_data");
+	// Check feature access (premium is per-server)
+	const hasExportAccess = await TierManager.canAccess(req.svr.id, "export_data");
 	if (!hasExportAccess) {
 		return res.status(403).json({ error: "Export feature requires a premium subscription." });
 	}

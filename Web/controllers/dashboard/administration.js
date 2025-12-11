@@ -66,8 +66,8 @@ controllers.moderation = async (req, { res }) => {
 	const svr = await req.svr.fetchCollection("roles");
 	const serverDocument = req.svr.document;
 
-	// Check if user has auto_roles feature
-	const hasAutoRoles = await TierManager.canAccess(req.consolemember.user.id, "auto_roles");
+	// Check if server has auto_roles feature (premium is per-server)
+	const hasAutoRoles = await TierManager.canAccess(req.svr.id, "auto_roles");
 
 	res.setPageData({
 		page: "admin-moderation.ejs",
@@ -409,8 +409,8 @@ controllers.filters = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 	await svr.fetchCollection("roles");
 
-	// Check if user has advanced_moderation feature
-	const hasAdvancedModeration = await TierManager.canAccess(req.consolemember.user.id, "advanced_moderation");
+	// Check if server has advanced_moderation feature (premium is per-server)
+	const hasAdvancedModeration = await TierManager.canAccess(req.svr.id, "advanced_moderation");
 
 	const filteredCommands = [];
 	for (const command in serverDocument.config.commands) {
@@ -436,8 +436,8 @@ controllers.filters = async (req, { res }) => {
 	res.render();
 };
 controllers.filters.post = async (req, res) => {
-	// Check if user has advanced_moderation feature
-	const hasAdvancedModeration = await TierManager.canAccess(req.consolemember.user.id, "advanced_moderation");
+	// Check if server has advanced_moderation feature (premium is per-server)
+	const hasAdvancedModeration = await TierManager.canAccess(req.svr.id, "advanced_moderation");
 	if (!hasAdvancedModeration) {
 		return res.status(403).json({ error: "Advanced moderation requires a premium subscription." });
 	}
@@ -592,8 +592,8 @@ controllers.logs = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
 
-	// Check if user has extended_logs feature
-	const hasExtendedLogs = await TierManager.canAccess(req.consolemember.user.id, "extended_logs");
+	// Check if server has extended_logs feature (premium is per-server)
+	const hasExtendedLogs = await TierManager.canAccess(req.svr.id, "extended_logs");
 
 	// Premium users get access to more logs (1000 vs 200)
 	const logLimit = hasExtendedLogs ? 1000 : 200;

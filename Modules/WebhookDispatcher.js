@@ -1,8 +1,8 @@
 /**
- * WebhookDispatcher - Manages custom webhook integrations for premium users
+ * WebhookDispatcher - Manages custom webhook integrations for premium servers
  *
  * Allows servers to send event notifications to external webhooks.
- * Premium feature gated by `webhook_integrations`.
+ * Premium feature gated by `webhook_integrations` (per-server).
  */
 
 const fetch = require("node-fetch");
@@ -42,11 +42,11 @@ class WebhookDispatcher {
 
 	/**
 	 * Check if a server has webhook integrations enabled
-	 * @param {string} userId - Server owner/admin user ID
+	 * @param {string} serverId - Server/guild ID
 	 * @returns {Promise<boolean>}
 	 */
-	async hasWebhookAccess (userId) {
-		return TierManager.canAccess(userId, "webhook_integrations");
+	async hasWebhookAccess (serverId) {
+		return TierManager.canAccess(serverId, "webhook_integrations");
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /**
- * ThemeHelper - Manages dashboard themes for premium users
+ * ThemeHelper - Manages dashboard themes for premium servers
  *
- * Premium users with the premium_dashboard feature can customize
+ * Premium servers with the premium_dashboard feature can customize
  * their dashboard appearance with different themes.
  */
 
@@ -77,19 +77,19 @@ const THEMES = {
 };
 
 /**
- * Check if user has premium dashboard feature
- * @param {string} userId - The user ID
+ * Check if server has premium dashboard feature
+ * @param {string} serverId - The server ID
  * @returns {Promise<boolean>}
  */
-const hasPremiumDashboard = async userId => TierManager.canAccess(userId, "premium_dashboard");
+const hasPremiumDashboard = async serverId => TierManager.canAccess(serverId, "premium_dashboard");
 
 /**
- * Get available themes for a user
- * @param {string} userId - The user ID
+ * Get available themes for a server
+ * @param {string} serverId - The server ID
  * @returns {Promise<Object[]>} Array of available themes
  */
-const getAvailableThemes = async userId => {
-	const hasPremium = await hasPremiumDashboard(userId);
+const getAvailableThemes = async serverId => {
+	const hasPremium = await hasPremiumDashboard(serverId);
 
 	return Object.values(THEMES).map(theme => ({
 		...theme,
@@ -98,13 +98,13 @@ const getAvailableThemes = async userId => {
 };
 
 /**
- * Get user's current theme
- * @param {Object} userDocument - The user document
- * @param {string} userId - The user ID for premium check
+ * Get server's current theme (stored in user preferences but gated by server premium)
+ * @param {Object} userDocument - The user document (stores theme preference)
+ * @param {string} serverId - The server ID for premium check
  * @returns {Promise<Object>} Theme object
  */
-const getUserTheme = async (userDocument, userId) => {
-	const hasPremium = await hasPremiumDashboard(userId);
+const getUserTheme = async (userDocument, serverId) => {
+	const hasPremium = await hasPremiumDashboard(serverId);
 	const themeId = userDocument?.preferences?.theme || "default";
 
 	// If user has a premium theme but no longer has premium, fall back to default
@@ -117,19 +117,19 @@ const getUserTheme = async (userDocument, userId) => {
 };
 
 /**
- * Set user's theme preference
+ * Set user's theme preference (gated by server premium)
  * @param {Object} userQueryDocument - The user query document
  * @param {string} themeId - The theme ID
- * @param {string} userId - The user ID for premium check
+ * @param {string} serverId - The server ID for premium check
  * @returns {Promise<boolean>} Success status
  */
-const setUserTheme = async (userQueryDocument, themeId, userId) => {
+const setUserTheme = async (userQueryDocument, themeId, serverId) => {
 	const theme = THEMES[themeId];
 	if (!theme) return false;
 
-	// Check if user can use this theme
+	// Check if server has premium to use this theme
 	if (theme.isPremium) {
-		const hasPremium = await hasPremiumDashboard(userId);
+		const hasPremium = await hasPremiumDashboard(serverId);
 		if (!hasPremium) return false;
 	}
 

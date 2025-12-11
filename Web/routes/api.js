@@ -6,17 +6,25 @@ const controllers = require("../controllers");
 
 // SkynetBot Data API
 module.exports = router => {
-	// Configure RateLimit (bypassed for users with api_unlimited feature)
+	// Configure RateLimit
+	// Note: Rate limiting bypass checks user's servers for api_unlimited feature
+	// This is because API rate limiting is per-user (preventing abuse), while
+	// feature access is per-server. If user is admin of any premium server, they
+	// bypass rate limits.
 	router.use("/api/", async (req, res, next) => {
-		// Check if authenticated user has api_unlimited feature
 		if (req.isAuthenticated()) {
 			const TierManager = require("../../Modules/TierManager");
-			const hasUnlimited = await TierManager.canAccess(req.user.id, "api_unlimited");
-			if (hasUnlimited) {
-				return next();
+			// Check if any server the user owns/administers has api_unlimited
+			// For simplicity, we check if req.params.svrid exists and that server has it
+			const serverId = req.params?.svrid || req.query?.svrid;
+			if (serverId) {
+				const hasUnlimited = await TierManager.canAccess(serverId, "api_unlimited");
+				if (hasUnlimited) {
+					return next();
+				}
 			}
 		}
-		// Apply rate limit for users without api_unlimited
+		// Apply rate limit for requests without premium server context
 		rateLimit({
 			windowMs: 3600000,
 			max: 150,

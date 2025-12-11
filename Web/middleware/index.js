@@ -198,6 +198,7 @@ const TierManager = require("../../Modules/TierManager");
 
 /**
  * Middleware to require a specific feature for access
+ * Premium is per-server, so checks req.svr.id (dashboard) or req.params.svrid (API)
  * Usage: router.get('/path', middleware.requireFeature('feature_key'), controller)
  * @param {string} featureKey - The feature ID to check
  * @returns {Function} Express middleware
@@ -208,12 +209,22 @@ middleware.requireFeature = featureKey => async (req, res, next) => {
 		return res.redirect("/login");
 	}
 
-	const hasAccess = await TierManager.canAccess(req.user.id, featureKey);
+	// Get server ID - premium is per-server, not per-user
+	const serverId = req.svr?.id || req.params?.svrid;
+	if (!serverId) {
+		if (req.isAPI) return res.status(400).json({ error: "Server context required for feature check" });
+		return res.status(400).render("pages/error.ejs", {
+			error_text: "Server Required",
+			error_line: "This feature requires a server context.",
+		});
+	}
+
+	const hasAccess = await TierManager.canAccess(serverId, featureKey);
 	if (!hasAccess) {
-		if (req.isAPI) return res.status(403).json({ error: "Feature not available for your tier" });
+		if (req.isAPI) return res.status(403).json({ error: "Feature not available for this server's tier" });
 		return res.status(403).render("pages/error.ejs", {
 			error_text: "Feature Locked",
-			error_line: "This feature is not available for your current subscription tier.",
+			error_line: "This feature is not available for this server's subscription tier.",
 		});
 	}
 
@@ -222,6 +233,7 @@ middleware.requireFeature = featureKey => async (req, res, next) => {
 
 /**
  * Middleware to require a minimum tier level for access
+ * Premium is per-server, so checks req.svr.id (dashboard) or req.params.svrid (API)
  * Usage: router.get('/path', middleware.requireTierLevel(2), controller)
  * @param {number} minLevel - Minimum tier level required
  * @returns {Function} Express middleware
@@ -232,12 +244,22 @@ middleware.requireTierLevel = minLevel => async (req, res, next) => {
 		return res.redirect("/login");
 	}
 
-	const hasLevel = await TierManager.hasMinimumTierLevel(req.user.id, minLevel);
+	// Get server ID - premium is per-server, not per-user
+	const serverId = req.svr?.id || req.params?.svrid;
+	if (!serverId) {
+		if (req.isAPI) return res.status(400).json({ error: "Server context required for tier check" });
+		return res.status(400).render("pages/error.ejs", {
+			error_text: "Server Required",
+			error_line: "This feature requires a server context.",
+		});
+	}
+
+	const hasLevel = await TierManager.hasMinimumTierLevel(serverId, minLevel);
 	if (!hasLevel) {
-		if (req.isAPI) return res.status(403).json({ error: "Insufficient tier level" });
+		if (req.isAPI) return res.status(403).json({ error: "Insufficient tier level for this server" });
 		return res.status(403).render("pages/error.ejs", {
 			error_text: "Upgrade Required",
-			error_line: "This feature requires a higher subscription tier.",
+			error_line: "This feature requires a higher subscription tier for this server.",
 		});
 	}
 

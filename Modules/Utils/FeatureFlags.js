@@ -1,7 +1,7 @@
 /**
  * FeatureFlags - Manages early access and experimental features
  *
- * Premium users with the `early_access` feature can opt-in to
+ * Premium servers with the `early_access` feature can opt-in to
  * beta features before they're released to everyone.
  */
 
@@ -65,20 +65,20 @@ const STAGES = {
 };
 
 /**
- * Check if a user has early access feature
- * @param {string} userId - The user ID
+ * Check if a server has early access feature
+ * @param {string} serverId - The server ID
  * @returns {Promise<boolean>}
  */
-const hasEarlyAccess = async userId => TierManager.canAccess(userId, "early_access");
+const hasEarlyAccess = async serverId => TierManager.canAccess(serverId, "early_access");
 
 /**
- * Check if a feature flag is enabled for a user
- * @param {string} userId - The user ID
+ * Check if a feature flag is enabled for a server
+ * @param {string} serverId - The server ID
  * @param {string} flagId - The feature flag ID
  * @param {Object} serverDocument - Optional server document for server-level overrides
  * @returns {Promise<boolean>}
  */
-const isFeatureEnabled = async (userId, flagId, serverDocument = null) => {
+const isFeatureEnabled = async (serverId, flagId, serverDocument = null) => {
 	const flag = Object.values(FLAGS).find(f => f.id === flagId);
 	if (!flag) return false;
 
@@ -93,26 +93,26 @@ const isFeatureEnabled = async (userId, flagId, serverDocument = null) => {
 		return false;
 	}
 
-	// Check if feature requires early access
+	// Check if feature requires early access (premium is per-server)
 	if (flag.requiresEarlyAccess) {
-		const hasAccess = await hasEarlyAccess(userId);
+		const hasAccess = await hasEarlyAccess(serverId);
 		if (!hasAccess) return false;
 	}
 
-	// Check if user has opted into this feature
-	const userDocument = await Users.findOne(userId);
-	const optedIn = userDocument?.feature_flags?.[flagId] !== false;
+	// Check server-level feature flag opt-in
+	const serverDoc = serverDocument || await Servers.findOne(serverId);
+	const optedIn = serverDoc?.config?.feature_flags?.[flagId] !== false;
 
 	return optedIn;
 };
 
 /**
- * Get all available features for a user
- * @param {string} userId - The user ID
+ * Get all available features for a server
+ * @param {string} serverId - The server ID
  * @returns {Promise<Object[]>} Array of features with availability status
  */
-const getAvailableFeatures = async userId => {
-	const earlyAccess = await hasEarlyAccess(userId);
+const getAvailableFeatures = async serverId => {
+	const earlyAccess = await hasEarlyAccess(serverId);
 
 	return Object.values(FLAGS).map(flag => ({
 		...flag,
@@ -125,50 +125,50 @@ const getAvailableFeatures = async userId => {
 
 /**
  * Get beta/alpha features only
- * @param {string} userId - The user ID
+ * @param {string} serverId - The server ID
  * @returns {Promise<Object[]>} Array of beta features
  */
-const getBetaFeatures = async userId => {
-	const allFeatures = await getAvailableFeatures(userId);
+const getBetaFeatures = async serverId => {
+	const allFeatures = await getAvailableFeatures(serverId);
 	return allFeatures.filter(f => f.stage === STAGES.ALPHA || f.stage === STAGES.BETA);
 };
 
 /**
- * Opt user into a feature
- * @param {string} userId - The user ID
+ * Opt server into a feature
+ * @param {string} serverId - The server ID
  * @param {string} flagId - The feature flag ID
  * @returns {Promise<boolean>} Success status
  */
-const optIntoFeature = async (userId, flagId) => {
+const optIntoFeature = async (serverId, flagId) => {
 	const flag = Object.values(FLAGS).find(f => f.id === flagId);
 	if (!flag) return false;
 
-	// Check access
+	// Check access (premium is per-server)
 	if (flag.requiresEarlyAccess) {
-		const hasAccess = await hasEarlyAccess(userId);
+		const hasAccess = await hasEarlyAccess(serverId);
 		if (!hasAccess) return false;
 	}
 
-	const userDocument = await Users.findOne(userId);
-	if (userDocument) {
-		userDocument.query.set(`feature_flags.${flagId}`, true);
-		await userDocument.save();
+	const serverDocument = await Servers.findOne(serverId);
+	if (serverDocument) {
+		serverDocument.query.set(`config.feature_flags.${flagId}`, true);
+		await serverDocument.save();
 	}
 
 	return true;
 };
 
 /**
- * Opt user out of a feature
- * @param {string} userId - The user ID
+ * Opt server out of a feature
+ * @param {string} serverId - The server ID
  * @param {string} flagId - The feature flag ID
  * @returns {Promise<boolean>} Success status
  */
-const optOutOfFeature = async (userId, flagId) => {
-	const userDocument = await Users.findOne(userId);
-	if (userDocument) {
-		userDocument.query.set(`feature_flags.${flagId}`, false);
-		await userDocument.save();
+const optOutOfFeature = async (serverId, flagId) => {
+	const serverDocument = await Servers.findOne(serverId);
+	if (serverDocument) {
+		serverDocument.query.set(`config.feature_flags.${flagId}`, false);
+		await serverDocument.save();
 	}
 
 	return true;
@@ -182,12 +182,12 @@ const optOutOfFeature = async (userId, flagId) => {
  * @returns {Function} Wrapped function
  */
 const withFeatureFlag = (flagId, fn, fallback = null) => async (...args) => {
-	// Try to extract userId from args (assumes first arg has userId or author.id)
+	// Try to extract serverId from args (assumes first arg has guild.id or serverId)
 	const firstArg = args[0];
-	const userId = firstArg?.author?.id || firstArg?.user?.id || firstArg?.userId || firstArg;
+	const serverId = firstArg?.guild?.id || firstArg?.guildId || firstArg?.serverId || firstArg;
 
-	if (typeof userId === "string") {
-		const enabled = await isFeatureEnabled(userId, flagId);
+	if (typeof serverId === "string") {
+		const enabled = await isFeatureEnabled(serverId, flagId);
 		if (enabled) {
 			return fn(...args);
 		}
