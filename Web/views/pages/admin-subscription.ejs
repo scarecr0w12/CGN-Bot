@@ -22,28 +22,28 @@
 									<div>
 										<p class="heading">Tier</p>
 										<p class="title is-4">
-											<span class="tag is-<%= (serverTier && serverTier.level > 0) ? 'success' : 'light' %> is-medium">
-												<%= (serverTier && serverTier.name) ? serverTier.name : 'Free' %>
+											<span class="tag is-<%= (pageData.serverTier && pageData.serverTier.level > 0) ? 'success' : 'light' %> is-medium">
+												<%= (pageData.serverTier && pageData.serverTier.name) ? pageData.serverTier.name : 'Free' %>
 											</span>
 										</p>
 									</div>
 								</div>
-								<% if (subscription && subscription.expires_at) { %>
+								<% if (pageData.subscription && pageData.subscription.expires_at) { %>
 								<div class="level-item">
 									<div>
 										<p class="heading">Expires</p>
 										<p class="title is-5">
-											<%= new Date(subscription.expires_at).toLocaleDateString() %>
+											<%= new Date(pageData.subscription.expires_at).toLocaleDateString() %>
 										</p>
 									</div>
 								</div>
 								<% } %>
-								<% if (subscription && subscription.source) { %>
+								<% if (pageData.subscription && pageData.subscription.source) { %>
 								<div class="level-item">
 									<div>
 										<p class="heading">Source</p>
 										<p class="title is-6">
-											<span class="tag is-info"><%= subscription.source %></span>
+											<span class="tag is-info"><%= pageData.subscription.source %></span>
 										</p>
 									</div>
 								</div>
@@ -51,12 +51,12 @@
 							</div>
 						</div>
 
-						<% if (serverFeatures && serverFeatures.length > 0) { %>
+						<% if (pageData.serverFeatures && pageData.serverFeatures.length > 0) { %>
 						<div class="mt-4">
 							<p class="heading">Active Features</p>
 							<div class="tags">
-								<% serverFeatures.forEach(function(featureId) { 
-									const feature = features.find(f => f._id === featureId);
+								<% pageData.serverFeatures.forEach(function(featureId) { 
+									const feature = pageData.features.find(f => f._id === featureId);
 								%>
 									<span class="tag is-success" title="<%= (feature && feature.description) ? feature.description : '' %>">
 										<%= (feature && feature.name) ? feature.name : featureId %>
@@ -68,13 +68,13 @@
 					</div>
 
 					<!-- Upgrade Options -->
-					<% if (!serverTier || serverTier.level === 0) { %>
+					<% if (!pageData.serverTier || pageData.serverTier.level === 0) { %>
 					<div class="box">
 						<h4 class="title is-5">Upgrade Your Server</h4>
 						<p class="mb-4">Unlock premium features for all members of this server.</p>
 
 						<div class="columns is-multiline">
-							<% tiers.filter(t => t.is_purchasable && t.level > 0).forEach(function(tier) { %>
+							<% pageData.tiers.filter(t => t.is_purchasable && t.level > 0).forEach(function(tier) { %>
 							<div class="column is-one-third">
 								<div class="card">
 									<div class="card-header">
@@ -85,15 +85,15 @@
 											<p class="title is-3 has-text-primary">
 												$<%= tier.price_monthly %><span class="is-size-6">/mo</span>
 											</p>
-											<% if (yearlyDiscount > 0) { %>
+											<% if (pageData.yearlyDiscount > 0) { %>
 											<p class="is-size-7 has-text-grey">
-												or $<%= Math.round(tier.price_monthly * 12 * (1 - yearlyDiscount/100)) %>/year (save <%= yearlyDiscount %>%)
+												or $<%= Math.round(tier.price_monthly * 12 * (1 - pageData.yearlyDiscount/100)) %>/year (save <%= pageData.yearlyDiscount %>%)
 											</p>
 											<% } %>
 											<hr>
 											<ul class="is-size-7">
 												<% (tier.features || []).slice(0, 5).forEach(function(featureId) {
-													const feature = features.find(f => f._id === featureId);
+													const feature = pageData.features.find(f => f._id === featureId);
 												%>
 													<li><%= (feature && feature.name) ? feature.name : featureId %></li>
 												<% }); %>
@@ -116,7 +116,7 @@
 					<% } %>
 
 					<!-- Point Redemption -->
-					<% if (redemptionInfo && redemptionInfo.enabled) { %>
+					<% if (pageData.redemptionInfo && pageData.redemptionInfo.enabled) { %>
 					<div class="box">
 						<h4 class="title is-5">
 							<span class="icon"><i class="fas fa-coins"></i></span>
@@ -130,50 +130,50 @@
 							<div class="column is-half">
 								<div class="field">
 									<label class="label">Your Points</label>
-									<p class="title is-4 has-text-warning"><%= userPoints.toLocaleString() %></p>
+									<p class="title is-4 has-text-warning"><%= pageData.userPoints.toLocaleString() %></p>
 								</div>
 
 								<div class="field">
 									<label class="label">Cost</label>
 									<p class="is-size-7">
-										<strong><%= redemptionInfo.pointsPerDay.toLocaleString() %></strong> points per day
-										(<%= redemptionInfo.pointsPerMonth.toLocaleString() %> per month)
+										<strong><%= pageData.redemptionInfo.pointsPerDay.toLocaleString() %></strong> points per day
+										(<%= pageData.redemptionInfo.pointsPerMonth.toLocaleString() %> per month)
 									</p>
 								</div>
 
 								<div class="field">
 									<label class="label">You can afford</label>
 									<p class="title is-5 has-text-success">
-										<%= Math.min(redemptionInfo.affordableDays, redemptionInfo.maxDays) %> days
+										<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %> days
 									</p>
 								</div>
 							</div>
 
 							<div class="column is-half">
-								<% if (canManageSubscription) { %>
+								<% if (pageData.canManageSubscription) { %>
 								<form id="redeemForm">
 									<div class="field">
 										<label class="label">Days to Redeem</label>
 										<div class="control">
 											<input class="input" type="number" name="days" id="redeemDays"
-												min="<%= redemptionInfo.minDays %>"
-												max="<%= Math.min(redemptionInfo.affordableDays, redemptionInfo.maxDays) %>"
-												value="<%= Math.min(30, redemptionInfo.affordableDays, redemptionInfo.maxDays) %>"
-												<%= redemptionInfo.affordableDays < redemptionInfo.minDays ? 'disabled' : '' %>>
+												min="<%= pageData.redemptionInfo.minDays %>"
+												max="<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %>"
+												value="<%= Math.min(30, pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %>"
+												<%= pageData.redemptionInfo.affordableDays < pageData.redemptionInfo.minDays ? 'disabled' : '' %>>
 										</div>
-										<p class="help">Minimum: <%= redemptionInfo.minDays %> days</p>
+										<p class="help">Minimum: <%= pageData.redemptionInfo.minDays %> days</p>
 									</div>
 
 									<div class="field">
 										<label class="label">Total Cost</label>
 										<p class="title is-5" id="totalCost">
-											<%= (Math.min(30, redemptionInfo.affordableDays, redemptionInfo.maxDays) * redemptionInfo.pointsPerDay).toLocaleString() %> points
+											<%= (Math.min(30, pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) * pageData.redemptionInfo.pointsPerDay).toLocaleString() %> points
 										</p>
 									</div>
 
 									<div class="field">
 										<button type="submit" class="button is-warning"
-											<%= redemptionInfo.affordableDays < redemptionInfo.minDays ? 'disabled' : '' %>>
+											<%= pageData.redemptionInfo.affordableDays < pageData.redemptionInfo.minDays ? 'disabled' : '' %>>
 											<span class="icon"><i class="fas fa-exchange-alt"></i></span>
 											<span>Redeem Points</span>
 										</button>
@@ -191,7 +191,7 @@
 					<% } %>
 
 					<!-- Subscription History -->
-					<% if (subscription && subscription.history && subscription.history.length > 0) { %>
+					<% if (pageData.subscription && pageData.subscription.history && pageData.subscription.history.length > 0) { %>
 					<div class="box">
 						<h4 class="title is-5">Subscription History</h4>
 						<table class="table is-fullwidth is-striped">
@@ -205,7 +205,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								<% subscription.history.slice(-10).reverse().forEach(function(entry) { %>
+								<% pageData.subscription.history.slice(-10).reverse().forEach(function(entry) { %>
 								<tr>
 									<td><%= entry.tier_id %></td>
 									<td><span class="tag is-light"><%= entry.source %></span></td>
@@ -220,13 +220,13 @@
 					<% } %>
 
 					<!-- Cancel Subscription -->
-					<% if (subscription && subscription.is_active && subscription.tier_id !== 'free' && canManageSubscription) { %>
+					<% if (pageData.subscription && pageData.subscription.is_active && pageData.subscription.tier_id !== 'free' && pageData.canManageSubscription) { %>
 					<div class="box">
 						<h4 class="title is-5 has-text-danger">Cancel Subscription</h4>
 						<p class="mb-3">
 							Canceling will disable premium features when your current period ends.
-							<% if (subscription.expires_at) { %>
-							Your access will continue until <strong><%= new Date(subscription.expires_at).toLocaleDateString() %></strong>.
+							<% if (pageData.subscription.expires_at) { %>
+							Your access will continue until <strong><%= new Date(pageData.subscription.expires_at).toLocaleDateString() %></strong>.
 							<% } %>
 						</p>
 						<button class="button is-danger is-outlined" id="cancelBtn">
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const redeemDays = document.getElementById('redeemDays');
 	const totalCost = document.getElementById('totalCost');
 	const cancelBtn = document.getElementById('cancelBtn');
-	const pointsPerDay = <%= (redemptionInfo && redemptionInfo.pointsPerDay) ? redemptionInfo.pointsPerDay : 0 %>;
+	const pointsPerDay = <%= (pageData.redemptionInfo && pageData.redemptionInfo.pointsPerDay) ? pageData.redemptionInfo.pointsPerDay : 0 %>;
 
 	// Update cost on input change
 	if (redeemDays && totalCost) {
