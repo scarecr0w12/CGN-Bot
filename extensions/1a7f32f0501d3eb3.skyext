@@ -1,0 +1,51 @@
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+
+const targets = [
+	{ name: 'Corner Store', difficulty: 'Easy', reward: [500, 1500] },
+	{ name: 'Local Bank', difficulty: 'Medium', reward: [2000, 5000] },
+	{ name: 'Casino Vault', difficulty: 'Hard', reward: [5000, 15000] },
+	{ name: 'Federal Reserve', difficulty: 'Extreme', reward: [20000, 50000] }
+];
+
+if (action === 'start') {
+	const target = targets[Math.floor(Math.random() * targets.length)];
+	message.reply({
+		embeds: [{
+			title: '🏦 Heist Started!',
+			description: '**Target:** ' + target.name + '\n' +
+				'**Difficulty:** ' + target.difficulty + '\n' +
+				'**Potential Reward:** ' + target.reward[0].toLocaleString() + ' - ' + target.reward[1].toLocaleString() + ' points\n\n' +
+				'React with 💰 to join the heist!\n' +
+				'Heist begins in 60 seconds...',
+			color: 0xe74c3c,
+			footer: { text: 'More crew = higher success rate!' }
+		}]
+	});
+} else if (action === 'join') {
+	message.reply({
+		embeds: [{
+			title: '✅ Joined Heist!',
+			description: 'You\'ve joined the heist crew!\n\n' +
+				'Wait for the heist to begin...',
+			color: 0x2ecc71
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🏦 Heist',
+			description: '**Commands:**\n' +
+				'• `heist start` - Start a new heist\n' +
+				'• `heist join` - Join an active heist\n\n' +
+				'**How it works:**\n' +
+				'1. Someone starts a heist\n' +
+				'2. Others join within 60 seconds\n' +
+				'3. Success rate increases with more members\n' +
+				'4. Rewards are split among participants',
+			color: 0xe74c3c
+		}]
+	});
+}

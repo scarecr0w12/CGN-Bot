@@ -1,0 +1,47 @@
+const message = require('message');
+
+const catches = [
+	{ name: 'Old Boot', emoji: '👢', rarity: 'Junk', points: 0, chance: 15 },
+	{ name: 'Seaweed', emoji: '🌿', rarity: 'Junk', points: 1, chance: 10 },
+	{ name: 'Sardine', emoji: '🐟', rarity: 'Common', points: 5, chance: 25 },
+	{ name: 'Cod', emoji: '🐟', rarity: 'Common', points: 10, chance: 20 },
+	{ name: 'Salmon', emoji: '🐟', rarity: 'Uncommon', points: 25, chance: 12 },
+	{ name: 'Tuna', emoji: '🐟', rarity: 'Uncommon', points: 40, chance: 8 },
+	{ name: 'Swordfish', emoji: '🗡️', rarity: 'Rare', points: 75, chance: 5 },
+	{ name: 'Octopus', emoji: '🐙', rarity: 'Rare', points: 100, chance: 3 },
+	{ name: 'Golden Fish', emoji: '✨', rarity: 'Legendary', points: 500, chance: 1.5 },
+	{ name: 'Treasure Chest', emoji: '💎', rarity: 'Legendary', points: 1000, chance: 0.5 }
+];
+
+const rarityColors = {
+	'Junk': 0x95a5a6,
+	'Common': 0x3498db,
+	'Uncommon': 0x2ecc71,
+	'Rare': 0x9b59b6,
+	'Legendary': 0xf1c40f
+};
+
+// Weighted random selection
+function getCatch() {
+	const roll = Math.random() * 100;
+	let cumulative = 0;
+	for (const c of catches) {
+		cumulative += c.chance;
+		if (roll <= cumulative) return c;
+	}
+	return catches[2]; // Default to sardine
+}
+
+const caught = getCatch();
+
+message.reply({
+	embeds: [{
+		title: '🎣 Fishing...',
+		description: 'You cast your line and wait...\n\n' +
+			caught.emoji + ' You caught a **' + caught.name + '**!\n\n' +
+			'**Rarity:** ' + caught.rarity + '\n' +
+			'**Worth:** ' + caught.points + ' points',
+		color: rarityColors[caught.rarity],
+		footer: { text: caught.points > 0 ? 'Nice catch!' : 'Better luck next time!' }
+	}]
+});

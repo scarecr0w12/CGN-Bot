@@ -1,0 +1,32 @@
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+const amount = parseInt(command.arguments[1]);
+
+if (!target) {
+	message.reply({
+		embeds: [{
+			title: '🎁 Give Points',
+			description: 'Transfer points to another user!\n\n' +
+				'**Usage:** `give @user <amount>`\n\n' +
+				'Example: `give @friend 500`',
+			color: 0x3498db
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\'t give points to yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\'t give points to bots!');
+} else if (!amount || isNaN(amount) || amount <= 0) {
+	message.reply('❌ Please enter a valid amount!');
+} else {
+	message.reply({
+		embeds: [{
+			title: '🎁 Points Transferred!',
+			description: 'You gave **' + amount.toLocaleString() + ' points** to ' + target + '!',
+			color: 0x2ecc71,
+			footer: { text: 'Generosity is a virtue!' }
+		}]
+	});
+}

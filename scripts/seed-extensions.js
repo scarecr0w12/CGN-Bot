@@ -1672,10 +1672,847 @@ message.reply({
 	}]
 });
 `
+	},
+	// ==================== BATCH 3 - ECONOMY & PETS ====================
+	{
+		name: "Pet",
+		description: "Adopt and care for a virtual pet! Feed, play, and watch it grow.",
+		type: "command",
+		key: "pet",
+		usage_help: "[adopt|feed|play|stats|rename]",
+		extended_help: "Adopt a virtual pet and take care of it! Feed it, play with it, and watch it level up. Neglect it and it might run away!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+
+const petTypes = [
+	{ name: 'Dog', emoji: '🐕', trait: 'Loyal' },
+	{ name: 'Cat', emoji: '🐈', trait: 'Independent' },
+	{ name: 'Dragon', emoji: '🐉', trait: 'Fierce' },
+	{ name: 'Bunny', emoji: '🐰', trait: 'Cuddly' },
+	{ name: 'Fox', emoji: '🦊', trait: 'Clever' },
+	{ name: 'Penguin', emoji: '🐧', trait: 'Cool' },
+	{ name: 'Owl', emoji: '🦉', trait: 'Wise' },
+	{ name: 'Unicorn', emoji: '🦄', trait: 'Magical' }
+];
+
+const action = command.arguments[0]?.toLowerCase();
+
+if (!action || action === 'stats') {
+	// Show pet stats (simulated - would use extension.storage in real implementation)
+	const pet = petTypes[Math.floor(Math.random() * petTypes.length)];
+	const level = Math.floor(Math.random() * 20) + 1;
+	const hunger = Math.floor(Math.random() * 100);
+	const happiness = Math.floor(Math.random() * 100);
+	const xp = Math.floor(Math.random() * 1000);
+	
+	const hungerBar = '█'.repeat(Math.floor(hunger/10)) + '░'.repeat(10 - Math.floor(hunger/10));
+	const happyBar = '█'.repeat(Math.floor(happiness/10)) + '░'.repeat(10 - Math.floor(happiness/10));
+	
+	message.reply({
+		embeds: [{
+			title: pet.emoji + ' ' + message.author.username + '\\'s Pet',
+			description: '**Name:** ' + pet.name + '\\n' +
+				'**Type:** ' + pet.emoji + ' ' + pet.name + '\\n' +
+				'**Trait:** ' + pet.trait + '\\n' +
+				'**Level:** ' + level + ' (' + xp + ' XP)\\n\\n' +
+				'🍖 **Hunger:** [' + hungerBar + '] ' + hunger + '%\\n' +
+				'💖 **Happiness:** [' + happyBar + '] ' + happiness + '%',
+			color: 0x2ecc71,
+			footer: { text: 'Use !pet feed or !pet play to care for your pet!' }
+		}]
+	});
+} else if (action === 'adopt') {
+	const pet = petTypes[Math.floor(Math.random() * petTypes.length)];
+	message.reply({
+		embeds: [{
+			title: '🎉 New Pet Adopted!',
+			description: 'You adopted a **' + pet.emoji + ' ' + pet.name + '**!\\n\\n' +
+				'**Trait:** ' + pet.trait + '\\n\\n' +
+				'Take good care of your new friend!',
+			color: 0x2ecc71,
+			footer: { text: 'Use !pet stats to check on your pet' }
+		}]
+	});
+} else if (action === 'feed') {
+	message.reply({
+		embeds: [{
+			title: '🍖 Pet Fed!',
+			description: 'Your pet happily munches on the food!\\n\\n' +
+				'+20 Hunger restored\\n+5 XP earned',
+			color: 0xf39c12
+		}]
+	});
+} else if (action === 'play') {
+	message.reply({
+		embeds: [{
+			title: '🎾 Playtime!',
+			description: 'You played with your pet!\\n\\n' +
+				'+25 Happiness\\n+10 XP earned\\n-5 Hunger',
+			color: 0x3498db
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🐾 Pet Commands',
+			description: '• \`pet adopt\` - Adopt a new pet\\n' +
+				'• \`pet stats\` - View your pet\\n' +
+				'• \`pet feed\` - Feed your pet\\n' +
+				'• \`pet play\` - Play with your pet\\n' +
+				'• \`pet rename <name>\` - Rename your pet',
+			color: 0x3498db
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Fish",
+		description: "Go fishing and catch various fish! Sell them for points.",
+		type: "command",
+		key: "fish",
+		usage_help: "",
+		extended_help: "Cast your line and try to catch fish! Different fish are worth different amounts of points. Rare catches can be very valuable!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const catches = [
+	{ name: 'Old Boot', emoji: '👢', rarity: 'Junk', points: 0, chance: 15 },
+	{ name: 'Seaweed', emoji: '🌿', rarity: 'Junk', points: 1, chance: 10 },
+	{ name: 'Sardine', emoji: '🐟', rarity: 'Common', points: 5, chance: 25 },
+	{ name: 'Cod', emoji: '🐟', rarity: 'Common', points: 10, chance: 20 },
+	{ name: 'Salmon', emoji: '🐟', rarity: 'Uncommon', points: 25, chance: 12 },
+	{ name: 'Tuna', emoji: '🐟', rarity: 'Uncommon', points: 40, chance: 8 },
+	{ name: 'Swordfish', emoji: '🗡️', rarity: 'Rare', points: 75, chance: 5 },
+	{ name: 'Octopus', emoji: '🐙', rarity: 'Rare', points: 100, chance: 3 },
+	{ name: 'Golden Fish', emoji: '✨', rarity: 'Legendary', points: 500, chance: 1.5 },
+	{ name: 'Treasure Chest', emoji: '💎', rarity: 'Legendary', points: 1000, chance: 0.5 }
+];
+
+const rarityColors = {
+	'Junk': 0x95a5a6,
+	'Common': 0x3498db,
+	'Uncommon': 0x2ecc71,
+	'Rare': 0x9b59b6,
+	'Legendary': 0xf1c40f
+};
+
+// Weighted random selection
+function getCatch() {
+	const roll = Math.random() * 100;
+	let cumulative = 0;
+	for (const c of catches) {
+		cumulative += c.chance;
+		if (roll <= cumulative) return c;
+	}
+	return catches[2]; // Default to sardine
+}
+
+const caught = getCatch();
+
+message.reply({
+	embeds: [{
+		title: '🎣 Fishing...',
+		description: 'You cast your line and wait...\\n\\n' +
+			caught.emoji + ' You caught a **' + caught.name + '**!\\n\\n' +
+			'**Rarity:** ' + caught.rarity + '\\n' +
+			'**Worth:** ' + caught.points + ' points',
+		color: rarityColors[caught.rarity],
+		footer: { text: caught.points > 0 ? 'Nice catch!' : 'Better luck next time!' }
+	}]
+});
+`
+	},
+	{
+		name: "Hunt",
+		description: "Go hunting in the wilderness! Find animals and treasures.",
+		type: "command",
+		key: "hunt",
+		usage_help: "",
+		extended_help: "Venture into the wilderness to hunt! You might find animals, treasures, or danger. Higher risk means higher rewards!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const encounters = [
+	{ name: 'Rabbit', emoji: '🐰', points: 10, type: 'catch' },
+	{ name: 'Deer', emoji: '🦌', points: 25, type: 'catch' },
+	{ name: 'Wild Boar', emoji: '🐗', points: 40, type: 'catch' },
+	{ name: 'Fox', emoji: '🦊', points: 30, type: 'catch' },
+	{ name: 'Bear', emoji: '🐻', points: 100, type: 'danger' },
+	{ name: 'Wolf Pack', emoji: '🐺', points: -50, type: 'danger' },
+	{ name: 'Treasure Chest', emoji: '💰', points: 200, type: 'treasure' },
+	{ name: 'Rare Mushrooms', emoji: '🍄', points: 35, type: 'forage' },
+	{ name: 'Bird\\'s Nest', emoji: '🪺', points: 15, type: 'forage' },
+	{ name: 'Nothing', emoji: '🌲', points: 0, type: 'empty' }
+];
+
+const encounter = encounters[Math.floor(Math.random() * encounters.length)];
+
+let description = '';
+let color = 0x2ecc71;
+
+switch (encounter.type) {
+	case 'catch':
+		description = 'You spotted a **' + encounter.emoji + ' ' + encounter.name + '**!\\n\\n' +
+			'You successfully caught it!\\n💰 **+' + encounter.points + ' points**';
+		color = 0x2ecc71;
+		break;
+	case 'danger':
+		if (encounter.points > 0) {
+			description = 'You encountered a **' + encounter.emoji + ' ' + encounter.name + '**!\\n\\n' +
+				'After a fierce battle, you won!\\n💰 **+' + encounter.points + ' points**';
+			color = 0xf39c12;
+		} else {
+			description = 'You encountered a **' + encounter.emoji + ' ' + encounter.name + '**!\\n\\n' +
+				'You had to flee and dropped some coins!\\n💸 **' + encounter.points + ' points**';
+			color = 0xe74c3c;
+		}
+		break;
+	case 'treasure':
+		description = 'You found a **' + encounter.emoji + ' ' + encounter.name + '**!\\n\\n' +
+			'Lucky find!\\n💰 **+' + encounter.points + ' points**';
+		color = 0xf1c40f;
+		break;
+	case 'forage':
+		description = 'You found some **' + encounter.emoji + ' ' + encounter.name + '**!\\n\\n' +
+			'You collected them.\\n💰 **+' + encounter.points + ' points**';
+		color = 0x9b59b6;
+		break;
+	default:
+		description = encounter.emoji + ' The forest was quiet today...\\n\\nYou found nothing of value.';
+		color = 0x95a5a6;
+}
+
+message.reply({
+	embeds: [{
+		title: '🏹 Hunting...',
+		description: description,
+		color: color,
+		footer: { text: 'Hunt again in 30 minutes' }
+	}]
+});
+`
+	},
+	{
+		name: "Rob",
+		description: "Attempt to rob another user! Risk losing your own points if you fail.",
+		type: "command",
+		key: "rob",
+		usage_help: "[@user]",
+		extended_help: "Try to steal points from another user! Success rate depends on various factors. If you fail, you might lose points or get caught!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+
+if (!target) {
+	message.reply({
+		embeds: [{
+			title: '🦹 Rob',
+			description: 'Mention a user to attempt to rob them!\\n\\n' +
+				'**Usage:** \`rob @user\`\\n\\n' +
+				'⚠️ **Warning:** If you fail, you might lose points!',
+			color: 0xe74c3c
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\\'t rob yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\\'t rob bots!');
+} else {
+	const success = Math.random() > 0.5;
+	const amount = Math.floor(Math.random() * 200) + 50;
+	
+	if (success) {
+		message.reply({
+			embeds: [{
+				title: '💰 Robbery Successful!',
+				description: 'You snuck up on **' + target.username + '** and stole **' + amount + ' points**!\\n\\n' +
+					'Don\\'t get caught!',
+				color: 0x2ecc71,
+				footer: { text: 'You can rob again in 2 hours' }
+			}]
+		});
+	} else {
+		const fine = Math.floor(amount * 0.75);
+		message.reply({
+			embeds: [{
+				title: '🚔 Caught!',
+				description: 'You tried to rob **' + target.username + '** but got caught!\\n\\n' +
+					'You paid a fine of **' + fine + ' points**.',
+				color: 0xe74c3c,
+				footer: { text: 'Crime doesn\\'t pay!' }
+			}]
+		});
+	}
+}
+`
+	},
+	{
+		name: "Gamble",
+		description: "Gamble your points! Double or nothing!",
+		type: "command",
+		key: "gamble",
+		usage_help: "<amount|all>",
+		extended_help: "Bet your points on a coin flip! Win and double your bet, lose and it's gone. Use 'all' to bet everything!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const betArg = command.arguments[0];
+
+if (!betArg) {
+	message.reply({
+		embeds: [{
+			title: '🎲 Gamble',
+			description: 'Bet your points on a coin flip!\\n\\n' +
+				'**Usage:** \`gamble <amount>\` or \`gamble all\`\\n\\n' +
+				'Win = 2x your bet\\nLose = Lose your bet',
+			color: 0xf1c40f
+		}]
+	});
+} else {
+	const bet = betArg.toLowerCase() === 'all' ? 1000 : parseInt(betArg);
+	
+	if (isNaN(bet) || bet <= 0) {
+		message.reply('❌ Please enter a valid bet amount!');
+	} else {
+		const win = Math.random() > 0.5;
+		const result = win ? bet : -bet;
+		
+		message.reply({
+			embeds: [{
+				title: '🎲 ' + (win ? 'You Won!' : 'You Lost!'),
+				description: (win ? '🎉' : '😢') + ' The coin landed on **' + (win ? 'HEADS' : 'TAILS') + '**!\\n\\n' +
+					'**Bet:** ' + bet + ' points\\n' +
+					'**Result:** ' + (win ? '+' : '') + result + ' points',
+				color: win ? 0x2ecc71 : 0xe74c3c,
+				footer: { text: win ? 'Lucky!' : 'Better luck next time!' }
+			}]
+		});
+	}
+}
+`
+	},
+	{
+		name: "Shop",
+		description: "Browse and buy items from the server shop!",
+		type: "command",
+		key: "shop",
+		usage_help: "[buy <item>]",
+		extended_help: "View available items in the shop and purchase them with your points! Items include roles, badges, and special perks.",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const shopItems = [
+	{ id: 1, name: 'Custom Role Color', price: 5000, emoji: '🎨', desc: 'Change your role color' },
+	{ id: 2, name: 'Nickname Change', price: 1000, emoji: '📝', desc: 'Change your nickname' },
+	{ id: 3, name: 'VIP Badge', price: 10000, emoji: '⭐', desc: 'Exclusive VIP badge' },
+	{ id: 4, name: 'XP Boost (1h)', price: 2500, emoji: '⚡', desc: '2x XP for 1 hour' },
+	{ id: 5, name: 'Lottery Ticket', price: 500, emoji: '🎟️', desc: 'Enter the lottery' },
+	{ id: 6, name: 'Pet Food', price: 100, emoji: '🍖', desc: 'Feed your pet' },
+	{ id: 7, name: 'Fishing Rod Upgrade', price: 3000, emoji: '🎣', desc: 'Better catch rates' },
+	{ id: 8, name: 'Mystery Box', price: 2000, emoji: '📦', desc: 'Random reward!' }
+];
+
+const action = command.arguments[0]?.toLowerCase();
+
+if (action === 'buy') {
+	const itemName = command.arguments.slice(1).join(' ').toLowerCase();
+	const item = shopItems.find(i => i.name.toLowerCase().includes(itemName));
+	
+	if (!item) {
+		message.reply('❌ Item not found! Use \`shop\` to see available items.');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🛒 Purchase',
+				description: 'You purchased **' + item.emoji + ' ' + item.name + '**!\\n\\n' +
+					'**Cost:** ' + item.price.toLocaleString() + ' points',
+				color: 0x2ecc71,
+				footer: { text: 'Thank you for your purchase!' }
+			}]
+		});
+	}
+} else {
+	const shopList = shopItems.map(item => 
+		item.emoji + ' **' + item.name + '** - ' + item.price.toLocaleString() + ' pts\\n└ *' + item.desc + '*'
+	).join('\\n\\n');
+	
+	message.reply({
+		embeds: [{
+			title: '🏪 Server Shop',
+			description: shopList + '\\n\\n*Use* \`shop buy <item>\` *to purchase*',
+			color: 0x3498db,
+			footer: { text: 'Your balance: Check with /points' }
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Inventory",
+		description: "View your inventory of collected items!",
+		type: "command",
+		key: "inventory",
+		usage_help: "[@user]",
+		extended_help: "Check your inventory to see all items you've collected, purchased, or earned!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const targetUser = message.mentions?.users?.first() || message.author;
+
+// Simulated inventory
+const inventory = [
+	{ name: 'Fishing Rod', emoji: '🎣', quantity: 1, type: 'Tool' },
+	{ name: 'Pet Food', emoji: '🍖', quantity: 5, type: 'Consumable' },
+	{ name: 'Lottery Tickets', emoji: '🎟️', quantity: 3, type: 'Item' },
+	{ name: 'XP Boost', emoji: '⚡', quantity: 2, type: 'Boost' },
+	{ name: 'Golden Badge', emoji: '🏅', quantity: 1, type: 'Collectible' }
+];
+
+const invList = inventory.map(item => 
+	item.emoji + ' **' + item.name + '** x' + item.quantity + ' *(' + item.type + ')*'
+).join('\\n');
+
+message.reply({
+	embeds: [{
+		author: {
+			name: targetUser.username + '\\'s Inventory',
+			icon_url: targetUser.displayAvatarURL()
+		},
+		description: invList || '*Inventory is empty*',
+		color: 0x9b59b6,
+		footer: { text: 'Total items: ' + inventory.reduce((a, b) => a + b.quantity, 0) }
+	}]
+});
+`
+	},
+	{
+		name: "Profile",
+		description: "View your detailed profile with stats and achievements!",
+		type: "command",
+		key: "profile",
+		usage_help: "[@user]",
+		extended_help: "Display your full profile including level, points, achievements, and other stats!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const targetUser = message.mentions?.users?.first() || message.author;
+
+// Simulated profile data
+const level = Math.floor(Math.random() * 50) + 1;
+const xp = Math.floor(Math.random() * 5000);
+const xpNeeded = level * 500;
+const points = Math.floor(Math.random() * 50000);
+const messages = Math.floor(Math.random() * 10000);
+const voiceHours = Math.floor(Math.random() * 100);
+const joinDate = '<t:1609459200:D>';
+
+const xpProgress = Math.floor((xp / xpNeeded) * 10);
+const xpBar = '█'.repeat(xpProgress) + '░'.repeat(10 - xpProgress);
+
+const badges = ['🏆', '⭐', '🎮', '💎', '🔥'].slice(0, Math.floor(Math.random() * 5) + 1);
+
+message.reply({
+	embeds: [{
+		author: {
+			name: targetUser.username + '\\'s Profile',
+			icon_url: targetUser.displayAvatarURL()
+		},
+		thumbnail: { url: targetUser.displayAvatarURL({ size: 256 }) },
+		fields: [
+			{ name: '📊 Level', value: level.toString(), inline: true },
+			{ name: '⭐ Points', value: points.toLocaleString(), inline: true },
+			{ name: '💬 Messages', value: messages.toLocaleString(), inline: true },
+			{ name: '🎤 Voice', value: voiceHours + 'h', inline: true },
+			{ name: '📅 Joined', value: joinDate, inline: true },
+			{ name: '🏅 Badges', value: badges.join(' ') || 'None', inline: true },
+			{ name: 'XP Progress', value: '[' + xpBar + '] ' + xp + '/' + xpNeeded, inline: false }
+		],
+		color: 0x3498db,
+		footer: { text: 'Rank #' + (Math.floor(Math.random() * 100) + 1) + ' in server' }
+	}]
+});
+`
+	},
+	{
+		name: "Heist",
+		description: "Organize a heist with other members! Higher rewards with more participants.",
+		type: "command",
+		key: "heist",
+		usage_help: "[start|join]",
+		extended_help: "Start or join a heist! More participants means bigger rewards but also bigger risks. Failed heists cost everyone!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+
+const targets = [
+	{ name: 'Corner Store', difficulty: 'Easy', reward: [500, 1500] },
+	{ name: 'Local Bank', difficulty: 'Medium', reward: [2000, 5000] },
+	{ name: 'Casino Vault', difficulty: 'Hard', reward: [5000, 15000] },
+	{ name: 'Federal Reserve', difficulty: 'Extreme', reward: [20000, 50000] }
+];
+
+if (action === 'start') {
+	const target = targets[Math.floor(Math.random() * targets.length)];
+	message.reply({
+		embeds: [{
+			title: '🏦 Heist Started!',
+			description: '**Target:** ' + target.name + '\\n' +
+				'**Difficulty:** ' + target.difficulty + '\\n' +
+				'**Potential Reward:** ' + target.reward[0].toLocaleString() + ' - ' + target.reward[1].toLocaleString() + ' points\\n\\n' +
+				'React with 💰 to join the heist!\\n' +
+				'Heist begins in 60 seconds...',
+			color: 0xe74c3c,
+			footer: { text: 'More crew = higher success rate!' }
+		}]
+	});
+} else if (action === 'join') {
+	message.reply({
+		embeds: [{
+			title: '✅ Joined Heist!',
+			description: 'You\\'ve joined the heist crew!\\n\\n' +
+				'Wait for the heist to begin...',
+			color: 0x2ecc71
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🏦 Heist',
+			description: '**Commands:**\\n' +
+				'• \`heist start\` - Start a new heist\\n' +
+				'• \`heist join\` - Join an active heist\\n\\n' +
+				'**How it works:**\\n' +
+				'1. Someone starts a heist\\n' +
+				'2. Others join within 60 seconds\\n' +
+				'3. Success rate increases with more members\\n' +
+				'4. Rewards are split among participants',
+			color: 0xe74c3c
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Lottery",
+		description: "Enter the server lottery for a chance to win big!",
+		type: "command",
+		key: "lottery",
+		usage_help: "[enter|check]",
+		extended_help: "Buy lottery tickets and enter the draw! The jackpot grows with each ticket purchased. Drawings happen daily!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+
+const jackpot = Math.floor(Math.random() * 100000) + 10000;
+const ticketPrice = 500;
+const participants = Math.floor(Math.random() * 50) + 10;
+
+if (action === 'enter') {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Lottery Ticket Purchased!',
+			description: 'You bought a lottery ticket!\\n\\n' +
+				'**Cost:** ' + ticketPrice + ' points\\n' +
+				'**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\\n\\n' +
+				'Good luck! Drawing happens at midnight.',
+			color: 0xf1c40f
+		}]
+	});
+} else if (action === 'check') {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Lottery Status',
+			description: '**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\\n' +
+				'**Participants:** ' + participants + ' entries\\n' +
+				'**Ticket Price:** ' + ticketPrice + ' points\\n' +
+				'**Drawing:** <t:' + (Math.floor(Date.now()/1000) + 3600) + ':R>',
+			color: 0xf1c40f
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Server Lottery',
+			description: '**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\\n\\n' +
+				'**Commands:**\\n' +
+				'• \`lottery enter\` - Buy a ticket (' + ticketPrice + ' pts)\\n' +
+				'• \`lottery check\` - View current lottery\\n\\n' +
+				'Drawing happens daily at midnight!',
+			color: 0xf1c40f
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Crime",
+		description: "Commit petty crimes for quick cash! Risk vs reward.",
+		type: "command",
+		key: "crime",
+		usage_help: "",
+		extended_help: "Commit various crimes for quick points. Higher risk crimes have higher rewards but also higher chance of getting caught!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const crimes = [
+	{ name: 'Pickpocket', successRate: 70, reward: [10, 50], fine: [20, 40] },
+	{ name: 'Shoplift', successRate: 60, reward: [30, 100], fine: [50, 100] },
+	{ name: 'Car Break-in', successRate: 50, reward: [75, 200], fine: [100, 200] },
+	{ name: 'ATM Hack', successRate: 35, reward: [200, 500], fine: [200, 400] },
+	{ name: 'Bank Fraud', successRate: 20, reward: [500, 1500], fine: [500, 1000] }
+];
+
+const crime = crimes[Math.floor(Math.random() * crimes.length)];
+const success = Math.random() * 100 < crime.successRate;
+
+if (success) {
+	const reward = Math.floor(Math.random() * (crime.reward[1] - crime.reward[0])) + crime.reward[0];
+	message.reply({
+		embeds: [{
+			title: '💰 Crime Successful!',
+			description: 'You committed **' + crime.name + '** and got away with it!\\n\\n' +
+				'**Earned:** +' + reward + ' points',
+			color: 0x2ecc71,
+			footer: { text: 'You can commit another crime in 30 minutes' }
+		}]
+	});
+} else {
+	const fine = Math.floor(Math.random() * (crime.fine[1] - crime.fine[0])) + crime.fine[0];
+	message.reply({
+		embeds: [{
+			title: '🚨 Busted!',
+			description: 'You tried to commit **' + crime.name + '** but got caught!\\n\\n' +
+				'**Fine:** -' + fine + ' points',
+			color: 0xe74c3c,
+			footer: { text: 'Maybe try something less risky?' }
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Give",
+		description: "Give some of your points to another user!",
+		type: "command",
+		key: "give",
+		usage_help: "<@user> <amount>",
+		extended_help: "Transfer points to another user. Great for gifts or paying debts!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+const amount = parseInt(command.arguments[1]);
+
+if (!target) {
+	message.reply({
+		embeds: [{
+			title: '🎁 Give Points',
+			description: 'Transfer points to another user!\\n\\n' +
+				'**Usage:** \`give @user <amount>\`\\n\\n' +
+				'Example: \`give @friend 500\`',
+			color: 0x3498db
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\\'t give points to yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\\'t give points to bots!');
+} else if (!amount || isNaN(amount) || amount <= 0) {
+	message.reply('❌ Please enter a valid amount!');
+} else {
+	message.reply({
+		embeds: [{
+			title: '🎁 Points Transferred!',
+			description: 'You gave **' + amount.toLocaleString() + ' points** to ' + target + '!',
+			color: 0x2ecc71,
+			footer: { text: 'Generosity is a virtue!' }
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Deposit",
+		description: "Deposit points into your bank for safekeeping!",
+		type: "command",
+		key: "deposit",
+		usage_help: "<amount|all>",
+		extended_help: "Store points in your bank to keep them safe from robbers! Bank points can't be stolen but earn interest.",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const amountArg = command.arguments[0];
+
+if (!amountArg) {
+	message.reply({
+		embeds: [{
+			title: '🏦 Deposit',
+			description: 'Store your points safely in the bank!\\n\\n' +
+				'**Usage:** \`deposit <amount>\` or \`deposit all\`\\n\\n' +
+				'Bank points earn 1% daily interest!',
+			color: 0x3498db
+		}]
+	});
+} else {
+	const amount = amountArg.toLowerCase() === 'all' ? 5000 : parseInt(amountArg);
+	
+	if (isNaN(amount) || amount <= 0) {
+		message.reply('❌ Please enter a valid amount!');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🏦 Deposited!',
+				description: 'You deposited **' + amount.toLocaleString() + ' points** into your bank!\\n\\n' +
+					'Your bank balance is now earning interest.',
+				color: 0x2ecc71
+			}]
+		});
+	}
+}
+`
+	},
+	{
+		name: "Withdraw",
+		description: "Withdraw points from your bank!",
+		type: "command",
+		key: "withdraw",
+		usage_help: "<amount|all>",
+		extended_help: "Take points out of your bank and into your wallet. Remember, wallet points can be stolen!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const amountArg = command.arguments[0];
+
+if (!amountArg) {
+	message.reply({
+		embeds: [{
+			title: '🏦 Withdraw',
+			description: 'Take points out of your bank!\\n\\n' +
+				'**Usage:** \`withdraw <amount>\` or \`withdraw all\`\\n\\n' +
+				'⚠️ Wallet points can be stolen by robbers!',
+			color: 0x3498db
+		}]
+	});
+} else {
+	const amount = amountArg.toLowerCase() === 'all' ? 5000 : parseInt(amountArg);
+	
+	if (isNaN(amount) || amount <= 0) {
+		message.reply('❌ Please enter a valid amount!');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🏦 Withdrawn!',
+				description: 'You withdrew **' + amount.toLocaleString() + ' points** from your bank!\\n\\n' +
+					'Points are now in your wallet.',
+				color: 0x2ecc71
+			}]
+		});
+	}
+}
+`
+	},
+	{
+		name: "Dice Duel",
+		description: "Challenge someone to a dice duel! Highest roll wins the pot.",
+		type: "command",
+		key: "diceduel",
+		usage_help: "<@user> <bet>",
+		extended_help: "Challenge another user to a dice duel! Both players bet the same amount, roll dice, and the highest roll wins everything!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+const bet = parseInt(command.arguments[1]);
+
+if (!target || !bet) {
+	message.reply({
+		embeds: [{
+			title: '🎲 Dice Duel',
+			description: 'Challenge someone to a dice battle!\\n\\n' +
+				'**Usage:** \`diceduel @user <bet>\`\\n\\n' +
+				'Both players roll dice. Highest wins!',
+			color: 0xf39c12
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\\'t duel yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\\'t duel bots!');
+} else {
+	const roll1 = Math.floor(Math.random() * 6) + 1;
+	const roll2 = Math.floor(Math.random() * 6) + 1;
+	const winner = roll1 > roll2 ? message.author : (roll2 > roll1 ? target : null);
+	
+	let result = '';
+	let color = 0xf39c12;
+	
+	if (winner) {
+		result = '🏆 **' + winner.username + '** wins **' + (bet * 2).toLocaleString() + ' points**!';
+		color = winner.id === message.author.id ? 0x2ecc71 : 0xe74c3c;
+	} else {
+		result = '🤝 **It\\'s a tie!** Bets are returned.';
+	}
+	
+	message.reply({
+		embeds: [{
+			title: '🎲 Dice Duel Results',
+			description: '**' + message.author.username + '** rolled: 🎲 **' + roll1 + '**\\n' +
+				'**' + target.username + '** rolled: 🎲 **' + roll2 + '**\\n\\n' +
+				result,
+			color: color
+		}]
+	});
+}
+`
 	}
 ];
 
-async function seedExtensions() {
+async function seedExtensions () {
 	// Load environment and database
 	require("dotenv").config();
 	const Database = require("../Database/Driver");

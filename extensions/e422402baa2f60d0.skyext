@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+
+const jackpot = Math.floor(Math.random() * 100000) + 10000;
+const ticketPrice = 500;
+const participants = Math.floor(Math.random() * 50) + 10;
+
+if (action === 'enter') {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Lottery Ticket Purchased!',
+			description: 'You bought a lottery ticket!\n\n' +
+				'**Cost:** ' + ticketPrice + ' points\n' +
+				'**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\n\n' +
+				'Good luck! Drawing happens at midnight.',
+			color: 0xf1c40f
+		}]
+	});
+} else if (action === 'check') {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Lottery Status',
+			description: '**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\n' +
+				'**Participants:** ' + participants + ' entries\n' +
+				'**Ticket Price:** ' + ticketPrice + ' points\n' +
+				'**Drawing:** <t:' + (Math.floor(Date.now()/1000) + 3600) + ':R>',
+			color: 0xf1c40f
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🎟️ Server Lottery',
+			description: '**Current Jackpot:** 💰 ' + jackpot.toLocaleString() + ' points\n\n' +
+				'**Commands:**\n' +
+				'• `lottery enter` - Buy a ticket (' + ticketPrice + ' pts)\n' +
+				'• `lottery check` - View current lottery\n\n' +
+				'Drawing happens daily at midnight!',
+			color: 0xf1c40f
+		}]
+	});
+}

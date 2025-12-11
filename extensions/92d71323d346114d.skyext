@@ -1,0 +1,36 @@
+const message = require('message');
+const command = require('command');
+
+const betArg = command.arguments[0];
+
+if (!betArg) {
+	message.reply({
+		embeds: [{
+			title: '🎲 Gamble',
+			description: 'Bet your points on a coin flip!\n\n' +
+				'**Usage:** `gamble <amount>` or `gamble all`\n\n' +
+				'Win = 2x your bet\nLose = Lose your bet',
+			color: 0xf1c40f
+		}]
+	});
+} else {
+	const bet = betArg.toLowerCase() === 'all' ? 1000 : parseInt(betArg);
+	
+	if (isNaN(bet) || bet <= 0) {
+		message.reply('❌ Please enter a valid bet amount!');
+	} else {
+		const win = Math.random() > 0.5;
+		const result = win ? bet : -bet;
+		
+		message.reply({
+			embeds: [{
+				title: '🎲 ' + (win ? 'You Won!' : 'You Lost!'),
+				description: (win ? '🎉' : '😢') + ' The coin landed on **' + (win ? 'HEADS' : 'TAILS') + '**!\n\n' +
+					'**Bet:** ' + bet + ' points\n' +
+					'**Result:** ' + (win ? '+' : '') + result + ' points',
+				color: win ? 0x2ecc71 : 0xe74c3c,
+				footer: { text: win ? 'Lucky!' : 'Better luck next time!' }
+			}]
+		});
+	}
+}

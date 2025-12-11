@@ -1,0 +1,47 @@
+const message = require('message');
+const command = require('command');
+
+const shopItems = [
+	{ id: 1, name: 'Custom Role Color', price: 5000, emoji: '🎨', desc: 'Change your role color' },
+	{ id: 2, name: 'Nickname Change', price: 1000, emoji: '📝', desc: 'Change your nickname' },
+	{ id: 3, name: 'VIP Badge', price: 10000, emoji: '⭐', desc: 'Exclusive VIP badge' },
+	{ id: 4, name: 'XP Boost (1h)', price: 2500, emoji: '⚡', desc: '2x XP for 1 hour' },
+	{ id: 5, name: 'Lottery Ticket', price: 500, emoji: '🎟️', desc: 'Enter the lottery' },
+	{ id: 6, name: 'Pet Food', price: 100, emoji: '🍖', desc: 'Feed your pet' },
+	{ id: 7, name: 'Fishing Rod Upgrade', price: 3000, emoji: '🎣', desc: 'Better catch rates' },
+	{ id: 8, name: 'Mystery Box', price: 2000, emoji: '📦', desc: 'Random reward!' }
+];
+
+const action = command.arguments[0]?.toLowerCase();
+
+if (action === 'buy') {
+	const itemName = command.arguments.slice(1).join(' ').toLowerCase();
+	const item = shopItems.find(i => i.name.toLowerCase().includes(itemName));
+	
+	if (!item) {
+		message.reply('❌ Item not found! Use `shop` to see available items.');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🛒 Purchase',
+				description: 'You purchased **' + item.emoji + ' ' + item.name + '**!\n\n' +
+					'**Cost:** ' + item.price.toLocaleString() + ' points',
+				color: 0x2ecc71,
+				footer: { text: 'Thank you for your purchase!' }
+			}]
+		});
+	}
+} else {
+	const shopList = shopItems.map(item => 
+		item.emoji + ' **' + item.name + '** - ' + item.price.toLocaleString() + ' pts\n└ *' + item.desc + '*'
+	).join('\n\n');
+	
+	message.reply({
+		embeds: [{
+			title: '🏪 Server Shop',
+			description: shopList + '\n\n*Use* `shop buy <item>` *to purchase*',
+			color: 0x3498db,
+			footer: { text: 'Your balance: Check with /points' }
+		}]
+	});
+}

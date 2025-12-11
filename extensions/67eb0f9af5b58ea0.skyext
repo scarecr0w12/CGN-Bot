@@ -1,0 +1,31 @@
+const message = require('message');
+const command = require('command');
+
+const amountArg = command.arguments[0];
+
+if (!amountArg) {
+	message.reply({
+		embeds: [{
+			title: '🏦 Deposit',
+			description: 'Store your points safely in the bank!\n\n' +
+				'**Usage:** `deposit <amount>` or `deposit all`\n\n' +
+				'Bank points earn 1% daily interest!',
+			color: 0x3498db
+		}]
+	});
+} else {
+	const amount = amountArg.toLowerCase() === 'all' ? 5000 : parseInt(amountArg);
+	
+	if (isNaN(amount) || amount <= 0) {
+		message.reply('❌ Please enter a valid amount!');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🏦 Deposited!',
+				description: 'You deposited **' + amount.toLocaleString() + ' points** into your bank!\n\n' +
+					'Your bank balance is now earning interest.',
+				color: 0x2ecc71
+			}]
+		});
+	}
+}

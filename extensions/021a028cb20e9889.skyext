@@ -1,0 +1,60 @@
+const message = require('message');
+
+const encounters = [
+	{ name: 'Rabbit', emoji: '🐰', points: 10, type: 'catch' },
+	{ name: 'Deer', emoji: '🦌', points: 25, type: 'catch' },
+	{ name: 'Wild Boar', emoji: '🐗', points: 40, type: 'catch' },
+	{ name: 'Fox', emoji: '🦊', points: 30, type: 'catch' },
+	{ name: 'Bear', emoji: '🐻', points: 100, type: 'danger' },
+	{ name: 'Wolf Pack', emoji: '🐺', points: -50, type: 'danger' },
+	{ name: 'Treasure Chest', emoji: '💰', points: 200, type: 'treasure' },
+	{ name: 'Rare Mushrooms', emoji: '🍄', points: 35, type: 'forage' },
+	{ name: 'Bird\'s Nest', emoji: '🪺', points: 15, type: 'forage' },
+	{ name: 'Nothing', emoji: '🌲', points: 0, type: 'empty' }
+];
+
+const encounter = encounters[Math.floor(Math.random() * encounters.length)];
+
+let description = '';
+let color = 0x2ecc71;
+
+switch (encounter.type) {
+	case 'catch':
+		description = 'You spotted a **' + encounter.emoji + ' ' + encounter.name + '**!\n\n' +
+			'You successfully caught it!\n💰 **+' + encounter.points + ' points**';
+		color = 0x2ecc71;
+		break;
+	case 'danger':
+		if (encounter.points > 0) {
+			description = 'You encountered a **' + encounter.emoji + ' ' + encounter.name + '**!\n\n' +
+				'After a fierce battle, you won!\n💰 **+' + encounter.points + ' points**';
+			color = 0xf39c12;
+		} else {
+			description = 'You encountered a **' + encounter.emoji + ' ' + encounter.name + '**!\n\n' +
+				'You had to flee and dropped some coins!\n💸 **' + encounter.points + ' points**';
+			color = 0xe74c3c;
+		}
+		break;
+	case 'treasure':
+		description = 'You found a **' + encounter.emoji + ' ' + encounter.name + '**!\n\n' +
+			'Lucky find!\n💰 **+' + encounter.points + ' points**';
+		color = 0xf1c40f;
+		break;
+	case 'forage':
+		description = 'You found some **' + encounter.emoji + ' ' + encounter.name + '**!\n\n' +
+			'You collected them.\n💰 **+' + encounter.points + ' points**';
+		color = 0x9b59b6;
+		break;
+	default:
+		description = encounter.emoji + ' The forest was quiet today...\n\nYou found nothing of value.';
+		color = 0x95a5a6;
+}
+
+message.reply({
+	embeds: [{
+		title: '🏹 Hunting...',
+		description: description,
+		color: color,
+		footer: { text: 'Hunt again in 30 minutes' }
+	}]
+});

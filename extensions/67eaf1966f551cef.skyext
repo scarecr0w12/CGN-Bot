@@ -1,0 +1,28 @@
+const message = require('message');
+
+const targetUser = message.mentions?.users?.first() || message.author;
+
+// Simulated inventory
+const inventory = [
+	{ name: 'Fishing Rod', emoji: '🎣', quantity: 1, type: 'Tool' },
+	{ name: 'Pet Food', emoji: '🍖', quantity: 5, type: 'Consumable' },
+	{ name: 'Lottery Tickets', emoji: '🎟️', quantity: 3, type: 'Item' },
+	{ name: 'XP Boost', emoji: '⚡', quantity: 2, type: 'Boost' },
+	{ name: 'Golden Badge', emoji: '🏅', quantity: 1, type: 'Collectible' }
+];
+
+const invList = inventory.map(item => 
+	item.emoji + ' **' + item.name + '** x' + item.quantity + ' *(' + item.type + ')*'
+).join('\n');
+
+message.reply({
+	embeds: [{
+		author: {
+			name: targetUser.username + '\'s Inventory',
+			icon_url: targetUser.displayAvatarURL()
+		},
+		description: invList || '*Inventory is empty*',
+		color: 0x9b59b6,
+		footer: { text: 'Total items: ' + inventory.reduce((a, b) => a + b.quantity, 0) }
+	}]
+});

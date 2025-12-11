@@ -1,0 +1,46 @@
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+
+if (!target) {
+	message.reply({
+		embeds: [{
+			title: '🦹 Rob',
+			description: 'Mention a user to attempt to rob them!\n\n' +
+				'**Usage:** `rob @user`\n\n' +
+				'⚠️ **Warning:** If you fail, you might lose points!',
+			color: 0xe74c3c
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\'t rob yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\'t rob bots!');
+} else {
+	const success = Math.random() > 0.5;
+	const amount = Math.floor(Math.random() * 200) + 50;
+	
+	if (success) {
+		message.reply({
+			embeds: [{
+				title: '💰 Robbery Successful!',
+				description: 'You snuck up on **' + target.username + '** and stole **' + amount + ' points**!\n\n' +
+					'Don\'t get caught!',
+				color: 0x2ecc71,
+				footer: { text: 'You can rob again in 2 hours' }
+			}]
+		});
+	} else {
+		const fine = Math.floor(amount * 0.75);
+		message.reply({
+			embeds: [{
+				title: '🚔 Caught!',
+				description: 'You tried to rob **' + target.username + '** but got caught!\n\n' +
+					'You paid a fine of **' + fine + ' points**.',
+				color: 0xe74c3c,
+				footer: { text: 'Crime doesn\'t pay!' }
+			}]
+		});
+	}
+}

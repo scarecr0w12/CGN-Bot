@@ -1,0 +1,31 @@
+const message = require('message');
+const command = require('command');
+
+const amountArg = command.arguments[0];
+
+if (!amountArg) {
+	message.reply({
+		embeds: [{
+			title: '🏦 Withdraw',
+			description: 'Take points out of your bank!\n\n' +
+				'**Usage:** `withdraw <amount>` or `withdraw all`\n\n' +
+				'⚠️ Wallet points can be stolen by robbers!',
+			color: 0x3498db
+		}]
+	});
+} else {
+	const amount = amountArg.toLowerCase() === 'all' ? 5000 : parseInt(amountArg);
+	
+	if (isNaN(amount) || amount <= 0) {
+		message.reply('❌ Please enter a valid amount!');
+	} else {
+		message.reply({
+			embeds: [{
+				title: '🏦 Withdrawn!',
+				description: 'You withdrew **' + amount.toLocaleString() + ' points** from your bank!\n\n' +
+					'Points are now in your wallet.',
+				color: 0x2ecc71
+			}]
+		});
+	}
+}

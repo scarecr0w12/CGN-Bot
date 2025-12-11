@@ -1,0 +1,84 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+
+const petTypes = [
+	{ name: 'Dog', emoji: '🐕', trait: 'Loyal' },
+	{ name: 'Cat', emoji: '🐈', trait: 'Independent' },
+	{ name: 'Dragon', emoji: '🐉', trait: 'Fierce' },
+	{ name: 'Bunny', emoji: '🐰', trait: 'Cuddly' },
+	{ name: 'Fox', emoji: '🦊', trait: 'Clever' },
+	{ name: 'Penguin', emoji: '🐧', trait: 'Cool' },
+	{ name: 'Owl', emoji: '🦉', trait: 'Wise' },
+	{ name: 'Unicorn', emoji: '🦄', trait: 'Magical' }
+];
+
+const action = command.arguments[0]?.toLowerCase();
+
+if (!action || action === 'stats') {
+	// Show pet stats (simulated - would use extension.storage in real implementation)
+	const pet = petTypes[Math.floor(Math.random() * petTypes.length)];
+	const level = Math.floor(Math.random() * 20) + 1;
+	const hunger = Math.floor(Math.random() * 100);
+	const happiness = Math.floor(Math.random() * 100);
+	const xp = Math.floor(Math.random() * 1000);
+	
+	const hungerBar = '█'.repeat(Math.floor(hunger/10)) + '░'.repeat(10 - Math.floor(hunger/10));
+	const happyBar = '█'.repeat(Math.floor(happiness/10)) + '░'.repeat(10 - Math.floor(happiness/10));
+	
+	message.reply({
+		embeds: [{
+			title: pet.emoji + ' ' + message.author.username + '\'s Pet',
+			description: '**Name:** ' + pet.name + '\n' +
+				'**Type:** ' + pet.emoji + ' ' + pet.name + '\n' +
+				'**Trait:** ' + pet.trait + '\n' +
+				'**Level:** ' + level + ' (' + xp + ' XP)\n\n' +
+				'🍖 **Hunger:** [' + hungerBar + '] ' + hunger + '%\n' +
+				'💖 **Happiness:** [' + happyBar + '] ' + happiness + '%',
+			color: 0x2ecc71,
+			footer: { text: 'Use !pet feed or !pet play to care for your pet!' }
+		}]
+	});
+} else if (action === 'adopt') {
+	const pet = petTypes[Math.floor(Math.random() * petTypes.length)];
+	message.reply({
+		embeds: [{
+			title: '🎉 New Pet Adopted!',
+			description: 'You adopted a **' + pet.emoji + ' ' + pet.name + '**!\n\n' +
+				'**Trait:** ' + pet.trait + '\n\n' +
+				'Take good care of your new friend!',
+			color: 0x2ecc71,
+			footer: { text: 'Use !pet stats to check on your pet' }
+		}]
+	});
+} else if (action === 'feed') {
+	message.reply({
+		embeds: [{
+			title: '🍖 Pet Fed!',
+			description: 'Your pet happily munches on the food!\n\n' +
+				'+20 Hunger restored\n+5 XP earned',
+			color: 0xf39c12
+		}]
+	});
+} else if (action === 'play') {
+	message.reply({
+		embeds: [{
+			title: '🎾 Playtime!',
+			description: 'You played with your pet!\n\n' +
+				'+25 Happiness\n+10 XP earned\n-5 Hunger',
+			color: 0x3498db
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '🐾 Pet Commands',
+			description: '• `pet adopt` - Adopt a new pet\n' +
+				'• `pet stats` - View your pet\n' +
+				'• `pet feed` - Feed your pet\n' +
+				'• `pet play` - Play with your pet\n' +
+				'• `pet rename <name>` - Rename your pet',
+			color: 0x3498db
+		}]
+	});
+}

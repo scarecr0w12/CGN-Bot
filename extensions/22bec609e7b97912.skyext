@@ -1,0 +1,36 @@
+const message = require('message');
+
+const crimes = [
+	{ name: 'Pickpocket', successRate: 70, reward: [10, 50], fine: [20, 40] },
+	{ name: 'Shoplift', successRate: 60, reward: [30, 100], fine: [50, 100] },
+	{ name: 'Car Break-in', successRate: 50, reward: [75, 200], fine: [100, 200] },
+	{ name: 'ATM Hack', successRate: 35, reward: [200, 500], fine: [200, 400] },
+	{ name: 'Bank Fraud', successRate: 20, reward: [500, 1500], fine: [500, 1000] }
+];
+
+const crime = crimes[Math.floor(Math.random() * crimes.length)];
+const success = Math.random() * 100 < crime.successRate;
+
+if (success) {
+	const reward = Math.floor(Math.random() * (crime.reward[1] - crime.reward[0])) + crime.reward[0];
+	message.reply({
+		embeds: [{
+			title: '💰 Crime Successful!',
+			description: 'You committed **' + crime.name + '** and got away with it!\n\n' +
+				'**Earned:** +' + reward + ' points',
+			color: 0x2ecc71,
+			footer: { text: 'You can commit another crime in 30 minutes' }
+		}]
+	});
+} else {
+	const fine = Math.floor(Math.random() * (crime.fine[1] - crime.fine[0])) + crime.fine[0];
+	message.reply({
+		embeds: [{
+			title: '🚨 Busted!',
+			description: 'You tried to commit **' + crime.name + '** but got caught!\n\n' +
+				'**Fine:** -' + fine + ' points',
+			color: 0xe74c3c,
+			footer: { text: 'Maybe try something less risky?' }
+		}]
+	});
+}

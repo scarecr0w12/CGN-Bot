@@ -1,0 +1,45 @@
+const message = require('message');
+const command = require('command');
+
+const target = message.mentions?.users?.first();
+const bet = parseInt(command.arguments[1]);
+
+if (!target || !bet) {
+	message.reply({
+		embeds: [{
+			title: '🎲 Dice Duel',
+			description: 'Challenge someone to a dice battle!\n\n' +
+				'**Usage:** `diceduel @user <bet>`\n\n' +
+				'Both players roll dice. Highest wins!',
+			color: 0xf39c12
+		}]
+	});
+} else if (target.id === message.author.id) {
+	message.reply('❌ You can\'t duel yourself!');
+} else if (target.bot) {
+	message.reply('❌ You can\'t duel bots!');
+} else {
+	const roll1 = Math.floor(Math.random() * 6) + 1;
+	const roll2 = Math.floor(Math.random() * 6) + 1;
+	const winner = roll1 > roll2 ? message.author : (roll2 > roll1 ? target : null);
+	
+	let result = '';
+	let color = 0xf39c12;
+	
+	if (winner) {
+		result = '🏆 **' + winner.username + '** wins **' + (bet * 2).toLocaleString() + ' points**!';
+		color = winner.id === message.author.id ? 0x2ecc71 : 0xe74c3c;
+	} else {
+		result = '🤝 **It\'s a tie!** Bets are returned.';
+	}
+	
+	message.reply({
+		embeds: [{
+			title: '🎲 Dice Duel Results',
+			description: '**' + message.author.username + '** rolled: 🎲 **' + roll1 + '**\n' +
+				'**' + target.username + '** rolled: 🎲 **' + roll2 + '**\n\n' +
+				result,
+			color: color
+		}]
+	});
+}
