@@ -22,13 +22,13 @@
 									<div>
 										<p class="heading">Tier</p>
 										<p class="title is-4">
-											<span class="tag is-<%= serverTier?.level > 0 ? 'success' : 'light' %> is-medium">
-												<%= serverTier?.name || 'Free' %>
+											<span class="tag is-<%= (serverTier && serverTier.level > 0) ? 'success' : 'light' %> is-medium">
+												<%= (serverTier && serverTier.name) ? serverTier.name : 'Free' %>
 											</span>
 										</p>
 									</div>
 								</div>
-								<% if (subscription?.expires_at) { %>
+								<% if (subscription && subscription.expires_at) { %>
 								<div class="level-item">
 									<div>
 										<p class="heading">Expires</p>
@@ -38,7 +38,7 @@
 									</div>
 								</div>
 								<% } %>
-								<% if (subscription?.source) { %>
+								<% if (subscription && subscription.source) { %>
 								<div class="level-item">
 									<div>
 										<p class="heading">Source</p>
@@ -58,8 +58,8 @@
 								<% serverFeatures.forEach(function(featureId) { 
 									const feature = features.find(f => f._id === featureId);
 								%>
-									<span class="tag is-success" title="<%= feature?.description || '' %>">
-										<%= feature?.name || featureId %>
+									<span class="tag is-success" title="<%= (feature && feature.description) ? feature.description : '' %>">
+										<%= (feature && feature.name) ? feature.name : featureId %>
 									</span>
 								<% }); %>
 							</div>
@@ -68,7 +68,7 @@
 					</div>
 
 					<!-- Upgrade Options -->
-					<% if (serverTier?.level === 0 || !serverTier) { %>
+					<% if (!serverTier || serverTier.level === 0) { %>
 					<div class="box">
 						<h4 class="title is-5">Upgrade Your Server</h4>
 						<p class="mb-4">Unlock premium features for all members of this server.</p>
@@ -95,7 +95,7 @@
 												<% (tier.features || []).slice(0, 5).forEach(function(featureId) {
 													const feature = features.find(f => f._id === featureId);
 												%>
-													<li><%= feature?.name || featureId %></li>
+													<li><%= (feature && feature.name) ? feature.name : featureId %></li>
 												<% }); %>
 												<% if ((tier.features || []).length > 5) { %>
 													<li class="has-text-grey">+ <%= tier.features.length - 5 %> more...</li>
@@ -191,7 +191,7 @@
 					<% } %>
 
 					<!-- Subscription History -->
-					<% if (subscription?.history && subscription.history.length > 0) { %>
+					<% if (subscription && subscription.history && subscription.history.length > 0) { %>
 					<div class="box">
 						<h4 class="title is-5">Subscription History</h4>
 						<table class="table is-fullwidth is-striped">
@@ -220,7 +220,7 @@
 					<% } %>
 
 					<!-- Cancel Subscription -->
-					<% if (subscription?.is_active && subscription?.tier_id !== 'free' && canManageSubscription) { %>
+					<% if (subscription && subscription.is_active && subscription.tier_id !== 'free' && canManageSubscription) { %>
 					<div class="box">
 						<h4 class="title is-5 has-text-danger">Cancel Subscription</h4>
 						<p class="mb-3">
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const redeemDays = document.getElementById('redeemDays');
 	const totalCost = document.getElementById('totalCost');
 	const cancelBtn = document.getElementById('cancelBtn');
-	const pointsPerDay = <%= redemptionInfo?.pointsPerDay || 0 %>;
+	const pointsPerDay = <%= (redemptionInfo && redemptionInfo.pointsPerDay) ? redemptionInfo.pointsPerDay : 0 %>;
 
 	// Update cost on input change
 	if (redeemDays && totalCost) {
