@@ -304,12 +304,14 @@ controllers.builder = async (req, { res }) => {
 		if (req.query.extid) {
 			try {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectId(req.query.extid),
+					_id: req.query.extid,
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {
 					try {
-						galleryDocument.code = await fs.readFile(`${__dirname}/../../extensions/${galleryDocument.versions.id(galleryDocument.version).code_id}.skyext`);
+						const versionDoc = galleryDocument.versions.id(galleryDocument.version);
+						const codePath = `${__dirname}/../../extensions/${versionDoc.code_id}.skyext`;
+						galleryDocument.code = require("fs").readFileSync(codePath, "utf8");
 					} catch (err) {
 						galleryDocument.code = "";
 					}
@@ -378,7 +380,7 @@ controllers.builder.post = async (req, res) => {
 
 			if (req.query.extid) {
 				const galleryDocument = await Gallery.findOne({
-					_id: new ObjectId(req.query.extid),
+					_id: req.query.extid,
 					owner_id: req.user.id,
 				});
 				if (galleryDocument) {

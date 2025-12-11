@@ -19,6 +19,8 @@ class BotLists {
 		this.postInterval = setInterval(() => this.postAllStats(), 30 * 60 * 1000);
 		// Post immediately on startup (after 10 second delay)
 		setTimeout(() => this.postAllStats(), 10000);
+		// Sync commands on startup (after 15 second delay to ensure slash commands are loaded)
+		setTimeout(() => this.syncAllCommands(), 15000);
 		logger.info("BotLists module initialized");
 	}
 
@@ -112,6 +114,66 @@ class BotLists {
 		} catch (err) {
 			logger.error("Error posting to discordbotlist.com", {}, err);
 		}
+	}
+
+	/**
+	 * Post slash commands to discordbotlist.com
+	 * @param {string} [token] - Optional API token override
+	 * @returns {Promise<{success: boolean, count?: number, error?: string}>}
+	 */
+	async postCommandsToDiscordBotList(token = null) {
+		try {
+			const config = await this.getConfig();
+			const apiToken = token || config.discordbotlist?.api_token;
+
+			if (!apiToken) {
+				return { success: false, error: "No API token configured for discordbotlist.com" };
+			}
+
+			// Get slash commands from handler
+			const slashHandler = this.client.slashCommands;
+			if (!slashHandler || !slashHandler.commands || slashHandler.commands.size === 0) {
+				return { success: false, error: "No slash commands loaded" };
+			}
+
+			// Convert commands to Discord API format
+			const commandsData = slashHandler.commands.map(cmd => cmd.data.toJSON());
+
+			const response = await fetch(`https://discordbotlist.com/api/v1/bots/${this.client.user.id}/commands`, {
+				method: "POST",
+				headers: {
+					"Authorization": `Bot ${apiToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(commandsData),
+			});
+
+			if (response.ok) {
+				logger.info("Posted slash commands to discordbotlist.com", { count: commandsData.length });
+				return { success: true, count: commandsData.length };
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post commands to discordbotlist.com", { status: response.status, body: text });
+				return { success: false, error: `HTTP ${response.status}: ${text}` };
+			}
+		} catch (err) {
+			logger.error("Error posting commands to discordbotlist.com", {}, err);
+			return { success: false, error: err.message };
+		}
+	}
+
+	/**
+	 * Sync commands to all enabled bot lists
+	 */
+	async syncAllCommands() {
+		const config = await this.getConfig();
+		const results = {};
+
+		if (config.discordbotlist?.isEnabled && config.discordbotlist?.api_token && config.discordbotlist?.sync_commands) {
+			results.discordbotlist = await this.postCommandsToDiscordBotList(config.discordbotlist.api_token);
+		}
+
+		return results;
 	}
 
 	/**

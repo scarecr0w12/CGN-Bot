@@ -403,6 +403,11 @@ controllers.options.botLists.post = async (req, res) => {
 	// WRITE operation - create if needed (will be saved below with actual data)
 	const siteSettings = await getSiteSettingsForWrite();
 
+	// Ensure nested objects exist for bot_lists
+	if (!siteSettings.bot_lists) siteSettings.bot_lists = {};
+	if (!siteSettings.bot_lists.topgg) siteSettings.bot_lists.topgg = {};
+	if (!siteSettings.bot_lists.discordbotlist) siteSettings.bot_lists.discordbotlist = {};
+
 	// Update top.gg settings
 	siteSettings.query.set("bot_lists.topgg.isEnabled", req.body.topgg_enabled === "on");
 	siteSettings.query.set("bot_lists.topgg.api_token", req.body.topgg_api_token || "");
@@ -414,6 +419,7 @@ controllers.options.botLists.post = async (req, res) => {
 	siteSettings.query.set("bot_lists.discordbotlist.api_token", req.body.dbl_api_token || "");
 	siteSettings.query.set("bot_lists.discordbotlist.webhook_secret", req.body.dbl_webhook_secret || "");
 	siteSettings.query.set("bot_lists.discordbotlist.auto_post_stats", req.body.dbl_auto_post !== "off");
+	siteSettings.query.set("bot_lists.discordbotlist.sync_commands", Boolean(req.body.dbl_sync_commands === "on"));
 
 	// Update vote rewards settings
 	siteSettings.query.set("vote_rewards.isEnabled", req.body.rewards_enabled === "on");
@@ -434,6 +440,27 @@ controllers.options.botLists.post = async (req, res) => {
 	} catch (err) {
 		logger.error("Failed to save bot list settings", {}, err);
 		renderError(res, "Failed to save bot list settings.");
+	}
+};
+
+controllers.options.botLists.syncCommands = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.status(403).json({ error: "Forbidden" });
+
+	try {
+		const botLists = req.app.get("botLists");
+		if (!botLists) {
+			return res.status(500).json({ error: "BotLists module not initialized" });
+		}
+
+		const result = await botLists.postCommandsToDiscordBotList();
+		if (result.success) {
+			res.json({ success: true, count: result.count, message: `Synced ${result.count} commands to discordbotlist.com` });
+		} else {
+			res.status(400).json({ success: false, error: result.error });
+		}
+	} catch (err) {
+		logger.error("Failed to sync commands to discordbotlist.com", {}, err);
+		res.status(500).json({ error: "Failed to sync commands" });
 	}
 };
 

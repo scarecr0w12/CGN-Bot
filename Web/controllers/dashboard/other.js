@@ -288,7 +288,7 @@ controllers.extensionBuilder = async (req, { res }) => {
 				let galleryDocument;
 				try {
 					galleryDocument = await Gallery.findOne({
-						_id: new ObjectId(req.query.extid),
+						_id: req.query.extid,
 						level: "third",
 					});
 				} catch (err) {
@@ -296,7 +296,8 @@ controllers.extensionBuilder = async (req, { res }) => {
 				}
 				if (galleryDocument) {
 					try {
-						galleryDocument.code = await fs.readFile(`${__dirname}/../../../extensions/${galleryDocument.versions.id(galleryDocument.version).code_id}.skyext`);
+						const versionDoc = galleryDocument.versions.id(galleryDocument.version);
+						galleryDocument.code = require("fs").readFileSync(`${__dirname}/../../../extensions/${versionDoc.code_id}.skyext`, "utf8");
 					} catch (err) {
 						galleryDocument.code = "";
 					}
@@ -393,7 +394,7 @@ controllers.extensionBuilder.post = async (req, res) => {
 			let galleryDocument;
 			try {
 				galleryDocument = await Gallery.findOne({
-					_id: new ObjectId(req.query.extid),
+					_id: req.query.extid,
 					owner_id: req.user.id,
 				});
 			} catch (err) {

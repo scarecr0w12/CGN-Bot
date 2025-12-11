@@ -190,6 +190,10 @@ module.exports = new Schema({
 				type: Boolean,
 				default: true,
 			},
+			sync_commands: {
+				type: Boolean,
+				default: false,
+			},
 		}),
 	}),
 
