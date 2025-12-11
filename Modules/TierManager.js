@@ -241,39 +241,49 @@ const hasMinimumTierLevel = async (serverId, requiredLevel) => {
  * @returns {Promise<Object>}
  */
 const setServerTier = async (serverId, tierId, source = "manual", expiresAt = null, reason = "assigned", purchasedBy = null) => {
-	const server = await Servers.findOne(serverId);
+	let server = await Servers.findOne(serverId);
 	if (!server) {
-		return null; // Server must exist
+		// Create server document if it doesn't exist
+		server = Servers.new({ _id: serverId });
+		await server.save();
+		server = await Servers.findOne(serverId);
+		if (!server) {
+			logger.error("Failed to create server document for tier assignment", { serverId });
+			return null;
+		}
 	}
 
 	const oldSubscription = server.subscription || {};
 	const now = new Date();
 
-	// Add to history if there was a previous tier
+	// Build history array
+	const history = oldSubscription.history || [];
 	if (oldSubscription.tier_id && oldSubscription.tier_id !== tierId) {
-		const historyEntry = {
+		history.push({
 			tier_id: oldSubscription.tier_id,
 			source: oldSubscription.source,
 			purchased_by: oldSubscription.purchased_by,
 			started_at: oldSubscription.started_at,
 			ended_at: now,
 			reason: reason,
-		};
-
-		const history = oldSubscription.history || [];
-		history.push(historyEntry);
-		server.query.set("subscription.history", history);
+		});
 	}
 
-	// Update subscription
-	server.query.set("subscription.tier_id", tierId);
-	server.query.set("subscription.source", source);
-	server.query.set("subscription.started_by", now);
-	server.query.set("subscription.expires_at", expiresAt);
-	server.query.set("subscription.is_active", true);
-	if (purchasedBy) {
-		server.query.set("subscription.purchased_by", purchasedBy);
-	}
+	// Build complete subscription object and set it at once
+	const newSubscription = {
+		tier_id: tierId,
+		source: source,
+		started_at: now,
+		expires_at: expiresAt,
+		is_active: true,
+		purchased_by: purchasedBy || oldSubscription.purchased_by || null,
+		granted_features: oldSubscription.granted_features || [],
+		revoked_features: oldSubscription.revoked_features || [],
+		history: history,
+	};
+
+	// Set entire subscription object at once for MariaDB compatibility
+	server.query.set("subscription", newSubscription);
 
 	await server.save();
 	return server;
@@ -327,19 +337,27 @@ const grantFeature = async (serverId, featureKey) => {
 		return null; // Server must exist
 	}
 
-	const granted = server.subscription?.granted_features || [];
+	const oldSubscription = server.subscription || {};
+	const granted = [...(oldSubscription.granted_features || [])];
+	const revoked = [...(oldSubscription.revoked_features || [])];
+
+	// Add to granted if not present
 	if (!granted.includes(featureKey)) {
 		granted.push(featureKey);
-		server.query.set("subscription.granted_features", granted);
 	}
 
 	// Remove from revoked if present
-	const revoked = server.subscription?.revoked_features || [];
 	const revokedIndex = revoked.indexOf(featureKey);
 	if (revokedIndex > -1) {
 		revoked.splice(revokedIndex, 1);
-		server.query.set("subscription.revoked_features", revoked);
 	}
+
+	// Set entire subscription object for MariaDB compatibility
+	server.query.set("subscription", {
+		...oldSubscription,
+		granted_features: granted,
+		revoked_features: revoked,
+	});
 
 	await server.save();
 	return server;
@@ -357,19 +375,27 @@ const revokeFeature = async (serverId, featureKey) => {
 		return null; // Server must exist
 	}
 
-	const revoked = server.subscription?.revoked_features || [];
+	const oldSubscription = server.subscription || {};
+	const granted = [...(oldSubscription.granted_features || [])];
+	const revoked = [...(oldSubscription.revoked_features || [])];
+
+	// Add to revoked if not present
 	if (!revoked.includes(featureKey)) {
 		revoked.push(featureKey);
-		server.query.set("subscription.revoked_features", revoked);
 	}
 
 	// Remove from granted if present
-	const granted = server.subscription?.granted_features || [];
 	const grantedIndex = granted.indexOf(featureKey);
 	if (grantedIndex > -1) {
 		granted.splice(grantedIndex, 1);
-		server.query.set("subscription.granted_features", granted);
 	}
+
+	// Set entire subscription object for MariaDB compatibility
+	server.query.set("subscription", {
+		...oldSubscription,
+		granted_features: granted,
+		revoked_features: revoked,
+	});
 
 	await server.save();
 	return server;
@@ -471,7 +497,12 @@ const linkPaymentCustomer = async (serverId, provider, customerId) => {
 
 	const field = fieldMap[provider];
 	if (field) {
-		server.query.set(`payment_ids.${field}`, customerId);
+		// Set entire payment_ids object for MariaDB compatibility
+		const oldPaymentIds = server.payment_ids || {};
+		server.query.set("payment_ids", {
+			...oldPaymentIds,
+			[field]: customerId,
+		});
 		await server.save();
 	}
 

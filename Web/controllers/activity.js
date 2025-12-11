@@ -131,39 +131,32 @@ module.exports = async (req, { res }) => {
 			rawCount = guildAmount;
 		}
 
-		const serverDocuments = await Servers.aggregate([
-			{
-				$match: matchCriteria,
-			},
-			{
-				$addFields: {
-					member_count: {
-						$size: { $objectToArray: "$members" },
-					},
-				},
-			},
-			{
-				$project: {
-					messages_today: 1,
-					"config.public_data": 1,
-					"config.command_prefix": 1,
-					member_count: 1,
-					added_timestamp: 1,
-					activity_score: {
-						$add: [{ $multiply: [1.5, "$member_count"] }, { $multiply: [0.5, "$messages_today", { $multiply: [0.005, "$member_count"] }] }],
-					},
-				},
-			},
-			{
-				$sort: sortParams,
-			},
-			{
-				$skip: count * (page - 1),
-			},
-			{
-				$limit: count,
-			},
-		]);
+		// Use simple find() for SQL compatibility, then process in JS
+		let allServerDocs = await Servers.find(matchCriteria).exec();
+
+		// Calculate member_count and activity_score in JavaScript
+		allServerDocs = allServerDocs.map(doc => {
+			const memberCount = doc.members ? Object.keys(doc.members).length : 0;
+			const messagesCount = doc.messages_today || 0;
+			const activityScore = (1.5 * memberCount) + (0.5 * messagesCount * (0.005 * memberCount));
+			return {
+				...doc,
+				member_count: memberCount,
+				activity_score: activityScore,
+			};
+		});
+
+		// Sort in JavaScript
+		const sortField = Object.keys(sortParams)[0];
+		const sortDir = sortParams[sortField];
+		allServerDocs.sort((a, b) => {
+			const aVal = a[sortField] || 0;
+			const bVal = b[sortField] || 0;
+			return sortDir === 1 ? aVal - bVal : bVal - aVal;
+		});
+
+		// Paginate
+		const serverDocuments = allServerDocs.slice(count * (page - 1), count * page);
 		let serverData = [];
 		if (serverDocuments) {
 			const webp = req.accepts("image/webp") === "image/webp";

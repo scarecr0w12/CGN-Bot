@@ -25,6 +25,13 @@
 							</div>
 						</div>
 					</article>
+					<% if (!pageData.hasAdvancedModeration) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<strong><span class="tag is-warning">Premium Feature</span></strong> Advanced moderation filters require a premium subscription. <a href="/membership">Upgrade now</a> to configure spam filters, mention limits, NSFW filtering, and custom word filters.
+						</div>
+					</article>
+					<% } else { %>
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<h4 class="subtitle is-4">
 							Spam
@@ -303,6 +310,7 @@
 						<%- include('../partials/form-buttons') %>
 						<%- include('../partials/form-buttons-bar') %>
 					</form>
+					<% } %>
 				</div>
 			</div>
 		</div>

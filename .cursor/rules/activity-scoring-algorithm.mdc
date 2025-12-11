@@ -1,5 +1,5 @@
 ---
-description: Specification for Discord server activity scoring algorithms, including weighting factors and ranking calculations
+description: Specification for Discord server activity scoring system implementation and logic
 ---
 
 # === USER INSTRUCTIONS ===
@@ -46,7 +46,12 @@ The system emphasizes message activity as the primary indicator while balancing 
 $END$
 
  If you're using this file in context, clearly say in italics in one small line that "Context added by Giga activity-scoring-algorithm" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
-# === END USER INSTRUCTIONS ===
+
+---
+description: Specification for Discord server activity scoring algorithms, including weighting factors and ranking calculations
+---
+
+
 
 # activity-scoring-algorithm
 
@@ -96,6 +101,58 @@ Importance Score: 90
 - Platinum Tier: 20000+ points
 Path: Web/controllers/dashboard/stats.js
 Importance Score: 70
+
+$END$
+
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga activity-scoring-algorithm" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
+# === END USER INSTRUCTIONS ===
+
+# activity-scoring-algorithm
+
+Core activity scoring system that evaluates and ranks server engagement:
+
+1. Base Activity Calculation (Importance: 85/100)
+- Message frequency weighted by channel type
+- Voice activity duration with premium channel multipliers 
+- Command usage frequency with cooldown consideration
+- User mention and interaction tracking
+- Custom reaction usage weighting
+
+2. Period-Based Scoring (Importance: 80/100)
+- Daily activity rollups with peak time multipliers
+- Weekly average calculation with weekend bonuses
+- Monthly persistence for long-term tracking
+- Configurable scoring windows per server
+
+3. Rank Progression Logic (Importance: 75/100)
+- Activity thresholds for automatic rank advancement
+- Score decay for inactive periods
+- Server-specific minimum requirements
+- Role hierarchy integration
+
+4. Score Modifiers
+- Premium server multipliers
+- Event participation bonuses
+- Contribution rewards (helps, starred messages)
+- Strike/warning penalties
+- Administrative action impacts
+
+Implementation employs a weighted formula:
+```
+Total Score = (MessageScore * 0.4) + 
+              (VoiceScore * 0.3) + 
+              (CommandScore * 0.15) + 
+              (InteractionScore * 0.15) * 
+              ServerMultiplier * 
+              PremiumMultiplier
+```
+
+Key Paths:
+- Internals/Activity/ScoreCalculator.js
+- Internals/Activity/PeriodTracker.js
+- Internals/Activity/RankManager.js
+
+The system provides server administrators with customizable weights and thresholds while maintaining consistent baseline scoring across all servers.
 
 $END$
 

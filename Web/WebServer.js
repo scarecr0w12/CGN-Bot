@@ -24,6 +24,7 @@ const Sentry = require("@sentry/node");
 const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
+const metrics = require("../Modules/Metrics");
 const app = express();
 
 const listen = async configJS => {
@@ -122,6 +123,12 @@ exports.open = async (client, auth, configJS, logger) => {
 
 	// Configure global middleware & Server properties
 	app.use(compression());
+
+	// Prometheus metrics middleware - track HTTP request metrics
+	app.use(metrics.metricsMiddleware);
+
+	// Metrics endpoint for Prometheus scraping
+	app.get("/metrics", metrics.getMetrics);
 
 	// Security headers with helmet (configured for dashboard compatibility)
 	app.use(helmet({

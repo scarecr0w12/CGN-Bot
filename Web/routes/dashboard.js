@@ -31,6 +31,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/stats-points/stats-collection", [], controllers.dashboard.stats.collection);
 	setupDashboardPage(router, "/stats-points/ranks", [], controllers.dashboard.stats.ranks, "ranks_list");
 	setupDashboardPage(router, "/stats-points/skynet-points", [], controllers.dashboard.stats.points);
+	setupDashboardPage(router, "/stats-points/advanced-stats", [], controllers.dashboard.stats.advancedStats);
 	// Premium analytics endpoint
 	router.get("/:svrid/stats-points/analytics", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analytics);
 

@@ -1,7 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Membership - <%= serverData.name %></title>
+	<title>Premium Membership - Skynet Discord Bot</title>
+	<%
+	// SEO for membership/pricing page
+	if (typeof pageData === "undefined") pageData = {};
+	pageData.seo = {
+		title: "Premium Membership - Skynet Discord Bot",
+		description: "Unlock premium features for Skynet Discord bot. Get higher limits, priority support, custom branding, advanced moderation tools, and exclusive features for your Discord server.",
+		keywords: "Discord bot premium, Skynet premium, Discord bot subscription, Discord server premium features, bot membership",
+		type: "website"
+	};
+	pageData.breadcrumbs = [
+		{ name: "Home", url: "/" },
+		{ name: "Membership", url: "/membership" }
+	];
+	%>
 	<%- include('../partials/head') %>
 	<style>
 		.pricing-card {

@@ -707,8 +707,8 @@ controllers.membership.payments.post = async (req, res) => {
 	}
 };
 
-// User Management
-controllers.membership.users = async (req, { res }) => {
+// Server Management (Premium subscriptions are per-server)
+controllers.membership.servers = async (req, { res }) => {
 	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
 
 	// READ operation - never create/save, use defaults if not found
@@ -718,40 +718,57 @@ controllers.membership.users = async (req, { res }) => {
 	const query = req.query.q;
 
 	if (query) {
-		// Search by ID or username
-		const directUser = await Users.findOne(query);
-		if (directUser) {
-			const discordUser = await req.app.client.users.fetch(query, true).catch(() => null);
+		// Search by server ID first (exact match)
+		const directServer = await Servers.findOne(query);
+		if (directServer) {
+			const discordGuild = await req.app.client.guilds.fetch(query).catch(() => null);
 			searchResults.push({
-				...directUser,
-				username: discordUser?.username || directUser.username || "Unknown",
-				avatar: discordUser?.displayAvatarURL() || null,
+				...directServer,
+				name: discordGuild?.name || "Unknown Server",
+				icon: discordGuild?.iconURL() || null,
+				memberCount: discordGuild?.memberCount || 0,
 			});
 		} else {
-			// Search by username pattern
-			const users = await Users.find({ username: { $regex: query, $options: "i" } })
-				.limit(10)
-				.exec();
-			for (const user of users) {
-				const discordUser = await req.app.client.users.fetch(user._id, true).catch(() => null);
+			// If not found by ID, search through bot's cached guilds by name
+			const matchingGuilds = req.app.client.guilds.cache
+				.filter(g => g.name.toLowerCase().includes(query.toLowerCase()))
+				.first(10);
+
+			for (const guild of matchingGuilds) {
+				const serverDoc = await Servers.findOne(guild.id);
 				searchResults.push({
-					...user,
-					username: discordUser?.username || user.username || "Unknown",
-					avatar: discordUser?.displayAvatarURL() || null,
+					_id: guild.id,
+					subscription: serverDoc?.subscription || null,
+					name: guild.name,
+					icon: guild.iconURL() || null,
+					memberCount: guild.memberCount || 0,
 				});
 			}
 		}
 	}
 
-	// Get recent subscription changes
-	const recentSubscriptions = await Users.find({ "subscription.started_at": { $exists: true } })
-		.sort({ "subscription.started_at": -1 })
-		.limit(20)
-		.exec();
+	// Get recent subscription changes - query servers that have subscription data
+	let recentSubscriptions = [];
+	try {
+		// For MariaDB, check if subscription JSON field is not null
+		recentSubscriptions = await Servers.find({ subscription: { $ne: null } })
+			.limit(20)
+			.exec() || [];
 
-	for (const sub of recentSubscriptions || []) {
-		const discordUser = await req.app.client.users.fetch(sub._id, true).catch(() => null);
-		sub.username = discordUser?.username || sub.username || "Unknown";
+		// Filter to only those with started_at and sort
+		recentSubscriptions = recentSubscriptions
+			.filter(s => s.subscription?.started_at)
+			.sort((a, b) => new Date(b.subscription.started_at) - new Date(a.subscription.started_at))
+			.slice(0, 20);
+	} catch {
+		// Fallback if query fails
+		recentSubscriptions = [];
+	}
+
+	for (const sub of recentSubscriptions) {
+		const discordGuild = await req.app.client.guilds.fetch(sub._id).catch(() => null);
+		sub.name = discordGuild?.name || "Unknown Server";
+		sub.icon = discordGuild?.iconURL() || null;
 	}
 
 	res.setConfigData({
@@ -761,56 +778,56 @@ controllers.membership.users = async (req, { res }) => {
 		query,
 		searchResults,
 		recentSubscriptions,
-		page: "maintainer-users.ejs",
+		page: "maintainer-servers.ejs",
 	}).render();
 };
 
-controllers.membership.users.post = async (req, res) => {
+controllers.membership.servers.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	const { user_id: userId, tier_id: tierId, expires_at: expiresAt, reason } = req.body;
+	const { server_id: serverId, tier_id: tierId, expires_at: expiresAt, reason } = req.body;
 	const grantFeatures = req.body["grant_features[]"] || [];
 
-	if (!userId) {
-		return res.status(400).json({ error: "User ID required" });
+	if (!serverId) {
+		return res.status(400).json({ error: "Server ID required" });
 	}
 
 	try {
 		const TierManager = require("../../Modules/TierManager");
 
-		// Set user tier
+		// Set server tier
 		if (tierId) {
 			const expiration = expiresAt ? new Date(expiresAt) : null;
-			await TierManager.setUserTier(userId, tierId, "manual", expiration, reason || "admin_assigned");
+			await TierManager.setServerTier(serverId, tierId, "manual", expiration, reason || "admin_assigned");
 		}
 
 		// Grant individual features
 		const features = Array.isArray(grantFeatures) ? grantFeatures : [grantFeatures];
 		for (const feature of features.filter(f => f)) {
-			await TierManager.grantFeature(userId, feature);
+			await TierManager.grantFeature(serverId, feature);
 		}
 
 		res.redirect(req.originalUrl);
 	} catch (err) {
-		logger.error("Failed to update user tier", { userId }, err);
-		renderError(res, "Failed to update user tier.");
+		logger.error("Failed to update server tier", { serverId }, err);
+		renderError(res, "Failed to update server tier.");
 	}
 };
 
-controllers.membership.users.cancel = async (req, res) => {
+controllers.membership.servers.cancel = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
 
-	const { user_id: userId } = req.body;
-	if (!userId) {
-		return res.status(400).json({ error: "User ID required" });
+	const { server_id: serverId } = req.body;
+	if (!serverId) {
+		return res.status(400).json({ error: "Server ID required" });
 	}
 
 	try {
 		const TierManager = require("../../Modules/TierManager");
-		await TierManager.cancelSubscription(userId, "admin_canceled");
+		await TierManager.cancelSubscription(serverId, "admin_canceled");
 		res.json({ success: true });
 	} catch (err) {
-		logger.error("Failed to cancel subscription", { userId }, err);
+		logger.error("Failed to cancel subscription", { serverId }, err);
 		res.status(500).json({ error: "Failed to cancel subscription" });
 	}
 };

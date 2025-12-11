@@ -1,5 +1,5 @@
 ---
-description: Specification for Discord bot's progressive moderation system including strikes, bans, and infractions
+description: Specifies the architecture and rules for the bot's progressive discipline and infraction tracking system.
 trigger: model_decision
 ---
 
@@ -61,7 +61,13 @@ Located in `Internals/Events/message/GAB.SpamHandler.js`:
 $END$
 
  If you're using this file in context, clearly say in italics in one small line that "Context added by Giga moderation-system-model" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
-# === END USER INSTRUCTIONS ===
+
+---
+description: Specification for Discord bot's progressive moderation system including strikes, bans, and infractions
+trigger: model_decision
+---
+
+
 
 # moderation-system-model
 
@@ -109,6 +115,92 @@ Key Components:
 - Action hierarchy enforcement
 - Override authorization
 - Audit logging
+
+$END$
+
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga moderation-system-model" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
+# === END USER INSTRUCTIONS ===
+
+# moderation-system-model
+
+## Strike Management System
+Importance Score: 90/100
+
+Core infraction tracking implementation with:
+- Progressive discipline model with configurable thresholds
+- Strike history persistence with full audit trail
+- Automated escalation rules based on offense counts
+- Required reason documentation with moderator attribution
+- DM notification system for warned users
+
+Key components in `/Internals/SlashCommands/commands/strike.js`:
+```
+strikes: {
+  count: Number,
+  reasons: Array<String>,
+  moderators: Array<String>,
+  timestamps: Array<Date>
+}
+```
+
+## Temporary Ban System
+Importance Score: 85/100
+
+Automated temporary restriction system:
+- Duration-based bans with automatic expiration
+- Maximum duration enforcement (28 days)
+- Ban metadata tracking (reason, moderator, duration)
+- Integration with moderation logging
+- Automated unban scheduling
+
+Implementation in `/Web/controllers/dashboard/administration.js`:
+- Custom duration parsing with validation
+- Ban state persistence
+- Unban job scheduling
+- Audit log integration
+
+## Admin Level Validation 
+Importance Score: 80/100
+
+Hierarchical permission model:
+- 4-tier admin system (0-3)
+- Role-based access control
+- Strike immunity for higher-level moderators
+- Server-specific permission inheritance
+- Channel-specific configuration support
+
+## Auto-Moderation Rules
+Importance Score: 75/100
+
+Automated enforcement system:
+- Configurable violation thresholds
+- Channel-specific rule sets
+- Progressive action escalation
+- Automatic strike application
+- Violation type classification
+
+## Infraction Data Model
+Importance Score: 85/100
+
+Core data structures:
+```
+infraction: {
+  type: String,
+  user: String,
+  moderator: String,
+  reason: String,
+  timestamp: Date,
+  expires: Date?,
+  automated: Boolean,
+  strikes: Number
+}
+```
+
+- Full audit trail maintenance
+- Reason documentation requirements
+- Duration tracking for temporary actions
+- Cross-reference with strike system
+- Moderator attribution tracking
 
 $END$
 

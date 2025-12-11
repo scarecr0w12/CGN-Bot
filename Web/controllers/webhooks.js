@@ -70,16 +70,17 @@ controllers.stripe = async (req, res) => {
 
 async function handleStripeCheckoutCompleted (session) {
 	const customerId = session.customer;
-	const discordUserId = session.metadata?.discord_user_id;
+	const serverId = session.metadata?.server_id;
+	const purchasedBy = session.metadata?.discord_user_id;
 
-	if (!discordUserId) {
-		logger.warn("Stripe checkout missing discord_user_id metadata", { sessionId: session.id });
+	if (!serverId) {
+		logger.warn("Stripe checkout missing server_id metadata", { sessionId: session.id });
 		return;
 	}
 
-	// Link Stripe customer to user
-	await TierManager.linkPaymentCustomer(discordUserId, "stripe", customerId);
-	logger.info(`Stripe customer linked: ${customerId} -> ${discordUserId}`);
+	// Link Stripe customer to server
+	await TierManager.linkPaymentCustomer(serverId, "stripe", customerId);
+	logger.info(`Stripe customer linked: ${customerId} -> server ${serverId} (purchased by ${purchasedBy})`);
 }
 
 async function handleStripeSubscriptionUpdate (subscription) {
@@ -87,9 +88,9 @@ async function handleStripeSubscriptionUpdate (subscription) {
 	const { status } = subscription;
 	const priceId = subscription.items?.data?.[0]?.price?.id;
 
-	// Find user by Stripe customer ID
-	const user = await TierManager.findUserByPaymentCustomer("stripe", customerId);
-	if (!user) {
+	// Find server by Stripe customer ID
+	const server = await TierManager.findServerByPaymentCustomer("stripe", customerId);
+	if (!server) {
 		logger.warn("Stripe subscription update for unknown customer", { customerId });
 		return;
 	}
@@ -102,40 +103,40 @@ async function handleStripeSubscriptionUpdate (subscription) {
 				new Date(subscription.current_period_end * 1000) :
 				null;
 
-			await TierManager.setUserTier(
-				user._id,
+			await TierManager.setServerTier(
+				server._id,
 				tier._id,
 				"stripe",
 				expiresAt,
 				"subscription_active",
 			);
-			logger.info(`User ${user._id} assigned tier ${tier._id} via Stripe`);
+			logger.info(`Server ${server._id} assigned tier ${tier._id} via Stripe`);
 		}
 	} else if (status === "past_due" || status === "unpaid") {
-		logger.warn(`Stripe subscription ${status} for user ${user._id}`);
+		logger.warn(`Stripe subscription ${status} for server ${server._id}`);
 	}
 }
 
 async function handleStripeSubscriptionCanceled (subscription) {
 	const customerId = subscription.customer;
 
-	const user = await TierManager.findUserByPaymentCustomer("stripe", customerId);
-	if (!user) {
+	const server = await TierManager.findServerByPaymentCustomer("stripe", customerId);
+	if (!server) {
 		logger.warn("Stripe cancellation for unknown customer", { customerId });
 		return;
 	}
 
-	await TierManager.cancelSubscription(user._id, "stripe_canceled");
-	logger.info(`Stripe subscription canceled for user ${user._id}`);
+	await TierManager.cancelSubscription(server._id, "stripe_canceled");
+	logger.info(`Stripe subscription canceled for server ${server._id}`);
 }
 
 async function handleStripePaymentFailed (invoice) {
 	const customerId = invoice.customer;
 
-	const user = await TierManager.findUserByPaymentCustomer("stripe", customerId);
-	if (user) {
-		logger.warn(`Stripe payment failed for user ${user._id}`, { invoiceId: invoice.id });
-		// Could send notification to user here
+	const server = await TierManager.findServerByPaymentCustomer("stripe", customerId);
+	if (server) {
+		logger.warn(`Stripe payment failed for server ${server._id}`, { invoiceId: invoice.id });
+		// Could notify server owner here
 	}
 }
 
@@ -211,18 +212,16 @@ async function verifyPayPalWebhook (req) {
 async function handlePayPalSubscriptionActive (subscription) {
 	const subscriptionId = subscription.id;
 	const planId = subscription.plan_id;
-	// custom_id should contain discord_user_id
-	const customData = subscription.custom_id;
+	// custom_id should contain server_id (premium is per-server)
+	const serverId = subscription.custom_id;
 
-	if (!customData) {
-		logger.warn("PayPal subscription missing custom_id", { subscriptionId });
+	if (!serverId) {
+		logger.warn("PayPal subscription missing custom_id (server_id)", { subscriptionId });
 		return;
 	}
 
-	const discordUserId = customData;
-
-	// Link PayPal subscription to user
-	await TierManager.linkPaymentCustomer(discordUserId, "paypal", subscriptionId);
+	// Link PayPal subscription to server
+	await TierManager.linkPaymentCustomer(serverId, "paypal", subscriptionId);
 
 	// Get tier from plan mapping
 	const tier = await TierManager.getTierByPaymentProduct("paypal", planId);
@@ -231,22 +230,22 @@ async function handlePayPalSubscriptionActive (subscription) {
 			new Date(subscription.billing_info.next_billing_time) :
 			null;
 
-		await TierManager.setUserTier(discordUserId, tier._id, "paypal", expiresAt, "subscription_active");
-		logger.info(`User ${discordUserId} assigned tier ${tier._id} via PayPal`);
+		await TierManager.setServerTier(serverId, tier._id, "paypal", expiresAt, "subscription_active");
+		logger.info(`Server ${serverId} assigned tier ${tier._id} via PayPal`);
 	}
 }
 
 async function handlePayPalSubscriptionEnded (subscription, eventType) {
 	const subscriptionId = subscription.id;
 
-	const user = await TierManager.findUserByPaymentCustomer("paypal", subscriptionId);
-	if (!user) {
-		logger.warn("PayPal subscription end for unknown user", { subscriptionId });
+	const server = await TierManager.findServerByPaymentCustomer("paypal", subscriptionId);
+	if (!server) {
+		logger.warn("PayPal subscription end for unknown server", { subscriptionId });
 		return;
 	}
 
-	await TierManager.cancelSubscription(user._id, `paypal_${eventType.toLowerCase()}`);
-	logger.info(`PayPal subscription ended for user ${user._id}: ${eventType}`);
+	await TierManager.cancelSubscription(server._id, `paypal_${eventType.toLowerCase()}`);
+	logger.info(`PayPal subscription ended for server ${server._id}: ${eventType}`);
 }
 
 async function handlePayPalPaymentCompleted (sale) {
@@ -318,24 +317,25 @@ controllers.btcpay = async (req, res) => {
 async function handleBTCPayInvoiceSettled (event) {
 	const { invoiceId } = event;
 	const metadata = event.metadata || {};
-	const discordUserId = metadata.discord_user_id;
+	const serverId = metadata.server_id;
 	const tierId = metadata.tier_id;
 	const durationDays = parseInt(metadata.duration_days) || 30;
+	const purchasedBy = metadata.discord_user_id;
 
-	if (!discordUserId || !tierId) {
-		logger.warn("BTCPay invoice missing metadata", { invoiceId });
+	if (!serverId || !tierId) {
+		logger.warn("BTCPay invoice missing metadata (server_id or tier_id)", { invoiceId });
 		return;
 	}
 
-	// Link BTCPay customer
-	await TierManager.linkPaymentCustomer(discordUserId, "btcpay", invoiceId);
+	// Link BTCPay customer to server
+	await TierManager.linkPaymentCustomer(serverId, "btcpay", invoiceId);
 
 	// Calculate expiration
 	const expiresAt = new Date();
 	expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-	await TierManager.setUserTier(discordUserId, tierId, "btcpay", expiresAt, "crypto_payment");
-	logger.info(`User ${discordUserId} assigned tier ${tierId} via BTCPay for ${durationDays} days`);
+	await TierManager.setServerTier(serverId, tierId, "btcpay", expiresAt, "crypto_payment", purchasedBy);
+	logger.info(`Server ${serverId} assigned tier ${tierId} via BTCPay for ${durationDays} days (purchased by ${purchasedBy})`);
 }
 
 async function handleBTCPayInvoiceFailed (event) {
@@ -408,10 +408,18 @@ async function handlePatreonPledgeActive (data) {
 		return;
 	}
 
-	// Find user by linked Patreon account
+	// Find user by linked Patreon account to get their servers
 	const user = await Users.findOne({ "linked_accounts._id": "patreon", "linked_accounts.provider_user_id": patronId });
 	if (!user) {
 		logger.warn("Patreon pledge for unlinked patron", { patronId });
+		return;
+	}
+
+	// For Patreon, we need to find which server the user wants to apply the tier to
+	// Check if user has a default server set for Patreon benefits
+	const patreonServerId = user.patreon_server_id;
+	if (!patreonServerId) {
+		logger.warn("Patreon pledge but user has no default server configured", { patronId, userId: user._id });
 		return;
 	}
 
@@ -422,8 +430,8 @@ async function handlePatreonPledgeActive (data) {
 		const mapping = tierMapping.find(m => m._id === tierId);
 
 		if (mapping) {
-			await TierManager.setUserTier(user._id, mapping.local_tier_id, "patreon", null, "patreon_pledge");
-			logger.info(`User ${user._id} assigned tier ${mapping.local_tier_id} via Patreon pledge`);
+			await TierManager.setServerTier(patreonServerId, mapping.local_tier_id, "patreon", null, "patreon_pledge", user._id);
+			logger.info(`Server ${patreonServerId} assigned tier ${mapping.local_tier_id} via Patreon pledge from user ${user._id}`);
 		}
 	}
 }
@@ -436,8 +444,12 @@ async function handlePatreonPledgeDeleted (data) {
 	const user = await Users.findOne({ "linked_accounts._id": "patreon", "linked_accounts.provider_user_id": patronId });
 	if (!user) return;
 
-	await TierManager.cancelSubscription(user._id, "patreon_pledge_deleted");
-	logger.info(`Patreon pledge deleted for user ${user._id}`);
+	// Find the server that has this user's Patreon benefits
+	const patreonServerId = user.patreon_server_id;
+	if (!patreonServerId) return;
+
+	await TierManager.cancelSubscription(patreonServerId, "patreon_pledge_deleted");
+	logger.info(`Patreon pledge deleted - server ${patreonServerId} subscription canceled (patron: ${user._id})`);
 }
 
 // ============================================

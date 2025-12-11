@@ -223,15 +223,19 @@
 									<div class="column">
 										<div class="field">
 											<label class="label is-small">Admin Notes</label>
-											<div class="control">
+											<div class="control has-icons-right">
 												<input type="text" class="input is-small admin-notes-input" data-id="<%= item._id %>" value="<%= item.admin_notes || '' %>" placeholder="Internal notes...">
+												<span class="icon is-small is-right notes-saved-icon" style="display:none; color:#48c774;"><i class="fa fa-check"></i></span>
 											</div>
 										</div>
 									</div>
 									<div class="column is-narrow">
 										<div class="field">
 											<label class="label is-small">&nbsp;</label>
-											<div class="control">
+											<div class="control buttons has-addons">
+												<button class="button is-primary is-small save-notes-btn" data-id="<%= item._id %>" title="Save Notes">
+													<span class="icon"><i class="fa fa-save"></i></span>
+												</button>
 												<button class="button is-danger is-small delete-btn" data-id="<%= item._id %>" title="Delete">
 													<span class="icon"><i class="fa fa-trash"></i></span>
 												</button>
@@ -291,25 +295,43 @@
 			});
 		});
 		
-		// Admin notes handler (debounced)
-		let notesTimeout;
-		document.querySelectorAll('.admin-notes-input').forEach(input => {
-			input.addEventListener('input', function() {
+		// Save notes button handler
+		document.querySelectorAll('.save-notes-btn').forEach(btn => {
+			btn.addEventListener('click', async function() {
 				const id = this.dataset.id;
-				const notes = this.value;
+				const card = this.closest('.feedback-card');
+				const input = card.querySelector('.admin-notes-input');
+				const notes = input.value;
+				const savedIcon = card.querySelector('.notes-saved-icon');
 				
-				clearTimeout(notesTimeout);
-				notesTimeout = setTimeout(async () => {
-					try {
-						await fetch('/dashboard/maintainer/feedback/update', {
-							method: 'POST',
-							headers: { 'Content-Type': 'application/json' },
-							body: JSON.stringify({ id, admin_notes: notes })
-						});
-					} catch (err) {
-						console.error('Failed to save notes');
-					}
-				}, 500);
+				this.classList.add('is-loading');
+				try {
+					const response = await fetch('/dashboard/maintainer/feedback/update', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ id, admin_notes: notes })
+					});
+					
+					if (!response.ok) throw new Error('Failed to save');
+					
+					// Show saved icon briefly
+					savedIcon.style.display = 'inline-flex';
+					setTimeout(() => { savedIcon.style.display = 'none'; }, 2000);
+				} catch (err) {
+					alert('Failed to save notes');
+				} finally {
+					this.classList.remove('is-loading');
+				}
+			});
+		});
+		
+		// Also save on Enter key
+		document.querySelectorAll('.admin-notes-input').forEach(input => {
+			input.addEventListener('keypress', function(e) {
+				if (e.key === 'Enter') {
+					const card = this.closest('.feedback-card');
+					card.querySelector('.save-notes-btn').click();
+				}
 			});
 		});
 		

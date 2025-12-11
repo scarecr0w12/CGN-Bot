@@ -1,5 +1,6 @@
 const { setupConsolePage, setupRedirection } = require("../helpers");
 const controllers = require("../controllers");
+const mw = require("../middleware");
 
 module.exports = router => {
 	setupRedirection(router, "/", "/maintainer");
@@ -23,8 +24,8 @@ module.exports = router => {
 	setupConsolePage(router, "/membership/tiers", "administration", [], controllers.console.membership.tiers);
 	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
 	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
-	setupConsolePage(router, "/membership/users", "administration", [], controllers.console.membership.users);
-	router.post("/membership/users/cancel", controllers.console.membership.users.cancel);
+	setupConsolePage(router, "/membership/servers", "administration", [], controllers.console.membership.servers);
+	router.post("/membership/servers/cancel", controllers.console.membership.servers.cancel);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);
@@ -36,8 +37,8 @@ module.exports = router => {
 
 	// Feedback System
 	setupConsolePage(router, "/feedback", "maintainer", [], controllers.console.feedback.list);
-	router.post("/feedback/update", controllers.console.feedback.update);
-	router.post("/feedback/delete", controllers.console.feedback.delete);
+	router.post("/feedback/update", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.feedback.update);
+	router.post("/feedback/delete", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.feedback.delete);
 
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);

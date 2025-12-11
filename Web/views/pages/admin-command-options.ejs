@@ -28,10 +28,15 @@
 							General
 						</h4>
 						<div class="field">
-							<label class="label">Command prefix</label>
+							<label class="label">Command prefix <% if (!pageData.hasCustomPrefix) { %><span class="tag is-warning is-light">Premium</span><% } %></label>
 							<p class="control">
-								<input name="command_prefix" class="input is-primary" type="text" value="<%= configData.command_prefix %>" minlength="1" maxlength="10">
-								<span class="help">Plaintext prefix used to activate commands. Type <code>@mention</code> in the box above to use a Discord mention of Skynet.</span>
+								<input name="command_prefix" class="input is-primary" type="text" value="<%= configData.command_prefix %>" minlength="1" maxlength="10" <%= !pageData.hasCustomPrefix ? 'disabled' : '' %>>
+								<span class="help">
+									Plaintext prefix used to activate commands. Type <code>@mention</code> in the box above to use a Discord mention of Skynet.
+									<% if (!pageData.hasCustomPrefix) { %>
+									<br><strong class="has-text-warning">Custom prefix requires a premium subscription.</strong> <a href="/membership">Upgrade now</a>
+									<% } %>
+								</span>
 							</p>
 						</div>
 						<div class="field">

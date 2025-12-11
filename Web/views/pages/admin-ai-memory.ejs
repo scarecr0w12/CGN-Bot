@@ -26,6 +26,13 @@
 						</div>
 					</article>
 
+					<% if (!pageData.hasAIAccess) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<strong><span class="tag is-warning">Premium Feature</span></strong> AI features require a premium subscription. <a href="/membership">Upgrade now</a>
+						</div>
+					</article>
+					<% } else { %>
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<!-- Enable Toggle -->
 						<div class="field">
@@ -323,6 +330,7 @@
 						<%- include('../partials/form-buttons') %>
 						<%- include('../partials/form-buttons-bar') %>
 					</form>
+					<% } %>
 				</div>
 			</div>
 		</div>

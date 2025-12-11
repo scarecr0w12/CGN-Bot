@@ -1,7 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" class="has-no-scrollbar">
 <head>
-    <title>Installing <%= pageData.extensionData.name %> - Skynet Extensions</title>
+    <title>Install <%= pageData.extensionData.name %> - Skynet Discord Bot Extensions</title>
+    <%
+    // SEO for extension installer pages
+    if (typeof pageData !== "undefined" && pageData.extensionData) {
+        pageData.seo = {
+            title: `Install ${pageData.extensionData.name} - Skynet Discord Bot Extensions`,
+            description: pageData.extensionData.description 
+                ? `${pageData.extensionData.description.substring(0, 150)}... Install this ${pageData.extensionData.type || 'extension'} on your Discord server with Skynet bot.`
+                : `Install the ${pageData.extensionData.name} extension for Skynet Discord bot. Enhance your server with custom commands and features.`,
+            keywords: `${pageData.extensionData.name}, Discord bot extension, Discord custom command, Skynet extension, Discord bot plugin`,
+            type: "website"
+        };
+        pageData.breadcrumbs = [
+            { name: "Home", url: "/" },
+            { name: "Extensions", url: "/extensions" },
+            { name: pageData.extensionData.name, url: `/extensions/${pageData.extensionData._id}/install` }
+        ];
+    }
+    %>
     <%- include('../partials/head') %>
 </head>
 <body class="has-no-scrollbar">

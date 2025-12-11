@@ -1,5 +1,5 @@
 ---
-description: Handles marketplace extension validation, versioning, publishing and deployment workflows for Discord bot extensions
+description: Guidelines for implementing extension marketplace features including validation, versioning, and permissions
 trigger: model_decision
 ---
 
@@ -53,7 +53,13 @@ The extension system implements a comprehensive marketplace workflow focusing on
 $END$
 
  If you're using this file in context, clearly say in italics in one small line that "Context added by Giga extension-management-flow" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
-# === END USER INSTRUCTIONS ===
+
+---
+description: Handles marketplace extension validation, versioning, publishing and deployment workflows for Discord bot extensions
+trigger: model_decision
+---
+
+
 
 # extension-management-flow
 
@@ -107,6 +113,65 @@ Key Extension Workflows:
 - Resource cleanup
 
 The system implements strict security measures through sandboxing while providing flexible extension capabilities. Extension lifecycles are fully managed from publication through deployment and maintenance.
+
+$END$
+
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga extension-management-flow" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
+# === END USER INSTRUCTIONS ===
+
+# extension-management-flow
+
+Extension Management Core System (Importance: 90/100)
+
+1. Extension Validation Pipeline
+- Multi-stage validation process for submitted extensions
+- Security scanning for malicious code patterns 
+- Dependency graph analysis for conflicts
+- Version compatibility verification
+- Author reputation checking
+File: Internals/Extensions/API/IsolatedSandbox.js
+
+2. Version Control System
+- Semantic versioning enforcement
+- Automated compatibility checking
+- Breaking change detection
+- Dependency resolution across versions
+File: Web/controllers/extensions.js
+
+3. Permission Management
+- Granular capability system for extensions
+- Scope-based permission inheritance
+- Server-specific extension policies
+- Author privilege levels
+File: Internals/Extensions/API/IsolatedSandbox.js
+
+4. Extension Marketplace Flow
+- Submission queue management
+- Review workflow tracking
+- Rating and feedback system
+- Installation tracking
+- Usage analytics
+File: Web/controllers/dashboard/extensions.js
+
+5. Extension Runtime Environment
+- Sandboxed execution context
+- Resource usage monitoring
+- Memory allocation controls 
+- API access restrictions
+- Error boundary management
+File: Internals/Worker.js
+
+Key Workflows:
+1. Extension Submission -> Validation -> Review -> Publishing
+2. Version Update -> Compatibility Check -> Deployment
+3. Installation -> Permission Grant -> Resource Allocation
+
+Business Rules:
+- Extensions must pass security validation before review
+- Version updates require compatibility verification
+- Author reputation affects review priority
+- Server-specific extension policies override global defaults
+- Resource limits scale with server subscription tier
 
 $END$
 

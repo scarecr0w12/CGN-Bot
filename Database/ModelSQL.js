@@ -68,6 +68,16 @@ module.exports = class ModelSQL {
 					}
 				}
 
+				// Track computed fields from $addFields
+				if (stage.$addFields) {
+					// $addFields creates computed columns - we'll handle these in $project
+					// Store them for later use
+					if (!this._computedFields) this._computedFields = {};
+					for (const [key, value] of Object.entries(stage.$addFields)) {
+						this._computedFields[key] = value;
+					}
+				}
+
 				if (stage.$group) {
 					const groupFields = [];
 					const selectFields = [];
@@ -120,11 +130,42 @@ module.exports = class ModelSQL {
 					const projectFields = [];
 					for (const [key, value] of Object.entries(stage.$project)) {
 						if (value === 1 || value === true) {
-							projectFields.push(`\`${key}\``);
+							// Check if this is a computed field from $addFields
+							if (this._computedFields && this._computedFields[key]) {
+								const computed = this._computedFields[key];
+								// Handle $size: { $objectToArray: "$field" } pattern
+								if (computed.$size && computed.$size.$objectToArray) {
+									const field = computed.$size.$objectToArray.substring(1);
+									projectFields.push(`JSON_LENGTH(\`${field}\`) as \`${key}\``);
+								}
+							} else if (key.includes(".")) {
+								// Handle JSON paths (fields with dots like "config.public_data")
+								const parts = key.split(".");
+								const baseCol = parts[0];
+								const jsonPath = parts.slice(1).join(".");
+								projectFields.push(`JSON_EXTRACT(\`${baseCol}\`, '$."${jsonPath}"') as \`${key.replace(/\./g, "_")}\``);
+							} else {
+								projectFields.push(`\`${key}\``);
+							}
+						} else if (typeof value === "object" && value.$add) {
+							// $add - arithmetic addition
+							const sqlExpr = this._buildArithmeticExpr(value.$add);
+							projectFields.push(`(${sqlExpr}) as \`${key}\``);
 						} else if (typeof value === "object" && value.$size) {
 							// $size for JSON array length
 							const field = value.$size.substring(1);
 							projectFields.push(`JSON_LENGTH(\`${field}\`) as \`${key}\``);
+						} else if (typeof value === "object" && value.$objectToArray) {
+							// $objectToArray - for MariaDB, we need to handle JSON objects
+							const field = value.$objectToArray.substring(1);
+							if (field.includes(".")) {
+								const parts = field.split(".");
+								const baseCol = parts[0];
+								const jsonPath = parts.slice(1).join(".");
+								projectFields.push(`JSON_EXTRACT(\`${baseCol}\`, '$."${jsonPath}"') as \`${key}\``);
+							} else {
+								projectFields.push(`\`${field}\` as \`${key}\``);
+							}
 						}
 					}
 					if (projectFields.length > 0) {
@@ -157,6 +198,53 @@ module.exports = class ModelSQL {
 		} finally {
 			if (conn) conn.release();
 		}
+	}
+
+	/**
+	 * Build SQL expression from MongoDB arithmetic operators
+	 * @param {Array} operands Array of operands for the operation
+	 * @returns {string} SQL expression
+	 */
+	_buildArithmeticExpr (operands) {
+		const parts = operands.map(op => {
+			if (typeof op === "number") {
+				return op.toString();
+			} else if (typeof op === "string" && op.startsWith("$")) {
+				const field = op.substring(1);
+				// Check if this is a computed field
+				if (this._computedFields && this._computedFields[field]) {
+					const computed = this._computedFields[field];
+					if (computed.$size && computed.$size.$objectToArray) {
+						const jsonField = computed.$size.$objectToArray.substring(1);
+						return `JSON_LENGTH(\`${jsonField}\`)`;
+					}
+				}
+				return `\`${field}\``;
+			} else if (typeof op === "object" && op.$multiply) {
+				const mulParts = op.$multiply.map(m => {
+					if (typeof m === "number") return m.toString();
+					if (typeof m === "string" && m.startsWith("$")) {
+						const f = m.substring(1);
+						if (this._computedFields && this._computedFields[f]) {
+							const c = this._computedFields[f];
+							if (c.$size && c.$size.$objectToArray) {
+								return `JSON_LENGTH(\`${c.$size.$objectToArray.substring(1)}\`)`;
+							}
+						}
+						return `\`${f}\``;
+					}
+					if (typeof m === "object" && m.$multiply) {
+						return `(${this._buildArithmeticExpr([{ $multiply: m.$multiply }])})`;
+					}
+					return "0";
+				});
+				return `(${mulParts.join(" * ")})`;
+			} else if (typeof op === "object" && op.$add) {
+				return `(${this._buildArithmeticExpr(op.$add)})`;
+			}
+			return "0";
+		});
+		return parts.join(" + ");
 	}
 
 	/**

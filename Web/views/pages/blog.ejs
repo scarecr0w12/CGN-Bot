@@ -3,21 +3,62 @@
 <head>
 	<title><%= pageData.pageTitle %> | Skynet Discord Bot Blog</title>
 	<%
-	// SEO for blog pages
+	// SEO for blog pages - dynamic based on mode
 	if (typeof pageData !== "undefined") {
+		const isArticle = pageData.mode === "article" && pageData.blogPost;
+		const articleDescription = isArticle && pageData.blogPost.content 
+			? pageData.blogPost.content.replace(/<[^>]*>/g, '').substring(0, 155).trim() + '...'
+			: null;
+		
 		pageData.seo = {
 			title: `${pageData.pageTitle} | Skynet Discord Bot Blog`,
-			description: "Latest news, updates, and announcements for Skynet Discord bot. Stay informed about new features, tips, and community highlights.",
-			keywords: "Discord bot blog, Skynet updates, Discord bot news, Discord server tips, bot announcements",
-			type: "blog"
+			description: articleDescription || "Latest news, updates, and announcements for Skynet Discord bot. Stay informed about new features, tips, and community highlights.",
+			keywords: isArticle 
+				? `${pageData.blogPost.title}, ${pageData.blogPost.category}, Discord bot blog, Skynet updates`
+				: "Discord bot blog, Skynet updates, Discord bot news, Discord server tips, bot announcements",
+			type: isArticle ? "article" : "blog"
 		};
 		pageData.breadcrumbs = [
 			{ name: "Home", url: "/" },
 			{ name: "Blog", url: "/blog" }
 		];
+		if (isArticle) {
+			pageData.breadcrumbs.push({ name: pageData.blogPost.title, url: `/blog/${pageData.blogPost.id}` });
+		}
 	}
 	%>
 	<%- include('../partials/head') %>
+	<% if (pageData.mode === "article" && pageData.blogPost) { %>
+	<!-- Article Schema for Blog Post -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Article",
+		"headline": "<%= pageData.blogPost.title.replace(/"/g, '\\"') %>",
+		"description": "<%= pageData.blogPost.content ? pageData.blogPost.content.replace(/<[^>]*>/g, '').substring(0, 155).replace(/"/g, '\\"').trim() : '' %>",
+		"image": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/static/img/logo.png",
+		"author": {
+			"@type": "Person",
+			"name": "<%= pageData.blogPost.author.name.replace(/"/g, '\\"') %>"
+		},
+		"publisher": {
+			"@type": "Organization",
+			"name": "Skynet Discord Bot",
+			"logo": {
+				"@type": "ImageObject",
+				"url": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/static/img/logo.png"
+			}
+		},
+		"datePublished": "<%= pageData.blogPost.rawPublished %>",
+		"dateModified": "<%= pageData.blogPost.rawPublished %>",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/blog/<%= pageData.blogPost.id %>"
+		},
+		"articleSection": "<%= pageData.blogPost.category %>"
+	}
+	</script>
+	<% } %>
 </head>
 <body>
 	<section id="header" class="main-header-section hero is-primary is-small is-bold">

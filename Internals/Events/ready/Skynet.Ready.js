@@ -8,6 +8,7 @@ const {
 	Giveaways,
 } = require("../../../Modules/");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
+const metrics = require("../../../Modules/Metrics");
 const {
 	ClearServerStats: clearStats,
 	MessageOfTheDay: createMessageOfTheDay,
@@ -161,6 +162,17 @@ class Ready extends BaseEvent {
 		}
 	}
 
+	// Start periodic metrics collection
+	startMetricsCollection () {
+		// Update Discord metrics every 30 seconds
+		const updateMetrics = () => {
+			metrics.updateDiscordMetrics(this.client);
+		};
+		updateMetrics(); // Initial update
+		this.client.setInterval(updateMetrics, 30000);
+		logger.debug("Started Prometheus metrics collection interval");
+	}
+
 	// Report to master that we're ok to go
 	showStartupMessage () {
 		const readyMsgs = [
@@ -195,6 +207,9 @@ class Ready extends BaseEvent {
 
 		// Start Uptime Kuma heartbeat for this shard
 		uptimeKuma.startShardHeartbeat(this.client);
+
+		// Start Prometheus metrics collection
+		this.startMetricsCollection();
 
 		this.client.IPC.send("finished", { id: this.client.shard.id });
 	}
@@ -297,17 +312,18 @@ class Ready extends BaseEvent {
 	 */
 	async setGiveaways () {
 		const promiseArray = [];
-		const serverDocuments = await Servers.find({
+		// Get all servers and filter for ongoing giveaways in JS (MariaDB compatible)
+		const allServerDocs = await Servers.find({
 			_id: {
 				$in: Array.from(this.client.guilds.cache.keys()),
 			},
-			channels: {
-				$elemMatch: {
-					"giveaway.isOngoing": true,
-				},
-			},
 		}).exec().catch(err => {
 			logger.warn("Failed to get giveaways from db (-_-*)", {}, err);
+		});
+		// Filter servers with ongoing giveaways
+		const serverDocuments = allServerDocs?.filter(doc => {
+			if (!doc.channels) return false;
+			return Object.values(doc.channels).some(ch => ch.giveaway?.isOngoing === true);
 		});
 		if (serverDocuments) {
 			logger.debug("Setting existing giveaways for servers.");
@@ -334,18 +350,18 @@ class Ready extends BaseEvent {
 	 */
 	async setCountdowns () {
 		const promiseArray = [];
-		const serverDocuments = await Servers.find({
+		// Get all servers and filter for countdowns in JS (MariaDB compatible)
+		const allServerDocs = await Servers.find({
 			_id: {
 				$in: Array.from(this.client.guilds.cache.keys()),
-			},
-			"config.countdown_data": {
-				$not: {
-					$size: 0,
-				},
 			},
 		}).exec().catch(err => {
 			logger.warn("Failed to get countdowns from db (-_-*)", {}, err);
 		});
+		// Filter servers with countdown data
+		const serverDocuments = allServerDocs?.filter(doc =>
+			doc.config?.countdown_data && doc.config.countdown_data.length > 0,
+		);
 		if (serverDocuments) {
 			logger.debug("Setting existing countdowns in servers.");
 			for (let i = 0; i < serverDocuments.length; i++) {
@@ -364,9 +380,14 @@ class Ready extends BaseEvent {
 	async setReminders () {
 		if (this.client.shardID !== "0") return;
 		const promiseArray = [];
-		const userDocuments = await Users.find({ reminders: { $not: { $size: 0 } } }).exec().catch(err => {
+		// Get all users and filter for reminders in JS (MariaDB compatible)
+		const allUserDocs = await Users.find({}).exec().catch(err => {
 			logger.warn(`Failed to get reminders from db (-_-*)`, {}, err);
 		});
+		// Filter users with reminders
+		const userDocuments = allUserDocs?.filter(doc =>
+			doc.reminders && doc.reminders.length > 0,
+		);
 		if (userDocuments) {
 			logger.debug("Setting existing reminders for all users.");
 			for (let i = 0; i < userDocuments.length; i++) {

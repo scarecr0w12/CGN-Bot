@@ -18,6 +18,77 @@
 	%>
 	<%- include("../partials/head") %>
 
+	<!-- FAQ Schema for Rich Snippets -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{
+				"@type": "Question",
+				"name": "Is Skynet Discord bot free to use?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes! Skynet is completely free to use with all core features including moderation, fun commands, leveling, giveaways, and the web dashboard. Premium tiers are available for additional features and higher limits."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I add Skynet to my Discord server?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Click the 'Add to Server' button on our website, select your server from the dropdown, and authorize the bot. Skynet will be added instantly and you can configure it through the web dashboard."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What moderation features does Skynet offer?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet includes auto-moderation with spam detection, word filters, raid protection, warning/strike system, timed mutes and bans, moderation logs, and customizable punishment escalation."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I create custom commands with Skynet?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes! Skynet has a powerful extension system that lets you create custom commands, automated responses, and event-triggered actions using JavaScript. You can also browse and install community-created extensions."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Does Skynet have a web dashboard?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes, Skynet includes a comprehensive web dashboard where you can configure all bot settings, manage moderation, set up leveling and ranks, create custom commands, and view server statistics."
+				}
+			}
+		]
+	}
+	</script>
+
+	<!-- Organization Schema -->
+	<% const baseUrl = typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : ''; %>
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Organization",
+		"name": "Skynet Discord Bot",
+		"url": "<%= baseUrl %>",
+		"logo": "<%= baseUrl %>/static/img/logo.png",
+		"sameAs": [
+			"https://github.com/scarecr0w12/CGN-Bot",
+			"https://discord.gg/gDtzaS2"
+		],
+		"contactPoint": {
+			"@type": "ContactPoint",
+			"contactType": "customer support",
+			"url": "https://discord.gg/gDtzaS2"
+		}
+	}
+	</script>
+
 	<style type="text/css">
 	@media screen and (max-width: 768px) {
 		#skynet-discord {

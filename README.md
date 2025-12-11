@@ -30,7 +30,7 @@ npm install
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your Discord bot token and MongoDB connection
+# Edit .env with your Discord bot token and database connection (MongoDB or MariaDB)
 
 # Start the bot
 node master.js
@@ -40,6 +40,7 @@ node master.js
 
 - [Changelog](CHANGELOG.md) - Version history and release notes
 - [Feature Development](docs/FEATURE_DEVELOPMENT.md) - Tier-gated feature implementation guide
+- [MariaDB Migration](docs/MARIADB_MIGRATION.md) - Guide for migrating from MongoDB to MariaDB
 - [Contributing](/.github/CONTRIBUTING.md) - How to contribute to the project
 
 ## Development

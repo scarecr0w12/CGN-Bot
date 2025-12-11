@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Advanced Statistics - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<style>
+		.stat-card {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			border-radius: 12px;
+			padding: 1.5rem;
+			color: white;
+			margin-bottom: 1rem;
+		}
+		.stat-card.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+		.stat-card.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+		.stat-card.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+		.stat-card .stat-value {
+			font-size: 2.5rem;
+			font-weight: 700;
+			line-height: 1;
+		}
+		.stat-card .stat-label {
+			font-size: 0.9rem;
+			opacity: 0.9;
+			margin-top: 0.5rem;
+		}
+		.chart-container {
+			position: relative;
+			height: 250px;
+			width: 100%;
+		}
+		.leaderboard-item {
+			display: flex;
+			align-items: center;
+			padding: 0.75rem;
+			border-bottom: 1px solid #eee;
+		}
+		.leaderboard-item:last-child { border-bottom: none; }
+		.leaderboard-rank {
+			width: 32px;
+			height: 32px;
+			border-radius: 50%;
+			background: #3273dc;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 600;
+			margin-right: 1rem;
+		}
+		.leaderboard-rank.gold { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
+		.leaderboard-rank.silver { background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%); }
+		.leaderboard-rank.bronze { background: linear-gradient(135deg, #c9920f 0%, #8B4513 100%); }
+		.premium-overlay {
+			position: relative;
+		}
+		.premium-overlay.locked::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255,255,255,0.8);
+			backdrop-filter: blur(4px);
+			border-radius: 6px;
+			z-index: 10;
+		}
+		.premium-badge {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 11;
+			text-align: center;
+		}
+		.activity-bar {
+			height: 24px;
+			border-radius: 12px;
+			background: #eee;
+			overflow: hidden;
+		}
+		.activity-bar-fill {
+			height: 100%;
+			background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+			border-radius: 12px;
+			transition: width 0.5s ease;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fas fa-chart-line"></i></span>
+						Advanced Statistics
+						<% if (pageData.hasAdvancedStats) { %>
+						<span class="tag is-success">Premium</span>
+						<% } else { %>
+						<span class="tag is-warning">Premium Required</span>
+						<% } %>
+					</h1>
+
+					<% if (!pageData.hasAdvancedStats) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<p><strong>Premium Feature</strong></p>
+							<p>Advanced Statistics provides detailed analytics and insights about your server. <a href="/dashboard/<%= serverData.id %>/subscription">Upgrade to Premium</a> to unlock this feature.</p>
+						</div>
+					</article>
+					<% } %>
+
+					<div class="premium-overlay <%= !pageData.hasAdvancedStats ? 'locked' : '' %>">
+						<% if (!pageData.hasAdvancedStats) { %>
+						<div class="premium-badge">
+							<span class="icon is-large has-text-warning"><i class="fas fa-lock fa-3x"></i></span>
+							<p class="mt-3"><a href="/dashboard/<%= serverData.id %>/subscription" class="button is-warning">Unlock Premium</a></p>
+						</div>
+						<% } %>
+
+						<!-- Overview Cards -->
+						<div class="columns is-multiline">
+							<div class="column is-3">
+								<div class="stat-card">
+									<div class="stat-value"><%= pageData.stats.overview.totalMembers.toLocaleString() %></div>
+									<div class="stat-label">Total Members Tracked</div>
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="stat-card green">
+									<div class="stat-value"><%= pageData.stats.overview.totalPoints.toLocaleString() %></div>
+									<div class="stat-label">Total Points</div>
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="stat-card orange">
+									<div class="stat-value"><%= pageData.stats.overview.averagePoints.toLocaleString() %></div>
+									<div class="stat-label">Average Points/Member</div>
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="stat-card blue">
+									<div class="stat-value"><%= pageData.stats.overview.messagesToday.toLocaleString() %></div>
+									<div class="stat-label">Messages Today</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Activity & Moderation Row -->
+						<div class="columns">
+							<div class="column is-6">
+								<div class="box">
+									<h4 class="title is-5">
+										<span class="icon"><i class="fas fa-users"></i></span>
+										Member Activity (7 days)
+									</h4>
+									<div class="activity-bar mb-3">
+										<div class="activity-bar-fill" style="width: <%= pageData.stats.activity.activityRate %>%"></div>
+									</div>
+									<div class="columns is-mobile">
+										<div class="column has-text-centered">
+											<p class="heading">Active</p>
+											<p class="title is-4 has-text-success"><%= pageData.stats.activity.activeMembers %></p>
+										</div>
+										<div class="column has-text-centered">
+											<p class="heading">Inactive</p>
+											<p class="title is-4 has-text-grey"><%= pageData.stats.activity.inactiveMembers %></p>
+										</div>
+										<div class="column has-text-centered">
+											<p class="heading">Activity Rate</p>
+											<p class="title is-4 has-text-info"><%= pageData.stats.activity.activityRate %>%</p>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="column is-6">
+								<div class="box">
+									<h4 class="title is-5">
+										<span class="icon"><i class="fas fa-gavel"></i></span>
+										Moderation Overview
+									</h4>
+									<div class="columns is-mobile">
+										<div class="column has-text-centered">
+											<p class="heading">Members with Strikes</p>
+											<p class="title is-3 has-text-danger"><%= pageData.stats.moderation.membersWithStrikes %></p>
+										</div>
+										<div class="column has-text-centered">
+											<p class="heading">Total Strikes</p>
+											<p class="title is-3 has-text-warning"><%= pageData.stats.moderation.totalStrikes %></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Charts Row -->
+						<div class="columns">
+							<div class="column is-6">
+								<div class="box">
+									<h4 class="title is-5">
+										<span class="icon"><i class="fas fa-coins"></i></span>
+										Points Distribution
+									</h4>
+									<div class="chart-container">
+										<canvas id="pointsChart"></canvas>
+									</div>
+								</div>
+							</div>
+							<div class="column is-6">
+								<div class="box">
+									<h4 class="title is-5">
+										<span class="icon"><i class="fas fa-medal"></i></span>
+										Rank Distribution
+									</h4>
+									<div class="chart-container">
+										<canvas id="ranksChart"></canvas>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Leaderboard -->
+						<div class="box">
+							<h4 class="title is-5">
+								<span class="icon"><i class="fas fa-trophy"></i></span>
+								Top 10 Leaderboard
+							</h4>
+							<% if (pageData.stats.leaderboard.length === 0) { %>
+							<p class="has-text-grey has-text-centered py-4">No members with points yet.</p>
+							<% } else { %>
+							<div class="leaderboard">
+								<% pageData.stats.leaderboard.forEach((member, index) => { %>
+								<div class="leaderboard-item">
+									<div class="leaderboard-rank <%= index === 0 ? 'gold' : (index === 1 ? 'silver' : (index === 2 ? 'bronze' : '')) %>">
+										<%= index + 1 %>
+									</div>
+									<div class="is-flex-grow-1">
+										<p class="has-text-weight-semibold"><%= member.id %></p>
+										<p class="is-size-7 has-text-grey"><%= member.rank || 'No Rank' %></p>
+									</div>
+									<div class="has-text-right">
+										<p class="has-text-weight-bold has-text-primary"><%= member.points.toLocaleString() %></p>
+										<p class="is-size-7 has-text-grey">points</p>
+									</div>
+								</div>
+								<% }); %>
+							</div>
+							<% } %>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		<% if (pageData.hasAdvancedStats) { %>
+		// Points Distribution Chart
+		const pointsCtx = document.getElementById('pointsChart').getContext('2d');
+		new Chart(pointsCtx, {
+			type: 'doughnut',
+			data: {
+				labels: ['No Points', '1-100', '101-500', '501-1000', '1000+'],
+				datasets: [{
+					data: [
+						<%= pageData.stats.distributions.points.zero %>,
+						<%= pageData.stats.distributions.points.low %>,
+						<%= pageData.stats.distributions.points.medium %>,
+						<%= pageData.stats.distributions.points.high %>,
+						<%= pageData.stats.distributions.points.elite %>
+					],
+					backgroundColor: [
+						'#bdc3c7',
+						'#3498db',
+						'#2ecc71',
+						'#f39c12',
+						'#e74c3c'
+					],
+					borderWidth: 0
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						position: 'bottom'
+					}
+				}
+			}
+		});
+
+		// Ranks Distribution Chart
+		const ranksCtx = document.getElementById('ranksChart').getContext('2d');
+		const rankData = <%- JSON.stringify(pageData.stats.distributions.ranks) %>;
+		const rankLabels = Object.keys(rankData);
+		const rankValues = Object.values(rankData);
+		
+		new Chart(ranksCtx, {
+			type: 'bar',
+			data: {
+				labels: rankLabels,
+				datasets: [{
+					label: 'Members',
+					data: rankValues,
+					backgroundColor: 'rgba(50, 115, 220, 0.8)',
+					borderRadius: 6
+				}]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					}
+				},
+				scales: {
+					y: {
+						beginAtZero: true,
+						ticks: {
+							stepSize: 1
+						}
+					}
+				}
+			}
+		});
+		<% } %>
+	});
+	</script>
+</body>
+</html>

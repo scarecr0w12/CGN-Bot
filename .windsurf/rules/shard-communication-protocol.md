@@ -1,5 +1,5 @@
 ---
-description: Specification for implementing custom inter-shard communication protocols and state synchronization between bot shards
+description: Handles cross-shard communication and state synchronization for distributed Discord bot operations
 trigger: model_decision
 ---
 
@@ -45,7 +45,13 @@ The protocol appears to be built specifically for Discord bot shard management w
 $END$
 
  If you're using this file in context, clearly say in italics in one small line that "Context added by Giga shard-communication-protocol" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
-# === END USER INSTRUCTIONS ===
+
+---
+description: Specification for implementing custom inter-shard communication protocols and state synchronization between bot shards
+trigger: model_decision
+---
+
+
 
 # shard-communication-protocol
 
@@ -91,6 +97,49 @@ The protocol implements specialized handling for:
 - Cross-shard command execution
 - Distributed cache invalidation
 - Real-time state updates
+
+$END$
+
+ If you're using this file in context, clearly say in italics in one small line that "Context added by Giga shard-communication-protocol" along with specifying exactly what information was used from this file in a human-friendly way, instead of using kebab-case use normal sentence case.
+# === END USER INSTRUCTIONS ===
+
+# shard-communication-protocol
+
+Importance Score: 85/100
+
+Core IPC Protocol Components:
+
+1. Cross-Shard Message Routing
+- Implements internal pub/sub system for cross-shard event propagation
+- Maintains guild-to-shard mapping for targeted message delivery
+- Routes slash commands and interactions to appropriate shards
+- Handles cross-shard user presence synchronization
+
+2. State Synchronization
+- Guild configuration propagation across shards
+- Shared cache invalidation protocol
+- Member status synchronization between shards
+- Global rate limit tracking and enforcement
+
+3. Worker Process Communication
+- Extension execution result propagation
+- Math operation distribution and result collection
+- Emoji processing load balancing
+- Custom IPC messaging format for worker tasks
+
+Key Protocol Handlers:
+- GUILD_SYNC: Synchronizes guild settings across shards
+- USER_UPDATE: Propagates user data changes
+- PRESENCE_UPDATE: Manages cross-shard presence state
+- COMMAND_EXEC: Routes slash commands to target shards
+- CACHE_INVALIDATE: Coordinates cache updates
+
+Relevant File Paths:
+- Internals/Sharder.js
+- Internals/Client.js
+- Internals/Worker.js
+
+The protocol implements Discord-specific business logic for maintaining consistent state across a distributed bot instance, with emphasis on guild data synchronization and command routing.
 
 $END$
 

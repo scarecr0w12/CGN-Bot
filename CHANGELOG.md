@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-12-11
+
+### Added
+
+#### Per-Server Premium Model
+
+- **Server Subscriptions** - Premium features now apply per-server instead of per-user
+- **Server Subscription Page** (`Web/views/pages/admin-subscription.ejs`) - Dashboard page for managing server subscriptions
+- **Subscription Management** - Owners can upgrade servers independently
+- **TierManager Updates** - Refactored to support server-level feature gating
+- **Seed Script** (`scripts/seed-tiers.js`) - Initialize default tiers and features
+
+#### Monitoring & Observability
+
+- **Prometheus Metrics** (`Modules/Metrics.js`) - Bot performance metrics collection
+- **Grafana Dashboards** - Pre-configured monitoring dashboards
+- **MariaDB Exporter** - Database performance metrics
+- **Docker Monitoring Stack** - Full observability setup in docker-compose
+
+#### Developer Workflows
+
+- **Windsurf Workflows** - 7 new development workflows:
+  - `add-slash-command` - Scaffold new Discord slash commands
+  - `check-logs` - View and analyze bot logs
+  - `database-migration` - Create and run MariaDB migrations
+  - `debug-web-routes` - Troubleshoot Express routes
+  - `deploy-release` - Build and tag releases
+  - `start-dev-environment` - Start Docker dev environment
+  - `test-extension` - Validate bot extensions
+
+#### Dashboard Enhancements
+
+- **Advanced Stats Page** (`Web/views/pages/admin-advanced-stats.ejs`) - Detailed server analytics
+- **Maintainer Servers Page** (`Web/views/pages/maintainer-servers.ejs`) - Admin server management
+- **AI Model Selection** - Dynamic model list loading in AI settings
+
+### Changed
+
+- **Premium Architecture** - Migrated from user-based to server-based subscriptions
+- **SubscriptionCheck** - Updated to handle server subscription expiration
+- **Dashboard Routes** - Added AI models endpoint with proper auth
+- **WebServer** - Enhanced graceful shutdown handling
+
+### Fixed
+
+- **TierManager Query** - Fixed missing `.exec()` causing non-iterable results
+- **Activity Controller** - Use `.cache.size` for accurate guild/user counts
+- **Webhook Controller** - Improved error handling for payment webhooks
+- **Auth Middleware** - Better session validation and error recovery
+
+---
+
 ## [Unreleased] - MariaDB Migration Branch
 
 ### Added
@@ -212,6 +264,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.3.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.3.0
+[1.2.1]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.2.1
 [1.2.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.2.0
 [1.1.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.1.0
 [1.0.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.0.0

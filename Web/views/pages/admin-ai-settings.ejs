@@ -25,6 +25,13 @@
 						</div>
 					</article>
 
+					<% if (!pageData.hasAIAccess) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<strong><span class="tag is-warning">Premium Feature</span></strong> AI features require a premium subscription. <a href="/membership">Upgrade now</a> to configure AI assistants, chat capabilities, and image generation for your server.
+						</div>
+					</article>
+					<% } else { %>
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
 						<!-- Provider Selection -->
 						<h4 class="subtitle is-4">
@@ -289,6 +296,7 @@
 						<%- include('../partials/form-buttons') %>
 						<%- include('../partials/form-buttons-bar') %>
 					</form>
+					<% } %>
 				</div>
 			</div>
 		</div>

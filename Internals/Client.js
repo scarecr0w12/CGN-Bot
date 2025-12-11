@@ -1065,21 +1065,29 @@ module.exports = class SkynetClient extends DJSClient {
 	async logMessage (serverDocument, level, content, chid, usrid) {
 		try {
 			if (serverDocument && level && content) {
-				const logCount = (await Servers.aggregate([{ $match: { _id: serverDocument._id } }, { $project: { logs: { $size: "$logs" } } }]))[0].logs;
-				Servers.update({ _id: serverDocument._id }, {
-					$push: {
-						logs: {
-							level: level,
-							content: content,
-							channelid: chid ? chid : undefined,
-							userid: usrid ? usrid : undefined,
-							timestamp: Date.now(),
-						},
-					},
-				});
-				if (logCount >= 200) {
-					await Servers.update({ _id: serverDocument._id }, { $pop: { logs: -1 } });
+				// Use document query interface for MariaDB compatibility
+				const doc = await Servers.findOne(serverDocument._id);
+				if (!doc) return serverDocument;
+
+				const logs = doc.logs || [];
+				const logEntry = {
+					level: level,
+					content: content,
+					channelid: chid || undefined,
+					userid: usrid || undefined,
+					timestamp: Date.now(),
+				};
+
+				// Add new log entry
+				logs.push(logEntry);
+
+				// Keep only last 200 logs
+				if (logs.length > 200) {
+					logs.shift();
 				}
+
+				doc.query.set("logs", logs);
+				await doc.save();
 			}
 		} catch (err) {
 			logger.warn(`Failed to save the trees (and logs) for server ${serverDocument._id} (*-*)`, { svrid: serverDocument._id }, err);

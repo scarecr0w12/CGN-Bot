@@ -45,9 +45,11 @@ controllers.gallery = async (req, { res }) => {
 			if (req.query.id) {
 				matchCriteria._id = new ObjectId(req.query.id);
 			} else if (req.query.q) {
-				matchCriteria.$text = {
-					$search: req.query.q,
-				};
+				// Use $regex for text search (works with both MongoDB and MariaDB)
+				matchCriteria.$or = [
+					{ name: { $regex: req.query.q } },
+					{ description: { $regex: req.query.q } },
+				];
 			}
 
 			const galleryDocuments = await Gallery.find(matchCriteria).sort({ featured: -1, points: -1, last_updated: -1 }).skip(count * (page - 1))
@@ -74,6 +76,7 @@ controllers.gallery = async (req, { res }) => {
 
 			res.render();
 		} catch (err) {
+			logger.error("Failed to fetch extension data", { path: req.path }, err);
 			renderError(res, "An error occurred while fetching extension data.");
 		}
 	};
@@ -681,7 +684,19 @@ controllers.gallery.modify = async (req, res) => {
 					if (galleryDocument.owner_id !== req.user.id) return res.sendStatus(404);
 
 					await Gallery.delete({ _id: galleryDocument._id });
-					await Servers.update({ extensions: { $elemMatch: { _id: galleryDocument._id.toString() } } }, { $pull: { extensions: { _id: galleryDocument._id.toString() } } }, { multi: true });
+					// Remove extension from all servers that have it installed
+					// For MariaDB: extensions is a JSON array, need to handle manually
+					const extensionId = galleryDocument._id.toString();
+					const serversWithExt = await Servers.find({}).exec();
+					for (const server of serversWithExt) {
+						if (server.extensions && Array.isArray(server.extensions)) {
+							const extIndex = server.extensions.findIndex(e => e._id === extensionId);
+							if (extIndex !== -1) {
+								server.query.pull("extensions", { _id: extensionId });
+								await server.save().catch(() => {});
+							}
+						}
+					}
 					dashboardUpdate(req, req.path, req.user.id);
 
 					try {

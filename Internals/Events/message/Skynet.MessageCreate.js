@@ -1,6 +1,7 @@
 /* eslint-disable max-len, max-depth, no-console */
 const BaseEvent = require("../BaseEvent.js");
 const { MicrosoftTranslate: mstranslate, Utils } = require("../../../Modules/index");
+const metrics = require("../../../Modules/Metrics");
 const {
 	Gist,
 	FilterChecker: checkFiltered,
@@ -141,7 +142,11 @@ class MessageCreate extends BaseEvent {
 				const memberQueryDocument = serverQueryDocument.clone.id("members", msg.author.id);
 				const memberBotAdminLevel = this.client.getUserBotAdmin(msg.guild, serverDocument, msg.member);
 				// Increment today's message count for server
-				if (!msg.editedAt) serverQueryDocument.inc("messages_today");
+				if (!msg.editedAt) {
+					serverQueryDocument.inc("messages_today");
+					// Track message in Prometheus metrics
+					metrics.recordMessage("guild");
+				}
 				// Count server stats if enabled in this channel
 				if (channelDocument.isStatsEnabled) {
 					// Increment this week's message count for member
@@ -287,6 +292,8 @@ class MessageCreate extends BaseEvent {
 								!serverDocument.config.commands[cmd].disabled_channel_ids.includes(msg.channel.id)) {
 							// Increment command usage count
 							this.incrementCommandUsage(serverDocument, cmd);
+							// Track command in Prometheus metrics
+							metrics.recordCommand(cmd, "prefix");
 							// Get User data
 							const userDocument = await Users.findOne(msg.author.id);
 							if (userDocument) {

@@ -119,8 +119,11 @@ module.exports = middleware => {
 				if (perm === "maintainer" || canDo(perm, req.user.id)) {
 					req.isAuthorized = true;
 					req.level = process.env.SKYNET_HOST !== req.user.id ? configJSON.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
-					res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
-					res.res.template.isHost = req.level === 0;
+					// Only set template properties for non-API requests
+					if (res.res && res.res.template) {
+						res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
+						res.res.template.isHost = req.level === 0;
+					}
 					console.log("[CONSOLE AUTH] Access granted, level:", req.level);
 					return next();
 				} else {

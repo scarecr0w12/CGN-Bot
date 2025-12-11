@@ -71,11 +71,8 @@ const sitemapXml = async (req, res) => {
 	let extensions = [];
 
 	try {
-		// Get wiki pages
-		const wikiDocs = await Database.client.collection("wiki")
-			.find({})
-			.project({ _id: 1, updatedAt: 1 })
-			.toArray();
+		// Get wiki pages using global Wiki model
+		const wikiDocs = await Wiki.find({}).exec();
 		wikiPages = wikiDocs.map(doc => ({
 			url: `/wiki/${encodeURIComponent(doc._id)}`,
 			priority: "0.6",
@@ -87,11 +84,8 @@ const sitemapXml = async (req, res) => {
 	}
 
 	try {
-		// Get blog posts
-		const blogDocs = await Database.client.collection("blog")
-			.find({})
-			.project({ _id: 1, published_timestamp: 1 })
-			.toArray();
+		// Get blog posts using global Blog model
+		const blogDocs = await Blog.find({}).exec();
 		blogPosts = blogDocs.map(doc => ({
 			url: `/blog/${doc._id}`,
 			priority: "0.7",
@@ -103,11 +97,8 @@ const sitemapXml = async (req, res) => {
 	}
 
 	try {
-		// Get published extensions
-		const extDocs = await Database.client.collection("gallery")
-			.find({ state: "gallery" })
-			.project({ _id: 1, accepted_at: 1 })
-			.toArray();
+		// Get published extensions using global Gallery model
+		const extDocs = await Gallery.find({ state: "gallery" }).exec();
 		extensions = extDocs.map(doc => ({
 			url: `/extensions/${doc._id}/install`,
 			priority: "0.5",

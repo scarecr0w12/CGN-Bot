@@ -24,6 +24,13 @@
 						</div>
 					</article>
 
+					<% if (!pageData.hasAIAccess) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<strong><span class="tag is-warning">Premium Feature</span></strong> AI features require a premium subscription. <a href="/membership">Upgrade now</a>
+						</div>
+					</article>
+					<% } else { %>
 					<!-- Usage Statistics -->
 					<div class="box">
 						<h4 class="subtitle is-4">
@@ -195,6 +202,7 @@
 						<%- include('../partials/form-buttons') %>
 						<%- include('../partials/form-buttons-bar') %>
 					</form>
+					<% } %>
 				</div>
 			</div>
 		</div>

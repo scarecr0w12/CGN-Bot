@@ -4,6 +4,7 @@
  */
 
 const { saveAdminConsoleOptions: save, getChannelData, getRoleData } = require("../../helpers");
+const TierManager = require("../../../Modules/TierManager");
 
 const controllers = module.exports;
 
@@ -13,6 +14,9 @@ const controllers = module.exports;
 controllers.settings = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
+
+	// Check if server has AI features (premium is per-server)
+	const hasAIAccess = await TierManager.canAccess(req.svr.id, "ai_chat");
 	await svr.fetchCollection("roles");
 	await svr.fetchCollection("channels");
 
@@ -23,6 +27,7 @@ controllers.settings = async (req, { res }) => {
 		page: "admin-ai-settings.ejs",
 		channelData: getChannelData(svr),
 		roleData: getRoleData(svr),
+		hasAIAccess,
 		providers: [
 			{ id: "openai", name: "OpenAI", models: ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"] },
 			{ id: "anthropic", name: "Anthropic", models: ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022", "claude-3-opus-20240229", "claude-3-sonnet-20240229", "claude-3-haiku-20240307"] },
@@ -187,6 +192,9 @@ controllers.governance = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 	await svr.fetchCollection("roles");
 
+	// Check if server has AI features (premium is per-server)
+	const hasAIAccess = await TierManager.canAccess(req.svr.id, "ai_chat");
+
 	const aiConfig = serverDocument.config.ai || {};
 	const governance = aiConfig.governance || {};
 	const usage = aiConfig.usage || {};
@@ -194,6 +202,7 @@ controllers.governance = async (req, { res }) => {
 	res.setPageData({
 		page: "admin-ai-governance.ejs",
 		roleData: getRoleData(svr),
+		hasAIAccess,
 	});
 
 	res.setConfigData({
@@ -367,6 +376,9 @@ controllers.models = async (req, res) => {
  * AI Vector Memory - Qdrant configuration page
  */
 controllers.memory = async (req, { res }) => {
+	// Check if server has AI features (premium is per-server)
+	const hasAIAccess = await TierManager.canAccess(req.svr.id, "ai_chat");
+
 	const serverDocument = req.svr.document;
 	const aiConfig = serverDocument.config.ai || {};
 	const vectorConfig = aiConfig.vectorMemory || {};
@@ -390,6 +402,7 @@ controllers.memory = async (req, { res }) => {
 
 	res.setPageData({
 		page: "admin-ai-memory.ejs",
+		hasAIAccess,
 		embeddingModels: [
 			{ id: "text-embedding-3-small", name: "OpenAI text-embedding-3-small (1536d)", size: 1536 },
 			{ id: "text-embedding-3-large", name: "OpenAI text-embedding-3-large (3072d)", size: 3072 },
@@ -585,11 +598,15 @@ controllers.vectorStats = async (req, res) => {
  * AI Personality - System Prompt configuration
  */
 controllers.personality = async (req, { res }) => {
+	// Check if server has AI features (premium is per-server)
+	const hasAIAccess = await TierManager.canAccess(req.svr.id, "ai_chat");
+
 	const serverDocument = req.svr.document;
 	const aiConfig = serverDocument.config.ai || {};
 
 	res.setPageData({
 		page: "admin-ai-personality.ejs",
+		hasAIAccess,
 	});
 
 	res.setConfigData({

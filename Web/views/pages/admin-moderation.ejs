@@ -80,8 +80,15 @@
 							<div class="moderation-feature">
 								<br>
 								<h4 class="subtitle is-4">
-									New Member Roles
+									New Member Roles <% if (!pageData.hasAutoRoles) { %><span class="tag is-warning is-light">Premium</span><% } %>
 								</h4>
+								<% if (!pageData.hasAutoRoles) { %>
+								<article class="message is-warning">
+									<div class="message-body">
+										Auto roles require a premium subscription. <a href="/membership">Upgrade now</a> to automatically assign roles to new members.
+									</div>
+								</article>
+								<% } else { %>
 								<div class="field">
 									<div class="control">
 										<% pageData.roleData.forEach(role => { %>
@@ -94,6 +101,7 @@
 										<span class="help">New members will be automatically assigned the selected roles.</span>
 									</div>
 								</div>
+								<% } %>
 							</div>
 							<div class="moderation-feature">
 								<br>

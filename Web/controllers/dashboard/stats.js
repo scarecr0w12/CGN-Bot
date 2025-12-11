@@ -118,6 +118,77 @@ controllers.points.post = async (req, res) => {
 	save(req, res, true);
 };
 
+// Premium Advanced Stats Page
+controllers.advancedStats = async (req, { res }) => {
+	const hasAdvancedStats = await TierManager.canAccess(req.svr.id, "advanced_stats");
+	const serverDocument = req.svr.document;
+	const members = Object.values(serverDocument.members || {});
+
+	// Calculate statistics for the page
+	const totalPoints = members.reduce((sum, m) => sum + (m.points || 0), 0);
+	const avgPoints = members.length ? Math.round(totalPoints / members.length) : 0;
+
+	// Points distribution
+	const pointsDistribution = {
+		zero: members.filter(m => (m.points || 0) === 0).length,
+		low: members.filter(m => (m.points || 0) > 0 && (m.points || 0) <= 100).length,
+		medium: members.filter(m => (m.points || 0) > 100 && (m.points || 0) <= 500).length,
+		high: members.filter(m => (m.points || 0) > 500 && (m.points || 0) <= 1000).length,
+		elite: members.filter(m => (m.points || 0) > 1000).length,
+	};
+
+	// Top members by points
+	const topMembers = members
+		.filter(m => m.points > 0)
+		.sort((a, b) => (b.points || 0) - (a.points || 0))
+		.slice(0, 10)
+		.map(m => ({ id: m._id, points: m.points, rank: m.rank }));
+
+	// Rank distribution
+	const rankDistribution = {};
+	members.forEach(m => {
+		const rank = m.rank || "No Rank";
+		rankDistribution[rank] = (rankDistribution[rank] || 0) + 1;
+	});
+
+	// Activity metrics (7-day window)
+	const activeMembers = members.filter(m => m.last_active && Date.now() - new Date(m.last_active).getTime() < 7 * 24 * 60 * 60 * 1000).length;
+	const inactiveMembers = members.length - activeMembers;
+	const activityRate = members.length ? Math.round((activeMembers / members.length) * 100) : 0;
+
+	// Strike statistics
+	const membersWithStrikes = members.filter(m => m.strikes && m.strikes.length > 0);
+	const totalStrikes = membersWithStrikes.reduce((sum, m) => sum + (m.strikes?.length || 0), 0);
+
+	res.setPageData({
+		page: "admin-advanced-stats.ejs",
+		hasAdvancedStats,
+		stats: {
+			overview: {
+				totalMembers: members.length,
+				totalPoints,
+				averagePoints: avgPoints,
+				messagesToday: serverDocument.messages_today || 0,
+			},
+			activity: {
+				activeMembers,
+				inactiveMembers,
+				activityRate,
+			},
+			moderation: {
+				membersWithStrikes: membersWithStrikes.length,
+				totalStrikes,
+			},
+			distributions: {
+				points: pointsDistribution,
+				ranks: rankDistribution,
+			},
+			leaderboard: topMembers,
+		},
+	});
+	res.render();
+};
+
 // Premium Advanced Stats API endpoint
 controllers.analytics = async (req, res) => {
 	// Check if server has advanced_stats feature (premium is per-server)
