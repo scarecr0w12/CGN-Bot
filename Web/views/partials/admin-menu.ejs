@@ -233,4 +233,20 @@
             <% } %>
 		</li>
 	</ul>
+	<p class="menu-label">
+		<span class="icon is-small">
+			<i class="fas fa-crown"></i>
+		</span>
+		<span>Subscription</span>
+	</p>
+	<ul class="menu-list">
+		<li>
+			<% if (currentPage === `/dashboard/${serverData.id}/subscription`) { %>
+			<%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">Server Premium</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/subscription">Server Premium</a>
+			<% } %>
+		</li>
+	</ul>
 </aside>

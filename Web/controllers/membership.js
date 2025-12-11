@@ -1,7 +1,8 @@
 /**
  * Membership Controller
  *
- * Handles public membership pages and checkout flow
+ * Handles public membership pages and checkout flow.
+ * Premium subscriptions are per-server (guild), not per-user.
  */
 
 const { request } = require("undici");
@@ -83,10 +84,21 @@ controllers.createCheckout = async (req, res) => {
 		return res.status(401).json({ error: "You must be logged in to subscribe" });
 	}
 
-	const { tier_id: tierId, billing_period: billingPeriod } = req.body;
+	const { tier_id: tierId, billing_period: billingPeriod, server_id: serverId } = req.body;
 
 	if (!tierId) {
 		return res.status(400).json({ error: "Tier ID is required" });
+	}
+
+	// Validate server ID - premium is per-server
+	if (!serverId) {
+		return res.status(400).json({ error: "Server ID is required - premium subscriptions are per-server" });
+	}
+
+	// Verify user has admin access to this server
+	const serverDoc = await Servers.findOne(serverId);
+	if (!serverDoc) {
+		return res.status(400).json({ error: "Server not found. The bot must be in the server first." });
 	}
 
 	try {
@@ -139,7 +151,7 @@ controllers.createCheckout = async (req, res) => {
 				logger.info(`Created dynamic Stripe price for tier ${tierId}: ${priceId}`);
 			}
 
-			// Create checkout session
+			// Create checkout session - subscription is for the server, not user
 			const session = await stripe.checkout.sessions.create({
 				mode: "subscription",
 				payment_method_types: ["card"],
@@ -147,24 +159,26 @@ controllers.createCheckout = async (req, res) => {
 					price: priceId,
 					quantity: 1,
 				}],
-				success_url: `${configJS.hostingURL}membership/success?session_id={CHECKOUT_SESSION_ID}&provider=stripe`,
-				cancel_url: `${configJS.hostingURL}membership`,
+				success_url: `${configJS.hostingURL}membership/success?session_id={CHECKOUT_SESSION_ID}&provider=stripe&server=${serverId}`,
+				cancel_url: `${configJS.hostingURL}dashboard/${serverId}/subscription`,
 				customer_email: req.user.email || undefined,
-				client_reference_id: req.user.id,
+				client_reference_id: serverId, // Server ID as reference
 				metadata: {
-					discord_user_id: req.user.id,
+					discord_server_id: serverId,
+					purchased_by: req.user.id,
 					tier_id: tierId,
 					billing_period: billingPeriod,
 				},
 				subscription_data: {
 					metadata: {
-						discord_user_id: req.user.id,
+						discord_server_id: serverId,
+						purchased_by: req.user.id,
 						tier_id: tierId,
 					},
 				},
 			});
 
-			logger.info(`Stripe checkout session created for user ${req.user.id}`, { sessionId: session.id, tierId });
+			logger.info(`Stripe checkout session created for server ${serverId}`, { sessionId: session.id, tierId, purchasedBy: req.user.id });
 			return res.json({ checkout_url: session.url });
 		}
 
@@ -187,6 +201,7 @@ controllers.createCheckout = async (req, res) => {
 				return res.status(400).json({ error: "This tier is not available for purchase" });
 			}
 
+			// Create BTCPay invoice - subscription is for the server, not user
 			const { statusCode, body } = await request(`${btcpayUrl}/api/v1/stores/${btcpayStoreId}/invoices`, {
 				method: "POST",
 				headers: {
@@ -199,12 +214,13 @@ controllers.createCheckout = async (req, res) => {
 					metadata: {
 						tier_id: tierId,
 						billing_period: billingPeriod,
-						discord_user_id: req.user.id,
+						discord_server_id: serverId,
+						purchased_by: req.user.id,
 						email: req.user.email || undefined,
-						orderId: `${tierId}-${Date.now()}`,
+						orderId: `${serverId}-${tierId}-${Date.now()}`,
 					},
 					checkout: {
-						redirectURL: `${configJS.hostingURL}membership/success?session_id={InvoiceId}&provider=btcpay`,
+						redirectURL: `${configJS.hostingURL}membership/success?session_id={InvoiceId}&provider=btcpay&server=${serverId}`,
 					},
 				}),
 			});
@@ -216,14 +232,14 @@ controllers.createCheckout = async (req, res) => {
 				throw new Error("Failed to create BTCPay invoice");
 			}
 
-			logger.info(`BTCPay invoice created for user ${req.user.id}`, { invoiceId: responseData.id, tierId });
+			logger.info(`BTCPay invoice created for server ${serverId}`, { invoiceId: responseData.id, tierId, purchasedBy: req.user.id });
 			return res.json({ checkout_url: responseData.checkoutLink });
 		}
 
 		// No provider configured
 		return res.status(503).json({ error: "Payment processing is not configured" });
 	} catch (err) {
-		logger.error("Error creating checkout session", { userId: req.user?.id }, err);
+		logger.error("Error creating checkout session", { serverId, userId: req.user?.id }, err);
 		res.status(500).json({ error: "Failed to create checkout session" });
 	}
 };
@@ -233,9 +249,10 @@ controllers.createCheckout = async (req, res) => {
  */
 controllers.success = async (req, { res }) => {
 	const sessionId = req.query.session_id;
+	const serverId = req.query.server;
 
 	if (!sessionId) {
-		return res._redirect("/membership");
+		return res._redirect(serverId ? `/dashboard/${serverId}/subscription` : "/membership");
 	}
 
 	try {
@@ -250,15 +267,16 @@ controllers.success = async (req, { res }) => {
 				res.setPageData({
 					page: "membership-success.ejs",
 					session,
+					serverId,
 				});
 				return res.render();
 			}
 		}
 
-		res._redirect("/membership");
+		res._redirect(serverId ? `/dashboard/${serverId}/subscription` : "/membership");
 	} catch (err) {
-		logger.error("Error verifying checkout session", {}, err);
-		res._redirect("/membership");
+		logger.error("Error verifying checkout session", { serverId }, err);
+		res._redirect(serverId ? `/dashboard/${serverId}/subscription` : "/membership");
 	}
 };
 

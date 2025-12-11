@@ -1,0 +1,319 @@
+<%- include('../partials/header') %>
+<section class="section">
+	<div class="container">
+		<div class="columns">
+			<div class="column is-one-quarter">
+				<%- include('../partials/admin-menu') %>
+			</div>
+			<div class="column">
+				<div class="content">
+					<h2 class="title is-4">
+						<span class="icon"><i class="fas fa-crown"></i></span>
+						Server Subscription
+					</h2>
+					<p class="subtitle is-6">Manage premium features for this server</p>
+
+					<!-- Current Subscription Status -->
+					<div class="box">
+						<h4 class="title is-5">Current Plan</h4>
+						<div class="level">
+							<div class="level-left">
+								<div class="level-item">
+									<div>
+										<p class="heading">Tier</p>
+										<p class="title is-4">
+											<span class="tag is-<%= serverTier?.level > 0 ? 'success' : 'light' %> is-medium">
+												<%= serverTier?.name || 'Free' %>
+											</span>
+										</p>
+									</div>
+								</div>
+								<% if (subscription?.expires_at) { %>
+								<div class="level-item">
+									<div>
+										<p class="heading">Expires</p>
+										<p class="title is-5">
+											<%= new Date(subscription.expires_at).toLocaleDateString() %>
+										</p>
+									</div>
+								</div>
+								<% } %>
+								<% if (subscription?.source) { %>
+								<div class="level-item">
+									<div>
+										<p class="heading">Source</p>
+										<p class="title is-6">
+											<span class="tag is-info"><%= subscription.source %></span>
+										</p>
+									</div>
+								</div>
+								<% } %>
+							</div>
+						</div>
+
+						<% if (serverFeatures && serverFeatures.length > 0) { %>
+						<div class="mt-4">
+							<p class="heading">Active Features</p>
+							<div class="tags">
+								<% serverFeatures.forEach(function(featureId) { 
+									const feature = features.find(f => f._id === featureId);
+								%>
+									<span class="tag is-success" title="<%= feature?.description || '' %>">
+										<%= feature?.name || featureId %>
+									</span>
+								<% }); %>
+							</div>
+						</div>
+						<% } %>
+					</div>
+
+					<!-- Upgrade Options -->
+					<% if (serverTier?.level === 0 || !serverTier) { %>
+					<div class="box">
+						<h4 class="title is-5">Upgrade Your Server</h4>
+						<p class="mb-4">Unlock premium features for all members of this server.</p>
+
+						<div class="columns is-multiline">
+							<% tiers.filter(t => t.is_purchasable && t.level > 0).forEach(function(tier) { %>
+							<div class="column is-one-third">
+								<div class="card">
+									<div class="card-header">
+										<p class="card-header-title"><%= tier.name %></p>
+									</div>
+									<div class="card-content">
+										<div class="content">
+											<p class="title is-3 has-text-primary">
+												$<%= tier.price_monthly %><span class="is-size-6">/mo</span>
+											</p>
+											<% if (yearlyDiscount > 0) { %>
+											<p class="is-size-7 has-text-grey">
+												or $<%= Math.round(tier.price_monthly * 12 * (1 - yearlyDiscount/100)) %>/year (save <%= yearlyDiscount %>%)
+											</p>
+											<% } %>
+											<hr>
+											<ul class="is-size-7">
+												<% (tier.features || []).slice(0, 5).forEach(function(featureId) {
+													const feature = features.find(f => f._id === featureId);
+												%>
+													<li><%= feature?.name || featureId %></li>
+												<% }); %>
+												<% if ((tier.features || []).length > 5) { %>
+													<li class="has-text-grey">+ <%= tier.features.length - 5 %> more...</li>
+												<% } %>
+											</ul>
+										</div>
+									</div>
+									<div class="card-footer">
+										<a href="/membership?tier=<%= tier._id %>&server=<%= serverData.id %>" class="card-footer-item button is-primary">
+											Subscribe
+										</a>
+									</div>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+					</div>
+					<% } %>
+
+					<!-- Point Redemption -->
+					<% if (redemptionInfo && redemptionInfo.enabled) { %>
+					<div class="box">
+						<h4 class="title is-5">
+							<span class="icon"><i class="fas fa-coins"></i></span>
+							Redeem Points for Premium
+						</h4>
+						<p class="mb-3">
+							Use your accumulated points to get premium time for this server.
+						</p>
+
+						<div class="columns">
+							<div class="column is-half">
+								<div class="field">
+									<label class="label">Your Points</label>
+									<p class="title is-4 has-text-warning"><%= userPoints.toLocaleString() %></p>
+								</div>
+
+								<div class="field">
+									<label class="label">Cost</label>
+									<p class="is-size-7">
+										<strong><%= redemptionInfo.pointsPerDay.toLocaleString() %></strong> points per day
+										(<%= redemptionInfo.pointsPerMonth.toLocaleString() %> per month)
+									</p>
+								</div>
+
+								<div class="field">
+									<label class="label">You can afford</label>
+									<p class="title is-5 has-text-success">
+										<%= Math.min(redemptionInfo.affordableDays, redemptionInfo.maxDays) %> days
+									</p>
+								</div>
+							</div>
+
+							<div class="column is-half">
+								<% if (canManageSubscription) { %>
+								<form id="redeemForm">
+									<div class="field">
+										<label class="label">Days to Redeem</label>
+										<div class="control">
+											<input class="input" type="number" name="days" id="redeemDays"
+												min="<%= redemptionInfo.minDays %>"
+												max="<%= Math.min(redemptionInfo.affordableDays, redemptionInfo.maxDays) %>"
+												value="<%= Math.min(30, redemptionInfo.affordableDays, redemptionInfo.maxDays) %>"
+												<%= redemptionInfo.affordableDays < redemptionInfo.minDays ? 'disabled' : '' %>>
+										</div>
+										<p class="help">Minimum: <%= redemptionInfo.minDays %> days</p>
+									</div>
+
+									<div class="field">
+										<label class="label">Total Cost</label>
+										<p class="title is-5" id="totalCost">
+											<%= (Math.min(30, redemptionInfo.affordableDays, redemptionInfo.maxDays) * redemptionInfo.pointsPerDay).toLocaleString() %> points
+										</p>
+									</div>
+
+									<div class="field">
+										<button type="submit" class="button is-warning"
+											<%= redemptionInfo.affordableDays < redemptionInfo.minDays ? 'disabled' : '' %>>
+											<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+											<span>Redeem Points</span>
+										</button>
+									</div>
+								</form>
+								<% } else { %>
+								<div class="notification is-warning is-light">
+									<span class="icon"><i class="fas fa-lock"></i></span>
+									Only the server owner can redeem points for server premium.
+								</div>
+								<% } %>
+							</div>
+						</div>
+					</div>
+					<% } %>
+
+					<!-- Subscription History -->
+					<% if (subscription?.history && subscription.history.length > 0) { %>
+					<div class="box">
+						<h4 class="title is-5">Subscription History</h4>
+						<table class="table is-fullwidth is-striped">
+							<thead>
+								<tr>
+									<th>Tier</th>
+									<th>Source</th>
+									<th>Started</th>
+									<th>Ended</th>
+									<th>Reason</th>
+								</tr>
+							</thead>
+							<tbody>
+								<% subscription.history.slice(-10).reverse().forEach(function(entry) { %>
+								<tr>
+									<td><%= entry.tier_id %></td>
+									<td><span class="tag is-light"><%= entry.source %></span></td>
+									<td><%= entry.started_at ? new Date(entry.started_at).toLocaleDateString() : '-' %></td>
+									<td><%= entry.ended_at ? new Date(entry.ended_at).toLocaleDateString() : '-' %></td>
+									<td><%= entry.reason || '-' %></td>
+								</tr>
+								<% }); %>
+							</tbody>
+						</table>
+					</div>
+					<% } %>
+
+					<!-- Cancel Subscription -->
+					<% if (subscription?.is_active && subscription?.tier_id !== 'free' && canManageSubscription) { %>
+					<div class="box">
+						<h4 class="title is-5 has-text-danger">Cancel Subscription</h4>
+						<p class="mb-3">
+							Canceling will disable premium features when your current period ends.
+							<% if (subscription.expires_at) { %>
+							Your access will continue until <strong><%= new Date(subscription.expires_at).toLocaleDateString() %></strong>.
+							<% } %>
+						</p>
+						<button class="button is-danger is-outlined" id="cancelBtn">
+							<span class="icon"><i class="fas fa-times-circle"></i></span>
+							<span>Cancel Subscription</span>
+						</button>
+					</div>
+					<% } %>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const redeemForm = document.getElementById('redeemForm');
+	const redeemDays = document.getElementById('redeemDays');
+	const totalCost = document.getElementById('totalCost');
+	const cancelBtn = document.getElementById('cancelBtn');
+	const pointsPerDay = <%= redemptionInfo?.pointsPerDay || 0 %>;
+
+	// Update cost on input change
+	if (redeemDays && totalCost) {
+		redeemDays.addEventListener('input', function() {
+			const days = parseInt(this.value) || 0;
+			totalCost.textContent = (days * pointsPerDay).toLocaleString() + ' points';
+		});
+	}
+
+	// Handle redemption
+	if (redeemForm) {
+		redeemForm.addEventListener('submit', async function(e) {
+			e.preventDefault();
+			const days = parseInt(redeemDays.value);
+			
+			if (!confirm(`Are you sure you want to redeem ${days} days of premium for ${(days * pointsPerDay).toLocaleString()} points?`)) {
+				return;
+			}
+
+			try {
+				const response = await fetch(window.location.pathname + '/redeem', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ days })
+				});
+				
+				const data = await response.json();
+				if (data.success) {
+					alert(data.message);
+					window.location.reload();
+				} else {
+					alert('Error: ' + (data.error || 'Failed to redeem points'));
+				}
+			} catch (err) {
+				alert('Error: ' + err.message);
+			}
+		});
+	}
+
+	// Handle cancellation
+	if (cancelBtn) {
+		cancelBtn.addEventListener('click', async function() {
+			if (!confirm('Are you sure you want to cancel your subscription? You will lose access to premium features when your current period ends.')) {
+				return;
+			}
+
+			try {
+				const response = await fetch(window.location.pathname + '/cancel', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' }
+				});
+				
+				const data = await response.json();
+				if (data.success) {
+					alert('Subscription canceled successfully');
+					window.location.reload();
+				} else {
+					alert('Error: ' + (data.error || 'Failed to cancel subscription'));
+				}
+			} catch (err) {
+				alert('Error: ' + err.message);
+			}
+		});
+	}
+});
+</script>
+
+<%- include('../partials/footer') %>

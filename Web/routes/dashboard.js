@@ -64,4 +64,9 @@ module.exports = router => {
 	router.post("/:svrid/ai/test-qdrant", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.testQdrant);
 	router.post("/:svrid/ai/clear-vector-memory", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.clearVectorMemory);
 	router.get("/:svrid/ai/vector-stats", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.ai.vectorStats);
+
+	// Subscription Management (per-server premium)
+	setupDashboardPage(router, "/subscription", [], controllers.dashboard.subscription.manage);
+	router.post("/:svrid/subscription/redeem", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.redeemPoints);
+	router.post("/:svrid/subscription/cancel", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.cancel);
 };
