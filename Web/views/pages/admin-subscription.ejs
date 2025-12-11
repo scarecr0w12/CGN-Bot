@@ -1,17 +1,26 @@
-<%- include('../partials/header') %>
-<section class="section">
-	<div class="container">
-		<div class="columns">
-			<div class="column is-one-quarter">
-				<%- include('../partials/admin-menu') %>
-			</div>
-			<div class="column">
-				<div class="content">
-					<h2 class="title is-4">
-						<span class="icon"><i class="fas fa-crown"></i></span>
-						Server Subscription
-					</h2>
-					<p class="subtitle is-6">Manage premium features for this server</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Subscription - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<div class="content">
+						<h2 class="title is-4">
+							<span class="icon"><i class="fas fa-crown"></i></span>
+							Server Subscription
+						</h2>
+						<p class="subtitle is-6">Manage premium features for this server</p>
 
 					<!-- Current Subscription Status -->
 					<div class="box">
@@ -236,13 +245,13 @@
 					</div>
 					<% } %>
 
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
 
-<script>
+	<script>
 document.addEventListener('DOMContentLoaded', function() {
 	const redeemForm = document.getElementById('redeemForm');
 	const redeemDays = document.getElementById('redeemDays');
@@ -316,4 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<%- include('../partials/footer') %>
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>
