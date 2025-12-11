@@ -3,20 +3,14 @@ services:
     build: .
     container_name: skynetbot
     restart: always
+    network_mode: host
     security_opt:
       - apparmor:unconfined
-    ports:
-      - "8081:8080"
-      - "8443:443"
     env_file:
       - .env
     environment:
-      - DATABASE_URL=mongodb://mongo:27017/
-      - DATABASE_NAME=SkynetBot
       - NODE_ENV=development
       - SHARD_TOTAL=auto
-    depends_on:
-      - mongo
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -24,10 +18,14 @@ services:
       - ./Temp:/usr/src/app/Temp
       - ./.env:/usr/src/app/.env
 
+  # MongoDB - only needed when DATABASE_TYPE=mongodb
+  # To use: docker compose --profile mongodb up -d
   mongo:
     image: mongo:6
     container_name: skynetbot-mongo
     restart: always
+    profiles:
+      - mongodb
     security_opt:
       - apparmor:unconfined
     ports:
@@ -45,6 +43,32 @@ services:
       - "3001:3001"
     volumes:
       - ./data/uptime-kuma:/app/data
+      # Mount Docker socket for container monitoring
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true
+      # MariaDB configuration
+      - DATA_DIR=/app/data
+      - DATABASE_TYPE=mariadb
+      - DATABASE_HOSTNAME=host.docker.internal
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=uptime_kuma
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=${MARIADB_PASSWORD}
+    # Allow container to reach host services
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: skynetbot-phpmyadmin
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    environment:
+      - PMA_HOST=127.0.0.1
+      - PMA_PORT=3306
+      - PMA_ABSOLUTE_URI=/phpmyadmin/
+      - APACHE_PORT=8082
+    network_mode: host
 

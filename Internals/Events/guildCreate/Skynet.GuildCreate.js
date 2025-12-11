@@ -1,6 +1,6 @@
 const BaseEvent = require("../BaseEvent.js");
 const { NewServer: getNewServerData, PostShardedData } = require("../../../Modules/");
-const {	LoggingLevels } = require("../../Constants");
+// const { LoggingLevels } = require("../../Constants"); // Disabled: server join messages removed
 
 class GuildCreate extends BaseEvent {
 	async handle (guild) {
@@ -18,7 +18,8 @@ class GuildCreate extends BaseEvent {
 			}
 			if (serverDocument) {
 				logger.info(`Rejoined server ${guild}`, { svrid: guild.id });
-				this.client.logMessage(serverDocument, LoggingLevels.INFO, "I've been re-added to your server! (^-^)");
+				// Disabled: Don't send message to server owners/moderators on rejoin
+				// this.client.logMessage(serverDocument, LoggingLevels.INFO, "I've been re-added to your server! (^-^)");
 			} else if (shouldMakeDocument || !serverDocument) {
 				logger.info(`Joined server ${guild}`, { svrid: guild.id });
 				try {
@@ -27,7 +28,8 @@ class GuildCreate extends BaseEvent {
 				} catch (err) {
 					logger.warn(`Failed to create a new server document for new server >.>`, { svrid: guild.id }, err);
 				}
-				this.client.logMessage(await Servers.findOne(guild.id), LoggingLevels.INFO, "I've been added to your server! (^-^)");
+				// Disabled: Don't send message to server owners/moderators on join
+				// this.client.logMessage(await Servers.findOne(guild.id), LoggingLevels.INFO, "I've been added to your server! (^-^)");
 			}
 		}
 	}

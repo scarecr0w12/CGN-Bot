@@ -1,5 +1,8 @@
 /* eslint node/exports-style: ["error", "exports"] */
 
+// Load environment variables early - this file may be required before main app loads dotenv
+require("dotenv").config();
+
 // Database backend selection based on DATABASE_TYPE environment variable
 const databaseType = process.env.DATABASE_TYPE || "mongodb";
 

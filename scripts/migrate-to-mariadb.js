@@ -9,9 +9,11 @@
  *   node scripts/migrate-to-mariadb.js [options]
  *
  * Options:
- *   --dry-run     Preview what would be migrated without making changes
- *   --collection  Migrate only a specific collection (e.g., --collection=users)
- *   --skip-verify Skip verification step after migration
+ *   --dry-run       Preview what would be migrated without making changes
+ *   --collection    Migrate only a specific collection (e.g., --collection=users)
+ *   --skip-verify   Skip verification step after migration
+ *   --mongo-url     Override MongoDB URL (e.g., --mongo-url=mongodb://localhost:27017/)
+ *   --maria-host    Override MariaDB host (e.g., --maria-host=127.0.0.1)
  */
 
 const { MongoClient } = require("mongodb");
@@ -26,6 +28,10 @@ const isDryRun = args.includes("--dry-run");
 const skipVerify = args.includes("--skip-verify");
 const collectionArg = args.find(a => a.startsWith("--collection="));
 const targetCollection = collectionArg ? collectionArg.split("=")[1] : null;
+const mongoUrlArg = args.find(a => a.startsWith("--mongo-url="));
+const mongoUrl = mongoUrlArg ? mongoUrlArg.split("=")[1] : process.env.DATABASE_URL || "localhost";
+const mariaHostArg = args.find(a => a.startsWith("--maria-host="));
+const mariaHost = mariaHostArg ? mariaHostArg.split("=")[1] : process.env.MARIADB_HOST || "localhost";
 
 // Collection to table mapping
 const COLLECTION_MAP = {
@@ -70,14 +76,14 @@ let mongoClient = null;
 let mariaPool = null;
 
 async function connect () {
-	console.log("📦 Connecting to MongoDB...");
-	mongoClient = new MongoClient(process.env.DATABASE_URL);
+	console.log(`📦 Connecting to MongoDB at ${mongoUrl}...`);
+	mongoClient = new MongoClient(mongoUrl);
 	await mongoClient.connect();
 	console.log("✅ MongoDB connected");
 
-	console.log("📦 Connecting to MariaDB...");
+	console.log(`📦 Connecting to MariaDB at ${mariaHost}...`);
 	mariaPool = mariadb.createPool({
-		host: process.env.MARIADB_HOST || "localhost",
+		host: mariaHost,
 		port: parseInt(process.env.MARIADB_PORT || "3306", 10),
 		user: process.env.MARIADB_USER,
 		password: process.env.MARIADB_PASSWORD,

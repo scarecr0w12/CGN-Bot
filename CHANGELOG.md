@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - MariaDB Migration Branch
+
+### Added
+
+#### MariaDB 10.11 Database Layer
+
+- **DriverSQL.js** - MariaDB connection pooling with automatic reconnection
+- **ModelSQL.js** - SQL CRUD operations maintaining MongoDB-style API
+- **DocumentSQL.js** - Row operations with atomic update support (`$set`, `$inc`, `$push`, `$pull`)
+- **CursorSQL.js** - Query result iteration with `.exec()`, `.limit()`, `.sort()` methods
+- **QuerySQL.js** - Fluent query builder for document manipulation
+- **ObjectID.js** - MongoDB ObjectID compatibility layer for MariaDB
+
+#### Database Migrations
+
+- **001_initial_schema.sql** - Complete DDL for all tables (servers, users, gallery, wiki, blog, etc.)
+- **migrate-to-mariadb.js** - Data migration script from MongoDB to MariaDB
+
+#### Infrastructure
+
+- **Docker Compose** - Added MariaDB 10.11 service with health checks
+- **Dockerfile** - Multi-stage build optimizations
+- **Uptime Kuma** - Enhanced monitoring with MariaDB health endpoint
+
+### Changed
+
+- **Database Driver** - Abstracted backend selection (MongoDB vs MariaDB via `DB_TYPE` env)
+- **Seed Scripts** - Updated `seed-blog-posts.js` and `seed-wiki.js` to support both backends
+- **WebServer** - Added graceful shutdown and connection draining
+
+### Documentation
+
+- **MARIADB_MIGRATION.md** - Comprehensive migration guide with schema mapping and rollback plans
+
+---
+
 ## [1.2.1] - 2025-12-10
 
 ### Added

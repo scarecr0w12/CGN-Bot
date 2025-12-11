@@ -11,17 +11,12 @@
  * - Admin Levels & Permissions
  * - Extensions Guide
  * - FAQ
+ *
+ * Supports both MongoDB and MariaDB via the Database driver.
  */
 
-const { MongoClient } = require("mongodb");
-
-// Load config
-let config;
-try {
-	config = require("../Configurations/config.js");
-} catch {
-	config = require("../Configurations/config.template.js");
-}
+require("dotenv").config();
+const Database = require("../Database/Driver");
 
 // Import command definitions for documentation
 const commands = require("../Configurations/commands.js");
@@ -1322,23 +1317,17 @@ Detailed reference for all ${categoryName.toLowerCase()} commands.
 async function seedWiki() {
 	console.log("🚀 Starting Wiki Seed Script...\n");
 	
-	const mongoUrl = (config.database && config.database.URL) || process.env.MONGO_URL || "mongodb://localhost:27017";
-	const dbName = (config.database && config.database.db) || process.env.MONGO_DB || "SkynetBot";
-	
-	console.log(`📡 Connecting to MongoDB: ${mongoUrl}`);
-	console.log(`📁 Database: ${dbName}\n`);
-	
-	const client = new MongoClient(mongoUrl);
+	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	console.log(`📡 Initializing ${databaseType} database...\n`);
 	
 	try {
-		await client.connect();
-		console.log("✅ Connected to MongoDB\n");
+		await Database.initialize();
+		console.log("✅ Connected to database\n");
 		
-		const db = client.db(dbName);
-		const wikiCollection = db.collection("wiki");
+		const Wiki = global.Wiki;
 		
 		// Check existing pages
-		const existingCount = await wikiCollection.countDocuments();
+		const existingCount = await Wiki.count({});
 		console.log(`📊 Existing wiki pages: ${existingCount}`);
 		
 		if (existingCount > 0) {
@@ -1347,11 +1336,12 @@ async function seedWiki() {
 			
 			if (!process.argv.includes("--force")) {
 				console.log("\n❌ Aborting. Use --force to overwrite.");
+				process.exit(0);
 				return;
 			}
 			
 			console.log("\n🗑️  --force flag detected. Removing existing wiki pages...");
-			await wikiCollection.deleteMany({});
+			await Wiki.delete({});
 			console.log("✅ Existing pages removed\n");
 		}
 		
@@ -1359,7 +1349,8 @@ async function seedWiki() {
 		console.log(`📝 Inserting ${wikiPages.length} wiki pages...\n`);
 		
 		for (const page of wikiPages) {
-			await wikiCollection.insertOne(page);
+			const doc = Wiki.new(page);
+			await doc.save();
 			console.log(`   ✅ Created: ${page._id}`);
 		}
 		
@@ -1373,8 +1364,8 @@ async function seedWiki() {
 		console.error("\n❌ Error seeding wiki:", error.message);
 		throw error;
 	} finally {
-		await client.close();
-		console.log("\n📡 MongoDB connection closed");
+		console.log("\n📡 Database connection closed");
+		process.exit(0);
 	}
 }
 

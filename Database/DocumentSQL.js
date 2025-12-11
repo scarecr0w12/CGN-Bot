@@ -9,11 +9,12 @@ const crypto = require("crypto");
 module.exports = class DocumentSQL {
 	/**
 	 * An object representing a Model document from MariaDB
-	 * @param {object} doc The raw data received from MariaDB
 	 * @param {ModelSQL} model The Model this document was created by
+	 * @param {object} doc The raw data received from MariaDB
+	 * @param {boolean} isNew Whether this is a new document not yet in database
 	 * @constructor
 	 */
-	constructor (doc, model) {
+	constructor (model, doc, isNew = false) {
 		/**
 		 * A reference to the Model this document was created by
 		 * @type {ModelSQL}
@@ -25,12 +26,12 @@ module.exports = class DocumentSQL {
 		 * @type {boolean}
 		 * @private
 		 */
-		this._new = false;
+		this._new = isNew;
 		/**
-		 * Reference to the pool
+		 * Reference to the pool getter
 		 * @private
 		 */
-		this._pool = this._model._pool;
+		this._getPool = this._model._getPool;
 		/**
 		 * An internal collection of all the atomic operations to be pushed to MariaDB on save
 		 * @type {Object}
@@ -72,7 +73,7 @@ module.exports = class DocumentSQL {
 
 		let conn;
 		try {
-			conn = await this._pool.getConnection();
+			conn = await this._getPool().getConnection();
 
 			if (this._new) {
 				// INSERT
@@ -81,7 +82,7 @@ module.exports = class DocumentSQL {
 				const placeholders = keys.map(() => "?").join(", ");
 				const values = keys.map(k => this._serializeValue(this._doc[k]));
 
-				const sql = `INSERT INTO \`${this._model._table}\` (${columns}) VALUES (${placeholders})`;
+				const sql = `INSERT INTO \`${this._model._tableName}\` (${columns}) VALUES (${placeholders})`;
 				await conn.query(sql, values);
 			} else {
 				// UPDATE - translate atomics to SQL
@@ -90,21 +91,44 @@ module.exports = class DocumentSQL {
 
 				if (ops.$set) {
 					for (const [key, value] of Object.entries(ops.$set)) {
-						updates.push(`\`${key}\` = ?`);
-						params.push(this._serializeValue(value));
+						if (key.includes(".")) {
+							// Nested path - use JSON_SET for JSON column updates
+							const [column, ...pathParts] = key.split(".");
+							const jsonPath = `$."${pathParts.join('"."')}"`;
+							updates.push(`\`${column}\` = JSON_SET(COALESCE(\`${column}\`, '{}'), '${jsonPath}', JSON_COMPACT(?))`);
+							params.push(JSON.stringify(value));
+						} else {
+							updates.push(`\`${key}\` = ?`);
+							params.push(this._serializeValue(value));
+						}
 					}
 				}
 
 				if (ops.$inc) {
 					for (const [key, value] of Object.entries(ops.$inc)) {
-						updates.push(`\`${key}\` = \`${key}\` + ?`);
-						params.push(value);
+						if (key.includes(".")) {
+							// Nested path - use JSON_SET with addition for JSON column
+							const [column, ...pathParts] = key.split(".");
+							const jsonPath = `$."${pathParts.join('"."')}"`;
+							updates.push(`\`${column}\` = JSON_SET(COALESCE(\`${column}\`, '{}'), '${jsonPath}', COALESCE(JSON_EXTRACT(\`${column}\`, '${jsonPath}'), 0) + ?)`);
+							params.push(value);
+						} else {
+							updates.push(`\`${key}\` = \`${key}\` + ?`);
+							params.push(value);
+						}
 					}
 				}
 
 				if (ops.$unset) {
 					for (const key of Object.keys(ops.$unset)) {
-						updates.push(`\`${key}\` = NULL`);
+						if (key.includes(".")) {
+							// Nested path - use JSON_REMOVE for JSON column
+							const [column, ...pathParts] = key.split(".");
+							const jsonPath = `$."${pathParts.join('"."')}"`;
+							updates.push(`\`${column}\` = JSON_REMOVE(\`${column}\`, '${jsonPath}')`);
+						} else {
+							updates.push(`\`${key}\` = NULL`);
+						}
 					}
 				}
 
@@ -144,7 +168,7 @@ module.exports = class DocumentSQL {
 				}
 
 				if (updates.length > 0) {
-					const sql = `UPDATE \`${this._model._table}\` SET ${updates.join(", ")} WHERE \`_id\` = ?`;
+					const sql = `UPDATE \`${this._model._tableName}\` SET ${updates.join(", ")} WHERE \`_id\` = ?`;
 					params.push(this._id);
 					await conn.query(sql, params);
 				}
@@ -338,12 +362,23 @@ module.exports = class DocumentSQL {
 	}
 
 	/**
+	 * Ensure the model has a cache Map initialized
+	 * @private
+	 */
+	_ensureCache () {
+		if (!this._model._cache) {
+			this._model._cache = new Map();
+		}
+	}
+
+	/**
 	 * Actually set a document in Model._cache
 	 * @param {boolean} force Overwrite existing document
 	 * @returns {boolean}
 	 * @private
 	 */
 	_setCache (force) {
+		this._ensureCache();
 		if (!this._existsInCache || force) return !!this._model._cache.set(this._doc._id, this._doc);
 		else return false;
 	}
@@ -354,6 +389,7 @@ module.exports = class DocumentSQL {
 	 * @private
 	 */
 	get _existsInCache () {
+		this._ensureCache();
 		return this._model._cache.has(this._doc._id);
 	}
 
@@ -363,6 +399,7 @@ module.exports = class DocumentSQL {
 	 * @private
 	 */
 	get _cache () {
+		this._ensureCache();
 		return this._model._cache.get(this._doc._id);
 	}
 
@@ -389,7 +426,7 @@ module.exports = class DocumentSQL {
 	 * @returns {DocumentSQL}
 	 */
 	static new (obj, model) {
-		const doc = new DocumentSQL(obj, model);
+		const doc = new DocumentSQL(model, obj);
 		doc._new = true;
 		if (!doc._doc._id && model.schema._options._id !== false && !model.schema._definitions.get("_id")) {
 			// Generate a MongoDB-style ObjectId-like string

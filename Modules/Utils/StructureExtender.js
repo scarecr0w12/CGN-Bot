@@ -80,6 +80,9 @@ function extendMessage () {
 	Message.prototype.build = async function () {
 		const { content } = this;
 
+		// Skip if content is null/undefined (e.g., embed-only messages)
+		if (!content) return;
+
 		if (this.guild && this.client.isReady) {
 			await this.guild.populateDocument();
 			const { serverDocument } = this.guild;

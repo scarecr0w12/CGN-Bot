@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs-nextra");
-const { ObjectId } = require("mongodb");
+const ObjectId = require("../../Database/ObjectID");
 
 const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;

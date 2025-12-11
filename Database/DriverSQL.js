@@ -1,7 +1,9 @@
 /* eslint node/exports-style: ["error", "exports"] */
-const mariadb = require("mariadb");
 
-const ModelSQL = require("./ModelSQL");
+// Lazy load mariadb - only require when initialize() is called
+let mariadb = null;
+let ModelSQL = null;
+
 const { addToGlobal } = require("../Modules/Utils/GlobalDefines.js");
 
 let pool = null;
@@ -11,15 +13,29 @@ let pool = null;
  * @param {object} config A set of MariaDB config options
  * @returns {Promise<Object>}
  */
-exports.initialize = async config => {
+exports.initialize = async () => {
+	// Lazy load dependencies
+	if (!mariadb) mariadb = require("mariadb");
+	if (!ModelSQL) ModelSQL = require("./ModelSQL");
+
+	// Read MariaDB config from environment variables
+	const host = process.env.MARIADB_HOST || "localhost";
+	const port = parseInt(process.env.MARIADB_PORT || "3306", 10);
+	const user = process.env.MARIADB_USER;
+	const password = process.env.MARIADB_PASSWORD;
+	const database = process.env.MARIADB_DATABASE;
+	const connectionLimit = parseInt(process.env.MARIADB_POOL_SIZE || "10", 10);
+
+	console.log(`[MariaDB] Connecting to ${host}:${port}/${database} as ${user}`);
+
 	pool = mariadb.createPool({
-		host: config.host || "localhost",
-		port: config.port || 3306,
-		user: config.user,
-		password: config.password,
-		database: config.database,
-		connectionLimit: config.connectionLimit || 10,
-		acquireTimeout: config.acquireTimeout || 30000,
+		host,
+		port,
+		user,
+		password,
+		database,
+		connectionLimit,
+		acquireTimeout: 30000,
 		// Enable JSON support
 		insertIdAsNumber: true,
 		bigIntAsNumber: true,
@@ -36,6 +52,9 @@ exports.initialize = async config => {
 	} finally {
 		if (conn) conn.release();
 	}
+
+	// Helper function to get the pool
+	const getPool = () => pool;
 
 	const [
 		Servers,
@@ -55,22 +74,22 @@ exports.initialize = async config => {
 		SiteSettings,
 		Feedback,
 	] = [
-		new ModelSQL(pool, "servers", require("./Schemas/serverSchema")),
-		new ModelSQL(pool, "users", require("./Schemas/userSchema")),
-		new ModelSQL(pool, "gallery", require("./Schemas/gallerySchema")),
-		new ModelSQL(pool, "blog", require("./Schemas/blogSchema")),
-		new ModelSQL(pool, "wiki", require("./Schemas/wikiSchema")),
-		new ModelSQL(pool, "traffic", require("./Schemas/trafficSchema")),
-		new ModelSQL(pool, "votes", require("./Schemas/votesSchema")),
-		new ModelSQL(pool, "global_filters", require("./Schemas/globalFilterSchema")),
-		new ModelSQL(pool, "global_ranks", require("./Schemas/globalRankSchema")),
-		new ModelSQL(pool, "global_rss_feeds", require("./Schemas/globalRSSFeedSchema")),
-		new ModelSQL(pool, "global_status_messages", require("./Schemas/globalStatusMessageSchema")),
-		new ModelSQL(pool, "global_tag_reactions", require("./Schemas/globalTagReactionSchema")),
-		new ModelSQL(pool, "global_tags", require("./Schemas/globalTagSchema")),
-		new ModelSQL(pool, "global_trivia", require("./Schemas/globalTriviaSchema")),
-		new ModelSQL(pool, "site_settings", require("./Schemas/siteSettingsSchema")),
-		new ModelSQL(pool, "feedback", require("./Schemas/feedbackSchema")),
+		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
+		new ModelSQL(getPool, "users", require("./Schemas/userSchema")),
+		new ModelSQL(getPool, "gallery", require("./Schemas/gallerySchema")),
+		new ModelSQL(getPool, "blog", require("./Schemas/blogSchema")),
+		new ModelSQL(getPool, "wiki", require("./Schemas/wikiSchema")),
+		new ModelSQL(getPool, "traffic", require("./Schemas/trafficSchema")),
+		new ModelSQL(getPool, "votes", require("./Schemas/votesSchema")),
+		new ModelSQL(getPool, "global_filters", require("./Schemas/globalFilterSchema")),
+		new ModelSQL(getPool, "global_ranks", require("./Schemas/globalRankSchema")),
+		new ModelSQL(getPool, "global_rss_feeds", require("./Schemas/globalRSSFeedSchema")),
+		new ModelSQL(getPool, "global_status_messages", require("./Schemas/globalStatusMessageSchema")),
+		new ModelSQL(getPool, "global_tag_reactions", require("./Schemas/globalTagReactionSchema")),
+		new ModelSQL(getPool, "global_tags", require("./Schemas/globalTagSchema")),
+		new ModelSQL(getPool, "global_trivia", require("./Schemas/globalTriviaSchema")),
+		new ModelSQL(getPool, "site_settings", require("./Schemas/siteSettingsSchema")),
+		new ModelSQL(getPool, "feedback", require("./Schemas/feedbackSchema")),
 	];
 
 	addToGlobal("Servers", Servers);

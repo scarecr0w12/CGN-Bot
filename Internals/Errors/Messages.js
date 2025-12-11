@@ -59,6 +59,7 @@ const Messages = {
 
 	// Database Faults
 	MONGODB_ERROR: err => `An unknown error occurred while interacting with MongoDB: ${err}`,
+	MARIADB_ERROR: err => `An unknown error occurred while interacting with MariaDB: ${err}`,
 	GADRIVER_ERROR: err => `An unknown error occurred within GADriver: ${err}`,
 	GADRIVER_INVALID_PARAMS: `A GADriver method was executed with insufficient or invalid parameters.`,
 };

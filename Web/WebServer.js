@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const MySQLStore = require("express-mysql-session")(session);
 const passport = require("passport");
 const discordStrategy = require("passport-discord").Strategy;
 const discordOAuthScopes = ["identify", "guilds", "email"];
@@ -179,12 +180,45 @@ exports.open = async (client, auth, configJS, logger) => {
 		done(null, id);
 	});
 
-	// connect-mongo v5 uses a different API
-	const sessionStore = MongoStore.create({
-		client: Database.mongoClient,
-		dbName: Database.mongoClient.options?.dbName || "skynet",
-		stringify: false,
-	});
+	// Session store - use MongoStore for MongoDB, MySQLStore for MariaDB
+	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	let sessionStore;
+
+	if (databaseType === "mongodb" && Database.mongoClient) {
+		// connect-mongo v5 uses a different API
+		sessionStore = MongoStore.create({
+			client: Database.mongoClient,
+			dbName: Database.mongoClient.options?.dbName || "skynet",
+			stringify: false,
+		});
+	} else if (databaseType === "mariadb") {
+		// Use MySQLStore for MariaDB session persistence
+		const mysqlOptions = {
+			host: process.env.MARIADB_HOST || "127.0.0.1",
+			port: parseInt(process.env.MARIADB_PORT, 10) || 3306,
+			user: process.env.MARIADB_USER || "root",
+			password: process.env.MARIADB_PASSWORD || "",
+			database: process.env.MARIADB_DATABASE || "skynet",
+			clearExpired: true,
+			checkExpirationInterval: 900000, // 15 minutes
+			expiration: 604800000, // 1 week
+			createDatabaseTable: true,
+			schema: {
+				tableName: "sessions",
+				columnNames: {
+					session_id: "session_id",
+					expires: "expires",
+					data: "data",
+				},
+			},
+		};
+		sessionStore = new MySQLStore(mysqlOptions);
+		logger.info("Using MariaDB session store for persistent sessions");
+	} else {
+		// Fallback to memory store
+		logger.warn("Using memory session store - sessions will not persist across restarts");
+		sessionStore = new session.MemoryStore();
+	}
 
 	const sessionMiddleware = session({
 		secret: configJS.secret,

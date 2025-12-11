@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `upvoted_gallery_extensions` JSON DEFAULT NULL,
     `subscription` JSON DEFAULT NULL,
     `linked_accounts` JSON DEFAULT NULL,
+    `payment_ids` JSON DEFAULT NULL,
     `stripe_customer_id` VARCHAR(255) DEFAULT NULL,
     `paypal_customer_id` VARCHAR(255) DEFAULT NULL,
     `btcpay_customer_id` VARCHAR(255) DEFAULT NULL,

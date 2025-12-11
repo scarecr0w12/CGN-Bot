@@ -1,6 +1,6 @@
 const fs = require("fs-nextra");
 const moment = require("moment");
-const { ObjectId } = require("mongodb");
+const ObjectId = require("../../../Database/ObjectID");
 const { ChannelType } = require("discord.js");
 const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");

@@ -13,7 +13,7 @@ class CursorSQL {
 	 */
 	constructor (model, query = {}, opts = {}) {
 		this._model = model;
-		this._pool = this._model._pool;
+		this._pool = this._model._getPool;
 		this._query = query;
 		this._opts = opts;
 		this._skip = null;
@@ -68,23 +68,29 @@ class CursorSQL {
 			}
 		}
 
-		let sql = `SELECT ${columns} FROM \`${this._model._table}\``;
+		let sql = `SELECT ${columns} FROM \`${this._model._tableName}\``;
 		const params = [];
 
 		// Build WHERE clause
 		if (Object.keys(this._query).length > 0) {
-			const { conditions, values } = this._model._buildWhereClause(this._query);
-			if (conditions.length > 0) {
-				sql += ` WHERE ${conditions.join(" AND ")}`;
-				params.push(...values);
+			const { whereClause, whereParams } = this._model._buildWhereClause(this._query);
+			if (whereClause) {
+				sql += ` WHERE ${whereClause}`;
+				params.push(...whereParams);
 			}
 		}
 
 		// Build ORDER BY clause
 		if (this._sort) {
-			const sortParts = Object.entries(this._sort).map(([field, dir]) =>
-				`\`${field}\` ${dir === 1 ? "ASC" : "DESC"}`,
-			);
+			const sortParts = Object.entries(this._sort).map(([field, dir]) => {
+				if (field.includes(".")) {
+					// Nested JSON path - use JSON_VALUE for sorting
+					const [column, ...pathParts] = field.split(".");
+					const jsonPath = `$."${pathParts.join('"."')}"`;
+					return `JSON_VALUE(\`${column}\`, '${jsonPath}') ${dir === 1 ? "ASC" : "DESC"}`;
+				}
+				return `\`${field}\` ${dir === 1 ? "ASC" : "DESC"}`;
+			});
 			sql += ` ORDER BY ${sortParts.join(", ")}`;
 		}
 
@@ -103,14 +109,14 @@ class CursorSQL {
 
 		let conn;
 		try {
-			conn = await this._pool.getConnection();
+			conn = await this._pool().getConnection();
 			const rows = await conn.query(sql, params);
 
 			if (!Array.isArray(rows)) {
-				return rows ? [new DocumentSQL(this._parseRow(rows), this._model)] : [];
+				return rows ? [new DocumentSQL(this._model, this._parseRow(rows), false)] : [];
 			}
 
-			return rows.map(row => new DocumentSQL(this._parseRow(row), this._model));
+			return rows.map(row => new DocumentSQL(this._model, this._parseRow(row), false));
 		} finally {
 			if (conn) conn.release();
 		}

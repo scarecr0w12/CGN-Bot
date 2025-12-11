@@ -4,17 +4,11 @@
  * Run with: node scripts/seed-blog-posts.js
  *
  * This script populates the database with SEO-centered blog posts to attract users.
+ * Supports both MongoDB and MariaDB via the Database driver.
  */
 
-const { MongoClient } = require("mongodb");
-
-// Load config
-let config;
-try {
-	config = require("../Configurations/config.js");
-} catch {
-	config = require("../Configurations/config.template.js");
-}
+require("dotenv").config();
+const Database = require("../Database/Driver");
 
 const AUTHOR_ID = "218536118591684613"; // Using the maintainer ID found in other seed scripts
 
@@ -124,39 +118,37 @@ Enable the Points system in your server settings dashboard and watch your engage
 ];
 
 async function seed() {
-	const url = config.database.URL;
-	const dbName = config.database.db;
-	
-	console.log(`Connecting to ${url}...`);
-	const client = new MongoClient(url);
+	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	console.log(`Initializing ${databaseType} database...`);
 
 	try {
-		await client.connect();
-		console.log("Connected successfully to server");
-		const db = client.db(dbName);
-		const blogsCollection = db.collection("blog");
+		await Database.initialize();
+		console.log("Connected successfully to database");
+		
+		const Blog = global.Blog;
 
 		for (const post of blogPosts) {
-			const filter = { title: post.title };
-			const update = { $set: post };
-			const options = { upsert: true };
+			// Check if post already exists
+			const existing = await Blog.findOne({ title: post.title });
 			
-			const result = await blogsCollection.updateOne(filter, update, options);
-			
-			if (result.upsertedCount > 0) {
-				console.log(`Inserted post: "${post.title}"`);
-			} else if (result.modifiedCount > 0) {
+			if (existing) {
+				// Update existing post
+				await Blog.update({ title: post.title }, { $set: post });
 				console.log(`Updated post: "${post.title}"`);
 			} else {
-				console.log(`No changes for post: "${post.title}"`);
+				// Create new post
+				const doc = Blog.new(post);
+				await doc.save();
+				console.log(`Inserted post: "${post.title}"`);
 			}
 		}
+
+		console.log("\nBlog seeding complete!");
 
 	} catch (err) {
 		console.error("Error seeding blog posts:", err);
 	} finally {
-		await client.close();
-		console.log("Connection closed.");
+		process.exit(0);
 	}
 }
 

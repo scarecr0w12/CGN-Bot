@@ -71,14 +71,18 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 
 	ObjectDefines(client);
 
-	console.log("[DEBUG] Connecting to MongoDB...");
-	logger.debug("Connecting to MongoDB...", { config: configJS.database });
+	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	const isMariaDB = databaseType === "mariadb";
+	const dbName = isMariaDB ? "MariaDB" : "MongoDB";
+
+	console.log(`[DEBUG] Connecting to ${dbName}...`);
+	logger.debug(`Connecting to ${dbName}...`, { config: isMariaDB ? { host: process.env.MARIADB_HOST } : configJS.database });
 	await database.initialize(configJS.database).catch(err => {
-		logger.error(`An error occurred while connecting to MongoDB! Is the database online?`, { config: configJS.database }, err);
+		logger.error(`An error occurred while connecting to ${dbName}! Is the database online?`, { config: isMariaDB ? { host: process.env.MARIADB_HOST } : configJS.database }, err);
 		process.exit(1);
 	});
-	console.log("[DEBUG] MongoDB connected");
-	logger.info("Successfully connected to MongoDB!");
+	console.log(`[DEBUG] ${dbName} connected`);
+	logger.info(`Successfully connected to ${dbName}!`);
 
 	console.log("[DEBUG] Initializing Discord Events...");
 	logger.silly("Initializing Discord Events.");
@@ -835,12 +839,12 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 * PRESENCE_UPDATE
 	 */
 	client.on("presenceUpdate", async (oldPresence, newPresence) => {
-		if (client.isReady) {
+		if (client.isReady && newPresence?.member && newPresence?.guild) {
 			logger.silly(`Received PRESENCE_UPDATE event from Discord!`, { usrid: newPresence.member.id, svrid: newPresence.guild.id });
 			try {
 				await client.events.onEvent("presenceUpdate", oldPresence, newPresence);
 			} catch (err) {
-				logger.error(`An unexpected error occurred while handling a PRESENCE_UPDATE event! x.x`, { svrid: newPresence.guild.id, usrid: newPresence.member.id }, err);
+				logger.error(`An unexpected error occurred while handling a PRESENCE_UPDATE event! x.x`, { svrid: newPresence.guild?.id, usrid: newPresence.member?.id }, err);
 			}
 		}
 	});

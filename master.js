@@ -14,17 +14,28 @@ const scope = { safeMode: false };
 
 Boot({ configJS, configJSON, auth }, scope).then(() => {
 	if (scope.migrating) return;
-	logger.info("Connecting to MongoDB...", { URL: configJS.database.URL, db: configJS.database.db });
+
+	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	const isMariaDB = databaseType === "mariadb";
+
+	if (isMariaDB) {
+		logger.info("Connecting to MariaDB...", {
+			host: process.env.MARIADB_HOST,
+			database: process.env.MARIADB_DATABASE,
+		});
+	} else {
+		logger.info("Connecting to MongoDB...", { URL: configJS.database.URL, db: configJS.database.db });
+	}
 
 	// eslint-disable-next-line promise/catch-or-return
 	database.initialize(configJS.database).catch(err => {
-		logger.error(`An error occurred while connecting to MongoDB! x( Is the database online?`, { config: configJS.database }, err);
+		logger.error(`An error occurred while connecting to ${isMariaDB ? "MariaDB" : "MongoDB"}! x( Is the database online?`, { config: isMariaDB ? { host: process.env.MARIADB_HOST } : configJS.database }, err);
 		process.exit(1);
 	}).then(async () => {
 		const db = database.getConnection();
 
 		if (db && !scope.safeMode) {
-			await logger.info(`Connected to MongoDB successfully.`);
+			await logger.info(`Connected to ${isMariaDB ? "MariaDB" : "MongoDB"} successfully.`);
 
 			logger.silly("Confirming auth.js config values.");
 			if (Object.values(auth.tokens).some(token => token === "")) {

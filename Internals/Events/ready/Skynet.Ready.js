@@ -7,6 +7,7 @@ const {
 	Utils,
 	Giveaways,
 } = require("../../../Modules/");
+const uptimeKuma = require("../../../Modules/UptimeKuma");
 const {
 	ClearServerStats: clearStats,
 	MessageOfTheDay: createMessageOfTheDay,
@@ -191,6 +192,10 @@ class Ready extends BaseEvent {
 			"help people out!",
 		];
 		logger.info(`Hey boss, we're ready to ${readyMsgs[Math.floor(Math.random() * readyMsgs.length)]}`);
+
+		// Start Uptime Kuma heartbeat for this shard
+		uptimeKuma.startShardHeartbeat(this.client);
+
 		this.client.IPC.send("finished", { id: this.client.shard.id });
 	}
 

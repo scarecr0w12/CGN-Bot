@@ -3,13 +3,19 @@
  * Provides integration with Uptime Kuma for status page data
  */
 
-const { UPTIME_KUMA_URL = "http://uptime-kuma:3001", UPTIME_KUMA_API_KEY, UPTIME_KUMA_STATUS_PAGE_SLUG = "status" } = process.env;
+const {
+	UPTIME_KUMA_URL = "http://uptime-kuma:3001",
+	UPTIME_KUMA_API_KEY,
+	UPTIME_KUMA_STATUS_PAGE_SLUG = "status",
+	UPTIME_KUMA_PUSH_TOKEN,
+} = process.env;
 
 class UptimeKumaClient {
 	constructor () {
 		this.baseUrl = UPTIME_KUMA_URL;
 		this.apiKey = UPTIME_KUMA_API_KEY;
 		this.statusPageSlug = UPTIME_KUMA_STATUS_PAGE_SLUG;
+		this.pushToken = UPTIME_KUMA_PUSH_TOKEN;
 		this.cache = {
 			statusPage: null,
 			heartbeats: null,
@@ -17,6 +23,8 @@ class UptimeKumaClient {
 		};
 		// 30 seconds cache
 		this.cacheTTL = 30000;
+		// Track active heartbeat intervals per shard
+		this.heartbeatIntervals = new Map();
 	}
 
 	/**
@@ -265,6 +273,123 @@ class UptimeKumaClient {
 			heartbeats: null,
 			lastFetch: 0,
 		};
+	}
+
+	/**
+	 * Check if push heartbeats are configured
+	 */
+	isPushConfigured () {
+		return Boolean(this.baseUrl && this.pushToken);
+	}
+
+	/**
+	 * Send a push heartbeat to Uptime Kuma
+	 * @param {string} monitorToken - The push monitor token (or use default)
+	 * @param {string} status - 'up' or 'down'
+	 * @param {string} msg - Status message
+	 * @param {number} ping - Response time in ms (optional)
+	 */
+	async sendHeartbeat (monitorToken, status = "up", msg = "OK", ping = null) {
+		const token = monitorToken || this.pushToken;
+		if (!this.baseUrl || !token) {
+			return { success: false, error: "Push heartbeat not configured" };
+		}
+
+		try {
+			const params = new URLSearchParams({
+				status,
+				msg: msg.substring(0, 200),
+				...ping !== null && { ping: String(ping) },
+			});
+
+			const url = `${this.baseUrl}/api/push/${token}?${params}`;
+			const response = await fetch(url, {
+				method: "GET",
+				signal: AbortSignal.timeout(10000),
+			});
+
+			if (!response.ok) {
+				throw new Error(`Push failed: ${response.status}`);
+			}
+
+			const data = await response.json();
+			return { success: true, data };
+		} catch (error) {
+			if (error.name !== "TimeoutError" && error.code !== "ECONNREFUSED") {
+				logger.debug("Failed to send Uptime Kuma heartbeat", {}, error);
+			}
+			return { success: false, error: error.message };
+		}
+	}
+
+	/**
+	 * Start periodic heartbeat for a shard
+	 * @param {object} client - Discord client instance
+	 * @param {string} shardToken - Optional per-shard push token
+	 * @param {number} intervalMs - Heartbeat interval (default 60s)
+	 */
+	startShardHeartbeat (client, shardToken = null, intervalMs = 60000) {
+		const shardId = client.shardID || "0";
+		const token = shardToken || this.pushToken;
+
+		if (!this.isPushConfigured() && !shardToken) {
+			logger.debug("Uptime Kuma push heartbeat not configured, skipping");
+			return false;
+		}
+
+		// Clear existing interval if any
+		this.stopShardHeartbeat(shardId);
+
+		const sendBeat = async () => {
+			const wsStatus = client.ws?.status;
+			const isReady = client.isReady();
+			const guilds = client.guilds?.cache?.size || 0;
+			const ping = client.ws?.ping || 0;
+
+			let status = "up";
+			let msg = `Shard ${shardId}: ${guilds} guilds, ${ping}ms ping`;
+
+			if (!isReady || wsStatus !== 0) {
+				status = "down";
+				msg = `Shard ${shardId}: Not ready (ws: ${wsStatus})`;
+			}
+
+			await this.sendHeartbeat(token, status, msg, ping > 0 ? ping : null);
+		};
+
+		// Send initial heartbeat
+		sendBeat();
+
+		// Set up interval
+		const interval = setInterval(sendBeat, intervalMs);
+		this.heartbeatIntervals.set(shardId, interval);
+
+		logger.info(`Started Uptime Kuma heartbeat for shard ${shardId} (every ${intervalMs / 1000}s)`);
+		return true;
+	}
+
+	/**
+	 * Stop heartbeat for a shard
+	 * @param {string} shardId
+	 */
+	stopShardHeartbeat (shardId) {
+		const interval = this.heartbeatIntervals.get(shardId);
+		if (interval) {
+			clearInterval(interval);
+			this.heartbeatIntervals.delete(shardId);
+			logger.debug(`Stopped Uptime Kuma heartbeat for shard ${shardId}`);
+		}
+	}
+
+	/**
+	 * Stop all heartbeats
+	 */
+	stopAllHeartbeats () {
+		for (const [shardId, interval] of this.heartbeatIntervals) {
+			clearInterval(interval);
+			logger.debug(`Stopped Uptime Kuma heartbeat for shard ${shardId}`);
+		}
+		this.heartbeatIntervals.clear();
 	}
 }
 
