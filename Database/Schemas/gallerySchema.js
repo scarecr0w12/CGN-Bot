@@ -29,6 +29,7 @@ module.exports = new Schema({
 		min: 0,
 	},
 	owner_id: String,
+	code_id: String,
 	featured: Boolean,
 	last_updated: Date,
 	state: {

@@ -29,7 +29,9 @@ CREATE INDEX IF NOT EXISTS `idx_feedback_category` ON `feedback` (`category`);
 ALTER TABLE `votes`
     ADD COLUMN IF NOT EXISTS `site` VARCHAR(32) DEFAULT NULL,
     ADD COLUMN IF NOT EXISTS `is_weekend` TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `points_awarded` INT DEFAULT 0;
+    ADD COLUMN IF NOT EXISTS `points_awarded` INT DEFAULT 0,
+    ADD COLUMN IF NOT EXISTS `username` VARCHAR(255) DEFAULT NULL,
+    ADD COLUMN IF NOT EXISTS `avatar` VARCHAR(255) DEFAULT NULL;
 
 -- Add index for site queries
 CREATE INDEX IF NOT EXISTS `idx_votes_site` ON `votes` (`site`);

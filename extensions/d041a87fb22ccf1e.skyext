@@ -1,0 +1,42 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+
+const moods = {
+	happy: { emoji: '😊', color: 0x2ecc71, name: 'Happy' },
+	sad: { emoji: '😢', color: 0x3498db, name: 'Sad' },
+	angry: { emoji: '😠', color: 0xe74c3c, name: 'Angry' },
+	tired: { emoji: '😴', color: 0x95a5a6, name: 'Tired' },
+	excited: { emoji: '🤩', color: 0xf39c12, name: 'Excited' },
+	neutral: { emoji: '😐', color: 0x9b59b6, name: 'Neutral' }
+};
+
+const args = command.suffix.trim().split(/\s+/);
+const moodArg = args[0]?.toLowerCase();
+const note = args.slice(1).join(' ');
+
+if (!moodArg || !moods[moodArg]) {
+	const moodList = Object.entries(moods).map(([k, v]) => v.emoji + ' `' + k + '`').join('\n');
+	message.reply({
+		embeds: [{
+			title: '🎭 Mood Tracker',
+			description: 'Log how you\'re feeling!\n\n**Available moods:**\n' + moodList + '\n\n' +
+				'Usage: `' + command.prefix + command.key + ' <mood> [optional note]`',
+			color: 0x9b59b6
+		}]
+	});
+} else {
+	const mood = moods[moodArg];
+	const timestamp = Math.floor(Date.now() / 1000);
+	
+	message.reply({
+		embeds: [{
+			title: mood.emoji + ' Mood Logged',
+			description: '**Feeling:** ' + mood.name + '\n' +
+				(note ? '**Note:** ' + note + '\n' : '') +
+				'**When:** <t:' + timestamp + ':R>',
+			color: mood.color,
+			footer: { text: 'Logged by ' + message.author.username }
+		}]
+	});
+}

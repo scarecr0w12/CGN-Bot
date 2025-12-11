@@ -21,6 +21,10 @@ const seoRouting = router => {
 	router.routes.push(new Route(router, "/robots.txt", [], controllers.seo.robotsTxt, "get", "static"));
 	router.routes.push(new Route(router, "/sitemap.xml", [], controllers.seo.sitemapXml, "get", "static"));
 	router.routes.push(new Route(router, "/sitemap-index.xml", [], controllers.seo.sitemapIndex, "get", "static"));
+	// IndexNow key verification file
+	if (process.env.INDEXNOW_API_KEY) {
+		router.routes.push(new Route(router, `/${process.env.INDEXNOW_API_KEY}.txt`, [], controllers.seo.indexNowKey, "get", "static"));
+	}
 };
 
 const generalRouting = router => {

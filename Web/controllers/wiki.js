@@ -136,6 +136,8 @@ module.exports.edit = async (req, { res }) => {
 };
 
 module.exports.edit.post = async (req, res) => {
+	const indexNow = req.app.get("indexNow");
+
 	if (req.params.id) {
 		try {
 			const wikiDocument = await Wiki.findOne(req.params.id);
@@ -148,6 +150,8 @@ module.exports.edit.post = async (req, res) => {
 			}).set("content", req.body.content);
 
 			await wikiDocument.save();
+			// Notify search engines of updated content
+			indexNow?.submitUrl(`/wiki/${encodeURIComponent(wikiDocument._id)}`);
 			res.redirect(`/wiki/${wikiDocument._id}`);
 		} catch (err) {
 			renderError(res, "An error occurred while saving wiki documents!");
@@ -161,6 +165,8 @@ module.exports.edit.post = async (req, res) => {
 			}],
 		});
 		await wikiDocument.save();
+		// Notify search engines of new content
+		indexNow?.submitUrl(`/wiki/${encodeURIComponent(wikiDocument._id)}`);
 		res.redirect(`/wiki/${wikiDocument._id}`);
 	}
 };

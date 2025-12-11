@@ -1,0 +1,40 @@
+const message = require('message');
+
+const statements = [
+	"Never have I ever been on TV",
+	"Never have I ever gone skydiving",
+	"Never have I ever lied to get out of work",
+	"Never have I ever met a celebrity",
+	"Never have I ever broken a bone",
+	"Never have I ever gone skinny dipping",
+	"Never have I ever been in a food fight",
+	"Never have I ever cried during a movie",
+	"Never have I ever sung karaoke",
+	"Never have I ever been in a car accident",
+	"Never have I ever stayed up for 24 hours",
+	"Never have I ever laughed so hard I cried",
+	"Never have I ever had a surprise party",
+	"Never have I ever been on a blind date",
+	"Never have I ever traveled alone",
+	"Never have I ever eaten an entire pizza by myself",
+	"Never have I ever faked being sick",
+	"Never have I ever been in a physical fight",
+	"Never have I ever gone viral on social media",
+	"Never have I ever walked into a glass door",
+	"Never have I ever been in love",
+	"Never have I ever ghosted someone",
+	"Never have I ever regifted a present",
+	"Never have I ever forgotten someone's name right after meeting them",
+	"Never have I ever pretended to know a song"
+];
+
+const statement = statements[Math.floor(Math.random() * statements.length)];
+
+message.reply({
+	embeds: [{
+		title: '🙈 Never Have I Ever',
+		description: '**' + statement + '**',
+		color: 0xf39c12,
+		footer: { text: 'React if you HAVE done it!' }
+	}]
+});

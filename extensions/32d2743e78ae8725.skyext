@@ -1,0 +1,14 @@
+const message = require('message');
+
+const isHeads = Math.random() < 0.5;
+const result = isHeads ? 'Heads' : 'Tails';
+const emoji = isHeads ? '👑' : '🦅';
+
+message.reply({
+	embeds: [{
+		title: '🪙 Coin Flip',
+		description: emoji + ' **' + result + '!**',
+		color: isHeads ? 0xf1c40f : 0x95a5a6,
+		footer: { text: 'The coin has spoken!' }
+	}]
+});

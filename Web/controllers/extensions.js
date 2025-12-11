@@ -621,6 +621,10 @@ controllers.gallery.modify = async (req, res) => {
 					}
 					res.sendStatus(200);
 
+					// Notify search engines of new published extension
+					const indexNow = req.app.get("indexNow");
+					indexNow?.submitUrl(`/extensions/${galleryDocument._id.toString()}/install`);
+
 					messageOwner(galleryDocument.owner_id, {
 						embeds: [{
 							color: Colors.GREEN,

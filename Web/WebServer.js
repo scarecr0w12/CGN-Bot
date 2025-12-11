@@ -91,6 +91,14 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.set("botLists", botLists);
 	botLists.init().catch(err => logger.warn("Failed to initialize BotLists module", {}, err));
 
+	// Initialize IndexNow module for search engine URL notifications
+	const IndexNow = require("../Modules/IndexNow");
+	const indexNow = new IndexNow(client);
+	app.set("indexNow", indexNow);
+	if (indexNow.enabled) {
+		logger.info("IndexNow integration initialized");
+	}
+
 	// Apply Cloudflare middleware if proxy is enabled
 	if (configJS.cloudflare?.proxyEnabled) {
 		app.use(cloudflareMiddleware.cloudflareData);

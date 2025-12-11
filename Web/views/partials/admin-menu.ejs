@@ -241,6 +241,28 @@
 	</ul>
 	<p class="menu-label">
 		<span class="icon is-small">
+			<i class="fa fa-puzzle-piece"></i>
+		</span>
+		<span>Extensions</span>
+	</p>
+	<ul class="menu-list">
+		<li>
+			<% if (currentPage === `/dashboard/${serverData.id}/other/extensions`) { %>
+			<%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">Installed Extensions</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/other/extensions">Installed Extensions</a>
+			<% } %>
+			<% if (currentPage === `/dashboard/${serverData.id}/other/extension-builder`) { %>
+			<%- include('../partials/admin-sudo.ejs') %>
+			<a class="is-active" href="#">Extension Builder</a>
+			<% } else { %>
+				<a href="/dashboard/<%= serverData.id %>/other/extension-builder">Extension Builder</a>
+			<% } %>
+		</li>
+	</ul>
+	<p class="menu-label">
+		<span class="icon is-small">
 			<i class="fas fa-crown"></i>
 		</span>
 		<span>Subscription</span>

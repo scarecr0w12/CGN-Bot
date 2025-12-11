@@ -8,3 +8,21 @@ datasources:
     url: http://prometheus:9090
     isDefault: true
     editable: false
+
+  - name: Matomo
+    uid: matomo
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    isDefault: false
+    editable: true
+    jsonData:
+      global_queries:
+        - name: matomo_base
+          id: matomo_base
+          query:
+            type: json
+            source: url
+            format: table
+            url: "$__env{MATOMO_URL}"
+            url_options:
+              method: GET

@@ -1,0 +1,74 @@
+const message = require('message');
+const extension = require('extension');
+
+const COLS = 7;
+const ROWS = 6;
+const EMPTY = '⚫';
+const P1 = '🔴';
+const P2 = '🟡';
+const NUMBERS = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣'];
+
+// Initialize empty board
+function createBoard() {
+	const board = [];
+	for (let r = 0; r < ROWS; r++) {
+		board.push(new Array(COLS).fill(EMPTY));
+	}
+	return board;
+}
+
+// Render board as string
+function renderBoard(board) {
+	let str = NUMBERS.join('') + '\n';
+	for (let r = 0; r < ROWS; r++) {
+		str += board[r].join('') + '\n';
+	}
+	return str;
+}
+
+// Check for winner
+function checkWinner(board, piece) {
+	// Horizontal
+	for (let r = 0; r < ROWS; r++) {
+		for (let c = 0; c <= COLS - 4; c++) {
+			if (board[r][c] === piece && board[r][c+1] === piece && 
+				board[r][c+2] === piece && board[r][c+3] === piece) return true;
+		}
+	}
+	// Vertical
+	for (let c = 0; c < COLS; c++) {
+		for (let r = 0; r <= ROWS - 4; r++) {
+			if (board[r][c] === piece && board[r+1][c] === piece && 
+				board[r+2][c] === piece && board[r+3][c] === piece) return true;
+		}
+	}
+	// Diagonal (down-right)
+	for (let r = 0; r <= ROWS - 4; r++) {
+		for (let c = 0; c <= COLS - 4; c++) {
+			if (board[r][c] === piece && board[r+1][c+1] === piece && 
+				board[r+2][c+2] === piece && board[r+3][c+3] === piece) return true;
+		}
+	}
+	// Diagonal (up-right)
+	for (let r = 3; r < ROWS; r++) {
+		for (let c = 0; c <= COLS - 4; c++) {
+			if (board[r][c] === piece && board[r-1][c+1] === piece && 
+				board[r-2][c+2] === piece && board[r-3][c+3] === piece) return true;
+		}
+	}
+	return false;
+}
+
+const board = createBoard();
+const boardStr = renderBoard(board);
+
+message.reply({
+	embeds: [{
+		title: '🎮 Connect 4',
+		description: boardStr + '\n\nReact with a number (1-7) to drop your piece!\n' +
+			P1 + ' ' + message.author.username + ' vs ' + P2 + ' Opponent\n\n' +
+			'*This is a preview - full game requires reaction collectors*',
+		color: 0x3498db,
+		footer: { text: 'First to get 4 in a row wins!' }
+	}]
+});

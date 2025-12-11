@@ -136,11 +136,13 @@ module.exports = class DocumentSQL {
 					for (const [key, value] of Object.entries(ops.$push)) {
 						if (value.$each) {
 							for (const item of value.$each) {
-								updates.push(`\`${key}\` = JSON_ARRAY_APPEND(COALESCE(\`${key}\`, '[]'), '$', CAST(? AS JSON))`);
+								// MariaDB doesn't support CAST(? AS JSON), use JSON_EXTRACT to parse the JSON string
+								updates.push(`\`${key}\` = JSON_ARRAY_APPEND(COALESCE(\`${key}\`, '[]'), '$', JSON_EXTRACT(?, '$'))`);
 								params.push(JSON.stringify(item));
 							}
 						} else {
-							updates.push(`\`${key}\` = JSON_ARRAY_APPEND(COALESCE(\`${key}\`, '[]'), '$', CAST(? AS JSON))`);
+							// MariaDB doesn't support CAST(? AS JSON), use JSON_EXTRACT to parse the JSON string
+							updates.push(`\`${key}\` = JSON_ARRAY_APPEND(COALESCE(\`${key}\`, '[]'), '$', JSON_EXTRACT(?, '$'))`);
 							params.push(JSON.stringify(value));
 						}
 					}

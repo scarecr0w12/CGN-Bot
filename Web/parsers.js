@@ -103,11 +103,31 @@ parsers.userData = async (req, usr, userDocument) => {
 		userProfile.afkMessage = userDocument.afk_message;
 		for (const svr of mutualServers) {
 			const owner = svr.members[svr.ownerId] || { username: "invalid-user" };
+
+			// Fetch per-server profile fields
+			let serverProfileFields = null;
+			try {
+				const serverDocument = await Servers.findOne(svr.id);
+				if (serverDocument) {
+					const memberDocument = serverDocument.members?.[usr.id];
+					if (memberDocument?.profile_fields && Object.keys(memberDocument.profile_fields).length > 0) {
+						serverProfileFields = {};
+						for (const key in memberDocument.profile_fields) {
+							serverProfileFields[key] = md.makeHtml(xssFilters.inHTMLData(memberDocument.profile_fields[key]));
+							serverProfileFields[key] = serverProfileFields[key].substring(3, serverProfileFields[key].length - 4);
+						}
+					}
+				}
+			} catch (err) {
+				// Ignore errors fetching server profile
+			}
+
 			userProfile.mutualServers.push({
 				name: svr.name,
 				id: svr.id,
 				icon: req.app.client.getAvatarURL(svr.id, svr.icon, "icons"),
 				owner: owner.username,
+				profileFields: serverProfileFields,
 			});
 		}
 	}
@@ -115,7 +135,13 @@ parsers.userData = async (req, usr, userDocument) => {
 };
 
 parsers.extensionData = async (req, galleryDocument, versionTag) => {
-	const owner = await req.app.client.users.fetch(galleryDocument.owner_id, true) || {};
+	// Handle system-owned extensions without Discord API call
+	let owner = {};
+	if (galleryDocument.owner_id && galleryDocument.owner_id !== "system") {
+		owner = await req.app.client.users.fetch(galleryDocument.owner_id, true).catch(() => ({})) || {};
+	} else if (galleryDocument.owner_id === "system") {
+		owner = { username: "System", id: "system", displayAvatarURL: () => "/static/img/discord-icon.png" };
+	}
 	const versionDocument = galleryDocument.versions.id(versionTag || galleryDocument.published_version);
 	if (!versionDocument) return null;
 	let typeIcon, typeDescription;

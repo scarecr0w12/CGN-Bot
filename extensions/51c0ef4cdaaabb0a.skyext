@@ -1,0 +1,40 @@
+const message = require('message');
+
+const questions = [
+	["Be able to fly", "Be able to read minds"],
+	["Have unlimited money", "Have unlimited time"],
+	["Be famous", "Be powerful"],
+	["Live in the past", "Live in the future"],
+	["Be a superhero", "Be a supervillain"],
+	["Never use social media again", "Never watch TV/movies again"],
+	["Have no internet", "Have no AC/heating"],
+	["Be the funniest person", "Be the smartest person"],
+	["Only eat pizza forever", "Never eat pizza again"],
+	["Have super strength", "Have super speed"],
+	["Be invisible", "Be able to teleport"],
+	["Know how you die", "Know when you die"],
+	["Have free WiFi everywhere", "Have free coffee everywhere"],
+	["Be a famous musician", "Be a famous actor"],
+	["Live without music", "Live without movies"],
+	["Be 4 feet tall", "Be 8 feet tall"],
+	["Control fire", "Control water"],
+	["Speak every language", "Play every instrument"],
+	["Have a pause button for life", "Have a rewind button for life"],
+	["Be rich but alone", "Be poor but with loved ones"],
+	["Always be cold", "Always be hot"],
+	["Only text", "Only call"],
+	["Have a personal chef", "Have a personal driver"],
+	["Live in a treehouse", "Live in a cave"],
+	["Be a wizard", "Be a Jedi"]
+];
+
+const q = questions[Math.floor(Math.random() * questions.length)];
+
+message.reply({
+	embeds: [{
+		title: '🤷 Would You Rather...',
+		description: '🅰️ **' + q[0] + '**\n\nor\n\n🅱️ **' + q[1] + '**',
+		color: 0x9b59b6,
+		footer: { text: 'React with 🅰️ or 🅱️ to vote!' }
+	}]
+});

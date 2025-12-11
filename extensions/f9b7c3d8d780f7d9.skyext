@@ -1,0 +1,24 @@
+const message = require('message');
+const extension = require('extension');
+
+const target = message.mentions[0] || message.author;
+const statsKey = 'stats_' + target.id;
+let stats = extension.storage.get(statsKey);
+
+if (!stats) {
+	stats = { games_played: 0, messages: 0, commands: 0 };
+}
+
+message.reply({
+	embeds: [{
+		title: '📊 User Stats',
+		description: '**User:** ' + target.username,
+		fields: [
+			{ name: '🎮 Games Played', value: String(stats.games_played || 0), inline: true },
+			{ name: '💬 Messages', value: String(stats.messages || 0), inline: true },
+			{ name: '⚡ Commands', value: String(stats.commands || 0), inline: true }
+		],
+		color: 0x9b59b6,
+		thumbnail: { url: target.avatarURL || '' }
+	}]
+});

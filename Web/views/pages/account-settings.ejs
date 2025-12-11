@@ -43,6 +43,63 @@
 			flex-wrap: wrap;
 			gap: 0.5rem;
 		}
+		.server-card {
+			display: flex;
+			align-items: center;
+			padding: 0.75rem;
+			border: 1px solid #dbdbdb;
+			border-radius: 8px;
+			margin-bottom: 0.5rem;
+			transition: all 0.2s ease;
+			cursor: pointer;
+		}
+		.server-card:hover {
+			border-color: #3273dc;
+			background-color: #f5f8ff;
+		}
+		.server-card.has-profile {
+			border-left: 3px solid #48c774;
+		}
+		.server-icon {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			margin-right: 1rem;
+			object-fit: cover;
+		}
+		.server-info {
+			flex: 1;
+		}
+		.server-info h4 {
+			margin: 0 0 0.25rem 0;
+			font-weight: 600;
+		}
+		.server-info p {
+			margin: 0;
+			font-size: 0.85rem;
+			color: #666;
+		}
+		.profile-field-row {
+			display: flex;
+			gap: 0.5rem;
+			margin-bottom: 0.5rem;
+			align-items: center;
+		}
+		.profile-field-row input {
+			flex: 1;
+		}
+		.profile-field-row .field-name {
+			width: 30%;
+			min-width: 100px;
+		}
+		.profile-field-row .field-value {
+			flex: 1;
+		}
+		.servers-loading {
+			text-align: center;
+			padding: 2rem;
+			color: #666;
+		}
 	</style>
 </head>
 <body>
@@ -280,12 +337,73 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Server Profiles Section -->
+			<div class="box mt-5">
+				<h2 class="subtitle">
+					<span class="icon"><i class="fa fa-server"></i></span>
+					Server Profiles
+				</h2>
+				<p class="mb-4 has-text-grey">Create and manage custom profiles for each server you're in. These profiles are visible to other members on that server.</p>
+
+				<div id="servers-list">
+					<div class="servers-loading">
+						<span class="icon"><i class="fa fa-spinner fa-spin"></i></span>
+						<span>Loading your servers...</span>
+					</div>
+				</div>
+			</div>
 		</div>
 	</section>
+
+	<!-- Server Profile Edit Modal -->
+	<div id="profile-modal" class="modal">
+		<div class="modal-background" onclick="closeProfileModal()"></div>
+		<div class="modal-card">
+			<header class="modal-card-head">
+				<p class="modal-card-title">
+					<span class="icon"><i class="fa fa-user-edit"></i></span>
+					<span id="modal-server-name">Edit Profile</span>
+				</p>
+				<button class="delete" aria-label="close" onclick="closeProfileModal()"></button>
+			</header>
+			<section class="modal-card-body">
+				<input type="hidden" id="modal-server-id">
+				
+				<div class="notification is-info is-light">
+					<span class="icon"><i class="fa fa-info-circle"></i></span>
+					Add custom fields to your profile for this server. Other members can view these fields.
+				</div>
+
+				<div id="profile-fields-container">
+					<!-- Fields will be dynamically added here -->
+				</div>
+
+				<button type="button" class="button is-small is-info is-outlined mt-3" onclick="addProfileField()">
+					<span class="icon"><i class="fa fa-plus"></i></span>
+					<span>Add Field</span>
+				</button>
+
+				<p class="help mt-3">Maximum 10 fields. Field names: 100 chars max. Values: 500 chars max.</p>
+			</section>
+			<footer class="modal-card-foot">
+				<button class="button is-success" onclick="saveProfile()" id="save-profile-btn">
+					<span class="icon"><i class="fa fa-save"></i></span>
+					<span>Save Profile</span>
+				</button>
+				<button class="button is-danger is-outlined" onclick="deleteProfile()" id="delete-profile-btn">
+					<span class="icon"><i class="fa fa-trash"></i></span>
+					<span>Delete Profile</span>
+				</button>
+				<button class="button" onclick="closeProfileModal()">Cancel</button>
+			</footer>
+		</div>
+	</div>
 
 	<%- include('../partials/footer') %>
 
 	<script>
+	// Unlink OAuth account
 	async function unlinkAccount(provider) {
 		if (!confirm(`Are you sure you want to unlink your ${provider} account?`)) {
 			return;
@@ -306,6 +424,243 @@
 			alert('An error occurred. Please try again.');
 		}
 	}
+
+	// Server profiles functionality
+	let serversData = [];
+
+	// Load servers on page load
+	document.addEventListener('DOMContentLoaded', loadServers);
+
+	async function loadServers() {
+		const container = document.getElementById('servers-list');
+		
+		try {
+			const response = await fetch('/account/servers');
+			if (!response.ok) throw new Error('Failed to fetch servers');
+			
+			const data = await response.json();
+			serversData = data.servers || [];
+			
+			if (serversData.length === 0) {
+				container.innerHTML = `
+					<div class="notification is-warning is-light">
+						<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+						<span>You're not in any servers where the bot is present.</span>
+					</div>
+				`;
+				return;
+			}
+			
+			renderServersList();
+		} catch (err) {
+			console.error('Error loading servers:', err);
+			container.innerHTML = `
+				<div class="notification is-danger is-light">
+					<span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+					<span>Failed to load servers. Please refresh the page.</span>
+				</div>
+			`;
+		}
+	}
+
+	function renderServersList() {
+		const container = document.getElementById('servers-list');
+		
+		const html = serversData.map(server => `
+			<div class="server-card ${server.hasProfile ? 'has-profile' : ''}" onclick="openProfileModal('${server.id}')">
+				<img src="${server.icon}" alt="${escapeHtml(server.name)}" class="server-icon" onerror="this.src='/static/img/discord-icon.png'">
+				<div class="server-info">
+					<h4>${escapeHtml(server.name)}</h4>
+					<p>
+						<span class="icon is-small"><i class="fa fa-users"></i></span>
+						${server.memberCount} members
+						<span class="ml-3 icon is-small"><i class="fa fa-crown"></i></span>
+						${escapeHtml(server.owner)}
+					</p>
+				</div>
+				<div>
+					${server.hasProfile 
+						? '<span class="tag is-success"><span class="icon is-small"><i class="fa fa-check"></i></span><span>Profile Set</span></span>' 
+						: '<span class="tag is-light"><span class="icon is-small"><i class="fa fa-plus"></i></span><span>Add Profile</span></span>'
+					}
+				</div>
+			</div>
+		`).join('');
+		
+		container.innerHTML = html;
+	}
+
+	function openProfileModal(serverId) {
+		const server = serversData.find(s => s.id === serverId);
+		if (!server) return;
+		
+		document.getElementById('modal-server-id').value = serverId;
+		document.getElementById('modal-server-name').textContent = `Edit Profile - ${server.name}`;
+		
+		const container = document.getElementById('profile-fields-container');
+		container.innerHTML = '';
+		
+		// Load existing profile fields
+		const profile = server.profile || {};
+		const keys = Object.keys(profile);
+		
+		if (keys.length > 0) {
+			keys.forEach(key => {
+				addProfileField(key, profile[key]);
+			});
+		} else {
+			// Add one empty field to start
+			addProfileField();
+		}
+		
+		document.getElementById('profile-modal').classList.add('is-active');
+	}
+
+	function closeProfileModal() {
+		document.getElementById('profile-modal').classList.remove('is-active');
+	}
+
+	function addProfileField(name = '', value = '') {
+		const container = document.getElementById('profile-fields-container');
+		const fieldCount = container.querySelectorAll('.profile-field-row').length;
+		
+		if (fieldCount >= 10) {
+			alert('Maximum 10 fields allowed');
+			return;
+		}
+		
+		const row = document.createElement('div');
+		row.className = 'profile-field-row';
+		row.innerHTML = `
+			<input type="text" class="input field-name" placeholder="Field Name (e.g., Bio, Location)" maxlength="100" value="${escapeHtml(name)}">
+			<input type="text" class="input field-value" placeholder="Value" maxlength="500" value="${escapeHtml(value)}">
+			<button type="button" class="button is-small is-danger is-outlined" onclick="this.parentElement.remove()">
+				<span class="icon"><i class="fa fa-times"></i></span>
+			</button>
+		`;
+		
+		container.appendChild(row);
+	}
+
+	async function saveProfile() {
+		const serverId = document.getElementById('modal-server-id').value;
+		const container = document.getElementById('profile-fields-container');
+		const rows = container.querySelectorAll('.profile-field-row');
+		
+		const profile_fields = {};
+		
+		rows.forEach(row => {
+			const name = row.querySelector('.field-name').value.trim();
+			const value = row.querySelector('.field-value').value.trim();
+			
+			if (name && value) {
+				profile_fields[name] = value;
+			}
+		});
+		
+		const btn = document.getElementById('save-profile-btn');
+		btn.classList.add('is-loading');
+		btn.disabled = true;
+		
+		try {
+			const response = await fetch(`/account/servers/${serverId}/profile`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ profile_fields })
+			});
+			
+			const data = await response.json();
+			
+			if (!response.ok) {
+				throw new Error(data.error || 'Failed to save profile');
+			}
+			
+			// Update local data
+			const serverIndex = serversData.findIndex(s => s.id === serverId);
+			if (serverIndex !== -1) {
+				serversData[serverIndex].profile = profile_fields;
+				serversData[serverIndex].hasProfile = Object.keys(profile_fields).length > 0;
+			}
+			
+			renderServersList();
+			closeProfileModal();
+			
+			// Show success notification
+			showNotification('Profile saved successfully!', 'success');
+		} catch (err) {
+			alert(err.message || 'Failed to save profile');
+		} finally {
+			btn.classList.remove('is-loading');
+			btn.disabled = false;
+		}
+	}
+
+	async function deleteProfile() {
+		if (!confirm('Are you sure you want to delete your profile for this server?')) {
+			return;
+		}
+		
+		const serverId = document.getElementById('modal-server-id').value;
+		const btn = document.getElementById('delete-profile-btn');
+		btn.classList.add('is-loading');
+		btn.disabled = true;
+		
+		try {
+			const response = await fetch(`/account/servers/${serverId}/profile`, {
+				method: 'DELETE'
+			});
+			
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || 'Failed to delete profile');
+			}
+			
+			// Update local data
+			const serverIndex = serversData.findIndex(s => s.id === serverId);
+			if (serverIndex !== -1) {
+				serversData[serverIndex].profile = {};
+				serversData[serverIndex].hasProfile = false;
+			}
+			
+			renderServersList();
+			closeProfileModal();
+			
+			showNotification('Profile deleted successfully!', 'info');
+		} catch (err) {
+			alert(err.message || 'Failed to delete profile');
+		} finally {
+			btn.classList.remove('is-loading');
+			btn.disabled = false;
+		}
+	}
+
+	function escapeHtml(text) {
+		const div = document.createElement('div');
+		div.textContent = text;
+		return div.innerHTML;
+	}
+
+	function showNotification(message, type = 'info') {
+		const notification = document.createElement('div');
+		notification.className = `notification is-${type} is-light`;
+		notification.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;';
+		notification.innerHTML = `
+			<button class="delete" onclick="this.parentElement.remove()"></button>
+			${escapeHtml(message)}
+		`;
+		document.body.appendChild(notification);
+		
+		setTimeout(() => {
+			notification.remove();
+		}, 3000);
+	}
+
+	// Close modal on escape key
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') {
+			closeProfileModal();
+		}
+	});
 	</script>
 </body>
 </html>

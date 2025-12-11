@@ -8,23 +8,57 @@ const databaseType = process.env.DATABASE_TYPE || "mongodb";
 let MongoObjectId = null;
 
 /**
+ * MariaDB ObjectID wrapper class
+ * Wraps string IDs to provide consistent interface with MongoDB ObjectId
+ */
+class MariaDBObjectId {
+	constructor (id) {
+		if (id === undefined || id === null) {
+			this._id = MariaDBObjectId.generate();
+		} else if (typeof id === "string") {
+			this._id = id;
+		} else if (id instanceof MariaDBObjectId) {
+			this._id = id._id;
+		} else {
+			throw new Error("Invalid ID format");
+		}
+	}
+
+	toString () {
+		return this._id;
+	}
+
+	toHexString () {
+		return this._id;
+	}
+
+	equals (other) {
+		if (other instanceof MariaDBObjectId) {
+			return this._id === other._id;
+		}
+		return this._id === String(other);
+	}
+
+	static generate () {
+		const crypto = require("crypto");
+		return crypto.randomBytes(12).toString("hex");
+	}
+
+	static isValid (id) {
+		return typeof id === "string" && id.length > 0;
+	}
+}
+
+/**
  * Create or validate an ObjectID
  * For MongoDB: Returns actual ObjectId instance
- * For MariaDB: Returns string representation
+ * For MariaDB: Returns MariaDBObjectId wrapper
  * @param {string} [id] - The ID string to convert, or undefined to generate new
- * @returns {ObjectId|string} - ObjectId for MongoDB, string for MariaDB
+ * @returns {ObjectId|MariaDBObjectId} - ObjectId for MongoDB, MariaDBObjectId for MariaDB
  */
 function ObjectID (id) {
 	if (databaseType === "mariadb") {
-		// For MariaDB, generate new ID if none provided
-		if (id === undefined || id === null) {
-			return ObjectID.generate();
-		}
-		// Just return the string ID
-		if (typeof id !== "string") {
-			throw new Error("Invalid ID format");
-		}
-		return id;
+		return new MariaDBObjectId(id);
 	}
 
 	// For MongoDB, use actual ObjectId
@@ -41,8 +75,7 @@ function ObjectID (id) {
  */
 ObjectID.isValid = function (id) {
 	if (databaseType === "mariadb") {
-		// For MariaDB, accept any non-empty string
-		return typeof id === "string" && id.length > 0;
+		return MariaDBObjectId.isValid(id);
 	}
 
 	// For MongoDB, use ObjectId validation
@@ -54,13 +87,11 @@ ObjectID.isValid = function (id) {
 
 /**
  * Generate a new ObjectID
- * @returns {ObjectId|string}
+ * @returns {ObjectId|MariaDBObjectId}
  */
 ObjectID.generate = function () {
 	if (databaseType === "mariadb") {
-		// Generate 24 character hex string similar to MongoDB ObjectId
-		const crypto = require("crypto");
-		return crypto.randomBytes(12).toString("hex");
+		return new MariaDBObjectId();
 	}
 
 	// For MongoDB, generate new ObjectId

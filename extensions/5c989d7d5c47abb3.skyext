@@ -1,0 +1,84 @@
+const message = require('message');
+const command = require('command');
+
+const truths = [
+	"What's the most embarrassing thing you've ever done?",
+	"What's a secret you've never told anyone?",
+	"What's the biggest lie you've ever told?",
+	"Who was your first crush?",
+	"What's your biggest fear?",
+	"What's the worst date you've ever been on?",
+	"Have you ever cheated on a test?",
+	"What's your most embarrassing social media moment?",
+	"What's the weirdest dream you've ever had?",
+	"What's something you pretend to hate but actually love?",
+	"What's the most childish thing you still do?",
+	"What's the worst gift you've ever received?",
+	"Have you ever blamed something on someone else?",
+	"What's your guilty pleasure TV show?",
+	"What's the longest you've gone without showering?",
+	"What's the most trouble you've been in?",
+	"Have you ever had a crush on a friend's partner?",
+	"What's the most embarrassing thing in your room?",
+	"What's the worst thing you've said to someone?",
+	"What's your biggest regret?"
+];
+
+const dares = [
+	"Do your best impression of another player!",
+	"Send a funny selfie in the chat!",
+	"Speak in an accent for the next 3 messages!",
+	"Share the last photo in your camera roll!",
+	"Let someone else send a message from your account!",
+	"Change your nickname to something embarrassing for 10 minutes!",
+	"Do 10 pushups right now!",
+	"Sing the chorus of your favorite song!",
+	"Call someone and tell them you love them!",
+	"Post an embarrassing story about yourself!",
+	"Try to lick your elbow!",
+	"Talk without using the letter 'e' for 5 minutes!",
+	"Do your best dance move on video!",
+	"Speak only in questions for the next 5 minutes!",
+	"Make up a short rap about another player!",
+	"Hold your breath for 30 seconds!",
+	"Tell a joke that makes everyone laugh!",
+	"Act like a chicken for 30 seconds!",
+	"Say the alphabet backwards!",
+	"Do your best celebrity impression!"
+];
+
+const suffix = command.suffix.toLowerCase().trim();
+const isTruth = suffix === 'truth' || suffix === 't';
+const isDare = suffix === 'dare' || suffix === 'd';
+
+if (!isTruth && !isDare) {
+	message.reply({
+		embeds: [{
+			title: '🎭 Truth or Dare',
+			description: 'Usage: `' + command.prefix + command.key + ' <truth|dare>`\n\n' +
+				'🤔 **truth** - Get a truth question\n' +
+				'😈 **dare** - Get a dare challenge',
+			color: 0xe91e63
+		}]
+	});
+} else if (isTruth) {
+	const truth = truths[Math.floor(Math.random() * truths.length)];
+	message.reply({
+		embeds: [{
+			title: '🤔 Truth',
+			description: truth,
+			color: 0x3498db,
+			footer: { text: 'Answer honestly!' }
+		}]
+	});
+} else {
+	const dare = dares[Math.floor(Math.random() * dares.length)];
+	message.reply({
+		embeds: [{
+			title: '😈 Dare',
+			description: dare,
+			color: 0xe74c3c,
+			footer: { text: 'No chickening out!' }
+		}]
+	});
+}

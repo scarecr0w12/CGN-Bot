@@ -150,8 +150,21 @@ const sitemapIndex = async (req, res) => {
 	res.type("application/xml").send(index);
 };
 
+/**
+ * Serve IndexNow key verification file
+ * The key file is served at /{key}.txt
+ */
+const indexNowKey = async (req, res) => {
+	const key = process.env.INDEXNOW_API_KEY;
+	if (!key) {
+		return res.status(404).send("IndexNow not configured");
+	}
+	res.type("text/plain").send(key);
+};
+
 module.exports = {
 	robotsTxt,
 	sitemapXml,
 	sitemapIndex,
+	indexNowKey,
 };

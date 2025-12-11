@@ -122,6 +122,8 @@ controllers.article.compose = async (req, { res }) => {
 };
 
 controllers.article.compose.post = async (req, res) => {
+	const indexNow = req.app.get("indexNow");
+
 	if (req.params.id) {
 		const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
 		if (!blogDocument) {
@@ -132,6 +134,8 @@ controllers.article.compose.post = async (req, res) => {
 				.set("content", req.body.content);
 
 			blogDocument.save().then(() => {
+				// Notify search engines of updated content
+				indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}`);
 				res.redirect(`/blog/${blogDocument._id.toString()}`);
 			}).catch(() => res.sendStatus(500));
 		}
@@ -143,6 +147,8 @@ controllers.article.compose.post = async (req, res) => {
 			content: req.body.content,
 		});
 		blogDocument.save().then(() => {
+			// Notify search engines of new content
+			indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}`);
 			res.redirect(`/blog/${blogDocument._id.toString()}`);
 		}).catch(() => res.sendStatus(500));
 	}

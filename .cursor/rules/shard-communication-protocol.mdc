@@ -1,5 +1,5 @@
 ---
-description: Specification for implementing custom inter-shard communication protocols and state synchronization between bot shards
+description: Specification for cross-shard communication protocols and message routing in distributed Discord bot systems
 ---
 
 # === USER INSTRUCTIONS ===
@@ -47,48 +47,52 @@ $END$
 
 # shard-communication-protocol
 
-IMPORTANCE SCORE: 85/100
+Core IPC Protocol Components:
 
-Shard Communication Protocol:
+1. Message Router (Importance Score: 95)
+- Custom binary protocol for cross-shard communication
+- Implements atomic broadcasting with acknowledgment
+- Handles shard state synchronization and data replication
+- Priority-based message queuing with QoS levels
 
-1. Message Routing System
-- Custom routing tables for cross-shard message delivery
-- Guild-specific message targeting with shard mapping
-- Automatic rerouting for guild migration between shards
-- Protocol types for different message categories:
-  - GUILD_SYNC - Guild state updates
-  - MEMBER_UPDATE - Member data changes 
-  - COMMAND_BROADCAST - Cross-shard commands
+2. State Manager (Importance Score: 90)
+- Manages distributed state across bot shards
+- Implements eventual consistency for guild data
+- Handles shard membership changes and recovery
+- Maintains shard registry and routing tables
 
-2. State Synchronization
-- Bidirectional state sync between master and worker shards
-- Custom state merging strategies for:
-  - Guild configurations
-  - Member data
-  - Permission updates
-  - Cross-guild user data
+3. Guild Coordinator (Importance Score: 85)
+- Manages guild distribution across shards
+- Implements guild migration during scaling events
+- Handles cross-shard guild operation routing
+- Maintains guild location registry
 
-3. Connection Management
-- Heartbeat system for shard health monitoring
-- Automatic shard reconnection with state recovery
-- Load balancing through dynamic shard assignment
-- Guild migration coordination between shards
+Protocol Message Types:
+- SYNC_STATE: Full state synchronization
+- GUILD_UPDATE: Guild data changes
+- BROADCAST: Cross-shard announcements
+- SHARD_STATUS: Health/status updates
+- ROUTE_REQUEST: Operation routing
 
-Core Protocol Messages:
-```
-SHARD_READY      -> Shard initialization complete
-SHARD_DISCONNECT -> Graceful shard shutdown
-GUILD_SYNC       -> Guild state synchronization
-STATE_UPDATE     -> Partial state updates
-BROADCAST        -> Cross-shard broadcast
-```
+Key Integration Points:
+- Sharded database connections
+- Memory-based state caching
+- Redis pub/sub for real-time updates
+- Worker process coordination
 
-The protocol implements specialized handling for:
-- Guild data consistency across shards
-- Member state synchronization
-- Cross-shard command execution
-- Distributed cache invalidation
-- Real-time state updates
+Shard Lifecycle States:
+1. INITIALIZING - Loading state
+2. CONNECTING - Establishing Discord connection
+3. READY - Processing messages
+4. SYNCHRONIZING - Replicating state
+5. SHUTTING_DOWN - Graceful termination
+
+The protocol implements a custom binary format for efficiency with message headers containing:
+- Message Type (1 byte)
+- Shard ID (2 bytes)
+- Sequence Number (4 bytes) 
+- Priority Level (1 byte)
+- Payload Length (4 bytes)
 
 $END$
 

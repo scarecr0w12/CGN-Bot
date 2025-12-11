@@ -39,6 +39,10 @@ module.exports = router => {
 	setupResource(router, "/extensions", [], controllers.api.extensions, "get", "public");
 	setupResource(router, "/feedback", [], controllers.console.feedback.submit, "post", "public");
 
+	// Matomo proxy for Grafana dashboards
+	const matomoProxy = require("../controllers/matomo-proxy");
+	setupResource(router, "/matomo", [], matomoProxy, "get", "public");
+
 	// Protected endpoints (require api_access feature)
 	setupResource(router, "/servers/:svrid/channels", [middleware.requireFeature("api_access")], controllers.api.servers.channels, "get", "authorization");
 	setupResource(router, "/list/servers", [middleware.requireFeature("api_access")], controllers.api.servers.list, "get", "authentication");

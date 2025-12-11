@@ -106,4 +106,8 @@ module.exports = new Schema({
 		},
 	}, { _id: false })],
 	modlog: require("./serverModlogSchema.js"),
+
+	// MariaDB timestamp fields
+	created_at: Date,
+	updated_at: Date,
 });

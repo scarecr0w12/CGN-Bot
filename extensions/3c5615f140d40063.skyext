@@ -1,0 +1,53 @@
+const message = require('message');
+const command = require('command');
+
+const mentions = message.mentions;
+const args = command.suffix.trim().split(/\s+/);
+
+let numTeams = 2;
+if (args[0] && !isNaN(parseInt(args[0]))) {
+	numTeams = parseInt(args[0]);
+}
+
+if (mentions.length < 2) {
+	message.reply({
+		embeds: [{
+			title: '👥 Team Picker',
+			description: 'Mention at least 2 users to create teams!\n\n' +
+				'Usage: `' + command.prefix + command.key + ' [number of teams] @user1 @user2 @user3...`',
+			color: 0xe74c3c
+		}]
+	});
+} else {
+	numTeams = Math.min(Math.max(numTeams, 2), mentions.length);
+	
+	// Shuffle mentions
+	const shuffled = [...mentions].sort(() => Math.random() - 0.5);
+	
+	// Distribute into teams
+	const teams = [];
+	for (let i = 0; i < numTeams; i++) {
+		teams.push([]);
+	}
+	shuffled.forEach((user, i) => {
+		teams[i % numTeams].push(user);
+	});
+	
+	let description = '';
+	const teamEmojis = ['🔴', '🔵', '🟢', '🟡', '🟣', '🟠', '⚪', '🟤'];
+	teams.forEach((team, i) => {
+		const emoji = teamEmojis[i % teamEmojis.length];
+		description += emoji + ' **Team ' + (i + 1) + '**\n';
+		description += team.map(u => '• ' + u.username).join('\n');
+		description += '\n\n';
+	});
+	
+	message.reply({
+		embeds: [{
+			title: '👥 Team Picker',
+			description: description,
+			color: 0x2ecc71,
+			footer: { text: 'Teams randomly generated!' }
+		}]
+	});
+}
