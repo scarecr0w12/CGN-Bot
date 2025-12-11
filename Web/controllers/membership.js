@@ -12,45 +12,50 @@ const controllers = module.exports;
 
 /**
  * Public membership/pricing page
+ * Premium subscriptions are per-server, so user must select a server to subscribe
  */
 controllers.pricing = async (req, { res }) => {
 	try {
 		const siteSettings = await TierManager.getSiteSettings();
 		const tiers = siteSettings?.tiers || [];
 		const features = siteSettings?.features || [];
-		const redemptionConfig = siteSettings?.vote_rewards?.redemption || {};
+		const yearlyDiscount = siteSettings?.yearly_discount || 20;
 
-		let userTier = null;
-		let subscription = null;
-		let userPoints = 0;
-		let redemptionInfo = null;
+		const userServers = [];
+		let selectedServer = null;
+		let serverTier = null;
+		let serverSubscription = null;
+
+		// Get server from query param
+		const selectedServerId = req.query.server;
 
 		if (req.isAuthenticated()) {
-			userTier = await TierManager.getUserTier(req.user.id);
-			subscription = await TierManager.getUserSubscription(req.user.id);
-			
-			// Get user's points for redemption
-			const userDoc = await Users.findOne(req.user.id);
-			userPoints = userDoc?.points || 0;
+			// Get user's servers where they have admin permissions
+			const userGuilds = req.user.guilds || [];
+			const botGuilds = await req.app.client.guilds.cache;
 
-			// Calculate redemption info
-			if (redemptionConfig.isEnabled && redemptionConfig.redeemable_tier_id) {
-				const redeemTier = tiers.find(t => t._id === redemptionConfig.redeemable_tier_id);
-				if (redeemTier) {
-					const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
-					const pricePerMonth = redeemTier.price_monthly || 5;
-					const pointsPerDay = Math.ceil((pricePerMonth / 30) * pointsPerDollar);
-					
-					redemptionInfo = {
-						enabled: true,
-						tier: redeemTier,
-						pointsPerDollar,
-						pointsPerDay,
-						pointsPerMonth: Math.ceil(pricePerMonth * pointsPerDollar),
-						minDays: redemptionConfig.min_redemption_days || 7,
-						maxDays: redemptionConfig.max_redemption_days || 365,
-						affordableDays: Math.floor(userPoints / pointsPerDay),
-					};
+			// Filter to servers where user is admin/owner and bot is present
+			for (const guild of userGuilds) {
+				// Check if user has admin or manage server permission (0x8 = ADMINISTRATOR, 0x20 = MANAGE_GUILD)
+				const hasAdminPerms = (guild.permissions & 0x8) === 0x8 || (guild.permissions & 0x20) === 0x20 || guild.owner;
+				const botInGuild = botGuilds.has(guild.id);
+
+				if (hasAdminPerms && botInGuild) {
+					userServers.push({
+						id: guild.id,
+						name: guild.name,
+						icon: guild.icon ? `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png` : null,
+					});
+				}
+			}
+
+			// If a server is selected, get its subscription info
+			if (selectedServerId) {
+				const serverInList = userServers.find(s => s.id === selectedServerId);
+				if (serverInList) {
+					selectedServer = serverInList;
+					serverTier = await TierManager.getServerTier(selectedServerId);
+					serverSubscription = await TierManager.getServerSubscription(selectedServerId);
 				}
 			}
 		}
@@ -59,10 +64,11 @@ controllers.pricing = async (req, { res }) => {
 			page: "membership.ejs",
 			tiers,
 			features,
-			userTier,
-			subscription,
-			userPoints,
-			redemptionInfo,
+			yearlyDiscount,
+			userServers,
+			selectedServer,
+			serverTier,
+			serverSubscription,
 		});
 		res.render();
 	} catch (err) {
@@ -389,13 +395,13 @@ controllers.redeemPoints = async (req, res) => {
 
 		// Calculate expiration
 		const expiresAt = new Date();
-		
+
 		// If user already has this tier, extend from current expiration
 		const currentTier = await TierManager.getUserTier(req.user.id);
 		if (currentTier?.tier_id === tierId && currentTier?.expires_at && new Date(currentTier.expires_at) > expiresAt) {
 			expiresAt.setTime(new Date(currentTier.expires_at).getTime());
 		}
-		
+
 		expiresAt.setDate(expiresAt.getDate() + requestedDays);
 
 		// Assign the tier

@@ -104,30 +104,72 @@
 
 	<section class="section">
 		<div class="container">
-			<% if (pageData.userTier) { %>
+			<!-- Server Selection (required for purchase) -->
+			<% if (authUser && pageData.userServers && pageData.userServers.length > 0) { %>
+			<div class="box mb-5">
+				<div class="columns is-vcentered">
+					<div class="column">
+						<p class="title is-5">
+							<span class="icon"><i class="fa fa-server"></i></span>
+							Select a Server
+						</p>
+						<p class="subtitle is-6">Premium subscriptions are per-server. Choose which server to manage.</p>
+					</div>
+					<div class="column is-narrow">
+						<div class="select is-medium">
+							<select id="server-select" onchange="selectServer(this.value)">
+								<option value="">-- Select a server --</option>
+								<% pageData.userServers.forEach(server => { %>
+								<option value="<%= server.id %>" <%= pageData.selectedServer && pageData.selectedServer.id === server.id ? 'selected' : '' %>>
+									<%= server.name %>
+								</option>
+								<% }); %>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% } else if (authUser) { %>
+			<div class="notification is-warning mb-5">
+				<p><strong>No eligible servers found.</strong></p>
+				<p>You need to be an admin of a server where the bot is installed to purchase a subscription.</p>
+				<a href="/servers" class="button is-warning is-light mt-3">
+					<span class="icon"><i class="fa fa-plus"></i></span>
+					<span>Add Bot to Server</span>
+				</a>
+			</div>
+			<% } %>
+
+			<!-- Selected Server's Current Plan -->
+			<% if (pageData.selectedServer) { %>
 			<div class="current-tier-banner">
 				<div class="columns is-vcentered">
 					<div class="column">
-						<p class="is-size-5">Your Current Plan</p>
-						<p class="is-size-3 has-text-weight-bold">
-							<% if (pageData.userTier.badge_icon) { %>
-							<span class="icon"><i class="fa <%= pageData.userTier.badge_icon %>"></i></span>
+						<p class="is-size-6">
+							<% if (pageData.selectedServer.icon) { %>
+							<img src="<%= pageData.selectedServer.icon %>" alt="" style="width: 24px; height: 24px; border-radius: 50%; vertical-align: middle; margin-right: 0.5rem;">
 							<% } %>
-							<%= pageData.userTier.name %>
+							<%= pageData.selectedServer.name %>
 						</p>
-						<% if (pageData.subscription && pageData.subscription.expires_at) { %>
+						<p class="is-size-3 has-text-weight-bold">
+							<% if (pageData.serverTier && pageData.serverTier.badge_icon) { %>
+							<span class="icon"><i class="fa <%= pageData.serverTier.badge_icon %>"></i></span>
+							<% } %>
+							<%= pageData.serverTier ? pageData.serverTier.name : 'Free' %>
+						</p>
+						<% if (pageData.serverSubscription && pageData.serverSubscription.expires_at) { %>
 						<p class="is-size-7">
 							<span class="icon"><i class="fa fa-clock"></i></span>
-							<% if (new Date(pageData.subscription.expires_at) > new Date()) { %>
-							Active until <%= new Date(pageData.subscription.expires_at).toLocaleDateString() %>
+							<% if (new Date(pageData.serverSubscription.expires_at) > new Date()) { %>
+							Active until <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
 							<% } else { %>
-							Expired on <%= new Date(pageData.subscription.expires_at).toLocaleDateString() %>
+							Expired on <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
 							<% } %>
 						</p>
 						<% } %>
 					</div>
 					<div class="column is-narrow">
-						<a href="/account" class="button is-white is-outlined">
+						<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription" class="button is-white is-outlined">
 							<span class="icon"><i class="fa fa-cog"></i></span>
 							<span>Manage Subscription</span>
 						</a>
@@ -193,19 +235,24 @@
 
 						<div class="pricing-footer">
 							<% if (authUser) { %>
-								<% if (pageData.userTier && pageData.userTier._id === tier._id) { %>
+								<% if (!pageData.selectedServer) { %>
+								<button class="button is-fullwidth is-light" disabled>
+									<span class="icon"><i class="fa fa-server"></i></span>
+									<span>Select a Server First</span>
+								</button>
+								<% } else if (pageData.serverTier && pageData.serverTier._id === tier._id) { %>
 								<button class="button is-fullwidth" disabled>
 									<span class="icon"><i class="fa fa-check"></i></span>
 									<span>Current Plan</span>
 								</button>
-								<% } else if (pageData.userTier && pageData.userTier.level >= tier.level) { %>
+								<% } else if (pageData.serverTier && pageData.serverTier.level >= tier.level) { %>
 								<button class="button is-fullwidth is-warning" disabled>
 									<span>Downgrade not available online</span>
 								</button>
 								<% } else { %>
 								<button class="button is-fullwidth is-primary" onclick="subscribe('<%= tier._id %>')" style="background-color: <%= tier.color || '#3273dc' %>;">
 									<span class="icon"><i class="fa fa-arrow-up"></i></span>
-									<span><%= pageData.userTier ? 'Upgrade' : 'Subscribe' %></span>
+									<span><%= pageData.serverTier && pageData.serverTier.level > 0 ? 'Upgrade' : 'Subscribe' %></span>
 								</button>
 								<% } %>
 							<% } else { %>
@@ -231,71 +278,14 @@
 				<% } %>
 			</div>
 
-			<!-- Point Redemption Section -->
-			<% if (pageData.redemptionInfo?.enabled && authUser) { %>
-			<div class="mt-6" id="redeem-points">
-				<h2 class="title is-3 has-text-centered">
-					<span class="icon"><i class="fa fa-exchange-alt"></i></span>
-					Redeem Vote Points
-				</h2>
-				<div class="columns is-centered">
-					<div class="column is-8">
-						<div class="box">
-							<div class="columns is-vcentered">
-								<div class="column">
-									<p class="title is-4">Your Points: <span class="has-text-primary"><%= pageData.userPoints.toLocaleString() %></span></p>
-									<p class="subtitle is-6">
-										Redeem your vote points for <strong><%= pageData.redemptionInfo.tier.name %></strong> membership time!
-									</p>
-								</div>
-								<div class="column is-narrow">
-									<div class="tags has-addons">
-										<span class="tag is-medium">1 Day</span>
-										<span class="tag is-medium is-primary"><%= pageData.redemptionInfo.pointsPerDay.toLocaleString() %> pts</span>
-									</div>
-									<div class="tags has-addons">
-										<span class="tag is-medium">30 Days</span>
-										<span class="tag is-medium is-primary"><%= pageData.redemptionInfo.pointsPerMonth.toLocaleString() %> pts</span>
-									</div>
-								</div>
-							</div>
-							
-							<% if (pageData.redemptionInfo.affordableDays >= pageData.redemptionInfo.minDays) { %>
-							<hr>
-							<div class="field has-addons">
-								<div class="control is-expanded">
-									<input class="input is-medium" type="number" id="redeem-days" 
-										min="<%= pageData.redemptionInfo.minDays %>" 
-										max="<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %>" 
-										value="<%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.minDays) %>"
-										placeholder="Days">
-								</div>
-								<div class="control">
-									<button class="button is-primary is-medium" onclick="redeemPoints()">
-										<span class="icon"><i class="fa fa-gift"></i></span>
-										<span>Redeem</span>
-									</button>
-								</div>
-							</div>
-							<p class="help">
-								You can afford up to <strong><%= Math.min(pageData.redemptionInfo.affordableDays, pageData.redemptionInfo.maxDays) %> days</strong> 
-								(min: <%= pageData.redemptionInfo.minDays %>, max: <%= pageData.redemptionInfo.maxDays %>)
-							</p>
-							<p class="help" id="points-cost">
-								Cost: <span id="cost-display"><%= (pageData.redemptionInfo.pointsPerDay * pageData.redemptionInfo.minDays).toLocaleString() %></span> points
-							</p>
-							<% } else { %>
-							<article class="message is-warning">
-								<div class="message-body">
-									You need at least <strong><%= (pageData.redemptionInfo.pointsPerDay * pageData.redemptionInfo.minDays).toLocaleString() %> points</strong> 
-									to redeem (<%= pageData.redemptionInfo.minDays %> days minimum).
-									Vote for the bot to earn more points!
-								</div>
-							</article>
-							<% } %>
-						</div>
-					</div>
-				</div>
+			<!-- Point Redemption Note -->
+			<% if (pageData.selectedServer) { %>
+			<div class="mt-5 has-text-centered">
+				<p class="is-size-6 has-text-grey">
+					<span class="icon"><i class="fa fa-coins"></i></span>
+					Want to redeem vote points for premium?
+					<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription">Manage subscription in the dashboard</a>
+				</p>
 			</div>
 			<% } %>
 
@@ -350,16 +340,30 @@
 		});
 	}
 
+	function selectServer(serverId) {
+		if (serverId) {
+			window.location.href = '/membership?server=' + serverId;
+		} else {
+			window.location.href = '/membership';
+		}
+	}
+
 	async function subscribe(tierId) {
+		const serverId = '<%= pageData.selectedServer ? pageData.selectedServer.id : "" %>';
+		if (!serverId) {
+			alert('Please select a server first.');
+			return;
+		}
+
 		try {
 			const response = await fetch('/api/membership/checkout', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ tier_id: tierId, billing_period: billingPeriod }),
+				body: JSON.stringify({ tier_id: tierId, billing_period: billingPeriod, server_id: serverId }),
 			});
 
 			const data = await response.json();
-			
+
 			if (data.checkout_url) {
 				window.location.href = data.checkout_url;
 			} else if (data.error) {
@@ -372,53 +376,6 @@
 
 	// Initialize with yearly selected
 	setBilling('yearly');
-
-	// Point redemption
-	<% if (pageData.redemptionInfo?.enabled && authUser) { %>
-	const pointsPerDay = <%= pageData.redemptionInfo.pointsPerDay %>;
-	const daysInput = document.getElementById('redeem-days');
-	const costDisplay = document.getElementById('cost-display');
-
-	if (daysInput) {
-		daysInput.addEventListener('input', function() {
-			const days = parseInt(this.value) || 0;
-			const cost = days * pointsPerDay;
-			costDisplay.textContent = cost.toLocaleString();
-		});
-	}
-
-	async function redeemPoints() {
-		const days = parseInt(daysInput.value);
-		if (!days || days < 1) {
-			alert('Please enter a valid number of days');
-			return;
-		}
-
-		const cost = days * pointsPerDay;
-		if (!confirm(`Redeem ${cost.toLocaleString()} points for ${days} days of <%= pageData.redemptionInfo.tier.name %>?`)) {
-			return;
-		}
-
-		try {
-			const response = await fetch('/api/membership/redeem-points', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ days }),
-			});
-
-			const data = await response.json();
-			
-			if (data.success) {
-				alert(`Success! You now have ${data.tier_name} until ${new Date(data.expires_at).toLocaleDateString()}.\n\nPoints remaining: ${data.points_remaining.toLocaleString()}`);
-				window.location.reload();
-			} else {
-				alert(data.error || 'Redemption failed');
-			}
-		} catch (err) {
-			alert('An error occurred. Please try again.');
-		}
-	}
-	<% } %>
 	</script>
 </body>
 </html>
