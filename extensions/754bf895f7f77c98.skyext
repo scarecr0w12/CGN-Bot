@@ -1,0 +1,46 @@
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+const taskText = command.arguments.slice(1).join(' ');
+
+// Example todos (in real implementation, use extension.storage)
+const todos = [
+	{ id: 1, task: "Learn Discord.js", done: true },
+	{ id: 2, task: "Build a cool bot", done: false },
+	{ id: 3, task: "Add more features", done: false }
+];
+
+if (!action || action === 'list') {
+	const todoList = todos.map((t, i) => 
+		(t.done ? '✅' : '⬜') + ' `' + (i + 1) + '.` ' + (t.done ? '~~' + t.task + '~~' : t.task)
+	).join('\n');
+	
+	message.reply({
+		embeds: [{
+			title: '📋 Your Todo List',
+			description: todoList || '*No tasks yet! Add one with* `todo add <task>`',
+			color: 0x3498db,
+			footer: { text: todos.filter(t => !t.done).length + ' tasks remaining' }
+		}]
+	});
+} else if (action === 'add' && taskText) {
+	message.reply({
+		embeds: [{
+			title: '✅ Task Added',
+			description: '**Task:** ' + taskText,
+			color: 0x2ecc71
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '📋 Todo Commands',
+			description: '• `todo list` - View your tasks\n' +
+				'• `todo add <task>` - Add a new task\n' +
+				'• `todo done <number>` - Mark task as done\n' +
+				'• `todo remove <number>` - Remove a task',
+			color: 0x3498db
+		}]
+	});
+}

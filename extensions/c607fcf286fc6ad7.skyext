@@ -1,0 +1,24 @@
+const message = require('message');
+const command = require('command');
+
+const targetUser = message.mentions?.users?.first() || message.author;
+
+// Simulated balance (in real implementation, use database)
+const wallet = Math.floor(Math.random() * 10000);
+const bank = Math.floor(Math.random() * 50000);
+const total = wallet + bank;
+
+message.reply({
+	embeds: [{
+		author: {
+			name: targetUser.username + '\'s Balance',
+			icon_url: targetUser.displayAvatarURL()
+		},
+		description: '💵 **Wallet:** ' + wallet.toLocaleString() + ' coins\n' +
+			'🏦 **Bank:** ' + bank.toLocaleString() + ' coins\n' +
+			'━━━━━━━━━━━━━━━\n' +
+			'💰 **Total:** ' + total.toLocaleString() + ' coins',
+		color: 0xf1c40f,
+		footer: { text: 'Use !daily to earn more coins!' }
+	}]
+});

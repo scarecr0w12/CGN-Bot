@@ -1,0 +1,30 @@
+const message = require('message');
+
+const sentences = [
+	"The quick brown fox jumps over the lazy dog.",
+	"Pack my box with five dozen liquor jugs.",
+	"How vexingly quick daft zebras jump!",
+	"The five boxing wizards jump quickly.",
+	"Sphinx of black quartz, judge my vow.",
+	"Two driven jocks help fax my big quiz.",
+	"Programming is the art of telling a computer what to do.",
+	"Discord is a great platform for communities.",
+	"Practice makes perfect when it comes to typing.",
+	"Speed and accuracy are both important in typing."
+];
+
+const sentence = sentences[Math.floor(Math.random() * sentences.length)];
+const wordCount = sentence.split(' ').length;
+
+message.reply({
+	embeds: [{
+		title: '⌨️ Type Race!',
+		description: '**Type this sentence as fast as you can:**\n\n' +
+			'```' + sentence + '```\n' +
+			'📝 **Words:** ' + wordCount + '\n' +
+			'📏 **Characters:** ' + sentence.length + '\n\n' +
+			'*The timer starts NOW! Type the sentence exactly as shown.*',
+		color: 0xe74c3c,
+		footer: { text: 'First to type it correctly wins!' }
+	}]
+});

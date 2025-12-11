@@ -1,0 +1,25 @@
+const message = require('message');
+
+const waitTime = Math.floor(Math.random() * 4000) + 2000; // 2-6 seconds
+
+message.reply({
+	embeds: [{
+		title: '⚡ Reaction Test',
+		description: '**Get Ready...**\n\n' +
+			'🔴 Wait for it...\n\n' +
+			'When you see 🟢 **GO!**, react with ⚡ as fast as you can!\n\n' +
+			'*The signal will appear in a few seconds...*',
+		color: 0xe74c3c,
+		footer: { text: 'Don\'t react too early!' }
+	}]
+}).then(() => {
+	// In a real implementation, this would update after waitTime
+	message.channel.send({
+		embeds: [{
+			title: '⚡ Reaction Test',
+			description: '🟢 **GO GO GO!**\n\n' +
+				'React with ⚡ NOW!',
+			color: 0x2ecc71
+		}]
+	});
+});

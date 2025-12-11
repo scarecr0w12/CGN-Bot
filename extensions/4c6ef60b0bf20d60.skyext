@@ -1,0 +1,19 @@
+const message = require('message');
+
+const exampleWords = ['apple', 'elephant', 'tiger', 'rabbit', 'turtle'];
+
+message.reply({
+	embeds: [{
+		title: '🔗 Word Chain',
+		description: '**How to Play:**\n' +
+			'1. Someone starts with any word\n' +
+			'2. Next person says a word starting with the LAST letter\n' +
+			'3. No repeating words!\n\n' +
+			'**Example:**\n' +
+			exampleWords.map((w, i) => '• ' + w + (i < exampleWords.length - 1 ? ' → **' + w[w.length-1].toUpperCase() + '**...' : '')).join('\n') +
+			'\n\n**Starting word:** 🎯 **DISCORD**\n\n' +
+			'*Type a word starting with* ***D*** *to continue!*',
+		color: 0x9b59b6,
+		footer: { text: 'Think fast! You have 30 seconds!' }
+	}]
+});

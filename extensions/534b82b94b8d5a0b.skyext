@@ -1,0 +1,37 @@
+const message = require('message');
+const command = require('command');
+
+const type = command.arguments[0]?.toLowerCase() || 'xp';
+
+// Simulated leaderboard data
+const users = [
+	{ name: "Player1", xp: 15420, coins: 52300, voice: "24h 32m" },
+	{ name: "Player2", xp: 12350, coins: 48100, voice: "20h 15m" },
+	{ name: "Player3", xp: 10200, coins: 35600, voice: "18h 45m" },
+	{ name: "Player4", xp: 8900, coins: 29400, voice: "15h 20m" },
+	{ name: "Player5", xp: 7500, coins: 22100, voice: "12h 10m" },
+	{ name: "Player6", xp: 6200, coins: 18500, voice: "10h 5m" },
+	{ name: "Player7", xp: 5100, coins: 15200, voice: "8h 30m" },
+	{ name: "Player8", xp: 4300, coins: 12800, voice: "6h 45m" },
+	{ name: "Player9", xp: 3600, coins: 9400, voice: "5h 20m" },
+	{ name: "Player10", xp: 2900, coins: 6100, voice: "3h 55m" }
+];
+
+const medals = ['🥇', '🥈', '🥉'];
+const typeEmoji = { xp: '✨', coins: '💰', voice: '🎤' };
+const typeName = { xp: 'XP', coins: 'Coins', voice: 'Voice Time' };
+
+const leaderboard = users.map((u, i) => {
+	const medal = i < 3 ? medals[i] : '`' + (i + 1) + '.`';
+	const value = type === 'xp' ? u.xp.toLocaleString() : type === 'coins' ? u.coins.toLocaleString() : u.voice;
+	return medal + ' **' + u.name + '** - ' + value;
+}).join('\n');
+
+message.reply({
+	embeds: [{
+		title: typeEmoji[type] + ' ' + typeName[type] + ' Leaderboard',
+		description: leaderboard,
+		color: 0xf1c40f,
+		footer: { text: 'Your rank: #42' }
+	}]
+});

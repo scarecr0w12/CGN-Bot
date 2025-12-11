@@ -1,0 +1,33 @@
+const message = require('message');
+const extension = require('extension');
+
+const baseReward = 100;
+const streakBonus = 25;
+
+// Simulate streak (in real implementation, use extension.storage)
+const streak = Math.floor(Math.random() * 30) + 1;
+const reward = baseReward + (streak * streakBonus);
+
+const milestones = {
+	7: '🎁 Weekly Bonus: +500!',
+	30: '🏆 Monthly Bonus: +2000!',
+	100: '👑 Century Bonus: +10000!'
+};
+
+let bonusText = '';
+if (milestones[streak]) {
+	bonusText = '\n\n' + milestones[streak];
+}
+
+message.reply({
+	embeds: [{
+		title: '📅 Daily Reward Claimed!',
+		description: '**Base Reward:** 💰 ' + baseReward + '\n' +
+			'**Streak Bonus:** 🔥 +' + (streak * streakBonus) + '\n' +
+			'**Total:** 💎 ' + reward + bonusText + '\n\n' +
+			'🔥 **Current Streak:** ' + streak + ' days',
+		color: 0xf1c40f,
+		thumbnail: { url: 'https://cdn.discordapp.com/emojis/836329015009329212.gif' },
+		footer: { text: 'Come back tomorrow to continue your streak!' }
+	}]
+});

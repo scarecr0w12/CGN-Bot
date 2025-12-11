@@ -1,0 +1,32 @@
+const message = require('message');
+
+const jobs = [
+	{ title: "Software Developer", pay: [200, 500], emoji: "💻" },
+	{ title: "Chef", pay: [100, 300], emoji: "👨‍🍳" },
+	{ title: "Teacher", pay: [150, 350], emoji: "👨‍🏫" },
+	{ title: "Doctor", pay: [300, 600], emoji: "👨‍⚕️" },
+	{ title: "Artist", pay: [50, 400], emoji: "🎨" },
+	{ title: "Musician", pay: [75, 450], emoji: "🎵" },
+	{ title: "Streamer", pay: [100, 500], emoji: "📺" },
+	{ title: "YouTuber", pay: [50, 600], emoji: "🎬" }
+];
+
+const job = jobs[Math.floor(Math.random() * jobs.length)];
+const earned = Math.floor(Math.random() * (job.pay[1] - job.pay[0])) + job.pay[0];
+
+const messages = [
+	"You worked hard as a " + job.title + "!",
+	"Great job at your " + job.title + " shift!",
+	"Another day, another dollar as a " + job.title + "!",
+	"You finished your work as a " + job.title + "!"
+];
+
+message.reply({
+	embeds: [{
+		title: job.emoji + ' Work Complete!',
+		description: messages[Math.floor(Math.random() * messages.length)] + '\n\n' +
+			'💰 **Earned:** ' + earned.toLocaleString() + ' coins',
+		color: 0x2ecc71,
+		footer: { text: 'You can work again in 1 hour' }
+	}]
+});

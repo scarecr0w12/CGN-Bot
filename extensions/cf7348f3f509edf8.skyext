@@ -1,0 +1,43 @@
+const message = require('message');
+
+const words = [
+	{ word: "PROGRAMMING", hint: "Writing code" },
+	{ word: "JAVASCRIPT", hint: "Popular web language" },
+	{ word: "DISCORD", hint: "Chat platform" },
+	{ word: "COMPUTER", hint: "Electronic device" },
+	{ word: "KEYBOARD", hint: "Input device" },
+	{ word: "DEVELOPER", hint: "Code writer" },
+	{ word: "DATABASE", hint: "Data storage" },
+	{ word: "INTERNET", hint: "Global network" },
+	{ word: "SOFTWARE", hint: "Computer programs" },
+	{ word: "ALGORITHM", hint: "Step-by-step procedure" }
+];
+
+function scramble(word) {
+	const arr = word.split('');
+	for (let i = arr.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[arr[i], arr[j]] = [arr[j], arr[i]];
+	}
+	return arr.join('');
+}
+
+const chosen = words[Math.floor(Math.random() * words.length)];
+let scrambled = scramble(chosen.word);
+
+// Make sure it's actually scrambled
+while (scrambled === chosen.word) {
+	scrambled = scramble(chosen.word);
+}
+
+message.reply({
+	embeds: [{
+		title: '🔀 Word Scramble',
+		description: '**Unscramble this word:**\n\n' +
+			'📝 `' + scrambled + '`\n\n' +
+			'💡 **Hint:** ' + chosen.hint + '\n\n' +
+			'*Type your answer in chat!*',
+		color: 0x3498db,
+		footer: { text: 'First correct answer wins!' }
+	}]
+});

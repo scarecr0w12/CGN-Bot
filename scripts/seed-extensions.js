@@ -922,6 +922,756 @@ if (!moodArg || !moods[moodArg]) {
 	});
 }
 `
+	},
+	// ==================== NEW BATCH ====================
+	{
+		name: "Akinator",
+		description: "Play the famous Akinator guessing game! Think of a character and Akinator will try to guess who it is.",
+		type: "command",
+		key: "akinator",
+		usage_help: "[start]",
+		extended_help: "Start an Akinator game where you think of a character (real or fictional) and answer yes/no questions. Akinator will try to guess who you're thinking of!",
+		scopes: ["messages_write"],
+		timeout: 10000,
+		code: `
+const message = require('message');
+const extension = require('extension');
+
+// Akinator-style questions for guessing
+const questions = [
+	"Is your character real (not fictional)?",
+	"Is your character male?",
+	"Is your character from a video game?",
+	"Is your character from an anime/manga?",
+	"Is your character a superhero?",
+	"Is your character alive today?",
+	"Is your character American?",
+	"Is your character a musician?",
+	"Is your character an actor/actress?",
+	"Is your character from a movie?"
+];
+
+const randomQ = questions[Math.floor(Math.random() * questions.length)];
+
+message.reply({
+	embeds: [{
+		title: '🧞 Akinator',
+		description: '**Think of a character...** (real or fictional)\\n\\n' +
+			'I will ask you questions to guess who you\\'re thinking of!\\n\\n' +
+			'**Question:** ' + randomQ + '\\n\\n' +
+			'React with:\\n✅ Yes | ❌ No | 🤷 Don\\'t Know | 👍 Probably Yes | 👎 Probably No',
+		color: 0x2ecc71,
+		thumbnail: { url: 'https://en.akinator.com/bundles/elokencesite/images/akinator.png' },
+		footer: { text: 'Think of your answer and react!' }
+	}]
+});
+`
+	},
+	{
+		name: "Trivia",
+		description: "Test your knowledge with trivia questions from various categories!",
+		type: "command",
+		key: "trivia",
+		usage_help: "[category]",
+		extended_help: "Play trivia! Categories: general, science, history, geography, entertainment, sports. Answer correctly to earn points!",
+		scopes: ["messages_write"],
+		timeout: 8000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const categories = {
+	general: [
+		{ q: "What is the capital of France?", a: ["paris"], points: 10 },
+		{ q: "How many continents are there?", a: ["7", "seven"], points: 10 },
+		{ q: "What is the largest planet in our solar system?", a: ["jupiter"], points: 15 },
+		{ q: "What year did World War II end?", a: ["1945"], points: 15 },
+		{ q: "What is the chemical symbol for gold?", a: ["au"], points: 20 }
+	],
+	science: [
+		{ q: "What is the speed of light in km/s (approximately)?", a: ["300000", "299792"], points: 25 },
+		{ q: "What is H2O commonly known as?", a: ["water"], points: 10 },
+		{ q: "How many bones are in the adult human body?", a: ["206"], points: 20 },
+		{ q: "What planet is known as the Red Planet?", a: ["mars"], points: 10 }
+	],
+	history: [
+		{ q: "Who was the first President of the United States?", a: ["george washington", "washington"], points: 10 },
+		{ q: "In what year did the Titanic sink?", a: ["1912"], points: 15 },
+		{ q: "Who painted the Mona Lisa?", a: ["leonardo da vinci", "da vinci", "leonardo"], points: 15 }
+	]
+};
+
+const category = command.arguments[0]?.toLowerCase() || 'general';
+const questions = categories[category] || categories.general;
+const question = questions[Math.floor(Math.random() * questions.length)];
+
+message.reply({
+	embeds: [{
+		title: '🧠 Trivia Time!',
+		description: '**Category:** ' + (category.charAt(0).toUpperCase() + category.slice(1)) + '\\n\\n' +
+			'**Question:** ' + question.q + '\\n\\n' +
+			'💰 **Points:** ' + question.points + '\\n\\n' +
+			'*Type your answer in chat!*',
+		color: 0x9b59b6,
+		footer: { text: 'You have 30 seconds to answer!' }
+	}]
+});
+`
+	},
+	{
+		name: "Hangman",
+		description: "Play the classic word guessing game! Guess letters to reveal the hidden word.",
+		type: "command",
+		key: "hangman",
+		usage_help: "[start|guess <letter>]",
+		extended_help: "Start a game of Hangman! Guess one letter at a time to reveal the hidden word. You have 6 wrong guesses before you lose!",
+		scopes: ["messages_write"],
+		timeout: 8000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const words = [
+	"javascript", "discord", "programming", "computer", "keyboard",
+	"database", "algorithm", "function", "variable", "developer",
+	"python", "typescript", "framework", "library", "server",
+	"network", "internet", "browser", "website", "application"
+];
+
+const hangmanStages = [
+	'\`\`\`\\n  +---+\\n  |   |\\n      |\\n      |\\n      |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n      |\\n      |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n  |   |\\n      |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n /|   |\\n      |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n /|\\\\  |\\n      |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n /|\\\\  |\\n /    |\\n      |\\n=========\`\`\`',
+	'\`\`\`\\n  +---+\\n  |   |\\n  O   |\\n /|\\\\  |\\n / \\\\  |\\n      |\\n=========\`\`\`'
+];
+
+const word = words[Math.floor(Math.random() * words.length)];
+const display = word.split('').map(() => '_').join(' ');
+
+message.reply({
+	embeds: [{
+		title: '📝 Hangman',
+		description: hangmanStages[0] + '\\n\\n' +
+			'**Word:** \`' + display + '\`\\n\\n' +
+			'**Letters guessed:** None yet\\n' +
+			'**Remaining guesses:** 6\\n\\n' +
+			'*Guess a letter by typing it in chat!*',
+		color: 0xe74c3c,
+		footer: { text: 'Word has ' + word.length + ' letters' }
+	}]
+});
+`
+	},
+	{
+		name: "Blackjack",
+		description: "Play Blackjack (21) against the dealer! Try to get as close to 21 as possible without going over.",
+		type: "command",
+		key: "blackjack",
+		usage_help: "[bet amount]",
+		extended_help: "Play a game of Blackjack! Get dealt 2 cards and try to beat the dealer by getting closer to 21 without busting. Face cards = 10, Aces = 1 or 11.",
+		scopes: ["messages_write"],
+		timeout: 10000,
+		code: `
+const message = require('message');
+
+const suits = ['♠️', '♥️', '♦️', '♣️'];
+const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+function drawCard() {
+	const suit = suits[Math.floor(Math.random() * suits.length)];
+	const value = values[Math.floor(Math.random() * values.length)];
+	return { suit, value, display: value + suit };
+}
+
+function getCardValue(card) {
+	if (['J', 'Q', 'K'].includes(card.value)) return 10;
+	if (card.value === 'A') return 11;
+	return parseInt(card.value);
+}
+
+function calculateHand(cards) {
+	let total = cards.reduce((sum, card) => sum + getCardValue(card), 0);
+	let aces = cards.filter(c => c.value === 'A').length;
+	while (total > 21 && aces > 0) {
+		total -= 10;
+		aces--;
+	}
+	return total;
+}
+
+const playerCards = [drawCard(), drawCard()];
+const dealerCards = [drawCard(), drawCard()];
+const playerTotal = calculateHand(playerCards);
+const dealerShowing = getCardValue(dealerCards[0]);
+
+let status = '';
+if (playerTotal === 21) {
+	status = '🎉 **BLACKJACK!** You win!';
+}
+
+message.reply({
+	embeds: [{
+		title: '🃏 Blackjack',
+		description: '**Your Hand:** ' + playerCards.map(c => c.display).join(' ') + ' (**' + playerTotal + '**)\\n\\n' +
+			'**Dealer Shows:** ' + dealerCards[0].display + ' 🎴 (**' + dealerShowing + '**)\\n\\n' +
+			(status || 'React: 👊 **Hit** | 🛑 **Stand** | ✌️ **Double Down**'),
+		color: playerTotal === 21 ? 0x2ecc71 : 0x3498db,
+		footer: { text: 'Get as close to 21 as possible without going over!' }
+	}]
+});
+`
+	},
+	{
+		name: "Slots",
+		description: "Try your luck at the slot machine! Match symbols to win big!",
+		type: "command",
+		key: "slots",
+		usage_help: "[bet amount]",
+		extended_help: "Spin the slot machine and try to match 3 symbols! Different symbols have different payouts. 🍒🍒🍒 = 3x, 🍋🍋🍋 = 5x, 💎💎💎 = 10x, 7️⃣7️⃣7️⃣ = JACKPOT!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const symbols = ['🍒', '🍋', '🍊', '🍇', '💎', '7️⃣', '⭐'];
+const weights = [30, 25, 20, 15, 7, 2, 1]; // Rarity weights
+
+function weightedRandom() {
+	const total = weights.reduce((a, b) => a + b, 0);
+	let random = Math.random() * total;
+	for (let i = 0; i < symbols.length; i++) {
+		random -= weights[i];
+		if (random <= 0) return symbols[i];
+	}
+	return symbols[0];
+}
+
+const reel1 = weightedRandom();
+const reel2 = weightedRandom();
+const reel3 = weightedRandom();
+
+const payouts = {
+	'🍒': 3, '🍋': 5, '🍊': 7, '🍇': 10, '💎': 25, '7️⃣': 100, '⭐': 50
+};
+
+let result = '';
+let color = 0x95a5a6;
+
+if (reel1 === reel2 && reel2 === reel3) {
+	const multiplier = payouts[reel1];
+	result = '🎉 **JACKPOT!** Three ' + reel1 + ' = **' + multiplier + 'x** payout!';
+	color = reel1 === '7️⃣' ? 0xf1c40f : 0x2ecc71;
+} else if (reel1 === reel2 || reel2 === reel3 || reel1 === reel3) {
+	result = '😊 **Two of a kind!** Small win!';
+	color = 0x3498db;
+} else {
+	result = '😔 No match. Better luck next time!';
+	color = 0xe74c3c;
+}
+
+message.reply({
+	embeds: [{
+		title: '🎰 Slot Machine',
+		description: '━━━━━━━━━━━━━━━\\n' +
+			'▶️ | ' + reel1 + ' | ' + reel2 + ' | ' + reel3 + ' | ◀️\\n' +
+			'━━━━━━━━━━━━━━━\\n\\n' + result,
+		color: color,
+		footer: { text: 'Spin again to try your luck!' }
+	}]
+});
+`
+	},
+	{
+		name: "Daily Reward",
+		description: "Claim your daily reward! Build a streak for bonus rewards!",
+		type: "command",
+		key: "daily",
+		usage_help: "",
+		extended_help: "Claim your daily reward once every 24 hours. Build a consecutive streak for bonus multipliers! Miss a day and your streak resets.",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const extension = require('extension');
+
+const baseReward = 100;
+const streakBonus = 25;
+
+// Simulate streak (in real implementation, use extension.storage)
+const streak = Math.floor(Math.random() * 30) + 1;
+const reward = baseReward + (streak * streakBonus);
+
+const milestones = {
+	7: '🎁 Weekly Bonus: +500!',
+	30: '🏆 Monthly Bonus: +2000!',
+	100: '👑 Century Bonus: +10000!'
+};
+
+let bonusText = '';
+if (milestones[streak]) {
+	bonusText = '\\n\\n' + milestones[streak];
+}
+
+message.reply({
+	embeds: [{
+		title: '📅 Daily Reward Claimed!',
+		description: '**Base Reward:** 💰 ' + baseReward + '\\n' +
+			'**Streak Bonus:** 🔥 +' + (streak * streakBonus) + '\\n' +
+			'**Total:** 💎 ' + reward + bonusText + '\\n\\n' +
+			'🔥 **Current Streak:** ' + streak + ' days',
+		color: 0xf1c40f,
+		thumbnail: { url: 'https://cdn.discordapp.com/emojis/836329015009329212.gif' },
+		footer: { text: 'Come back tomorrow to continue your streak!' }
+	}]
+});
+`
+	},
+	{
+		name: "Reminder",
+		description: "Set a reminder and get notified when the time comes!",
+		type: "command",
+		key: "remind",
+		usage_help: "<time> <message>",
+		extended_help: "Set a reminder! Use formats like '10m', '2h', '1d' for time. Example: !remind 30m Check the oven",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const timeArg = command.arguments[0];
+const reminderText = command.arguments.slice(1).join(' ');
+
+if (!timeArg || !reminderText) {
+	message.reply({
+		embeds: [{
+			title: '⏰ Reminder',
+			description: '**Usage:** \`' + command.prefix + 'remind <time> <message>\`\\n\\n' +
+				'**Time formats:**\\n' +
+				'• \`10m\` - 10 minutes\\n' +
+				'• \`2h\` - 2 hours\\n' +
+				'• \`1d\` - 1 day\\n\\n' +
+				'**Example:** \`' + command.prefix + 'remind 30m Check the pizza\`',
+			color: 0x3498db
+		}]
+	});
+} else {
+	const timeMatch = timeArg.match(/^(\\d+)(m|h|d)$/i);
+	if (!timeMatch) {
+		message.reply('❌ Invalid time format! Use like: 10m, 2h, 1d');
+	} else {
+		const amount = parseInt(timeMatch[1]);
+		const unit = timeMatch[2].toLowerCase();
+		const units = { m: 'minute', h: 'hour', d: 'day' };
+		const unitName = units[unit] + (amount > 1 ? 's' : '');
+		
+		const timestamp = Math.floor(Date.now() / 1000) + (amount * (unit === 'm' ? 60 : unit === 'h' ? 3600 : 86400));
+		
+		message.reply({
+			embeds: [{
+				title: '⏰ Reminder Set!',
+				description: '**Reminder:** ' + reminderText + '\\n\\n' +
+					'**When:** <t:' + timestamp + ':R> (<t:' + timestamp + ':f>)',
+				color: 0x2ecc71,
+				footer: { text: 'I\\'ll remind you in ' + amount + ' ' + unitName + '!' }
+			}]
+		});
+	}
+}
+`
+	},
+	{
+		name: "Word Chain",
+		description: "Play Word Chain! Each word must start with the last letter of the previous word.",
+		type: "keyword",
+		keywords: ["wordchain", "wc"],
+		usage_help: "",
+		extended_help: "Start a Word Chain game! Each player must say a word that starts with the last letter of the previous word. No repeating words!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const exampleWords = ['apple', 'elephant', 'tiger', 'rabbit', 'turtle'];
+
+message.reply({
+	embeds: [{
+		title: '🔗 Word Chain',
+		description: '**How to Play:**\\n' +
+			'1. Someone starts with any word\\n' +
+			'2. Next person says a word starting with the LAST letter\\n' +
+			'3. No repeating words!\\n\\n' +
+			'**Example:**\\n' +
+			exampleWords.map((w, i) => '• ' + w + (i < exampleWords.length - 1 ? ' → **' + w[w.length-1].toUpperCase() + '**...' : '')).join('\\n') +
+			'\\n\\n**Starting word:** 🎯 **DISCORD**\\n\\n' +
+			'*Type a word starting with* ***D*** *to continue!*',
+		color: 0x9b59b6,
+		footer: { text: 'Think fast! You have 30 seconds!' }
+	}]
+});
+`
+	},
+	{
+		name: "Type Race",
+		description: "Test your typing speed! Type the given text as fast as you can.",
+		type: "command",
+		key: "typerace",
+		usage_help: "",
+		extended_help: "Start a typing race! A random sentence will appear and you must type it exactly as shown. Fastest typer wins!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const sentences = [
+	"The quick brown fox jumps over the lazy dog.",
+	"Pack my box with five dozen liquor jugs.",
+	"How vexingly quick daft zebras jump!",
+	"The five boxing wizards jump quickly.",
+	"Sphinx of black quartz, judge my vow.",
+	"Two driven jocks help fax my big quiz.",
+	"Programming is the art of telling a computer what to do.",
+	"Discord is a great platform for communities.",
+	"Practice makes perfect when it comes to typing.",
+	"Speed and accuracy are both important in typing."
+];
+
+const sentence = sentences[Math.floor(Math.random() * sentences.length)];
+const wordCount = sentence.split(' ').length;
+
+message.reply({
+	embeds: [{
+		title: '⌨️ Type Race!',
+		description: '**Type this sentence as fast as you can:**\\n\\n' +
+			'\`\`\`' + sentence + '\`\`\`\\n' +
+			'📝 **Words:** ' + wordCount + '\\n' +
+			'📏 **Characters:** ' + sentence.length + '\\n\\n' +
+			'*The timer starts NOW! Type the sentence exactly as shown.*',
+		color: 0xe74c3c,
+		footer: { text: 'First to type it correctly wins!' }
+	}]
+});
+`
+	},
+	{
+		name: "Reaction Test",
+		description: "Test your reaction speed! Click the button as fast as you can when it appears.",
+		type: "command",
+		key: "reaction",
+		usage_help: "",
+		extended_help: "Test how fast your reactions are! Wait for the signal, then react as quickly as possible. Your reaction time will be measured in milliseconds.",
+		scopes: ["messages_write"],
+		timeout: 8000,
+		code: `
+const message = require('message');
+
+const waitTime = Math.floor(Math.random() * 4000) + 2000; // 2-6 seconds
+
+message.reply({
+	embeds: [{
+		title: '⚡ Reaction Test',
+		description: '**Get Ready...**\\n\\n' +
+			'🔴 Wait for it...\\n\\n' +
+			'When you see 🟢 **GO!**, react with ⚡ as fast as you can!\\n\\n' +
+			'*The signal will appear in a few seconds...*',
+		color: 0xe74c3c,
+		footer: { text: 'Don\\'t react too early!' }
+	}]
+}).then(() => {
+	// In a real implementation, this would update after waitTime
+	message.channel.send({
+		embeds: [{
+			title: '⚡ Reaction Test',
+			description: '🟢 **GO GO GO!**\\n\\n' +
+				'React with ⚡ NOW!',
+			color: 0x2ecc71
+		}]
+	});
+});
+`
+	},
+	{
+		name: "Scramble",
+		description: "Unscramble the word as fast as you can!",
+		type: "command",
+		key: "scramble",
+		usage_help: "",
+		extended_help: "A word will be scrambled and you have to figure out what it is! Be the first to type the correct word to win!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const words = [
+	{ word: "PROGRAMMING", hint: "Writing code" },
+	{ word: "JAVASCRIPT", hint: "Popular web language" },
+	{ word: "DISCORD", hint: "Chat platform" },
+	{ word: "COMPUTER", hint: "Electronic device" },
+	{ word: "KEYBOARD", hint: "Input device" },
+	{ word: "DEVELOPER", hint: "Code writer" },
+	{ word: "DATABASE", hint: "Data storage" },
+	{ word: "INTERNET", hint: "Global network" },
+	{ word: "SOFTWARE", hint: "Computer programs" },
+	{ word: "ALGORITHM", hint: "Step-by-step procedure" }
+];
+
+function scramble(word) {
+	const arr = word.split('');
+	for (let i = arr.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[arr[i], arr[j]] = [arr[j], arr[i]];
+	}
+	return arr.join('');
+}
+
+const chosen = words[Math.floor(Math.random() * words.length)];
+let scrambled = scramble(chosen.word);
+
+// Make sure it's actually scrambled
+while (scrambled === chosen.word) {
+	scrambled = scramble(chosen.word);
+}
+
+message.reply({
+	embeds: [{
+		title: '🔀 Word Scramble',
+		description: '**Unscramble this word:**\\n\\n' +
+			'📝 \`' + scrambled + '\`\\n\\n' +
+			'💡 **Hint:** ' + chosen.hint + '\\n\\n' +
+			'*Type your answer in chat!*',
+		color: 0x3498db,
+		footer: { text: 'First correct answer wins!' }
+	}]
+});
+`
+	},
+	{
+		name: "Riddle",
+		description: "Solve a riddle! Test your brain with tricky riddles.",
+		type: "command",
+		key: "riddle",
+		usage_help: "",
+		extended_help: "Get a random riddle to solve! Think carefully and type your answer. Some riddles are tricky!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const riddles = [
+	{ q: "What has keys but no locks?", a: "keyboard" },
+	{ q: "What has hands but can't clap?", a: "clock" },
+	{ q: "What has a head and a tail but no body?", a: "coin" },
+	{ q: "What gets wetter the more it dries?", a: "towel" },
+	{ q: "What can you catch but not throw?", a: "cold" },
+	{ q: "What has many teeth but can't bite?", a: "comb" },
+	{ q: "What runs but never walks?", a: "water" },
+	{ q: "What has words but never speaks?", a: "book" },
+	{ q: "What has a ring but no finger?", a: "phone" },
+	{ q: "I have cities, but no houses. I have mountains, but no trees. What am I?", a: "map" }
+];
+
+const riddle = riddles[Math.floor(Math.random() * riddles.length)];
+
+message.reply({
+	embeds: [{
+		title: '🤔 Riddle Me This...',
+		description: '**' + riddle.q + '**\\n\\n' +
+			'*Think carefully and type your answer!*',
+		color: 0x9b59b6,
+		footer: { text: 'Hint: The answer is a single word' }
+	}]
+});
+`
+	},
+	{
+		name: "Todo List",
+		description: "Manage your personal todo list! Add, complete, and remove tasks.",
+		type: "command",
+		key: "todo",
+		usage_help: "[add/done/remove/list] [task]",
+		extended_help: "Manage your personal todo list! Use: todo add <task>, todo done <number>, todo remove <number>, todo list",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const action = command.arguments[0]?.toLowerCase();
+const taskText = command.arguments.slice(1).join(' ');
+
+// Example todos (in real implementation, use extension.storage)
+const todos = [
+	{ id: 1, task: "Learn Discord.js", done: true },
+	{ id: 2, task: "Build a cool bot", done: false },
+	{ id: 3, task: "Add more features", done: false }
+];
+
+if (!action || action === 'list') {
+	const todoList = todos.map((t, i) => 
+		(t.done ? '✅' : '⬜') + ' \`' + (i + 1) + '.\` ' + (t.done ? '~~' + t.task + '~~' : t.task)
+	).join('\\n');
+	
+	message.reply({
+		embeds: [{
+			title: '📋 Your Todo List',
+			description: todoList || '*No tasks yet! Add one with* \`todo add <task>\`',
+			color: 0x3498db,
+			footer: { text: todos.filter(t => !t.done).length + ' tasks remaining' }
+		}]
+	});
+} else if (action === 'add' && taskText) {
+	message.reply({
+		embeds: [{
+			title: '✅ Task Added',
+			description: '**Task:** ' + taskText,
+			color: 0x2ecc71
+		}]
+	});
+} else {
+	message.reply({
+		embeds: [{
+			title: '📋 Todo Commands',
+			description: '• \`todo list\` - View your tasks\\n' +
+				'• \`todo add <task>\` - Add a new task\\n' +
+				'• \`todo done <number>\` - Mark task as done\\n' +
+				'• \`todo remove <number>\` - Remove a task',
+			color: 0x3498db
+		}]
+	});
+}
+`
+	},
+	{
+		name: "Balance",
+		description: "Check your wallet and bank balance!",
+		type: "command",
+		key: "balance",
+		usage_help: "[@user]",
+		extended_help: "Check your current balance including wallet cash and bank savings. Mention someone to check their balance!",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const targetUser = message.mentions?.users?.first() || message.author;
+
+// Simulated balance (in real implementation, use database)
+const wallet = Math.floor(Math.random() * 10000);
+const bank = Math.floor(Math.random() * 50000);
+const total = wallet + bank;
+
+message.reply({
+	embeds: [{
+		author: {
+			name: targetUser.username + '\\'s Balance',
+			icon_url: targetUser.displayAvatarURL()
+		},
+		description: '💵 **Wallet:** ' + wallet.toLocaleString() + ' coins\\n' +
+			'🏦 **Bank:** ' + bank.toLocaleString() + ' coins\\n' +
+			'━━━━━━━━━━━━━━━\\n' +
+			'💰 **Total:** ' + total.toLocaleString() + ' coins',
+		color: 0xf1c40f,
+		footer: { text: 'Use !daily to earn more coins!' }
+	}]
+});
+`
+	},
+	{
+		name: "Work",
+		description: "Work a job to earn some coins! Different jobs pay different amounts.",
+		type: "command",
+		key: "work",
+		usage_help: "",
+		extended_help: "Work a random job to earn coins! Jobs have different payouts. You can work once every hour.",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+
+const jobs = [
+	{ title: "Software Developer", pay: [200, 500], emoji: "💻" },
+	{ title: "Chef", pay: [100, 300], emoji: "👨‍🍳" },
+	{ title: "Teacher", pay: [150, 350], emoji: "👨‍🏫" },
+	{ title: "Doctor", pay: [300, 600], emoji: "👨‍⚕️" },
+	{ title: "Artist", pay: [50, 400], emoji: "🎨" },
+	{ title: "Musician", pay: [75, 450], emoji: "🎵" },
+	{ title: "Streamer", pay: [100, 500], emoji: "📺" },
+	{ title: "YouTuber", pay: [50, 600], emoji: "🎬" }
+];
+
+const job = jobs[Math.floor(Math.random() * jobs.length)];
+const earned = Math.floor(Math.random() * (job.pay[1] - job.pay[0])) + job.pay[0];
+
+const messages = [
+	"You worked hard as a " + job.title + "!",
+	"Great job at your " + job.title + " shift!",
+	"Another day, another dollar as a " + job.title + "!",
+	"You finished your work as a " + job.title + "!"
+];
+
+message.reply({
+	embeds: [{
+		title: job.emoji + ' Work Complete!',
+		description: messages[Math.floor(Math.random() * messages.length)] + '\\n\\n' +
+			'💰 **Earned:** ' + earned.toLocaleString() + ' coins',
+		color: 0x2ecc71,
+		footer: { text: 'You can work again in 1 hour' }
+	}]
+});
+`
+	},
+	{
+		name: "Leaderboard",
+		description: "View the server leaderboard for XP, coins, or other stats!",
+		type: "command",
+		key: "leaderboard",
+		usage_help: "[xp|coins|voice]",
+		extended_help: "View the top members of the server! Choose between XP, coins, or voice time leaderboards.",
+		scopes: ["messages_write"],
+		timeout: 5000,
+		code: `
+const message = require('message');
+const command = require('command');
+
+const type = command.arguments[0]?.toLowerCase() || 'xp';
+
+// Simulated leaderboard data
+const users = [
+	{ name: "Player1", xp: 15420, coins: 52300, voice: "24h 32m" },
+	{ name: "Player2", xp: 12350, coins: 48100, voice: "20h 15m" },
+	{ name: "Player3", xp: 10200, coins: 35600, voice: "18h 45m" },
+	{ name: "Player4", xp: 8900, coins: 29400, voice: "15h 20m" },
+	{ name: "Player5", xp: 7500, coins: 22100, voice: "12h 10m" },
+	{ name: "Player6", xp: 6200, coins: 18500, voice: "10h 5m" },
+	{ name: "Player7", xp: 5100, coins: 15200, voice: "8h 30m" },
+	{ name: "Player8", xp: 4300, coins: 12800, voice: "6h 45m" },
+	{ name: "Player9", xp: 3600, coins: 9400, voice: "5h 20m" },
+	{ name: "Player10", xp: 2900, coins: 6100, voice: "3h 55m" }
+];
+
+const medals = ['🥇', '🥈', '🥉'];
+const typeEmoji = { xp: '✨', coins: '💰', voice: '🎤' };
+const typeName = { xp: 'XP', coins: 'Coins', voice: 'Voice Time' };
+
+const leaderboard = users.map((u, i) => {
+	const medal = i < 3 ? medals[i] : '\`' + (i + 1) + '.\`';
+	const value = type === 'xp' ? u.xp.toLocaleString() : type === 'coins' ? u.coins.toLocaleString() : u.voice;
+	return medal + ' **' + u.name + '** - ' + value;
+}).join('\\n');
+
+message.reply({
+	embeds: [{
+		title: typeEmoji[type] + ' ' + typeName[type] + ' Leaderboard',
+		description: leaderboard,
+		color: 0xf1c40f,
+		footer: { text: 'Your rank: #42' }
+	}]
+});
+`
 	}
 ];
 

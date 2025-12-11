@@ -1,0 +1,47 @@
+const message = require('message');
+
+const suits = ['♠️', '♥️', '♦️', '♣️'];
+const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+function drawCard() {
+	const suit = suits[Math.floor(Math.random() * suits.length)];
+	const value = values[Math.floor(Math.random() * values.length)];
+	return { suit, value, display: value + suit };
+}
+
+function getCardValue(card) {
+	if (['J', 'Q', 'K'].includes(card.value)) return 10;
+	if (card.value === 'A') return 11;
+	return parseInt(card.value);
+}
+
+function calculateHand(cards) {
+	let total = cards.reduce((sum, card) => sum + getCardValue(card), 0);
+	let aces = cards.filter(c => c.value === 'A').length;
+	while (total > 21 && aces > 0) {
+		total -= 10;
+		aces--;
+	}
+	return total;
+}
+
+const playerCards = [drawCard(), drawCard()];
+const dealerCards = [drawCard(), drawCard()];
+const playerTotal = calculateHand(playerCards);
+const dealerShowing = getCardValue(dealerCards[0]);
+
+let status = '';
+if (playerTotal === 21) {
+	status = '🎉 **BLACKJACK!** You win!';
+}
+
+message.reply({
+	embeds: [{
+		title: '🃏 Blackjack',
+		description: '**Your Hand:** ' + playerCards.map(c => c.display).join(' ') + ' (**' + playerTotal + '**)\n\n' +
+			'**Dealer Shows:** ' + dealerCards[0].display + ' 🎴 (**' + dealerShowing + '**)\n\n' +
+			(status || 'React: 👊 **Hit** | 🛑 **Stand** | ✌️ **Double Down**'),
+		color: playerTotal === 21 ? 0x2ecc71 : 0x3498db,
+		footer: { text: 'Get as close to 21 as possible without going over!' }
+	}]
+});

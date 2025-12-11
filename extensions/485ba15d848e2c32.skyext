@@ -1,0 +1,48 @@
+const message = require('message');
+
+const symbols = ['🍒', '🍋', '🍊', '🍇', '💎', '7️⃣', '⭐'];
+const weights = [30, 25, 20, 15, 7, 2, 1]; // Rarity weights
+
+function weightedRandom() {
+	const total = weights.reduce((a, b) => a + b, 0);
+	let random = Math.random() * total;
+	for (let i = 0; i < symbols.length; i++) {
+		random -= weights[i];
+		if (random <= 0) return symbols[i];
+	}
+	return symbols[0];
+}
+
+const reel1 = weightedRandom();
+const reel2 = weightedRandom();
+const reel3 = weightedRandom();
+
+const payouts = {
+	'🍒': 3, '🍋': 5, '🍊': 7, '🍇': 10, '💎': 25, '7️⃣': 100, '⭐': 50
+};
+
+let result = '';
+let color = 0x95a5a6;
+
+if (reel1 === reel2 && reel2 === reel3) {
+	const multiplier = payouts[reel1];
+	result = '🎉 **JACKPOT!** Three ' + reel1 + ' = **' + multiplier + 'x** payout!';
+	color = reel1 === '7️⃣' ? 0xf1c40f : 0x2ecc71;
+} else if (reel1 === reel2 || reel2 === reel3 || reel1 === reel3) {
+	result = '😊 **Two of a kind!** Small win!';
+	color = 0x3498db;
+} else {
+	result = '😔 No match. Better luck next time!';
+	color = 0xe74c3c;
+}
+
+message.reply({
+	embeds: [{
+		title: '🎰 Slot Machine',
+		description: '━━━━━━━━━━━━━━━\n' +
+			'▶️ | ' + reel1 + ' | ' + reel2 + ' | ' + reel3 + ' | ◀️\n' +
+			'━━━━━━━━━━━━━━━\n\n' + result,
+		color: color,
+		footer: { text: 'Spin again to try your luck!' }
+	}]
+});
