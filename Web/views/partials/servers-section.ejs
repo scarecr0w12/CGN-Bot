@@ -11,240 +11,456 @@ SkynetUtil.showActivitySelections = () => {
 };
 </script>
 
-<nav class="level">
-	<div class="level-left">
-		<div class="level-item">
-			<span class="select is-primary">
-				<select id="category-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=' + this.value + '&publiconly=<%= pageData.isPublicOnly %>');">
-					<option value="All">All Categories</option>
-					<option>Gaming</option>
-					<option>Tech</option>
-					<option>Programming</option>
-					<option>Community</option>
-					<option>Bots</option>
-					<option>Other</option>
-				</select>
-			</span>
-		</div>
-		<div class="level-item">
-			<span class="select is-primary">
-				<select id="public-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=' + this.value);">
-					<option value="false">Show All Servers</option>
-					<option value="true">Public Listings Only</option>
-				</select>
-			</span>
-		</div>
-	</div>
-	<div class="level-right">
-		<div class="level-item">
-			<span class="select is-primary">
-				<select id="sort-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=' + this.value + '&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>');">
-					<option value="activity-des">Skynet Activity Score (default)</option>
-					<option value="messages-asc">Messages Today (ascending)</option>
-					<option value="messages-des">Messages Today (descending)</option>
-					<option value="members-asc">Members (ascending)</option>
-					<option value="members-des">Members (descending)</option>
-				</select>
-			</span>
-		</div>
-		<div class="level-item">
-			<div class="field has-addons">
-				<div class="control">
-				<a id="grid-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('grid');">
-					<span class="icon is-small">
-						<i class="fa fa-th"></i>
-					</span>
-					<span>Grid</span>
-				</a>
-				</div>
-				<div class="control">
-				<a id="list-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('list');">
-					<span class="icon is-small">
-						<i class="fa fa-th-list"></i>
-					</span>
-					<span>List</span>
-				</a>
+<style>
+/* Server Cards Styles */
+.server-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 1.5rem;
+	margin-top: 1.5rem;
+}
+.server-card-item {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+	transition: all 0.3s ease;
+	display: flex;
+	flex-direction: column;
+}
+.server-card-item:hover {
+	transform: translateY(-6px);
+	box-shadow: var(--shadow-card-hover);
+}
+.server-card-banner {
+	height: 120px;
+	background: var(--gradient-primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	overflow: hidden;
+}
+.server-card-banner img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.server-card-icon {
+	width: 72px;
+	height: 72px;
+	border-radius: var(--radius-lg);
+	border: 4px solid var(--color-bg-primary);
+	position: absolute;
+	bottom: -36px;
+	left: 50%;
+	transform: translateX(-50%);
+	box-shadow: var(--shadow-md);
+	background: var(--color-bg-primary);
+}
+.server-card-body {
+	padding: 2.5rem 1.25rem 1.25rem;
+	text-align: center;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+.server-card-name {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--color-text-primary);
+	margin-bottom: 0.25rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.server-card-category {
+	font-size: 0.8rem;
+	color: var(--color-accent);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 1rem;
+}
+.server-card-stats {
+	display: flex;
+	justify-content: center;
+	gap: 1.5rem;
+	margin-bottom: 1rem;
+	padding: 0.75rem 0;
+	border-top: 1px solid var(--color-border-light);
+	border-bottom: 1px solid var(--color-border-light);
+}
+.server-stat {
+	text-align: center;
+}
+.server-stat-value {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: var(--color-text-primary);
+}
+.server-stat-label {
+	font-size: 0.7rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+}
+.server-card-description {
+	font-size: 0.875rem;
+	color: var(--color-text-secondary);
+	line-height: 1.5;
+	margin-bottom: 1rem;
+	flex-grow: 1;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.server-card-footer {
+	padding: 0 1.25rem 1.25rem;
+}
+.server-card-footer .button {
+	width: 100%;
+	border-radius: var(--radius-md);
+}
+.server-card-owner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+	margin-bottom: 1rem;
+}
+.server-card-owner img {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+}
+
+/* Filter Bar Styles */
+.filter-bar {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-lg);
+	padding: 1rem 1.5rem;
+	margin-bottom: 1.5rem;
+	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--color-border-light);
+}
+.filter-bar .level-item {
+	margin-bottom: 0;
+}
+.filter-bar .select select {
+	border-radius: var(--radius-md);
+	border: 1px solid var(--color-border);
+	font-size: 0.875rem;
+}
+.filter-bar .select select:focus {
+	border-color: var(--color-accent);
+}
+.view-toggle .button {
+	border-radius: var(--radius-md);
+	border: 1px solid var(--color-border);
+	background: var(--color-bg-primary);
+}
+.view-toggle .button.is-active {
+	background: var(--color-primary);
+	color: white;
+	border-color: var(--color-primary);
+}
+.view-toggle .field.has-addons .control:first-child .button {
+	border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+.view-toggle .field.has-addons .control:last-child .button {
+	border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+/* List View Styles */
+.server-list-table {
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	box-shadow: var(--shadow-sm);
+}
+.server-list-table thead th {
+	background: var(--color-bg-secondary);
+	font-weight: 600;
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-text-secondary);
+	padding: 1rem;
+}
+.server-list-table tbody tr {
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+.server-list-table tbody tr:hover {
+	background: var(--color-bg-secondary);
+}
+.server-list-table td {
+	padding: 1rem;
+	vertical-align: middle;
+}
+.server-list-name {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+.server-list-name img {
+	width: 40px;
+	height: 40px;
+	border-radius: var(--radius-md);
+}
+.server-list-name-text {
+	font-weight: 500;
+}
+
+/* Modern Pagination */
+.modern-pagination {
+	margin-top: 2rem;
+}
+.modern-pagination .pagination-link {
+	border-radius: var(--radius-md);
+	border: 1px solid var(--color-border);
+	transition: all 0.2s ease;
+}
+.modern-pagination .pagination-link:hover {
+	border-color: var(--color-accent);
+	color: var(--color-accent);
+}
+.modern-pagination .pagination-link.is-current {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+}
+</style>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+	<nav class="level is-mobile">
+		<div class="level-left">
+			<div class="level-item">
+				<div class="field is-horizontal">
+					<div class="field-body">
+						<div class="field" style="margin-right: 0.75rem;">
+							<span class="select">
+								<select id="category-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=' + this.value + '&publiconly=<%= pageData.isPublicOnly %>');">
+									<option value="All">All Categories</option>
+									<option>Gaming</option>
+									<option>Tech</option>
+									<option>Programming</option>
+									<option>Community</option>
+									<option>Bots</option>
+									<option>Other</option>
+								</select>
+							</span>
+						</div>
+						<div class="field">
+							<span class="select">
+								<select id="public-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=' + this.value);">
+									<option value="false">All Servers</option>
+									<option value="true">Public Only</option>
+								</select>
+							</span>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class="level-item">
-			<span class="select is-primary">
-				<select id="count-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=' + this.value + '&page=1&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>');">
-					<option value="0">All Items</option>
-					<option value="8">8 items/page</option>
-					<option value="16">16 items/page</option>
-					<option value="24">24 items/page</option>
-					<option value="32">32 items/page</option>
-					<option value="48">48 items/page</option>
-					<option value="64">64 items/page</option>
-				</select>
-			</span>
+		<div class="level-right">
+			<div class="level-item">
+				<span class="select">
+					<select id="sort-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=' + this.value + '&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>');">
+						<option value="activity-des">Activity Score</option>
+						<option value="messages-des">Most Messages</option>
+						<option value="messages-asc">Least Messages</option>
+						<option value="members-des">Most Members</option>
+						<option value="members-asc">Least Members</option>
+					</select>
+				</span>
+			</div>
+			<div class="level-item view-toggle">
+				<div class="field has-addons">
+					<div class="control">
+						<a id="grid-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('grid');" title="Grid View">
+							<span class="icon is-small">
+								<i class="fa fa-th-large"></i>
+							</span>
+						</a>
+					</div>
+					<div class="control">
+						<a id="list-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('list');" title="List View">
+							<span class="icon is-small">
+								<i class="fa fa-list"></i>
+							</span>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="level-item">
+				<span class="select">
+					<select id="count-select" onchange="Turbolinks.visit('/activity/servers?q=<%= pageData.activeSearchQuery %>&count=' + this.value + '&page=1&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>');">
+						<option value="0">All</option>
+						<option value="8">8</option>
+						<option value="16">16</option>
+						<option value="24">24</option>
+						<option value="32">32</option>
+						<option value="48">48</option>
+						<option value="64">64</option>
+					</select>
+				</span>
+			</div>
 		</div>
-	</div>
-</nav>
-<div id="grid-layout" class="container">
+	</nav>
+</div>
+
+<!-- Grid Layout -->
+<div id="grid-layout">
 	<% if (pageData.serverData.length > 0) { %>
-		<br>
-		<div class="columns">
+		<div class="server-grid">
 			<% pageData.serverData.forEach((server, i) => { %>
 			<% if (server) { %>
-				<div class="column is-one-quarter">
-					<center>
-						<div class="card" style="text-align: left;">
-							<div class="card-image">
-								<figure class="image is-square">
-									<img src="<%= server.icon %>" alt=":(">
-								</figure>
-							</div>
-							<div id="cardContent-<%= server.id %>" class="card-content" style="max-height: 255px;overflow-y: scroll;">
-								<div class="columns">
-									<div class="column">
-									<h5 class="title is-5"><%= server.name %></h5>
-										<h5 class="subtitle is-5"><%= server.category %></h5>
-									</div>
-									<% if (isMaintainer) { %>
-										<div class="column is-one-fifth">
-											<button class="delete is-pulled-right" onclick="SkynetUtil.activityBanGuild('<%= server.id %>');" title='Remove "<%= server.name %>" from the activity page'></button>
-										</div>
-									<% } %>
-								</div>
-								<div class="level is-mobile">
-									<div class="level-item has-text-centered">
-										<div>
-											<p class="heading">Members</p>
-											<p class="title"><%= server.members %></p>
-										</div>
-									</div>
-									<div class="level-item has-text-centered">
-										<div>
-											<p class="heading">Message<%= server.messages === 1 ? "" : "s" %></p>
-											<p class="title"><%= server.messages %></p>
-										</div>
-									</div>
-									<div class="level-item has-text-centered">
-										<div>
-											<p class="heading">Created</p>
-											<p class="title" title="<%= server.rawCreated %>"><%= server.relativeCreated %>d</p>
-										</div>
-									</div>
-								</div>
-
-								<div class="media">
-									<div class="media-left">
-										<figure class="image is-32x32">
-											<img src="<%= server.owner.avatar %>" alt="<%= server.owner.id %>">
-										</figure>
-									</div>
-									<div class="media-content">
-										<p class="title is-5"><%= server.owner.name %></p>
-										<p class="subtitle is-6">@<%= server.owner.username %></p>
-									</div>
-								</div>
-
-								<% if (server.description) { %>
-									<div class="content">
-										<%- server.description %>
-									</div>
-								<% } %>
-
-								<% if (server.invite_link) { %>
-									<div class="content">
-										Use <code><%= server.command_prefix %>help</code> to learn how to use Skynet on <%= server.name %>
-									</div>
-								<% } %>
-							</div>
-							<% if (server.invite_link) { %>
-								<footer class="card-footer">
-									<a class="card-footer-item" href="<%= server.invite_link %>">Join Server</a>
-								</footer>
-							<% } %>
-						</div>
-					</center>
-				</div>
-				<% } %>
-				<% if (i % 4 === 3 && i !== pageData.serverData.length - 1 && i !== 0) { %>
+				<div class="server-card-item fade-in">
+					<div class="server-card-banner">
+						<img src="<%= server.icon %>" alt="<%= server.name %>" style="opacity: 0.3; filter: blur(10px); transform: scale(1.2);">
+						<img src="<%= server.icon %>" alt="<%= server.name %>" class="server-card-icon">
 					</div>
-					<div class="columns">
-				<% } %>
+					<div class="server-card-body">
+						<h3 class="server-card-name" title="<%= server.name %>"><%= server.name %></h3>
+						<span class="server-card-category"><%= server.category %></span>
+						
+						<div class="server-card-stats">
+							<div class="server-stat">
+								<div class="server-stat-value"><%= server.members %></div>
+								<div class="server-stat-label">Members</div>
+							</div>
+							<div class="server-stat">
+								<div class="server-stat-value"><%= server.messages %></div>
+								<div class="server-stat-label">Today</div>
+							</div>
+							<div class="server-stat">
+								<div class="server-stat-value"><%= server.relativeCreated %>d</div>
+								<div class="server-stat-label">Age</div>
+							</div>
+						</div>
+
+						<div class="server-card-owner">
+							<img src="<%= server.owner.avatar %>" alt="<%= server.owner.username %>">
+							<span>@<%= server.owner.username %></span>
+						</div>
+
+						<% if (server.description) { %>
+							<p class="server-card-description"><%- server.description %></p>
+						<% } %>
+					</div>
+					
+					<% if (server.invite_link) { %>
+						<div class="server-card-footer">
+							<a class="button is-primary is-modern" href="<%= server.invite_link %>">
+								<span class="icon"><i class="fa fa-sign-in"></i></span>
+								<span>Join Server</span>
+							</a>
+						</div>
+					<% } %>
+					
+					<% if (isMaintainer) { %>
+						<button class="delete" style="position: absolute; top: 0.5rem; right: 0.5rem;" onclick="SkynetUtil.activityBanGuild('<%= server.id %>');" title='Remove "<%= server.name %>" from the activity page'></button>
+					<% } %>
+				</div>
+			<% } %>
 			<% }); %>
 		</div>
 	<% } %>
 </div>
-<div id="list-layout" class="container is-hidden">
+
+<!-- List Layout -->
+<div id="list-layout" class="is-hidden">
 	<% if (pageData.serverData.length > 0) { %>
-		<div style="overflow-x: scroll;">
-			<table class="table is-fullwidth is-hoverable is-striped">
+		<div style="overflow-x: auto;">
+			<table class="table is-fullwidth server-list-table">
 				<thead>
 					<tr>
-						<th>Name</th>
+						<th>Server</th>
 						<th>Members</th>
 						<th>Messages</th>
 						<th>Owner</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					<% pageData.serverData.forEach(server => { %>
 						<tr class="modal-button" data-target="#server-<%= server.id %>-modal">
 							<td>
-								<img class="image is-24x24" src="<%= server.icon %>" alt="<%= server.id %>" style="border-radius: 100%; float: left;">
-								&nbsp;
-								<%= server.name %>
+								<div class="server-list-name">
+									<img src="<%= server.icon %>" alt="<%= server.id %>">
+									<div>
+										<div class="server-list-name-text"><%= server.name %></div>
+										<small class="has-text-grey"><%= server.category %></small>
+									</div>
+								</div>
+							</td>
+							<td><strong><%= server.members %></strong></td>
+							<td><strong><%= server.messages %></strong></td>
+							<td>
+								<div class="server-list-name">
+									<img src="<%= server.owner.avatar %>" alt="<%= server.owner.id %>" style="width: 24px; height: 24px;">
+									<span>@<%= server.owner.username %></span>
+								</div>
+							</td>
+							<td>
 								<% if (server.invite_link) { %>
-									&nbsp;
-									<span class="tag is-primary" title="Click to learn more">
-										Public
-									</span>
+									<span class="tag is-success is-rounded">Public</span>
 								<% } %>
-							</td>
-							<td>
-								<%= server.members %>
-							</td>
-							<td>
-								<%= server.messages %>
-							</td>
-							<td>
-								<img class="image is-24x24" src="<%= server.owner.avatar %>" alt="<%= server.owner.id %>" style="border-radius: 100%; float: left;">
-								&nbsp;
-								@<%= server.owner.username %>
 							</td>
 						</tr>
 						<div id="server-<%= server.id %>-modal" class="modal">
 							<div class="modal-background"></div>
-							<div class="modal-container">
-								<div class="modal-content">
-									<div class="box">
-										<article class="media">
-											<div class="media-left">
-												<figure class="image is-96x96">
-													<img src="<%= server.icon %>" alt="<%= server.id %>">
-												</figure>
-											</div>
-											<div class="media-content">
-												<div class="content">
-													<h4 class="title is-4">
-														<%= server.name %> <small class="subtitle is-5"><%= server.category %></small>
-													</h4>
-													<h6 class="subtitle is-6">
-														Owned by @<%= server.owner.username %>, created <span title="<%= server.rawCreated %>"><%= server.relativeCreated %> day<%= server.relativeCreated === 1 ? "" : "s" %> ago</span>
-													</h6>
-													<% if (server.description) { %>
-														<%- server.description %>
-													<% } %>
-													<% if (server.invite_link) { %>
-														Use <code><%= server.command_prefix %>help</code> to learn how to use Skynet on <%= server.name %>
-													<% } %>
-												</div>
-												<% if (server.invite_link) { %>
-													<a class="button is-primary" href="<%= server.invite_link %>">
-														Join Server
-													</a>
-												<% } %>
-											</div>
-										</article>
+							<div class="modal-card" style="max-width: 500px;">
+								<header class="modal-card-head">
+									<p class="modal-card-title" style="color: white;"><%= server.name %></p>
+									<button class="delete" aria-label="close"></button>
+								</header>
+								<section class="modal-card-body">
+									<div class="has-text-centered" style="margin-bottom: 1.5rem;">
+										<img src="<%= server.icon %>" alt="<%= server.id %>" style="width: 80px; height: 80px; border-radius: var(--radius-lg);">
 									</div>
-								</div>
+									<div class="level" style="margin-bottom: 1.5rem;">
+										<div class="level-item has-text-centered">
+											<div>
+												<p class="heading">Members</p>
+												<p class="title is-5"><%= server.members %></p>
+											</div>
+										</div>
+										<div class="level-item has-text-centered">
+											<div>
+												<p class="heading">Messages</p>
+												<p class="title is-5"><%= server.messages %></p>
+											</div>
+										</div>
+										<div class="level-item has-text-centered">
+											<div>
+												<p class="heading">Created</p>
+												<p class="title is-5"><%= server.relativeCreated %>d ago</p>
+											</div>
+										</div>
+									</div>
+									<p class="has-text-grey" style="margin-bottom: 1rem;">
+										<span class="icon"><i class="fa fa-user"></i></span>
+										Owned by <strong>@<%= server.owner.username %></strong>
+									</p>
+									<% if (server.description) { %>
+										<div class="content"><%- server.description %></div>
+									<% } %>
+									<% if (server.invite_link) { %>
+										<p class="has-text-grey is-size-7">Use <code><%= server.command_prefix %>help</code> to learn how to use Skynet</p>
+									<% } %>
+								</section>
+								<footer class="modal-card-foot" style="justify-content: center;">
+									<% if (server.invite_link) { %>
+										<a class="button is-primary is-modern" href="<%= server.invite_link %>">
+											<span class="icon"><i class="fa fa-sign-in"></i></span>
+											<span>Join Server</span>
+										</a>
+									<% } %>
+								</footer>
 							</div>
-							<button class="modal-close"></button>
 						</div>
 					<% }); %>
 				</tbody>
@@ -252,57 +468,63 @@ SkynetUtil.showActivitySelections = () => {
 		</div>
 	<% } %>
 </div>
+
 <% if (pageData.serverData.length === 0) { %>
 	<% const resetUrl = "/activity/servers?q=&count=" + pageData.itemsPerPage + "&page=1&sort=" + pageData.sortOrder + "&category=All&publiconly=false"; %>
 	<%- include("../partials/no-results", { isSearchQuery: true, activeSearchQuery: pageData.activeSearchQuery, resetUrl, mode: pageData.mode }) %>
 <% } %>
+
 <% if (pageData.numPages > 1) { %>
-	<br>
-	<nav class="pagination is-centered">
+	<nav class="pagination is-centered modern-pagination" aria-label="pagination">
 		<ul class="pagination-list">
 			<% if (pageData.currentPage > 2) { %>
 				<li>
-					<a class="button pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=1&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">
-						1
-					</a>
+					<a class="pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=1&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">1</a>
 				</li>
 			<% } %>
 			<% if (pageData.currentPage > 3) { %>
-				<li>
-					<span class="pagination-ellipsis">&hellip;</span>
-				</li>
+				<li><span class="pagination-ellipsis">&hellip;</span></li>
 			<% } %>
 			<% if (pageData.currentPage > 1) { %>
 				<li>
-					<a class="button pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage - 1 %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">
-						<%= pageData.currentPage - 1 %>
-					</a>
+					<a class="pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage - 1 %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>"><%= pageData.currentPage - 1 %></a>
 				</li>
 			<% } %>
 			<li>
-				<a class="button is-primary pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">
-					<%= pageData.currentPage %>
-				</a>
+				<a class="pagination-link is-current" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>"><%= pageData.currentPage %></a>
 			</li>
 			<% if (pageData.currentPage < pageData.numPages) { %>
 				<li>
-					<a class="button pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage+1 %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">
-						<%= pageData.currentPage + 1 %>
-					</a>
+					<a class="pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.currentPage+1 %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>"><%= pageData.currentPage + 1 %></a>
 				</li>
 			<% } %>
 			<% if (pageData.currentPage < pageData.numPages - 2) { %>
-				<li>
-					<span class="pagination-ellipsis">&hellip;</span>
-				</li>
+				<li><span class="pagination-ellipsis">&hellip;</span></li>
 			<% } %>
 			<% if (pageData.currentPage < pageData.numPages - 1) { %>
 				<li>
-					<a class="button pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.numPages %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>">
-						<%= pageData.numPages %>
-					</a>
+					<a class="pagination-link" href="/activity/servers?q=<%= pageData.activeSearchQuery %>&count=<%= pageData.itemsPerPage %>&page=<%= pageData.numPages %>&sort=<%= pageData.sortOrder %>&category=<%= pageData.selectedCategory %>&publiconly=<%= pageData.isPublicOnly %>"><%= pageData.numPages %></a>
 				</li>
 			<% } %>
 		</ul>
 	</nav>
 <% } %>
+
+<script>
+document.addEventListener('turbolinks:load', function() {
+	SkynetUtil.showActivitySelections();
+	
+	// Fade-in animations for grid items
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach((entry, index) => {
+			if (entry.isIntersecting) {
+				setTimeout(() => {
+					entry.target.classList.add('is-visible');
+				}, index * 50);
+			}
+		});
+	}, { threshold: 0.1 });
+
+	document.querySelectorAll('.server-card-item').forEach(el => observer.observe(el));
+});
+</script>

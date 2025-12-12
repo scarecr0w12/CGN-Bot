@@ -10,6 +10,8 @@ class SkynetResponse {
 			currentPage: `${req.baseUrl}${req.path}`,
 			currentPath: currentPath,
 			hostingURL: req.app.client.configJS.hostingURL,
+			isProduction: process.env.NODE_ENV === "production",
+			disableExternalScripts: req.app.client.configJS.disableExternalScripts,
 			officialMode: req.app.client.officialMode ? true : undefined,
 			adsense: {
 				isEnabled: req.cookies.adsPreference !== "false",

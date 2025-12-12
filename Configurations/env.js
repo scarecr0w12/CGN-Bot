@@ -33,6 +33,7 @@ const loadConfigs = () => {
 
 	const configJS = {
 		...fileConfigJS,
+		disableExternalScripts: pick("DISABLE_EXTERNAL_SCRIPTS", fileConfigJS.disableExternalScripts ?? "false") === "true",
 		shardTotal: pick("SHARD_TOTAL", fileConfigJS.shardTotal ?? "auto"),
 		hostingURL: pick("HOSTING_URL", fileConfigJS.hostingURL),
 		serverIP: pick("SERVER_IP", fileConfigJS.serverIP ?? "0.0.0.0"),

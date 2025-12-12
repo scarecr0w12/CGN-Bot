@@ -52,6 +52,10 @@ class UptimeKumaClient {
 			});
 
 			if (!response.ok) {
+				if (response.status === 401 || response.status === 403) {
+					logger.debug(`Uptime Kuma unauthorized for ${endpoint} (${response.status} ${response.statusText})`);
+					return null;
+				}
 				throw new Error(`Uptime Kuma API error: ${response.status} ${response.statusText}`);
 			}
 

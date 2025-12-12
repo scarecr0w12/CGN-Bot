@@ -1,12 +1,163 @@
-const { Collection, REST, Routes } = require("discord.js");
+const { Collection, REST, Routes, ApplicationCommandOptionType } = require("discord.js");
+const fs = require("fs-nextra");
 const { readdir } = require("fs/promises");
 const { join } = require("path");
+
+const IsolatedSandbox = require("../Extensions/API/IsolatedSandbox");
 
 class SlashCommandHandler {
 	constructor (client) {
 		this.client = client;
 		this.commands = new Collection();
 		this.commandsDir = join(__dirname, "commands");
+	}
+
+	_getRest () {
+		const token = process.env.CLIENT_TOKEN;
+		if (!token) return null;
+		return new REST({ version: "10" }).setToken(token);
+	}
+
+	_getClientId () {
+		return this.client.application?.id || this.client.user?.id || null;
+	}
+
+	_mapSlashOptionType (type) {
+		switch (String(type || "").toLowerCase()) {
+			case "string": return ApplicationCommandOptionType.String;
+			case "integer": return ApplicationCommandOptionType.Integer;
+			case "number": return ApplicationCommandOptionType.Number;
+			case "boolean": return ApplicationCommandOptionType.Boolean;
+			case "user": return ApplicationCommandOptionType.User;
+			case "channel": return ApplicationCommandOptionType.Channel;
+			case "role": return ApplicationCommandOptionType.Role;
+			case "mentionable": return ApplicationCommandOptionType.Mentionable;
+			case "attachment": return ApplicationCommandOptionType.Attachment;
+			default: return null;
+		}
+	}
+
+	_buildSlashOptions (rawOptions) {
+		if (!Array.isArray(rawOptions)) return [];
+		return rawOptions.map(opt => {
+			const type = this._mapSlashOptionType(opt.type);
+			if (!type) return null;
+			const name = String(opt.name || "").toLowerCase();
+			const description = String(opt.description || "");
+			if (!name || !description) return null;
+
+			const built = {
+				type,
+				name,
+				description,
+				required: Boolean(opt.required),
+			};
+
+			if (Array.isArray(opt.choices)) {
+				built.choices = opt.choices
+					.filter(c => c && typeof c.name === "string" && Object.prototype.hasOwnProperty.call(c, "value"))
+					.map(c => ({ name: c.name, value: c.value }));
+			}
+
+			if (Object.prototype.hasOwnProperty.call(opt, "autocomplete")) {
+				built.autocomplete = Boolean(opt.autocomplete);
+			}
+
+			if (Object.prototype.hasOwnProperty.call(opt, "min_value") || Object.prototype.hasOwnProperty.call(opt, "minValue")) {
+				built.min_value = opt.min_value ?? opt.minValue;
+			}
+			if (Object.prototype.hasOwnProperty.call(opt, "max_value") || Object.prototype.hasOwnProperty.call(opt, "maxValue")) {
+				built.max_value = opt.max_value ?? opt.maxValue;
+			}
+			if (Object.prototype.hasOwnProperty.call(opt, "min_length") || Object.prototype.hasOwnProperty.call(opt, "minLength")) {
+				built.min_length = opt.min_length ?? opt.minLength;
+			}
+			if (Object.prototype.hasOwnProperty.call(opt, "max_length") || Object.prototype.hasOwnProperty.call(opt, "maxLength")) {
+				built.max_length = opt.max_length ?? opt.maxLength;
+			}
+			if (Array.isArray(opt.channel_types) || Array.isArray(opt.channelTypes)) {
+				built.channel_types = opt.channel_types ?? opt.channelTypes;
+			}
+
+			return built;
+		}).filter(Boolean);
+	}
+
+	_isValidCommandName (name) {
+		return /^[a-z0-9_-]{1,32}$/.test(String(name || ""));
+	}
+
+	async syncExtensionGuildCommands (guildId) {
+		const rest = this._getRest();
+		const clientId = this._getClientId();
+		if (!rest || !clientId || !guildId) return;
+
+		let serverDocument;
+		try {
+			serverDocument = await Servers.findOne(guildId);
+		} catch (err) {
+			logger.warn("Failed to load server document for extension command sync.", { svrid: guildId }, err);
+			return;
+		}
+		if (!serverDocument) return;
+
+		const usedNames = new Set();
+		this.commands.forEach(cmd => usedNames.add(cmd.data?.name));
+		const commandsBody = [];
+		const serverQuery = serverDocument.query;
+
+		for (const extConfig of serverDocument.extensions || []) {
+			if (!extConfig || !extConfig._id) continue;
+			const statusQuery = serverQuery.id("extensions", extConfig._id).prop("status");
+			statusQuery.set("code", 0).set("description", null);
+
+			let extensionDocument;
+			try {
+				extensionDocument = await Gallery.findOneByObjectID(extConfig._id);
+			} catch (_) {
+				extensionDocument = null;
+			}
+			if (!extensionDocument) continue;
+			const versionDocument = extensionDocument.versions?.id(extConfig.version);
+			if (!versionDocument || versionDocument.type !== "slash" || !versionDocument.accepted) continue;
+
+			const name = String(versionDocument.key || "").toLowerCase();
+			if (!this._isValidCommandName(name)) {
+				statusQuery.set("code", 2).set("description", "Invalid slash command name.");
+				continue;
+			}
+			if (!versionDocument.slash_description || typeof versionDocument.slash_description !== "string") {
+				statusQuery.set("code", 2).set("description", "Missing slash command description.");
+				continue;
+			}
+			if (usedNames.has(name)) {
+				statusQuery.set("code", 2).set("description", "Slash command name collides with another command.");
+				continue;
+			}
+
+			usedNames.add(name);
+			commandsBody.push({
+				name,
+				description: versionDocument.slash_description,
+				options: this._buildSlashOptions(versionDocument.slash_options),
+			});
+		}
+
+		try {
+			await serverDocument.save();
+		} catch (_) {
+			// ignore status save failures
+		}
+
+		try {
+			await rest.put(
+				Routes.applicationGuildCommands(clientId, guildId),
+				{ body: commandsBody },
+			);
+			logger.info(`Synced ${commandsBody.length} extension guild slash commands`, { svrid: guildId });
+		} catch (err) {
+			logger.warn("Failed to sync extension guild slash commands", { svrid: guildId }, err);
+		}
 	}
 
 	/**
@@ -70,12 +221,6 @@ class SlashCommandHandler {
 		if (!interaction.isChatInputCommand()) return;
 
 		const command = this.commands.get(interaction.commandName);
-		if (!command) {
-			return interaction.reply({
-				content: "This command is not available.",
-				ephemeral: true,
-			});
-		}
 
 		// Get server document
 		const serverDocument = await Servers.findOne(interaction.guild.id);
@@ -84,6 +229,82 @@ class SlashCommandHandler {
 				content: "Failed to load server configuration.",
 				ephemeral: true,
 			});
+		}
+
+		if (!command) {
+			// Try extension slash commands
+			const extConfig = (serverDocument.extensions || []).find(e => e && e.key && e.key.toLowerCase() === interaction.commandName.toLowerCase());
+			if (!extConfig) {
+				return interaction.reply({
+					content: "This command is not available.",
+					ephemeral: true,
+				});
+			}
+
+			const userAdminLevel = this.client.getUserBotAdmin(interaction.guild, serverDocument, interaction.member);
+			if ((extConfig.admin_level || 0) > 0 && userAdminLevel < (extConfig.admin_level || 0)) {
+				return interaction.reply({
+					content: "You don't have permission to use this command.",
+					ephemeral: true,
+				});
+			}
+
+			let extensionDocument;
+			try {
+				extensionDocument = await Gallery.findOneByObjectID(extConfig._id);
+			} catch (_) {
+				extensionDocument = null;
+			}
+			if (!extensionDocument) {
+				return interaction.reply({ content: "This command is not available.", ephemeral: true });
+			}
+			const versionDocument = extensionDocument.versions?.id(extConfig.version);
+			if (!versionDocument || versionDocument.type !== "slash" || !versionDocument.accepted) {
+				return interaction.reply({ content: "This command is not available.", ephemeral: true });
+			}
+
+			let code;
+			try {
+				const basePath = `${__dirname}/../../extensions/${versionDocument.code_id}`;
+				code = await fs.readFile(`${basePath}.skyext`, "utf8");
+			} catch (err) {
+				logger.error("Failed to load extension code for slash command", { svrid: interaction.guild.id, extid: extConfig._id }, err);
+				return interaction.reply({ content: "This command is not available.", ephemeral: true });
+			}
+
+			const context = {
+				extensionDocument,
+				versionDocument,
+				serverDocument,
+				extensionConfigDocument: serverDocument.extensions.id(extConfig._id),
+				client: this.client,
+				guild: interaction.guild,
+				interaction,
+			};
+
+			const sandbox = new IsolatedSandbox(this.client, context, versionDocument.scopes || []);
+			try {
+				await sandbox.initialize(versionDocument.timeout || 5000);
+				const result = await sandbox.run(code, versionDocument.timeout || 5000);
+				const statusQuery = serverDocument.query.id("extensions", extConfig._id).prop("status");
+				if (result.success || !result.err) {
+					statusQuery.set("code", 0).set("description", null);
+				} else {
+					statusQuery.set("code", 2).set("description", result.err.message || "Something went wrong!");
+				}
+				await serverDocument.save();
+				if (!result.success && !interaction.replied && !interaction.deferred) {
+					await interaction.reply({ content: "An error occurred while executing this command.", ephemeral: true });
+				}
+			} catch (err) {
+				logger.error("Error executing slash extension", { svrid: interaction.guild.id, extid: extConfig._id }, err);
+				if (!interaction.replied && !interaction.deferred) {
+					await interaction.reply({ content: "An error occurred while executing this command.", ephemeral: true });
+				}
+			} finally {
+				sandbox.dispose();
+			}
+			return;
 		}
 
 		// Check admin level if required

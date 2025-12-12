@@ -67,6 +67,9 @@ class IsolatedSandbox {
 		// Set up economy/points write callbacks
 		await this._setupPointsCallbacks(jail);
 
+		// Set up interaction callbacks (slash commands)
+		await this._setupInteractionCallbacks(jail);
+
 		// Set up the require function in the isolate
 		await this.vmContext.eval(`
 			const require = (name) => {
@@ -109,6 +112,25 @@ class IsolatedSandbox {
 								const result = __pointsGetCallback__(userId);
 								return JSON.parse(result);
 							},
+						};
+					}
+
+					// Wrap interaction module for slash commands
+					if (name === 'interaction') {
+						const call = (cb, payload) => {
+							const result = cb(JSON.stringify(payload || {}));
+							try {
+								return JSON.parse(result);
+							} catch (_) {
+								return { success: false, error: 'Invalid interaction callback response' };
+							}
+						};
+						module = {
+							...module,
+							reply: (payload) => call(__interactionReplyCallback__, (typeof payload === 'string') ? { content: payload } : payload),
+							deferReply: (payload) => call(__interactionDeferCallback__, payload),
+							editReply: (payload) => call(__interactionEditReplyCallback__, (typeof payload === 'string') ? { content: payload } : payload),
+							followUp: (payload) => call(__interactionFollowUpCallback__, (typeof payload === 'string') ? { content: payload } : payload),
 						};
 					}
 					return module;
@@ -179,12 +201,91 @@ class IsolatedSandbox {
 	}
 
 	/**
+	 * Set up callbacks for interaction reply operations (slash commands)
+	 * @param {ivm.Reference} jail - The global reference
+	 * @private
+	 */
+	async _setupInteractionCallbacks (jail) {
+		if (!this.context || !this.context.interaction) return;
+
+		const interaction = this.context.interaction;
+
+		const safeParse = input => {
+			if (!input) return {};
+			try {
+				return JSON.parse(input);
+			} catch (_) {
+				return {};
+			}
+		};
+
+		const replyCallback = new ivm.Callback(async payloadJSON => {
+			const payload = safeParse(payloadJSON);
+			try {
+				if (interaction.replied || interaction.deferred) {
+					await interaction.followUp(payload);
+				} else {
+					await interaction.reply(payload);
+				}
+				return JSON.stringify({ success: true });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		}, { async: true });
+
+		const deferCallback = new ivm.Callback(async payloadJSON => {
+			const payload = safeParse(payloadJSON);
+			try {
+				if (!interaction.deferred && !interaction.replied) {
+					await interaction.deferReply(payload);
+				}
+				return JSON.stringify({ success: true });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		}, { async: true });
+
+		const editReplyCallback = new ivm.Callback(async payloadJSON => {
+			const payload = safeParse(payloadJSON);
+			try {
+				if (interaction.deferred || interaction.replied) {
+					await interaction.editReply(payload);
+				} else {
+					await interaction.reply(payload);
+				}
+				return JSON.stringify({ success: true });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		}, { async: true });
+
+		const followUpCallback = new ivm.Callback(async payloadJSON => {
+			const payload = safeParse(payloadJSON);
+			try {
+				if (!interaction.deferred && !interaction.replied) {
+					await interaction.reply(payload);
+				} else {
+					await interaction.followUp(payload);
+				}
+				return JSON.stringify({ success: true });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		}, { async: true });
+
+		await jail.set("__interactionReplyCallback__", replyCallback);
+		await jail.set("__interactionDeferCallback__", deferCallback);
+		await jail.set("__interactionEditReplyCallback__", editReplyCallback);
+		await jail.set("__interactionFollowUpCallback__", followUpCallback);
+	}
+
+	/**
 	 * Build serializable module data for the isolate
 	 * @returns {Object} Module data map
 	 * @private
 	 */
 	_buildModulesData () {
-		const { extensionDocument, versionDocument, msg, serverDocument, extensionConfigDocument } = this.context;
+		const { extensionDocument, versionDocument, msg, serverDocument, extensionConfigDocument, interaction } = this.context;
 		const modules = {};
 
 		// Command module data
@@ -223,6 +324,7 @@ class IsolatedSandbox {
 		modules.config = { needsCallback: true };
 		modules.bot = { needsCallback: true };
 		modules.event = { needsCallback: true };
+		if (interaction) modules.interaction = { needsCallback: true };
 		modules.moment = { needsCallback: true };
 		modules.rss = { needsCallback: true };
 		modules.fetch = { needsCallback: true };
@@ -248,7 +350,7 @@ class IsolatedSandbox {
 	 * @private
 	 */
 	_resolveModule (name) {
-		const { msg, guild, serverDocument, eventData } = this.context;
+		const { msg, guild, serverDocument, eventData, interaction } = this.context;
 		const { scopes } = this;
 		const { rawClient } = this;
 		const Utils = require("./Modules/Utils");
@@ -272,6 +374,9 @@ class IsolatedSandbox {
 			case "event":
 				if (!eventData) throw new SkynetError("UNKNOWN_MODULE", name);
 				return this._serializeEvent(eventData);
+			case "interaction":
+				if (!interaction) throw new SkynetError("UNKNOWN_MODULE", name);
+				return this._serializeInteraction(interaction);
 			case "moment":
 				// Return current timestamp - moment functions can't be passed
 				return { now: Date.now() };
@@ -307,6 +412,46 @@ class IsolatedSandbox {
 			default:
 				throw new SkynetError("UNKNOWN_MODULE", name);
 		}
+	}
+
+	/**
+	 * Serialize an interaction for the isolate
+	 * @param {Interaction} interaction
+	 * @returns {Object}
+	 * @private
+	 */
+	_serializeInteraction (interaction) {
+		const optionsMap = {};
+		try {
+			const data = interaction.options && Array.isArray(interaction.options.data) ? interaction.options.data : [];
+			data.forEach(opt => {
+				if (!opt || !opt.name) return;
+				let value = opt.value;
+				if (opt.user) value = { id: opt.user.id, type: "user" };
+				else if (opt.member) value = { id: opt.member.id, type: "member" };
+				else if (opt.channel) value = { id: opt.channel.id, type: "channel" };
+				else if (opt.role) value = { id: opt.role.id, type: "role" };
+				else if (opt.attachment) value = { id: opt.attachment.id, type: "attachment", url: opt.attachment.url, name: opt.attachment.name };
+				optionsMap[opt.name] = value;
+			});
+		} catch (_) {
+			// Ignore parsing errors
+		}
+
+		return {
+			id: interaction.id,
+			commandName: interaction.commandName,
+			guildId: interaction.guildId,
+			channelId: interaction.channelId,
+			user: interaction.user ? {
+				id: interaction.user.id,
+				username: interaction.user.username,
+				tag: interaction.user.tag,
+				bot: interaction.user.bot,
+			} : null,
+			member: interaction.member ? { id: interaction.member.id } : null,
+			options: optionsMap,
+		};
 	}
 
 	/**

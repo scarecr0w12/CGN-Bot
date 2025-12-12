@@ -569,6 +569,13 @@ SkynetUtil.saveExtension = (isGallery, URL) => {
 		});
 };
 
+SkynetUtil.saveExtensionFromForm = (formEl) => {
+	const $form = $(formEl);
+	const isGallery = $form.attr("data-is-gallery") === "1";
+	const submitUrl = $form.attr("data-submit-url");
+	return SkynetUtil.saveExtension(isGallery, submitUrl);
+};
+
 SkynetUtil.voteExtension = extid => {
 	const voteButton = $(`#vote-${extid}`);
 	const vote = voteButton.html().trim();

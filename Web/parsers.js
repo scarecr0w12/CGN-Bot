@@ -152,6 +152,13 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 			typeDescription = versionDocument.key;
 			typeInfo.key = versionDocument.key;
 			break;
+		case "slash":
+			typeIcon = "terminal";
+			typeDescription = `/${versionDocument.key}`;
+			typeInfo.key = versionDocument.key;
+			typeInfo.slash_description = versionDocument.slash_description;
+			typeInfo.slash_options = versionDocument.slash_options;
+			break;
 		case "keyword":
 			typeIcon = "key";
 			typeDescription = versionDocument.keywords.join(", ");

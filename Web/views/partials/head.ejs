@@ -146,12 +146,21 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingU
 <script src="/socket.io/socket.io.js"></script>
 
 <% if (typeof injection !== "undefined" && injection.headScript) { %>
-	<%- injection.headScript %>
+	<% if (typeof isProduction !== "undefined" && isProduction && !(typeof disableExternalScripts !== "undefined" && disableExternalScripts)) { %>
+		<%- injection.headScript %>
+	<% } %>
 <% } %>
-<% if (typeof injection !== "undefined" && injection.pageScript) { %>
+
+<% if (
+	typeof injection !== "undefined" &&
+	injection.pageScript &&
+	typeof isProduction !== "undefined" &&
+	isProduction &&
+	!(typeof disableExternalScripts !== "undefined" && disableExternalScripts)
+) { %>
 <script>
-  	document.addEventListener("turbolinks:load", () => {
-	  	<%- injection.pageScript %>
+	document.addEventListener("turbolinks:load", () => {
+		<%- injection.pageScript %>
 	});
 </script>
 <% } %>

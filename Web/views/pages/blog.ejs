@@ -59,83 +59,316 @@
 	}
 	</script>
 	<% } %>
+	
+	<style>
+	/* Blog Page Styles */
+	.blog-hero-content {
+		max-width: 700px;
+		margin: 0 auto;
+	}
+	.blog-post-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+		margin-bottom: 1.5rem;
+		transition: all 0.3s ease;
+	}
+	.blog-post-card:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-card-hover);
+	}
+	.blog-post-header {
+		padding: 1.5rem 1.5rem 0;
+	}
+	.blog-post-category {
+		display: inline-block;
+		background: var(--gradient-primary);
+		color: white;
+		padding: 0.25rem 0.75rem;
+		border-radius: var(--radius-full);
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 0.75rem;
+	}
+	.blog-post-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--color-text-primary);
+		margin-bottom: 0.5rem;
+		line-height: 1.3;
+	}
+	.blog-post-title a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.blog-post-title a:hover {
+		color: var(--color-primary);
+	}
+	.blog-post-meta {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		color: var(--color-text-muted);
+		font-size: 0.875rem;
+		margin-bottom: 1rem;
+	}
+	.blog-post-author {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.blog-post-author img {
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+	}
+	.blog-post-body {
+		padding: 0 1.5rem 1.5rem;
+	}
+	.blog-post-excerpt {
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+	.blog-post-footer {
+		padding: 1rem 1.5rem;
+		border-top: 1px solid var(--color-border-light);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.blog-read-more {
+		color: var(--color-primary);
+		font-weight: 500;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: all 0.2s ease;
+	}
+	.blog-read-more:hover {
+		color: var(--color-primary-dark);
+		gap: 0.75rem;
+	}
+	.blog-pagination {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 2rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--color-border-light);
+	}
+	.blog-pagination .button {
+		border-radius: var(--radius-md);
+	}
+	/* Article view specific */
+	.blog-article-container {
+		max-width: 800px;
+		margin: 0 auto;
+	}
+	.blog-article-header {
+		text-align: center;
+		margin-bottom: 2rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid var(--color-border-light);
+	}
+	.blog-article-title {
+		font-size: 2.25rem;
+		font-weight: 700;
+		color: var(--color-text-primary);
+		margin-bottom: 1rem;
+		line-height: 1.2;
+	}
+	.blog-article-content {
+		font-size: 1.1rem;
+		line-height: 1.8;
+		color: var(--color-text-secondary);
+	}
+	.blog-article-content h2, .blog-article-content h3 {
+		color: var(--color-text-primary);
+		margin-top: 2rem;
+		margin-bottom: 1rem;
+	}
+	.blog-article-content p {
+		margin-bottom: 1.5rem;
+	}
+	.blog-article-content code {
+		background: var(--color-bg-secondary);
+		padding: 0.2rem 0.5rem;
+		border-radius: var(--radius-sm);
+		font-size: 0.9em;
+	}
+	.blog-article-content pre {
+		background: var(--color-bg-secondary);
+		padding: 1rem;
+		border-radius: var(--radius-md);
+		overflow-x: auto;
+		margin-bottom: 1.5rem;
+	}
+	.blog-back-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--color-text-muted);
+		text-decoration: none;
+		margin-bottom: 2rem;
+		transition: color 0.2s ease;
+	}
+	.blog-back-link:hover {
+		color: var(--color-primary);
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="main-header-section hero is-primary is-small is-bold">
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
 		<div class="hero-head">
 			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="title is-1">
-					<span class="icon is-large">
-                        <i class="fa fa-rss"></i>
-                    </span>
-                    Skynet blog
-				</h1>
-                <h3 id="blog-header-subtitle" class="subtitle is-3">
-                    Dolphin Musings
-                </h3>
-                <%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
-                <% if (isMaintainer) { %>
-                <a class="button is-white is-outlined" href="/blog/new">
-                    <span class="icon is-small">
-                        <i class="fa fa-plus"></i>
-                    </span>
-                    <span>New</span>
-                </a>
-                <% } %>
+			<div class="container">
+				<div class="blog-hero-content has-text-centered fade-in">
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						<span class="icon is-medium" style="margin-right: 0.5rem;">
+							<i class="fa fa-rss"></i>
+						</span>
+						<% if (pageData.mode === "article" && pageData.blogPost) { %>
+							<%= pageData.blogPost.title %>
+						<% } else { %>
+							Skynet Blog
+						<% } %>
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.8);">
+						<% if (pageData.mode === "article" && pageData.blogPost) { %>
+							<span class="tag is-light is-medium" style="margin-right: 0.5rem;"><%= pageData.blogPost.category %></span>
+							<span><%= pageData.blogPost.relativePublished %></span>
+						<% } else { %>
+							News, updates, and insights from the Skynet team
+						<% } %>
+					</p>
+					
+					<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
+					
+					<% if (isMaintainer && pageData.mode !== "compose") { %>
+					<a class="button is-modern is-light" href="/blog/new" style="margin-top: 1rem;">
+						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span>New Post</span>
+					</a>
+					<% } %>
+				</div>
 			</div>
 		</div>
-	</section>
-	<section class="section is-white">
-		<div class="container">
-            <% if (pageData.mode === "article") { %>
-                <% const { blogPost } = pageData; %>
-                <%- include('../partials/blog-article', { blogPost }) %>
-            <% } else if (pageData.mode === "list") { %>
-                <% if (pageData.data.length > 0) { %>
-                    <% pageData.data.forEach(blogPost => { %>
-						<div class="box">
-	                        <%- include('../partials/blog-article', { blogPost }) %>
-						</div>
-                    <% }); %>
-                <% } else { %>
-                    <% var activeSearchQuery, mode = "blog"; %>
-                    <%- include("../partials/no-results", { isSearchQuery: true, activeSearchQuery, resetUrl: null, mode }) %>
-                <% } %>
+	</header>
 
-                <nav class="level is-mobile arrow-link">
-                    <div class="level-left">
-                        <% if (pageData.currentPage < pageData.numPages) { %>
-                            <a class="button" href="/blog?page=<%= pageData.currentPage + 1 %>">
-                                <span class="icon is-small">
-                                    <i class="fa fa-chevron-left"></i>
-                                </span>
-                                <span>Older Posts</span>
-                            </a>
-                        <% } %>
-                    </div>
-                    <div class="level-right">
-                        <% if (pageData.currentPage > 1) { %>
-                            <div class="level-item">
-                                <a class="button" href="/blog?page=<%= pageData.currentPage - 1 %>">
-                                    <span>Newer Posts</span>
-                                    <span class="icon is-small">
-                                        <i class="fa fa-chevron-right"></i>
-                                    </span>
-                                </a>
-                            </div>
-                        <% } %>
-                    </div>
-                </nav>
-            <% } else if (pageData.mode === "compose") { %>
-                <%- include('../partials/blog-composer') %>
-            <% } %>
-		</div>
-	</section>
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary); min-height: 50vh;">
+			<div class="container">
+				<% if (pageData.mode === "article") { %>
+					<div class="blog-article-container">
+						<a href="/blog" class="blog-back-link">
+							<i class="fa fa-arrow-left"></i>
+							Back to all posts
+						</a>
+						<% const { blogPost } = pageData; %>
+						<%- include('../partials/blog-article', { blogPost }) %>
+					</div>
+				<% } else if (pageData.mode === "list") { %>
+					<% if (pageData.data.length > 0) { %>
+						<div class="columns is-centered">
+							<div class="column is-8">
+								<% pageData.data.forEach(blogPost => { %>
+								<article class="blog-post-card fade-in">
+									<div class="blog-post-header">
+										<span class="blog-post-category"><%= blogPost.category %></span>
+										<h2 class="blog-post-title">
+											<a href="/blog/<%= blogPost.id %>"><%= blogPost.title %></a>
+										</h2>
+										<div class="blog-post-meta">
+											<div class="blog-post-author">
+												<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>">
+												<span><%= blogPost.author.name %></span>
+											</div>
+											<span><i class="fa fa-calendar"></i> <%= blogPost.relativePublished %></span>
+										</div>
+									</div>
+									<div class="blog-post-body">
+										<p class="blog-post-excerpt">
+											<%- blogPost.content ? blogPost.content.replace(/<[^>]*>/g, '').substring(0, 200).trim() + '...' : '' %>
+										</p>
+									</div>
+									<div class="blog-post-footer">
+										<a href="/blog/<%= blogPost.id %>" class="blog-read-more">
+											Read more <i class="fa fa-arrow-right"></i>
+										</a>
+										<% if (isMaintainer) { %>
+										<a href="/blog/<%= blogPost.id %>/edit" class="button is-small is-light">
+											<span class="icon"><i class="fa fa-edit"></i></span>
+											<span>Edit</span>
+										</a>
+										<% } %>
+									</div>
+								</article>
+								<% }); %>
+
+								<div class="blog-pagination">
+									<div>
+										<% if (pageData.currentPage < pageData.numPages) { %>
+										<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %>">
+											<span class="icon"><i class="fa fa-chevron-left"></i></span>
+											<span>Older Posts</span>
+										</a>
+										<% } %>
+									</div>
+									<div>
+										<% if (pageData.currentPage > 1) { %>
+										<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %>">
+											<span>Newer Posts</span>
+											<span class="icon"><i class="fa fa-chevron-right"></i></span>
+										</a>
+										<% } %>
+									</div>
+								</div>
+							</div>
+						</div>
+					<% } else { %>
+						<div class="columns is-centered">
+							<div class="column is-6 has-text-centered">
+								<div style="padding: 3rem; background: var(--color-bg-primary); border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
+									<span class="icon is-large" style="color: var(--color-text-muted); margin-bottom: 1rem;">
+										<i class="fa fa-newspaper-o fa-3x"></i>
+									</span>
+									<h3 class="title is-4">No Posts Yet</h3>
+									<p class="has-text-grey">Check back later for updates and announcements.</p>
+								</div>
+							</div>
+						</div>
+					<% } %>
+				<% } else if (pageData.mode === "compose") { %>
+					<%- include('../partials/blog-composer') %>
+				<% } %>
+			</div>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach((entry, index) => {
+				if (entry.isIntersecting) {
+					setTimeout(() => {
+						entry.target.classList.add('is-visible');
+					}, index * 100);
+				}
+			});
+		}, { threshold: 0.1 });
+
+		document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+	});
+	</script>
 </body>
 </html>

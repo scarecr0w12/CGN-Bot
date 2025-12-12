@@ -19,5 +19,10 @@ module.exports = pullEndpointKey => async (req, res) => {
 		default:
 			req.svr.queryDocument.pull(`config.${pullEndpointKey}`, req.params.id);
 	}
-	require("../../helpers").saveAdminConsoleOptions(req, res, true);
+	const { saveAdminConsoleOptions } = require("../../helpers");
+	if (pullEndpointKey === "extensions") {
+		saveAdminConsoleOptions(req, res, true, () => req.app.client.slashCommands?.syncExtensionGuildCommands(req.svr.id));
+	} else {
+		saveAdminConsoleOptions(req, res, true);
+	}
 };

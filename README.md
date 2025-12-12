@@ -3,7 +3,7 @@
 [![CI](https://github.com/scarecr0w12/CGN-Bot/actions/workflows/ci.yml/badge.svg)](https://github.com/scarecr0w12/CGN-Bot/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/scarecr0w12/CGN-Bot)](https://github.com/scarecr0w12/CGN-Bot/releases)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://github.com/scarecr0w12/CGN-Bot/blob/main/LICENSE)
-[![Discord Server](https://discordapp.com/api/guilds/272081064535654400/embed.png)](https://discord.gg/gDtzaS2)
+[![Discord Server](https://discordapp.com/api/guilds/272081064535654400/embed.png)](https://discord.gg/GSZfe5sBp6)
 
 A feature-rich Discord bot with a powerful web dashboard, designed to bring more activity to your server while keeping control with advanced moderation features.
 

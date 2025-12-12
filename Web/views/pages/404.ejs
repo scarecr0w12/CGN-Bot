@@ -1,43 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>404 - Skynet</title>
+	<title>404 - Page Not Found | Skynet</title>
 	<%- include('../partials/head') %>
+	<style>
+	.error-page {
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		background: var(--gradient-dark);
+	}
+	.error-hero {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+	}
+	.error-content {
+		text-align: center;
+		max-width: 500px;
+	}
+	.error-icon {
+		width: 120px;
+		height: 120px;
+		background: rgba(255, 255, 255, 0.1);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 2rem;
+		animation: float 3s ease-in-out infinite;
+	}
+	.error-icon i {
+		font-size: 3rem;
+		color: rgba(255, 255, 255, 0.8);
+	}
+	@keyframes float {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-10px); }
+	}
+	.error-code {
+		font-size: 6rem;
+		font-weight: 800;
+		color: white;
+		line-height: 1;
+		margin-bottom: 0.5rem;
+		text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+	}
+	.error-title {
+		font-size: 1.5rem;
+		color: rgba(255, 255, 255, 0.9);
+		margin-bottom: 1rem;
+	}
+	.error-message {
+		color: rgba(255, 255, 255, 0.6);
+		margin-bottom: 2rem;
+		line-height: 1.6;
+	}
+	.error-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.error-actions .button {
+		border-radius: var(--radius-md);
+		min-width: 140px;
+	}
+	.error-brand {
+		padding: 1.5rem;
+		text-align: center;
+	}
+	.error-brand img {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		margin-bottom: 0.5rem;
+	}
+	.error-brand-name {
+		color: rgba(255, 255, 255, 0.7);
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="hero is-dark is-fullheight is-bold">
-		<div class="hero-head has-text-centered">
-			<a class="title is-5 is-active" href="#" style="font-family: Montserrat;">
-                <img src="/static/img/icon.png" style="border-radius: 100%; margin-top: 10px;" height="128" width="128">
-                <br>
-                Skynet
-            </a>
+	<div class="error-page">
+		<div class="error-brand">
+			<a href="/">
+				<img src="/static/img/icon.png" alt="Skynet">
+				<div class="error-brand-name">Skynet</div>
+			</a>
 		</div>
-		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="title is-1">
-					<strong>Hello?</strong> Anyone?
-				</h1>
-        <br>
-        <h3 class="subtitle is-3">
-          It appears you're lost.
-        </h3>
-				<p class="hero-buttons">
-					<a class="button is-link is-large" href="javascript:window.history.back();">
-						<span class="icon">
-							<i class="fa fa-chevron-left"></i>
-						</span>
-						<span>Go back</span>
-					</a>
-					<a class="button is-success is-large" href="/">
-						<span class="icon">
-							<i class="fa fa-home"></i>
-						</span>
-						<span>Take me home!</span>
-					</a>
+		<div class="error-hero">
+			<div class="error-content">
+				<div class="error-icon">
+					<i class="fa fa-compass"></i>
+				</div>
+				<div class="error-code">404</div>
+				<h1 class="error-title">Page Not Found</h1>
+				<p class="error-message">
+					The page you're looking for doesn't exist or has been moved. 
+					Let's get you back on track.
 				</p>
+				<div class="error-actions">
+					<a class="button is-light" href="javascript:window.history.back();">
+						<span class="icon"><i class="fa fa-arrow-left"></i></span>
+						<span>Go Back</span>
+					</a>
+					<a class="button is-primary is-modern" href="/">
+						<span class="icon"><i class="fa fa-home"></i></span>
+						<span>Home</span>
+					</a>
+				</div>
 			</div>
 		</div>
-	</section>
+	</div>
 </body>
 </html>

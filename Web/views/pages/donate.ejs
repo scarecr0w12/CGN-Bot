@@ -19,94 +19,248 @@
 
 	<script>
 	function hideDonate() {
-	    var prompt = confirm("Are you sure? You won't ever see the donate button again :(");
-	    if(prompt) {
-	        localStorage.setItem("donate", "hide");
+		var prompt = confirm("Are you sure? You won't ever see the donate button again :(");
+		if(prompt) {
+			localStorage.setItem("donate", "hide");
 			window.history.back();
-	    }
+		}
 	}
 	</script>
+	
+	<style>
+	/* Donate Page Styles */
+	.donate-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+		transition: all 0.3s ease;
+	}
+	.donate-card:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-card-hover);
+	}
+	.donate-hero-icon {
+		width: 80px;
+		height: 80px;
+		background: rgba(255, 255, 255, 0.15);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		font-size: 2rem;
+		color: white;
+	}
+	.charity-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.charity-item {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.25rem;
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-sm);
+		text-decoration: none;
+		color: inherit;
+		transition: all 0.3s ease;
+		border: 1px solid var(--color-border-light);
+	}
+	.charity-item:hover {
+		transform: translateX(8px);
+		box-shadow: var(--shadow-md);
+		border-color: var(--color-primary);
+	}
+	.charity-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: var(--radius-md);
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+	.charity-info {
+		flex-grow: 1;
+	}
+	.charity-name {
+		font-size: 1.125rem;
+		font-weight: 600;
+		color: var(--color-text-primary);
+		margin-bottom: 0.25rem;
+	}
+	.charity-country {
+		font-size: 0.75rem;
+		background: var(--color-bg-secondary);
+		padding: 0.2rem 0.5rem;
+		border-radius: var(--radius-full);
+		color: var(--color-text-muted);
+		margin-left: 0.5rem;
+	}
+	.charity-arrow {
+		color: var(--color-primary);
+		font-size: 1.25rem;
+		transition: transform 0.2s ease;
+	}
+	.charity-item:hover .charity-arrow {
+		transform: translateX(4px);
+	}
+	.support-section {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		box-shadow: var(--shadow-card);
+		margin-top: 2rem;
+	}
+	.support-section h3 {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: var(--color-text-primary);
+		margin-bottom: 1rem;
+	}
+	.support-section p {
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+	}
+	.hide-donate-btn {
+		background: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.3);
+		color: rgba(255, 255, 255, 0.7);
+		border-radius: var(--radius-full);
+		padding: 0.5rem 1.5rem;
+		font-size: 0.875rem;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+	.hide-donate-btn:hover {
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+	}
+	</style>
 </head>
 <body>
 	<script>
 	localStorage.setItem("donate", null);
 	</script>
-	<section id="header" class="main-header-section hero is-primary is-medium is-bold">
+	
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
 		<div class="hero-head">
 			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
 			<div class="container">
-                <div class="columns">
-					<div class="column is-half is-offset-one-quarter">
-                        <h2 class="title is-2 has-text-centered">
-                            <strong>Thank you</strong> for your support!
-                        </h2>
+				<div class="columns is-centered">
+					<div class="column is-8 is-6-widescreen">
+						<div class="has-text-centered fade-in">
+							<div class="donate-hero-icon">
+								<i class="fa fa-heart"></i>
+							</div>
+							<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+								Support Skynet
+							</h1>
+							<p class="subtitle is-5" style="color: rgba(255,255,255,0.8); margin-bottom: 2rem;">
+								Your generosity helps keep Skynet free and growing for everyone.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary); min-height: 40vh;">
+			<div class="container">
+				<div class="columns is-centered">
+					<div class="column is-8 is-6-widescreen">
 						<% if (configData.charities && configData.charities.length > 0) { %>
-	                        <h5 class="subtitle is-5">
+						<div class="donate-card" style="padding: 2rem; margin-bottom: 2rem;">
+							<h2 class="title is-4 has-text-centered" style="margin-bottom: 0.5rem;">
+								<span class="icon" style="color: var(--color-primary);"><i class="fa fa-hand-holding-heart"></i></span>
+								Ways to Help
+							</h2>
+							<% if (configData.donateSubtitle) { %>
+							<p class="has-text-centered has-text-grey" style="margin-bottom: 1.5rem;">
 								<%- configData.donateSubtitle %>
-	                        </h5>
-							<% configData.charities.forEach(charity => { %>
-		                        <a class="level is-mobile arrow-link" href="<%= charity.donate_url %>">
-		                            <div class="level-left">
-										<div class="level-item">
-											<img class="image is-32x32" src="<%= charity.icon_url %>">
+							</p>
+							<% } %>
+							
+							<div class="charity-list">
+								<% configData.charities.forEach(charity => { %>
+								<a class="charity-item" href="<%= charity.donate_url %>" target="_blank" rel="noopener">
+									<img class="charity-icon" src="<%= charity.icon_url %>" alt="<%= charity.name %>">
+									<div class="charity-info">
+										<div class="charity-name">
+											<%= charity.name %>
+											<% if (charity.country) { %>
+											<span class="charity-country"><%= charity.country %></span>
+											<% } %>
 										</div>
-										<div class="level-item">
-											<p class="title is-3">
-                                                <%= charity.name %>
-                                                <% if (charity.country) { %>
-												<span class="tag is-rounded is-light"><%= charity.country %></span>
-                                                <% } %>
-											</p>
-										</div>
-		                            </div>
-		                            <div class="level-right">
-										<div class="level-item">
-		                                <span class="icon is-primary is-medium">
-		                                    <i class="fa fa-chevron-right fa-2x"></i>
-		                                </span>
-										</div>
-		                            </div>
-		                        </a>
-							<% }); %>
+									</div>
+									<span class="charity-arrow">
+										<i class="fa fa-chevron-right"></i>
+									</span>
+								</a>
+								<% }); %>
+							</div>
+						</div>
 						<% } %>
+
 						<% if (officialMode) { %>
-							<h5 class="subtitle is-5">
-								By viewing ads, you are supporting us develop and maintain Skynet publicly. However, we understand ads can be annoying and ruin the viewing experience. While we attempt to keep our ads as user-friendly as possible, you can disable ads here to prevent seeing them in this browser or enable them to continue supporting us.
-							</h5>
-							<a class="button is-medium is-fullwidth is-outlined <%= adsense.isEnabled ? "is-danger" : "is-success"%>" onclick="SkynetUtil.toggleAds('<%= adsense.isEnabled %>');"><%= adsense.isEnabled ? "Disable" : "Enable" %> advertisements and sponsored content</a>
+						<div class="support-section">
+							<h3>
+								<span class="icon"><i class="fa fa-ad"></i></span>
+								Support Through Ads
+							</h3>
+							<p>
+								By viewing ads, you are supporting us develop and maintain Skynet publicly. 
+								However, we understand ads can be annoying. While we attempt to keep our ads 
+								as user-friendly as possible, you can toggle them here.
+							</p>
+							<button class="button is-medium is-fullwidth <%= adsense.isEnabled ? 'is-danger is-outlined' : 'is-success is-modern'%>" onclick="SkynetUtil.toggleAds('<%= adsense.isEnabled %>');">
+								<span class="icon">
+									<i class="fa fa-<%= adsense.isEnabled ? 'eye-slash' : 'eye' %>"></i>
+								</span>
+								<span><%= adsense.isEnabled ? "Disable" : "Enable" %> Advertisements</span>
+							</button>
+						</div>
 						<% } %>
-                    </div>
-                </div>
+
+						<div class="has-text-centered" style="margin-top: 3rem;">
+							<p class="has-text-grey" style="margin-bottom: 1rem;">
+								<span class="icon"><i class="fa fa-code"></i></span>
+								Skynet is open source and community-driven
+							</p>
+							<div class="buttons is-centered">
+								<a class="button is-dark is-outlined" href="https://github.com/scarecr0w12/CGN-Bot" target="_blank">
+									<span class="icon"><i class="fa fa-github"></i></span>
+									<span>Star on GitHub</span>
+								</a>
+								<a class="button is-info is-outlined" href="https://discord.gg/GSZfe5sBp6" target="_blank">
+									<span class="icon"><i class="fa fa-discord"></i></span>
+									<span>Join Discord</span>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-		</div>
-		<div class="hero-foot">
-			<div class="container has-text-centered">
-                <a class="button is-white is-outlined" onclick="hideDonate();">
-                    <span>Hide the donate button forever</span>
-                    <span class="icon">
-                        <i class="fa fa-frown-o"></i>
-                    </span>
-                </a>
-                <br>
+		</section>
+
+		<section class="hero is-small" style="background: var(--gradient-dark);">
+			<div class="hero-body has-text-centered">
+				<button class="hide-donate-btn" onclick="hideDonate();">
+					<span class="icon is-small"><i class="fa fa-eye-slash"></i></span>
+					<span>Hide the donate button forever</span>
+				</button>
 			</div>
-		</div>
-		<br>
-	</section>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
-	<!-- Because joke bot wars are fun, *and jokes* -->
-	<script>
-			$('#auttaja-a').on('mouseenter', () => {
-				$('#auttaja-a a').css('visibility', 'visible');
-			}).on('mouseleave', () => {
-				$('#auttaja-a a').css('visibility', 'hidden');
-			})
-			$('#auttaja-a a').click(() => {
-				$('#auttaja').toggle();
-			})
-	</script>
 </body>
 </html>

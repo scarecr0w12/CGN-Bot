@@ -241,6 +241,10 @@ controllers.extensions.post = async (req, { res }) => {
 					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});
 				break;
+			case "slash":
+				serverExtensionDocument.key = versionDocument.key;
+				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
+				break;
 			case "keyword":
 				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 				Object.values(req.svr.channels).forEach(ch => {
@@ -261,7 +265,7 @@ controllers.extensions.post = async (req, { res }) => {
 			logger.debug(`A (malformed) ${req.method} request at ${req.originalURL} resulted in an invalid document.`, {}, err);
 			return res.sendStatus(400);
 		}
-		save(req, res, true);
+		save(req, res, true, () => req.app.client.slashCommands?.syncExtensionGuildCommands(req.svr.id));
 	} else {
 		return res.sendStatus(400);
 	}
@@ -348,6 +352,10 @@ controllers.extensionBuilder.post = async (req, res) => {
 						if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 					});
 					break;
+				case "slash":
+					serverExtensionDocument.key = versionDocument.key;
+					serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
+					break;
 				case "keyword":
 					serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
 					Object.values(req.svr.channels).forEach(ch => {
@@ -363,7 +371,7 @@ controllers.extensionBuilder.post = async (req, res) => {
 
 			if (serverDocument.extensions.id(galleryDocument._id.toString())) serverQueryDocument.clone.id("extensions", galleryDocument._id.toString()).set(serverExtensionDocument);
 			else serverQueryDocument.push("extensions", serverExtensionDocument);
-			save(req, res, true);
+			save(req, res, true, () => req.app.client.slashCommands?.syncExtensionGuildCommands(req.svr.id));
 		};
 
 		const saveExtensionData = async (galleryDocument, isUpdate) => {

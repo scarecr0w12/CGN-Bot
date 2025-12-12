@@ -74,6 +74,7 @@ module.exports = new Schema({
 				type: String,
 				enum: [
 					"command",
+					"slash",
 					"keyword",
 					"timer",
 					"event",
@@ -85,6 +86,11 @@ module.exports = new Schema({
 				minlength: 2,
 				maxlength: 25,
 			},
+			slash_description: {
+				type: String,
+				maxlength: 100,
+			},
+			slash_options: Schema.Mixed,
 			keywords: [String],
 			case_sensitive: Boolean,
 			interval: {

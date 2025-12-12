@@ -70,7 +70,7 @@ module.exports = {
 		});
 	},
 
-	saveAdminConsoleOptions: async (req, res, isAPI) => {
+	saveAdminConsoleOptions: async (req, res, isAPI, afterSave) => {
 		const validationError = req.svr.document.validate();
 		if (validationError) {
 			logger.debug(`A (malformed) ${req.method} request at ${req.originalURL} resulted in an invalid document:`, {}, validationError);
@@ -80,6 +80,11 @@ module.exports = {
 			req.app.client.logMessage(req.svr.document, LoggingLevels.SAVE, `Changes were saved in the Admin Console at section ${req.path.replace(`/${req.svr.id}`, "")}.`, null, req.consolemember.user.id);
 			module.exports.dashboardUpdate(req, `/dashboard${req.path}`, req.svr.id);
 			await req.svr.document.save();
+			if (typeof afterSave === "function") {
+				Promise.resolve(afterSave()).catch(err => {
+					logger.warn("Post-save hook failed.", { svrid: req.svr.id }, err);
+				});
+			}
 			if (isAPI) {
 				res.sendStatus(200);
 			} else {
@@ -190,16 +195,44 @@ module.exports = {
 		.update(code, "utf8")
 		.digest("hex"),
 
-	validateExtensionData: data => ((data.type === "command" && data.key) || (data.type === "keyword" && data.keywords) || (data.type === "timer" && data.interval) || (data.type === "event" && data.event)) && data.code,
+	validateExtensionData: data => {
+		if (!data || !data.type || !data.code) return false;
+		if (data.type === "command") return Boolean(data.key);
+		if (data.type === "slash") {
+			if (!data.key || !data.slash_description || !data.slash_options_json) return false;
+			try {
+				const parsed = JSON.parse(data.slash_options_json);
+				if (!Array.isArray(parsed)) return false;
+			} catch (_) {
+				return false;
+			}
+			return true;
+		}
+		if (data.type === "keyword") return Boolean(data.keywords);
+		if (data.type === "timer") return Boolean(data.interval);
+		if (data.type === "event") return Boolean(data.event);
+		return false;
+	},
 	pushExtensionVersionData: (extensionDocument, data) => {
 		const extensionQueryDocument = extensionDocument.query;
 		const currentVersion = extensionDocument.versions.id(extensionDocument.version) || { _id: 0 };
 		const newVersion = { _id: currentVersion._id, accepted: currentVersion.accepted };
 		newVersion.type = data.type;
 
-		newVersion.key = data.type === "command" ? data.key : null;
+		newVersion.key = data.type === "command" || data.type === "slash" ? data.key : null;
 		newVersion.usage_help = data.type === "command" ? data.usage_help : null;
 		newVersion.extended_help = data.type === "command" ? data.extended_help : null;
+
+		newVersion.slash_description = data.type === "slash" ? data.slash_description : null;
+		if (data.type === "slash") {
+			try {
+				newVersion.slash_options = JSON.parse(data.slash_options_json || "[]");
+			} catch (_) {
+				newVersion.slash_options = [];
+			}
+		} else {
+			newVersion.slash_options = null;
+		}
 
 		newVersion.keywords = data.keywords ? data.keywords.split(",") : [];
 		newVersion.case_sensitive = data.case_sensitive === "on";

@@ -1,40 +1,163 @@
 <!DOCTYPE html>
-<html lang="en" style="overflow-y: hidden;">
+<html lang="en">
 <head>
-	<title>503 - Skynet</title>
-
-<link rel="shortcut icon" type="image/png" href="/static/img/icon.png">
-<meta name="theme-color" content="#009688">
-
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
-
+	<title>503 - Service Unavailable | Skynet</title>
+	<link rel="shortcut icon" type="image/png" href="/static/img/icon.png">
+	<meta name="theme-color" content="#e53935">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+	:root {
+		--color-danger: #e53935;
+		--color-danger-dark: #c62828;
+	}
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	body {
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+	}
+	.error-page {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+	.error-brand {
+		padding: 1.5rem;
+		text-align: center;
+	}
+	.error-brand img {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		margin-bottom: 0.5rem;
+	}
+	.error-brand-name {
+		color: rgba(255, 255, 255, 0.7);
+		font-weight: 600;
+		font-size: 0.9rem;
+	}
+	.error-hero {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+	}
+	.error-content {
+		text-align: center;
+		max-width: 500px;
+	}
+	.error-icon {
+		width: 120px;
+		height: 120px;
+		background: rgba(229, 57, 53, 0.2);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 2rem;
+		animation: pulse 2s ease-in-out infinite;
+	}
+	.error-icon i {
+		font-size: 3rem;
+		color: var(--color-danger);
+	}
+	@keyframes pulse {
+		0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 57, 53, 0.4); }
+		50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(229, 57, 53, 0); }
+	}
+	.error-code {
+		font-size: 6rem;
+		font-weight: 800;
+		color: var(--color-danger);
+		line-height: 1;
+		margin-bottom: 0.5rem;
+		text-shadow: 0 4px 20px rgba(229, 57, 53, 0.3);
+	}
+	.error-title {
+		font-size: 1.5rem;
+		color: rgba(255, 255, 255, 0.9);
+		margin-bottom: 1rem;
+	}
+	.error-message {
+		color: rgba(255, 255, 255, 0.6);
+		margin-bottom: 2rem;
+		line-height: 1.6;
+	}
+	.error-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	.button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1.5rem;
+		border-radius: 8px;
+		font-weight: 500;
+		text-decoration: none;
+		transition: all 0.2s ease;
+		border: none;
+		cursor: pointer;
+		font-size: 1rem;
+	}
+	.button-primary {
+		background: var(--color-danger);
+		color: white;
+	}
+	.button-primary:hover {
+		background: var(--color-danger-dark);
+		transform: translateY(-2px);
+	}
+	.button-light {
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+	.button-light:hover {
+		background: rgba(255, 255, 255, 0.2);
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="hero is-danger is-fullheight is-bold">
-		<div class="hero-head">
-			<a class="nav-item is-brand title is-5 is-active" href="#" style="font-family: Montserrat;">
-                &nbsp;
-                Skynet
-            </a>
+	<div class="error-page">
+		<div class="error-brand">
+			<img src="/static/img/icon.png" alt="Skynet">
+			<div class="error-brand-name">Skynet</div>
 		</div>
-		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="title is-1">
-					<strong>Not so fast!</strong>
-				</h1>
-				<h1 class="subtitle is-1">
-					This Skynet instance is currently unable to accept requests.
-				</h1>
-        		<br>
-				<br>
-				<h6 class="subtitle is-6">
-					Sorry about that.
-					<br>
-					Check <b><a href="https://status.skynetbot.com">our status page</a></b> for details.
-				</h6>
+		<div class="error-hero">
+			<div class="error-content">
+				<div class="error-icon">
+					<i class="fa fa-exclamation-triangle"></i>
+				</div>
+				<div class="error-code">503</div>
+				<h1 class="error-title">Service Unavailable</h1>
+				<p class="error-message">
+					This Skynet instance is currently unable to accept requests. 
+					We're working on getting things back up and running.
+				</p>
+				<div class="error-actions">
+					<a class="button button-light" href="javascript:location.reload();">
+						<i class="fa fa-refresh"></i>
+						<span>Try Again</span>
+					</a>
+					<a class="button button-primary" href="https://status.skynetbot.com" target="_blank">
+						<i class="fa fa-signal"></i>
+						<span>Status Page</span>
+					</a>
+				</div>
 			</div>
 		</div>
-	</section>
+	</div>
 </body>
 </html>

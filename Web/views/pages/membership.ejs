@@ -18,226 +18,355 @@
 	%>
 	<%- include('../partials/head') %>
 	<style>
-		.pricing-card {
-			border-radius: 12px;
-			overflow: hidden;
-			transition: transform 0.2s, box-shadow 0.2s;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-		.pricing-card:hover {
-			transform: translateY(-5px);
-			box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-		}
-		.pricing-card.is-featured {
-			border: 3px solid #3273dc;
-		}
-		.pricing-header {
-			padding: 2rem;
-			text-align: center;
-		}
-		.pricing-price {
-			font-size: 3rem;
-			font-weight: 700;
-			line-height: 1;
-		}
-		.pricing-price .currency {
-			font-size: 1.5rem;
-			vertical-align: top;
-		}
-		.pricing-price .period {
-			font-size: 1rem;
-			font-weight: 400;
-			color: #7a7a7a;
-		}
-		.pricing-features {
-			padding: 1.5rem 2rem;
-			flex: 1;
-		}
-		.pricing-features li {
-			padding: 0.5rem 0;
-			border-bottom: 1px solid #f5f5f5;
-		}
-		.pricing-features li:last-child {
-			border-bottom: none;
-		}
-		.pricing-features .icon {
-			margin-right: 0.5rem;
-		}
-		.pricing-footer {
-			padding: 1.5rem 2rem;
-			text-align: center;
-		}
-		.tier-badge-large {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.5rem;
-			padding: 0.5rem 1.5rem;
-			border-radius: 30px;
-			font-size: 1.25rem;
-			font-weight: bold;
-		}
-		.current-tier-banner {
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-			color: white;
-			padding: 1.5rem;
-			border-radius: 12px;
-			margin-bottom: 2rem;
-		}
-		.billing-toggle {
-			display: flex;
-			justify-content: center;
-			gap: 1rem;
-			margin-bottom: 2rem;
-		}
-		.billing-toggle .button {
-			min-width: 120px;
-		}
-		.savings-badge {
-			background: #48c774;
-			color: white;
-			padding: 0.25rem 0.5rem;
-			border-radius: 4px;
-			font-size: 0.75rem;
-			margin-left: 0.5rem;
-		}
+	/* Membership Page Styles */
+	.pricing-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 1.5rem;
+		margin-top: 2rem;
+	}
+	.pricing-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+		transition: all 0.3s ease;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+	}
+	.pricing-card:hover {
+		transform: translateY(-8px);
+		box-shadow: var(--shadow-card-hover);
+	}
+	.pricing-card.is-featured {
+		border: 2px solid var(--color-primary);
+	}
+	.pricing-card.is-featured::before {
+		content: 'Most Popular';
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: var(--color-primary);
+		color: white;
+		padding: 0.25rem 1rem;
+		font-size: 0.75rem;
+		font-weight: 600;
+		border-radius: 0 0 0 var(--radius-md);
+	}
+	.pricing-header {
+		padding: 2rem;
+		text-align: center;
+		background: var(--color-bg-secondary);
+	}
+	.pricing-tier-icon {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1rem;
+		font-size: 1.5rem;
+	}
+	.pricing-tier-name {
+		font-size: 1.5rem;
+		font-weight: 700;
+		margin-bottom: 0.25rem;
+	}
+	.pricing-tier-desc {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+	}
+	.pricing-price {
+		margin-top: 1.5rem;
+	}
+	.pricing-price-value {
+		font-size: 3rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+	.pricing-price-currency {
+		font-size: 1.5rem;
+		vertical-align: top;
+	}
+	.pricing-price-period {
+		font-size: 1rem;
+		font-weight: 400;
+		color: var(--color-text-muted);
+	}
+	.pricing-yearly-note {
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+		margin-top: 0.5rem;
+	}
+	.pricing-features {
+		padding: 1.5rem 2rem;
+		flex: 1;
+	}
+	.pricing-features ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.pricing-features li {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.625rem 0;
+		border-bottom: 1px solid var(--color-border-light);
+		font-size: 0.9rem;
+	}
+	.pricing-features li:last-child {
+		border-bottom: none;
+	}
+	.pricing-features li .icon {
+		color: var(--color-success);
+		flex-shrink: 0;
+	}
+	.pricing-footer {
+		padding: 1.5rem 2rem;
+		border-top: 1px solid var(--color-border-light);
+	}
+	.pricing-footer .button {
+		width: 100%;
+		border-radius: var(--radius-md);
+	}
+	.server-select-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		padding: 1.5rem;
+		box-shadow: var(--shadow-card);
+		margin-bottom: 2rem;
+	}
+	.current-plan-banner {
+		background: var(--gradient-primary);
+		border-radius: var(--radius-xl);
+		padding: 1.5rem 2rem;
+		margin-bottom: 2rem;
+		color: white;
+	}
+	.current-plan-banner .server-icon {
+		width: 32px;
+		height: 32px;
+		border-radius: 50%;
+		margin-right: 0.5rem;
+		vertical-align: middle;
+	}
+	.billing-toggle {
+		display: flex;
+		justify-content: center;
+		gap: 0.5rem;
+		background: var(--color-bg-secondary);
+		padding: 0.5rem;
+		border-radius: var(--radius-full);
+		width: fit-content;
+		margin: 0 auto 2rem;
+	}
+	.billing-toggle .button {
+		border-radius: var(--radius-full);
+		min-width: 100px;
+		border: none;
+	}
+	.billing-toggle .button:not(.is-primary) {
+		background: transparent;
+	}
+	.savings-badge {
+		background: var(--color-success);
+		color: white;
+		padding: 0.15rem 0.5rem;
+		border-radius: var(--radius-full);
+		font-size: 0.7rem;
+		font-weight: 600;
+		margin-left: 0.5rem;
+	}
+	.faq-section {
+		margin-top: 4rem;
+	}
+	.faq-item {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-lg);
+		margin-bottom: 1rem;
+		box-shadow: var(--shadow-sm);
+		overflow: hidden;
+	}
+	.faq-item summary {
+		padding: 1.25rem 1.5rem;
+		font-weight: 600;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.faq-item summary::-webkit-details-marker {
+		display: none;
+	}
+	.faq-item summary::after {
+		content: '+';
+		font-size: 1.25rem;
+		color: var(--color-text-muted);
+	}
+	.faq-item[open] summary::after {
+		content: '−';
+	}
+	.faq-item p {
+		padding: 0 1.5rem 1.25rem;
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+	}
 	</style>
 </head>
 <body>
-	<%- include('../partials/header') %>
-
-	<section class="hero is-medium" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
 		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="title is-1 has-text-white">Membership Plans</h1>
-				<p class="subtitle has-text-white-ter">Unlock exclusive features and support the bot</p>
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						<span class="icon is-medium" style="margin-right: 0.5rem;">
+							<i class="fa fa-crown"></i>
+						</span>
+						Premium Membership
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.8); max-width: 550px; margin: 0 auto;">
+						Unlock powerful features and support continued development
+					</p>
+				</div>
 			</div>
 		</div>
-	</section>
+	</header>
 
-	<section class="section">
-		<div class="container">
-			<!-- Server Selection (required for purchase) -->
-			<% if (authUser && pageData.userServers && pageData.userServers.length > 0) { %>
-			<div class="box mb-5">
-				<div class="columns is-vcentered">
-					<div class="column">
-						<p class="title is-5">
-							<span class="icon"><i class="fa fa-server"></i></span>
-							Select a Server
-						</p>
-						<p class="subtitle is-6">Premium subscriptions are per-server. Choose which server to manage.</p>
-					</div>
-					<div class="column is-narrow">
-						<div class="select is-medium">
-							<select id="server-select" onchange="selectServer(this.value)">
-								<option value="">-- Select a server --</option>
-								<% pageData.userServers.forEach(server => { %>
-								<option value="<%= server.id %>" <%= pageData.selectedServer && pageData.selectedServer.id === server.id ? 'selected' : '' %>>
-									<%= server.name %>
-								</option>
-								<% }); %>
-							</select>
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary);">
+			<div class="container">
+				<!-- Server Selection -->
+				<% if (authUser && pageData.userServers && pageData.userServers.length > 0) { %>
+				<div class="server-select-card">
+					<div class="columns is-vcentered">
+						<div class="column">
+							<h3 class="title is-5" style="margin-bottom: 0.25rem;">
+								<span class="icon"><i class="fa fa-server"></i></span>
+								Select a Server
+							</h3>
+							<p class="has-text-grey is-size-7">Premium subscriptions are per-server</p>
+						</div>
+						<div class="column is-narrow">
+							<div class="select is-medium">
+								<select id="server-select" onchange="selectServer(this.value)">
+									<option value="">-- Select a server --</option>
+									<% pageData.userServers.forEach(server => { %>
+									<option value="<%= server.id %>" <%= pageData.selectedServer && pageData.selectedServer.id === server.id ? 'selected' : '' %>>
+										<%= server.name %>
+									</option>
+									<% }); %>
+								</select>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<% } else if (authUser) { %>
-			<div class="notification is-warning mb-5">
-				<p><strong>No eligible servers found.</strong></p>
-				<p>You need to be an admin of a server where the bot is installed to purchase a subscription.</p>
-				<a href="/servers" class="button is-warning is-light mt-3">
-					<span class="icon"><i class="fa fa-plus"></i></span>
-					<span>Add Bot to Server</span>
-				</a>
-			</div>
-			<% } %>
+				<% } else if (authUser) { %>
+				<div class="notification is-warning" style="border-radius: var(--radius-lg); margin-bottom: 2rem;">
+					<p><strong>No eligible servers found.</strong></p>
+					<p class="is-size-7">You need to be an admin of a server where Skynet is installed.</p>
+					<a href="/add" class="button is-warning is-light mt-3">
+						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span>Add Bot to Server</span>
+					</a>
+				</div>
+				<% } %>
 
-			<!-- Selected Server's Current Plan -->
-			<% if (pageData.selectedServer) { %>
-			<div class="current-tier-banner">
-				<div class="columns is-vcentered">
-					<div class="column">
-						<p class="is-size-6">
-							<% if (pageData.selectedServer.icon) { %>
-							<img src="<%= pageData.selectedServer.icon %>" alt="" style="width: 24px; height: 24px; border-radius: 50%; vertical-align: middle; margin-right: 0.5rem;">
+				<!-- Current Plan Banner -->
+				<% if (pageData.selectedServer) { %>
+				<div class="current-plan-banner">
+					<div class="columns is-vcentered">
+						<div class="column">
+							<p class="is-size-7" style="opacity: 0.8;">
+								<% if (pageData.selectedServer.icon) { %>
+								<img src="<%= pageData.selectedServer.icon %>" alt="" class="server-icon">
+								<% } %>
+								<%= pageData.selectedServer.name %>
+							</p>
+							<p class="is-size-4 has-text-weight-bold">
+								<% if (pageData.serverTier && pageData.serverTier.badge_icon) { %>
+								<span class="icon"><i class="fa <%= pageData.serverTier.badge_icon %>"></i></span>
+								<% } %>
+								<%= pageData.serverTier ? pageData.serverTier.name : 'Free' %> Plan
+							</p>
+							<% if (pageData.serverSubscription && pageData.serverSubscription.expires_at) { %>
+							<p class="is-size-7" style="opacity: 0.8;">
+								<span class="icon is-small"><i class="fa fa-clock"></i></span>
+								<% if (new Date(pageData.serverSubscription.expires_at) > new Date()) { %>
+								Active until <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
+								<% } else { %>
+								Expired on <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
+								<% } %>
+							</p>
 							<% } %>
-							<%= pageData.selectedServer.name %>
-						</p>
-						<p class="is-size-3 has-text-weight-bold">
-							<% if (pageData.serverTier && pageData.serverTier.badge_icon) { %>
-							<span class="icon"><i class="fa <%= pageData.serverTier.badge_icon %>"></i></span>
-							<% } %>
-							<%= pageData.serverTier ? pageData.serverTier.name : 'Free' %>
-						</p>
-						<% if (pageData.serverSubscription && pageData.serverSubscription.expires_at) { %>
-						<p class="is-size-7">
-							<span class="icon"><i class="fa fa-clock"></i></span>
-							<% if (new Date(pageData.serverSubscription.expires_at) > new Date()) { %>
-							Active until <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
-							<% } else { %>
-							Expired on <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
-							<% } %>
-						</p>
-						<% } %>
-					</div>
-					<div class="column is-narrow">
-						<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription" class="button is-white is-outlined">
-							<span class="icon"><i class="fa fa-cog"></i></span>
-							<span>Manage Subscription</span>
-						</a>
+						</div>
+						<div class="column is-narrow">
+							<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription" class="button is-light">
+								<span class="icon"><i class="fa fa-cog"></i></span>
+								<span>Manage</span>
+							</a>
+						</div>
 					</div>
 				</div>
-			</div>
-			<% } %>
+				<% } %>
 
-			<!-- Billing Toggle -->
-			<div class="billing-toggle">
-				<button class="button is-medium" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
-				<button class="button is-medium is-primary" id="btn-yearly" onclick="setBilling('yearly')">
-					Yearly
-					<span class="savings-badge">Save 15%</span>
-				</button>
-			</div>
+				<!-- Billing Toggle -->
+				<div class="billing-toggle">
+					<button class="button" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+					<button class="button is-primary" id="btn-yearly" onclick="setBilling('yearly')">
+						Yearly
+						<span class="savings-badge">Save 15%</span>
+					</button>
+				</div>
 
-			<!-- Pricing Cards -->
-			<div class="columns is-centered">
+				<!-- Pricing Cards -->
 				<% const purchasableTiers = (pageData.tiers || []).filter(t => t.is_purchasable).sort((a, b) => a.level - b.level); %>
-				<% purchasableTiers.forEach((tier, index) => { 
-					const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
-				%>
-				<div class="column is-4">
-					<div class="card pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
-						<div class="pricing-header" style="background-color: <%= tier.color || '#3273dc' %>20;">
-							<% if (tier.badge_icon) { %>
-							<span class="icon is-large" style="color: <%= tier.color || '#3273dc' %>;"><i class="fa fa-2x <%= tier.badge_icon %>"></i></span>
-							<% } %>
-							<h2 class="title is-3 mt-3" style="color: <%= tier.color || '#3273dc' %>;"><%= tier.name %></h2>
-							<p class="subtitle is-6 has-text-grey"><%= tier.description %></p>
-							
-							<div class="pricing-price" style="color: <%= tier.color || '#3273dc' %>;">
-								<span class="currency">$</span>
-								<span class="monthly-price"><%= (tier.price_monthly / 100).toFixed(0) %></span>
-								<span class="yearly-price" style="display: none;"><%= (yearlyTotalCents / 100 / 12).toFixed(0) %></span>
-								<span class="period">/mo</span>
+				<% if (purchasableTiers.length > 0) { %>
+				<div class="pricing-grid">
+					<% purchasableTiers.forEach((tier, index) => { 
+						const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+					%>
+					<div class="pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
+						<div class="pricing-header">
+							<div class="pricing-tier-icon" style="background: <%= tier.color || 'var(--color-primary)' %>20; color: <%= tier.color || 'var(--color-primary)' %>;">
+								<% if (tier.badge_icon) { %>
+								<i class="fa <%= tier.badge_icon %>"></i>
+								<% } else { %>
+								<i class="fa fa-star"></i>
+								<% } %>
 							</div>
-							<p class="yearly-total is-size-7 has-text-grey" style="display: none;">
+							<h2 class="pricing-tier-name" style="color: <%= tier.color || 'var(--color-primary)' %>;"><%= tier.name %></h2>
+							<p class="pricing-tier-desc"><%= tier.description %></p>
+							
+							<div class="pricing-price">
+								<span class="pricing-price-value" style="color: <%= tier.color || 'var(--color-primary)' %>;">
+									<span class="pricing-price-currency">$</span>
+									<span class="monthly-price"><%= (tier.price_monthly / 100).toFixed(0) %></span>
+									<span class="yearly-price" style="display: none;"><%= (yearlyTotalCents / 100 / 12).toFixed(0) %></span>
+								</span>
+								<span class="pricing-price-period">/mo</span>
+							</div>
+							<p class="pricing-yearly-note yearly-total" style="display: none;">
 								Billed $<%= (yearlyTotalCents / 100).toFixed(2) %>/year
 								<% if (tier.yearly_discount > 0) { %>
-								<span class="has-text-success">(Save <%= tier.yearly_discount %>%)</span>
+								<span style="color: var(--color-success);">(Save <%= tier.yearly_discount %>%)</span>
 								<% } %>
 							</p>
 						</div>
 
 						<div class="pricing-features">
-							<ul class="menu-list">
+							<ul>
 								<% tier.features.forEach(featureId => { %>
 								<% const feature = (pageData.features || []).find(f => f._id === featureId); %>
 								<% if (feature) { %>
 								<li>
-									<span class="icon has-text-success"><i class="fa fa-check"></i></span>
-									<%= feature.name %>
+									<span class="icon"><i class="fa fa-check"></i></span>
+									<span><%= feature.name %></span>
 								</li>
 								<% } %>
 								<% }); %>
@@ -250,89 +379,87 @@
 						<div class="pricing-footer">
 							<% if (authUser) { %>
 								<% if (!pageData.selectedServer) { %>
-								<button class="button is-fullwidth is-light" disabled>
+								<button class="button is-light" disabled>
 									<span class="icon"><i class="fa fa-server"></i></span>
 									<span>Select a Server First</span>
 								</button>
 								<% } else if (pageData.serverTier && pageData.serverTier._id === tier._id) { %>
-								<button class="button is-fullwidth" disabled>
+								<button class="button" disabled>
 									<span class="icon"><i class="fa fa-check"></i></span>
 									<span>Current Plan</span>
 								</button>
 								<% } else if (pageData.serverTier && pageData.serverTier.level >= tier.level) { %>
-								<button class="button is-fullwidth is-warning" disabled>
-									<span>Downgrade not available online</span>
+								<button class="button is-warning is-light" disabled>
+									<span>Downgrade not available</span>
 								</button>
 								<% } else { %>
-								<button class="button is-fullwidth is-primary" onclick="subscribe('<%= tier._id %>')" style="background-color: <%= tier.color || '#3273dc' %>;">
+								<button class="button is-primary is-modern" onclick="subscribe('<%= tier._id %>')" style="background: <%= tier.color || 'var(--color-primary)' %>;">
 									<span class="icon"><i class="fa fa-arrow-up"></i></span>
 									<span><%= pageData.serverTier && pageData.serverTier.level > 0 ? 'Upgrade' : 'Subscribe' %></span>
 								</button>
 								<% } %>
 							<% } else { %>
-							<a href="/login?redirect=/membership" class="button is-fullwidth is-primary" style="background-color: <%= tier.color || '#3273dc' %>;">
+							<a href="/login?redirect=/membership" class="button is-primary is-modern" style="background: <%= tier.color || 'var(--color-primary)' %>;">
 								<span class="icon"><i class="fa fa-sign-in"></i></span>
 								<span>Login to Subscribe</span>
 							</a>
 							<% } %>
 						</div>
 					</div>
+					<% }); %>
 				</div>
-				<% }); %>
-
-				<% if (purchasableTiers.length === 0) { %>
-				<div class="column is-8">
-					<article class="message is-info">
-						<div class="message-body">
-							<p class="has-text-centered">No membership plans are currently available.</p>
-							<p class="has-text-centered is-size-7 mt-2">Check back later or contact support for more information.</p>
-						</div>
-					</article>
+				<% } else { %>
+				<div class="has-text-centered" style="padding: 3rem;">
+					<div style="background: var(--color-bg-primary); border-radius: var(--radius-xl); padding: 3rem; max-width: 500px; margin: 0 auto;">
+						<span class="icon is-large has-text-grey-light"><i class="fa fa-info-circle fa-3x"></i></span>
+						<h3 class="title is-5 mt-4">No Plans Available</h3>
+						<p class="has-text-grey">Membership plans are not currently available. Check back later!</p>
+					</div>
 				</div>
 				<% } %>
-			</div>
 
-			<!-- Point Redemption Note -->
-			<% if (pageData.selectedServer) { %>
-			<div class="mt-5 has-text-centered">
-				<p class="is-size-6 has-text-grey">
-					<span class="icon"><i class="fa fa-coins"></i></span>
-					Want to redeem vote points for premium?
-					<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription">Manage subscription in the dashboard</a>
-				</p>
-			</div>
-			<% } %>
+				<!-- Point Redemption -->
+				<% if (pageData.selectedServer) { %>
+				<div class="has-text-centered mt-5">
+					<p class="is-size-7 has-text-grey">
+						<span class="icon"><i class="fa fa-coins"></i></span>
+						Have vote points? <a href="/dashboard/<%= pageData.selectedServer.id %>/subscription">Redeem them in the dashboard</a>
+					</p>
+				</div>
+				<% } %>
 
-			<!-- FAQ Section -->
-			<div class="mt-6">
-				<h2 class="title is-3 has-text-centered">Frequently Asked Questions</h2>
-				<div class="columns is-centered">
-					<div class="column is-8">
-						<div class="content">
-							<details class="mb-4">
-								<summary class="has-text-weight-bold is-size-5">How do payments work?</summary>
-								<p class="mt-2">We accept payments via Stripe (credit/debit cards) and PayPal. Your subscription will automatically renew unless cancelled.</p>
+				<!-- FAQ Section -->
+				<div class="faq-section">
+					<h2 class="title is-4 has-text-centered" style="margin-bottom: 2rem;">
+						Frequently Asked Questions
+					</h2>
+					<div class="columns is-centered">
+						<div class="column is-8">
+							<details class="faq-item">
+								<summary>How do payments work?</summary>
+								<p>We accept payments via Stripe (credit/debit cards), PayPal, and cryptocurrency via BTCPay. Your subscription will automatically renew unless cancelled.</p>
 							</details>
-							<details class="mb-4">
-								<summary class="has-text-weight-bold is-size-5">Can I cancel anytime?</summary>
-								<p class="mt-2">Yes! You can cancel your subscription at any time from your account settings. You'll keep your benefits until the end of your billing period.</p>
+							<details class="faq-item">
+								<summary>Can I cancel anytime?</summary>
+								<p>Yes! You can cancel your subscription at any time from your dashboard. You'll keep your benefits until the end of your billing period.</p>
 							</details>
-							<details class="mb-4">
-								<summary class="has-text-weight-bold is-size-5">How do I link my Patreon?</summary>
-								<p class="mt-2">If you're already a Patreon supporter, you can link your Patreon account in <a href="/account">Account Settings</a> to automatically receive your membership benefits.</p>
+							<details class="faq-item">
+								<summary>How do I link my Patreon?</summary>
+								<p>If you're already a Patreon supporter, you can link your Patreon account in <a href="/account">Account Settings</a> to automatically receive your membership benefits.</p>
 							</details>
-							<details class="mb-4">
-								<summary class="has-text-weight-bold is-size-5">What payment methods do you accept?</summary>
-								<p class="mt-2">We accept Visa, Mastercard, American Express, PayPal, and cryptocurrency via BTCPay.</p>
+							<details class="faq-item">
+								<summary>What payment methods do you accept?</summary>
+								<p>We accept Visa, Mastercard, American Express, PayPal, and cryptocurrency via BTCPay.</p>
 							</details>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</section>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 
 	<script>
 	let billingPeriod = 'yearly';

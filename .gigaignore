@@ -1,0 +1,10 @@
+scripts/
+Temp/
+logs/
+node_modules/
+.cursor/
+.windsurf/
+.taskmaster/
+.augment/
+
+monitoring/

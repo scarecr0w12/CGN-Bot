@@ -2,56 +2,161 @@
 <html lang="en">
 <head>
 	<title>Thank You! - <%= serverData.name %></title>
+	<%
+	if (typeof pageData === "undefined") pageData = {};
+	pageData.seo = {
+		title: "Thank You! - Membership Activated",
+		description: "Your Skynet premium membership has been activated successfully."
+	};
+	%>
 	<%- include('../partials/head') %>
+	
+	<style>
+	.success-hero-icon {
+		width: 100px;
+		height: 100px;
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		font-size: 2.5rem;
+		color: white;
+		animation: pulse 2s infinite;
+	}
+	@keyframes pulse {
+		0%, 100% { transform: scale(1); }
+		50% { transform: scale(1.05); }
+	}
+	.success-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		padding: 3rem 2rem;
+		box-shadow: var(--shadow-card);
+		text-align: center;
+		max-width: 500px;
+		margin: 0 auto;
+	}
+	.success-card h2 {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--color-text-primary);
+		margin-bottom: 1rem;
+	}
+	.success-card p {
+		color: var(--color-text-secondary);
+		line-height: 1.6;
+		margin-bottom: 1.5rem;
+	}
+	.success-actions {
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin-top: 2rem;
+	}
+	.success-actions .button {
+		border-radius: var(--radius-md);
+	}
+	.success-note {
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+		margin-top: 2rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--color-border-light);
+	}
+	.confetti {
+		position: fixed;
+		width: 10px;
+		height: 10px;
+		background: var(--color-primary);
+		animation: fall 3s linear forwards;
+		pointer-events: none;
+	}
+	@keyframes fall {
+		to {
+			transform: translateY(100vh) rotate(720deg);
+			opacity: 0;
+		}
+	}
+	</style>
 </head>
 <body>
-	<%- include('../partials/header') %>
-
-	<section class="hero is-medium is-success">
-		<div class="hero-body">
-			<div class="container has-text-centered">
-				<span class="icon is-large">
-					<i class="fa fa-check-circle fa-3x"></i>
-				</span>
-				<h1 class="title is-1 mt-4">Thank You!</h1>
-				<p class="subtitle">Your membership has been activated successfully.</p>
-			</div>
+	<header id="header" class="hero is-success is-bold is-modern" role="banner" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
 		</div>
-	</section>
-
-	<section class="section">
-		<div class="container">
-			<div class="columns is-centered">
-				<div class="column is-6 has-text-centered">
-					<div class="box">
-						<p class="is-size-5 mb-4">
-							Your new membership benefits are now active. 
-							It may take a few moments for all features to be available.
-						</p>
-						
-						<div class="buttons is-centered">
-							<a href="/account" class="button is-primary">
-								<span class="icon"><i class="fa fa-user-cog"></i></span>
-								<span>View Account</span>
-							</a>
-							<a href="/dashboard" class="button is-link">
-								<span class="icon"><i class="fa fa-tachometer"></i></span>
-								<span>Go to Dashboard</span>
-							</a>
-						</div>
-
-						<hr>
-
-						<p class="is-size-7 has-text-grey">
-							A confirmation email has been sent to your email address.
-							If you have any questions, please contact support.
-						</p>
+		<div class="hero-body">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<div class="success-hero-icon">
+						<i class="fa fa-check"></i>
 					</div>
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						Thank You!
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.9);">
+						Your membership has been activated successfully
+					</p>
 				</div>
 			</div>
 		</div>
-	</section>
+	</header>
+
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary); min-height: 40vh;">
+			<div class="container">
+				<div class="success-card">
+					<span class="icon is-large" style="color: var(--color-success); margin-bottom: 1rem;">
+						<i class="fa fa-gift fa-2x"></i>
+					</span>
+					<h2>Your Premium Benefits Are Now Active</h2>
+					<p>
+						All premium features are now unlocked for your server. 
+						It may take a few moments for some features to fully activate.
+					</p>
+					
+					<div class="success-actions">
+						<a href="/dashboard/<%= serverData.id %>" class="button is-primary is-modern">
+							<span class="icon"><i class="fa fa-tachometer"></i></span>
+							<span>Go to Dashboard</span>
+						</a>
+						<a href="/dashboard/<%= serverData.id %>/subscription" class="button is-light">
+							<span class="icon"><i class="fa fa-cog"></i></span>
+							<span>Manage Subscription</span>
+						</a>
+					</div>
+
+					<p class="success-note">
+						<span class="icon is-small"><i class="fa fa-envelope"></i></span>
+						A confirmation email has been sent to your email address.<br>
+						Questions? <a href="https://discord.gg/GSZfe5sBp6">Contact support</a>
+					</p>
+				</div>
+			</div>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	// Confetti animation
+	document.addEventListener('DOMContentLoaded', function() {
+		const colors = ['#11998e', '#38ef7d', '#667eea', '#ffd54f', '#f093fb'];
+		for (let i = 0; i < 50; i++) {
+			setTimeout(() => {
+				const confetti = document.createElement('div');
+				confetti.className = 'confetti';
+				confetti.style.left = Math.random() * 100 + 'vw';
+				confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+				confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+				document.body.appendChild(confetti);
+				setTimeout(() => confetti.remove(), 5000);
+			}, i * 50);
+		}
+	});
+	</script>
 </body>
 </html>

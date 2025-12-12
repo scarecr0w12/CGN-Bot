@@ -1,4 +1,8 @@
-<form id="form" onsubmit="SkynetUtil.saveExtension(<%= isGallery %>, '<%- isGallery ? `/extensions/builder?${pageData.extensionData._id ? ('extid=' + pageData.extensionData._id) : ""}` : `/dashboard/${serverData.id}/other/extensions` %>'); return false;">
+<form
+	id="form"
+	data-is-gallery="<%= isGallery ? '1' : '0' %>"
+	data-submit-url="<%- isGallery ? ('/extensions/builder' + (pageData.extensionData._id ? ('?extid=' + pageData.extensionData._id) : '')) : ('/dashboard/' + serverData.id + '/other/extensions') %>"
+	onsubmit="SkynetUtil.saveExtensionFromForm(this); return false;">
 	<div class="field">
 		<label class="label">Name</label>
 		<p class="control">
@@ -13,6 +17,7 @@
 			<span class="select is-primary">
 				<select name="type" onchange="$('.builder-type-options').addClass('is-hidden');$('#builder-type-' + this.value + '-options').removeClass('is-hidden');">
 					<option value="command" <%= pageData.versionData.type=="command" ? "selected" : "" %>>Command</option>
+					<option value="slash" <%= pageData.versionData.type=="slash" ? "selected" : "" %>>Slash Command</option>
 					<option value="keyword" <%= pageData.versionData.type=="keyword" ? "selected" : "" %>>Keyword</option>
                 	<option value="timer" <%= pageData.versionData.type=="timer" ? "selected" : "" %>>Timer</option>
 					<option value="event" <%= pageData.versionData.type==="event" ? "selected" : ""%>>Event</option>
@@ -55,6 +60,45 @@
 			<% }); %>
 			<span class="help">The extension will run only in these channels.</span>
 		</div>
+		<div class="field">
+			<label class="label">Permissions</label>
+			<p class="control">
+				<span class="select is-primary">
+					<select name="adminLevel">
+						<option value="0" <%= pageData.extensionConfigData.admin_level === 0 ? "" : "selected" %>>@everyone</option>
+						<option value="1" <%= pageData.extensionConfigData.admin_level === 1 ? "selected" : "" %>>Admin level &ge;1</option>
+						<option value="2" <%= pageData.extensionConfigData.admin_level === 2 ? "selected" : "" %>>Admin level &ge;2</option>
+						<option value="3" <%= pageData.extensionConfigData.admin_level === 3 ? "selected" : "" %>>Admin level 3</option>
+					</select>
+				</span>
+				<span class="help">The extension will only respond to members that have the selected bot admin level (or higher).</span>
+			</p>
+		</div>
+		<% } %>
+	</span>
+	<span id="builder-type-slash-options" class="builder-type-options <%= pageData.versionData.type === "slash" ? '' : 'is-hidden' %>">
+		<div class="field">
+			<label class="label">Slash command name</label>
+			<p class="control">
+				<input name="key" class="input is-primary" type="text" value="<%- pageData.versionData.key %>" minlength="1" maxlength="32">
+				<span class="help">The slash command name. Lowercase, no spaces (Discord rules apply).</span>
+			</p>
+		</div>
+		<div class="field">
+			<label class="label">Slash command description</label>
+			<p class="control">
+				<input name="slash_description" class="input is-primary" type="text" value="<%- pageData.versionData.slash_description || '' %>" maxlength="100">
+				<span class="help">Shown in Discord's command picker.</span>
+			</p>
+		</div>
+		<div class="field">
+			<label class="label">Slash options (JSON)</label>
+			<p class="control">
+				<textarea name="slash_options_json" class="textarea is-primary" rows="10" placeholder='[{"name":"query","description":"Search query","type":"string","required":true}]'><%- pageData.versionData.slash_options ? JSON.stringify(pageData.versionData.slash_options, null, 2) : "[]" %></textarea>
+				<span class="help">An array of option objects. Supported types: string, integer, number, boolean, user, channel, role, mentionable, attachment.</span>
+			</p>
+		</div>
+		<% if (!isGallery) { %>
 		<div class="field">
 			<label class="label">Permissions</label>
 			<p class="control">

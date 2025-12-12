@@ -25,137 +25,274 @@
 	}
 	%>
 	<%- include('../partials/head') %>
+	
+	<style>
+	/* Extensions Page Styles */
+	.ext-hero-stats {
+		display: flex;
+		justify-content: center;
+		gap: 2rem;
+		margin-bottom: 1.5rem;
+		flex-wrap: wrap;
+	}
+	.ext-hero-stat {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: var(--radius-lg);
+		padding: 1rem 1.5rem;
+		text-align: center;
+		min-width: 120px;
+	}
+	.ext-hero-stat-value {
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: white;
+	}
+	.ext-hero-stat-label {
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.ext-search-container {
+		max-width: 600px;
+		margin: 0 auto;
+	}
+	.ext-search-container .input {
+		border-radius: var(--radius-full) 0 0 var(--radius-full);
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+		padding-left: 1.5rem;
+	}
+	.ext-search-container .input::placeholder {
+		color: rgba(255, 255, 255, 0.6);
+	}
+	.ext-search-container .input:focus {
+		border-color: var(--color-accent);
+		background: rgba(255, 255, 255, 0.15);
+		box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+	}
+	.ext-search-container .button {
+		border-radius: 0 var(--radius-full) var(--radius-full) 0;
+	}
+	.ext-tabs {
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		padding: 0.5rem 1rem 0;
+	}
+	.ext-tabs ul {
+		border: none;
+	}
+	.ext-tabs li a {
+		color: rgba(255, 255, 255, 0.7);
+		border: none;
+		border-bottom: 3px solid transparent;
+		padding: 0.75rem 1.5rem;
+		transition: all 0.2s ease;
+	}
+	.ext-tabs li a:hover {
+		color: white;
+		border-bottom-color: rgba(255, 255, 255, 0.3);
+	}
+	.ext-tabs li.is-active a {
+		color: white;
+		background: transparent;
+		border-bottom-color: var(--color-accent);
+	}
+	.ext-cta-section {
+		background: var(--gradient-dark);
+		padding: 3rem 0;
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="main-header-section hero is-primary is-small is-bold">
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
 		<div class="hero-head">
 			<%- include('../partials/header') %>
 		</div>
-		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="subtitle is-1">
-					<span class="icon is-large">
-                        <i class="fa fa-bolt"></i>
-                    </span>
-					Extensions for <strong>@everyone</strong>.
-				</h1>
-				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
-				<% if (!['my', 'builder'].includes(pageData.mode)) { %>
-					<div class="columns">
-						<div class="column is-8 is-offset-2">
-							<form onsubmit="return false;">
-								<div class="field has-addons has-addons-centered">
-									<div class="control is-expanded">
-									<input id="search-input" class="input is-primary header-search-box is-large" type="text" placeholder="I'm looking for..." value="<%= pageData.activeSearchQuery %>">
-									</div>
-									<div class="control">
-									<button id="search-button" onclick="Turbolinks.visit(`?q=${$('#search-input').val()}`); return false;" class="button is-primary is-large header-search-box">
-										<span class="icon">
-											<i class="fa fa-search"></i>
-										</span>
-										<span>Search</span>
-									</button>
-									</div>
-								</div>
-							</form>
+		<div class="hero-body" style="padding-bottom: 2rem;">
+			<div class="container">
+				<!-- Stats Row -->
+				<div class="ext-hero-stats fade-in">
+					<div class="ext-hero-stat">
+						<div class="ext-hero-stat-value"><%= pageData.rawCount || 0 %></div>
+						<div class="ext-hero-stat-label">
+							<% if (pageData.mode === 'gallery') { %>Published<% } else if (pageData.mode === 'queue') { %>Pending<% } else { %>Your Extensions<% } %>
 						</div>
 					</div>
+					<% if (pageData.categoryCounts) { %>
+					<div class="ext-hero-stat">
+						<div class="ext-hero-stat-value"><%= pageData.categoryCounts.command || 0 %></div>
+						<div class="ext-hero-stat-label">Commands</div>
+					</div>
+					<div class="ext-hero-stat">
+						<div class="ext-hero-stat-value"><%= pageData.categoryCounts.event || 0 %></div>
+						<div class="ext-hero-stat-label">Events</div>
+					</div>
+					<% } %>
+				</div>
+
+				<!-- Title and Description -->
+				<div class="has-text-centered" style="margin-bottom: 1.5rem;">
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						<span class="icon is-medium" style="margin-right: 0.5rem;">
+							<i class="fa fa-bolt"></i>
+						</span>
+						<% if (pageData.mode === 'gallery') { %>
+							Extension Marketplace
+						<% } else if (pageData.mode === 'queue') { %>
+							Extension Queue
+						<% } else if (pageData.mode === 'my') { %>
+							My Extensions
+						<% } else if (pageData.mode === 'builder') { %>
+							Extension Builder
+						<% } else { %>
+							Extensions
+						<% } %>
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.8); max-width: 550px; margin: 0 auto;">
+						<% if (pageData.mode === 'gallery') { %>
+							Discover and install community-created extensions to enhance your server.
+						<% } else if (pageData.mode === 'queue') { %>
+							Review extensions awaiting approval from the community.
+						<% } else if (pageData.mode === 'my') { %>
+							Manage, edit, and publish your custom extensions.
+						<% } else if (pageData.mode === 'builder') { %>
+							Create powerful custom commands and automations.
+						<% } else { %>
+							Extend Skynet with custom commands, events, and automations.
+						<% } %>
+					</p>
+				</div>
+
+				<!-- Search Bar -->
+				<% if (!['my', 'builder'].includes(pageData.mode)) { %>
+				<div class="ext-search-container fade-in">
+					<form onsubmit="return false;">
+						<div class="field has-addons has-addons-centered">
+							<div class="control is-expanded">
+								<input id="search-input" class="input is-large" type="text" placeholder="Search extensions..." value="<%= pageData.activeSearchQuery %>">
+							</div>
+							<div class="control">
+								<button id="search-button" onclick="Turbolinks.visit(`?q=${$('#search-input').val()}`); return false;" class="button is-primary is-modern is-large">
+									<span class="icon">
+										<i class="fa fa-search"></i>
+									</span>
+									<span>Search</span>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
 				<% } %>
+
+				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
 			</div>
 		</div>
 		<div class="hero-foot">
-			<nav class="tabs is-boxed is-centered">
-				<div class="container">
+			<div class="container">
+				<nav class="tabs is-centered ext-tabs">
 					<ul>
 						<li class="<%= pageData.mode === 'gallery' ? 'is-active' : '' %>">
 							<a href="/extensions/gallery">
-								<span class="icon">
-									<i class="fa fa-fa"></i>
+								<span class="icon"><i class="fa fa-th-large"></i></span>
+								<span>Gallery</span>
+								<% if (pageData.mode === 'gallery') { %>
+								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
+									<%= pageData.rawCount %>
 								</span>
-								<% if (pageData.mode === "gallery") { %>
-									Gallery
-									&nbsp;
-									<span class="tag is-small is-primary">
-										<%= pageData.rawCount %>
-									</span>
-								<% } else { %>
-									<span>Gallery</span>
 								<% } %>
 							</a>
 						</li>
 						<li class="<%= pageData.mode === 'queue' ? 'is-active' : '' %>">
 							<a href="/extensions/queue">
-								<span class="icon">
-									<i class="fa fa-clock-o"></i>
+								<span class="icon"><i class="fa fa-clock-o"></i></span>
+								<span>Queue</span>
+								<% if (pageData.mode === 'queue') { %>
+								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
+									<%= pageData.rawCount %>
 								</span>
-								<% if (pageData.mode === "queue") { %>
-									Queue
-									&nbsp;
-									<span class="tag is-small is-primary">
-										<%= pageData.rawCount %>
-									</span>
-								<% } else { %>
-									<span>Queue</span>
 								<% } %>
 							</a>
 						</li>
 						<% if (authUser) { %>
-							<li class="<%= ['my', 'builder'].includes(pageData.mode) ? 'is-active' : '' %>">
-								<a href="/extensions/my">
-									<span class="icon">
-										<i class="fa fa-dashboard"></i>
-									</span>
-									<% if (pageData.mode === "my") { %>
-										My Extensions
-										&nbsp;
-										<span class="tag is-small is-primary">
-											<%= pageData.rawCount %>
-										</span>
-									<% } else { %>
-										<span>My Extensions</span>
-									<% } %>
-								</a>
-							</li>
+						<li class="<%= ['my', 'builder'].includes(pageData.mode) ? 'is-active' : '' %>">
+							<a href="/extensions/my">
+								<span class="icon"><i class="fa fa-folder"></i></span>
+								<span>My Extensions</span>
+								<% if (pageData.mode === 'my') { %>
+								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
+									<%= pageData.rawCount %>
+								</span>
+								<% } %>
+							</a>
+						</li>
 						<% } %>
 					</ul>
-				</div>
-			</nav>
-		</div>
-	</section>
-
-	<section id="frame"	class="section is-white">
-		<div class="container">
-			<% if (["gallery", "queue"].includes(pageData.mode)) { %>
-				<%- include('../partials/extension-gallery') %>
-			<% } else { %>
-				<%- include('../partials/dashboard-socket-updates') %>
-				<% if (pageData.mode === "my") { %>
-					<%- include('../partials/my-extensions') %>
-				<% } else if (pageData.mode === "builder") { %>
-					<%- include('../partials/extension-builder', { ...locals, isGallery: true }) %>
-				<% } %>
-			<% } %>
-		</div>
-	</section>
-
-	<section class="hero is-small is-black">
-		<div class="hero-body">
-			<div class="container">
-				<div class="has-text-centered">
-					<p class="hero-buttons">
-						<a class="button is-primary is-outlined is-large" href="/wiki/Extensions">
-							<span class="icon">
-								<i class="fa fa-book"></i>
-							</span>
-							<span>Read the extension docs</span>
-						</a>
-					</p>
-					<br>
-				</div>
+				</nav>
 			</div>
 		</div>
-	</section>
+	</header>
+
+	<main role="main">
+		<section id="frame" class="section" style="background: var(--color-bg-secondary); min-height: 50vh;">
+			<div class="container">
+				<% if (["gallery", "queue"].includes(pageData.mode)) { %>
+					<%- include('../partials/extension-gallery') %>
+				<% } else { %>
+					<%- include('../partials/dashboard-socket-updates') %>
+					<% if (pageData.mode === "my") { %>
+						<%- include('../partials/my-extensions') %>
+					<% } else if (pageData.mode === "builder") { %>
+						<%- include('../partials/extension-builder', { ...locals, isGallery: true }) %>
+					<% } %>
+				<% } %>
+			</div>
+		</section>
+
+		<section class="ext-cta-section">
+			<div class="container has-text-centered">
+				<h2 class="title is-4" style="color: white; margin-bottom: 1rem;">
+					<span class="icon"><i class="fa fa-code"></i></span>
+					Build Your Own Extensions
+				</h2>
+				<p class="subtitle is-6" style="color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">
+					Learn how to create custom commands, events, and automations for your server.
+				</p>
+				<div class="buttons is-centered">
+					<a class="button is-modern is-primary" href="/wiki/Extensions">
+						<span class="icon"><i class="fa fa-book"></i></span>
+						<span>Read the Docs</span>
+					</a>
+					<% if (authUser) { %>
+					<a class="button is-modern is-light" href="/extensions/builder">
+						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span>Create Extension</span>
+					</a>
+					<% } %>
+				</div>
+			</div>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('is-visible');
+				}
+			});
+		}, { threshold: 0.1 });
+
+		document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+	});
+	</script>
 </body>
+</html>

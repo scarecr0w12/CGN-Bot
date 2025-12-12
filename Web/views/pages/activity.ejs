@@ -22,124 +22,260 @@
 	}
 	%>
 	<%- include('../partials/head') %>
+	
+	<style>
+	/* Activity Page Specific Styles */
+	.activity-stat-card {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: var(--radius-xl);
+		padding: 1.5rem;
+		text-align: center;
+		transition: all 0.3s ease;
+	}
+	.activity-stat-card:hover {
+		transform: translateY(-4px);
+		background: rgba(255, 255, 255, 0.15);
+	}
+	.activity-stat-value {
+		font-size: 2.5rem;
+		font-weight: 700;
+		color: white;
+		line-height: 1.2;
+	}
+	.activity-stat-label {
+		font-size: 0.875rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.search-container {
+		max-width: 700px;
+		margin: 0 auto;
+	}
+	.search-container .input {
+		border-radius: var(--radius-full) 0 0 var(--radius-full);
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.1);
+		color: white;
+		padding-left: 1.5rem;
+	}
+	.search-container .input::placeholder {
+		color: rgba(255, 255, 255, 0.6);
+	}
+	.search-container .input:focus {
+		border-color: var(--color-accent);
+		background: rgba(255, 255, 255, 0.15);
+		box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+	}
+	.search-container .button {
+		border-radius: 0 var(--radius-full) var(--radius-full) 0;
+	}
+	.activity-tabs {
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		padding: 0.5rem 1rem 0;
+	}
+	.activity-tabs ul {
+		border: none;
+	}
+	.activity-tabs li a {
+		color: rgba(255, 255, 255, 0.7);
+		border: none;
+		border-bottom: 3px solid transparent;
+		padding: 0.75rem 1.5rem;
+		transition: all 0.2s ease;
+	}
+	.activity-tabs li a:hover {
+		color: white;
+		border-bottom-color: rgba(255, 255, 255, 0.3);
+	}
+	.activity-tabs li.is-active a {
+		color: white;
+		background: transparent;
+		border-bottom-color: var(--color-accent);
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="main-header-section hero is-primary is-small is-bold">
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
 		<div class="hero-head">
 			<%- include('../partials/header') %>
 		</div>
-		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="subtitle is-1">
-					<strong><%= pageData.totalMessageCount %></strong> message<%= pageData.totalMessageCount === 1 ? "" : "s" %> today, <strong><%= pageData.numActiveServers %></strong> active server<%= pageData.numActiveServers === 1 ? "" : "s" %>
-				</h1>
-				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
-				<div class="columns">
-					<div class="column is-8 is-offset-2">
-						<div class="field has-addons has-addons-centered">
-							<div class="control is-expanded">
-								<input id="search-input" class="input is-primary header-search-box is-large" type="text" placeholder="I'm looking for..." value="<%= pageData.activeSearchQuery %>">
-							</div>
-							<div class="control">
-								<a id="search-button" class="button is-primary is-large header-search-box">
-									<span class="icon">
-										<i class="fa fa-search"></i>
-									</span>
-									<span>Search</span>
-								</a>
-							</div>
+		<div class="hero-body" style="padding-bottom: 2rem;">
+			<div class="container">
+				<!-- Stats Row -->
+				<div class="columns is-centered" style="margin-bottom: 2rem;">
+					<div class="column is-3 has-text-centered fade-in">
+						<div class="activity-stat-card">
+							<span class="icon" style="color: #14b8a6; margin-bottom: 0.5rem;">
+								<i class="fa fa-comments fa-lg"></i>
+							</span>
+							<p class="activity-stat-value"><%= pageData.totalMessageCount %></p>
+							<p class="activity-stat-label">Messages Today</p>
+						</div>
+					</div>
+					<div class="column is-3 has-text-centered fade-in">
+						<div class="activity-stat-card">
+							<span class="icon" style="color: #14b8a6; margin-bottom: 0.5rem;">
+								<i class="fa fa-bolt fa-lg"></i>
+							</span>
+							<p class="activity-stat-value"><%= pageData.numActiveServers %></p>
+							<p class="activity-stat-label">Active Servers</p>
+						</div>
+					</div>
+					<div class="column is-3 has-text-centered fade-in">
+						<div class="activity-stat-card">
+							<span class="icon" style="color: #14b8a6; margin-bottom: 0.5rem;">
+								<i class="fa fa-server fa-lg"></i>
+							</span>
+							<p class="activity-stat-value"><%= pageData.rawServerCount %></p>
+							<p class="activity-stat-label">Total Servers</p>
 						</div>
 					</div>
 				</div>
+
+				<!-- Title and Description -->
+				<div class="has-text-centered" style="margin-bottom: 2rem;">
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						<% if (pageData.mode === 'servers') { %>
+							Discover Discord Communities
+						<% } else { %>
+							Find Discord Users
+						<% } %>
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto;">
+						<% if (pageData.mode === 'servers') { %>
+							Browse and join active servers powered by Skynet. Filter by category, size, or activity.
+						<% } else { %>
+							Search for users and view their public profiles across Skynet-powered servers.
+						<% } %>
+					</p>
+				</div>
+
+				<!-- Search Bar -->
+				<div class="search-container fade-in">
+					<div class="field has-addons has-addons-centered">
+						<div class="control is-expanded">
+							<input id="search-input" class="input is-large" type="text" placeholder="<%= pageData.mode === 'servers' ? 'Search for servers...' : 'Search for a user...' %>" value="<%= pageData.activeSearchQuery %>">
+						</div>
+						<div class="control">
+							<a id="search-button" class="button is-primary is-modern is-large">
+								<span class="icon">
+									<i class="fa fa-search"></i>
+								</span>
+								<span>Search</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<%- include("../partials/adspace", { officialMode: typeof officialMode !== undefined ? officialMode : false, adsEnabled: true }) %>
 			</div>
 		</div>
 		<div class="hero-foot">
-			<nav class="tabs is-boxed is-centered">
-				<div class="container">
+			<div class="container">
+				<nav class="tabs is-centered activity-tabs">
 					<ul>
 						<li class="<%= pageData.mode === 'servers' ? 'is-active' : '' %>">
 							<a href="/activity/servers">
 								<span class="icon">
 									<i class="fa fa-server"></i>
 								</span>
-								<% if ( pageData.mode === "servers") { %>
-									Servers
-									&nbsp;
-									<span class="tag is-small is-primary">
+								<span>Servers</span>
+								<% if (pageData.mode === 'servers') { %>
+									<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
 										<%= pageData.rawServerCount %>
 									</span>
-								<% } else { %>
-									<span>Servers</span>
 								<% } %>
 							</a>
 						</li>
 						<li class="<%= pageData.mode === 'users' ? 'is-active' : '' %>">
 							<a href="/activity/users">
 								<span class="icon">
-									<i class="fa fa-user"></i>
+									<i class="fa fa-users"></i>
 								</span>
-								<% if (pageData.mode === "users") { %>
-									Users
-									&nbsp;
-									<span class="tag is-small is-primary">
+								<span>Users</span>
+								<% if (pageData.mode === 'users') { %>
+									<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
 										<%= pageData.rawUserCount %>
 									</span>
-								<% } else { %>
-									<span>Users</span>
 								<% } %>
 							</a>
 						</li>
 					</ul>
-				</div>
-			</nav>
-		</div>
-	</section>
-
-	<section id="frame" class="section">
-		<div class="container">
-			<% if (pageData.mode === "servers") { %>
-				<%- include('../partials/servers-section') %>
-			<% } else { %>
-				<%- include('../partials/users-section') %>
-			<% } %>
-		</div>
-	</section>
-
-	<section class="hero is-small is-black">
-		<div class="hero-body">
-			<div class="container">
-				<div class="has-text-centered">
-					<% if (pageData.mode === "servers") { %>
-						<p class="hero-buttons">
-							<% if (authUser) { %>
-								<a class="button is-primary is-outlined is-large" href="/dashboard">
-									<span class="icon">
-										<i class="fa fa-cog"></i>
-									</span>
-									<span>Configure Skynet</span>
-								</a>
-							<% } else { %>
-								<a class="button is-primary is-outlined is-large" href="/login">
-									<span class="icon">
-										<i class="fa fa-sign-in"></i>
-									</span>
-									<span>Login to dashboard</span>
-								</a>
-							<% } %>
-						</p>
-						<br>
-					</div>
-				<% } else { %>
-					<p class="hero-buttons">
-						<h4 class="subtitle is-4">
-							PM Skynet <strong>profile setup</strong> to make your own profile.
-						</h4>
-					</p>
-				<% } %>
+				</nav>
 			</div>
 		</div>
-	</section>
+	</header>
+
+	<main role="main">
+		<section id="frame" class="section" style="background: var(--color-bg-secondary); min-height: 50vh;">
+			<div class="container">
+				<% if (pageData.mode === "servers") { %>
+					<%- include('../partials/servers-section') %>
+				<% } else { %>
+					<%- include('../partials/users-section') %>
+				<% } %>
+			</div>
+		</section>
+
+		<section class="hero is-small" style="background: var(--gradient-dark); padding: 3rem 0;">
+			<div class="hero-body">
+				<div class="container has-text-centered">
+					<% if (pageData.mode === "servers") { %>
+						<h2 class="title is-4" style="color: white; margin-bottom: 1.5rem;">
+							Want to list your server here?
+						</h2>
+						<p class="subtitle is-6" style="color: rgba(255,255,255,0.7); margin-bottom: 2rem;">
+							Enable public listing in your server dashboard to appear in search results.
+						</p>
+						<% if (authUser) { %>
+							<a class="button is-modern is-primary is-medium" href="/dashboard">
+								<span class="icon">
+									<i class="fa fa-cog"></i>
+								</span>
+								<span>Go to Dashboard</span>
+							</a>
+						<% } else { %>
+							<a class="button is-modern is-primary is-medium" href="/login">
+								<span class="icon">
+									<i class="fa fa-sign-in"></i>
+								</span>
+								<span>Login to Get Started</span>
+							</a>
+						<% } %>
+					<% } else { %>
+						<h2 class="title is-4" style="color: white; margin-bottom: 1rem;">
+							Create Your Public Profile
+						</h2>
+						<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+							PM Skynet <code style="background: rgba(255,255,255,0.1); padding: 0.25rem 0.5rem; border-radius: 4px;">profile setup</code> to customize your profile.
+						</p>
+					<% } %>
+				</div>
+			</div>
+		</section>
+	</main>
 
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		// Fade-in animations
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('is-visible');
+				}
+			});
+		}, { threshold: 0.1 });
+
+		document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+	});
+	</script>
 </body>
+</html>

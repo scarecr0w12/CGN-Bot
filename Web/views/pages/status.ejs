@@ -17,268 +17,360 @@
 	%>
 	<%- include("../partials/head") %>
 	<style>
-		.status-header {
-			padding: 3rem 1.5rem;
-		}
-		.status-badge {
-			display: inline-block;
-			padding: 0.5rem 1.5rem;
-			border-radius: 4px;
-			font-size: 1.25rem;
-			font-weight: 600;
-			margin-bottom: 1rem;
-		}
-		.status-badge.is-success { background-color: #48c774; color: white; }
-		.status-badge.is-warning { background-color: #ffdd57; color: rgba(0,0,0,0.7); }
-		.status-badge.is-danger { background-color: #f14668; color: white; }
-		.status-badge.is-info { background-color: #3298dc; color: white; }
-		.status-badge.is-dark { background-color: #363636; color: white; }
+	/* Status Page Styles */
+	.status-stats {
+		display: flex;
+		justify-content: center;
+		gap: 1.5rem;
+		margin-top: 1.5rem;
+		flex-wrap: wrap;
+	}
+	.status-stat {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: var(--radius-lg);
+		padding: 1rem 1.5rem;
+		text-align: center;
+		min-width: 100px;
+	}
+	.status-stat-value {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: white;
+	}
+	.status-stat-label {
+		font-size: 0.7rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.overall-status-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1.5rem;
+		border-radius: var(--radius-full);
+		font-size: 1rem;
+		font-weight: 600;
+		margin-bottom: 0.5rem;
+	}
+	.overall-status-badge.is-success { background: rgba(72, 199, 116, 0.9); color: white; }
+	.overall-status-badge.is-warning { background: rgba(255, 221, 87, 0.9); color: rgba(0,0,0,0.8); }
+	.overall-status-badge.is-danger { background: rgba(241, 70, 104, 0.9); color: white; }
+	.overall-status-badge.is-info { background: rgba(50, 152, 220, 0.9); color: white; }
+	.overall-status-badge.is-dark { background: rgba(54, 54, 54, 0.9); color: white; }
 
-		.monitor-card {
-			margin-bottom: 1rem;
-			border-radius: 6px;
-			overflow: hidden;
-		}
-		.monitor-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 1rem;
-			background: #f5f5f5;
-		}
-		.monitor-name {
-			font-weight: 600;
-			font-size: 1.1rem;
-		}
-		.monitor-status {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-		.status-dot {
-			width: 12px;
-			height: 12px;
-			border-radius: 50%;
-		}
-		.status-dot.success { background-color: #48c774; }
-		.status-dot.danger { background-color: #f14668; }
-		.status-dot.warning { background-color: #ffdd57; }
-		.status-dot.info { background-color: #3298dc; }
-		.status-dot.dark { background-color: #363636; }
-
-		.monitor-details {
-			padding: 1rem;
-			background: white;
-			border: 1px solid #dbdbdb;
-			border-top: none;
-		}
-		.uptime-bar {
-			display: flex;
-			gap: 2px;
-			height: 30px;
-			margin: 1rem 0;
-		}
-		.uptime-bar-segment {
-			flex: 1;
-			border-radius: 2px;
-			min-width: 4px;
-		}
-		.uptime-bar-segment.up { background-color: #48c774; }
-		.uptime-bar-segment.down { background-color: #f14668; }
-		.uptime-bar-segment.pending { background-color: #ffdd57; }
-		.uptime-bar-segment.maintenance { background-color: #3298dc; }
-		.uptime-bar-segment.unknown { background-color: #dbdbdb; }
-
-		.uptime-stats {
-			display: flex;
-			justify-content: space-between;
-			font-size: 0.9rem;
-			color: #666;
-		}
-		.bot-stats {
-			display: flex;
-			justify-content: center;
-			gap: 3rem;
-			margin-top: 1rem;
-		}
-		.bot-stat {
-			text-align: center;
-		}
-		.bot-stat-value {
-			font-size: 1.5rem;
-			font-weight: 700;
-		}
-		.bot-stat-label {
-			font-size: 0.85rem;
-			color: #666;
-		}
-		.group-title {
-			font-size: 1.25rem;
-			font-weight: 600;
-			margin: 2rem 0 1rem;
-			padding-bottom: 0.5rem;
-			border-bottom: 2px solid #dbdbdb;
-		}
-		.no-monitors {
-			text-align: center;
-			padding: 3rem;
-			color: #666;
-		}
-		.last-updated {
-			text-align: center;
-			color: #999;
-			font-size: 0.85rem;
-			margin-top: 2rem;
-		}
-		.incident-banner {
-			background-color: #fff3cd;
-			border: 1px solid #ffc107;
-			border-radius: 4px;
-			padding: 1rem;
-			margin-bottom: 2rem;
-		}
-		.incident-banner h4 {
-			margin: 0 0 0.5rem;
-			color: #856404;
-		}
-		.incident-banner p {
-			margin: 0;
-			color: #856404;
-		}
+	.monitor-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	.monitor-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+		transition: all 0.2s ease;
+	}
+	.monitor-card:hover {
+		box-shadow: var(--shadow-card-hover);
+	}
+	.monitor-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem 1.25rem;
+		background: var(--color-bg-secondary);
+	}
+	.monitor-name {
+		font-weight: 600;
+		font-size: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--color-text-primary);
+	}
+	.monitor-name .icon {
+		color: var(--color-text-muted);
+	}
+	.monitor-status {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.status-dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		animation: pulse-dot 2s infinite;
+	}
+	.status-dot.success { background-color: #48c774; box-shadow: 0 0 8px rgba(72, 199, 116, 0.5); }
+	.status-dot.danger { background-color: #f14668; box-shadow: 0 0 8px rgba(241, 70, 104, 0.5); }
+	.status-dot.warning { background-color: #ffdd57; box-shadow: 0 0 8px rgba(255, 221, 87, 0.5); }
+	.status-dot.info { background-color: #3298dc; box-shadow: 0 0 8px rgba(50, 152, 220, 0.5); }
+	.status-dot.dark { background-color: #888; }
+	@keyframes pulse-dot {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.6; }
+	}
+	.monitor-status-text {
+		font-size: 0.875rem;
+		color: var(--color-text-secondary);
+	}
+	.monitor-ping {
+		background: var(--color-bg-secondary);
+		padding: 0.25rem 0.5rem;
+		border-radius: var(--radius-sm);
+		font-size: 0.75rem;
+		color: var(--color-text-muted);
+	}
+	.monitor-details {
+		padding: 1rem 1.25rem;
+	}
+	.uptime-bar {
+		display: flex;
+		gap: 2px;
+		height: 24px;
+		margin-bottom: 0.75rem;
+		border-radius: var(--radius-sm);
+		overflow: hidden;
+	}
+	.uptime-bar-segment {
+		flex: 1;
+		min-width: 3px;
+		transition: opacity 0.2s ease;
+	}
+	.uptime-bar-segment:hover {
+		opacity: 0.8;
+	}
+	.uptime-bar-segment.up { background-color: #48c774; }
+	.uptime-bar-segment.down { background-color: #f14668; }
+	.uptime-bar-segment.pending { background-color: #ffdd57; }
+	.uptime-bar-segment.maintenance { background-color: #3298dc; }
+	.uptime-bar-segment.unknown { background-color: #dbdbdb; }
+	.uptime-stats {
+		display: flex;
+		justify-content: space-between;
+		font-size: 0.8rem;
+		color: var(--color-text-muted);
+	}
+	.uptime-stats strong {
+		color: var(--color-text-primary);
+	}
+	.group-title {
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-text-primary);
+		margin: 2rem 0 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px solid var(--color-border-light);
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.group-title:first-of-type {
+		margin-top: 0;
+	}
+	.no-monitors {
+		text-align: center;
+		padding: 4rem 2rem;
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+	}
+	.no-monitors .icon {
+		color: var(--color-text-muted);
+		margin-bottom: 1rem;
+	}
+	.no-monitors h3 {
+		color: var(--color-text-primary);
+		margin-bottom: 0.5rem;
+	}
+	.no-monitors p {
+		color: var(--color-text-muted);
+	}
+	.incident-banner {
+		background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+		border: 1px solid rgba(255, 193, 7, 0.3);
+		border-radius: var(--radius-lg);
+		padding: 1.25rem;
+		margin-bottom: 2rem;
+	}
+	.incident-banner h4 {
+		margin: 0 0 0.5rem;
+		color: #f57c00;
+		font-size: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+	.incident-banner p {
+		margin: 0;
+		color: var(--color-text-secondary);
+		font-size: 0.9rem;
+	}
+	.last-updated {
+		text-align: center;
+		color: var(--color-text-muted);
+		font-size: 0.8rem;
+		margin-top: 2rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--color-border-light);
+	}
 	</style>
 </head>
 <body>
-	<%- include("../partials/header") %>
-
-	<section class="hero is-primary status-header">
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include("../partials/header") %>
+		</div>
 		<div class="hero-body">
-			<div class="container has-text-centered">
-				<h1 class="title is-2">System Status</h1>
-				<% if (pageData.uptimeKuma.available) { %>
-					<span class="status-badge is-<%= pageData.uptimeKuma.overallStatus.class %>">
-						<span class="icon"><i class="fa fa-<%= pageData.uptimeKuma.overallStatus.status === 1 ? 'check-circle' : pageData.uptimeKuma.overallStatus.status === 0 ? 'exclamation-circle' : 'info-circle' %>"></i></span>
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<% if (pageData.uptimeKuma.available) { %>
+					<span class="overall-status-badge is-<%= pageData.uptimeKuma.overallStatus.class %>">
+						<i class="fa fa-<%= pageData.uptimeKuma.overallStatus.status === 1 ? 'check-circle' : pageData.uptimeKuma.overallStatus.status === 0 ? 'exclamation-circle' : 'info-circle' %>"></i>
 						<%= pageData.uptimeKuma.overallStatus.text %>
 					</span>
-				<% } else { %>
-					<span class="status-badge is-dark">
-						<span class="icon"><i class="fa fa-question-circle"></i></span>
+					<% } else { %>
+					<span class="overall-status-badge is-dark">
+						<i class="fa fa-question-circle"></i>
 						Status Unavailable
 					</span>
-				<% } %>
-
-				<div class="bot-stats">
-					<div class="bot-stat">
-						<div class="bot-stat-value"><%= pageData.rawServerCount %></div>
-						<div class="bot-stat-label">Servers</div>
-					</div>
-					<div class="bot-stat">
-						<div class="bot-stat-value"><%= pageData.rawUserCount %></div>
-						<div class="bot-stat-label">Users</div>
-					</div>
-					<div class="bot-stat" title="<%= pageData.rawUptime %>">
-						<div class="bot-stat-value"><%= pageData.roundedUptime %></div>
-						<div class="bot-stat-label">Uptime</div>
-					</div>
-					<% if (pageData.uptimeKuma.available) { %>
-					<div class="bot-stat">
-						<div class="bot-stat-value"><%= pageData.uptimeKuma.uptimePercentage %>%</div>
-						<div class="bot-stat-label">Overall Uptime</div>
-					</div>
 					<% } %>
+
+					<h1 class="title is-2" style="color: white; margin: 0.5rem 0;">
+						System Status
+					</h1>
+					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+						Real-time health monitoring for Skynet services
+					</p>
+
+					<div class="status-stats">
+						<div class="status-stat">
+							<div class="status-stat-value"><%= pageData.rawServerCount %></div>
+							<div class="status-stat-label">Servers</div>
+						</div>
+						<div class="status-stat">
+							<div class="status-stat-value"><%= pageData.rawUserCount %></div>
+							<div class="status-stat-label">Users</div>
+						</div>
+						<div class="status-stat" title="<%= pageData.rawUptime %>">
+							<div class="status-stat-value"><%= pageData.roundedUptime %></div>
+							<div class="status-stat-label">Uptime</div>
+						</div>
+						<% if (pageData.uptimeKuma.available) { %>
+						<div class="status-stat">
+							<div class="status-stat-value"><%= pageData.uptimeKuma.uptimePercentage %>%</div>
+							<div class="status-stat-label">Overall</div>
+						</div>
+						<% } %>
+					</div>
 				</div>
 			</div>
 		</div>
-	</section>
+	</header>
 
-	<section class="section">
-		<div class="container">
-			<% if (pageData.uptimeKuma.statusPage && pageData.uptimeKuma.statusPage.incident) { %>
-				<div class="incident-banner">
-					<h4><i class="fa fa-exclamation-triangle"></i> Active Incident</h4>
-					<p><%= pageData.uptimeKuma.statusPage.incident.title %></p>
-					<% if (pageData.uptimeKuma.statusPage.incident.content) { %>
-						<p><small><%= pageData.uptimeKuma.statusPage.incident.content %></small></p>
-					<% } %>
-				</div>
-			<% } %>
-
-			<% if (!pageData.uptimeKuma.configured) { %>
-				<div class="no-monitors">
-					<span class="icon is-large"><i class="fa fa-cog fa-3x"></i></span>
-					<h3 class="title is-4">Uptime Monitoring Not Configured</h3>
-					<p>Uptime Kuma integration has not been set up yet.</p>
-				</div>
-			<% } else if (!pageData.uptimeKuma.available) { %>
-				<div class="no-monitors">
-					<span class="icon is-large"><i class="fa fa-plug fa-3x"></i></span>
-					<h3 class="title is-4">Status Page Unavailable</h3>
-					<p>Unable to connect to the status monitoring service. Please check back later.</p>
-				</div>
-			<% } else if (pageData.uptimeKuma.monitors.length === 0) { %>
-				<div class="no-monitors">
-					<span class="icon is-large"><i class="fa fa-server fa-3x"></i></span>
-					<h3 class="title is-4">No Monitors Configured</h3>
-					<p>No services are currently being monitored on the public status page.</p>
-				</div>
-			<% } else { %>
-				<%
-					// Group monitors by their group name
-					const groups = {};
-					pageData.uptimeKuma.monitors.forEach(monitor => {
-						const groupName = monitor.group || 'Services';
-						if (!groups[groupName]) groups[groupName] = [];
-						groups[groupName].push(monitor);
-					});
-				%>
-
-				<% Object.keys(groups).forEach(groupName => { %>
-					<h2 class="group-title"><%= groupName %></h2>
-					<% groups[groupName].forEach(monitor => { %>
-						<div class="card monitor-card">
-							<div class="monitor-header">
-								<span class="monitor-name">
-									<span class="icon"><i class="fa fa-<%= monitor.type === 'http' ? 'globe' : monitor.type === 'ping' ? 'wifi' : monitor.type === 'port' ? 'plug' : 'server' %>"></i></span>
-									<%= monitor.name %>
-								</span>
-								<span class="monitor-status">
-									<span class="status-dot <%= monitor.statusClass %>"></span>
-									<span><%= monitor.statusText %></span>
-									<% if (monitor.ping) { %>
-										<span class="tag is-light"><%= monitor.ping %>ms</span>
-									<% } %>
-								</span>
-							</div>
-							<div class="monitor-details">
-								<div class="uptime-bar" title="Last 50 checks">
-									<% monitor.heartbeats.forEach(hb => { %>
-										<div class="uptime-bar-segment <%= hb.status === 1 ? 'up' : hb.status === 0 ? 'down' : hb.status === 2 ? 'pending' : hb.status === 3 ? 'maintenance' : 'unknown' %>" title="<%= new Date(hb.time).toLocaleString() %>: <%= hb.status === 1 ? 'Up' : hb.status === 0 ? 'Down' : 'Unknown' %><%= hb.ping ? ' (' + hb.ping + 'ms)' : '' %>"></div>
-									<% }) %>
-								</div>
-								<div class="uptime-stats">
-									<span>24h: <strong><%= monitor.uptime24h %>%</strong></span>
-									<span>30d: <strong><%= monitor.uptime30d %>%</strong></span>
-								</div>
-							</div>
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary); min-height: 50vh;">
+			<div class="container">
+				<div class="columns is-centered">
+					<div class="column is-8">
+						<% if (pageData.uptimeKuma.statusPage && pageData.uptimeKuma.statusPage.incident) { %>
+						<div class="incident-banner">
+							<h4><i class="fa fa-exclamation-triangle"></i> Active Incident</h4>
+							<p><strong><%= pageData.uptimeKuma.statusPage.incident.title %></strong></p>
+							<% if (pageData.uptimeKuma.statusPage.incident.content) { %>
+							<p><%= pageData.uptimeKuma.statusPage.incident.content %></p>
+							<% } %>
 						</div>
-					<% }) %>
-				<% }) %>
-			<% } %>
+						<% } %>
 
-			<p class="last-updated">
-				Last updated: <%= new Date(pageData.lastUpdated).toLocaleString() %>
-				<br>
-				<small>This page auto-refreshes every 60 seconds</small>
-			</p>
-		</div>
-	</section>
+						<% if (!pageData.uptimeKuma.configured) { %>
+						<div class="no-monitors">
+							<span class="icon is-large"><i class="fa fa-cog fa-3x"></i></span>
+							<h3 class="title is-5">Monitoring Not Configured</h3>
+							<p>Uptime monitoring has not been set up yet.</p>
+						</div>
+						<% } else if (!pageData.uptimeKuma.available) { %>
+						<div class="no-monitors">
+							<span class="icon is-large"><i class="fa fa-plug fa-3x"></i></span>
+							<h3 class="title is-5">Status Unavailable</h3>
+							<p>Unable to connect to the monitoring service. Please check back later.</p>
+						</div>
+						<% } else if (pageData.uptimeKuma.monitors.length === 0) { %>
+						<div class="no-monitors">
+							<span class="icon is-large"><i class="fa fa-server fa-3x"></i></span>
+							<h3 class="title is-5">No Monitors</h3>
+							<p>No services are currently being monitored.</p>
+						</div>
+						<% } else { %>
+						<%
+							const groups = {};
+							pageData.uptimeKuma.monitors.forEach(monitor => {
+								const groupName = monitor.group || 'Services';
+								if (!groups[groupName]) groups[groupName] = [];
+								groups[groupName].push(monitor);
+							});
+						%>
+
+						<% Object.keys(groups).forEach(groupName => { %>
+						<h2 class="group-title">
+							<i class="fa fa-folder-o"></i>
+							<%= groupName %>
+						</h2>
+						<div class="monitor-grid">
+							<% groups[groupName].forEach(monitor => { %>
+							<div class="monitor-card">
+								<div class="monitor-header">
+									<span class="monitor-name">
+										<span class="icon"><i class="fa fa-<%= monitor.type === 'http' ? 'globe' : monitor.type === 'ping' ? 'wifi' : monitor.type === 'port' ? 'plug' : 'server' %>"></i></span>
+										<%= monitor.name %>
+									</span>
+									<span class="monitor-status">
+										<span class="status-dot <%= monitor.statusClass %>"></span>
+										<span class="monitor-status-text"><%= monitor.statusText %></span>
+										<% if (monitor.ping) { %>
+										<span class="monitor-ping"><%= monitor.ping %>ms</span>
+										<% } %>
+									</span>
+								</div>
+								<div class="monitor-details">
+									<div class="uptime-bar" title="Last 50 checks">
+										<% monitor.heartbeats.forEach(hb => { %>
+										<div class="uptime-bar-segment <%= hb.status === 1 ? 'up' : hb.status === 0 ? 'down' : hb.status === 2 ? 'pending' : hb.status === 3 ? 'maintenance' : 'unknown' %>" title="<%= new Date(hb.time).toLocaleString() %>: <%= hb.status === 1 ? 'Up' : hb.status === 0 ? 'Down' : 'Unknown' %><%= hb.ping ? ' (' + hb.ping + 'ms)' : '' %>"></div>
+										<% }) %>
+									</div>
+									<div class="uptime-stats">
+										<span>24h: <strong><%= monitor.uptime24h %>%</strong></span>
+										<span>30d: <strong><%= monitor.uptime30d %>%</strong></span>
+									</div>
+								</div>
+							</div>
+							<% }) %>
+						</div>
+						<% }) %>
+						<% } %>
+
+						<p class="last-updated">
+							<i class="fa fa-clock-o"></i>
+							Last updated: <%= new Date(pageData.lastUpdated).toLocaleString() %>
+							<br>
+							<small>Auto-refreshes every 60 seconds</small>
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
 
 	<%- include("../partials/footer") %>
+	<%- include("../partials/scroll-top-button") %>
 
 	<script>
-		// Auto-refresh every 60 seconds
-		setTimeout(() => {
-			window.location.reload();
-		}, 60000);
+	setTimeout(() => { window.location.reload(); }, 60000);
 	</script>
 </body>
 </html>

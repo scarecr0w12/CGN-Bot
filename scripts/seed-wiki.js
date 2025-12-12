@@ -33,12 +33,21 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 
 - 🚀 [Getting Started](Getting-Started) - New here? Start here!
 - 📖 [Command Reference](Commands) - Full list of all commands
+- 🤖 [AI Guide](AI-Guide) - AI assistant features and configuration
+- 💰 [Economy Guide](Economy-Guide) - Virtual economy system
 - 👑 [Server Owner Guide](Server-Owner-Guide) - Configure your server
 - 🛡️ [Admin Levels](Admin-Levels) - Understanding permissions
 - 🧩 [Extensions](Extensions) - Extend your bot's functionality
+- ⭐ [Premium Features](Premium-Features) - Server subscriptions
 - ❓ [FAQ](FAQ) - Frequently Asked Questions
 
 ## Features Overview
+
+### 🤖 AI Assistant
+Get AI-powered assistance with multi-provider LLM support (OpenAI, Anthropic, Groq, Ollama). Features conversation memory, web search, and customizable personalities. See the [AI Guide](AI-Guide).
+
+### 💰 Economy System
+Full-featured virtual economy with wallets, banks, daily rewards, gambling, shops, and auctions. See the [Economy Guide](Economy-Guide).
 
 ### 🎪 Fun & Entertainment
 Engage your community with games, memes, jokes, trivia, and interactive commands.
@@ -52,11 +61,11 @@ Track server activity with SkynetPoints, leaderboards, ranks, and detailed serve
 ### 🔍 Search & Media
 Search Google, YouTube, Wikipedia, anime databases, and more directly from Discord.
 
-### 🤖 AI Assistant
-Get AI-powered assistance with the \`ai\` command featuring multi-provider LLM support.
-
 ### 🔦 Utility Tools
 Calculators, translators, reminders, polls, giveaways, and much more!
+
+### ⭐ Premium Features
+Unlock advanced features for your server with premium subscriptions. See [Premium Features](Premium-Features).
 
 ---
 
@@ -240,6 +249,655 @@ Need more help? Join our support server or check the [FAQ](FAQ)!
 	{
 		_id: "Commands-Stats",
 		content: generateCategoryPage(commands, "Stats & Points ⭐️"),
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Commands-AI",
+		content: generateCategoryPage(commands, "AI & Assistant 🤖"),
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Commands-Economy",
+		content: generateCategoryPage(commands, "Economy 💰"),
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "AI-Guide",
+		content: `# AI Assistant Guide
+
+SkynetBot features a powerful AI assistant with multi-provider LLM support, conversation memory, and advanced configuration options.
+
+## Overview
+
+The AI system provides:
+- **Multi-Provider Support**: OpenAI (GPT-4, GPT-4o), Anthropic (Claude), Groq (Llama, Mixtral), Ollama (local models)
+- **Conversation Memory**: Remembers context within conversations
+- **Web Search**: Integrated web search for up-to-date information
+- **Rate Limiting**: Configurable cooldowns to prevent abuse
+- **Usage Tracking**: Monitor token usage and costs
+- **Budget Controls**: Set daily limits per user or server
+- **Custom Personalities**: Configure custom system prompts
+
+---
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| \`!ai ask <message>\` | Chat with the AI assistant |
+| \`!ai stream <message>\` | Chat with streaming response |
+| \`!ai clear\` | Clear your conversation memory |
+| \`!ai search <query>\` | Search the web using AI |
+| \`!ai variables\` | Show available template variables |
+| \`!ai stats\` | View usage statistics (admin) |
+
+### Basic Usage
+
+Simply ask the AI anything:
+\`\`\`
+!ai ask What is the capital of France?
+!ai ask Explain quantum computing in simple terms
+!ai ask Write a haiku about Discord
+\`\`\`
+
+### Streaming Responses
+
+For longer responses, use streaming to see the response as it's generated:
+\`\`\`
+!ai stream Tell me a story about a brave knight
+\`\`\`
+
+### Web Search
+
+Search the web for current information:
+\`\`\`
+!ai search Latest news about artificial intelligence
+!ai search Weather in New York today
+\`\`\`
+
+### Clearing Memory
+
+Clear your conversation history to start fresh:
+\`\`\`
+!ai clear
+\`\`\`
+
+---
+
+## Template Variables
+
+Use these variables in your messages for dynamic content:
+
+| Variable | Description |
+|----------|-------------|
+| \`{{user}}\` | Your username |
+| \`{{user.id}}\` | Your Discord user ID |
+| \`{{user.mention}}\` | Mentions you in the response |
+| \`{{channel}}\` | Current channel name |
+| \`{{server}}\` | Server name |
+| \`{{date}}\` | Current date |
+| \`{{time}}\` | Current time |
+| \`{{datetime}}\` | Current date and time |
+
+Example:
+\`\`\`
+!ai ask Hello {{user}}, what time is it in {{channel}}?
+\`\`\`
+
+---
+
+## Supported Providers
+
+### OpenAI
+- **Models**: GPT-4o, GPT-4o-mini, GPT-4, GPT-3.5-turbo
+- **Best for**: General-purpose tasks, coding, creative writing
+- **Requires**: API key
+
+### Anthropic (Claude)
+- **Models**: Claude 3.5 Sonnet, Claude 3 Opus, Claude 3 Sonnet, Claude 3 Haiku
+- **Best for**: Long-form content, analysis, nuanced conversations
+- **Requires**: API key
+
+### Groq
+- **Models**: Llama 3.1, Mixtral
+- **Best for**: Fast responses, open-source models
+- **Requires**: API key
+
+### Ollama
+- **Models**: Any locally hosted model
+- **Best for**: Privacy-focused, offline use, custom models
+- **Requires**: Local Ollama installation
+
+---
+
+## Server Configuration (Admins)
+
+Server administrators can configure the AI system through the web dashboard:
+
+### Dashboard → AI Settings
+- **Provider & Model**: Choose default provider and model
+- **System Prompt**: Customize the AI's personality
+- **Rate Limits**: Set cooldowns and usage limits
+
+### Dashboard → AI Governance
+- **Model Policy**: Allow or deny specific models
+- **Tool Access**: Control which AI tools are available
+- **Budget Limits**: Set daily token/cost limits
+
+### Dashboard → AI Memory
+- **History Limit**: How many messages to remember
+- **Per-User Memory**: Enable individual memory per user
+
+### Dashboard → AI Personality
+- **System Prompt**: Define the AI's character and behavior
+- **Response Style**: Configure how the AI responds
+
+---
+
+## Rate Limits
+
+To prevent abuse, the AI system has built-in rate limiting:
+
+- **Cooldown**: Minimum time between requests (default: 5 seconds)
+- **Per-User Limit**: Maximum requests per user per day
+- **Per-Channel Limit**: Maximum requests per channel per hour
+- **Token Budget**: Maximum tokens per user/server per day
+
+Administrators can adjust these limits in the dashboard.
+
+---
+
+## Best Practices
+
+### For Users
+1. **Be specific**: Clear questions get better answers
+2. **Provide context**: Include relevant background information
+3. **Use streaming**: For long responses, use \`!ai stream\`
+4. **Clear when needed**: Use \`!ai clear\` if the AI seems confused
+
+### For Administrators
+1. **Set reasonable limits**: Balance accessibility with abuse prevention
+2. **Monitor usage**: Check \`!ai stats\` regularly
+3. **Customize personality**: Tailor the AI to your server's needs
+4. **Use governance**: Restrict expensive models if needed
+
+---
+
+## Troubleshooting
+
+### "Rate limited"
+You're sending requests too quickly. Wait for the cooldown period.
+
+### "Budget exceeded"
+You've reached your daily token limit. Wait until tomorrow or ask an admin to increase limits.
+
+### "Provider error"
+The AI provider is experiencing issues. Try again later or contact an admin.
+
+### "Model not available"
+The requested model is not configured or has been restricted by administrators.
+
+---
+
+See also: [Commands](Commands) | [Server Owner Guide](Server-Owner-Guide) | [FAQ](FAQ)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Economy-Guide",
+		content: `# Economy System Guide
+
+SkynetBot features a full virtual economy system where members can earn, spend, trade, and gamble coins.
+
+## Overview
+
+The economy system provides:
+- **Wallet & Bank**: Secure your coins in your bank
+- **Daily Rewards**: Claim daily coins with streak bonuses
+- **Trading**: Send coins to other users
+- **Gambling**: Test your luck with various games
+- **Shop System**: Buy items from the server shop
+- **Auctions**: Sell items to other players
+
+---
+
+## Commands
+
+### Balance & Banking
+
+| Command | Description |
+|---------|-------------|
+| \`!balance\` | Check your wallet and bank balance |
+| \`!deposit <amount>\` | Deposit coins into your bank |
+| \`!withdraw <amount>\` | Withdraw coins from your bank |
+| \`!daily\` | Claim your daily coin reward |
+
+### Trading
+
+| Command | Description |
+|---------|-------------|
+| \`!give @user <amount>\` | Send coins to another user |
+
+### Gambling
+
+| Command | Description |
+|---------|-------------|
+| \`!gamble <amount>\` | Gamble coins for a chance to win |
+| \`!slots <amount>\` | Play the slot machine |
+| \`!rob @user\` | Attempt to steal from another user |
+
+### Shopping
+
+| Command | Description |
+|---------|-------------|
+| \`!shop\` | Browse the server shop |
+| \`!shop buy <item_id>\` | Purchase an item |
+| \`!inventory\` | View your purchased items |
+
+### Auctions
+
+| Command | Description |
+|---------|-------------|
+| \`!auction\` | View active auctions |
+| \`!auction start <item> \\| <price>\` | Start an auction |
+| \`!auction bid <id> \\| <amount>\` | Place a bid |
+| \`!auction cancel <id>\` | Cancel your auction |
+
+---
+
+## Getting Started
+
+### Step 1: Claim Your Daily Reward
+Start earning by claiming your daily reward:
+\`\`\`
+!daily
+\`\`\`
+
+Daily rewards include streak bonuses - claim every day to maximize earnings!
+
+### Step 2: Check Your Balance
+View your current balance:
+\`\`\`
+!balance
+\`\`\`
+
+Your coins are split between:
+- **Wallet**: Readily available but can be stolen
+- **Bank**: Safe from theft but needs withdrawal to use
+
+### Step 3: Secure Your Coins
+Deposit coins to your bank for safekeeping:
+\`\`\`
+!deposit 500
+!deposit all
+\`\`\`
+
+---
+
+## Wallet vs Bank
+
+| Feature | Wallet | Bank |
+|---------|--------|------|
+| Spending | Immediate | Must withdraw first |
+| Rob Protection | Vulnerable | Safe |
+| Gambling | Direct use | Must withdraw |
+| Receiving | Goes here | N/A |
+
+**Pro Tip**: Keep most coins in your bank and only withdraw what you need!
+
+---
+
+## Earning Coins
+
+### Daily Rewards
+- Base reward: Configured by server
+- Streak bonus: Increases with consecutive daily claims
+- Broken streak: Missing a day resets your bonus
+
+### Gambling (Risk!)
+- **Gamble**: ~45% chance to double your bet
+- **Slots**: Various payouts based on matching symbols
+- **Rob**: Steal from others (but risk getting caught!)
+
+### Trading
+- Receive coins from other users via \`!give\`
+- Sell items through auctions
+
+---
+
+## Gambling Guide
+
+### Gamble Command
+\`\`\`
+!gamble 100
+!gamble all
+\`\`\`
+- ~45% chance to win double
+- ~55% chance to lose your bet
+
+### Slots Command
+\`\`\`
+!slots 50
+\`\`\`
+Payouts:
+| Result | Payout |
+|--------|--------|
+| 🍒🍒🍒 | 3x |
+| 🍋🍋🍋 | 5x |
+| 🍊🍊🍊 | 10x |
+| 💎💎💎 | 50x |
+| 7️⃣7️⃣7️⃣ | 100x |
+
+### Rob Command
+\`\`\`
+!rob @user
+\`\`\`
+- Success: Steal a portion of their wallet
+- Failure: Pay a fine and go on cooldown
+- Target needs coins in their wallet
+
+---
+
+## Shop System
+
+### Browsing the Shop
+\`\`\`
+!shop
+\`\`\`
+
+View available items with their prices and descriptions.
+
+### Purchasing Items
+\`\`\`
+!shop buy <item_id>
+\`\`\`
+
+### Viewing Inventory
+\`\`\`
+!inventory
+\`\`\`
+
+See all items you've purchased.
+
+---
+
+## Auction System
+
+### Creating an Auction
+\`\`\`
+!auction start <item_id> | <starting_price>
+\`\`\`
+
+### Bidding
+\`\`\`
+!auction bid <auction_id> | <amount>
+\`\`\`
+
+### Auction Rules
+- Bids must be higher than current price
+- Auctions last for a set duration
+- Winner pays their bid amount
+- Seller receives payment minus fees
+
+---
+
+## Server Configuration (Admins)
+
+Administrators can configure the economy through the dashboard:
+
+### Dashboard → Economy
+- **Starting Balance**: Initial coins for new users
+- **Daily Reward**: Base daily claim amount
+- **Streak Multiplier**: Bonus for consecutive claims
+
+### Dashboard → Economy Stats
+- View server-wide economy statistics
+- Monitor wealth distribution
+- Track gambling activity
+
+---
+
+## Tips & Strategies
+
+1. **Claim daily**: Never miss your daily reward for streak bonuses
+2. **Bank your coins**: Protect savings from robbers
+3. **Gamble responsibly**: Set limits for yourself
+4. **Check auctions**: Find deals on valuable items
+5. **Rob wisely**: Only target users with wallet coins
+
+---
+
+## Troubleshooting
+
+### "Insufficient funds"
+You don't have enough coins in your wallet. Try withdrawing from your bank.
+
+### "User has no coins"
+The target user has no coins in their wallet to steal.
+
+### "On cooldown"
+Wait for the cooldown period before using that command again.
+
+### "Item not found"
+The item ID doesn't exist. Check \`!shop\` for valid IDs.
+
+---
+
+See also: [Commands](Commands) | [FAQ](FAQ)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Premium-Features",
+		content: `# Premium Features
+
+Unlock advanced features for your Discord server with SkynetBot Premium subscriptions.
+
+## Overview
+
+SkynetBot Premium provides server-level subscriptions that unlock enhanced features for your entire community. Premium subscriptions are **per-server**, meaning you subscribe for a specific server rather than your personal account.
+
+---
+
+## Subscription Tiers
+
+Premium is available in multiple tiers, each offering different levels of features:
+
+### Free Tier
+- All basic commands
+- Standard rate limits
+- Basic moderation tools
+- Community extensions
+
+### Premium Tiers
+Premium tiers (configured by the bot operator) typically include:
+- **Increased Limits**: Higher rate limits and quotas
+- **Advanced AI**: Access to more powerful AI models
+- **Priority Support**: Faster response times
+- **Exclusive Commands**: Premium-only features
+- **Extended Storage**: More extension storage
+- **Custom Branding**: Remove bot branding
+
+*Specific tier benefits vary by instance configuration.*
+
+---
+
+## How to Subscribe
+
+### Step 1: Visit the Membership Page
+Navigate to the bot's website and click on "Membership" or "Premium".
+
+### Step 2: Login with Discord
+Authenticate with your Discord account to see your eligible servers.
+
+### Step 3: Select Your Server
+Choose the server you want to upgrade. You must have **Manage Server** permission.
+
+### Step 4: Choose a Plan
+Select your preferred tier and billing period:
+- **Monthly**: Flexible, cancel anytime
+- **Yearly**: Save with annual billing (discount varies)
+
+### Step 5: Complete Payment
+Pay securely via:
+- **Stripe**: Credit/debit cards
+- **BTCPay**: Bitcoin and cryptocurrency
+
+---
+
+## Managing Your Subscription
+
+### Viewing Status
+Check your server's subscription status in:
+- The web dashboard (Dashboard → Subscription)
+- The membership page with your server selected
+
+### Upgrading/Downgrading
+You can change your tier at any time:
+1. Visit the membership page
+2. Select your server
+3. Choose a new tier
+4. Confirm the change
+
+### Cancellation
+To cancel your subscription:
+1. Visit the membership page
+2. Select your subscribed server
+3. Click "Manage Subscription"
+4. Select "Cancel"
+
+*You'll retain premium features until the end of your billing period.*
+
+---
+
+## Server-Based Subscriptions
+
+### Why Per-Server?
+Premium subscriptions apply to **servers**, not users, because:
+- All server members benefit from the features
+- Admins can fund server improvements
+- Features like AI limits apply server-wide
+
+### Transferring Subscriptions
+Subscriptions are tied to the server ID and cannot be transferred. If you need to change servers, cancel and resubscribe to the new server.
+
+### Multiple Servers
+To have premium on multiple servers, you need separate subscriptions for each.
+
+---
+
+## Premium Features in Detail
+
+### Enhanced AI Access
+Premium servers may get:
+- Access to advanced models (GPT-4, Claude 3 Opus)
+- Higher daily token limits
+- Longer conversation memory
+- Priority response times
+
+### Increased Rate Limits
+- More commands per minute
+- Reduced cooldowns
+- Higher API quotas
+
+### Extended Storage
+- More extension storage space
+- Larger file uploads
+- Extended log retention
+
+### Priority Support
+- Faster issue resolution
+- Direct support channels
+- Feature request priority
+
+---
+
+## Payment Methods
+
+### Credit/Debit Cards (Stripe)
+- Visa, Mastercard, American Express
+- Secure processing via Stripe
+- Automatic renewal
+
+### Cryptocurrency (BTCPay)
+- Bitcoin (BTC)
+- Lightning Network
+- Other cryptocurrencies (varies by configuration)
+
+---
+
+## Billing FAQ
+
+### When am I charged?
+- **Monthly**: Every 30 days from subscription start
+- **Yearly**: Every 365 days from subscription start
+
+### What if my payment fails?
+You'll receive an email notification. Premium features remain active for a grace period while you update payment details.
+
+### Can I get a refund?
+Refund policies vary. Contact the bot operator for assistance.
+
+### Is my payment information secure?
+Yes. All payments are processed by Stripe or BTCPay. We never store your card details.
+
+---
+
+## Troubleshooting
+
+### "Server not showing"
+- Ensure the bot is in the server
+- Verify you have Manage Server permission
+- Try logging out and back in
+
+### "Payment failed"
+- Check your card details
+- Ensure sufficient funds
+- Try a different payment method
+
+### "Features not unlocked"
+- Wait a few minutes for sync
+- Try \`!debug\` to check subscription status
+- Contact support if issues persist
+
+---
+
+## Support
+
+For subscription issues:
+1. Check this guide and [FAQ](FAQ)
+2. Join the support server
+3. Contact an administrator
+
+---
+
+See also: [Getting Started](Getting-Started) | [Server Owner Guide](Server-Owner-Guide) | [FAQ](FAQ)
+`,
 		reactions: [],
 		updates: [{
 			_id: "218536118591684613",
@@ -1672,6 +2330,92 @@ Depends on server configuration. Defaults:
 
 ---
 
+## AI Assistant
+
+### How do I use the AI?
+\`\`\`
+!ai ask <your question>
+!ai stream <your question>
+\`\`\`
+See [AI Guide](AI-Guide) for full documentation.
+
+### What AI providers are supported?
+- OpenAI (GPT-4, GPT-4o)
+- Anthropic (Claude)
+- Groq (Llama, Mixtral)
+- Ollama (local models)
+
+### Why is the AI not responding?
+- You may be rate limited (wait for cooldown)
+- You may have exceeded your daily token budget
+- The AI provider may be unavailable
+- AI may not be configured on this server
+
+### How do I clear my AI conversation?
+\`\`\`
+!ai clear
+\`\`\`
+
+### Can I search the web with AI?
+Yes! Use \`!ai search <query>\` to search the web.
+
+---
+
+## Economy System
+
+### How do I get coins?
+\`\`\`
+!daily
+\`\`\`
+Claim daily rewards with streak bonuses. You can also win coins through gambling or receive them from other users.
+
+### What's the difference between wallet and bank?
+- **Wallet**: Ready to use, but can be robbed
+- **Bank**: Safe from theft, must withdraw to use
+
+### How do I protect my coins?
+\`\`\`
+!deposit all
+\`\`\`
+Keep your coins in the bank where they can't be stolen.
+
+### How do I gamble?
+\`\`\`
+!gamble <amount>
+!slots <amount>
+\`\`\`
+Warning: Gambling is risky! You can lose your bet.
+
+### How do I buy items?
+\`\`\`
+!shop
+!shop buy <item_id>
+\`\`\`
+
+See [Economy Guide](Economy-Guide) for full documentation.
+
+---
+
+## Premium & Subscriptions
+
+### What is Premium?
+Server-level subscriptions that unlock advanced features. See [Premium Features](Premium-Features).
+
+### How do I subscribe?
+1. Visit the membership page on the bot website
+2. Login with Discord
+3. Select your server
+4. Choose a tier and pay
+
+### Is Premium per-user or per-server?
+**Per-server**. When you subscribe, all members of that server benefit from the features.
+
+### What payment methods are accepted?
+- Credit/Debit cards (via Stripe)
+- Bitcoin/Cryptocurrency (via BTCPay)
+
+---
+
 ## Extensions
 
 ### What are extensions?
@@ -1687,6 +2431,11 @@ Custom additions created by the community. They add new commands and features. S
 - Check it's enabled in dashboard
 - Verify trigger conditions
 - Check bot permissions
+
+### Can I share extensions between instances?
+Yes! Use the Export/Import feature:
+- Export: Download a \`.skypkg\` file from the extension page
+- Import: Upload the package in "My Extensions"
 
 ---
 
@@ -1782,11 +2531,13 @@ Complete list of all SkynetBot commands organized by category.
 	content += `\n## Category Pages
 
 For detailed information, visit the category-specific pages:
-- [Moderation Commands](Commands-Moderation)
+- [AI & Assistant Commands](Commands-AI)
+- [Economy Commands](Commands-Economy)
 - [Fun Commands](Commands-Fun)
-- [Utility Commands](Commands-Utility)
+- [Moderation Commands](Commands-Moderation)
 - [Search & Media Commands](Commands-Search)
 - [Stats & Points Commands](Commands-Stats)
+- [Utility Commands](Commands-Utility)
 
 ## Command Usage Guide
 

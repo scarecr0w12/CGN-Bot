@@ -1,67 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Paperwork - Skynet</title>
-
-    <link rel="shortcut icon" type="image/png" href="/static/img/icon.png">
-    <meta name="theme-color" content="#009688">
-
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<title>Privacy Policy & Terms | Skynet Discord Bot</title>
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Privacy Policy & Terms | Skynet Discord Bot",
+		description: "Skynet Discord bot privacy policy and terms of service. Learn how we handle your data, cookies, and third-party integrations.",
+		keywords: "Skynet privacy policy, Discord bot terms, data handling, cookie policy"
+	};
+	pageData.breadcrumbs = [
+		{ name: "Home", url: "/" },
+		{ name: "Privacy Policy", url: "/paperwork" }
+	];
+	%>
+	<%- include('../partials/head') %>
+	<style>
+	.legal-card {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+		margin-bottom: 1.5rem;
+	}
+	.legal-card-header {
+		background: var(--color-bg-secondary);
+		padding: 1.25rem 1.5rem;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		border-bottom: 1px solid var(--color-border-light);
+	}
+	.legal-card-header .icon {
+		width: 40px;
+		height: 40px;
+		background: var(--gradient-primary);
+		border-radius: var(--radius-md);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+	}
+	.legal-card-header h3 {
+		font-size: 1.1rem;
+		font-weight: 600;
+		color: var(--color-text-primary);
+		margin: 0;
+	}
+	.legal-card-body {
+		padding: 1.5rem;
+	}
+	.legal-card-body p {
+		color: var(--color-text-secondary);
+		line-height: 1.7;
+		margin-bottom: 1rem;
+	}
+	.legal-card-body p:last-child {
+		margin-bottom: 0;
+	}
+	.legal-card-body a {
+		color: var(--color-primary);
+		text-decoration: underline;
+	}
+	.legal-card-body a:hover {
+		color: var(--color-primary-dark);
+	}
+	.legal-toc {
+		background: var(--color-bg-primary);
+		border-radius: var(--radius-lg);
+		padding: 1.25rem;
+		margin-bottom: 2rem;
+		box-shadow: var(--shadow-sm);
+	}
+	.legal-toc h4 {
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		margin-bottom: 0.75rem;
+	}
+	.legal-toc ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.legal-toc li {
+		margin-bottom: 0.5rem;
+	}
+	.legal-toc a {
+		color: var(--color-text-secondary);
+		text-decoration: none;
+		font-size: 0.9rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		transition: color 0.2s ease;
+	}
+	.legal-toc a:hover {
+		color: var(--color-primary);
+	}
+	.legal-updated {
+		text-align: center;
+		color: var(--color-text-muted);
+		font-size: 0.8rem;
+		margin-top: 2rem;
+	}
+	</style>
 </head>
 <body>
-    <section id="header" class="hero is-dark is-fullheight is-bold">
-        <div class="hero-head">
-            <a class="nav-item is-brand title is-5 is-active" href="/" style="font-family: Montserrat;">
-                &nbsp;
-                Skynet
-            </a>
-        </div>
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <h1 class="title is-1">
-                    <strong>Important</strong> paperwork.
-                </h1>
-                <br>
-                <br>
-                <h2 class="subtitle is-2">
-                    Privacy Policy
-                </h2>
-                <div class="notification is-dark is-bold">
-                    <p class="control">
-                        <span class="icon">
-                            <i class="fa fa-globe"></i>
-                        </span>
-                        Tracking information
-                        <br>
-                        Our service, "skynetbot.com", stores bits of information about you in your browsed called "cookies". These cookies are used to identify and authenticate you. Our domain proxy and CDN, CloudFlare, is a third party that installs cookies in your browser to make sure your sessions can be matched with your browser, even when your browser shares an IP with multiple browsers.
-                    </p>
-                    <br>
-                    <p class="control">
-                        <span class="icon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        Information storage
-                        <br>
-                        Our servers store a limited amount of information about you, all other information is stored in cookies and third parties such as Google.<br>
-                        We store information about your discord account that we access through the oauth process. When you login, you accept to hand us this information. This information includes the guilds your account has joined, the permissions your account has on those guilds, and your account's username.
-                        The above information is <b>never</b> disclosed to third parties.
-                    </p>
-                    <br>
-                    <p class="control">
-                        <span class="icon">
-                            <i class="fa fa-google"></i>
-                        </span>
-                        Third parties
-                        <br>
-                        Third parties such as Google may use cookies on our website to serve you personalized ads, based on your previous traffic behavior. Additionally, your traffic to our website may be used for advertisement cookies as well. However, this information is not disclosed to us. You can opt-out of personalized advertisements and cookie tracking by Google by going to <a href="https://google.com/settings/ads">this link</a>. For more information on personalized ads by Google and Google Analytics, please visit their respective websites.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+						<span class="icon is-medium" style="margin-right: 0.5rem;">
+							<i class="fa fa-file-text-o"></i>
+						</span>
+						Privacy & Terms
+					</h1>
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.8);">
+						How we handle your data and protect your privacy
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<main role="main">
+		<section class="section" style="background: var(--color-bg-secondary);">
+			<div class="container">
+				<div class="columns is-centered">
+					<div class="column is-8">
+						<nav class="legal-toc">
+							<h4>On This Page</h4>
+							<ul>
+								<li><a href="#tracking"><i class="fa fa-globe"></i> Tracking Information</a></li>
+								<li><a href="#storage"><i class="fa fa-database"></i> Information Storage</a></li>
+								<li><a href="#third-party"><i class="fa fa-external-link"></i> Third Parties</a></li>
+								<li><a href="#contact"><i class="fa fa-envelope"></i> Contact Us</a></li>
+							</ul>
+						</nav>
+
+						<article id="tracking" class="legal-card">
+							<div class="legal-card-header">
+								<span class="icon"><i class="fa fa-globe"></i></span>
+								<h3>Tracking Information</h3>
+							</div>
+							<div class="legal-card-body">
+								<p>
+									Our service stores small pieces of information in your browser called "cookies". 
+									These cookies are used to identify and authenticate you when using our website and services.
+								</p>
+								<p>
+									Our domain proxy and CDN provider, <strong>Cloudflare</strong>, is a third party that may 
+									install cookies in your browser to ensure your sessions can be properly matched with your 
+									browser, even when multiple browsers share the same IP address.
+								</p>
+							</div>
+						</article>
+
+						<article id="storage" class="legal-card">
+							<div class="legal-card-header">
+								<span class="icon"><i class="fa fa-database"></i></span>
+								<h3>Information Storage</h3>
+							</div>
+							<div class="legal-card-body">
+								<p>
+									Our servers store a limited amount of information about you. Other information 
+									is stored in cookies and by third parties such as Google.
+								</p>
+								<p>
+									We store information about your Discord account that we access through the OAuth process. 
+									When you log in, you consent to provide us this information, which includes:
+								</p>
+								<ul style="margin: 1rem 0 1rem 1.5rem; color: var(--color-text-secondary);">
+									<li>The servers (guilds) your account has joined</li>
+									<li>Your permissions on those servers</li>
+									<li>Your Discord username and avatar</li>
+								</ul>
+								<p>
+									<strong>This information is never disclosed to third parties.</strong>
+								</p>
+							</div>
+						</article>
+
+						<article id="third-party" class="legal-card">
+							<div class="legal-card-header">
+								<span class="icon"><i class="fa fa-external-link"></i></span>
+								<h3>Third Parties</h3>
+							</div>
+							<div class="legal-card-body">
+								<p>
+									Third parties such as Google may use cookies on our website to serve you 
+									personalized advertisements based on your previous browsing behavior. 
+									Your traffic to our website may be used for advertisement cookies as well. 
+									However, this information is not disclosed to us.
+								</p>
+								<p>
+									You can opt-out of personalized advertisements and cookie tracking by Google by visiting 
+									<a href="https://google.com/settings/ads" target="_blank" rel="noopener">Google's Ad Settings</a>. 
+									For more information on personalized ads by Google and Google Analytics, 
+									please visit their respective websites.
+								</p>
+							</div>
+						</article>
+
+						<article id="contact" class="legal-card">
+							<div class="legal-card-header">
+								<span class="icon"><i class="fa fa-envelope"></i></span>
+								<h3>Contact Us</h3>
+							</div>
+							<div class="legal-card-body">
+								<p>
+									If you have any questions about this Privacy Policy or our data practices, 
+									please contact us through our <a href="https://discord.gg/gDtzaS2" target="_blank" rel="noopener">Discord server</a> 
+									or by opening an issue on our <a href="https://github.com/scarecr0w12/CGN-Bot" target="_blank" rel="noopener">GitHub repository</a>.
+								</p>
+							</div>
+						</article>
+
+						<p class="legal-updated">
+							<i class="fa fa-clock-o"></i>
+							Last updated: January 2025
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
 </body>
 </html>

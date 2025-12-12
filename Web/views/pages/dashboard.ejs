@@ -1,140 +1,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Skynet Dashboard</title>
+	<title>Dashboard | Skynet</title>
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Dashboard | Skynet Discord Bot",
+		description: "Manage your Discord servers with Skynet bot dashboard."
+	};
+	%>
 	<%- include("../partials/head") %>
+	<style>
+	/* Dashboard Server Selection Styles */
+	.dashboard-hero {
+		background: var(--gradient-dark);
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+	}
+	.dashboard-user-avatar {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		border: 4px solid rgba(255,255,255,0.2);
+		box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+		animation: float 3s ease-in-out infinite;
+	}
+	@keyframes float {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-8px); }
+	}
+	.server-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+	.server-card {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.25rem;
+		background: rgba(255, 255, 255, 0.08);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: var(--radius-lg);
+		text-decoration: none;
+		color: white;
+		transition: all 0.2s ease;
+		animation: fadeInUp 0.5s ease forwards;
+		opacity: 0;
+	}
+	.server-card:hover {
+		background: rgba(255, 255, 255, 0.15);
+		border-color: rgba(255, 255, 255, 0.2);
+		transform: translateX(4px);
+	}
+	.server-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+	.server-name {
+		font-size: 1.1rem;
+		font-weight: 600;
+		margin: 0 0 0.25rem 0;
+	}
+	.server-arrow {
+		margin-left: auto;
+		color: rgba(255, 255, 255, 0.5);
+		transition: transform 0.2s ease;
+	}
+	.server-card:hover .server-arrow {
+		transform: translateX(4px);
+		color: white;
+	}
+	.tag.is-modern {
+		background: var(--color-primary);
+		color: white;
+		border-radius: var(--radius-full);
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 0.35rem 0.75rem;
+	}
+	.empty-state {
+		text-align: center;
+		padding: 3rem 2rem;
+		background: rgba(255, 255, 255, 0.05);
+		border: 2px dashed rgba(255, 255, 255, 0.2);
+		border-radius: var(--radius-xl);
+	}
+	.empty-state .icon {
+		color: rgba(255, 255, 255, 0.3);
+		margin-bottom: 1rem;
+	}
+	.empty-state p {
+		color: rgba(255, 255, 255, 0.6);
+		margin-bottom: 1.5rem;
+	}
+	.dashboard-footer-actions {
+		display: flex;
+		gap: 0.75rem;
+		justify-content: center;
+		flex-wrap: wrap;
+		padding: 1.5rem 0;
+	}
+	.dashboard-footer-actions .button {
+		border-radius: var(--radius-md);
+	}
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+	</style>
 </head>
 <body>
-	<section id="header" class="main-header-section hero is-modern is-fullheight is-bold">
+	<div class="dashboard-hero">
 		<div class="hero-head">
 			<%- include("../partials/header") %>
 		</div>
-		<div class="hero-body">
+		<div class="hero-body" style="flex: 1; display: flex; align-items: center;">
 			<div class="container">
 				<div class="has-text-centered" style="margin-bottom: 2rem;">
-					<div class="hero-floating" style="margin-bottom: 1.5rem;">
-						<img src="<%= authUser.avatar %>" alt="<%= authUser.username %>" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-					</div>
-					<h1 class="title is-2" style="font-weight: 700;">
-						Welcome back, <strong><%= authUser.username %></strong>!
+					<img src="<%= authUser.avatar %>" alt="<%= authUser.username %>" class="dashboard-user-avatar">
+					<h1 class="title is-2" style="color: white; margin-top: 1.5rem; font-weight: 700;">
+						Welcome, <strong><%= authUser.username %></strong>
 					</h1>
-					<p class="subtitle is-5" style="opacity: 0.9;">
+					<p class="subtitle is-5" style="color: rgba(255,255,255,0.7);">
 						<% if (serverData.length > 0) { %>
 							Select a server to manage
 						<% } else { %>
-							<span>You don't have any guilds yet</span>
-							<span class="icon">
-								<i class="fa fa-meh-o"></i>
-							</span>
+							<span>You don't have any servers yet</span>
+							<span class="icon"><i class="fa fa-meh-o"></i></span>
 						<% } %>
 					</p>
 				</div>
+				
 				<div class="columns is-centered">
 					<div class="column is-8 is-10-tablet">
-						<% serverData.forEach((server, index) => { %>
-							<% if (!server.botJoined) { %>
-								<a class="server-card modal-button" data-target="#post-add-modal" target="_blank" href="<%= pageData.rawJoinLink + '&guild_id=' + server.id %>" style="animation-delay: <%= index * 0.05 %>s;">
-							<% } else if (!server.isAdmin) { %>
-								<a class="server-card modal-button" data-target="#not-admin-modal" style="opacity: 0.6; animation-delay: <%= index * 0.05 %>s;">
-							<% } else { %>
-								<a class="server-card" href="/dashboard/<%= server.id %>/<%= server.id === 'maintainer' ? 'maintainer' : 'overview'%>" style="animation-delay: <%= index * 0.05 %>s;">
-							<% } %>
-								<img src="<%= server.icon %>" alt="<%= server.id %>" class="server-icon">
-								<div style="flex: 1;">
-									<h2 class="server-name"><%= server.name %></h2>
-									<p style="font-size: 0.875rem; color: rgba(255,255,255,0.6);">
-										<% if (!server.botJoined) { %>
-											<span class="icon is-small"><i class="fa fa-plus-circle"></i></span> Add Skynet
-										<% } else if (!server.isAdmin) { %>
-											<span class="icon is-small"><i class="fa fa-lock"></i></span> No admin access
-										<% } else { %>
-											<span class="icon is-small"><i class="fa fa-cog"></i></span> Manage server
-										<% } %>
-									</p>
-								</div>
-								<% if (server.botJoined && server.isAdmin) { %>
-									<span class="server-arrow">
-										<i class="fa fa-chevron-right fa-lg"></i>
-									</span>
-								<% } else if (!server.botJoined) { %>
-									<span class="tag is-modern">
-										Add Bot
-									</span>
+						<div class="server-list">
+							<% serverData.forEach((server, index) => { %>
+								<% if (!server.botJoined) { %>
+									<a class="server-card modal-button" data-target="#post-add-modal" target="_blank" href="<%= pageData.rawJoinLink + '&guild_id=' + server.id %>" style="animation-delay: <%= index * 0.05 %>s;">
+								<% } else if (!server.isAdmin) { %>
+									<a class="server-card modal-button" data-target="#not-admin-modal" style="opacity: 0.5; cursor: not-allowed; animation-delay: <%= index * 0.05 %>s;">
+								<% } else { %>
+									<a class="server-card" href="/dashboard/<%= server.id %>/<%= server.id === 'maintainer' ? 'maintainer' : 'overview'%>" style="animation-delay: <%= index * 0.05 %>s;">
 								<% } %>
-							</a>
-						<% }); %>
+									<img src="<%= server.icon %>" alt="<%= server.id %>" class="server-icon">
+									<div style="flex: 1;">
+										<h2 class="server-name"><%= server.name %></h2>
+										<p style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 0;">
+											<% if (!server.botJoined) { %>
+												<span class="icon is-small"><i class="fa fa-plus-circle"></i></span> Add Skynet to this server
+											<% } else if (!server.isAdmin) { %>
+												<span class="icon is-small"><i class="fa fa-lock"></i></span> No admin access
+											<% } else { %>
+												<span class="icon is-small"><i class="fa fa-cog"></i></span> Manage server settings
+											<% } %>
+										</p>
+									</div>
+									<% if (server.botJoined && server.isAdmin) { %>
+										<span class="server-arrow">
+											<i class="fa fa-chevron-right"></i>
+										</span>
+									<% } else if (!server.botJoined) { %>
+										<span class="tag is-modern">Add Bot</span>
+									<% } %>
+								</a>
+							<% }); %>
+						</div>
 						
 						<% if (serverData.length === 0) { %>
-							<div class="modern-card-glass has-text-centered" style="padding: 3rem; border-style: dashed;">
-								<span class="icon is-large" style="color: rgba(255,255,255,0.3); margin-bottom: 1rem;">
-									<i class="fa fa-server fa-3x"></i>
-								</span>
-								<p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">No servers found</p>
-								<a class="button is-modern is-primary" href="/add">
-									<span class="icon"><i class="fa fa-plus"></i></span>
-									<span>Add Skynet to a Server</span>
-								</a>
-							</div>
+						<div class="empty-state">
+							<span class="icon is-large">
+								<i class="fa fa-server fa-3x"></i>
+							</span>
+							<p>No servers found where you have admin access</p>
+							<a class="button is-primary is-modern" href="/add">
+								<span class="icon"><i class="fa fa-plus"></i></span>
+								<span>Add Skynet to a Server</span>
+							</a>
+						</div>
 						<% } %>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="hero-foot">
-			<div class="container has-text-centered">
-				<a class="button is-white is-outlined is-modern" href="/login">
-                    <span class="icon">
-                        <i class="fa fa-refresh"></i>
-                    </span>
-                    <span>Refresh</span>
-                </a>
-                &nbsp;
-				<a class="button is-white is-outlined is-modern" target="_blank" href="/wiki/Configuration">
-                    <span class="icon">
-                        <i class="fa fa-question-circle"></i>
-                    </span>
-                    <span>Help</span>
-                </a>
-                &nbsp;
-				<a class="button is-white is-outlined is-modern" href="/logout">
-                    <span class="icon">
-                        <i class="fa fa-sign-out"></i>
-                    </span>
-                    <span>Logout</span>
-                </a>
-                <br><br>
+			<div class="dashboard-footer-actions">
+				<a class="button is-light is-outlined" href="/login">
+					<span class="icon"><i class="fa fa-refresh"></i></span>
+					<span>Refresh</span>
+				</a>
+				<a class="button is-light is-outlined" target="_blank" href="/wiki/Configuration">
+					<span class="icon"><i class="fa fa-question-circle"></i></span>
+					<span>Help</span>
+				</a>
+				<a class="button is-light is-outlined" href="/account">
+					<span class="icon"><i class="fa fa-user-cog"></i></span>
+					<span>Account</span>
+				</a>
+				<a class="button is-danger is-outlined" href="/logout">
+					<span class="icon"><i class="fa fa-sign-out"></i></span>
+					<span>Logout</span>
+				</a>
 			</div>
 		</div>
-	</section>
+	</div>
 
+	<!-- Not Admin Modal -->
 	<div id="not-admin-modal" class="modal">
 		<div class="modal-background"></div>
-		<div class="modal-container">
-			<div class="modal-content">
-				<div class="box modern-card">
-					<h4 class="title is-4">
-						<strong>You do not have permission to access the admin console for that server.</strong> Ask the owner of the server or other moderators to give you access to the admin console (level 3 admin).
-					</h4>
-				</div>
-			</div>
+		<div class="modal-card" style="max-width: 450px;">
+			<header class="modal-card-head">
+				<p class="modal-card-title">
+					<span class="icon"><i class="fa fa-lock"></i></span>
+					Access Denied
+				</p>
+				<button class="modal-close is-large" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<p>You don't have permission to access the dashboard for this server.</p>
+				<p class="mt-3 has-text-grey is-size-7">
+					Ask the server owner or a moderator to grant you admin access (level 3).
+				</p>
+			</section>
+			<footer class="modal-card-foot">
+				<button class="button modal-close">Close</button>
+			</footer>
 		</div>
-		<button class="modal-close is-large"></button>
 	</div>
+
+	<!-- Post Add Modal -->
 	<div id="post-add-modal" class="modal">
 		<div class="modal-background"></div>
-		<div class="modal-container">
-			<div class="modal-content">
-				<div class="box modern-card">
-					<h4 class="title is-4">
-						Make sure to <strong><a href="/dashboard">refresh</a></strong> after adding Skynet.
-					</h4>
-				</div>
-			</div>
+		<div class="modal-card" style="max-width: 450px;">
+			<header class="modal-card-head">
+				<p class="modal-card-title">
+					<span class="icon has-text-success"><i class="fa fa-check-circle"></i></span>
+					Almost Done!
+				</p>
+				<button class="modal-close is-large" aria-label="close"></button>
+			</header>
+			<section class="modal-card-body">
+				<p>After adding Skynet to your server, click the button below to refresh this page.</p>
+			</section>
+			<footer class="modal-card-foot">
+				<a class="button is-success" href="/dashboard">
+					<span class="icon"><i class="fa fa-refresh"></i></span>
+					<span>Refresh</span>
+				</a>
+				<button class="button modal-close">Cancel</button>
+			</footer>
 		</div>
-		<button class="modal-close is-large"></button>
 	</div>
 
 	<%- include("../partials/footer") %>
-	<%- include("../partials/scroll-top-button") %>
 </body>
 </html>

@@ -79,12 +79,12 @@
 		"logo": "<%= baseUrl %>/static/img/logo.png",
 		"sameAs": [
 			"https://github.com/scarecr0w12/CGN-Bot",
-			"https://discord.gg/gDtzaS2"
+			"https://discord.gg/GSZfe5sBp6"
 		],
 		"contactPoint": {
 			"@type": "ContactPoint",
 			"contactType": "customer support",
-			"url": "https://discord.gg/gDtzaS2"
+			"url": "https://discord.gg/GSZfe5sBp6"
 		}
 	}
 	</script>
@@ -100,6 +100,47 @@
 			height: 2.5rem;
 		}
 	}
+
+	/* FAQ Styles */
+	.faq-item {
+		margin-bottom: 1rem;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		transition: all 0.3s ease;
+	}
+	.faq-question {
+		padding: 1.25rem;
+		background: var(--color-bg-secondary);
+		cursor: pointer;
+		font-weight: 600;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		user-select: none;
+	}
+	.faq-answer {
+		padding: 0 1.25rem;
+		max-height: 0;
+		overflow: hidden;
+		transition: all 0.3s ease;
+		background: var(--color-bg-primary);
+	}
+	.faq-item.active .faq-answer {
+		padding: 1.25rem;
+		max-height: 500px;
+		border-top: 1px solid var(--color-border);
+	}
+	.faq-item.active {
+		box-shadow: var(--shadow-md);
+		border-color: var(--color-accent);
+	}
+	.faq-icon {
+		transition: transform 0.3s ease;
+	}
+	.faq-item.active .faq-icon {
+		transform: rotate(180deg);
+	}
 	</style>
 </head>
 <body>
@@ -109,15 +150,26 @@
 		</div>
 		<div class="hero-body">
 			<div class="container has-text-centered">
+				
+				<!-- Trust Badge -->
+				<div class="fade-in" style="margin-bottom: 2rem;">
+					<span class="tag is-rounded is-medium" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; backdrop-filter: blur(5px);">
+						<span class="icon" style="color: #14b8a6; margin-right: 0.5rem;">
+							<i class="fa fa-shield"></i>
+						</span>
+						Trusted by <%= pageData.rawServerCount %>+ Servers
+					</span>
+				</div>
+
 				<div class="hero-floating">
 					<img src="/static/img/logo.png" style="border-radius: 100%; width: 180px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 4px solid rgba(255,255,255,0.2);" alt="Skynet - Free Discord Bot for Server Management and Moderation" width="180" height="180">
 				</div>
 				<br>
 				<h1 id="skynet-title" class="title is-1 is-size-2-mobile" style="font-family: Montserrat; font-weight: 700; letter-spacing: -0.02em;">
-					<span style="display: inline-block;">Skynet Discord Bot</span>
+					Elevate Your Discord Community
 				</h1>
-				<p id="skynet-subtitle" class="subtitle is-3 is-size-5-mobile" style="opacity: 0.95; font-weight: 400;">
-					The best free <img id="skynet-discord" src="/static/img/discord-logo.png" style="vertical-align: middle; padding-bottom: 4px;" alt="Discord logo" width="auto" height="40"> bot for your community
+				<p id="skynet-subtitle" class="subtitle is-3 is-size-5-mobile" style="opacity: 0.95; font-weight: 400; max-width: 800px; margin: 0 auto;">
+					The ultimate free bot for moderation, engagement, and server management.
 				</p>
 
 				<p class="hero-buttons" style="margin-top: 2.5rem;">
@@ -127,8 +179,8 @@
 						</span>
 						<span>Add to Server</span>
 					</a>
-					<a class="button is-outline-modern is-large" href="#about" style="margin-left: 1rem;">
-						<span>Learn More</span>
+					<a class="button is-outline-modern is-large" href="#features" style="margin-left: 1rem;">
+						<span>Explore Features</span>
 						<span class="icon">
 							<i class="fa fa-chevron-down"></i>
 						</span>
@@ -147,16 +199,6 @@
 				<div class="container">
 					<ul>
 						<li>
-						<a class="is-tab section-shortcut-link" href="#about">
-							About
-						</a>
-						</li>
-						<li>
-						<a class="nav-item is-tab section-shortcut-link" href="#media">
-							Media
-						</a>
-						</li>
-						<li>
 						<a class="nav-item is-tab section-shortcut-link" href="#stats">
 							Stats
 						</a>
@@ -168,7 +210,12 @@
 						</li>
 						<li>
 						<a class="nav-item is-tab section-shortcut-link" href="#customizability">
-							Customizability
+							Dashboard
+						</a>
+						</li>
+						<li>
+						<a class="nav-item is-tab section-shortcut-link" href="#faq">
+							FAQ
 						</a>
 						</li>
 						<li>
@@ -181,11 +228,6 @@
 							Team
 						</a>
 						</li>
-						<li>
-						<a class="nav-item is-tab section-shortcut-link" href="#links">
-							More
-						</a>
-						</li>
 					</ul>
 				</div>
 			</nav>
@@ -193,112 +235,8 @@
 	</header>
 
 	<main role="main">
-	<section id="about" class="hero is-light" style="padding: 4rem 0;" aria-labelledby="about-heading">
-		<div class="hero-body">
-			<div class="container">
-				<div class="columns is-centered">
-					<div class="column is-4 fade-in">
-						<div class="feature-card">
-							<div class="feature-icon">
-								<i class="fa fa-star"></i>
-							</div>
-							<h2 class="feature-title" id="about-heading">Awesome Features</h2>
-							<p class="feature-description">Packed with powerful Discord commands for moderation, fun games, and server utility</p>
-						</div>
-					</div>
-					<div class="column is-4 fade-in">
-						<div class="feature-card">
-							<div class="feature-icon">
-								<i class="fa fa-cog"></i>
-							</div>
-							<h3 class="feature-title">Easy Configuration</h3>
-							<p class="feature-description">Intuitive web dashboard to customize every aspect of your bot</p>
-						</div>
-					</div>
-					<div class="column is-4 fade-in">
-						<div class="feature-card">
-							<div class="feature-icon">
-								<i class="fa fa-heart"></i>
-							</div>
-							<h3 class="feature-title">Free & Open Source</h3>
-							<p class="feature-description">Completely free source code. Contribute on GitHub!</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<section id="media" class="hero is-medium">
-		<div class="hero-body">
-			<div class="container">
-				<nav class="columns is-vcentered">
-					<div class="column is-8 is-offset-2">
-						<nav class="columns is-vcentered is-multiline">
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-danger">
-									<span class="icon is-large">
-										<i class="fa fa-youtube-play fa-3x"></i>
-									</span>
-									<p class="subtitle is-4">YouTube</p>
-									<p class="title is-4">videos</p>
-								</div>
-							</div>
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-warning">
-									<span class="icon is-large">
-										<i class="fa fa-google fa-3x"></i>
-									</span>
-									<p class="subtitle is-4">Web results</p>
-									<p class="title is-4">from Google</p>
-								</div>
-							</div>
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-black">
-									<span class="icon is-large">
-										<i class="fa fa-reddit-alien fa-3x"></i>
-									</span>
-									<p class="title is-4">Reddit</p>
-									<p class="subtitle is-4">browser</p>
-								</div>
-							</div>
-							<div class="column is-12">
-								<img src="/static/img/media.png" style="border-radius: 3px;" alt="Skynet Discord bot media commands - YouTube videos, Google search, Reddit, RSS feeds, GIF search" width="100%" loading="lazy">
-							</div>
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-primary">
-									<span class="icon is-large">
-										<i class="fa fa-rss fa-3x"></i>
-									</span>
-									<p class="subtitle is-4">Custom</p>
-									<p class="title is-4">RSS Feeds</p>
-								</div>
-							</div>
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-success">
-									<span class="icon is-large">
-										<i class="fa fa-mouse-pointer fa-3x"></i>
-									</span>
-									<p class="subtitle is-4">Easily create</p>
-									<p class="title is-4">memes</p>
-								</div>
-							</div>
-							<div class="column is-one-third has-text-centered">
-								<div class="notification is-info">
-									<span class="icon is-large">
-										<i class="fa fa-picture-o fa-3x"></i>
-									</span>
-									<p class="title is-4">GIF + Image</p>
-									<p class="subtitle is-4">search</p>
-								</div>
-							</div>
-						</nav>
-					</div>
-				</nav>
-			</div>
-		</div>
-	</section>
-
+	
+	<!-- Stats Section -->
 	<section id="stats" class="hero is-small" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 3rem 0;">
 		<div class="hero-body">
 			<div class="container">
@@ -335,106 +273,119 @@
 		</div>
 	</section>
 
-	<section id="features" class="hero is-medium is-dark is-bold">
+	<!-- Features Grid Section -->
+	<section id="features" class="section is-medium" style="background-color: var(--color-bg-secondary);">
+		<div class="container">
+			<div class="has-text-centered" style="margin-bottom: 4rem;">
+				<h2 class="title is-2 is-gradient">Everything You Need</h2>
+				<p class="subtitle is-5">Powerful tools to manage and grow your server</p>
+			</div>
+			
+			<div class="columns is-multiline">
+				<!-- Moderation -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-gavel"></i>
+						</div>
+						<h3 class="feature-title">Advanced Moderation</h3>
+						<p class="feature-description">Keep your server safe with auto-moderation, spam detection, warnings, and customizable punishment escalation.</p>
+					</div>
+				</div>
+				<!-- Engagement -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-trophy"></i>
+						</div>
+						<h3 class="feature-title">Engagement System</h3>
+						<p class="feature-description">Reward activity with SkynetPoints, leveling, custom ranks, and leaderboards to keep members active.</p>
+					</div>
+				</div>
+				<!-- Fun -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-gamepad"></i>
+						</div>
+						<h3 class="feature-title">Fun & Games</h3>
+						<p class="feature-description">Entertain your community with Trivia, Polls, 8Ball, Memes, and Image manipulation commands.</p>
+					</div>
+				</div>
+				<!-- Utilities -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-cogs"></i>
+						</div>
+						<h3 class="feature-title">Server Utilities</h3>
+						<p class="feature-description">Essential tools like weather info, unit conversion, urban dictionary, and extensive server logging.</p>
+					</div>
+				</div>
+				<!-- Extensions -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-bolt"></i>
+						</div>
+						<h3 class="feature-title">Custom Extensions</h3>
+						<p class="feature-description">Build your own commands or install community extensions using our powerful JavaScript sandbox.</p>
+					</div>
+				</div>
+				<!-- Web Dashboard -->
+				<div class="column is-4 fade-in">
+					<div class="feature-card" style="height: 100%;">
+						<div class="feature-icon">
+							<i class="fa fa-tachometer"></i>
+						</div>
+						<h3 class="feature-title">Web Dashboard</h3>
+						<p class="feature-description">Easily configure every aspect of the bot through our intuitive and modern web interface.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Dashboard Showcase Section -->
+	<section id="customizability" class="hero is-medium is-white">
 		<div class="hero-body">
 			<div class="container">
-				<div class="tile is-ancestor">
-					<div class="tile is-vertical is-8">
-						<div class="tile is-parent">
-							<div class="tile is-child">
-								<p class="title is-2">Increase <strong>activity</strong> on <strong>your</strong> server</p>
-								<p class="subtitle is-4">Skynet provides tons of <strong>in-chat tools</strong>.</p>
-								<p>
-									Whether your server has 5 members or 5000, you can rely on Skynet to make it enjoyable while doing a great job of moderating annoying people. We've included plenty of powerful, customizable commands as well as a robust extension system, making Skynet the only bot you'll need for an awesome Discord experience.
-								</p>
-							</div>
+				<div class="columns is-vcentered">
+					<div class="column is-5 fade-in-left">
+						<h2 class="title is-2">Total Control</h2>
+						<p class="subtitle is-5" style="margin-bottom: 2rem;">
+							Manage your server from anywhere with our comprehensive dashboard. No command memorization required.
+						</p>
+						<div class="content">
+							<ul style="list-style: none; margin-left: 0;">
+								<li style="margin-bottom: 1rem;">
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									Configure moderation rules
+								</li>
+								<li style="margin-bottom: 1rem;">
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									Manage roles and permissions
+								</li>
+								<li style="margin-bottom: 1rem;">
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									View server analytics
+								</li>
+								<li style="margin-bottom: 1rem;">
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									Edit custom commands
+								</li>
+							</ul>
 						</div>
-						<div class="tile">
-							<div class="tile is-parent is-vertical">
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-comments fa-2x"></i>
-									</span>
-									<p class="title is-4">In-chat <b>polls</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-star fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>SkynetPoints</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-gavel fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Kick</b> + <b>ban</b></p>
-								</div>
-							</div>
-							<div class="tile is-parent is-vertical">
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-question fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Trivia</b> game</p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-wikipedia-w fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Wikipedia</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-table fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>ModLog</b></p>
-								</div>
-							</div>
-							<div class="tile is-parent is-vertical">
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-key fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Giveaways</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-book fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Urban</b> Dictionary</p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-check-square-o fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>To-do</b> list</p>
-								</div>
-							</div>
-							<div class="tile is-parent is-vertical">
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-trophy fa-2x"></i>
-									</span>
-									<p class="title is-4">Member <b>ranks</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-sun-o fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Weather</b> + <b>Time</b></p>
-								</div>
-								<div class="tile is-child has-text-centered">
-									<span class="icon is-large">
-										<i class="fa fa-sort fa-2x"></i>
-									</span>
-									<p class="title is-4"><b>Convert</b> units</p>
-								</div>
-							</div>
-						</div>
+						<a href="/login" class="button is-primary is-modern is-medium">
+							<span>Go to Dashboard</span>
+							<span class="icon">
+								<i class="fa fa-arrow-right"></i>
+							</span>
+						</a>
 					</div>
-					<div class="tile is-parent">
-						<div class="tile is-child">
-							<img class="image" src="/static/img/demo-activity.gif" style="border-radius: 3px;" alt="Skynet Discord bot activity demo - showing chat commands and interactions" loading="lazy">
+					<div class="column is-7 fade-in-right">
+						<div class="modern-card" style="padding: 0.5rem; background: var(--gradient-primary);">
+							<img src="/static/img/admin-console.png" style="border-radius: var(--radius-lg); display: block; box-shadow: var(--shadow-lg);" alt="Skynet Dashboard Interface" loading="lazy">
 						</div>
 					</div>
 				</div>
@@ -442,24 +393,65 @@
 		</div>
 	</section>
 
-	<section id="customizability">
-		<div class="hero-body">
-			<div class="container">
-				<nav class="columns">
-					<div class="column has-text-centered">
-						<h2 class="title is-2">
-							<strong>Configure</strong> everything in the comprehensive <strong>admin console</strong>.
-						</h2>
+	<!-- FAQ Section -->
+	<section id="faq" class="section" style="background-color: var(--color-bg-secondary); padding: 5rem 0;">
+		<div class="container">
+			<div class="has-text-centered" style="margin-bottom: 3rem;">
+				<h2 class="title is-2">Frequently Asked Questions</h2>
+				<p class="subtitle is-5">Got questions? We've got answers.</p>
+			</div>
+			
+			<div class="columns is-centered">
+				<div class="column is-8">
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							Is Skynet Discord bot free to use?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Yes! Skynet is completely free to use with all core features including moderation, fun commands, leveling, giveaways, and the web dashboard.</p>
+						</div>
 					</div>
-					<div class="column has-text-centered">
-						<h2 class="title is-2">
-							Build <strong>powerful extensions</strong> with JavaScript and share them.
-						</h2>
+
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							How do I add Skynet to my Discord server?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Click the 'Add to Server' button on our website, select your server from the dropdown, and authorize the bot. Skynet will be added instantly and you can configure it through the web dashboard.</p>
+						</div>
 					</div>
-				</nav>
-				<br><br>
-				<div class="has-text-centered">
-					<img src="/static/img/admin-console.png" style="border-radius: 3px;" alt="Skynet Discord bot web dashboard - easy server configuration and management interface" loading="lazy">
+
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							What moderation features does Skynet offer?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Skynet includes auto-moderation with spam detection, word filters, raid protection, warning/strike system, timed mutes and bans, moderation logs, and customizable punishment escalation.</p>
+						</div>
+					</div>
+
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							Can I create custom commands with Skynet?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Yes! Skynet has a powerful extension system that lets you create custom commands, automated responses, and event-triggered actions using JavaScript. You can also browse and install community-created extensions.</p>
+						</div>
+					</div>
+
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							Does Skynet have a web dashboard?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Yes, Skynet includes a comprehensive web dashboard where you can configure all bot settings, manage moderation, set up leveling and ranks, create custom commands, and view server statistics.</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -592,6 +584,14 @@
 			} else {
 				navbar.classList.remove('is-scrolled');
 			}
+		});
+
+		// FAQ Accordion
+		document.querySelectorAll('.faq-question').forEach(item => {
+			item.addEventListener('click', event => {
+				const parent = item.parentElement;
+				parent.classList.toggle('active');
+			});
 		});
 	});
 	</script>
