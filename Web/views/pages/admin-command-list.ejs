@@ -102,7 +102,13 @@
 								<div class="command-items">
 									<% for (let command of pageData.commandCategories[category]) { %>
 										<% if (command.name !== "stats") { %>
-											<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>
+											<%
+												const commandData = configData.commands[command.name] || { isEnabled: true, admin_level: 0, disabled_channel_ids: [] };
+												if (!Array.isArray(commandData.disabled_channel_ids)) commandData.disabled_channel_ids = [];
+												commandData.name = command.name;
+												commandData.description = command.description;
+												commandData.category = command.category;
+											%>
 											<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>
 										<% } %>
 									<% } %>

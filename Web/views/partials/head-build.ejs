@@ -2,3 +2,72 @@
 <link rel="stylesheet" href="/static/css/modern-ui.css?v=menu-fix">
 <script src='/static/js/app-skynet-v1.min.js'></script>
 
+<script>
+(function () {
+	if (window.__skynetMenuSectionsBound) return;
+	window.__skynetMenuSectionsBound = true;
+
+	function getStorageKey() {
+		return window.location.pathname.startsWith('/dashboard/maintainer') ? 'maintainerMenuState' : 'adminMenuState';
+	}
+
+	function initMenuSections() {
+		var menu = document.getElementById('menu');
+		if (!menu) return;
+		var sections = menu.querySelectorAll('.menu-section[data-section]');
+		if (!sections || sections.length === 0) return;
+
+		var state = null;
+		try {
+			var raw = localStorage.getItem(getStorageKey());
+			if (raw) state = JSON.parse(raw);
+		} catch (e) {
+			state = null;
+		}
+
+		for (var i = 0; i < sections.length; i++) {
+			var section = sections[i];
+			var id = section.getAttribute('data-section');
+			var hasActive = section.classList.contains('has-active');
+			if (hasActive) {
+				section.classList.remove('collapsed');
+				continue;
+			}
+			if (!state) {
+				section.classList.add('collapsed');
+				continue;
+			}
+			if (state[id]) section.classList.add('collapsed');
+			else section.classList.remove('collapsed');
+		}
+	}
+
+	function saveMenuSections() {
+		var menu = document.getElementById('menu');
+		if (!menu) return;
+		var sections = menu.querySelectorAll('.menu-section[data-section]');
+		if (!sections || sections.length === 0) return;
+		var state = {};
+		for (var i = 0; i < sections.length; i++) {
+			var section = sections[i];
+			var id = section.getAttribute('data-section');
+			state[id] = section.classList.contains('collapsed');
+		}
+		localStorage.setItem(getStorageKey(), JSON.stringify(state));
+	}
+
+	document.addEventListener('click', function (e) {
+		var header = e.target.closest ? e.target.closest('.menu-section-header') : null;
+		if (!header) return;
+		var menu = header.closest ? header.closest('#menu') : null;
+		if (!menu) return;
+		var section = header.closest ? header.closest('.menu-section[data-section]') : null;
+		if (!section) return;
+		section.classList.toggle('collapsed');
+		saveMenuSections();
+	});
+
+	document.addEventListener('DOMContentLoaded', initMenuSections);
+	document.addEventListener('turbolinks:load', initMenuSections);
+})();
+</script>

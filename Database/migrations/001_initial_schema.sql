@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     `username` VARCHAR(255) DEFAULT NULL,
     `past_names` JSON DEFAULT NULL,
     `points` INT DEFAULT 1,
+    `economy` JSON DEFAULT NULL,
+    `vote_rewards` JSON DEFAULT NULL,
     `afk_message` TEXT DEFAULT NULL,
     `server_nicks` JSON DEFAULT NULL,
     `reminders` JSON DEFAULT NULL,

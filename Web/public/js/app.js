@@ -1191,9 +1191,74 @@ SkynetPaths.dashboard = () => SkynetUtil.dashboardWrapper(() => {
 SkynetListeners.activityMQL = window.matchMedia("screen and (max-width: 768px)");
 SkynetListeners.activityMQL.addListener(SkynetUtil.activityViewPortUpdate);
 
+SkynetUtil.dashboard.initMenuSections = () => {
+	const menu = document.getElementById("menu");
+	if (!menu) return;
+	const sections = menu.querySelectorAll(".menu-section[data-section]");
+	if (!sections || sections.length === 0) return;
+
+	const isMaintainer = window.location.pathname.startsWith("/dashboard/maintainer");
+	const storageKey = isMaintainer ? "maintainerMenuState" : "adminMenuState";
+
+	let state = null;
+	try {
+		const raw = localStorage.getItem(storageKey);
+		if (raw) state = JSON.parse(raw);
+	} catch (e) {
+		state = null;
+	}
+
+	sections.forEach((section) => {
+		const id = section.dataset.section;
+		const isActiveSection = section.classList.contains("has-active");
+		if (isActiveSection) {
+			section.classList.remove("collapsed");
+			return;
+		}
+		if (!state) {
+			section.classList.add("collapsed");
+			return;
+		}
+		if (state[id]) section.classList.add("collapsed");
+		else section.classList.remove("collapsed");
+	});
+};
+
+SkynetUtil.dashboard.saveMenuSections = () => {
+	const menu = document.getElementById("menu");
+	if (!menu) return;
+	const sections = menu.querySelectorAll(".menu-section[data-section]");
+	if (!sections || sections.length === 0) return;
+
+	const isMaintainer = window.location.pathname.startsWith("/dashboard/maintainer");
+	const storageKey = isMaintainer ? "maintainerMenuState" : "adminMenuState";
+
+	const state = {};
+	sections.forEach((section) => {
+		const id = section.dataset.section;
+		state[id] = section.classList.contains("collapsed");
+	});
+	localStorage.setItem(storageKey, JSON.stringify(state));
+};
+
+if (!SkynetListeners.menuSectionToggleBound) {
+	SkynetListeners.menuSectionToggleBound = true;
+	document.addEventListener("click", (e) => {
+		const header = e.target.closest(".menu-section-header");
+		if (!header) return;
+		const menu = header.closest("#menu");
+		if (!menu) return;
+		const section = header.closest(".menu-section[data-section]");
+		if (!section) return;
+		section.classList.toggle("collapsed");
+		SkynetUtil.dashboard.saveMenuSections();
+	});
+}
+
 document.addEventListener("turbolinks:load", () => {
 	try {
 		SkynetUtil.log("Start load page JS");
+		SkynetUtil.dashboard.initMenuSections();
 		// Update active navbar item
 		SkynetUtil.updateHeader();
 

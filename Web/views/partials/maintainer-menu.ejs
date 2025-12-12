@@ -1,9 +1,7 @@
 <%
-// Helper to determine if a path is active
 const isActive = (path) => currentPage === path;
 const basePath = '/dashboard/maintainer';
 
-// Helper for menu item rendering
 const menuItem = (path, label, icon = null) => {
 	const fullPath = `${basePath}/${path}`;
 	const active = isActive(fullPath);
@@ -13,7 +11,6 @@ const menuItem = (path, label, icon = null) => {
 		: `<a href="${fullPath}">${iconHtml}${label}</a>`;
 };
 
-// Define sections and check active state
 const serversPaths = ['servers/server-list', 'servers/big-message'];
 const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists'];
 const membershipPaths = ['membership/features', 'membership/tiers', 'membership/oauth', 'membership/payments', 'membership/servers'];
@@ -23,7 +20,6 @@ const infraPaths = ['infrastructure/cloudflare'];
 const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 %>
 <aside class="menu">
-	<!-- Overview & Feedback (always visible) -->
 	<ul class="menu-list">
 		<li>
 			<%- menuItem('maintainer', 'Overview') %>
@@ -31,14 +27,13 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 		</li>
 	</ul>
 
-	<!-- Servers Section -->
 	<div class="menu-section<%= isInSection(serversPaths) ? ' has-active' : '' %>" data-section="servers">
-		<div class="menu-section-header" onclick="toggleMenuSection('servers')">
+		<div class="menu-section-header">
 			<p class="menu-label">
 				<span class="icon is-small"><i class="fa fa-server"></i></span>
 				<span>Servers</span>
 			</p>
-			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -51,14 +46,13 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 	</div>
 
 	<% if (accessPrivileges.includes("administration")) { %>
-	<!-- Global Options Section -->
 	<div class="menu-section<%= isInSection(globalPaths) ? ' has-active' : '' %>" data-section="global">
-		<div class="menu-section-header" onclick="toggleMenuSection('global')">
+		<div class="menu-section-header">
 			<p class="menu-label">
 				<span class="icon is-small"><i class="fa fa-cogs"></i></span>
 				<span>Global Options</span>
 			</p>
-			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -79,14 +73,13 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 	<% } %>
 
 	<% if (isSudoMaintainer && accessPrivileges.includes("administration")) { %>
-	<!-- Membership Section -->
 	<div class="menu-section<%= isInSection(membershipPaths) ? ' has-active' : '' %>" data-section="membership">
-		<div class="menu-section-header" onclick="toggleMenuSection('membership')">
+		<div class="menu-section-header">
 			<p class="menu-label">
 				<span class="icon is-small"><i class="fa fa-id-card"></i></span>
 				<span>Membership</span>
 			</p>
-			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -103,14 +96,13 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 	<% } %>
 
 	<% if (accessPrivileges.includes("management")) { %>
-	<!-- Management Section -->
 	<div class="menu-section<%= isInSection(managementPaths) ? ' has-active' : '' %>" data-section="management">
-		<div class="menu-section-header" onclick="toggleMenuSection('management')">
+		<div class="menu-section-header">
 			<p class="menu-label">
 				<span class="icon is-small"><i class="fa fa-wrench"></i></span>
 				<span>Management</span>
 			</p>
-			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -128,14 +120,13 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 		</div>
 	</div>
 
-	<!-- Infrastructure Section -->
 	<div class="menu-section<%= isInSection(infraPaths) ? ' has-active' : '' %>" data-section="infra">
-		<div class="menu-section-header" onclick="toggleMenuSection('infra')">
+		<div class="menu-section-header">
 			<p class="menu-label">
 				<span class="icon is-small"><i class="fa fa-cloud"></i></span>
 				<span>Infrastructure</span>
 			</p>
-			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -147,53 +138,3 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 	</div>
 	<% } %>
 </aside>
-
-<script>
-// Menu section collapse/expand functionality
-function toggleMenuSection(sectionId) {
-	const section = document.querySelector(`.menu-section[data-section="${sectionId}"]`);
-	if (!section) return;
-	
-	section.classList.toggle('collapsed');
-	saveMenuState();
-}
-
-function saveMenuState() {
-	const sections = document.querySelectorAll('.menu-section');
-	const state = {};
-	sections.forEach(section => {
-		const id = section.dataset.section;
-		state[id] = section.classList.contains('collapsed');
-	});
-	localStorage.setItem('maintainerMenuState', JSON.stringify(state));
-}
-
-function loadMenuState() {
-	const saved = localStorage.getItem('maintainerMenuState');
-	if (!saved) {
-		// Default: collapse sections without active items
-		document.querySelectorAll('.menu-section:not(.has-active)').forEach(section => {
-			section.classList.add('collapsed');
-		});
-		return;
-	}
-	
-	try {
-		const state = JSON.parse(saved);
-		document.querySelectorAll('.menu-section').forEach(section => {
-			const id = section.dataset.section;
-			// Always expand section with active item, otherwise use saved state
-			if (section.classList.contains('has-active')) {
-				section.classList.remove('collapsed');
-			} else if (state[id]) {
-				section.classList.add('collapsed');
-			}
-		});
-	} catch (e) {
-		console.error('Failed to load menu state:', e);
-	}
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', loadMenuState);
-</script>

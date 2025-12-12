@@ -1009,7 +1009,6 @@ strong {
     color: var(--color-text-muted);
 }
 
-/* Dark theme adjustments for scopes in dark mode contexts */
 .scope-item code {
     background: rgba(0, 0, 0, 0.05);
     padding: 0.1em 0.4em;
@@ -1017,7 +1016,6 @@ strong {
     font-size: 0.85em;
 }
 
-/* ===== Collapsible Menu Sections ===== */
 .menu-section {
     margin-bottom: var(--space-sm);
 }
@@ -1060,7 +1058,7 @@ strong {
 .menu-section-content {
     overflow: hidden;
     transition: max-height var(--transition-base), opacity var(--transition-fast);
-    max-height: 500px;
+    max-height: 2000px;
     opacity: 1;
 }
 
@@ -1069,7 +1067,6 @@ strong {
     opacity: 0;
 }
 
-/* Active section indicator */
 .menu-section.has-active > .menu-section-header {
     background: var(--color-primary-transparent);
 }
@@ -1078,7 +1075,6 @@ strong {
     color: var(--color-primary);
 }
 
-/* Section count badge */
 .menu-section-header .section-badge {
     font-size: 0.7rem;
     background: var(--color-bg-tertiary);
