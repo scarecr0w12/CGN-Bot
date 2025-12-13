@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-12-13
+
+### Added
+
+#### Extension Gallery - Batch 10 (Image & Media)
+
+- **18 Image Manipulation Extensions**:
+  - Avatar effects: `ship`, `wanted`, `triggered`, `pixel`, `jail`, `rip`, `wasted`, `passed`, `greyscale`, `invert`, `blur`
+  - Meme generation: `drake`, `achievement`
+  - Creative tools: `ascii`, `qrcode`, `banner`, `quoteimg`, `color`
+
+#### Extension Gallery - Batch 11 (Text Manipulation)
+
+- **14 Text Transformation Extensions**:
+  - `zalgo` - Glitchy Zalgo text
+  - `mock` - mOcKiNg SpOnGeBoB text
+  - `owo` / `uwuify` - OwO speak conversions
+  - `fancy` - Unicode fonts (8 styles)
+  - `reverse` / `flip` - Text reversal and upside-down
+  - `clap` - Add 👏 between words
+  - `spoiler` - Per-character spoiler tags
+  - `tiny` - Superscript text
+  - `vaporwave` - Fullwidth aesthetic
+  - `emojify` - Regional indicator letters
+  - `leet` - 1337 speak
+  - `scrambletext` - Middle letter scrambling
+
+---
+
 ## [1.3.0] - 2025-12-13
 
 ### Added

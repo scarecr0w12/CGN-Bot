@@ -1,0 +1,36 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🌴 Vaporwave',
+			description: 'Usage: vaporwave <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+// Convert to fullwidth characters
+const vapor = text.slice(0, 200).split('').map(char => {
+	const code = char.charCodeAt(0);
+	// Convert ASCII 33-126 to fullwidth
+	if (code >= 33 && code <= 126) {
+		return String.fromCharCode(code + 65248);
+	}
+	// Space to ideographic space
+	if (code === 32) return '　';
+	return char;
+}).join('');
+
+message.reply({
+	embeds: [embed.create({
+		title: '🌴 Ａ Ｅ Ｓ Ｔ Ｈ Ｅ Ｔ Ｉ Ｃ',
+		description: vapor,
+		color: embed.colors.PINK,
+	})],
+});

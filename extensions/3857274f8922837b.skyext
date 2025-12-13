@@ -1,0 +1,45 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '👹 Zalgo',
+			description: 'Usage: zalgo <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const zalgoUp = ['̍', '̎', '̄', '̅', '̿', '̑', '̆', '̐', '͒', '͗', '͑', '̇', '̈', '̊', '͂', '̓', '̈́', '͊', '͋', '͌', '̃', '̂', '̌', '͐', '̀', '́', '̋', '̏', '̒', '̓', '̔', '̽', '̉', 'ͣ', 'ͤ', 'ͥ', 'ͦ', 'ͧ', 'ͨ', 'ͩ', 'ͪ', 'ͫ', 'ͬ', 'ͭ', 'ͮ', 'ͯ', '̾', '͛', '͆', '̚'];
+const zalgoMid = ['̕', '̛', '̀', '́', '͘', '̡', '̢', '̧', '̨', '̴', '̵', '̶', '͜', '͝', '͞', '͟', '͠', '͢', '̸', '̷', '͡'];
+const zalgoDown = ['̖', '̗', '̘', '̙', '̜', '̝', '̞', '̟', '̠', '̤', '̥', '̦', '̩', '̪', '̫', '̬', '̭', '̮', '̯', '̰', '̱', '̲', '̳', '̹', '̺', '̻', '̼', 'ͅ', '͇', '͈', '͉', '͍', '͎', '͓', '͔', '͕', '͖', '͙', '͚', '̣'];
+
+function zalgoify(str, intensity = 3) {
+	let result = '';
+	for (const char of str) {
+		result += char;
+		if (char !== ' ') {
+			for (let i = 0; i < intensity; i++) {
+				result += zalgoUp[Math.floor(Math.random() * zalgoUp.length)];
+				result += zalgoMid[Math.floor(Math.random() * zalgoMid.length)];
+				result += zalgoDown[Math.floor(Math.random() * zalgoDown.length)];
+			}
+		}
+	}
+	return result;
+}
+
+const zalgoText = zalgoify(text.slice(0, 100));
+
+message.reply({
+	embeds: [embed.create({
+		title: '👹 Z̷̢a̶̡l̵̨g̶̢o̷̧',
+		description: zalgoText,
+		color: embed.colors.ERROR,
+	})],
+});

@@ -1,0 +1,28 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '📱 QR Code',
+			description: 'Usage: qrcode <text or URL>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const encoded = encodeURIComponent(text.slice(0, 500));
+const imageUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encoded;
+
+message.reply({
+	embeds: [embed.create({
+		title: '📱 QR Code',
+		description: 'Scan the QR code to see: ' + text.slice(0, 50) + (text.length > 50 ? '...' : ''),
+		image: { url: imageUrl },
+		color: embed.colors.DEFAULT,
+	})],
+});

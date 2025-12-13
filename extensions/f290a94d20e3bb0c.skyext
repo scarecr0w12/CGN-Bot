@@ -1,0 +1,48 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const players = message.mentions || [];
+
+const TOPICS = [
+	'Pineapple belongs on pizza.',
+	'Cats are better than dogs.',
+	'Gaming is a sport.',
+	'School uniforms should be mandatory.',
+	'AI will improve society overall.',
+	'Superheroes would cause more harm than good.',
+	'Public transport should be free.',
+];
+
+if (!players || players.length < 2) {
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ Debate Clash',
+			description: 'Mention at least 2 players.
+Example: debateclash @user1 @user2 @user3',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const shuffled = utils.random.shuffle([...players]);
+const mid = Math.ceil(shuffled.length / 2);
+const pro = shuffled.slice(0, mid);
+const con = shuffled.slice(mid);
+
+const topic = utils.random.pick(TOPICS);
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚔️ Debate Clash',
+		description: utils.discord.bold('Topic:') + ' ' + topic,
+		fields: [
+			{ name: '✅ Pro', value: pro.map(p => p.toString()).join(' ') || 'None', inline: true },
+			{ name: '❌ Con', value: con.map(p => p.toString()).join(' ') || 'None', inline: true },
+		],
+		color: embed.colors.PURPLE,
+		footer: { text: 'Set a timer and keep it civil.' },
+	})],
+});

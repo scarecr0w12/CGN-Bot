@@ -1,5 +1,5 @@
 ---
-description: Documents the progressive moderation system including strikes, infractions, and automated escalation rules
+description: Specification for implementing progressive Discord moderation systems with strike tracking and automated escalation
 ---
 
 # === USER INSTRUCTIONS ===
@@ -63,60 +63,50 @@ $END$
 
 # moderation-system-model
 
-## Core Components
+Progressive Strike System (Importance: 95/100)
+Path: Commands/Public/strike.js
+- Three-tiered strike accumulation (warning, mute, ban)
+- Configurable thresholds for automated punishment escalation
+- Strike decay over time with customizable half-life
+- Strike weight multipliers based on infraction severity
+- Permanent strike history with mod notes and timestamps
 
-### Strike Management System
-Path: `Web/controllers/dashboard/administration.js`
-- Progressive strike accumulation with configurable thresholds
-- Automated punishment escalation based on strike count
-- Strike decay rules with time-based expiration
-- Strike history tracking with moderator attribution
-Importance Score: 85
+Automated Moderation Actions (Importance: 90/100)
+Path: Commands/Public/tempban.js, Commands/Public/softban.js
+- Scheduled temporary bans with auto-expiration
+- Softban implementation for message pruning
+- Configurable ban duration presets
+- Appeal cooldown system
+- Automated unban scheduling
 
-### Infraction Data Model
-Path: `Database/Schemas/serverModlogSchema.js`
-- Hierarchical infraction tracking with severity levels
-- Automated correlation of related infractions
-- Custom metadata fields for context preservation
-- Permanent vs temporary infraction differentiation
-Importance Score: 80
+Infraction Data Model (Importance: 85/100)
+Path: Commands/Public/modlog.js
+- Detailed infraction tracking with categorization
+- Mod action attribution and reason logging
+- Appeal status tracking
+- Automated punishment calculation based on history
+- Cross-server infraction sharing for connected guilds
 
-### Automated Moderation Rules
-Path: `Internals/Events/messageCreate/Skynet.SpamHandler.js`
-- Content filtering with configurable rulesets
-- Rate limiting and spam detection
-- Message pattern matching for automated strikes  
-- Cross-channel violation tracking
-Importance Score: 75
+Escalation Rules Engine (Importance: 85/100)
+- Rule-based escalation triggers
+- Custom punishment matrices by infraction type
+- Server-specific threshold configuration
+- Auto-moderator integration points
+- Progressive timeout duration calculation
 
-### Moderation Action System
-Path: `Modules/ModLog.js`
-- Audit trail for all moderation actions
-- Required reason tracking for accountability
-- Appeal handling workflow
-- Automated notification system
-Importance Score: 70
+Violation Categories:
+- SPAM: 3 strikes = 24h mute
+- HARASSMENT: 2 strikes = 48h ban
+- NSFW: 1 strike = immediate 72h ban
+- ADVERTISING: 2 strikes = 24h mute
+- TOXICITY: Progressive mute scaling (2h -> 12h -> 24h)
 
-## Key Business Rules
-
-1. Strike Escalation
-- 1st strike: Warning
-- 2nd strike: Temporary mute (1 hour)
-- 3rd strike: Channel ban (24 hours)
-- 4th strike: Server ban (7 days)
-- 5th strike: Permanent ban
-
-2. Permission Hierarchy
-- Level 0: Helper (view only)
-- Level 1: Moderator (temporary actions)
-- Level 2: Admin (permanent actions)
-- Level 3: Owner (full control)
-
-3. Automated Actions
-- Spam Detection: Auto-mute after 5 messages/5 seconds
-- Link Filtering: Auto-delete blacklisted domains
-- Mass Mention: Strike on >5 mentions
-- Repeated Violations: Double punishment duration
+Mod Dashboard Integration:
+- Real-time infraction monitoring
+- Strike decay visualization
+- User history lookup
+- Appeal management interface
+- Mod action audit logging
 
 $END$
 

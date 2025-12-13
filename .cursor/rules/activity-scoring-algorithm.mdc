@@ -1,5 +1,5 @@
 ---
-description: Specifications for the server activity scoring and ranking algorithms used across the platform
+description: Defines the activity scoring and weighted calculation system used to measure server engagement metrics
 ---
 
 # === USER INSTRUCTIONS ===
@@ -147,47 +147,41 @@ The system provides server administrators with customizable weights and threshol
 
 # activity-scoring-algorithm
 
-Core Activity Scoring Components:
+Activity scoring system implements a weighted formula to calculate server engagement scores based on multiple factors:
 
-1. Server Activity Calculator
+Core Scoring Components (Importance: 90/100)
 Path: Web/controllers/activity.js
-- Base activity score formula: (1.5 * memberCount) + (0.5 * messagesCount * (0.005 * memberCount))
-- Activity decay factor of 0.95 per day of inactivity
-- Bonus multipliers for voice activity and unique member interactions
-- Weighted average across 7-day window
-Importance Score: 90
+- Base activity formula: (1.5 * memberCount) + (0.5 * messagesCount * (0.005 * memberCount))
+- Progressive multiplier based on server size tiers
+- Weighted channel activity tracking per message type
+- Score normalization across different server sizes
 
-2. Member Activity Tracker
-Path: Web/controllers/stats.js
-- Individual member contribution scoring
-- Message frequency normalization per channel
-- Voice activity minutes with 1.5x weight multiplier 
-- Cross-channel participation bonuses
-Importance Score: 85
+Participation Metrics (Importance: 85/100)
+Path: Internals/Client.js
+- Per-member engagement tracking
+- Voice channel participation weighting
+- Custom multipliers for interactive commands
+- Time-decay factor for historical activity
 
-3. Server Rank Calculator
+Server Ranking Logic (Importance: 80/100)
 Path: Web/controllers/dashboard/stats.js
-- Server tier classification based on activity thresholds
-- Multi-factor rank determination:
-  * Raw activity score (40% weight)
-  * Member engagement ratio (35% weight)
-  * Growth rate (25% weight)
-- Weekly rank recalculation with smoothing
-Importance Score: 80
+- Server activity tier calculation 
+- Comparative ranking across similar-sized servers
+- Weekly/monthly trend analysis
+- Activity milestone achievements
 
-Activity Score Modifiers:
-- Weekend activity bonus multiplier: 1.25x
-- Holiday event multiplier: 1.5x
-- Premium server boost: 1.1x
-- Inactive channel penalty: 0.75x
-- New member activity bonus: 1.2x first 24 hours
+Key weighted factors in scoring algorithm:
+1. Member count impact: 1.5x base multiplier
+2. Message volume: 0.5x with member count scaling
+3. Voice activity: 0.75x of message score equivalent
+4. Interactive commands: 1.25x standard message weight
+5. Time decay: -5% per day for historical actions
 
-Key Business Rules:
-1. Minimum 100 members for rank eligibility
-2. Activity scores cannot decrease by more than 15% per day
-3. Server must maintain minimum activity for 7 days to qualify
-4. Premium features unlock at specific activity score thresholds
-5. Automatic tier demotion after 14 days below threshold
+The system focuses on balanced scoring that:
+- Rewards sustained engagement over burst activity
+- Scales appropriately for different server sizes
+- Prevents gaming through spam detection
+- Provides meaningful comparison metrics
 
 $END$
 

@@ -1,0 +1,85 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const input = command.suffix.trim().toLowerCase();
+
+if (!input) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎨 Color',
+			description: 'Usage: color <hex|rgb|name>
+
+Examples:
+- color #ff5500
+- color rgb(255,85,0)
+- color red',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const namedColors = {
+	red: 'ff0000', green: '00ff00', blue: '0000ff', yellow: 'ffff00',
+	cyan: '00ffff', magenta: 'ff00ff', white: 'ffffff', black: '000000',
+	orange: 'ff8000', purple: '8000ff', pink: 'ff80ff', lime: '80ff00',
+	navy: '000080', teal: '008080', maroon: '800000', olive: '808000',
+	gray: '808080', grey: '808080', gold: 'ffd700', silver: 'c0c0c0',
+};
+
+let hex = null;
+
+// Try named color
+if (namedColors[input]) {
+	hex = namedColors[input];
+}
+// Try hex
+else if (/^#?[0-9a-f]{6}$/i.test(input)) {
+	hex = input.replace('#', '');
+}
+else if (/^#?[0-9a-f]{3}$/i.test(input)) {
+	const short = input.replace('#', '');
+	hex = short[0] + short[0] + short[1] + short[1] + short[2] + short[2];
+}
+// Try rgb
+else if (/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i.test(input)) {
+	const match = input.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+	const r = Math.min(255, parseInt(match[1])).toString(16).padStart(2, '0');
+	const g = Math.min(255, parseInt(match[2])).toString(16).padStart(2, '0');
+	const b = Math.min(255, parseInt(match[3])).toString(16).padStart(2, '0');
+	hex = r + g + b;
+}
+
+if (!hex) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎨 Color',
+			description: 'Could not parse color: ' + input,
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const colorInt = parseInt(hex, 16);
+const r = (colorInt >> 16) & 255;
+const g = (colorInt >> 8) & 255;
+const b = colorInt & 255;
+
+const imageUrl = 'https://singlecolorimage.com/get/' + hex + '/200x200';
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎨 Color Preview',
+		description:
+		utils.discord.bold('Hex:') + ' #' + hex.toUpperCase() + '
+' +
+		utils.discord.bold('RGB:') + ' rgb(' + r + ', ' + g + ', ' + b + ')
+' +
+		utils.discord.bold('Int:') + ' ' + colorInt,
+		thumbnail: { url: imageUrl },
+		color: colorInt,
+	})],
+});

@@ -1,0 +1,17 @@
+const message = require('message');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+const imageUrl = 'https://some-random-api.com/canvas/misc/wanted?avatar=' + encodeURIComponent(avatar);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🤠 WANTED',
+		description: utils.discord.bold(target.username) + ' is wanted!',
+		image: { url: imageUrl },
+		color: embed.colors.GOLD,
+		footer: { text: 'Reward: $1,000,000' },
+	})],
+});

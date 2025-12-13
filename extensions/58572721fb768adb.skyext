@@ -1,0 +1,52 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const raw = command.suffix.trim();
+if (!raw) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔁 Reverse Type',
+			description: 'Usage: ' + command.prefix + command.key + ' [all|words] <text>
+
+Examples:
+- ' + command.prefix + command.key + ' all hello world
+- ' + command.prefix + command.key + ' words hello world',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const parts = raw.split(/s+/).filter(Boolean);
+const mode = (parts[0] || '').toLowerCase();
+let text;
+let out;
+
+if (mode === 'words') {
+	text = parts.slice(1).join(' ');
+	if (!text) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🔁 Reverse Type',
+				description: 'Provide text to reverse.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+	out = text.split(/s+/).map(w => w.split('').reverse().join('')).join(' ');
+} else {
+	text = mode === 'all' ? parts.slice(1).join(' ') : raw;
+	out = text.split('').reverse().join('');
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔁 Reverse Type',
+		description: utils.discord.bold('Input:') + ' ' + text + '
+' + utils.discord.bold('Output:') + ' ' + out,
+		color: embed.colors.PURPLE,
+	})],
+});

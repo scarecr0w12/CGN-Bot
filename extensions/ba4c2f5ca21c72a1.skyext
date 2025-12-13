@@ -1,0 +1,51 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const sub = (command.suffix.trim().split(/s+/)[0] || 'new').toLowerCase();
+
+const LOCATIONS = ['a quiet mansion', 'a space station', 'a museum after hours', 'a luxury train', 'a small-town diner'];
+const WEAPONS = ['a candlestick', 'a poisoned drink', 'a mysterious device', 'a letter opener', 'a rare statue'];
+const MOTIVES = ['revenge', 'greed', 'jealousy', 'a hidden secret', 'mistaken identity'];
+const SUSPECTS = ['the chef', 'the librarian', 'the detective', 'the heir', 'the stranger', 'the security guard', 'the doctor'];
+const CLUES = ['a torn note', 'a single glove', 'muddy footprints', 'a broken watch', 'a strange perfume scent', 'a missing key'];
+
+if (sub !== 'new' && sub !== 'start') {
+	message.reply({
+		embeds: [embed.create({
+			title: '🧩 Alibi',
+			description: 'Usage: alibi new',
+			color: embed.colors.DEFAULT,
+		})],
+	});
+	return;
+}
+
+const location = utils.random.pick(LOCATIONS);
+const weapon = utils.random.pick(WEAPONS);
+const motive = utils.random.pick(MOTIVES);
+const suspects = utils.random.shuffle([...SUSPECTS]).slice(0, 4);
+const clues = utils.random.shuffle([...CLUES]).slice(0, 3);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧩 Alibi - Mystery Prompt',
+		description:
+		utils.discord.bold('Scene:') + ' In ' + location + ', someone was murdered with ' + weapon + '.
+' +
+		utils.discord.bold('Motive:') + ' ' + motive + '
+
+' +
+		utils.discord.bold('Suspects:') + '
+- ' + suspects.join('
+- ') + '
+
+' +
+		utils.discord.bold('Clues:') + '
+- ' + clues.join('
+- '),
+		color: embed.colors.PURPLE,
+		footer: { text: 'Use this to roleplay, debate, and deduce the culprit.' },
+	})],
+});

@@ -1,5 +1,5 @@
 ---
-description: Technical specification for cross-shard communication and coordination in a distributed Discord bot system
+description: Handles communication protocols and state synchronization between Discord bot shards
 ---
 
 # === USER INSTRUCTIONS ===
@@ -47,48 +47,40 @@ $END$
 
 # shard-communication-protocol
 
-The shard communication protocol implements a custom IPC system for coordinating Discord bot shards with the following key components:
+The shard communication protocol implements a custom IPC system for Discord bot shard coordination:
 
-## Message Routing System (Importance Score: 85)
-- Custom message types for cross-shard coordination:
-  - GUILD_INFO - Propagates guild configuration changes
-  - MEMBER_UPDATE - Syncs member data across shards 
-  - COMMAND_SYNC - Coordinates command registration
-  - STATS_UPDATE - Aggregates metrics and activity data
-- Sharded data storage with eventual consistency
-- Priority-based message delivery with failure recovery
+Key Protocol Components:
 
-## State Synchronization (Importance Score: 90)
-- Master-worker architecture for state management
-- Incremental state updates to minimize IPC overhead
-- Shared state primitives for:
-  - Premium feature activation
-  - Global user cooldowns
-  - Cross-server moderation actions
-  - Economy transactions
-- Transaction logging with rollback capability
+1. Shard Coordination Layer (Importance: 95/100)
+- Message routing between master and child shards using custom message types
+- State synchronization across shards for guild data and caches 
+- Real-time dashboard metric aggregation from all shards
+- Cross-shard broadcast system for global commands/events
 
-## Shard Lifecycle Management (Importance Score: 80)
-- Automated shard scaling based on guild count
-- Graceful shard respawning with state preservation
-- Dead shard detection and recovery
-- Staggered startup to prevent API rate limits
+2. Master-Worker Communication (Importance: 90/100)
+- Request-response pattern for cross-shard data queries
+- Heartbeat system for shard health monitoring
+- Graceful shutdown coordination
+- Shard respawn orchestration
 
-## Cross-Shard Features (Importance Score: 85)
-- Global user presence tracking
-- Distributed command rate limiting
-- Cross-shard ban synchronization
-- Global economy transaction coordination
-- Multi-shard statistics aggregation
+Message Types:
+- BROADCAST: Global message to all shards
+- GUILD_FETCH: Request guild data from specific shard
+- METRIC_UPDATE: Dashboard statistics aggregation
+- SHARD_READY: Shard initialization complete
+- STATE_SYNC: Cross-shard state synchronization
 
-File Paths:
-```
-Internals/Sharder.js          - Core sharding implementation
-Internals/ShardManager.js     - Shard lifecycle management
-Internals/IPC/Router.js       - Message routing system
-Internals/IPC/Protocol.js     - Protocol definitions
-Internals/IPC/State.js        - State synchronization
-```
+State Synchronization:
+- Guild configurations 
+- Premium feature access
+- Global user data
+- Cache invalidation events
+
+The protocol focuses on maintaining consistency across shards while enabling scalable bot operations through:
+- Distributed guild data management
+- Coordinated command execution
+- Real-time metrics collection
+- Cross-shard state consistency
 
 $END$
 

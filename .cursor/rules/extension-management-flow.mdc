@@ -1,5 +1,5 @@
 ---
-description: Specifications for handling extension marketplace workflows, validation, versioning and permissions
+description: Documentation for extension marketplace system, validation flows, versioning and permission controls
 ---
 
 # === USER INSTRUCTIONS ===
@@ -55,46 +55,55 @@ $END$
 
 # extension-management-flow
 
-## Extension Validation System (Importance: 85)
-- Multi-stage validation pipeline for submitted extensions
-- Custom security scanning for malicious code patterns 
-- Version compatibility checks against bot core
-- Automated test suite execution for new submissions
-- File path: Web/controllers/dashboard/extension-validation.js
+The extension management system implements a complete marketplace and validation workflow for Discord bot extensions.
 
-## Extension Versioning Logic (Importance: 80)
-- Semantic versioning enforcement for extensions
-- Breaking change detection between versions
-- Automated compatibility matrix generation
-- Version-specific feature flagging system
-- File path: Web/controllers/dashboard/extension-versioning.js
+## Extension Marketplace (Importance: 95/100)
+Path: `Web/controllers/extensions.js`
+- Custom extension format validation with semantic versioning
+- Publisher verification and revenue sharing model
+- Extension signing and integrity verification 
+- Usage analytics and popularity tracking
+- Per-server installation limits and quotas
 
-## Permission Management (Importance: 90)
-- Multi-tier permission system for extension management:
-  - Extension Owners: Full control over own extensions
-  - Maintainers: Review and approve submissions
-  - Administrators: Global marketplace management
-- Cross-server extension authorization
-- Role-based access control for extension features
-- File path: Web/middleware/extension-permissions.js
+## Version Control (Importance: 90/100)
+Path: `Modules/PremiumExtensionsManager.js`
+- Semantic version comparison and compatibility checking
+- Automated dependency resolution between extensions
+- Version rollback capabilities with state preservation
+- Breaking change detection and notification system
+- Version migration assistance
 
-## Marketplace Workflow (Importance: 85)
-- Extension submission pipeline:
-  1. Initial submission with metadata
-  2. Automated validation checks
-  3. Manual review queue
-  4. Approval/rejection with feedback
-  5. Publication to marketplace
-- Point-based monetization system
-- Extension rating and review system
-- File path: Web/controllers/dashboard/marketplace.js
-
-## Extension Installation Flow (Importance: 75) 
+## Permission Management (Importance: 85/100)
+Path: `Web/routes/account.js`
+- Granular permission model for extension capabilities
 - Server-specific extension configuration
-- Dependency resolution and conflict checking
-- Automated rollback on failed installations
-- Extension state persistence
-- File path: Web/controllers/dashboard/extension-install.js
+- Role-based access control for extension features
+- Extension isolation and resource limiting
+- Cross-extension permission inheritance
+
+## Validation Pipeline (Importance: 80/100)
+Path: `Internals/SlashCommands/SlashCommandHandler.js`
+- Multi-stage extension validation workflow
+- Code safety analysis and sandbox testing
+- Resource usage profiling and limits
+- Integration point validation
+- Command conflict resolution
+
+## Gallery Management (Importance: 75/100)
+Path: `Database/Schemas/gallerySchema.js`
+- Extension categorization and tagging system
+- Rating and review management
+- Featured extension rotation
+- Installation tracking metrics
+- Support thread management
+
+## Installation Flow (Importance: 70/100)
+Path: `Modules/Worker.js`
+- Atomic installation with rollback support
+- Dependency resolution and installation
+- Configuration validation and persistence
+- Post-install health checks
+- Extension warm-up and initialization
 
 $END$
 

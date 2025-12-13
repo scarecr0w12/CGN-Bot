@@ -1,0 +1,25 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '👏 Clap',
+			description: 'Usage: clap <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const clapped = text.slice(0, 200).split(/\s+/).join(' 👏 ').toUpperCase();
+
+message.reply({
+	embeds: [embed.create({
+		description: '👏 ' + clapped + ' 👏',
+		color: embed.colors.GOLD,
+	})],
+});

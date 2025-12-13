@@ -1,0 +1,18 @@
+const message = require('message');
+const embed = require('embed');
+const utils = require('utils');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+// Use popcat API for RIP
+const imageUrl = 'https://api.popcat.xyz/rip?image=' + encodeURIComponent(avatar) + '&text=' + encodeURIComponent('Rest in Peace');
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚰️ Rest In Peace',
+		description: 'In loving memory of ' + utils.discord.bold(target.username),
+		image: { url: imageUrl },
+		color: embed.colors.DEFAULT,
+	})],
+});

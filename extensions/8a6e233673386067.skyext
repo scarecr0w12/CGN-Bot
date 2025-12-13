@@ -1,0 +1,107 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const key = 'moviequiz_' + message.author.id;
+
+const QUESTIONS = [
+	{
+		clue: 'A young wizard attends a magical school and faces a dark lord.',
+		choices: ['Harry Potter', 'The Matrix', 'Inception', 'Star Wars'],
+		answer: 'a',
+	},
+	{
+		clue: 'A ship hits an iceberg and a love story unfolds.',
+		choices: ['Avatar', 'Titanic', 'The Notebook', 'Jaws'],
+		answer: 'b',
+	},
+	{
+		clue: 'A team of heroes tries to reverse a catastrophic snap.',
+		choices: ['The Avengers', 'Avengers: Endgame', 'Iron Man', 'Guardians of the Galaxy'],
+		answer: 'b',
+	},
+	{
+		clue: 'A clownfish travels the ocean to find his son.',
+		choices: ['Finding Nemo', 'Shark Tale', 'Moana', 'The Little Mermaid'],
+		answer: 'a',
+	},
+];
+
+const letters = ['a','b','c','d'];
+const formatChoices = (q) => {
+	let out = '';
+	for (let i = 0; i < q.choices.length; i++) {
+		out += utils.discord.bold(letters[i].toUpperCase() + ':') + ' ' + q.choices[i] + '
+';
+	}
+	return out;
+};
+
+if (sub === 'start' || !sub) {
+	const q = utils.random.pick(QUESTIONS);
+	extension.storage.write(key, { q, startedAt: Date.now() });
+	message.reply({
+		embeds: [embed.create({
+			title: '🎬 Movie Quiz',
+			description: utils.discord.bold('Clue:') + ' ' + q.clue + '
+
+' + formatChoices(q) + '
+Answer with: moviequiz answer <a|b|c|d>',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'answer') {
+	const state = extension.storage.get(key);
+	if (!state || !state.q) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🎬 Movie Quiz',
+				description: 'No active question. Use: moviequiz start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const guess = (args[1] || '').toLowerCase();
+	if (!letters.includes(guess)) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🎬 Movie Quiz',
+				description: 'Answer must be a, b, c, or d.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const correct = state.q.answer;
+	extension.storage.write(key, null);
+	message.reply({
+		embeds: [embed.create({
+			title: guess === correct ? '✅ Correct!' : '❌ Wrong!',
+			description:
+			utils.discord.bold('Your answer:') + ' ' + guess.toUpperCase() + '
+' +
+			utils.discord.bold('Correct:') + ' ' + correct.toUpperCase() + ' (' + state.q.choices[letters.indexOf(correct)] + ')',
+			color: guess === correct ? embed.colors.SUCCESS : embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎬 Movie Quiz',
+		description: 'Usage: moviequiz start | moviequiz answer <a|b|c|d>',
+		color: embed.colors.DEFAULT,
+	})],
+});

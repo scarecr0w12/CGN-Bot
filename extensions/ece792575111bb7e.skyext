@@ -1,0 +1,16 @@
+const message = require('message');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+const imageUrl = 'https://some-random-api.com/canvas/overlay/triggered?avatar=' + encodeURIComponent(avatar);
+
+message.reply({
+	embeds: [embed.create({
+		title: '😤 TRIGGERED',
+		description: target.username + ' has been triggered!',
+		image: { url: imageUrl },
+		color: embed.colors.ERROR,
+	})],
+});

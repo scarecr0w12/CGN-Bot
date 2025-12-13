@@ -1,0 +1,38 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '1337 Leet',
+			description: 'Usage: leet <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const leetMap = {
+	'a': '4', 'A': '4',
+	'e': '3', 'E': '3',
+	'i': '1', 'I': '1',
+	'o': '0', 'O': '0',
+	's': '5', 'S': '5',
+	't': '7', 'T': '7',
+	'l': '1', 'L': '1',
+	'b': '8', 'B': '8',
+	'g': '9', 'G': '9',
+};
+
+const leet = text.slice(0, 300).split('').map(c => leetMap[c] || c).join('');
+
+message.reply({
+	embeds: [embed.create({
+		title: '1337 5p34k',
+		description: leet,
+		color: embed.colors.SUCCESS,
+	})],
+});

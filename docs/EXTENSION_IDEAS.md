@@ -256,9 +256,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `scramble` | Unscramble words | ✅ SEEDED (Batch 1) |
 | `wordchain` | Each word starts with last letter | ✅ SEEDED (Batch 7) |
 | `anagram` | Find words from letters | ✅ SEEDED (Batch 3) |
-| `ghost` | Add letters without completing words | 📦 EXTENSION |
-| `acronym` | Create funny acronyms | 📦 EXTENSION |
-| `reversetype` | Type words backwards | 📦 EXTENSION |
+| `ghost` | Add letters without completing words | ✅ SEEDED (Batch 9) |
+| `acronym` | Create funny acronyms | ✅ SEEDED (Batch 9) |
+| `reversetype` | Type words backwards | ✅ SEEDED (Batch 9) |
 | `aki` | Akinator | ✅ SEEDED (Batch 1) |
 
 ### Trivia & Quiz
@@ -268,9 +268,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `trivia` | Trivia Quiz | ❌ BUILT-IN (`trivia.js`) |
 | `musicquiz` | Lyrics Guessing | ✅ SEEDED (Batch 5) |
 | `flagquiz` | Flag Identification | ✅ SEEDED (Batch 5) |
-| `moviequiz` | Guess movies | 📦 EXTENSION |
-| `emojiquiz` | Guess words from emojis | 📦 EXTENSION |
-| `quotequiz` | Identify famous quotes | 📦 EXTENSION |
+| `moviequiz` | Guess movies | ✅ SEEDED (Batch 9) |
+| `emojiquiz` | Guess words from emojis | ✅ SEEDED (Batch 9) |
+| `quotequiz` | Identify famous quotes | ✅ SEEDED (Batch 9) |
 
 ### Reaction Games
 
@@ -278,10 +278,10 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `reaction` | Test reaction time | ✅ SEEDED (Batch 1) |
 | `typerace` | Speed typing competition | ✅ SEEDED (Batch 1) |
-| `emojisimon` | Repeat emoji sequences | 📦 EXTENSION |
-| `buttonrush` | Click button before it disappears | 📦 EXTENSION |
+| `emojisimon` | Repeat emoji sequences | ✅ SEEDED (Batch 9) |
+| `buttonrush` | Click button before it disappears | ✅ SEEDED (Batch 9) |
 | `dodge` | React with correct emoji | 📦 EXTENSION |
-| `mathsnap` | React to true equations | 📦 EXTENSION |
+| `mathsnap` | React to true equations | ✅ SEEDED (Batch 9) |
 
 ### Social Deduction
 
@@ -290,9 +290,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `mafia` | Social deduction | ✅ SEEDED (Batch 2) |
 | `spyfall` | Find the spy | ✅ SEEDED (Batch 4) |
 | `traitor` | Vote out traitor | ✅ SEEDED (Batch 5) |
-| `liar` | Detect who has different info | 📦 EXTENSION |
+| `liar` | Detect who has different info | ✅ SEEDED (Batch 9) |
 | `secretroles` | Hidden role games | 📦 EXTENSION |
-| `alibi` | Murder mystery | 📦 EXTENSION |
+| `alibi` | Murder mystery | ✅ SEEDED (Batch 9) |
 
 ### Puzzle Games
 
@@ -305,8 +305,8 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `pattern` | Complete sequences | ✅ SEEDED (Batch 4) |
 | `cipher` | Decode encrypted messages | ✅ SEEDED (Batch 4) |
 | `maze` | Navigate text mazes | ✅ SEEDED (Batch 5) |
-| `nonogram` | Picross puzzles | 📦 EXTENSION |
-| `logicgrid` | Logic deduction puzzles | 📦 EXTENSION |
+| `nonogram` | Picross puzzles | ✅ SEEDED (Batch 9) |
+| `logicgrid` | Logic deduction puzzles | ✅ SEEDED (Batch 9) |
 
 ### Party Games
 
@@ -318,7 +318,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `thisorthat` | This or That choices | ✅ SEEDED (Batch 1) |
 | `icebreaker` | Conversation starters | ✅ SEEDED |
 | `hottake` | Debate topics | ✅ SEEDED (Batch 5) |
-| `debateclash` | Assign pro/con for debates | 📦 EXTENSION |
+| `debateclash` | Assign pro/con for debates | ✅ SEEDED (Batch 9) |
 | `captionbattle` | Caption contest | ✅ SEEDED (Batch 5) |
 | `story` | Chain story | ✅ SEEDED (Batch 3) |
 
@@ -364,58 +364,63 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `ship` | Ship users image | 📦 EXTENSION |
-| `wanted` | Wanted poster | 📦 EXTENSION |
-| `triggered` | TRIGGERED effect | 📦 EXTENSION |
-| `pixel` | Pixelate image | 📦 EXTENSION |
+| `ship` | Ship users image | ✅ SEEDED (Batch 10) |
+| `wanted` | Wanted poster | ✅ SEEDED (Batch 10) |
+| `triggered` | TRIGGERED effect | ✅ SEEDED (Batch 10) |
+| `pixel` | Pixelate image | ✅ SEEDED (Batch 10) |
 | `glitch` | Glitch effect | 📦 EXTENSION |
 | `petpet` | Petting GIF | 📦 EXTENSION |
 | `drip` | Add drip/swag | 📦 EXTENSION |
-| `jail` | Put behind bars | 📦 EXTENSION |
-| `rip` | Gravestone image | 📦 EXTENSION |
+| `jail` | Put behind bars | ✅ SEEDED (Batch 10) |
+| `rip` | Gravestone image | ✅ SEEDED (Batch 10) |
 | `trash` | Trash meme | 📦 EXTENSION |
 | `beautiful` | "Beautiful" meme | 📦 EXTENSION |
 | `facepalm` | Facepalm overlay | 📦 EXTENSION |
-| `wasted` | GTA Wasted effect | 📦 EXTENSION |
+| `wasted` | GTA Wasted effect | ✅ SEEDED (Batch 10) |
 
 ### Meme Generation
 
 | Command | Description | Status |
 |---------|-------------|--------|
 | `caption` | Meme captioner | ✅ SEEDED (Batch 5) |
-| `drake` | Drake meme template | 📦 EXTENSION |
+| `drake` | Drake meme template | ✅ SEEDED (Batch 10) |
 | `changemymind` | Change My Mind meme | 📦 EXTENSION |
 | `distracted` | Distracted boyfriend meme | 📦 EXTENSION |
-| `achievement` | Minecraft achievement | 📦 EXTENSION |
+| `achievement` | Minecraft achievement | ✅ SEEDED (Batch 10) |
 
 ### Creative
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `ascii` | Text to ASCII | 📦 EXTENSION |
-| `qrcode` | Text to QR | 📦 EXTENSION |
-| `banner` | Generate text banners | 📦 EXTENSION |
-| `quote` | Create quote images | 📦 EXTENSION |
+| `ascii` | Text to ASCII | ✅ SEEDED (Batch 10) |
+| `qrcode` | Text to QR | ✅ SEEDED (Batch 10) |
+| `banner` | Generate text banners | ✅ SEEDED (Batch 10) |
+| `quote` | Create quote images | ✅ SEEDED (Batch 10) |
 | `polaroid` | Polaroid photo effect | 📦 EXTENSION |
 | `album` | Album cover generator | 📦 EXTENSION |
 
 ---
 
-## 📝 TEXT MANIPULATION (BUILT-IN)
+## 📝 TEXT MANIPULATION (EXTENSIONS)
 
-*All Text commands should be Built-in.*
+*Text manipulation commands implemented as extensions.*
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `zalgo` | Glitchy Zalgo text | 🚧 PLANNED BUILT-IN |
-| `mock` | mOcKiNg TeXt | 🚧 PLANNED BUILT-IN |
-| `owo` | OwO speak conversion | 🚧 PLANNED BUILT-IN |
-| `fancy` | Fancy Unicode fonts | 🚧 PLANNED BUILT-IN |
-| `reverse` | Reverse text | 🚧 PLANNED BUILT-IN |
-| `clap` | Add 👏 between words | 🚧 PLANNED BUILT-IN |
-| `spoiler` | Spoilerify text | 🚧 PLANNED BUILT-IN |
-| `tiny` | Tiny text conversion | 🚧 PLANNED BUILT-IN |
-| `vaporwave` | ｖａｐｏｒｗａｖｅ text | 🚧 PLANNED BUILT-IN |
+| `zalgo` | Glitchy Zalgo text | ✅ SEEDED (Batch 11) |
+| `mock` | mOcKiNg TeXt | ✅ SEEDED (Batch 11) |
+| `owo` | OwO speak conversion | ✅ SEEDED (Batch 11) |
+| `fancy` | Fancy Unicode fonts | ✅ SEEDED (Batch 11) |
+| `reverse` | Reverse text | ✅ SEEDED (Batch 11) |
+| `clap` | Add 👏 between words | ✅ SEEDED (Batch 11) |
+| `spoiler` | Spoilerify text | ✅ SEEDED (Batch 11) |
+| `tiny` | Tiny text conversion | ✅ SEEDED (Batch 11) |
+| `vaporwave` | ｖａｐｏｒｗａｖｅ text | ✅ SEEDED (Batch 11) |
+| `emojify` | Regional indicator letters | ✅ SEEDED (Batch 11) |
+| `uwuify` | Extra cute UwU speak | ✅ SEEDED (Batch 11) |
+| `leet` | 1337 speak conversion | ✅ SEEDED (Batch 11) |
+| `scrambletext` | Scramble middle of words | ✅ SEEDED (Batch 11) |
+| `flip` | Upside down text | ✅ SEEDED (Batch 11) |
 
 ---
 

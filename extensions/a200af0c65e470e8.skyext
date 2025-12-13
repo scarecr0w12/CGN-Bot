@@ -1,0 +1,86 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const sub = (command.suffix.trim().split(/s+/)[0] || '').toLowerCase();
+const key = 'buttonrush_' + message.author.id;
+
+if (sub === 'start') {
+	const delayMs = utils.random.int(800, 2500);
+	const startAt = Date.now() + delayMs;
+	extension.storage.write(key, { active: true, startAt });
+	message.reply({
+		embeds: [embed.create({
+			title: '🟩 Button Rush',
+			description: 'Get ready...
+
+When I say GO, run: buttonrush click
+
+(Wait about ' + utils.format.number(delayMs) + 'ms)',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'end') {
+	extension.storage.write(key, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🟩 Button Rush',
+			description: 'Ended.',
+			color: embed.colors.DEFAULT,
+		})],
+	});
+	return;
+}
+
+if (sub === 'click') {
+	const state = extension.storage.get(key);
+	if (!state || !state.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🟩 Button Rush',
+				description: 'No active run. Use: buttonrush start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const now = Date.now();
+	const reaction = now - state.startAt;
+	extension.storage.write(key, null);
+
+	if (reaction < 0) {
+		message.reply({
+			embeds: [embed.create({
+				title: '⏱️ Too Early!',
+				description: 'You clicked ' + utils.format.number(Math.abs(reaction)) + 'ms before GO.
+
+Try again: buttonrush start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	message.reply({
+		embeds: [embed.create({
+			title: '⚡ Reaction Time',
+			description: 'Your reaction time: ' + utils.discord.bold(utils.format.number(reaction) + 'ms'),
+			color: reaction < 300 ? embed.colors.SUCCESS : embed.colors.BLUE,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🟩 Button Rush',
+		description: 'Usage: buttonrush start | buttonrush click | buttonrush end',
+		color: embed.colors.DEFAULT,
+	})],
+});

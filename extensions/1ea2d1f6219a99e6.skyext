@@ -1,0 +1,57 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: 'UwU',
+			description: 'Usage: uwuify <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const faces = ['UwU', 'OwO', '>w<', '^w^', ':3', '(^-^)'];
+const actions = ['*blushes*', '*nuzzles*', '*giggles*', '*pounces*', '*boops*'];
+
+function uwuify(str) {
+	let result = str
+		.replace(/[rl]/gi, 'w')
+		.replace(/[RL]/gi, 'W')
+		.replace(/n([aeiou])/gi, 'ny$1')
+		.replace(/ove/gi, 'uv')
+		.replace(/th/gi, 'd');
+	
+	// Add stuttering to some words
+	const words = result.split(' ');
+	result = words.map((word, i) => {
+		if (Math.random() < 0.2 && word.length > 2) {
+			return word[0] + '-' + word;
+		}
+		return word;
+	}).join(' ');
+	
+	// Add random face at end
+	result += ' ' + faces[Math.floor(Math.random() * faces.length)];
+	
+	// Maybe add action
+	if (Math.random() < 0.3) {
+		result += ' ' + actions[Math.floor(Math.random() * actions.length)];
+	}
+	
+	return result;
+}
+
+const uwued = uwuify(text.slice(0, 300));
+
+message.reply({
+	embeds: [embed.create({
+		description: uwued,
+		color: embed.colors.PINK,
+		footer: { text: 'UwU' },
+	})],
+});

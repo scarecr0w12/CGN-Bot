@@ -1,0 +1,83 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const key = 'emojiquiz_' + message.author.id;
+
+const QUESTIONS = [
+	{ emojis: '🌧️🧔☂️', answers: ['rain man', 'rainman'] },
+	{ emojis: '🦁👑', answers: ['lion king', 'the lion king'] },
+	{ emojis: '🚢🧊💔', answers: ['titanic'] },
+	{ emojis: '🕷️🧑', answers: ['spiderman', 'spider-man', 'spider man'] },
+	{ emojis: '👻🔫', answers: ['ghostbusters', 'ghost busters'] },
+	{ emojis: '🧊👸', answers: ['frozen'] },
+];
+
+if (sub === 'start' || !sub) {
+	const q = utils.random.pick(QUESTIONS);
+	extension.storage.write(key, q);
+	message.reply({
+		embeds: [embed.create({
+			title: '😀 Emoji Quiz',
+			description: 'Guess the phrase:
+
+' + utils.discord.bold(q.emojis) + '
+
+Answer with: emojiquiz answer <your guess>',
+			color: embed.colors.PURPLE,
+		})],
+	});
+	return;
+}
+
+if (sub === 'answer') {
+	const q = extension.storage.get(key);
+	if (!q) {
+		message.reply({
+			embeds: [embed.create({
+				title: '😀 Emoji Quiz',
+				description: 'No active question. Use: emojiquiz start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const guess = args.slice(1).join(' ').trim().toLowerCase();
+	if (!guess) {
+		message.reply({
+			embeds: [embed.create({
+				title: '😀 Emoji Quiz',
+				description: 'Provide your guess. Example: emojiquiz answer lion king',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	extension.storage.write(key, null);
+	const correct = q.answers.includes(guess);
+	message.reply({
+		embeds: [embed.create({
+			title: correct ? '✅ Correct!' : '❌ Wrong!',
+			description: correct
+			? 'Nice! That was: ' + utils.discord.bold(q.answers[0])
+			: 'Correct answer: ' + utils.discord.bold(q.answers[0]),
+			color: correct ? embed.colors.SUCCESS : embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '😀 Emoji Quiz',
+		description: 'Usage: emojiquiz start | emojiquiz answer <text>',
+		color: embed.colors.DEFAULT,
+	})],
+});

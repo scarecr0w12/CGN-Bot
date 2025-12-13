@@ -1,0 +1,110 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+const key = 'logicgrid_' + message.author.id;
+
+const PUZZLES = [
+	{
+		prompt: 'Three friends (Alex, Blake, Casey) ordered drinks (Tea, Coffee, Juice).
+
+Clues:
+1) Alex did not order Tea.
+2) Casey did not order Coffee.
+3) Blake ordered Tea.
+
+Question: What did Casey order?',
+		choices: ['Coffee', 'Juice', 'Tea'],
+		answer: 'b',
+		why: 'Blake has Tea. Alex cannot have Tea, so Alex has Coffee. Casey cannot have Coffee, so Casey has Juice.',
+	},
+	{
+		prompt: 'Three pets (Cat, Dog, Fish) belong to (Sam, Taylor, Jordan).
+
+Clues:
+1) Sam does not have the Fish.
+2) Jordan has the Cat.
+3) Taylor does not have the Cat.
+
+Question: Who has the Fish?',
+		choices: ['Sam', 'Taylor', 'Jordan'],
+		answer: 'b',
+		why: 'Jordan has Cat. Taylor cannot have Cat, so Taylor has Fish. Sam then has Dog.',
+	},
+];
+
+const letters = ['a','b','c'];
+
+if (sub === 'start' || !sub) {
+	const p = utils.random.pick(PUZZLES);
+	extension.storage.write(key, p);
+	message.reply({
+		embeds: [embed.create({
+			title: '🧠 Logic Grid',
+			description: p.prompt + '
+
+' +
+			utils.discord.bold('A:') + ' ' + p.choices[0] + '
+' +
+			utils.discord.bold('B:') + ' ' + p.choices[1] + '
+' +
+			utils.discord.bold('C:') + ' ' + p.choices[2] + '
+
+' +
+			'Answer with: logicgrid answer <a|b|c>',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'answer') {
+	const p = extension.storage.get(key);
+	if (!p) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🧠 Logic Grid',
+				description: 'No active puzzle. Use: logicgrid start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const guess = (args[1] || '').toLowerCase();
+	if (!letters.includes(guess)) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🧠 Logic Grid',
+				description: 'Answer must be a, b, or c.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	extension.storage.write(key, null);
+	const correct = guess === p.answer;
+	message.reply({
+		embeds: [embed.create({
+			title: correct ? '✅ Correct!' : '❌ Wrong',
+			description: (correct ? 'Nice deduction!' : 'Not quite.') + '
+
+' + utils.discord.bold('Explanation:') + ' ' + p.why,
+			color: correct ? embed.colors.SUCCESS : embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧠 Logic Grid',
+		description: 'Usage: logicgrid start | logicgrid answer <a|b|c>',
+		color: embed.colors.DEFAULT,
+	})],
+});
