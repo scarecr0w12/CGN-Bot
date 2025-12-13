@@ -37,6 +37,9 @@ Activity scoring, server statistics, leaderboards, and detailed analytics for pr
 ### 🧩 Extensions
 Create, share, and install custom server extensions with slash command support.
 
+### 🎫 Ticket System
+Per-server support tickets with categories, panels, transcripts, and staff management (Tier 2 Premium).
+
 ### 💎 Server Premium
 Per-server subscriptions with Stripe/PayPal/BTCPay payment processing.
 
@@ -54,6 +57,7 @@ Full server management from the browser with modern UI and real-time updates.
 | [Commands](guide/commands) | Full command reference |
 | [Configuration](guide/configuration) | Configure all bot features |
 | [Extensions](guide/extensions) | Create and install extensions |
+| [Tickets](guide/tickets) | Set up support ticket system |
 | [Testing](guide/testing) | Test your installation |
 | [Troubleshooting](guide/troubleshooting) | Common issues and solutions |
 | [API Reference](api/) | REST API documentation |
