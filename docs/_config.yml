@@ -1,8 +1,8 @@
 # Jekyll configuration for SkynetBot Documentation
 title: SkynetBot Documentation
 description: Comprehensive documentation for SkynetBot - a feature-rich Discord bot with web dashboard
-baseurl: ""
-url: "https://scarecr0w12.github.io/CGN-Bot"
+baseurl: "/CGN-Bot"
+url: "https://scarecr0w12.github.io"
 
 # Theme
 remote_theme: just-the-docs/just-the-docs
