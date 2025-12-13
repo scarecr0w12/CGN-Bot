@@ -38,6 +38,7 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 👑 [Server Owner Guide](Server-Owner-Guide) - Configure your server
 - 🛡️ [Admin Levels](Admin-Levels) - Understanding permissions
 - 🧩 [Extensions](Extensions) - Extend your bot's functionality
+- 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
 - ⭐ [Premium Features](Premium-Features) - Server subscriptions
 - ❓ [FAQ](FAQ) - Frequently Asked Questions
 
@@ -897,6 +898,135 @@ For subscription issues:
 ---
 
 See also: [Getting Started](Getting-Started) | [Server Owner Guide](Server-Owner-Guide) | [FAQ](FAQ)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Ticket-System",
+		content: `# Ticket System
+
+Create a professional support ticket system for your Discord server with custom categories, panels, and transcript logging.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Overview
+
+The ticket system allows server owners to set up an internal support system where users can create tickets for help, reports, or other inquiries. Staff members can manage, claim, and close tickets with full transcript logging.
+
+### Key Features
+- **Custom Categories** - Organize tickets by type (support, reports, applications)
+- **Ticket Panels** - Embed messages with buttons for easy ticket creation
+- **Support Roles** - Configure which roles can manage tickets
+- **Transcripts** - Automatic logging when tickets are closed
+- **Staff Management** - Claim tickets, add/remove users, set priority
+- **Dashboard Integration** - Full management from the web dashboard
+
+---
+
+## Commands
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| \`ticket\` | \`ticket [category] [subject]\` | Create a new ticket or view your tickets |
+| \`ticketclose\` | \`ticketclose [reason]\` | Close the current ticket channel |
+| \`ticketadd\` | \`ticketadd @user\` | Add a user to the current ticket |
+| \`ticketremove\` | \`ticketremove @user\` | Remove a user from the current ticket |
+| \`ticketpanel\` | \`ticketpanel [title] \\| [description]\` | Create a ticket panel (Admin) |
+
+---
+
+## Setup Guide
+
+### Step 1: Enable the System
+1. Go to your server dashboard
+2. Navigate to **Tickets** → **Settings**
+3. Toggle **Enable Ticket System** on
+
+### Step 2: Configure Channels
+- **Ticket Category** - Discord category for ticket channels
+- **Transcript Channel** - Where transcripts are saved
+- **Log Channel** - For ticket event notifications
+
+### Step 3: Set Support Roles
+Select roles that can:
+- View all tickets
+- Claim and manage tickets
+- Add/remove users
+
+### Step 4: Create Categories
+Add categories to organize tickets:
+- Name and emoji
+- Description
+- Custom welcome message
+
+### Step 5: Create a Panel
+\`\`\`
+!ticketpanel Support Center | Click a button to create a ticket!
+\`\`\`
+
+---
+
+## Managing Tickets
+
+### From Discord
+- Use button interactions in ticket channels
+- **Close** - Close and save transcript
+- **Claim** - Assign yourself as handler
+
+### From Dashboard
+Access **Dashboard → Tickets** to:
+- View all tickets with filters
+- Change status and priority
+- Add internal notes
+- View message history
+
+---
+
+## Ticket Status Flow
+
+| Status | Description |
+|--------|-------------|
+| **Open** | New ticket, awaiting staff |
+| **In Progress** | Staff actively working |
+| **On Hold** | Waiting for user response |
+| **Closed** | Resolved, transcript saved |
+
+---
+
+## Tips & Best Practices
+
+1. **Clear Categories** - Create distinct types to route efficiently
+2. **Welcome Messages** - Include FAQ links and expectations
+3. **Transcript Channel** - Keep it staff-only for privacy
+4. **Max Tickets** - Limit per user to prevent abuse (default: 3)
+
+---
+
+## Troubleshooting
+
+### Tickets not creating
+- Check bot has \`Manage Channels\` permission
+- Verify category has room (limit: 50 channels)
+- Ensure system is enabled
+
+### Users can't see tickets
+- Bot needs \`Manage Roles\` permission
+- Check Discord role hierarchy
+
+### Transcripts not saving
+- Verify channel is configured
+- Bot needs \`Send Messages\` permission
+
+---
+
+See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Owner-Guide) | [Commands](Commands)
 `,
 		reactions: [],
 		updates: [{
