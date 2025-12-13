@@ -69,6 +69,15 @@
 	margin-right: 0.5rem;
 }
 
+.ext-badge-premium {
+	background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+	color: #fff;
+}
+.ext-badge-owned {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	color: #fff;
+}
+
 /* Card Grid */
 .ext-card-grid {
 	display: grid;
@@ -374,13 +383,16 @@
 <div id="extensions-gallery">
 	<%
 	const categoryFilter = pageData.categoryFilter || 'all';
+	const premiumFilter = pageData.premiumFilter || 'all';
 	const sortOption = pageData.sortOption || 'featured';
 	const categoryCounts = pageData.categoryCounts || { all: 0, command: 0, keyword: 0, timer: 0, event: 0 };
+	const premiumCounts = pageData.premiumCounts || { all: 0, free: 0, premium: 0 };
 	
-	const buildFilterUrl = (category, sort) => {
+	const buildFilterUrl = (category, sort, premium) => {
 		const params = new URLSearchParams();
 		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
 		if (category && category !== 'all') params.set('category', category);
+		if (premium && premium !== 'all') params.set('premium', premium);
 		if (sort && sort !== 'featured') params.set('sort', sort);
 		const queryString = params.toString();
 		return `/extensions/${pageData.mode}${queryString ? '?' + queryString : ''}`;
@@ -394,41 +406,55 @@
 	<div class="ext-gallery-filters">
 		<div class="ext-filter-row">
 			<div class="ext-category-pills">
-				<a href="<%= buildFilterUrl('all', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'all' ? 'is-active' : '' %>">
+				<a href="<%= buildFilterUrl('all', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'all' ? 'is-active' : '' %>">
 					<i class="fa fa-th-large"></i>
 					All
 					<span class="pill-count"><%= categoryCounts.all %></span>
 				</a>
-				<a href="<%= buildFilterUrl('command', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'command' ? 'is-active' : '' %>">
+				<a href="<%= buildFilterUrl('command', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'command' ? 'is-active' : '' %>">
 					<i class="fa fa-magic"></i>
 					Commands
 					<span class="pill-count"><%= categoryCounts.command %></span>
 				</a>
-				<a href="<%= buildFilterUrl('keyword', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'keyword' ? 'is-active' : '' %>">
+				<a href="<%= buildFilterUrl('keyword', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'keyword' ? 'is-active' : '' %>">
 					<i class="fa fa-key"></i>
 					Keywords
 					<span class="pill-count"><%= categoryCounts.keyword %></span>
 				</a>
-				<a href="<%= buildFilterUrl('timer', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'timer' ? 'is-active' : '' %>">
+				<a href="<%= buildFilterUrl('timer', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'timer' ? 'is-active' : '' %>">
 					<i class="fa fa-clock-o"></i>
 					Timers
 					<span class="pill-count"><%= categoryCounts.timer %></span>
 				</a>
-				<a href="<%= buildFilterUrl('event', sortOption) %>" class="ext-category-pill <%= categoryFilter === 'event' ? 'is-active' : '' %>">
+				<a href="<%= buildFilterUrl('event', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'event' ? 'is-active' : '' %>">
 					<i class="fa fa-code"></i>
 					Events
 					<span class="pill-count"><%= categoryCounts.event %></span>
+				</a>
+			</div>
+			<div class="ext-category-pills">
+				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'all') %>" class="ext-category-pill <%= premiumFilter === 'all' ? 'is-active' : '' %>">
+					All
+					<span class="pill-count"><%= premiumCounts.all %></span>
+				</a>
+				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'free') %>" class="ext-category-pill <%= premiumFilter === 'free' ? 'is-active' : '' %>">
+					Free
+					<span class="pill-count"><%= premiumCounts.free %></span>
+				</a>
+				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'premium') %>" class="ext-category-pill <%= premiumFilter === 'premium' ? 'is-active' : '' %>">
+					Premium
+					<span class="pill-count"><%= premiumCounts.premium %></span>
 				</a>
 			</div>
 			<div class="ext-sort-dropdown">
 				<label><i class="fa fa-sort"></i> Sort:</label>
 				<div class="select is-small">
 					<select onchange="window.location.href = this.value">
-						<option value="<%= buildFilterUrl(categoryFilter, 'featured') %>" <%= sortOption === 'featured' ? 'selected' : '' %>>Featured</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'popular') %>" <%= sortOption === 'popular' ? 'selected' : '' %>>Most Popular</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'newest') %>" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'oldest') %>" <%= sortOption === 'oldest' ? 'selected' : '' %>>Oldest</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'name') %>" <%= sortOption === 'name' ? 'selected' : '' %>>Name (A-Z)</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'featured', premiumFilter) %>" <%= sortOption === 'featured' ? 'selected' : '' %>>Featured</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'popular', premiumFilter) %>" <%= sortOption === 'popular' ? 'selected' : '' %>>Most Popular</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'newest', premiumFilter) %>" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'oldest', premiumFilter) %>" <%= sortOption === 'oldest' ? 'selected' : '' %>>Oldest</option>
+						<option value="<%= buildFilterUrl(categoryFilter, 'name', premiumFilter) %>" <%= sortOption === 'name' ? 'selected' : '' %>>Name (A-Z)</option>
 					</select>
 				</div>
 			</div>
@@ -469,6 +495,16 @@
 							<i class="fa fa-star"></i> Featured
 						</span>
 						<% } %>
+						<% if (extension.isPremium) { %>
+						<span class="ext-badge ext-badge-premium">
+							<i class="fa fa-lock"></i> Premium <%= extension.premium && extension.premium.price_points ? (extension.premium.price_points + 'pts') : '' %>
+						</span>
+						<% } %>
+						<% if (extension.hasPurchased) { %>
+						<span class="ext-badge ext-badge-owned">
+							<i class="fa fa-check"></i> Purchased
+						</span>
+						<% } %>
 						<span class="ext-badge ext-badge-type <%= extension.type %>" title="<%= extension.typeDescription %>">
 							<i class="fa fa-<%= extension.typeIcon %>"></i> <%= extension.type %>
 						</span>
@@ -502,7 +538,7 @@
 			</div>
 			<div class="ext-card-footer">
 				<% if (authUser && pageData.serverData && pageData.serverData.length > 0) { %>
-				<a class="ext-card-action" onclick="SkynetUtil.openExtensionInstaller('<%= extension._id %>', <%= extension.version %>);">
+				<a class="ext-card-action" data-extid="<%= extension._id %>" data-version="<%= extension.version %>" onclick="SkynetUtil.openExtensionInstaller(this.dataset.extid, parseInt(this.dataset.version, 10));">
 					<i class="fa fa-download"></i> Install
 				</a>
 				<% } %>

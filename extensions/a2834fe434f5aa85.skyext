@@ -1,0 +1,280 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const utils = require('utils');
+const embed = require('embed');
+
+const TICKERS = [
+	{ symbol: 'SKY', name: 'Skynet Industries', base: 120 },
+	{ symbol: 'BOT', name: 'BotWare Systems', base: 85 },
+	{ symbol: 'MEME', name: 'Meme Holdings', base: 45 },
+	{ symbol: 'CAT', name: 'Catnip Corp', base: 30 },
+	{ symbol: 'DOG', name: 'Dogecoin Lite', base: 55 },
+	{ symbol: 'GEM', name: 'Gemstone Exchange', base: 150 },
+	{ symbol: 'VOID', name: 'Void Ventures', base: 70 },
+];
+
+function clamp(n, min, max) {
+	return Math.max(min, Math.min(max, n));
+}
+
+function hashToInt(str) {
+	let h = 0;
+	for (let i = 0; i < str.length; i++) {
+		h = (h << 5) - h + str.charCodeAt(i);
+		h |= 0;
+	}
+	return Math.abs(h);
+}
+
+function seededRand01(seed) {
+	let x = seed % 2147483647;
+	if (x <= 0) x += 2147483646;
+	x = (x * 16807) % 2147483647;
+	return (x - 1) / 2147483646;
+}
+
+function getTimeBucket() {
+	const now = new Date();
+	const day = now.toISOString().slice(0, 10); // YYYY-MM-DD
+	const hour = now.getUTCHours();
+	return { day, hour };
+}
+
+function getPrice(ticker) {
+	const { day, hour } = getTimeBucket();
+	const seedBase = hashToInt(day + '|' + ticker.symbol);
+	const dailyNoise = (seededRand01(seedBase) - 0.5) * 0.18; // +/- 9%
+	const hourSeed = hashToInt(day + '|' + hour + '|' + ticker.symbol);
+	const intradayNoise = (seededRand01(hourSeed) - 0.5) * 0.10; // +/- 5%
+	const wave = Math.sin((seedBase % 360) * (Math.PI / 180) + (hour / 24) * Math.PI * 2) * 0.06; // +/- 6%
+
+	const multiplier = 1 + dailyNoise + intradayNoise + wave;
+	const price = Math.round(clamp(ticker.base * multiplier, 5, 9999));
+	return price;
+}
+
+function formatMoney(n) {
+	return utils.format.number(Math.round(n));
+}
+
+function getPortfolioKey(userId) {
+	return 'stocks_portfolio_' + userId;
+}
+
+function getPortfolio(userId) {
+	return extension.storage.get(getPortfolioKey(userId)) || { holdings: {} };
+}
+
+function savePortfolio(userId, portfolio) {
+	extension.storage.write(getPortfolioKey(userId), portfolio);
+}
+
+function findTicker(symbol) {
+	if (!symbol) return null;
+	const s = symbol.toUpperCase();
+	return TICKERS.find(t => t.symbol === s) || null;
+}
+
+function listPricesEmbed() {
+	const lines = TICKERS.map(t => {
+		const p = getPrice(t);
+		return '• ' + utils.discord.bold(t.symbol) + ' - ' + t.name + ' — ' + utils.discord.bold(formatMoney(p)) + ' pts';
+	}).join('
+');
+
+	return embed.create({
+		title: '📈 Virtual Stocks',
+		description: lines + '
+
+' +
+			'Commands:
+' +
+			'`stocks buy <TICKER> <shares>`
+' +
+			'`stocks sell <TICKER> <shares>`
+' +
+			'`stocks portfolio`
+' +
+			'`stocks chart <TICKER>`',
+		color: embed.colors.BLUE,
+		footer: { text: 'Prices update hourly (UTC) and vary day-to-day' },
+	});
+}
+
+function portfolioEmbed(userId) {
+	const portfolio = getPortfolio(userId);
+	const holdings = portfolio.holdings || {};
+	const entries = Object.entries(holdings).filter(([_, shares]) => shares && shares > 0);
+
+	if (!entries.length) {
+		return embed.create({
+			title: '🧾 Portfolio',
+			description: 'No holdings yet. Use `stocks buy <TICKER> <shares>` to start trading.',
+			color: embed.colors.GOLD,
+		});
+	}
+
+	let totalValue = 0;
+	const lines = entries.map(([symbol, shares]) => {
+		const t = findTicker(symbol);
+		if (!t) return null;
+		const price = getPrice(t);
+		const value = price * shares;
+		totalValue += value;
+		return '• ' + utils.discord.bold(symbol) + ' — ' + shares + ' shares @ ' + formatMoney(price) + ' = ' + utils.discord.bold(formatMoney(value)) + ' pts';
+	}).filter(Boolean);
+
+	return embed.create({
+		title: '🧾 Portfolio',
+		description: lines.join('
+'),
+		color: embed.colors.PURPLE,
+		fields: [
+			{ name: 'Total Holdings Value', value: utils.discord.bold(formatMoney(totalValue) + ' pts'), inline: true },
+		],
+	});
+}
+
+function chartEmbed(symbol) {
+	const t = findTicker(symbol);
+	if (!t) {
+		return embed.create({
+			title: '❌ Unknown Ticker',
+			description: 'Unknown ticker. Use `stocks` to see available tickers.',
+			color: embed.colors.ERROR,
+		});
+	}
+
+	const now = new Date();
+	const days = [];
+	for (let i = 6; i >= 0; i--) {
+		const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+		const day = d.toISOString().slice(0, 10);
+		days.push(day);
+	}
+
+	const prices = days.map(day => {
+		const seedBase = hashToInt(day + '|' + t.symbol);
+		const dailyNoise = (seededRand01(seedBase) - 0.5) * 0.18;
+		const multiplier = 1 + dailyNoise;
+		return Math.round(clamp(t.base * multiplier, 5, 9999));
+	});
+
+	const min = Math.min(...prices);
+	const max = Math.max(...prices);
+	const bars = prices.map(p => {
+		const blocks = Math.round(((p - min) / Math.max(1, (max - min))) * 10);
+		return '▮'.repeat(blocks + 1);
+	});
+
+	let desc = utils.discord.bold(t.symbol) + ' - ' + t.name + '
+
+';
+	for (let i = 0; i < days.length; i++) {
+		desc += days[i].slice(5) + ' ' + bars[i] + ' ' + formatMoney(prices[i]) + '
+';
+	}
+
+	return embed.create({
+		title: '📊 7-Day Chart',
+		description: desc,
+		color: embed.colors.BLUE,
+		footer: { text: 'Chart uses daily close approximation' },
+	});
+}
+
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
+const sub = (args[0] || 'list').toLowerCase();
+
+if (sub === 'list' || sub === 'prices' || sub === 'price') {
+	message.reply({ embeds: [listPricesEmbed()] });
+	return;
+}
+
+if (sub === 'portfolio' || sub === 'port' || sub === 'p') {
+	message.reply({ embeds: [portfolioEmbed(message.author.id)] });
+	return;
+}
+
+if (sub === 'chart') {
+	message.reply({ embeds: [chartEmbed(args[1])] });
+	return;
+}
+
+if (sub === 'buy' || sub === 'sell') {
+	const ticker = findTicker(args[1]);
+	const shares = parseInt(args[2]);
+	if (!ticker || !shares || isNaN(shares) || shares <= 0) {
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ Invalid Usage',
+				description: 'Usage: `stocks ' + sub + ' <TICKER> <shares>`
+Example: `stocks ' + sub + ' SKY 5`',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const price = getPrice(ticker);
+	const total = price * shares;
+
+	const portfolio = getPortfolio(message.author.id);
+	const holdings = portfolio.holdings || {};
+	const currentShares = holdings[ticker.symbol] || 0;
+
+	if (sub === 'buy') {
+		const userData = economy.getSelf();
+		if (!userData || userData.rankScore < total) {
+			message.reply('❌ Not enough points. Need ' + formatMoney(total) + ' pts.');
+			return;
+		}
+
+		economy.removePoints(message.author.id, total, 'Stocks buy ' + ticker.symbol);
+		holdings[ticker.symbol] = currentShares + shares;
+		portfolio.holdings = holdings;
+		savePortfolio(message.author.id, portfolio);
+
+		message.reply({
+			embeds: [embed.create({
+				title: '✅ Buy Executed',
+				description: 'Bought ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '
+' +
+					'Price: ' + formatMoney(price) + ' pts/share
+' +
+					'Total: ' + utils.discord.bold(formatMoney(total) + ' pts'),
+				color: embed.colors.SUCCESS,
+			})],
+		});
+		return;
+	}
+
+	if (currentShares < shares) {
+		message.reply('❌ You only have ' + currentShares + ' shares of ' + ticker.symbol + '.');
+		return;
+	}
+
+	holdings[ticker.symbol] = currentShares - shares;
+	if (holdings[ticker.symbol] <= 0) delete holdings[ticker.symbol];
+	portfolio.holdings = holdings;
+	savePortfolio(message.author.id, portfolio);
+
+	economy.addPoints(message.author.id, total, 'Stocks sell ' + ticker.symbol);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Sell Executed',
+			description: 'Sold ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '
+' +
+				'Price: ' + formatMoney(price) + ' pts/share
+' +
+				'Total: ' + utils.discord.bold(formatMoney(total) + ' pts'),
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+message.reply({ embeds: [listPricesEmbed()] });

@@ -182,6 +182,16 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 			break;
 	}
 	const scopes = versionDocument.scopes.map(scope => Constants.Scopes[scope]);
+	const premium = galleryDocument.premium || {};
+	const isPremium = premium && premium.is_premium === true;
+	let hasPurchased = false;
+	if (req.isAuthenticated && req.isAuthenticated() && isPremium) {
+		if (galleryDocument.owner_id && req.user && galleryDocument.owner_id === req.user.id) {
+			hasPurchased = true;
+		} else if (Array.isArray(galleryDocument.purchased_by) && req.user) {
+			hasPurchased = galleryDocument.purchased_by.includes(req.user.id);
+		}
+	}
 
 	return {
 		_id: galleryDocument._id.toString(),
@@ -206,6 +216,13 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		relativeLastUpdated: moment(galleryDocument.last_updated).fromNow(),
 		rawLastUpdated: moment(galleryDocument.last_updated).format(configJS.moment_date_format),
 		scopes,
+		premium: {
+			is_premium: isPremium,
+			price_points: isPremium ? premium.price_points || 0 : 0,
+			purchases: premium.purchases || 0,
+		},
+		isPremium,
+		hasPurchased,
 		fields: versionDocument.fields,
 		timeout: versionDocument.timeout,
 	};

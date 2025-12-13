@@ -41,6 +41,34 @@
 		</div>
 	</div>
 
+	<% if (pageData.extensionEarnings) { %>
+	<div class="box" style="margin-bottom: 1rem;">
+		<h3 class="title is-5" style="margin-bottom: 0.75rem;">Earnings</h3>
+		<div class="columns is-multiline">
+			<div class="column is-one-third">
+				<strong>Available</strong>
+				<div><%= pageData.extensionEarnings.balance || 0 %> points</div>
+			</div>
+			<div class="column is-one-third">
+				<strong>Lifetime earned</strong>
+				<div><%= pageData.extensionEarnings.lifetime_earned || 0 %> points</div>
+			</div>
+			<div class="column is-one-third">
+				<strong>Total withdrawn</strong>
+				<div><%= pageData.extensionEarnings.total_withdrawn || 0 %> points</div>
+			</div>
+		</div>
+		<div class="field has-addons" style="max-width: 420px;">
+			<p class="control is-expanded">
+				<input id="extension-withdraw-amount" class="input" type="number" min="1" placeholder="Amount to withdraw">
+			</p>
+			<p class="control">
+				<button class="button is-primary" onclick="SkynetUtil.withdrawExtensionEarnings(); return false;">Withdraw to Vote Balance</button>
+			</p>
+		</div>
+	</div>
+	<% } %>
+
 	<div style="overflow-x: scroll;">
 		<% if (pageData.extensions.length > 0) { %>
 			<table class="table is-fullwidth">
@@ -51,6 +79,10 @@
 						<th>Latest Version</th>
 						<th>Status</th>
 						<th>Type</th>
+						<th>Premium</th>
+						<th>Price</th>
+						<th>Purchases</th>
+						<th>Revenue</th>
 						<th>Points</th>
 						<th></th>
 					</tr>
@@ -82,6 +114,18 @@
 								<%= extension.versions.id(extension.version).type.charAt(0).toUpperCase() + extension.versions.id(extension.version).type.slice(1) %>
 							</td>
 							<td>
+								<%= extension.premium && extension.premium.is_premium ? 'Yes' : 'No' %>
+							</td>
+							<td>
+								<%= extension.premium && extension.premium.price_points ? extension.premium.price_points : 0 %>
+							</td>
+							<td>
+								<%= extension.premium && extension.premium.purchases ? extension.premium.purchases : 0 %>
+							</td>
+							<td>
+								<%= extension.premium && extension.premium.developer_earnings ? extension.premium.developer_earnings : 0 %>
+							</td>
+							<td>
 								<%= extension.points %>
 							</td>
 							<td>
@@ -111,6 +155,12 @@
 										<i class="fa fa-share-square-o"></i>
 									</span>
 									<span>Export</span>
+								</a>
+								<a class="button is-small is-link" href="/extensions/<%= extension._id %>/sales" target="_blank">
+									<span class="icon is-small">
+										<i class="fa fa-line-chart"></i>
+									</span>
+									<span>Sales</span>
 								</a>
 								<button id="delete-<%= extension._id %>" class="button is-small is-danger" onclick="SkynetUtil.deleteExtension('<%= extension._id %>'); return false;">
 									<span>Delete</span>

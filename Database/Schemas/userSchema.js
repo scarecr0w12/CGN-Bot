@@ -34,6 +34,7 @@ module.exports = new Schema({
 			default: 0,
 		},
 		rob_last_attempt: Date,
+		work_last_time: Date,
 		total_earned: {
 			type: Number,
 			default: 0,
@@ -41,6 +42,17 @@ module.exports = new Schema({
 		total_lost: {
 			type: Number,
 			default: 0,
+		},
+		// Item effect flags
+		padlock_active: {
+			type: Boolean,
+			default: false,
+		},
+		lucky_coin_expiry: Date,
+		robbers_mask_expiry: Date,
+		golden_ticket_active: {
+			type: Boolean,
+			default: false,
 		},
 		inventory: [new Schema({
 			_id: {
@@ -61,6 +73,88 @@ module.exports = new Schema({
 				default: Date.now,
 			},
 		})],
+		// Progression system
+		quests: new Schema({
+			daily: [new Schema({
+				_id: {
+					type: String,
+					required: true,
+				},
+				progress: {
+					type: Number,
+					default: 0,
+				},
+				completed: {
+					type: Boolean,
+					default: false,
+				},
+				claimed: {
+					type: Boolean,
+					default: false,
+				},
+			})],
+			weekly: [new Schema({
+				_id: {
+					type: String,
+					required: true,
+				},
+				progress: {
+					type: Number,
+					default: 0,
+				},
+				completed: {
+					type: Boolean,
+					default: false,
+				},
+				claimed: {
+					type: Boolean,
+					default: false,
+				},
+			})],
+			daily_reset: Date,
+			weekly_reset: Date,
+		}),
+		achievements: [new Schema({
+			_id: {
+				type: String,
+				required: true,
+			},
+			unlocked_at: {
+				type: Date,
+				default: Date.now,
+			},
+		})],
+		badges: [new Schema({
+			_id: {
+				type: String,
+				required: true,
+			},
+			acquired_at: {
+				type: Date,
+				default: Date.now,
+			},
+			equipped: {
+				type: Boolean,
+				default: false,
+			},
+		})],
+		streaks: new Schema({
+			login: {
+				type: Number,
+				default: 0,
+			},
+			login_last: Date,
+			commands: {
+				type: Number,
+				default: 0,
+			},
+			commands_last: Date,
+			messages: {
+				type: Number,
+				default: 0,
+			},
+			messages_last: Date,
+		}),
 	}),
 	afk_message: String,
 	server_nicks: [new Schema({
@@ -86,6 +180,21 @@ module.exports = new Schema({
 		expiry_timestamp: {
 			type: Number,
 			required: true,
+		},
+	})],
+	notes: [new Schema({
+		id: {
+			type: String,
+			required: true,
+		},
+		content: {
+			type: String,
+			required: true,
+			maxlength: 500,
+		},
+		created: {
+			type: Date,
+			default: Date.now,
 		},
 	})],
 	location: String,
@@ -185,11 +294,25 @@ module.exports = new Schema({
 			default: 0,
 		},
 		last_vote_at: Date,
-		// Track votes per site for cooldown management
 		site_votes: new Schema({
 			topgg_last: Date,
 			discordbotlist_last: Date,
 		}),
+	}),
+	extension_earnings: new Schema({
+		balance: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+		lifetime_earned: {
+			type: Number,
+			default: 0,
+		},
+		total_withdrawn: {
+			type: Number,
+			default: 0,
+		},
 	}),
 
 	// Primary Profile (global profile across all servers)

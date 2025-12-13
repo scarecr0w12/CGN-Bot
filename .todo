@@ -1,7 +1,0 @@
-COMPLETED:
-✓ Added vote sites feature to maintainer console
-✓ Fixed maintainer page crash (aggregate result guard)
-✓ Fixed PresenceUpdate log spam (silent return for missing docs)
-✓ Refactored all SiteSettings controllers to prevent accidental blank document creation:
-  - GET requests (READ) never create/save documents - use configJS defaults if not found
-  - POST requests (WRITE) create documents only when needed, save only with actual data

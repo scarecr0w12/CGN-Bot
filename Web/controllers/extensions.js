@@ -6,6 +6,8 @@ const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;
 const { AllowedEvents, Colors, Scopes } = require("../../Internals/Constants");
 const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateExtensionData, writeExtensionData } = require("../helpers");
+const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
+const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 
 const controllers = module.exports;
 
@@ -40,6 +42,9 @@ controllers.gallery = async (req, { res }) => {
 	// Category filter (extension type)
 	const categoryFilter = req.query.category;
 	const validCategories = ["command", "keyword", "timer", "event"];
+
+	const premiumFilter = req.query.premium;
+	const validPremiumFilters = ["all", "free", "premium"];
 
 	const renderPage = async (upvotedData, serverData) => {
 		const extensionState = req.path.substring(req.path.lastIndexOf("/") + 1);
@@ -95,9 +100,26 @@ controllers.gallery = async (req, { res }) => {
 				}
 			});
 
+			const premiumCounts = {
+				all: allExtData.length,
+				free: 0,
+				premium: 0,
+			};
+			allExtData.forEach(ext => {
+				if (ext && ext.isPremium) premiumCounts.premium++;
+				else premiumCounts.free++;
+			});
+
 			// Filter by category if specified
 			if (categoryFilter && validCategories.includes(categoryFilter)) {
 				extensionData = extensionData.filter(ext => ext.type === categoryFilter);
+			}
+
+			const premiumFilterValue = validPremiumFilters.includes(premiumFilter) ? premiumFilter : "all";
+			if (premiumFilterValue === "premium") {
+				extensionData = extensionData.filter(ext => ext && ext.isPremium);
+			} else if (premiumFilterValue === "free") {
+				extensionData = extensionData.filter(ext => ext && !ext.isPremium);
 			}
 
 			res.setPageData({
@@ -114,7 +136,9 @@ controllers.gallery = async (req, { res }) => {
 				upvotedData,
 				sortOption,
 				categoryFilter: categoryFilter || "all",
+				premiumFilter: premiumFilterValue,
 				categoryCounts,
+				premiumCounts,
 			});
 
 			res.render();
@@ -194,6 +218,13 @@ controllers.installer = async (req, { res }) => {
 	}
 
 	if (!req.query.svrid) {
+		let voteRewardsBalance = 0;
+		try {
+			voteRewardsBalance = await VoteRewardsManager.getBalance(req.user.id);
+		} catch (err) {
+			voteRewardsBalance = 0;
+		}
+
 		const serverData = [];
 		const addServerData = async (i, callback) => {
 			if (req.user.guilds && i < req.user.guilds.length) {
@@ -231,6 +262,7 @@ controllers.installer = async (req, { res }) => {
 					page: "extension-installer.ejs",
 					mode: "select",
 					extensionData,
+					voteRewardsBalance,
 				})
 				.render();
 		});
@@ -241,12 +273,20 @@ controllers.installer = async (req, { res }) => {
 		const svr = new GetGuild(req.app.client, serverDocument._id);
 		await svr.initialize();
 		if (serverData) {
+			let voteRewardsBalance = 0;
+			try {
+				voteRewardsBalance = await VoteRewardsManager.getBalance(req.user.id);
+			} catch (err) {
+				voteRewardsBalance = 0;
+			}
+
 			res.setServerData(serverData)
 				.setPageData({
 					page: "extension-installer.ejs",
 					mode: req.query.update ? "update" : "install",
 					extensionData,
 					channelData: getChannelData(svr),
+					voteRewardsBalance,
 				}).render();
 		} else {
 			return renderError(res, "That server doesn't exist!", undefined, 404);
@@ -257,6 +297,7 @@ controllers.installer = async (req, { res }) => {
 controllers.my = async (req, { res }) => {
 	if (req.isAuthenticated()) {
 		try {
+			const extensionEarnings = await PremiumExtensionsManager.getExtensionEarnings(req.user.id);
 			const galleryDocuments = await Gallery.find({
 				level: "gallery",
 				owner_id: req.user.id,
@@ -272,6 +313,7 @@ controllers.my = async (req, { res }) => {
 				mode: "my",
 				rawCount: (galleryDocuments || []).length,
 				extensions: galleryDocuments || [],
+				extensionEarnings,
 			});
 			res.render();
 		} catch (err) {
@@ -284,6 +326,7 @@ controllers.my = async (req, { res }) => {
 
 controllers.builder = async (req, { res }) => {
 	if (req.isAuthenticated()) {
+		const premiumMarketplace = await PremiumExtensionsManager.getMarketplaceSettings();
 		const renderPage = extensionData => {
 			res.setServerData("id", req.user.id);
 
@@ -296,6 +339,7 @@ controllers.builder = async (req, { res }) => {
 				versionData: extensionData.versions ? extensionData.versions.id(extensionData.version) : {},
 				events: AllowedEvents,
 				scopes: Scopes,
+				premiumMarketplace,
 			});
 
 			res.render();
@@ -396,6 +440,48 @@ controllers.builder.post = async (req, res) => {
 		}
 	} else {
 		res.redirect("/login");
+	}
+};
+
+controllers.premium = async (req, res) => {
+	if (!req.isAuthenticated()) return res.sendStatus(401);
+	if (!req.params.extid) return res.status(400).json({ error: "Missing extension ID" });
+
+	const isPremium = req.body?.isPremium === true || req.body?.isPremium === "true" || req.body?.isPremium === 1 || req.body?.isPremium === "1";
+	const pricePoints = typeof req.body?.pricePoints === "string" ? parseInt(req.body.pricePoints, 10) : req.body?.pricePoints;
+
+	try {
+		const result = await PremiumExtensionsManager.setPremiumStatus(req.params.extid, req.user.id, pricePoints, isPremium);
+		return res.json(result);
+	} catch (err) {
+		logger.warn("Failed to set premium status", { usrid: req.user.id, extid: req.params.extid }, err);
+		return res.status(400).json({ error: err.message || "Failed to set premium status" });
+	}
+};
+
+controllers.sales = async (req, { res }) => {
+	if (!req.isAuthenticated()) return res.sendStatus(401);
+	if (!req.params.extid) return res.status(400).json({ error: "Missing extension ID" });
+
+	const wantsJson = req.query?.json === "1" || req.query?.json === "true" || (typeof req.headers?.accept === "string" && req.headers.accept.includes("application/json"));
+	const limit = req.query?.limit ? parseInt(req.query.limit, 10) : 100;
+	try {
+		const data = await PremiumExtensionsManager.getExtensionSales(req.user.id, req.params.extid, limit);
+		if (wantsJson) return res.json(data);
+
+		res.setServerData("id", req.user.id);
+		res.setPageData({
+			page: "extensions.ejs",
+			pageTitle: `Sales - ${data.extensionName}`,
+			mode: "sales",
+			rawCount: data.purchases || 0,
+			salesData: data,
+		});
+		return res.render();
+	} catch (err) {
+		logger.warn("Failed to fetch extension sales", { usrid: req.user.id, extid: req.params.extid }, err);
+		if (wantsJson) return res.status(400).json({ error: err.message || "Failed to fetch sales" });
+		return renderError(res, err.message || "Failed to fetch sales", undefined, 400);
 	}
 };
 
@@ -729,12 +815,10 @@ controllers.gallery.modify = async (req, res) => {
 
 					res.sendStatus(200);
 					break;
-				case "delete":
+				case "delete": {
 					if (galleryDocument.owner_id !== req.user.id) return res.sendStatus(404);
 
 					await Gallery.delete({ _id: galleryDocument._id });
-					// Remove extension from all servers that have it installed
-					// For MariaDB: extensions is a JSON array, need to handle manually
 					const extensionId = galleryDocument._id.toString();
 					const serversWithExt = await Servers.find({}).exec();
 					for (const server of serversWithExt) {
@@ -742,7 +826,7 @@ controllers.gallery.modify = async (req, res) => {
 							const extIndex = server.extensions.findIndex(e => e._id === extensionId);
 							if (extIndex !== -1) {
 								server.query.pull("extensions", { _id: extensionId });
-								await server.save().catch(() => {});
+								await server.save().catch(_error => null);
 							}
 						}
 					}
@@ -750,12 +834,13 @@ controllers.gallery.modify = async (req, res) => {
 
 					try {
 						await fs.unlink(`${__dirname}/../../extensions/${galleryDocument.code_id}.skyext`);
-					} catch (_) {
+					} catch (_error) {
 						// No-op
 					}
 
 					res.sendStatus(200);
 					break;
+				}
 				case "unpublish":
 					if (galleryDocument.owner_id !== req.user.id) return res.sendStatus(403);
 

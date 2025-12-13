@@ -5,61 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.3.0] - 2025-12-11
+## [1.3.0] - 2025-12-13
 
 ### Added
+
+#### Economy System
+
+- **11 Built-in Economy Commands**:
+  - `daily` - Claim daily rewards with streak bonuses
+  - `work` - Work jobs to earn coins
+  - `shop` / `inventory` / `sell` / `use` - Item management
+  - `gift` / `trade` - Item trading between users
+  - `quest` - Daily and weekly task system
+  - `achievements` / `badges` / `streaks` - Progression tracking
+  - `craft` / `upgrade` - Item crafting and stat upgrades
+  - `leaderboard` - Economy rankings
+- **Extension API Support** - Points module for extensions to interact with economy
+
+#### Extension Platform Enhancements
+
+- **47+ New Extensions** (Batches 2-5):
+  - Card games: Poker, Uno, High-Low
+  - Board games: Chess, Checkers, Tic-Tac-Toe, Minesweeper, Battleship
+  - Word games: Wordle, Hangman, Anagram, Word Chain
+  - Party games: Mafia, Spyfall, Caption Battle, Hot Take
+  - RPG: Duel, Tower Climb, Escape Room
+  - Puzzle: 2048, Mastermind, Cipher, Pattern, Maze
+  - Trivia: Music Quiz, Flag Quiz
+  - Economy: Gacha, Stocks, Auction, Season
+  - Pets & Companions system
+- **Slash Command Support** - Extensions can now register and handle Discord slash commands
+- **Interaction API** - New API for button, select menu, and modal interactions
+- **Premium Extensions** - Schema support for paid extensions with point-based pricing
+
+#### Vote Rewards System
+
+- **VoteRewardsManager** (`Modules/VoteRewardsManager.js`) - Complete point economy
+- **Point Purchases** - Buy points with Stripe/BTCPay
+- **Extension Redemption** - Purchase premium extensions with points
+- **Transaction History** - Full audit trail for point transactions
 
 #### Per-Server Premium Model
 
 - **Server Subscriptions** - Premium features now apply per-server instead of per-user
 - **Server Subscription Page** (`Web/views/pages/admin-subscription.ejs`) - Dashboard page for managing server subscriptions
-- **Subscription Management** - Owners can upgrade servers independently
 - **TierManager Updates** - Refactored to support server-level feature gating
 - **Seed Script** (`scripts/seed-tiers.js`) - Initialize default tiers and features
 
-#### Monitoring & Observability
+#### Redis Caching & Performance
 
-- **Prometheus Metrics** (`Modules/Metrics.js`) - Bot performance metrics collection
-- **Grafana Dashboards** - Pre-configured monitoring dashboards
-- **MariaDB Exporter** - Database performance metrics
-- **Docker Monitoring Stack** - Full observability setup in docker-compose
-
-#### Developer Workflows
-
-- **Windsurf Workflows** - 7 new development workflows:
-  - `add-slash-command` - Scaffold new Discord slash commands
-  - `check-logs` - View and analyze bot logs
-  - `database-migration` - Create and run MariaDB migrations
-  - `debug-web-routes` - Troubleshoot Express routes
-  - `deploy-release` - Build and tag releases
-  - `start-dev-environment` - Start Docker dev environment
-  - `test-extension` - Validate bot extensions
-
-#### Dashboard Enhancements
-
-- **Advanced Stats Page** (`Web/views/pages/admin-advanced-stats.ejs`) - Detailed server analytics
-- **Maintainer Servers Page** (`Web/views/pages/maintainer-servers.ejs`) - Admin server management
-- **AI Model Selection** - Dynamic model list loading in AI settings
-
-### Changed
-
-- **Premium Architecture** - Migrated from user-based to server-based subscriptions
-- **SubscriptionCheck** - Updated to handle server subscription expiration
-- **Dashboard Routes** - Added AI models endpoint with proper auth
-- **WebServer** - Enhanced graceful shutdown handling
-
-### Fixed
-
-- **TierManager Query** - Fixed missing `.exec()` causing non-iterable results
-- **Activity Controller** - Use `.cache.size` for accurate guild/user counts
-- **Webhook Controller** - Improved error handling for payment webhooks
-- **Auth Middleware** - Better session validation and error recovery
-
----
-
-## [Unreleased] - MariaDB Migration Branch
-
-### Added
+- **Redis Integration** - Caching layer for frequently accessed data
+- **Game Activity Tracking** - Real-time game session management
+- **Session Store** - Redis-backed session storage for web dashboard
 
 #### MariaDB 10.11 Database Layer
 
@@ -69,27 +66,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CursorSQL.js** - Query result iteration with `.exec()`, `.limit()`, `.sort()` methods
 - **QuerySQL.js** - Fluent query builder for document manipulation
 - **ObjectID.js** - MongoDB ObjectID compatibility layer for MariaDB
+- **Database Migrations** - Complete DDL and migration scripts
 
-#### Database Migrations
+#### Monitoring & Observability
 
-- **001_initial_schema.sql** - Complete DDL for all tables (servers, users, gallery, wiki, blog, etc.)
-- **migrate-to-mariadb.js** - Data migration script from MongoDB to MariaDB
+- **Prometheus Metrics** (`Modules/Metrics.js`) - Bot performance metrics collection
+- **Grafana Dashboards** - Pre-configured monitoring dashboards
+- **Docker Monitoring Stack** - Full observability setup in docker-compose
 
-#### Infrastructure
+#### Developer Workflows
 
-- **Docker Compose** - Added MariaDB 10.11 service with health checks
-- **Dockerfile** - Multi-stage build optimizations
-- **Uptime Kuma** - Enhanced monitoring with MariaDB health endpoint
+- **8 Windsurf Workflows**:
+  - `add-slash-command` - Scaffold new Discord slash commands
+  - `check-logs` - View and analyze bot logs
+  - `database-migration` - Create and run MariaDB migrations
+  - `debug-container-error` - Debug container issues
+  - `debug-web-routes` - Troubleshoot Express routes
+  - `deploy-release` - Build and tag releases
+  - `start-dev-environment` - Start Docker dev environment
+  - `test-extension` - Validate bot extensions
+
+#### Dashboard Enhancements
+
+- **Advanced Stats Page** - Detailed server analytics
+- **Maintainer Servers Page** - Admin server management
+- **AI Model Selection** - Dynamic model list loading in AI settings
+- **Premium Extensions Management** - Maintainer pages for extension marketplace
 
 ### Changed
 
+- **Premium Architecture** - Migrated from user-based to server-based subscriptions
+- **Extension Manager** - Enhanced scope handling and validation
 - **Database Driver** - Abstracted backend selection (MongoDB vs MariaDB via `DB_TYPE` env)
-- **Seed Scripts** - Updated `seed-blog-posts.js` and `seed-wiki.js` to support both backends
-- **WebServer** - Added graceful shutdown and connection draining
+- **WebServer** - Enhanced graceful shutdown and connection draining
+- **Context Rules** - Refactored for improved clarity and consistency
+
+### Fixed
+
+- **TierManager Query** - Fixed missing `.exec()` causing non-iterable results
+- **Activity Controller** - Use `.cache.size` for accurate guild/user counts
+- **Admin Dashboard** - Fixed menu section persistence bugs
+- **Extension Scopes** - Corrected scope validation and assignment
+- **Auth Middleware** - Better session validation and error recovery
 
 ### Documentation
 
-- **MARIADB_MIGRATION.md** - Comprehensive migration guide with schema mapping and rollback plans
+- **MARIADB_MIGRATION.md** - Comprehensive migration guide with schema mapping
+- **EXTENSION_IDEAS.md** - Updated with 400+ command ideas and status tracking
+- Archived obsolete planning documents to `docs/archive/`
 
 ---
 

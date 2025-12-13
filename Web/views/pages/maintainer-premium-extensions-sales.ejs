@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Premium Extension Sales - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">Premium Extension Sales</h1>
+
+					<div class="box">
+						<form action="<%= currentPage %>" method="get">
+							<div class="columns is-multiline">
+								<div class="column is-6">
+									<div class="field">
+										<label class="label">Extension</label>
+										<div class="control">
+											<div class="select is-fullwidth">
+												<select name="extid">
+													<option value="">Select an extension…</option>
+													<% (configData.premium_extensions_list || []).forEach(ext => { %>
+														<option value="<%= ext.id %>" <%= (pageData.selectedExtId && pageData.selectedExtId === ext.id) ? 'selected' : '' %>>
+															<%= ext.name %> (<%= ext.id %>)
+														</option>
+													<% }) %>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="field">
+										<label class="label">Limit</label>
+										<div class="control">
+											<input class="input" type="number" name="limit" min="1" max="500" value="<%= pageData.limit || 100 %>">
+										</div>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="field">
+										<label class="label">&nbsp;</label>
+										<div class="control">
+											<button class="button is-link" type="submit">View Sales</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+
+					<% const sales = configData.salesData; %>
+					<% if (sales) { %>
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div>
+										<h2 class="title is-4" style="margin-bottom: 0.25rem;"><%= sales.extensionName %></h2>
+										<p class="subtitle is-6" style="margin-bottom: 0;">Purchase history and revenue breakdown</p>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="buttons">
+										<a class="button is-light" href="/dashboard/maintainer/global-options/premium-extensions">Back</a>
+										<a class="button is-link" href="<%= currentPage %>?extid=<%= sales.extensionId %>&limit=<%= pageData.limit || 100 %>&json=1" target="_blank" rel="noopener noreferrer">View JSON</a>
+									</div>
+								</div>
+							</div>
+
+							<div class="columns is-multiline" style="margin-top: 1rem;">
+								<div class="column is-3">
+									<div class="box" style="height: 100%;">
+										<p class="heading">Price</p>
+										<p class="title is-5"><%= sales.pricePoints || 0 %> pts</p>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="box" style="height: 100%;">
+										<p class="heading">Revenue share</p>
+										<p class="title is-5"><%= (typeof sales.revenueShare === 'number' ? sales.revenueShare : 0) %>%</p>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="box" style="height: 100%;">
+										<p class="heading">Total purchases</p>
+										<p class="title is-5"><%= sales.purchases || 0 %></p>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="box" style="height: 100%;">
+										<p class="heading">Lifetime revenue (creator)</p>
+										<p class="title is-5"><%= sales.lifetimeRevenue || 0 %> pts</p>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-container">
+								<table class="table is-fullwidth is-striped is-hoverable">
+									<thead>
+										<tr>
+											<th>Purchased at</th>
+											<th>Buyer</th>
+											<th>Points paid</th>
+											<th>Creator share</th>
+											<th>Transaction</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% let totalPaid = 0; %>
+										<% let totalCreatorShare = 0; %>
+										<% if (!sales.history || sales.history.length === 0) { %>
+										<tr>
+											<td colspan="5" class="has-text-centered" style="padding: 2rem;">No purchases yet.</td>
+										</tr>
+										<% } else { %>
+										<% sales.history.forEach(row => { %>
+											<% totalPaid += row && row.points_paid ? row.points_paid : 0; %>
+											<% totalCreatorShare += row && row.extension_creator_share ? row.extension_creator_share : 0; %>
+										<tr>
+											<td><%= row && row.purchased_at ? new Date(row.purchased_at).toLocaleString() : '' %></td>
+											<td><code><%= row && row.user_id ? row.user_id : '' %></code></td>
+											<td><%= row && row.points_paid ? row.points_paid : 0 %></td>
+											<td><%= row && row.extension_creator_share ? row.extension_creator_share : 0 %></td>
+											<td><code><%= row && row.transaction_id ? row.transaction_id : '' %></code></td>
+										</tr>
+										<% }) %>
+										<% } %>
+									</tbody>
+									<tfoot>
+										<tr>
+											<th colspan="2">Totals (history)</th>
+											<th><%= totalPaid %></th>
+											<th><%= totalCreatorShare %></th>
+											<th></th>
+										</tr>
+									</tfoot>
+								</table>
+							</div>
+						</div>
+					<% } else if (pageData.selectedExtId) { %>
+						<article class="message is-warning">
+							<div class="message-body">No sales data could be loaded for that extension.</div>
+						</article>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

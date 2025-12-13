@@ -1,5 +1,7 @@
 const path = require("path");
 const showdown = require("showdown");
+const ObjectId = require("../../Database/ObjectID");
+// Feedback model is available via global.Feedback (initialized in Driver.js)
 const md = new showdown.Converter({
 	tables: true,
 	simplifiedAutoLink: true,
@@ -15,6 +17,7 @@ const { Tail } = require("tail");
 const { getRoundedUptime, saveMaintainerConsoleOptions: save, getChannelData, canDo, renderError } = require("../helpers");
 const { GetGuild } = require("../../Modules").getGuild;
 const Constants = require("../../Internals/Constants");
+const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 
 /**
  * Safely get site settings for READ operations (GET requests).
@@ -123,6 +126,7 @@ controllers.servers.list = async (req, { res }) => {
 		renderPage();
 	}
 };
+
 controllers.servers.list.post = async (req, res) => {
 	if (req.body.removeFromActivity && !configJSON.activityBlocklist.includes(req.body.removeFromActivity)) {
 		configJSON.activityBlocklist.push(req.body.removeFromActivity);
@@ -165,7 +169,7 @@ controllers.globalScan = async (req, res) => {
 		let serversScanned = 0;
 		const errors = [];
 
-		for (const [guildId, guild] of guilds) {
+		for (const [, guild] of guilds) {
 			try {
 				const members = await guild.members.fetch();
 				totalMembers += members.size;
@@ -216,6 +220,219 @@ controllers.globalScan = async (req, res) => {
 };
 
 controllers.options = {};
+
+controllers.options.premiumExtensionsSales = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	let premiumDocs = [];
+	try {
+		premiumDocs = await Gallery.find({ "premium.is_premium": true }).sort({ name: 1 }).exec();
+	} catch (err) {
+		premiumDocs = [];
+	}
+
+	const premiumExtensionsList = (premiumDocs || []).map(doc => ({
+		id: doc._id?.toString ? doc._id.toString() : `${doc._id}`,
+		name: doc.name,
+	}));
+
+	const selectedExtId = typeof req.query.extid === "string" ? req.query.extid : "";
+	const limit = req.query?.limit ? parseInt(req.query.limit, 10) : 100;
+	const wantsJson = req.query?.json === "1" || req.query?.json === "true" || (typeof req.headers?.accept === "string" && req.headers.accept.includes("application/json"));
+
+	let salesData = null;
+	if (selectedExtId) {
+		try {
+			salesData = await PremiumExtensionsManager.getExtensionSalesAdmin(selectedExtId, limit);
+		} catch (err) {
+			salesData = null;
+		}
+	}
+
+	if (wantsJson && salesData) return res.json(salesData);
+	if (wantsJson && selectedExtId && !salesData) return res.status(404).json({ error: "Extension not found" });
+
+	res.setConfigData({
+		premium_extensions_list: premiumExtensionsList,
+		salesData,
+	}).setPageData({
+		selectedExtId,
+		limit: typeof limit === "number" && !Number.isNaN(limit) ? limit : 100,
+		page: "maintainer-premium-extensions-sales.ejs",
+	}).render();
+};
+
+controllers.options.premiumExtensions = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	const siteSettings = await getSiteSettingsForRead();
+	const premiumSettings = siteSettings?.premium_extensions || {};
+	const fetchOwnerName = async ownerId => {
+		let ownerName = "invalid-user";
+		try {
+			const usr = await req.app.client.users.fetch(ownerId, true);
+			if (usr && usr.username) ownerName = usr.username;
+		} catch (_) {
+			ownerName = "invalid-user";
+		}
+		return ownerName;
+	};
+
+	let stats = {
+		totalPurchases: 0,
+		totalCreatorRevenue: 0,
+		topExtensionsByPurchases: [],
+		topExtensionsByRevenue: [],
+		topCreatorsByRevenue: [],
+	};
+	try {
+		stats = await PremiumExtensionsManager.getMarketplaceStats();
+	} catch (err) {
+		stats = {
+			totalPurchases: 0,
+			totalCreatorRevenue: 0,
+			topExtensionsByPurchases: [],
+			topExtensionsByRevenue: [],
+			topCreatorsByRevenue: [],
+		};
+	}
+
+	const topExtensionsByPurchases = Array.isArray(stats.topExtensionsByPurchases) ? stats.topExtensionsByPurchases : [];
+	const topExtensionsByRevenue = Array.isArray(stats.topExtensionsByRevenue) ? stats.topExtensionsByRevenue : [];
+	const topCreatorsByRevenue = Array.isArray(stats.topCreatorsByRevenue) ? stats.topCreatorsByRevenue : [];
+	stats.topExtensionsByPurchases = await Promise.all(topExtensionsByPurchases.map(async ext => ({
+		...ext,
+		owner_name: await fetchOwnerName(ext.owner_id),
+	})));
+	stats.topExtensionsByRevenue = await Promise.all(topExtensionsByRevenue.map(async ext => ({
+		...ext,
+		owner_name: await fetchOwnerName(ext.owner_id),
+	})));
+	stats.topCreatorsByRevenue = await Promise.all(topCreatorsByRevenue.map(async creator => ({
+		...creator,
+		owner_name: await fetchOwnerName(creator.owner_id),
+	})));
+
+	let premiumDocs = [];
+	try {
+		premiumDocs = await Gallery.find({ "premium.is_premium": true }).exec();
+	} catch (err) {
+		premiumDocs = [];
+	}
+	const pendingDocs = (premiumDocs || []).filter(doc => !(doc && doc.premium && doc.premium.approved === true));
+
+	const pending = await Promise.all(pendingDocs.map(async doc => {
+		const ownerName = await fetchOwnerName(doc.owner_id);
+		return {
+			id: doc._id.toString(),
+			name: doc.name,
+			owner_id: doc.owner_id,
+			owner_name: ownerName,
+			price_points: doc.premium?.price_points || 0,
+			purchases: doc.premium?.purchases || 0,
+			developer_earnings: doc.premium?.developer_earnings || 0,
+			lifetime_revenue: doc.premium?.lifetime_revenue || 0,
+		};
+	}));
+
+	res.setConfigData({
+		premium_extensions: {
+			isEnabled: premiumSettings.isEnabled === true,
+			default_revenue_share: typeof premiumSettings.default_revenue_share === "number" ? premiumSettings.default_revenue_share : 70,
+			min_price_points: typeof premiumSettings.min_price_points === "number" ? premiumSettings.min_price_points : 100,
+			max_price_points: typeof premiumSettings.max_price_points === "number" ? premiumSettings.max_price_points : 100000,
+			approval_required: premiumSettings.approval_required !== false,
+		},
+		premium_pending: pending,
+		premium_stats: stats,
+	}).setPageData({
+		page: "maintainer-premium-extensions.ejs",
+	}).render();
+};
+
+controllers.options.premiumExtensions.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const siteSettings = await getSiteSettingsForWrite();
+
+	if (req.body && req.body.pe_action && req.body.pe_extid) {
+		let extId;
+		try {
+			extId = new ObjectId(req.body.pe_extid);
+		} catch (err) {
+			return res.redirect(req.originalUrl);
+		}
+		const galleryDoc = await Gallery.findOne(extId);
+		if (!galleryDoc) return res.redirect(req.originalUrl);
+
+		if (req.body.pe_action === "approve") {
+			const premiumSettings2 = siteSettings?.premium_extensions || {};
+			const minPrice = typeof premiumSettings2.min_price_points === "number" ? premiumSettings2.min_price_points : 100;
+			const maxPrice = typeof premiumSettings2.max_price_points === "number" ? premiumSettings2.max_price_points : 100000;
+			const pricePoints = galleryDoc.premium?.price_points || 0;
+			if (pricePoints <= 0) {
+				renderError(res, "Extension price must be greater than 0 before approval.");
+				return;
+			}
+			if (typeof minPrice === "number" && pricePoints < minPrice) {
+				renderError(res, `Extension price is below the minimum (${minPrice} points).`);
+				return;
+			}
+			if (typeof maxPrice === "number" && pricePoints > maxPrice) {
+				renderError(res, `Extension price is above the maximum (${maxPrice} points).`);
+				return;
+			}
+			galleryDoc.query.set("premium.is_premium", true);
+			galleryDoc.query.set("premium.approved", true);
+			await galleryDoc.save().catch(() => null);
+			return res.redirect(req.originalUrl);
+		}
+		if (req.body.pe_action === "reject") {
+			galleryDoc.query.set("premium.is_premium", true);
+			galleryDoc.query.set("premium.approved", false);
+			await galleryDoc.save().catch(() => null);
+			return res.redirect(req.originalUrl);
+		}
+		if (req.body.pe_action === "adjust") {
+			const pricePoints = parseInt(req.body.pe_price_points, 10) || 0;
+			const premiumSettings2 = siteSettings?.premium_extensions || {};
+			const minPrice = typeof premiumSettings2.min_price_points === "number" ? premiumSettings2.min_price_points : 100;
+			const maxPrice = typeof premiumSettings2.max_price_points === "number" ? premiumSettings2.max_price_points : 100000;
+			if (pricePoints <= 0) {
+				renderError(res, "Price must be greater than 0.");
+				return;
+			}
+			if (typeof minPrice === "number" && pricePoints < minPrice) {
+				renderError(res, `Minimum price is ${minPrice} points.`);
+				return;
+			}
+			if (typeof maxPrice === "number" && pricePoints > maxPrice) {
+				renderError(res, `Maximum price is ${maxPrice} points.`);
+				return;
+			}
+			galleryDoc.query.set("premium.is_premium", true);
+			galleryDoc.query.set("premium.price_points", pricePoints);
+			galleryDoc.query.set("premium.approved", true);
+			await galleryDoc.save().catch(() => null);
+			return res.redirect(req.originalUrl);
+		}
+		return res.redirect(req.originalUrl);
+	}
+
+	siteSettings.query.set("premium_extensions.isEnabled", req.body.premium_enabled === "on");
+	siteSettings.query.set("premium_extensions.default_revenue_share", parseInt(req.body.default_revenue_share, 10) || 70);
+	siteSettings.query.set("premium_extensions.min_price_points", parseInt(req.body.min_price_points, 10) || 100);
+	siteSettings.query.set("premium_extensions.max_price_points", parseInt(req.body.max_price_points, 10) || 100000);
+	siteSettings.query.set("premium_extensions.approval_required", req.body.approval_required === "on");
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save premium extensions settings", {}, err);
+		renderError(res, "Failed to save premium extensions settings.");
+	}
+};
 
 controllers.options.blocklist = async (req, { res }) => {
 	res.setConfigData({
@@ -1205,16 +1422,16 @@ controllers.feedback.list = async (req, { res }) => {
 	if (status) filter.status = status;
 
 	// Get feedback items sorted by newest first
-	const feedbackItems = await Feedback.find(filter)
+	const feedbackItems = await global.Feedback.find(filter)
 		.sort({ created_at: -1 })
 		.limit(100)
 		.exec();
 
 	// Get counts per category and status
-	const categoryCounts = await Feedback.aggregate([
+	const categoryCounts = await global.Feedback.aggregate([
 		{ $group: { _id: "$category", count: { $sum: 1 } } },
 	]);
-	const statusCounts = await Feedback.aggregate([
+	const statusCounts = await global.Feedback.aggregate([
 		{ $group: { _id: "$status", count: { $sum: 1 } } },
 	]);
 
@@ -1250,7 +1467,7 @@ controllers.feedback.update = async (req, res) => {
 	}
 
 	try {
-		const feedback = await Feedback.findOne(id);
+		const feedback = await global.Feedback.findOne(id);
 		if (!feedback) {
 			return res.status(404).json({ error: "Feedback not found" });
 		}
@@ -1275,7 +1492,7 @@ controllers.feedback.delete = async (req, res) => {
 	}
 
 	try {
-		await Feedback.delete({ _id: id });
+		await global.Feedback.delete({ _id: id });
 		res.json({ success: true });
 	} catch (err) {
 		logger.error("Failed to delete feedback", { id }, err);
@@ -1301,7 +1518,7 @@ controllers.feedback.submit = async (req, res) => {
 		const userId = req.isAuthenticated() ? req.user.id : "anonymous";
 		const username = req.isAuthenticated() ? req.user.username : "Anonymous";
 
-		await Feedback.create({
+		await global.Feedback.create({
 			_id: feedbackId,
 			user_id: userId,
 			username,

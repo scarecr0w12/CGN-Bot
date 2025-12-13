@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Premium Extensions - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<div class="level">
+						<div class="level-left">
+							<h1 class="title" style="margin-bottom: 0;">Premium Extensions</h1>
+						</div>
+						<div class="level-right">
+							<div class="buttons">
+								<a class="button is-link" href="/dashboard/maintainer/global-options/premium-extensions/sales">
+									View Sales
+								</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="columns">
+						<div class="column">
+							<div class="box">
+								<p class="heading">Total Purchases</p>
+								<p class="title is-5"><%= configData.premium_stats ? (configData.premium_stats.totalPurchases || 0) : 0 %></p>
+							</div>
+						</div>
+						<div class="column">
+							<div class="box">
+								<p class="heading">Total Creator Revenue</p>
+								<p class="title is-5"><%= configData.premium_stats ? (configData.premium_stats.totalCreatorRevenue || 0) : 0 %> pts</p>
+							</div>
+						</div>
+					</div>
+
+					<% const topByPurchases = (configData.premium_stats && configData.premium_stats.topExtensionsByPurchases) ? configData.premium_stats.topExtensionsByPurchases : []; %>
+					<% const topByRevenue = (configData.premium_stats && configData.premium_stats.topExtensionsByRevenue) ? configData.premium_stats.topExtensionsByRevenue : []; %>
+					<% const topCreators = (configData.premium_stats && configData.premium_stats.topCreatorsByRevenue) ? configData.premium_stats.topCreatorsByRevenue : []; %>
+
+					<div class="columns">
+						<div class="column">
+							<div class="box">
+								<p class="heading">Top Extensions (by Purchases)</p>
+								<% if (!topByPurchases.length) { %>
+									<p>No purchase data yet.</p>
+								<% } else { %>
+									<div style="overflow-x: auto;">
+										<table class="table is-fullwidth is-striped">
+											<thead>
+												<tr>
+													<th>Extension</th>
+													<th>Owner</th>
+													<th>Price</th>
+													<th>Purchases</th>
+													<th>Creator Revenue</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% topByPurchases.forEach(ext => { %>
+												<tr>
+													<td><code><%= ext.id %></code><br><strong><%= ext.name %></strong></td>
+													<td><code><%= ext.owner_id %></code><br><%= ext.owner_name %></td>
+													<td><%= ext.price_points || 0 %> pts</td>
+													<td><%= ext.purchases || 0 %></td>
+													<td><%= ext.lifetime_revenue || 0 %> pts</td>
+												</tr>
+												<% }); %>
+											</tbody>
+										</table>
+									</div>
+								<% } %>
+							</div>
+						</div>
+						<div class="column">
+							<div class="box">
+								<p class="heading">Top Extensions (by Creator Revenue)</p>
+								<% if (!topByRevenue.length) { %>
+									<p>No revenue data yet.</p>
+								<% } else { %>
+									<div style="overflow-x: auto;">
+										<table class="table is-fullwidth is-striped">
+											<thead>
+												<tr>
+													<th>Extension</th>
+													<th>Owner</th>
+													<th>Price</th>
+													<th>Purchases</th>
+													<th>Creator Revenue</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% topByRevenue.forEach(ext => { %>
+												<tr>
+													<td><code><%= ext.id %></code><br><strong><%= ext.name %></strong></td>
+													<td><code><%= ext.owner_id %></code><br><%= ext.owner_name %></td>
+													<td><%= ext.price_points || 0 %> pts</td>
+													<td><%= ext.purchases || 0 %></td>
+													<td><%= ext.lifetime_revenue || 0 %> pts</td>
+												</tr>
+												<% }); %>
+											</tbody>
+										</table>
+									</div>
+								<% } %>
+							</div>
+						</div>
+					</div>
+
+					<div class="box">
+						<p class="heading">Top Creators (by Revenue)</p>
+						<% if (!topCreators.length) { %>
+							<p>No creator revenue data yet.</p>
+						<% } else { %>
+							<div style="overflow-x: auto;">
+								<table class="table is-fullwidth is-striped">
+									<thead>
+										<tr>
+											<th>Creator</th>
+											<th>Extensions</th>
+											<th>Total Purchases</th>
+											<th>Total Revenue</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% topCreators.forEach(c => { %>
+										<tr>
+											<td><code><%= c.owner_id %></code><br><%= c.owner_name %></td>
+											<td><%= c.extensions_count || 0 %></td>
+											<td><%= c.total_purchases || 0 %></td>
+											<td><%= c.total_revenue || 0 %> pts</td>
+										</tr>
+										<% }); %>
+									</tbody>
+								</table>
+							</div>
+						<% } %>
+					</div>
+
+					<h2 class="subtitle">Marketplace Settings</h2>
+					<form id="form" action="<%= currentPage %>" method="post">
+						<div class="field">
+							<label class="checkbox">
+								<input type="checkbox" name="premium_enabled" <%= configData.premium_extensions && configData.premium_extensions.isEnabled ? 'checked' : '' %>>
+								Enable Premium Extensions Marketplace
+							</label>
+						</div>
+
+						<div class="columns">
+							<div class="column is-3">
+								<div class="field">
+									<label class="label">Default Revenue Share (%)</label>
+									<input class="input" type="number" name="default_revenue_share" min="0" max="100" value="<%= configData.premium_extensions ? configData.premium_extensions.default_revenue_share : 70 %>">
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="field">
+									<label class="label">Min Price (points)</label>
+									<input class="input" type="number" name="min_price_points" min="0" value="<%= configData.premium_extensions ? configData.premium_extensions.min_price_points : 100 %>">
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="field">
+									<label class="label">Max Price (points)</label>
+									<input class="input" type="number" name="max_price_points" min="0" value="<%= configData.premium_extensions ? configData.premium_extensions.max_price_points : 100000 %>">
+								</div>
+							</div>
+							<div class="column is-3">
+								<div class="field">
+									<label class="checkbox" style="margin-top: 2.25rem; display: inline-block;">
+										<input type="checkbox" name="approval_required" <%= configData.premium_extensions && configData.premium_extensions.approval_required ? 'checked' : '' %>>
+										Require Approval
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<%- include('../partials/form-buttons') %>
+					</form>
+
+					<hr>
+
+					<h2 class="subtitle">Premium Approval Queue</h2>
+					<% const pending = configData.premium_pending || []; %>
+					<% if (!pending.length) { %>
+						<article class="message is-success">
+							<div class="message-body">No premium extensions pending approval.</div>
+						</article>
+					<% } else { %>
+						<div class="field" style="overflow-x: auto;">
+							<table class="table is-fullwidth">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Owner</th>
+										<th>Price</th>
+										<th>Purchases</th>
+										<th>Creator Earnings</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% pending.forEach(ext => { %>
+									<tr>
+										<td><code><%= ext.id %></code><br><strong><%= ext.name %></strong></td>
+										<td><code><%= ext.owner_id %></code><br><%= ext.owner_name %></td>
+										<td><%= ext.price_points %> pts</td>
+										<td><%= ext.purchases %></td>
+										<td><%= ext.developer_earnings %> pts</td>
+										<td>
+											<form action="<%= currentPage %>" method="post" style="margin-bottom: 0.5rem;">
+												<input type="hidden" name="pe_action" value="approve">
+												<input type="hidden" name="pe_extid" value="<%= ext.id %>">
+												<button class="button is-success is-small" type="submit">Approve</button>
+											</form>
+											<form action="<%= currentPage %>" method="post" style="margin-bottom: 0.5rem;">
+												<input type="hidden" name="pe_action" value="reject">
+												<input type="hidden" name="pe_extid" value="<%= ext.id %>">
+												<button class="button is-danger is-small" type="submit">Reject</button>
+											</form>
+											<form action="<%= currentPage %>" method="post">
+												<input type="hidden" name="pe_action" value="adjust">
+												<input type="hidden" name="pe_extid" value="<%= ext.id %>">
+												<div class="field has-addons">
+													<div class="control">
+														<input class="input is-small" type="number" name="pe_price_points" value="<%= ext.price_points %>" style="width: 110px;">
+													</div>
+													<div class="control">
+														<button class="button is-info is-small" type="submit">Adjust</button>
+													</div>
+												</div>
+											</form>
+										</td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

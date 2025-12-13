@@ -34,6 +34,10 @@ module.exports = new Schema({
 			type: Boolean,
 			default: false,
 		},
+		approved: {
+			type: Boolean,
+			default: false,
+		},
 		price_points: {
 			type: Number,
 			default: 0,
@@ -42,9 +46,30 @@ module.exports = new Schema({
 			type: Number,
 			default: 0,
 		},
+		developer_earnings: {
+			type: Number,
+			default: 0,
+		},
+		revenue_share: {
+			type: Number,
+			default: 70,
+			min: 0,
+			max: 100,
+		},
+		lifetime_revenue: {
+			type: Number,
+			default: 0,
+		},
 	}),
 	// Track users who have purchased this premium extension
 	purchased_by: [String],
+	purchase_history: [new Schema({
+		transaction_id: String,
+		user_id: String,
+		purchased_at: Date,
+		points_paid: Number,
+		extension_creator_share: Number,
+	})],
 	owner_id: String,
 	code_id: String,
 	featured: Boolean,

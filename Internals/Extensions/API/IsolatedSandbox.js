@@ -1,4 +1,5 @@
 const ivm = require("isolated-vm");
+const sizeof = require("object-sizeof");
 const {
 	Errors: {
 		Error: SkynetError,
@@ -67,6 +68,12 @@ class IsolatedSandbox {
 		// Set up economy/points write callbacks
 		await this._setupPointsCallbacks(jail);
 
+		// Set up extension storage callbacks
+		await this._setupExtensionStoreCallbacks(jail);
+
+		// Set up message reply callbacks
+		await this._setupMessageCallbacks(jail);
+
 		// Set up interaction callbacks (slash commands)
 		await this._setupInteractionCallbacks(jail);
 
@@ -90,6 +97,11 @@ class IsolatedSandbox {
 							getRanks: () => module.ranks,
 							getStats: () => module.stats,
 							getTotalMembers: () => module.totalMembers,
+							getMemberIds: (limit) => {
+								if (!Array.isArray(module.memberIds)) return [];
+								if (!limit) return module.memberIds;
+								return module.memberIds.slice(0, limit);
+							},
 							
 							// Write methods (via callbacks)
 							addPoints: (userId, amount, reason) => {
@@ -112,6 +124,63 @@ class IsolatedSandbox {
 								const result = __pointsGetCallback__(userId);
 								return JSON.parse(result);
 							},
+						};
+					}
+
+					// Wrap extension module to expose per-server storage
+					if (name === 'extension') {
+						const safeParse = (input) => {
+							if (!input) return null;
+							try { return JSON.parse(input); } catch (_) { return null; }
+						};
+						module = {
+							...module,
+							storage: {
+								get: (key) => {
+									if (!module.store) return undefined;
+									return module.store[key];
+								},
+								write: async (key, value) => {
+									const res = safeParse(__extensionStoreWriteCallback__(String(key), JSON.stringify(value)));
+									if (res && res.success) {
+										module.store = res.store;
+										return res.value;
+									}
+									throw new Error((res && res.error) ? res.error : 'Failed to write extension storage');
+								},
+								delete: async (key) => {
+									const res = safeParse(__extensionStoreDeleteCallback__(String(key)));
+									if (res && res.success) {
+										module.store = res.store;
+										return key;
+									}
+									throw new Error((res && res.error) ? res.error : 'Failed to delete extension storage key');
+								},
+								clear: async () => {
+									const res = safeParse(__extensionStoreClearCallback__());
+									if (res && res.success) {
+										module.store = res.store;
+										return true;
+									}
+									throw new Error((res && res.error) ? res.error : 'Failed to clear extension storage');
+								},
+							},
+						};
+					}
+
+					// Wrap message module to expose reply
+					if (name === 'message') {
+						const safeParse = (input) => {
+							if (!input) return {};
+							try { return JSON.parse(input); } catch (_) { return {}; }
+						};
+						const call = (cb, payload) => {
+							const result = cb(JSON.stringify(payload || {}));
+							return safeParse(result);
+						};
+						module = {
+							...module,
+							reply: (payload) => call(__messageReplyCallback__, (typeof payload === 'string') ? { content: payload } : payload),
 						};
 					}
 
@@ -138,6 +207,92 @@ class IsolatedSandbox {
 				return moduleData.value;
 			};
 		`);
+	}
+
+	/**
+	 * Set up callbacks for extension store operations
+	 * @param {ivm.Reference} jail
+	 * @private
+	 */
+	async _setupExtensionStoreCallbacks (jail) {
+		const { serverDocument, extensionConfigDocument } = this.context;
+		const maxSize = 25000;
+
+		const writeCallback = new ivm.Callback((key, valueJSON) => {
+			try {
+				const parsed = JSON.parse(valueJSON);
+				const store = extensionConfigDocument.store && typeof extensionConfigDocument.store === "object" ? JSON.parse(JSON.stringify(extensionConfigDocument.store)) : {};
+				store[key] = parsed;
+				if (sizeof(store) > maxSize) {
+					return JSON.stringify({ success: false, error: "STORAGE_SIZE_MAX" });
+				}
+				extensionConfigDocument.store = store;
+				serverDocument.markModified("extensions");
+				return JSON.stringify({ success: true, store, value: parsed });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		});
+
+		const deleteCallback = new ivm.Callback((key) => {
+			try {
+				const store = extensionConfigDocument.store && typeof extensionConfigDocument.store === "object" ? JSON.parse(JSON.stringify(extensionConfigDocument.store)) : {};
+				delete store[key];
+				extensionConfigDocument.store = store;
+				serverDocument.markModified("extensions");
+				return JSON.stringify({ success: true, store });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		});
+
+		const clearCallback = new ivm.Callback(() => {
+			try {
+				extensionConfigDocument.store = {};
+				serverDocument.markModified("extensions");
+				return JSON.stringify({ success: true, store: {} });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		});
+
+		await jail.set("__extensionStoreWriteCallback__", writeCallback);
+		await jail.set("__extensionStoreDeleteCallback__", deleteCallback);
+		await jail.set("__extensionStoreClearCallback__", clearCallback);
+	}
+
+	/**
+	 * Set up callbacks for message reply operations
+	 * @param {ivm.Reference} jail
+	 * @private
+	 */
+	async _setupMessageCallbacks (jail) {
+		const { msg } = this.context;
+		if (!msg) return;
+
+		const safeParse = input => {
+			if (!input) return {};
+			try {
+				return JSON.parse(input);
+			} catch (_) {
+				return {};
+			}
+		};
+
+		const replyCallback = new ivm.Callback(async payloadJSON => {
+			const payload = safeParse(payloadJSON);
+			try {
+				if (!this.scopes.includes(Scopes.messages_write.scope)) {
+					return JSON.stringify({ success: false, error: "MISSING_SCOPES" });
+				}
+				await msg.reply(payload);
+				return JSON.stringify({ success: true });
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message });
+			}
+		}, { async: true });
+
+		await jail.set("__messageReplyCallback__", replyCallback);
 	}
 
 	/**
@@ -285,7 +440,7 @@ class IsolatedSandbox {
 	 * @private
 	 */
 	_buildModulesData () {
-		const { extensionDocument, versionDocument, msg, serverDocument, extensionConfigDocument, interaction } = this.context;
+		const { versionDocument, msg, serverDocument, extensionConfigDocument, interaction } = this.context;
 		const modules = {};
 
 		// Command module data
@@ -308,14 +463,8 @@ class IsolatedSandbox {
 			};
 		}
 
-		// Extension info
-		modules.extension = {
-			value: {
-				name: extensionDocument.name,
-				version: versionDocument.version,
-				type: versionDocument.type,
-			},
-		};
+		// Extension module (needs callback for storage)
+		modules.extension = { needsCallback: true };
 
 		// Mark complex modules that need callback resolution
 		modules.message = { needsCallback: true };
@@ -350,12 +499,16 @@ class IsolatedSandbox {
 	 * @private
 	 */
 	_resolveModule (name) {
-		const { msg, guild, serverDocument, eventData, interaction } = this.context;
+		const { msg, guild, serverDocument, eventData, interaction, extensionConfigDocument } = this.context;
 		const { scopes } = this;
 		const { rawClient } = this;
 		const Utils = require("./Modules/Utils");
 
 		switch (name) {
+			case "extension":
+				return {
+					store: (extensionConfigDocument && extensionConfigDocument.store && typeof extensionConfigDocument.store === "object") ? JSON.parse(JSON.stringify(extensionConfigDocument.store)) : {},
+				};
 			case "message":
 				if (!msg) throw new SkynetError("UNKNOWN_MODULE", name);
 				return this._serializeMessage(msg);
@@ -729,6 +882,7 @@ class IsolatedSandbox {
 				ranks: pointsModule.getRanks(),
 				stats: pointsModule.getStats(),
 				totalMembers: pointsModule.getTotalMembers(),
+				memberIds: pointsModule.getMemberIds(250),
 
 				// Helper functions that work on the pre-loaded data
 				_leaderboardData: pointsModule.getLeaderboard(100),
@@ -751,6 +905,7 @@ class IsolatedSandbox {
 				ranks: [],
 				stats: null,
 				totalMembers: 0,
+				memberIds: [],
 				error: err.message,
 				addPoints: "__USE_CALLBACK__",
 				removePoints: "__USE_CALLBACK__",

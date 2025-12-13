@@ -6,6 +6,7 @@ const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");
 const parsers = require("../../parsers");
 const TierManager = require("../../../Modules/TierManager");
+const PremiumExtensionsManager = require("../../../Modules/PremiumExtensionsManager");
 
 const controllers = module.exports;
 
@@ -231,7 +232,33 @@ controllers.extensions.post = async (req, { res }) => {
 		const versionDocument = extensionDocument.versions.id(parseInt(req.body.v));
 		if (!versionDocument) return res.sendStatus(404);
 
-		const serverExtensionDocument = { _id: id.toString(), version: parseInt(req.body.v), disabled_channel_ids: [], keywords: [], status: { code: 0, description: "" } };
+		if (extensionDocument.premium && extensionDocument.premium.is_premium) {
+			const installerUserId = req.consolemember && req.consolemember.user ? req.consolemember.user.id : null;
+			if (!installerUserId) return res.sendStatus(401);
+			try {
+				const gate = await PremiumExtensionsManager.canServerInstallExtension(req.svr.id, id.toString(), installerUserId);
+				if (!gate.allowed) {
+					return res.status(403).send(gate.reason || "Not purchased");
+				}
+			} catch (err) {
+				logger.warn("Premium extension install gate failed", { svrid: req.svr.id, usrid: installerUserId, extid: id.toString() }, err);
+				return res.sendStatus(500);
+			}
+		}
+
+		const installerUserId = req.consolemember && req.consolemember.user ? req.consolemember.user.id : null;
+		const existingServerExtensionDocument = serverDocument.extensions.id(id.toString());
+		const serverExtensionDocument = {
+			_id: id.toString(),
+			version: parseInt(req.body.v),
+			installed_by: installerUserId,
+			disabled_channel_ids: [],
+			keywords: [],
+			// Preserve extension runtime storage (and any per-extension settings stored there)
+			store: existingServerExtensionDocument && existingServerExtensionDocument.store ? existingServerExtensionDocument.store : {},
+			// Preserve last known status unless we are installing fresh
+			status: existingServerExtensionDocument && existingServerExtensionDocument.status ? existingServerExtensionDocument.status : { code: 0, description: "" },
+		};
 
 		switch (versionDocument.type) {
 			case "command":
@@ -240,6 +267,11 @@ controllers.extensions.post = async (req, { res }) => {
 				Object.values(req.svr.channels).forEach(ch => {
 					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});
+				// Season extension: store per-server toggle for whether to reset points on season reset
+				if (versionDocument.key === "season") {
+					serverExtensionDocument.store = serverExtensionDocument.store || {};
+					serverExtensionDocument.store.season_reset_points = req.body.season_reset_points === "on";
+				}
 				break;
 			case "slash":
 				serverExtensionDocument.key = versionDocument.key;

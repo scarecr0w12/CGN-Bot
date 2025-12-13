@@ -259,6 +259,29 @@ module.exports = function createPointsModule (context, scopes) {
 		},
 
 		/**
+		 * Get member IDs with points data (for batch operations like season reset)
+		 * @param {number} [limit=250] - Maximum number of member IDs to return
+		 * @returns {Array<string>} Array of member user IDs
+		 * @throws {SkynetError} If missing scope
+		 */
+		getMemberIds (limit = 250) {
+			if (!hasReadScope) throw new SkynetError("MISSING_SCOPES", "members_read");
+
+			if (!serverDocument || !serverDocument.members) return [];
+
+			const safeLimit = Math.min(Math.max(1, limit), 500);
+
+			const members = Array.isArray(serverDocument.members) ?
+				serverDocument.members :
+				Object.values(serverDocument.members);
+
+			return members
+				.filter(m => m && m._id)
+				.map(m => m._id)
+				.slice(0, safeLimit);
+		},
+
+		/**
 		 * Get server economy statistics
 		 * @returns {Object} Economy stats
 		 * @throws {SkynetError} If missing scope

@@ -10,13 +10,16 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 ## Features
 
 - **🤖 AI Integration** - Chat with AI and generate images using DALL-E/Stable Diffusion
-- **🎮 Entertainment** - Games, polls, giveaways, and fun commands
+- **💰 Economy System** - Full economy with daily rewards, jobs, shops, trading, quests, and achievements
+- **🎮 Entertainment** - 60+ game extensions, polls, giveaways, and fun commands
 - **🛡️ Moderation** - Progressive strike system, auto-mod filters, audit logging
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
-- **🧩 Extensions** - Create, share, and install custom server extensions
-- **💎 Membership System** - Tiered subscriptions with Stripe/PayPal/BTCPay
+- **🧩 Extensions** - Create, share, and install custom server extensions with slash command support
+- **💎 Server Premium** - Per-server subscriptions with Stripe/PayPal/BTCPay
+- **🗳️ Vote Rewards** - Earn points from voting, spend on premium features
 - **🌐 Web Dashboard** - Full server management from the browser
 - **🔐 OAuth Integration** - Link Google, GitHub, Twitch, Patreon accounts
+- **🗃️ Dual Database** - Support for MongoDB and MariaDB backends
 
 ## Quick Start
 

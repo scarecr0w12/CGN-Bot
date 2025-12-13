@@ -1,0 +1,90 @@
+<div class="box" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.08);">
+	<div class="level">
+		<div class="level-left">
+			<div>
+				<h2 class="title is-4" style="margin-bottom: 0.25rem;"><%= pageData.salesData.extensionName %></h2>
+				<p class="subtitle is-6" style="margin-bottom: 0;">Sales history and earnings breakdown</p>
+			</div>
+		</div>
+		<div class="level-right">
+			<div class="buttons">
+				<a class="button is-light" href="/extensions/my">Back to My Extensions</a>
+				<a class="button is-link" href="/extensions/<%= pageData.salesData.extensionId %>/sales?json=1" target="_blank" rel="noopener noreferrer">View JSON</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="columns is-multiline" style="margin-top: 1rem;">
+		<div class="column is-3">
+			<div class="box" style="height: 100%;">
+				<p class="heading">Price</p>
+				<p class="title is-5"><%= pageData.salesData.pricePoints || 0 %> pts</p>
+			</div>
+		</div>
+		<div class="column is-3">
+			<div class="box" style="height: 100%;">
+				<p class="heading">Revenue share</p>
+				<p class="title is-5"><%= (typeof pageData.salesData.revenueShare === 'number' ? pageData.salesData.revenueShare : 0) %>%</p>
+			</div>
+		</div>
+		<div class="column is-3">
+			<div class="box" style="height: 100%;">
+				<p class="heading">Total purchases</p>
+				<p class="title is-5"><%= pageData.salesData.purchases || 0 %></p>
+			</div>
+		</div>
+		<div class="column is-3">
+			<div class="box" style="height: 100%;">
+				<%
+					let totalPaid = 0;
+					let totalCreatorShare = 0;
+					(pageData.salesData.history || []).forEach(r => {
+						totalPaid += r && r.points_paid ? r.points_paid : 0;
+						totalCreatorShare += r && r.extension_creator_share ? r.extension_creator_share : 0;
+					});
+				%>
+				<p class="heading">Creator earnings (history)</p>
+				<p class="title is-5"><%= totalCreatorShare %> pts</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="table-container">
+		<table class="table is-fullwidth is-striped is-hoverable">
+			<thead>
+				<tr>
+					<th>Purchased at</th>
+					<th>Buyer</th>
+					<th>Points paid</th>
+					<th>Creator share</th>
+					<th>Transaction</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% if (!pageData.salesData.history || pageData.salesData.history.length === 0) { %>
+				<tr>
+					<td colspan="5" class="has-text-centered" style="padding: 2rem;">No purchases yet.</td>
+				</tr>
+				<% } else { %>
+				<% pageData.salesData.history.forEach(row => { %>
+				<tr>
+					<td><%= row && row.purchased_at ? new Date(row.purchased_at).toLocaleString() : '' %></td>
+					<td><code><%= row && row.user_id ? row.user_id : '' %></code></td>
+					<td><%= row && row.points_paid ? row.points_paid : 0 %></td>
+					<td><%= row && row.extension_creator_share ? row.extension_creator_share : 0 %></td>
+					<td><code><%= row && row.transaction_id ? row.transaction_id : '' %></code></td>
+				</tr>
+				<% }) %>
+				<% } %>
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="2">Totals (history)</th>
+					<th><%= totalPaid %></th>
+					<th><%= totalCreatorShare %></th>
+					<th></th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>

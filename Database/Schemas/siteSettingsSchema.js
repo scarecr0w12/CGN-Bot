@@ -273,6 +273,33 @@ module.exports = new Schema({
 		}),
 	}),
 
+	premium_extensions: new Schema({
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+		default_revenue_share: {
+			type: Number,
+			default: 70,
+			min: 0,
+			max: 100,
+		},
+		min_price_points: {
+			type: Number,
+			default: 100,
+			min: 0,
+		},
+		max_price_points: {
+			type: Number,
+			default: 100000,
+			min: 0,
+		},
+		approval_required: {
+			type: Boolean,
+			default: true,
+		},
+	}),
+
 	// Payment Provider Configuration
 	payment_providers: new Schema({
 		stripe: new Schema({

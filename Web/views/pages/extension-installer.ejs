@@ -76,6 +76,46 @@
             </a>
             <% }); %>
             <% } else { %>
+            <%
+                const isPremium = pageData.extensionData && pageData.extensionData.isPremium;
+                const hasPurchased = pageData.extensionData && pageData.extensionData.hasPurchased;
+                const premiumPrice = pageData.extensionData && pageData.extensionData.premium ? (pageData.extensionData.premium.price_points || 0) : 0;
+                const voteRewardsBalance = typeof pageData.voteRewardsBalance === 'number' ? pageData.voteRewardsBalance : 0;
+            %>
+            <% if (isPremium) { %>
+            <div class="box" style="max-width: 900px; margin: 0 auto 1.5rem auto;">
+                <h2 class="title is-5" style="margin-bottom: 0.75rem;">
+                    <span class="icon"><i class="fa fa-lock"></i></span>
+                    Premium Extension
+                </h2>
+                <div class="columns is-multiline is-vcentered">
+                    <div class="column is-4">
+                        <p class="heading">Price</p>
+                        <p class="title is-6"><%= premiumPrice %> points</p>
+                    </div>
+                    <div class="column is-4">
+                        <p class="heading">Your Vote Rewards Balance</p>
+                        <p class="title is-6"><%= voteRewardsBalance %> points</p>
+                    </div>
+                    <div class="column is-4 has-text-right">
+                        <% if (hasPurchased) { %>
+                            <span class="tag is-success is-medium">Already Purchased</span>
+                        <% } else if (voteRewardsBalance >= premiumPrice && premiumPrice > 0) { %>
+                            <button id="purchase-premium-btn" class="button is-primary" onclick="SkynetUtil.purchasePremiumExtension('<%= pageData.extensionData._id %>'); return false;">Purchase for <%= premiumPrice %> points</button>
+                        <% } else { %>
+                            <div>
+                                <p class="has-text-danger" style="margin-bottom: 0.5rem;">Insufficient balance to purchase.</p>
+                                <a class="button is-light" href="/account" target="_blank" rel="noopener noreferrer">Get more points</a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% if (!hasPurchased) { %>
+                    <p class="help">After purchasing, you can install this extension on any server you admin.</p>
+                <% } %>
+            </div>
+            <% } %>
+
             <div class="installer">
                 <div class="box is-paddingless generic-feature">
                     <div id="installer-step-authorization" class="generic-feature-box installer-step is-active"
@@ -117,8 +157,13 @@
                             <% }); %>
                         </div>
                         <div class="has-text-centered">
-                            <a class="button is-outlined is-warning installer-step-button"
-                               data-next-is="installer-step-<%= ["command", "keyword"].includes(pageData.extensionData.type) ? "options" : pageData.extensionData.type === "event" ? "confirmation" : "settings" %>">Authorize</a>
+                            <% if (isPremium && !hasPurchased) { %>
+                                <p class="has-text-danger" style="margin-bottom: 0.75rem;">Purchase required before installing.</p>
+                                <a class="button is-outlined is-warning is-static">Purchase required</a>
+                            <% } else { %>
+                                <a class="button is-outlined is-warning installer-step-button"
+                                   data-next-is="installer-step-<%= ["command", "keyword"].includes(pageData.extensionData.type) ? "options" : pageData.extensionData.type === "event" ? "confirmation" : "settings" %>">Authorize</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -277,4 +322,38 @@
         </div>
     </section>
 </div>
+
+<script>
+    if (typeof SkynetUtil !== "undefined" && !SkynetUtil.purchasePremiumExtension) {
+        SkynetUtil.purchasePremiumExtension = (extid) => {
+            const button = document.getElementById("purchase-premium-btn");
+            if (button) button.disabled = true;
+            if (typeof NProgress !== "undefined") NProgress.start();
+            $.ajax({
+                method: "POST",
+                url: `/api/extensions/${extid}/purchase`,
+            })
+                .done(() => {
+                    window.location.reload();
+                })
+                .fail((xhr) => {
+                    let msg = "Failed to purchase extension";
+                    try {
+                        msg = xhr && xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : msg;
+                    } catch (e) {
+                        msg = "Failed to purchase extension";
+                    }
+                    if (typeof swal !== "undefined") swal("Purchase failed", msg, "error").then(() => null).catch(() => null);
+                    else alert(msg);
+                    if (button) button.disabled = false;
+                })
+                .always(() => {
+                    if (typeof NProgress !== "undefined") {
+                        NProgress.done();
+                        NProgress.remove();
+                    }
+                });
+        };
+    }
+</script>
 </body>

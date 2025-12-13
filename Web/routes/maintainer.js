@@ -2,6 +2,17 @@ const { setupConsolePage, setupRedirection } = require("../helpers");
 const controllers = require("../controllers");
 const mw = require("../middleware");
 
+const setMaintainerAPIContext = (req, res, next) => {
+	req.perm = "maintainer";
+	req.isAPI = true;
+	next();
+};
+
+const setAdministrationContext = (req, res, next) => {
+	req.perm = "administration";
+	next();
+};
+
 module.exports = router => {
 	setupRedirection(router, "/", "/maintainer");
 	setupConsolePage(router, "/maintainer", "maintainer", [], controllers.console.maintainer);
@@ -11,7 +22,7 @@ module.exports = router => {
 	setupConsolePage(router, "/servers/big-message", "maintainer", [], controllers.console.servers.bigmessage);
 
 	// Global Scan - scan all servers for members
-	router.post("/global-scan", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.globalScan);
+	router.post("/global-scan", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.globalScan);
 
 	// Global Settings
 	setupConsolePage(router, "/global-options/blocklist", "administration", [], controllers.console.options.blocklist);
@@ -21,9 +32,9 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/donations", "administration", [], controllers.console.options.donations);
 	setupConsolePage(router, "/global-options/vote-sites", "administration", [], controllers.console.options.voteSites);
 	setupConsolePage(router, "/global-options/bot-lists", "administration", [], controllers.console.options.botLists);
-	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI,
-		(req, res, next) => { req.perm = "administration"; next(); },
-		mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
+	setupConsolePage(router, "/global-options/premium-extensions", "administration", [], controllers.console.options.premiumExtensions);
+	setupConsolePage(router, "/global-options/premium-extensions/sales", "administration", [], controllers.console.options.premiumExtensionsSales);
+	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
 
 	// Membership System (Sudo/Host only)
 	setupConsolePage(router, "/membership/features", "administration", [], controllers.console.membership.features);
@@ -43,8 +54,8 @@ module.exports = router => {
 
 	// Feedback System
 	setupConsolePage(router, "/feedback", "maintainer", [], controllers.console.feedback.list);
-	router.post("/feedback/update", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.feedback.update);
-	router.post("/feedback/delete", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.feedback.delete);
+	router.post("/feedback/update", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.update);
+	router.post("/feedback/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.delete);
 
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);

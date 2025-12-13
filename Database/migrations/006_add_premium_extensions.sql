@@ -1,0 +1,16 @@
+SET NAMES utf8mb4;
+
+ALTER TABLE `users`
+	ADD COLUMN IF NOT EXISTS `extension_earnings` JSON DEFAULT NULL;
+
+ALTER TABLE `gallery`
+	ADD COLUMN IF NOT EXISTS `premium` JSON DEFAULT NULL,
+	ADD COLUMN IF NOT EXISTS `purchased_by` JSON DEFAULT NULL,
+	ADD COLUMN IF NOT EXISTS `purchase_history` JSON DEFAULT NULL;
+
+ALTER TABLE `site_settings`
+	ADD COLUMN IF NOT EXISTS `premium_extensions` JSON DEFAULT NULL;
+
+DESCRIBE `users`;
+DESCRIBE `gallery`;
+DESCRIBE `site_settings`;

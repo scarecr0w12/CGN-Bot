@@ -489,6 +489,11 @@ const canVote = async (userId, site) => {
 	};
 };
 
+const getPremiumExtensionsSettings = async () => {
+	const siteSettings = await SiteSettings.findOne("main");
+	return siteSettings?.premium_extensions || {};
+};
+
 /**
  * Redeem points for a premium extension
  * @param {string} userId - User redeeming points
@@ -501,13 +506,25 @@ const redeemForExtension = async (userId, extensionId) => {
 		throw new Error("Extension not found");
 	}
 
+	const marketplaceSettings = await getPremiumExtensionsSettings();
+	if (marketplaceSettings && marketplaceSettings.isEnabled === false) {
+		throw new Error("Premium extensions marketplace is disabled");
+	}
+
 	if (!extension.premium?.is_premium) {
 		throw new Error("This extension is not premium");
+	}
+	if (marketplaceSettings && marketplaceSettings.approval_required === true && extension.premium?.approved !== true) {
+		throw new Error("This premium extension is pending approval");
 	}
 
 	const pointsCost = extension.premium.price_points || 0;
 	if (pointsCost <= 0) {
 		throw new Error("Extension price not configured");
+	}
+
+	if (extension.owner_id === userId) {
+		throw new Error("You already own this extension");
 	}
 
 	// Check if already purchased
@@ -528,11 +545,60 @@ const redeemForExtension = async (userId, extensionId) => {
 		extension_name: extension.name,
 	});
 
-	// Add user to purchased_by list
-	purchasedBy.push(userId);
-	extension.query.set("purchased_by", purchasedBy);
+	const marketplaceSettings2 = marketplaceSettings;
+	let revenueShare = extension.premium?.revenue_share;
+	if (typeof revenueShare !== "number" || Number.isNaN(revenueShare) || revenueShare < 0 || revenueShare > 100) {
+		revenueShare = marketplaceSettings2.default_revenue_share;
+	}
+	if (typeof revenueShare !== "number" || Number.isNaN(revenueShare) || revenueShare < 0 || revenueShare > 100) {
+		revenueShare = 70;
+	}
+	const creatorSharePoints = Math.floor(pointsCost * (revenueShare / 100));
+
+	if (!Array.isArray(extension.purchased_by)) {
+		extension.query.set("purchased_by", []);
+	}
+	if (!Array.isArray(extension.purchase_history)) {
+		extension.query.set("purchase_history", []);
+	}
+
+	extension.query.push("purchased_by", userId);
+	extension.query.push("purchase_history", {
+		transaction_id: transaction.transactionId,
+		user_id: userId,
+		purchased_at: new Date(),
+		points_paid: pointsCost,
+		extension_creator_share: creatorSharePoints,
+	});
+
 	extension.query.inc("premium.purchases", 1);
+	if (creatorSharePoints > 0) {
+		extension.query.inc("premium.developer_earnings", creatorSharePoints);
+		extension.query.inc("premium.lifetime_revenue", creatorSharePoints);
+	}
 	await extension.save();
+
+	if (creatorSharePoints > 0 && extension.owner_id) {
+		let creator = await Users.findOne(extension.owner_id);
+		if (!creator) {
+			creator = Users.new({ _id: extension.owner_id });
+			await creator.save();
+			creator = await Users.findOne(extension.owner_id);
+		}
+
+		const currentEarnings = creator.extension_earnings || {
+			balance: 0,
+			lifetime_earned: 0,
+			total_withdrawn: 0,
+		};
+
+		creator.query.set("extension_earnings", {
+			...currentEarnings,
+			balance: (currentEarnings.balance || 0) + creatorSharePoints,
+			lifetime_earned: (currentEarnings.lifetime_earned || 0) + creatorSharePoints,
+		});
+		await creator.save();
+	}
 
 	logger.info(`User ${userId} purchased extension ${extensionId} (${extension.name}) for ${pointsCost} points`);
 
@@ -542,6 +608,8 @@ const redeemForExtension = async (userId, extensionId) => {
 		newBalance: transaction.newBalance,
 		extensionId,
 		extensionName: extension.name,
+		creatorSharePoints,
+		revenueShare,
 	};
 };
 

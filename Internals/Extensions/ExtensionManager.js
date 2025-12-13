@@ -4,6 +4,7 @@ const { AllowedEvents } = require("../Constants");
 const DB = require("../../Database/Driver");
 const IsolatedSandbox = require("./API/IsolatedSandbox");
 const EventsHandler = require("./EventsHandler");
+const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 
 /**
  * Manages all operations of extensions on the Shard Worker.
@@ -95,6 +96,18 @@ class ExtensionManager extends DJSClient {
 				break;
 		}
 		if (!versionDocument.accepted) return { success: false, err: null };
+
+		if (extensionDocument && extensionDocument.premium && extensionDocument.premium.is_premium) {
+			const installerUserId = extensionConfigDocument ? extensionConfigDocument.installed_by : null;
+			if (!installerUserId) return { success: false, err: null };
+			try {
+				const hasAccess = await VoteRewardsManager.hasUserPurchasedExtension(installerUserId, extensionDocument._id.toString());
+				if (!hasAccess) return { success: false, err: null };
+			} catch (err) {
+				logger.warn("Premium extension execution gate failed", { svrid: eventData.guild.id, usrid: installerUserId, extid: extensionDocument._id.toString() }, err);
+				return { success: false, err: null };
+			}
+		}
 		const result = await this.runWithContext(await this.fetchExtensionCode(versionDocument), context);
 		await this.handleRunResult(result, serverDocument, extensionConfigDocument);
 		return result;

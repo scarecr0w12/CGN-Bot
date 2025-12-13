@@ -6,6 +6,7 @@ module.exports = new Schema({
 		type: String,
 		required: true,
 	},
+	installed_by: String,
 	version: Number,
 	key: {
 		type: String,

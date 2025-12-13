@@ -50,46 +50,48 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 ## 💰 ECONOMY & PROGRESSION
 
-*Core system uses built-in "SkyNet Points". New features are Built-in unless listed as Exceptions.*
+*Core system uses built-in "SkyNet Points" and coin-based economy. Features are Built-in unless listed as Exceptions.*
 
-### Built-in Economy (SkyNet Points)
+### Built-in Economy (Coins + SkyNet Points)
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `points` | Check balance | ❌ BUILT-IN (`points.js`) |
+| `points` | Check SkyNet points balance | ❌ BUILT-IN (`points.js`) |
 | `ranks` | Check rank/level | ❌ BUILT-IN (`ranks.js`) |
-| `leaderboard` | Server rankings | ❌ BUILT-IN (`ranks.js`) |
-| `daily` | Claim daily rewards | 🚧 PLANNED BUILT-IN |
-| `work` | Work for points | 🚧 PLANNED BUILT-IN |
-| `shop` | Buy items/roles | 🚧 PLANNED BUILT-IN |
-| `inventory` | View items | 🚧 PLANNED BUILT-IN |
+| `balance` | Check wallet/bank balance | ❌ BUILT-IN (`balance.js`) |
+| `leaderboard` | Economy leaderboard | ❌ BUILT-IN (`leaderboard.js`) |
+| `daily` | Claim daily rewards with streaks | ❌ BUILT-IN (`daily.js`) |
+| `work` | Work a job for coins | ❌ BUILT-IN (`work.js`) |
+| `shop` | Buy items/roles | ❌ BUILT-IN (`shop.js`) |
+| `inventory` | View items | ❌ BUILT-IN (`inventory.js`) |
 | `giveaway` | Manage giveaways | ❌ BUILT-IN (`giveaway.js`) |
 | `lottery` | Lottery system | ❌ BUILT-IN (`lottery.js`) |
-| `rob` | Attempt to rob others | 🚧 PLANNED BUILT-IN |
-| `deposit` | Deposit to bank | 🚧 PLANNED BUILT-IN |
-| `withdraw` | Withdraw from bank | 🚧 PLANNED BUILT-IN |
-| `transfer` | Send money to others | 🚧 PLANNED BUILT-IN |
-| `buy` | Purchase items | 🚧 PLANNED BUILT-IN |
-| `sell` | Sell items back | 🚧 PLANNED BUILT-IN |
-| `use` | Use consumable items | 🚧 PLANNED BUILT-IN |
-| `gift` | Gift items to others | 🚧 PLANNED BUILT-IN |
-| `quest` | Daily/weekly tasks | 🚧 PLANNED BUILT-IN |
-| `achievements` | Unlockable achievements | 🚧 PLANNED BUILT-IN |
-| `badges` | Collectible badges | 🚧 PLANNED BUILT-IN |
-| `streaks` | Track activity streaks | 🚧 PLANNED BUILT-IN |
-| `craft` | Combine items | 🚧 PLANNED BUILT-IN |
-| `upgrade` | Upgrade items/stats | 🚧 PLANNED BUILT-IN |
-| `trade` | Trade items with others | 🚧 PLANNED BUILT-IN |
+| `rob` | Attempt to rob others | ❌ BUILT-IN (`rob.js`) |
+| `deposit` | Deposit to bank | ❌ BUILT-IN (`deposit.js`) |
+| `withdraw` | Withdraw from bank | ❌ BUILT-IN (`withdraw.js`) |
+| `give` | Send coins to others | ❌ BUILT-IN (`give.js`) |
+| `gamble` | Gamble coins | ❌ BUILT-IN (`gamble.js`) |
+| `slots` | Slot machine game | ❌ BUILT-IN (`slots.js`) |
+| `sell` | Sell items back | ❌ BUILT-IN (`sell.js`) |
+| `use` | Use consumable items | ❌ BUILT-IN (`use.js`) |
+| `gift` | Gift items to others | ❌ BUILT-IN (`gift.js`) |
+| `quest` | Daily/weekly tasks | ❌ BUILT-IN (`quest.js`) |
+| `achievements` | Unlockable achievements | ❌ BUILT-IN (`achievements.js`) |
+| `badges` | Collectible badges | ❌ BUILT-IN (`badges.js`) |
+| `streaks` | Track activity streaks | ❌ BUILT-IN (`streaks.js`) |
+| `craft` | Combine items into new items | ❌ BUILT-IN (`craft.js`) |
+| `upgrade` | Upgrade economy stats | ❌ BUILT-IN (`upgrade.js`) |
+| `trade` | Trade items with others | ❌ BUILT-IN (`trade.js`) |
 
 ### Economy Extensions (Exceptions)
 
 | Command | Description | Status |
 |---------|-------------|--------|
 | `gacha` | Lootbox/character collection | ✅ SEEDED (Batch 4) |
-| `stocks` | Virtual stock market | 📦 EXTENSION |
+| `stocks` | Virtual stock market | ✅ SEEDED (Batch 6) |
 | `auction` | Auction house | ✅ SEEDED (Batch 2) |
-| `crime` | High risk/reward actions | 📦 EXTENSION |
-| `season` | Seasonal progression resets | 📦 EXTENSION |
+| `crime` | High risk/reward actions | ✅ SEEDED (Batch 1) |
+| `season` | Seasonal progression resets | ✅ SEEDED (Batch 8) |
 
 ---
 
@@ -104,9 +106,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `remind` | Personal reminders | ❌ BUILT-IN (`remindme.js`) |
 | `time` | Timezone info | ❌ BUILT-IN (`time.js`) |
 | `timer` | Simple timer | ✅ SEEDED (Move to Built-in) |
-| `stopwatch` | Stopwatch functionality | 🚧 PLANNED BUILT-IN |
+| `stopwatch` | Stopwatch functionality | ❌ BUILT-IN (`stopwatch.js`) |
 | `countdown` | Event countdowns | ❌ BUILT-IN (`countdown.js`) |
-| `pomodoro` | Study/focus timer | 🚧 PLANNED BUILT-IN |
+| `pomodoro` | Study/focus timer | ❌ BUILT-IN (`pomodoro.js`) |
 
 ### Calculators & Converters
 
@@ -115,7 +117,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `calc` | Calculator | ❌ BUILT-IN (`calc.js`) |
 | `convert` | Unit converter | ❌ BUILT-IN (`convert.js`) |
 | `color` | Color code converter | ✅ SEEDED (Move to Built-in) |
-| `base` | Number base converter | 🚧 PLANNED BUILT-IN |
+| `base` | Number base converter | ❌ BUILT-IN (`base.js`) |
 
 ### Generators
 
@@ -123,11 +125,11 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `roll` | Dice notation roller | ❌ BUILT-IN (`roll.js`) |
 | `choose` | Random picker | ❌ BUILT-IN (`choose.js`) |
-| `password` | Generate secure passwords | 🚧 PLANNED BUILT-IN |
-| `uuid` | Generate UUIDs | 🚧 PLANNED BUILT-IN |
-| `randomnum` | Generate random numbers | 🚧 PLANNED BUILT-IN |
-| `shuffle` | Shuffle a list | 🚧 PLANNED BUILT-IN |
-| `teampicker` | Random team assignment | 🚧 PLANNED BUILT-IN |
+| `password` | Generate secure passwords | ❌ BUILT-IN (`password.js`) |
+| `uuid` | Generate UUIDs | ❌ BUILT-IN (`uuid.js`) |
+| `randomnum` | Generate random numbers | ❌ BUILT-IN (`randomnum.js`) |
+| `shuffle` | Shuffle a list | ❌ BUILT-IN (`shuffle.js`) |
+| `teampicker` | Random team assignment | ❌ BUILT-IN (`teampicker.js`) |
 
 ### Lookup & Info
 
@@ -138,9 +140,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `wiki` | Wikipedia search | ❌ BUILT-IN (`wiki.js`) |
 | `google` | Google search | ❌ BUILT-IN (`google.js`) |
 | `translate` | Text translation | ❌ BUILT-IN (`translate.js`) |
-| `crypto` | Cryptocurrency prices | 🚧 PLANNED BUILT-IN |
-| `stock` | Stock market info | 🚧 PLANNED BUILT-IN |
-| `lyrics` | Song lyrics lookup | 🚧 PLANNED BUILT-IN |
+| `crypto` | Cryptocurrency prices | ❌ BUILT-IN (`crypto.js`) |
+| `stock` | Stock market info | ❌ BUILT-IN (`stock.js`) |
+| `lyrics` | Song lyrics lookup | ❌ BUILT-IN (`lyrics.js`) |
 
 ### Productivity
 
@@ -148,9 +150,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `poll` | Create polls | ❌ BUILT-IN (`poll.js`) |
 | `todo` | Todo lists | ❌ BUILT-IN (`list.js`) |
-| `notes` | Personal notes | 🚧 PLANNED BUILT-IN |
+| `notes` | Personal notes | ❌ BUILT-IN (`notes.js`) |
 | `afk` | Set AFK status | ❌ BUILT-IN (`afk.js`) |
-| `snooze` | Temporary DND mode | 🚧 PLANNED BUILT-IN |
+| `snooze` | Temporary DND mode | ❌ BUILT-IN (`snooze.js`) |
 
 ---
 
@@ -232,7 +234,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `poker` | Texas Hold'em | ✅ SEEDED (Batch 4) |
 | `uno` | Uno Card Game | ✅ SEEDED (Batch 3) |
 | `war` | Simple War card game | ✅ SEEDED |
-| `highlow` | Guess if next card higher/lower | 📦 EXTENSION |
+| `highlow` | Guess if next card higher/lower | ✅ SEEDED (Batch 3) |
 
 ### Board Games
 
@@ -251,12 +253,13 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `wordle` | Daily word guess | ✅ SEEDED (Batch 2) |
 | `hangman` | Hangman | ✅ SEEDED (Batch 2) |
-| `scramble` | Unscramble words | 📦 EXTENSION |
-| `wordchain` | Each word starts with last letter | 📦 EXTENSION |
-| `anagram` | Find words from letters | 📦 EXTENSION |
+| `scramble` | Unscramble words | ✅ SEEDED (Batch 1) |
+| `wordchain` | Each word starts with last letter | ✅ SEEDED (Batch 7) |
+| `anagram` | Find words from letters | ✅ SEEDED (Batch 3) |
 | `ghost` | Add letters without completing words | 📦 EXTENSION |
 | `acronym` | Create funny acronyms | 📦 EXTENSION |
 | `reversetype` | Type words backwards | 📦 EXTENSION |
+| `aki` | Akinator | ✅ SEEDED (Batch 1) |
 
 ### Trivia & Quiz
 
@@ -268,14 +271,13 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `moviequiz` | Guess movies | 📦 EXTENSION |
 | `emojiquiz` | Guess words from emojis | 📦 EXTENSION |
 | `quotequiz` | Identify famous quotes | 📦 EXTENSION |
-| `aki` | Akinator | ✅ SEEDED (Batch 1) |
 
 ### Reaction Games
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `reaction` | Test reaction time | 📦 EXTENSION |
-| `typerace` | Speed typing competition | 📦 EXTENSION |
+| `reaction` | Test reaction time | ✅ SEEDED (Batch 1) |
+| `typerace` | Speed typing competition | ✅ SEEDED (Batch 1) |
 | `emojisimon` | Repeat emoji sequences | 📦 EXTENSION |
 | `buttonrush` | Click button before it disappears | 📦 EXTENSION |
 | `dodge` | React with correct emoji | 📦 EXTENSION |
@@ -286,8 +288,8 @@ All extensions and high-resource built-in features must check Server Tiers.
 | Command | Description | Status |
 |---------|-------------|--------|
 | `mafia` | Social deduction | ✅ SEEDED (Batch 2) |
-| `spyfall` | Find the spy | 📦 EXTENSION |
-| `traitor` | Vote out traitor | 📦 EXTENSION |
+| `spyfall` | Find the spy | ✅ SEEDED (Batch 4) |
+| `traitor` | Vote out traitor | ✅ SEEDED (Batch 5) |
 | `liar` | Detect who has different info | 📦 EXTENSION |
 | `secretroles` | Hidden role games | 📦 EXTENSION |
 | `alibi` | Murder mystery | 📦 EXTENSION |
@@ -298,11 +300,11 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `2048` | Number puzzle | ✅ SEEDED (Batch 2) |
 | `escaperoom` | Text adventure puzzle | ✅ SEEDED (Batch 4) |
-| `riddle` | Solve riddles | 📦 EXTENSION |
-| `mastermind` | Crack the color code | 📦 EXTENSION |
-| `pattern` | Complete sequences | 📦 EXTENSION |
-| `cipher` | Decode encrypted messages | 📦 EXTENSION |
-| `maze` | Navigate text mazes | 📦 EXTENSION |
+| `riddle` | Solve riddles | ✅ SEEDED (Batch 1) |
+| `mastermind` | Crack the color code | ✅ SEEDED (Batch 3) |
+| `pattern` | Complete sequences | ✅ SEEDED (Batch 4) |
+| `cipher` | Decode encrypted messages | ✅ SEEDED (Batch 4) |
+| `maze` | Navigate text mazes | ✅ SEEDED (Batch 5) |
 | `nonogram` | Picross puzzles | 📦 EXTENSION |
 | `logicgrid` | Logic deduction puzzles | 📦 EXTENSION |
 
@@ -313,7 +315,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `truthordare` | Truth or Dare | ✅ SEEDED (Batch 1) |
 | `wouldyourather` | Would You Rather | ✅ SEEDED (Batch 1) |
 | `neverhaveiever` | Never Have I Ever | ✅ SEEDED (Batch 1) |
-| `thisorthat` | This or That choices | 📦 EXTENSION |
+| `thisorthat` | This or That choices | ✅ SEEDED (Batch 1) |
 | `icebreaker` | Conversation starters | ✅ SEEDED |
 | `hottake` | Debate topics | ✅ SEEDED (Batch 5) |
 | `debateclash` | Assign pro/con for debates | 📦 EXTENSION |
@@ -324,24 +326,24 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `duel` | PvP Combat | 📦 EXTENSION |
+| `duel` | PvP Combat | ✅ SEEDED (Batch 3) |
 | `bossraid` | Server Boss | 📦 EXTENSION |
 | `adventure` | Text Adventure | ✅ SEEDED (Batch 2) |
 | `dungeon` | Dungeon Crawler | ✅ SEEDED (Batch 2) |
 | `towerclimb` | Tower Climbing | ✅ SEEDED (Batch 4) |
-| `hunt` | Hunting mini-game | 📦 EXTENSION |
-| `pet` | Virtual pet | 📦 EXTENSION |
+| `hunt` | Hunting mini-game | ✅ SEEDED (Batch 1) |
+| `pet` | Virtual pet | ✅ SEEDED (Batch 1) |
 | `flashcards` | Study cards | ✅ SEEDED (Batch 3) |
 
 ### Casino & Gambling
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `slots` | Slot machine | 📦 EXTENSION |
+| `slots` | Slot machine | ✅ SEEDED (Batch 1) |
 | `roulette` | Roulette | ✅ SEEDED (Batch 2) |
 | `crash` | Crash Game | ✅ SEEDED (Batch 2) |
 | `diceroll` | Dice rolling with bets | 📦 EXTENSION |
-| `fish` | Go fishing | 📦 EXTENSION |
+| `fish` | Go fishing | ✅ SEEDED (Batch 1) |
 | `rps` | Rock Paper Scissors | ✅ SEEDED (Batch 1) |
 
 ---

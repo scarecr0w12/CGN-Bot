@@ -53,6 +53,8 @@ module.exports = router => {
 	setupResource(router, "/status", [], controllers.status.api, "get", "public");
 	setupResource(router, "/servers", [], controllers.api.servers, "get", "public");
 	setupResource(router, "/extensions", [], controllers.api.extensions, "get", "public");
+	setupResource(router, "/extensions/:extid/purchase", [], controllers.api.extensions.purchase, "post", "authentication");
+	setupResource(router, "/extensions/:extid/ownership", [], controllers.api.extensions.ownership, "get", "authentication");
 	setupResource(router, "/feedback", [], controllers.console.feedback.submit, "post", "public");
 
 	// Matomo proxy for Grafana dashboards

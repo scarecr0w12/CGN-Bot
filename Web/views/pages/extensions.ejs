@@ -8,7 +8,8 @@
 		const modeDescriptions = {
 			gallery: "Browse and install free extensions for Skynet Discord bot. Find custom commands, automation scripts, and plugins to enhance your Discord server.",
 			queue: "View pending extensions awaiting approval for the Skynet Discord bot marketplace.",
-			my: "Manage your Skynet Discord bot extensions - create, edit, and publish custom commands and scripts."
+			my: "Manage your Skynet Discord bot extensions - create, edit, and publish custom commands and scripts.",
+			sales: "View sales history and earnings for your premium Skynet extensions."
 		};
 		pageData.seo = {
 			title: `${pageData.pageTitle} | Skynet Discord Bot Extensions`,
@@ -120,7 +121,7 @@
 					<div class="ext-hero-stat">
 						<div class="ext-hero-stat-value"><%= pageData.rawCount || 0 %></div>
 						<div class="ext-hero-stat-label">
-							<% if (pageData.mode === 'gallery') { %>Published<% } else if (pageData.mode === 'queue') { %>Pending<% } else { %>Your Extensions<% } %>
+							<% if (pageData.mode === 'gallery') { %>Published<% } else if (pageData.mode === 'queue') { %>Pending<% } else if (pageData.mode === 'sales') { %>Purchases<% } else { %>Your Extensions<% } %>
 						</div>
 					</div>
 					<% if (pageData.categoryCounts) { %>
@@ -149,6 +150,8 @@
 							My Extensions
 						<% } else if (pageData.mode === 'builder') { %>
 							Extension Builder
+						<% } else if (pageData.mode === 'sales') { %>
+							Sales History
 						<% } else { %>
 							Extensions
 						<% } %>
@@ -162,6 +165,8 @@
 							Manage, edit, and publish your custom extensions.
 						<% } else if (pageData.mode === 'builder') { %>
 							Create powerful custom commands and automations.
+						<% } else if (pageData.mode === 'sales') { %>
+							Review purchases and earnings for your premium extension.
 						<% } else { %>
 							Extend Skynet with custom commands, events, and automations.
 						<% } %>
@@ -169,7 +174,7 @@
 				</div>
 
 				<!-- Search Bar -->
-				<% if (!['my', 'builder'].includes(pageData.mode)) { %>
+				<% if (!['my', 'builder', 'sales'].includes(pageData.mode)) { %>
 				<div class="ext-search-container fade-in">
 					<form onsubmit="return false;">
 						<div class="field has-addons has-addons-centered">
@@ -219,7 +224,7 @@
 							</a>
 						</li>
 						<% if (authUser) { %>
-						<li class="<%= ['my', 'builder'].includes(pageData.mode) ? 'is-active' : '' %>">
+						<li class="<%= ['my', 'builder', 'sales'].includes(pageData.mode) ? 'is-active' : '' %>">
 							<a href="/extensions/my">
 								<span class="icon"><i class="fa fa-folder"></i></span>
 								<span>My Extensions</span>
@@ -248,6 +253,8 @@
 						<%- include('../partials/my-extensions') %>
 					<% } else if (pageData.mode === "builder") { %>
 						<%- include('../partials/extension-builder', { ...locals, isGallery: true }) %>
+					<% } else if (pageData.mode === "sales") { %>
+						<%- include('../partials/extension-sales') %>
 					<% } %>
 				<% } %>
 			</div>

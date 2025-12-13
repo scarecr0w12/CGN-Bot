@@ -25,6 +25,7 @@ module.exports = {
 	Traffic: require("./Traffic.js"),
 	Trivia: require("./Trivia.js"),
 	Utils: require("./Utils/index"),
+	PremiumExtensionsManager: require("./PremiumExtensionsManager.js"),
 	VoiceStatsCollector: require("./VoiceStatsCollector"),
 	Voicetext: require("./Voicetext"),
 };

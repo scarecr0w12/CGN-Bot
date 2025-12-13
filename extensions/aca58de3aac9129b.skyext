@@ -1,0 +1,188 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const economy = require('economy');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/[\t\n\r ]+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+// Get current season state
+let season = extension.storage.get('current_season') || null;
+const history = extension.storage.get('season_history') || [];
+
+// Check if server owner enabled point reset
+const resetPointsEnabled = extension.storage.get('season_reset_points') === true;
+
+const formatDate = (ts) => {
+	const d = new Date(ts);
+	return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+};
+
+const formatDuration = (ms) => {
+	const days = Math.floor(ms / 86400000);
+	const hours = Math.floor((ms % 86400000) / 3600000);
+	if (days > 0) return days + ' day' + (days !== 1 ? 's' : '') + (hours > 0 ? ', ' + hours + 'h' : '');
+	return hours + ' hour' + (hours !== 1 ? 's' : '');
+};
+
+if (sub === 'start') {
+	if (season && season.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '⚠️ Season Already Active',
+				description: 'End the current season first with `season end`.',
+				color: embed.colors.WARNING,
+			})],
+		});
+		return;
+	}
+
+	const seasonName = args.slice(1).join(' ') || 'Season ' + (history.length + 1);
+
+	season = {
+		active: true,
+		name: seasonName,
+		startedAt: Date.now(),
+		startedBy: message.author.id,
+		participants: {},
+	};
+
+	extension.storage.write('current_season', season);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🏆 New Season Started!',
+			description: '**' + seasonName + '** has begun!\n\nCompete to climb the leaderboard.',
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Started by ' + message.author.username },
+		})],
+	});
+	return;
+}
+
+if (sub === 'end') {
+	if (!season || !season.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ No Active Season',
+				description: 'Start one with `season start <name>`.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	season.active = false;
+	season.endedAt = Date.now();
+	season.endedBy = message.author.id;
+
+	// Save to history
+	history.push({
+		name: season.name,
+		startedAt: season.startedAt,
+		endedAt: season.endedAt,
+		duration: season.endedAt - season.startedAt,
+	});
+
+	extension.storage.write('current_season', null);
+	extension.storage.write('season_history', history);
+
+	const duration = formatDuration(season.endedAt - season.startedAt);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🏁 Season Ended',
+			description:
+				'**' + season.name + '** has concluded!\n\n' +
+				'Duration: ' + duration + '\n' +
+				'Total seasons: ' + history.length,
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'reset') {
+	if (!resetPointsEnabled) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🔒 Point Reset Disabled',
+				description: 'Server owner has not enabled point resets for seasons.\n\nThis can be configured in the server dashboard under Extensions.',
+				color: embed.colors.WARNING,
+			})],
+		});
+		return;
+	}
+
+	// Get all member IDs and reset their points
+	const memberIds = economy.getMemberIds(500);
+	let resetCount = 0;
+
+	for (const userId of memberIds) {
+		try {
+			const user = economy.getUser(userId);
+			if (user && user.found && user.rankScore > 0) {
+				economy.setPoints(userId, 0, 'Season Reset');
+				resetCount++;
+			}
+		} catch (e) {
+			// Skip errors for individual users
+		}
+	}
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🔄 Points Reset',
+			description: 'Reset points for **' + resetCount + '** members.\n\nA fresh start for the new season!',
+			color: embed.colors.SUCCESS,
+		})],
+	});
+	return;
+}
+
+if (sub === 'status') {
+	if (!season || !season.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '📊 Season Status',
+				description: 'No active season.\n\nTotal past seasons: ' + history.length,
+				color: embed.colors.BLUE,
+			})],
+		});
+		return;
+	}
+
+	const elapsed = formatDuration(Date.now() - season.startedAt);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '📊 ' + season.name,
+			description:
+				'**Status:** Active\n' +
+				'**Started:** ' + formatDate(season.startedAt) + '\n' +
+				'**Duration:** ' + elapsed + '\n' +
+				'**Point reset enabled:** ' + (resetPointsEnabled ? 'Yes' : 'No'),
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+// Default: show help/info
+message.reply({
+	embeds: [embed.create({
+		title: '🏆 Season Manager',
+		description:
+			'Manage seasonal competitions for your server.\n\n' +
+			'**Commands:**\n' +
+			'`season start <name>` - Start a new season\n' +
+			'`season end` - End the current season\n' +
+			'`season reset` - Reset all member points (if enabled)\n' +
+			'`season status` - View current season info\n\n' +
+			'**Point Reset:** ' + (resetPointsEnabled ? '✅ Enabled' : '❌ Disabled') + '\n' +
+			'_(Configure in server dashboard → Extensions)_',
+		color: embed.colors.BLUE,
+		footer: { text: 'Past seasons: ' + history.length },
+	})],
+});

@@ -576,6 +576,67 @@ SkynetUtil.saveExtensionFromForm = (formEl) => {
 	return SkynetUtil.saveExtension(isGallery, submitUrl);
 };
 
+SkynetUtil.savePremiumSettings = (extid) => {
+	const enabled = $("#builder-premium-enabled").is(":checked");
+	const pricePointsRaw = $("#builder-premium-price").val();
+	const pricePoints = pricePointsRaw ? parseInt(pricePointsRaw, 10) : 0;
+
+	NProgress.start();
+	$.ajax({
+		method: "POST",
+		url: `/extensions/${extid}/premium`,
+		data: {
+			isPremium: enabled ? "1" : "0",
+			pricePoints: pricePoints.toString(),
+		},
+	})
+		.always(() => {
+			NProgress.done();
+			NProgress.remove();
+		})
+		.done(() => {
+			Turbolinks.visit(window.location.pathname + window.location.search);
+		})
+		.fail((xhr) => {
+			let msg = "Failed to save premium settings";
+			try {
+				msg = xhr?.responseJSON?.error || msg;
+			} catch (_) {
+				return null;
+			}
+			alert(msg);
+		});
+};
+
+SkynetUtil.withdrawExtensionEarnings = () => {
+	const amountRaw = $("#extension-withdraw-amount").val();
+	const amount = amountRaw ? parseInt(amountRaw, 10) : 0;
+	if (!amount || amount <= 0) return;
+
+	NProgress.start();
+	$.ajax({
+		method: "POST",
+		url: "/account/extensions/withdraw",
+		data: { amount: amount.toString() },
+	})
+		.always(() => {
+			NProgress.done();
+			NProgress.remove();
+		})
+		.done(() => {
+			Turbolinks.visit("/extensions/my");
+		})
+		.fail((xhr) => {
+			let msg = "Failed to withdraw earnings";
+			try {
+				msg = xhr?.responseJSON?.error || msg;
+			} catch (_) {
+				return null;
+			}
+			alert(msg);
+		});
+};
+
 SkynetUtil.voteExtension = extid => {
 	const voteButton = $(`#vote-${extid}`);
 	const vote = voteButton.html().trim();
@@ -866,6 +927,20 @@ SkynetPaths.extensions = () => {
 		});
 		SkynetData.builder.refresh();
 		SkynetUtil.updateCodeStats();
+		const enabledEl = document.getElementById("builder-premium-enabled");
+		const priceEl = document.getElementById("builder-premium-price");
+		const estimateEl = document.getElementById("builder-premium-estimate-value");
+		if (enabledEl && priceEl && estimateEl) {
+			const update = () => {
+				priceEl.disabled = !enabledEl.checked;
+				const price = parseInt(priceEl.value || "0", 10) || 0;
+				const revenueShare = parseInt(priceEl.getAttribute("data-revenue-share") || "70", 10) || 70;
+				estimateEl.textContent = Math.floor(price * (revenueShare / 100)).toString();
+			};
+			update();
+			enabledEl.addEventListener("change", update);
+			priceEl.addEventListener("input", update);
+		}
 	} else if (window.location.pathname.endsWith("/install")) {
 		$("#installer-submit").click(SkynetUtil.installExtension);
 	}

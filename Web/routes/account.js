@@ -5,6 +5,7 @@
 const { renderError } = require("../helpers");
 const { GetGuild } = require("../../Modules/GetGuild");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 
 module.exports = router => {
 	const { passport } = router.app;
@@ -540,6 +541,34 @@ module.exports = router => {
 		} catch (err) {
 			logger.error("Error purchasing extension", { extensionId }, err);
 			res.status(400).json({ error: err.message || "Failed to purchase extension" });
+		}
+	});
+
+	router.get("/account/extensions/earnings", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+		try {
+			const earnings = await PremiumExtensionsManager.getExtensionEarnings(req.user.id);
+			const extensions = await PremiumExtensionsManager.getUserExtensions(req.user.id);
+			return res.json({ earnings, extensions });
+		} catch (err) {
+			logger.error("Error fetching extension earnings", {}, err);
+			return res.status(500).json({ error: "Failed to fetch earnings" });
+		}
+	});
+
+	router.post("/account/extensions/withdraw", async (req, res) => {
+		if (!req.isAuthenticated()) {
+			return res.status(401).json({ error: "Not authenticated" });
+		}
+		const amount = typeof req.body?.amount === "string" ? parseInt(req.body.amount, 10) : req.body?.amount;
+		try {
+			const result = await PremiumExtensionsManager.withdrawEarnings(req.user.id, amount);
+			return res.json(result);
+		} catch (err) {
+			logger.error("Error withdrawing extension earnings", {}, err);
+			return res.status(400).json({ error: err.message || "Failed to withdraw earnings" });
 		}
 	});
 

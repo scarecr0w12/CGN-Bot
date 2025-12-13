@@ -117,3 +117,31 @@ controllers.extensions = async (req, res) => {
 		res.status(500).json(APIResponses.extensions.internalError());
 	}
 };
+
+controllers.extensions.purchase = async (req, res) => {
+	if (!req.params.extid) {
+		return res.status(400).json({ error: "Missing extension ID" });
+	}
+	try {
+		const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
+		const result = await PremiumExtensionsManager.purchaseExtension(req.user.id, req.params.extid);
+		return res.json(result);
+	} catch (err) {
+		logger.error("Error purchasing extension", { extid: req.params.extid }, err);
+		return res.status(400).json({ error: err.message || "Failed to purchase extension" });
+	}
+};
+
+controllers.extensions.ownership = async (req, res) => {
+	if (!req.params.extid) {
+		return res.status(400).json({ error: "Missing extension ID" });
+	}
+	try {
+		const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+		const hasAccess = await VoteRewardsManager.hasUserPurchasedExtension(req.user.id, req.params.extid);
+		return res.json({ hasAccess });
+	} catch (err) {
+		logger.error("Error checking extension access", { extid: req.params.extid }, err);
+		return res.status(500).json({ error: "Failed to check access" });
+	}
+};

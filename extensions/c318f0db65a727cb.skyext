@@ -1,0 +1,138 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const embed = require('embed');
+
+function normalizeWord(word) {
+	return (word || '')
+		.toLowerCase()
+		.replace(/[^a-z]/g, '');
+}
+
+function isValidWord(word) {
+	return typeof word === 'string' && /^[a-z]+$/.test(word) && word.length >= 2 && word.length <= 25;
+}
+
+function lastLetter(word) {
+	return word[word.length - 1];
+}
+
+const args = command.suffix.trim().split(/[\t\n\r ]+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const stateKey = 'wordchain_' + message.channel.id;
+let state = extension.storage.get(stateKey);
+
+const renderStatus = () => {
+	if (!state || !state.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🔗 Word Chain',
+				description: 'No active game in this channel.
+
+Start one with: `wordchain new`',
+				color: embed.colors.BLUE,
+			})],
+		});
+		return;
+	}
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🔗 Word Chain',
+			description:
+				'**Current word:** ' + state.current + '
+' +
+				'**Next must start with:** ' + state.next + '
+' +
+				'**Streak:** ' + state.streak + '
+' +
+				(state.lastUserId ? ('**Last player:** <@' + state.lastUserId + '>') : ''),
+			color: embed.colors.GOLD,
+		})],
+	});
+};
+
+if (sub === 'new' || sub === 'start' || !state) {
+	state = {
+		active: true,
+		current: null,
+		next: null,
+		used: {},
+		streak: 0,
+		lastUserId: null,
+		startedAt: Date.now(),
+	};
+	extension.storage.write(stateKey, state);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🔗 Word Chain Started!',
+			description:
+				'Game started in this channel.
+
+' +
+				'First player: type any single word (letters only).
+' +
+				'Example: `wordchain apple`',
+			color: embed.colors.SUCCESS,
+			footer: { text: 'Rules: one word, no repeats, must match last letter' },
+		})],
+	});
+	return;
+}
+
+if (sub === 'status') {
+	renderStatus();
+	return;
+}
+
+const rawWord = args[0];
+const word = normalizeWord(rawWord);
+
+if (!word) {
+	renderStatus();
+	return;
+}
+
+if (!isValidWord(word)) {
+	message.reply('❌ Please provide a single word (letters only), 2-25 characters.');
+	return;
+}
+
+if (state.lastUserId && state.lastUserId === message.author.id) {
+	message.reply('⏳ Let someone else go next!');
+	return;
+}
+
+if (state.used && state.used[word]) {
+	message.reply('❌ That word was already used!');
+	return;
+}
+
+if (state.next && word[0] !== state.next) {
+	message.reply('❌ Invalid start letter! Your word must start with **' + state.next + '**.');
+	return;
+}
+
+state.current = word;
+state.next = lastLetter(word);
+state.used = state.used || {};
+state.used[word] = true;
+state.streak = (state.streak || 0) + 1;
+state.lastUserId = message.author.id;
+
+extension.storage.write(stateKey, state);
+
+message.reply({
+	embeds: [embed.create({
+		title: '✅ Word Accepted',
+		description:
+			'**Word:** ' + word + '
+' +
+			'**Next must start with:** ' + state.next + '
+' +
+			'**Streak:** ' + state.streak,
+		color: embed.colors.SUCCESS,
+	})],
+});
