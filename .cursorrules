@@ -187,52 +187,66 @@ Critical Implementation Paths:
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
 
-BUSINESS DOMAIN OVERVIEW
-A Discord bot platform focused on server management, AI integration, and premium feature provisioning. Core business value centers on AI conversation management, server-specific configurations, and tiered access control.
+## Core Business Architecture
 
-KEY BUSINESS COMPONENTS
+### AI Service Integration (Importance: 90)
+- Multi-provider AI orchestration (OpenAI, Anthropic, Groq)
+- Vector-based conversation memory system with semantic search
+- Per-server budget and rate limiting controls
+- Custom prompt management with personality configurations
 
-1. AI Conversation System (Modules/AI/*)
-Importance Score: 95
-- Multi-provider AI integration with OpenAI, Anthropic, Groq
-- Vector-based conversation memory management
-- Provider-specific rate limiting and budget controls
-- Token usage tracking and cost calculation
+### Premium Feature Management (Importance: 85)
+- Tier-based subscription model per server
+- Point redemption system with dynamic pricing
+- Feature access control with inheritance hierarchy
+- Cross-platform benefit synchronization (Patreon/BTCPay/Stripe)
 
-2. Premium Server Management (Modules/TierManager.js)
-Importance Score: 90
-- Tier-based feature access control
-- Subscription lifecycle management
-- Server-specific premium feature provisioning
-- Multi-provider payment integration
+### Economy Framework (Importance: 80)
+- Dual-currency system with wallet/bank separation
+- Server-specific virtual economy tracking
+- Wealth distribution classification system
+- Advanced statistics and leaderboard algorithms
+- Auction house with dynamic pricing
 
-3. Extension Marketplace (Web/controllers/extensions.js)
-Importance Score: 85
-- Custom extension packaging format
-- Security sandbox implementation
-- Extension validation workflow
-- Version control and compatibility checks
+### Moderation System (Importance: 85)
+- Four-tier admin permission hierarchy
+- Automated member scanning and document creation
+- Progressive strike management
+- Custom filtering rules with auto-moderation
+- Cross-server violation tracking
 
-4. Server Administration
-Importance Score: 80
-- Progressive warning system with strike counting
-- Temporary ban implementation with auto-expiration
-- Custom modlog integration
-- Multi-level admin permissions (levels 0-3)
+### Vote Rewards Engine (Importance: 75)
+- Point-based rewards with weekend multipliers
+- Multi-site vote aggregation
+- Transaction history tracking
+- Premium feature unlocking thresholds
+- Package purchase system
 
-5. Community Features
-Importance Score: 75
-- Server-specific point tracking and ranking
-- Dynamic voice channel lifecycle management
-- Custom tag/command system
-- Structured suggestion workflow
+### Activity Tracking (Importance: 70)
+- Game session analytics with playtime metrics
+- Voice channel participation monitoring
+- Server activity scoring algorithm
+- Custom ranking calculations
 
-CORE ARCHITECTURE
-- Modular AI provider system with unified interface
-- Server-centric configuration management
-- Premium feature gating through subscription tiers
-- Extensible command/event framework
-- Multi-shard coordination for large-scale deployment
+## Integration Points
+
+### Subscription Orchestration
+- Multi-provider payment processing
+- Cross-platform benefit mapping
+- Unified subscription lifecycle
+- Vote point conversion system
+
+### AI Context Management 
+- Vector database integration
+- Provider-specific rate limiting
+- Budget enforcement
+- Memory retention policies
+
+### Server Customization
+- Feature flag inheritance
+- Premium tier overrides
+- Custom moderation rules
+- Economy configuration
 
 $END$
 

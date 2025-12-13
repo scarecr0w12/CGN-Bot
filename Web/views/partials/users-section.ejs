@@ -207,7 +207,7 @@ SkynetUtil.searchUsers = (query) => {
 					</div>
 					<div class="search-results-list">
 						<% pageData.searchResults.forEach(user => { %>
-							<a href="/activity/users?q=<%= user.id %>" class="search-result-item" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: var(--radius-lg); margin-bottom: 0.75rem; text-decoration: none; transition: all 0.2s ease;">
+							<a href="/profile/<%= user.id %>" class="search-result-item" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: var(--radius-lg); margin-bottom: 0.75rem; text-decoration: none; transition: all 0.2s ease;">
 								<img src="<%= user.avatar %>" alt="<%= user.username %>" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--color-border);">
 								<div style="flex-grow: 1;">
 									<div style="font-weight: 600; color: var(--color-text-primary);"><%= user.username %></div>

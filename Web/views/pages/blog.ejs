@@ -286,10 +286,10 @@
 											<a href="/blog/<%= blogPost.id %>"><%= blogPost.title %></a>
 										</h2>
 										<div class="blog-post-meta">
-											<div class="blog-post-author">
+											<a href="/profile/<%= blogPost.author.id %>" class="blog-post-author" style="text-decoration: none; color: inherit;">
 												<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>">
 												<span><%= blogPost.author.name %></span>
-											</div>
+											</a>
 											<span><i class="fa fa-calendar"></i> <%= blogPost.relativePublished %></span>
 										</div>
 									</div>

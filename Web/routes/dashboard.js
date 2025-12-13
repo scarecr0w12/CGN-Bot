@@ -53,6 +53,9 @@ module.exports = router => {
 	// Scan members API endpoint
 	router.post("/:svrid/administration/scan-members", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.administration.scanMembers);
 
+	// Search members API endpoint
+	router.get("/:svrid/search-members", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.administration.searchMembers);
+
 	// Other
 	setupDashboardPage(router, "/other/name-display", [], controllers.dashboard.other.nameDisplay);
 	setupDashboardPage(router, "/other/ongoing-activities", [], controllers.dashboard.other.activities);

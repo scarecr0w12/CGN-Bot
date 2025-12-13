@@ -70,7 +70,9 @@
 														<img class="image is-24x24" src="<%= configData.wiki_contributors[i].avatar %>" alt="<%= configData.wiki_contributors[i].id %>">
 													</td>
 													<td>
-														<%= configData.wiki_contributors[i].name %>
+														<a href="/profile/<%= configData.wiki_contributors[i].id %>" style="color: inherit; text-decoration: none;">
+															<%= configData.wiki_contributors[i].name %>
+														</a>
 														<% if(configData.wiki_contributors[i].isSudoMaintainer) { %>
 															&nbsp;
 															<span class="tag">Sudo Maintainer</span>

@@ -1,5 +1,5 @@
 ---
-description: Defines the extension marketplace validation, versioning, and permission management system for bot extensions
+description: Specifications for handling extension marketplace workflows, validation, versioning and permissions
 ---
 
 # === USER INSTRUCTIONS ===
@@ -55,58 +55,46 @@ $END$
 
 # extension-management-flow
 
-Extension Marketplace System (Importance Score: 85)
+## Extension Validation System (Importance: 85)
+- Multi-stage validation pipeline for submitted extensions
+- Custom security scanning for malicious code patterns 
+- Version compatibility checks against bot core
+- Automated test suite execution for new submissions
+- File path: Web/controllers/dashboard/extension-validation.js
 
-Core Components:
-
-1. Extension Validation Pipeline
-- Multi-stage validation process for new extension submissions
-- Code safety analysis with prohibited operation detection
-- Resource usage profiling and quota validation  
-- Permission scope verification against allowed capabilities
-- File path: Internals/Extensions/validators.js
-
-2. Version Control System
+## Extension Versioning Logic (Importance: 80)
 - Semantic versioning enforcement for extensions
-- Compatibility tracking across bot versions
-- Update detection and notification system
-- Automatic version conflict resolution
-- File path: Web/controllers/extensions.js
+- Breaking change detection between versions
+- Automated compatibility matrix generation
+- Version-specific feature flagging system
+- File path: Web/controllers/dashboard/extension-versioning.js
 
-3. Installation Manager
-- Secure extension installation workflow
-- Dependency resolution and validation
-- Resource allocation and quota management
-- Installation state tracking and rollback capabilities
-- File path: Internals/Extensions/ExtensionManager.js
+## Permission Management (Importance: 90)
+- Multi-tier permission system for extension management:
+  - Extension Owners: Full control over own extensions
+  - Maintainers: Review and approve submissions
+  - Administrators: Global marketplace management
+- Cross-server extension authorization
+- Role-based access control for extension features
+- File path: Web/middleware/extension-permissions.js
 
-4. Permission Management
-- Granular capability control system
-- Server-specific extension permissions
-- Author verification and trust levels
-- Resource access scoping
-- File path: Internals/Extensions/permissions.js
+## Marketplace Workflow (Importance: 85)
+- Extension submission pipeline:
+  1. Initial submission with metadata
+  2. Automated validation checks
+  3. Manual review queue
+  4. Approval/rejection with feedback
+  5. Publication to marketplace
+- Point-based monetization system
+- Extension rating and review system
+- File path: Web/controllers/dashboard/marketplace.js
 
-5. Extension Marketplace
-- Rating and review system
-- Extension categorization and discovery
-- Download tracking and popularity metrics
-- Featured extension rotation system
-- File path: Web/controllers/gallery.js
-
-6. Extension Sandboxing
-- Isolated execution environment
-- Resource usage monitoring and limits
-- Network access controls
-- File system restrictions
-- File path: Internals/Extensions/sandbox.js
-
-Extension States:
-- PENDING_REVIEW: Awaiting moderation
-- APPROVED: Available in marketplace
-- SUSPENDED: Temporarily disabled
-- REJECTED: Failed validation
-- DEPRECATED: No longer supported
+## Extension Installation Flow (Importance: 75) 
+- Server-specific extension configuration
+- Dependency resolution and conflict checking
+- Automated rollback on failed installations
+- Extension state persistence
+- File path: Web/controllers/dashboard/extension-install.js
 
 $END$
 

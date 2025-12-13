@@ -121,7 +121,7 @@
 							<% pageData.recentSubscriptions.forEach(sub => { %>
 							<tr>
 								<td>
-									<span class="has-text-weight-bold"><%= sub.username %></span>
+									<a href="/profile/<%= sub._id %>" style="color: inherit;"><span class="has-text-weight-bold"><%= sub.username %></span></a>
 									<br><span class="is-size-7 has-text-grey"><%= sub._id %></span>
 								</td>
 								<td>

@@ -41,13 +41,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `ai_images` - AI Images
 
-**Status:** 
+**Status:**
 **Priority:** Medium  
 **Description:** Generate AI images with DALL-E or Stable Diffusion
 
 **Implementation Notes:**
 
--  Created `imagine` command with full feature gating
+- Created `imagine` command with full feature gating
 - Supports size and style parameters
 - Integrates with AIManager for image generation
 - Premium-only with upgrade prompt for free users
@@ -60,13 +60,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `custom_commands` - Custom Commands
 
-**Status:** 
+**Status:**
 **Priority:** Medium  
 **Description:** Create unlimited custom commands per server
 
 **Implementation Notes:**
 
--  Custom command system exists with tier-based limits
+- Custom command system exists with tier-based limits
 - Free users: 5 tags max, Premium users: 1000 tags
 - Limit checked on tag creation in dashboard
 
@@ -78,15 +78,15 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `advanced_moderation` - Advanced Moderation
 
-**Status:** 
+**Status:**
 **Priority:** Medium  
 **Description:** Advanced auto-mod filters and spam detection
 
 **Implementation Notes:**
 
--  Moderation filters page now checks `advanced_moderation` feature
--  Non-premium users see feature but can't modify filter settings
--  POST handler rejects changes from non-premium users
+- Moderation filters page now checks `advanced_moderation` feature
+- Non-premium users see feature but can't modify filter settings
+- POST handler rejects changes from non-premium users
 
 **Files Modified:**
 
@@ -96,15 +96,15 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `custom_branding` - Custom Branding
 
-**Status:** 
+**Status:**
 **Priority:** Low  
 **Description:** Remove bot branding from embeds and messages
 
 **Implementation Notes:**
 
--  Created `BrandingHelper` utility module
--  Checks `custom_branding` feature for premium users
--  Supports: hide footer, custom footer text
+- Created `BrandingHelper` utility module
+- Checks `custom_branding` feature for premium users
+- Supports: hide footer, custom footer text
 - Server config can set `branding.hideFooter` and `branding.customFooter`
 
 **Files Created:**
@@ -115,14 +115,14 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `extended_logs` - Extended Logs
 
-**Status:**   
+**Status:**
 **Priority:** Low  
 **Description:** Extended audit logging and log retention
 
 **Implementation Notes:**
 
--  Premium users see 1000 logs (vs 200 for free)
--  Controller passes `hasExtendedLogs`, `logLimit`, `totalLogs` to template
+- Premium users see 1000 logs (vs 200 for free)
+- Controller passes `hasExtendedLogs`, `logLimit`, `totalLogs` to template
 - Template can show upgrade prompt when logs are truncated
 
 **Files Modified:**
@@ -139,14 +139,14 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `voice_features` - Voice Features
 
-**Status:**   
+**Status:**
 **Priority:** Low  
 **Description:** Voice channel features and music commands
 
 **Implementation Notes:**
 
--  Voice room creation requires `voice_features` feature
--  Text rooms remain free, voice rooms are premium
+- Voice room creation requires `voice_features` feature
+- Text rooms remain free, voice rooms are premium
 - Also fixed pre-existing undefined imports (ChannelType, PermissionFlagsBits)
 
 **Files Modified:**
@@ -157,14 +157,14 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `auto_roles` - Auto Roles
 
-**Status:**   
+**Status:**
 **Priority:** Medium  
 **Description:** Automatic role assignment on join or reaction
 
 **Implementation Notes:**
 
--  Auto-role settings (new_member_roles) now feature-gated
--  Moderation controller passes `hasAutoRoles` to template
+- Auto-role settings (new_member_roles) now feature-gated
+- Moderation controller passes `hasAutoRoles` to template
 - Non-premium users can view but not modify auto-role settings
 
 **Files Modified:**
@@ -177,13 +177,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `premium_dashboard` - Premium Dashboard
 
-**Status:** 
+**Status:**
 **Priority:** Low  
 **Description:** Access to premium dashboard themes and layouts
 
 **Implementation Notes:**
 
--  Created ThemeHelper utility module
+- Created ThemeHelper utility module
 - 5 themes: Default, Dark Mode, Midnight Blue, Forest, Sunset
 - Free users get Default only, premium users get all themes
 - Generates CSS variables for theme colors
@@ -196,13 +196,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `advanced_stats` - Advanced Statistics
 
-**Status:**   
+**Status:**
 **Priority:** Medium  
 **Description:** Detailed analytics and server insights
 
 **Implementation Notes:**
 
--  Premium API endpoint at `/dashboard/:svrid/stats-points/analytics`
+- Premium API endpoint at `/dashboard/:svrid/stats-points/analytics`
 - Returns: overview, activity metrics, moderation stats, distributions, leaderboard
 - Includes points distribution, rank breakdown, activity rates
 
@@ -215,16 +215,16 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `export_data` - Export Data
 
-**Status:** 
+**Status:**
 **Priority:** Medium  
 **Description:** Export server data and logs to CSV/JSON
 
 **Implementation Notes:**
 
--  Export page at `/dashboard/:svrid/other/export`
--  Supports: config, members, moderation, commands, stats, full export
--  Formats: JSON (all types), CSV (for array data)
--  Feature-gated with `TierManager.canAccess`
+- Export page at `/dashboard/:svrid/other/export`
+- Supports: config, members, moderation, commands, stats, full export
+- Formats: JSON (all types), CSV (for array data)
+- Feature-gated with `TierManager.canAccess`
 
 **Files Created/Modified:**
 
@@ -235,13 +235,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `webhook_integrations` - Webhook Integrations
 
-**Status:** 
+**Status:**
 **Priority:** Low  
 **Description:** Custom webhook integrations for notifications
 
 **Implementation Notes:**
 
--  Created WebhookDispatcher module
+- Created WebhookDispatcher module
 - 10 supported events (member join/leave, bans, messages, etc.)
 - Retry logic with exponential backoff
 - HMAC signature support for security
@@ -257,14 +257,14 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `api_access` - API Access
 
-**Status:** 
+**Status:**
 **Priority:** High  
 **Description:** Access to bot REST API endpoints
 
 **Implementation Notes:**
 
--  API exists at `Web/routes/api.js`
--  Protected endpoints now require `api_access` feature
+- API exists at `Web/routes/api.js`
+- Protected endpoints now require `api_access` feature
 - Public endpoints (status, servers list) remain open
 
 **Files Modified:**
@@ -275,7 +275,7 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `api_webhooks` - API Webhooks
 
-**Status:** 
+**Status:**
 **Priority:** Low  
 **Description:** Receive webhook callbacks for events
 
@@ -288,14 +288,14 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `api_unlimited` - Unlimited API Calls
 
-**Status:** 
+**Status:**
 **Priority:** Medium  
 **Description:** No rate limiting on API requests
 
 **Implementation Notes:**
 
--  Rate limiting exists in `Web/routes/api.js`
--  Users with `api_unlimited` feature bypass rate limits
+- Rate limiting exists in `Web/routes/api.js`
+- Users with `api_unlimited` feature bypass rate limits
 - Standard limit: 150 requests/hour
 
 **Files Modified:**
@@ -308,7 +308,7 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `priority_support` - Priority Support
 
-**Status:** 
+**Status:**
 **Priority:** N/A  
 **Description:** Fast-track support responses and dedicated help
 
@@ -321,13 +321,13 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `early_access` - Early Access
 
-**Status:** 
+**Status:**
 **Priority:** Low  
 **Description:** Beta access to new features before public release
 
 **Implementation Notes:**
 
--  Created FeatureFlags utility module
+- Created FeatureFlags utility module
 - Supports alpha/beta/stable/deprecated stages
 - 5 initial beta features defined
 - User opt-in/opt-out functionality
@@ -341,7 +341,7 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `no_ads` - Ad-Free Experience
 
-**Status:** 
+**Status:**
 **Status:** ⚪ N/A  
 **Priority:** N/A  
 **Description:** Remove any promotional messages
@@ -437,6 +437,7 @@ controllers.premiumFeature = async (req, res) => {
 ## Recent Changes
 
 ### December 9, 2024
+
 - ✅ `ai_chat` - Added tier gating to AI command
 - ✅ `api_access` - Protected API endpoints with feature middleware
 - ✅ `api_unlimited` - Added rate limit bypass for premium users
@@ -458,7 +459,7 @@ controllers.premiumFeature = async (req, res) => {
 
 *Last Updated: December 10, 2024*
 
-## Implementation Complete!
+## Implementation Complete
 
 All 17 tier-gated features have been implemented (2 UI-Only features excluded from count).
 
@@ -471,10 +472,12 @@ All 17 tier-gated features have been implemented (2 UI-Only features excluded fr
 Migrated from per-user to per-server premium model:
 
 **Schema Changes:**
+
 - Added `subscription` field to `serverSchema.js` (mirrors user subscription structure)
 - Added `payment_ids` to servers for payment provider webhooks
 
 **TierManager Changes:**
+
 - `canAccess(serverId, featureKey)` - Now checks server's subscription
 - `getServerTier(serverId)` - Get server's current tier
 - `getServerFeatures(serverId)` - Get server's effective features
@@ -482,6 +485,7 @@ Migrated from per-user to per-server premium model:
 - Deprecated user-based functions (kept for backward compatibility)
 
 **Updated Files:**
+
 - `Modules/TierManager.js` - Server-based access checks
 - `Web/middleware/index.js` - Middleware uses `req.svr.id`
 - `Web/controllers/dashboard/*.js` - All use `req.svr.id`

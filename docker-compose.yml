@@ -51,7 +51,7 @@ services:
       # MariaDB configuration
       - DATA_DIR=/app/data
       - DATABASE_TYPE=mariadb
-      - DATABASE_HOSTNAME=127.0.0.1
+      - DATABASE_HOSTNAME=10.10.20.105
       - DATABASE_PORT=3306
       - DATABASE_NAME=uptime_kuma
       - DATABASE_USERNAME=root
@@ -65,7 +65,7 @@ services:
     security_opt:
       - apparmor:unconfined
     environment:
-      - PMA_HOST=127.0.0.1
+      - PMA_HOST=10.10.20.105
       - PMA_PORT=3306
       - PMA_ABSOLUTE_URI=/phpmyadmin/
       - APACHE_PORT=8082
@@ -149,12 +149,9 @@ services:
     image: oliver006/redis_exporter:latest
     container_name: skynetbot-redis-exporter
     restart: always
+    network_mode: host
     security_opt:
       - apparmor:unconfined
-    ports:
-      - "9121:9121"
     environment:
-      - REDIS_ADDR=host.docker.internal:${REDIS_PORT:-6379}
+      - REDIS_ADDR=redis://127.0.0.1:${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"

@@ -714,3 +714,84 @@ controllers.logs = async (req, { res }) => {
 		renderError(res, "Failed to fetch all the trees and their logs.");
 	}
 };
+
+/**
+ * Search members within a server
+ * GET /api/dashboard/:svrid/search-members
+ */
+controllers.searchMembers = async (req, res) => {
+	try {
+		const query = req.query.q?.trim();
+		if (!query) {
+			return res.json({ error: "Please provide a search query" });
+		}
+
+		const guild = req.app.client.guilds.cache.get(req.svr.id);
+		if (!guild) {
+			return res.json({ error: "Server not found" });
+		}
+
+		const serverDocument = await Servers.findOne(req.svr.id);
+		const members = serverDocument?.members || {};
+
+		// Search by username or ID
+		const isIdSearch = /^\d{17,19}$/.test(query);
+		let results = [];
+
+		if (isIdSearch) {
+			// Direct ID lookup
+			const member = guild.members.cache.get(query);
+			if (member && !member.user.bot) {
+				const memberDoc = members[query] || {};
+				results.push({
+					id: member.id,
+					username: member.user.username,
+					displayName: member.displayName,
+					avatar: member.user.displayAvatarURL({ size: 64 }),
+					rank: memberDoc.rank || "No Rank",
+					messages: memberDoc.messages || 0,
+					rankScore: memberDoc.rank_score || 0,
+				});
+			}
+		} else {
+			// Search by username
+			const lowerQuery = query.toLowerCase();
+			const matchingMembers = guild.members.cache.filter(m =>
+				!m.user.bot && (
+					m.user.username.toLowerCase().includes(lowerQuery) ||
+					m.displayName.toLowerCase().includes(lowerQuery)
+				),
+			);
+
+			// Sort by relevance (exact match first, then by rank score)
+			const sorted = [...matchingMembers.values()].sort((a, b) => {
+				const aExact = a.user.username.toLowerCase() === lowerQuery || a.displayName.toLowerCase() === lowerQuery;
+				const bExact = b.user.username.toLowerCase() === lowerQuery || b.displayName.toLowerCase() === lowerQuery;
+				if (aExact && !bExact) return -1;
+				if (!aExact && bExact) return 1;
+
+				const aScore = members[a.id]?.rank_score || 0;
+				const bScore = members[b.id]?.rank_score || 0;
+				return bScore - aScore;
+			});
+
+			results = sorted.slice(0, 10).map(member => {
+				const memberDoc = members[member.id] || {};
+				return {
+					id: member.id,
+					username: member.user.username,
+					displayName: member.displayName,
+					avatar: member.user.displayAvatarURL({ size: 64 }),
+					rank: memberDoc.rank || "No Rank",
+					messages: memberDoc.messages || 0,
+					rankScore: memberDoc.rank_score || 0,
+				};
+			});
+		}
+
+		res.json({ results });
+	} catch (err) {
+		logger.warn(`Failed to search members`, {}, err);
+		res.json({ error: "Failed to search members" });
+	}
+};

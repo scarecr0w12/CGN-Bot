@@ -68,7 +68,7 @@
 											<img class="image is-24x24" src="<%= blockDocument.avatar %>" alt="<%= blockDocument.id %>">
 										</td>
 										<td>
-											<%= blockDocument.name %>
+											<a href="/profile/<%= blockDocument.id %>" style="color: inherit;"><%= blockDocument.name %></a>
 											<% if (blockDocument.isGlobal) { %>
 												&nbsp;
 												<span class="tag">Global</span>

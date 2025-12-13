@@ -341,10 +341,10 @@ SkynetUtil.showActivitySelections = () => {
 							</div>
 						</div>
 
-						<div class="server-card-owner">
+						<a href="/profile/<%= server.owner.id %>" class="server-card-owner" style="text-decoration: none;">
 							<img src="<%= server.owner.avatar %>" alt="<%= server.owner.username %>">
 							<span>@<%= server.owner.username %></span>
-						</div>
+						</a>
 
 						<% if (server.description) { %>
 							<p class="server-card-description"><%- server.description %></p>
@@ -399,10 +399,10 @@ SkynetUtil.showActivitySelections = () => {
 							<td><strong><%= server.members %></strong></td>
 							<td><strong><%= server.messages %></strong></td>
 							<td>
-								<div class="server-list-name">
+								<a href="/profile/<%= server.owner.id %>" class="server-list-name" style="text-decoration: none; color: inherit;">
 									<img src="<%= server.owner.avatar %>" alt="<%= server.owner.id %>" style="width: 24px; height: 24px;">
 									<span>@<%= server.owner.username %></span>
-								</div>
+								</a>
 							</td>
 							<td>
 								<% if (server.invite_link) { %>
@@ -443,7 +443,7 @@ SkynetUtil.showActivitySelections = () => {
 									</div>
 									<p class="has-text-grey" style="margin-bottom: 1rem;">
 										<span class="icon"><i class="fa fa-user"></i></span>
-										Owned by <strong>@<%= server.owner.username %></strong>
+										Owned by <a href="/profile/<%= server.owner.id %>" style="color: inherit;"><strong>@<%= server.owner.username %></strong></a>
 									</p>
 									<% if (server.description) { %>
 										<div class="content"><%- server.description %></div>

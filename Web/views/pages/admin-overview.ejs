@@ -64,19 +64,19 @@
 					<div class="columns">
 						<!-- Server Owner -->
 						<div class="column is-6">
-							<div class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+							<a href="/profile/<%= serverData.owner.id %>" class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;">
 								<img src="<%= serverData.owner.avatar %>" alt="<%= serverData.owner.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--color-border);">
 								<div>
 									<p class="stat-label">Server Owner</p>
 									<p style="font-weight: 600; font-size: 1.1rem;">@<%= serverData.owner.username %></p>
 								</div>
-							</div>
+							</a>
 						</div>
 						
 						<% if (pageData.topMember) { %>
 						<!-- Top Member -->
 						<div class="column is-6">
-							<div class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+							<a href="/profile/<%= pageData.topMember.id %>/<%= serverData.id %>" class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;">
 								<div style="position: relative;">
 									<img src="<%= pageData.topMember.avatar %>" alt="<%= pageData.topMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--color-accent);">
 									<span style="position: absolute; bottom: -2px; right: -2px; background: var(--color-accent); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
@@ -87,7 +87,7 @@
 									<p class="stat-label">Top Member</p>
 									<p style="font-weight: 600; font-size: 1.1rem;">@<%= pageData.topMember.username %></p>
 								</div>
-							</div>
+							</a>
 						</div>
 						<% } %>
 					</div>
@@ -96,7 +96,7 @@
 					<div class="columns">
 						<!-- Richest Member -->
 						<div class="column is-6">
-							<div class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #fcd34d;">
+							<a href="/profile/<%= pageData.richestMember.id %>/<%= serverData.id %>" class="modern-card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #fcd34d; text-decoration: none; color: inherit;">
 								<div style="position: relative;">
 									<img src="<%= pageData.richestMember.avatar %>" alt="<%= pageData.richestMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #f59e0b;">
 									<span style="position: absolute; bottom: -2px; right: -2px; background: #f59e0b; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
@@ -107,10 +107,87 @@
 									<p class="stat-label" style="color: #92400e;">Richest Member</p>
 									<p style="font-weight: 600; color: #78350f; font-size: 1.1rem;">@<%= pageData.richestMember.username %></p>
 								</div>
-							</div>
+							</a>
 						</div>
 					</div>
 					<% } %>
+
+					<!-- Member Search -->
+					<article class="message is-primary modern-card" style="margin-top: 1.5rem;">
+						<div class="message-header">
+							<p style="display: flex; align-items: center; gap: 0.5rem;">
+								<span class="icon"><i class="fa fa-search"></i></span>
+								Search Members
+							</p>
+						</div>
+						<div class="message-body">
+							<p style="margin-bottom: 1rem;">
+								Search for members in this server by username or ID to view their server profile.
+							</p>
+							<div class="field has-addons">
+								<div class="control is-expanded">
+									<input id="member-search-input" class="input" type="text" placeholder="Enter username or user ID..." onkeypress="if(event.keyCode===13) SkynetUtil.searchServerMembers()">
+								</div>
+								<div class="control">
+									<button class="button is-primary" onclick="SkynetUtil.searchServerMembers()">
+										<span class="icon"><i class="fa fa-search"></i></span>
+										<span>Search</span>
+									</button>
+								</div>
+							</div>
+							<div id="member-search-results" style="margin-top: 1rem;"></div>
+						</div>
+					</article>
+
+					<script>
+					SkynetUtil.searchServerMembers = async () => {
+						const query = document.getElementById('member-search-input').value.trim();
+						const resultsDiv = document.getElementById('member-search-results');
+						
+						if (!query) {
+							resultsDiv.innerHTML = '<div class="notification is-warning">Please enter a username or ID to search.</div>';
+							return;
+						}
+						
+						resultsDiv.innerHTML = '<div class="has-text-centered"><span class="icon is-large"><i class="fa fa-spinner fa-spin fa-2x"></i></span></div>';
+						
+						try {
+							const response = await fetch('/dashboard/<%= serverData.id %>/search-members?q=' + encodeURIComponent(query));
+							const data = await response.json();
+							
+							if (data.error) {
+								resultsDiv.innerHTML = '<div class="notification is-danger">' + data.error + '</div>';
+								return;
+							}
+							
+							if (!data.results || data.results.length === 0) {
+								resultsDiv.innerHTML = '<div class="notification is-info">No members found matching "' + query + '"</div>';
+								return;
+							}
+							
+							let html = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+							data.results.forEach(member => {
+								html += '<a href="/profile/' + member.id + '/<%= serverData.id %>" class="modern-card" style="padding: 0.75rem 1rem; display: flex; align-items: center; gap: 1rem; text-decoration: none; color: inherit;">' +
+									'<img src="' + member.avatar + '" alt="' + member.username + '" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--color-border);">' +
+									'<div style="flex-grow: 1;">' +
+									'<p style="font-weight: 600;">@' + member.username + '</p>' +
+									'<p class="is-size-7 has-text-grey">' + (member.rank || 'No Rank') + ' • ' + (member.messages || 0) + ' messages</p>' +
+									'</div>' +
+									'<span class="icon has-text-grey"><i class="fa fa-chevron-right"></i></span>' +
+									'</a>';
+							});
+							html += '</div>';
+							
+							if (data.results.length >= 10) {
+								html += '<p class="is-size-7 has-text-grey" style="margin-top: 0.5rem;">Showing first 10 results. Try a more specific search.</p>';
+							}
+							
+							resultsDiv.innerHTML = html;
+						} catch (err) {
+							resultsDiv.innerHTML = '<div class="notification is-danger">Error: ' + err.message + '</div>';
+						}
+					};
+					</script>
 
 					<!-- Server Actions -->
 					<article class="message is-info modern-card" style="margin-top: 1.5rem;">

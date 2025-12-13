@@ -6,5 +6,16 @@ node_modules/
 .windsurf/
 .taskmaster/
 .augment/
+.idea/
+.vscode/
+.giga/
+.github/
 
 monitoring/
+data/
+
+certs/
+
+scripts/
+
+extensions/

@@ -29,7 +29,7 @@ scrape_configs:
     static_configs:
       - targets: ['skynetbot-mariadb-exporter:9104']
 
-  # Redis Exporter - Cache metrics
+  # Redis Exporter - Cache metrics (host network mode)
   - job_name: 'redis'
     static_configs:
-      - targets: ['skynetbot-redis-exporter:9121']
+      - targets: ['172.17.0.1:9121']

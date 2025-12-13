@@ -5,1184 +5,778 @@ Organized by category with command names and descriptions.
 
 ## Legend
 
-- ✅ SEEDED - Extension exists and is seeded
+- ✅ SEEDED - Extension exists and is seeded in the database
 - ❌ BUILT-IN - Duplicates a built-in command (do not implement as extension)
-- ❌ REMOVED - Previously removed for duplicating built-in features
-- (no mark) - Idea for future implementation
+- 🔄 HYBRID - Planned as mix of built-in and extension
+- 🚧 PLANNED - To be built into core system
+- 📦 EXTENSION - Planned as an extension
+- 🛑 HOLDING - Feature in holding pattern
 
----
+## 🔒 TIER GATING POLICY
 
-## 🎮 GAMES - Mini Games & Fun
+All extensions and high-resource built-in features must check Server Tiers.
 
-### Card Games
+### Tier 1 (Free)
 
-| Command | Description |
-|---------|-------------|
-| `blackjack` | Classic 21 card game against the bot ✅ SEEDED |
-| `poker` | Texas Hold'em poker with betting ✅ SEEDED |
-| `uno` | UNO card game with multiple players ✅ SEEDED |
-| `war` | Simple War card game ✅ SEEDED |
-| `highlow` | Guess if next card is higher or lower ✅ SEEDED |
+- Basic Economy (points, ranks, daily, work)
+- Basic Utilities (reminders, calculator, polls)
+- Information & Stats
+- Social & Fun commands
+- Basic Games (party games, simple card/board games)
+- Text Manipulation
 
-### Board Games
+### Tier 2 (Premium)
 
-| Command | Description |
-|---------|-------------|
-| `chess` | Play chess against another user or bot ✅ SEEDED |
-| `checkers` | Classic checkers game ✅ SEEDED |
-| `tictactoe` | 3x3 tic-tac-toe with buttons ✅ SEEDED |
-| `connect4` | Drop pieces to get 4 in a row ✅ SEEDED |
-| `battleship` | Naval combat guessing game |
-| `minesweeper` | Generate minesweeper puzzles |
+- Advanced Analytics (heatmaps, exports, engagement metrics)
+- Music & Audio (resource-intensive streaming)
+- AI Features (image generation, advanced chat)
+- High-res Image Generation
+- Server Ticket Panel Extension
+- Multi-server features (rolesync, crosspost, broadcast)
+- Backup & Restore features
+- Advanced Moderation (antiraid, antinuke, alt detection)
+- Gaming API Integrations (Valorant, LoL, Fortnite, etc.)
+- Log Export & Advanced Audit
+- Developer Tools (secure code execution)
 
-### Word Games
+### Tier 3 (Enterprise)
 
-| Command | Description |
-|---------|-------------|
-| `hangman` | Classic word guessing with ASCII art ✅ SEEDED |
-| `scramble` | Unscramble words fastest ✅ SEEDED |
-| `wordchain` | Each word starts with last letter ✅ SEEDED |
-| `anagram` | Find words from given letters ✅ SEEDED |
-| `ghost` | Add letters without completing words |
-| `wordle` | Daily word guessing puzzle ✅ SEEDED |
-| `acronym` | Create funny acronym expansions |
-| `reversetype` | Type words backwards fastest |
-
-### Trivia & Quiz
-
-| Command | Description |
-|---------|-------------|
-| `trivia` | Multi-category trivia with leaderboards ❌ BUILT-IN |
-| `musicquiz` | Guess songs from lyrics ✅ SEEDED |
-| `flagquiz` | Identify country flags ✅ SEEDED |
-| `moviequiz` | Guess movies from descriptions |
-| `emojiquiz` | Guess words from emoji combos |
-| `quotequiz` | Identify who said famous quotes |
-
-### Reaction Games
-
-| Command | Description |
-|---------|-------------|
-| `reaction` | Test reaction time in milliseconds ✅ SEEDED |
-| `typerace` | Speed typing competition with WPM ✅ SEEDED |
-| `emojisimon` | Repeat emoji sequences (Simon Says) |
-| `buttonrush` | Click button before it disappears |
-| `dodge` | React with correct emoji quickly |
-| `mathsnap` | React only to true equations |
-
-### Social Deduction
-
-| Command | Description |
-|---------|-------------|
-| `mafia` | Classic Mafia/Werewolf game ✅ SEEDED |
-| `spyfall` | Find the spy who doesn't know location ✅ SEEDED |
-| `traitor` | Vote out the traitor among crew ✅ SEEDED |
-| `liar` | Detect who has different info |
-| `secretroles` | Hidden role games with win conditions |
-| `alibi` | Murder mystery with alibis |
-
-### Puzzle Games
-
-| Command | Description |
-|---------|-------------|
-| `riddle` | Solve riddles for points ✅ SEEDED |
-| `mastermind` | Crack the color code ✅ SEEDED |
-| `pattern` | Complete number/emoji sequences ✅ SEEDED |
-| `cipher` | Decode encrypted messages ✅ SEEDED |
-| `escaperoom` | Text-based escape puzzles ✅ SEEDED |
-| `maze` | Navigate text mazes ✅ SEEDED |
-| `nonogram` | Picross/nonogram puzzles |
-| `logicgrid` | Logic deduction puzzles |
-
-### Party Games
-
-| Command | Description |
-|---------|-------------|
-| `truthordare` | Truth or Dare prompts ✅ SEEDED |
-| `wouldyourather` | Would You Rather questions ✅ SEEDED |
-| `neverhaveiever` | Never Have I Ever game ✅ SEEDED |
-| `thisorthat` | This or That choices ✅ SEEDED |
-| `icebreaker` | Random conversation starters ✅ SEEDED |
-| `hottake` | Controversial discussion topics ✅ SEEDED |
-| `debateclash` | Assign pro/con for debates |
-| `captionbattle` | Caption contest for images ✅ SEEDED |
-
-### RPG & Adventure
-
-| Command | Description |
-|---------|-------------|
-| `duel` | Turn-based PvP combat ✅ SEEDED |
-| `bossraid` | Server-wide boss battles ✅ SEEDED |
-| `adventure` | Text-based adventure choices ✅ SEEDED |
-| `dungeon` | Dungeon crawler mini-game ✅ SEEDED |
-| `hunt` | Hunting mini-game ✅ SEEDED |
-| `pet` | Virtual pet adoption/training ✅ SEEDED |
-| `towerclimb` | Co-op floor challenges ✅ SEEDED |
-
-### Casino & Gambling
-
-| Command | Description |
-|---------|-------------|
-| `slots` | Slot machine with emojis ✅ SEEDED |
-| `roulette` | Roulette wheel betting ✅ SEEDED |
-| `crash` | Multiplier crash game ✅ SEEDED |
-| `coinflip` | Bet on coin flip ✅ SEEDED |
-| `diceroll` | Dice rolling with bets ✅ SEEDED |
-| `fish` | Go fishing and catch various fish ✅ SEEDED |
+- Custom Bots / Whitelabeling
+- Priority Support
+- Dedicated Resources
+- Custom Branding
 
 ---
 
 ## 💰 ECONOMY & PROGRESSION
 
-### Currency System
+*Core system uses built-in "SkyNet Points". New features are Built-in unless listed as Exceptions.*
 
-| Command | Description |
-|---------|-------------|
-| `balance` | Check your balance ✅ SEEDED |
-| `daily` | Claim daily rewards with streaks ✅ SEEDED |
-| `work` | Work for random coins ✅ SEEDED |
-| `crime` | Risk crime for bigger rewards ✅ SEEDED |
-| `rob` | Attempt to rob other users ✅ SEEDED |
-| `deposit` | Deposit to bank ✅ SEEDED |
-| `withdraw` | Withdraw from bank ✅ SEEDED |
-| `transfer` | Send money to others ✅ SEEDED |
+### Built-in Economy (SkyNet Points)
 
-### Shop & Items
+| Command | Description | Status |
+|---------|-------------|--------|
+| `points` | Check balance | ❌ BUILT-IN (`points.js`) |
+| `ranks` | Check rank/level | ❌ BUILT-IN (`ranks.js`) |
+| `leaderboard` | Server rankings | ❌ BUILT-IN (`ranks.js`) |
+| `daily` | Claim daily rewards | 🚧 PLANNED BUILT-IN |
+| `work` | Work for points | 🚧 PLANNED BUILT-IN |
+| `shop` | Buy items/roles | 🚧 PLANNED BUILT-IN |
+| `inventory` | View items | 🚧 PLANNED BUILT-IN |
+| `giveaway` | Manage giveaways | ❌ BUILT-IN (`giveaway.js`) |
+| `lottery` | Lottery system | ❌ BUILT-IN (`lottery.js`) |
+| `rob` | Attempt to rob others | 🚧 PLANNED BUILT-IN |
+| `deposit` | Deposit to bank | 🚧 PLANNED BUILT-IN |
+| `withdraw` | Withdraw from bank | 🚧 PLANNED BUILT-IN |
+| `transfer` | Send money to others | 🚧 PLANNED BUILT-IN |
+| `buy` | Purchase items | 🚧 PLANNED BUILT-IN |
+| `sell` | Sell items back | 🚧 PLANNED BUILT-IN |
+| `use` | Use consumable items | 🚧 PLANNED BUILT-IN |
+| `gift` | Gift items to others | 🚧 PLANNED BUILT-IN |
+| `quest` | Daily/weekly tasks | 🚧 PLANNED BUILT-IN |
+| `achievements` | Unlockable achievements | 🚧 PLANNED BUILT-IN |
+| `badges` | Collectible badges | 🚧 PLANNED BUILT-IN |
+| `streaks` | Track activity streaks | 🚧 PLANNED BUILT-IN |
+| `craft` | Combine items | 🚧 PLANNED BUILT-IN |
+| `upgrade` | Upgrade items/stats | 🚧 PLANNED BUILT-IN |
+| `trade` | Trade items with others | 🚧 PLANNED BUILT-IN |
 
-| Command | Description |
-|---------|-------------|
-| `shop` | Browse available items ✅ SEEDED |
-| `buy` | Purchase items |
-| `sell` | Sell items back |
-| `inventory` | View your items ✅ SEEDED |
-| `use` | Use consumable items |
-| `gift` | Gift items to others |
+### Economy Extensions (Exceptions)
 
-### Progression
-
-| Command | Description |
-|---------|-------------|
-| `rank` | View your XP and level ❌ BUILT-IN (ranks/points) |
-| `leaderboard` | Server XP rankings ❌ BUILT-IN (ranks/messages) |
-| `quest` | Daily/weekly task system |
-| `achievements` | View unlockable achievements |
-| `badges` | Collectible badge system |
-| `streaks` | Track activity streaks |
-| `season` | Seasonal progression track |
-
-### Advanced Economy
-
-| Command | Description |
-|---------|-------------|
-| `craft` | Combine items into better ones |
-| `upgrade` | Upgrade items/stats |
-| `gacha` | Lootbox/gacha system ✅ SEEDED |
-| `trade` | Trade items with others |
-| `auction` | Auction items to highest bidder ✅ SEEDED |
-| `stocks` | Virtual stock market |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `gacha` | Lootbox/character collection | ✅ SEEDED (Batch 4) |
+| `stocks` | Virtual stock market | 📦 EXTENSION |
+| `auction` | Auction house | ✅ SEEDED (Batch 2) |
+| `crime` | High risk/reward actions | 📦 EXTENSION |
+| `season` | Seasonal progression resets | 📦 EXTENSION |
 
 ---
 
 ## 🛠️ UTILITIES
 
+*All Utilities should be Built-in.*
+
 ### Time & Reminders
 
-| Command | Description |
-|---------|-------------|
-| `remind` | Set personal reminders ❌ BUILT-IN (remindme) |
-| `timer` | Countdown timer ✅ SEEDED |
-| `stopwatch` | Stopwatch functionality |
-| `timezone` | Convert between timezones ❌ BUILT-IN (time) |
-| `countdown` | Countdown to events ❌ BUILT-IN |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `remind` | Personal reminders | ❌ BUILT-IN (`remindme.js`) |
+| `time` | Timezone info | ❌ BUILT-IN (`time.js`) |
+| `timer` | Simple timer | ✅ SEEDED (Move to Built-in) |
+| `stopwatch` | Stopwatch functionality | 🚧 PLANNED BUILT-IN |
+| `countdown` | Event countdowns | ❌ BUILT-IN (`countdown.js`) |
+| `pomodoro` | Study/focus timer | 🚧 PLANNED BUILT-IN |
 
 ### Calculators & Converters
 
-| Command | Description |
-|---------|-------------|
-| `calc` | Math calculator ❌ BUILT-IN |
-| `convert` | Unit converter ❌ BUILT-IN |
-| `currency` | Currency conversion ❌ BUILT-IN (convert) |
-| `color` | Color code converter ✅ SEEDED |
-| `base` | Number base converter |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `calc` | Calculator | ❌ BUILT-IN (`calc.js`) |
+| `convert` | Unit converter | ❌ BUILT-IN (`convert.js`) |
+| `color` | Color code converter | ✅ SEEDED (Move to Built-in) |
+| `base` | Number base converter | 🚧 PLANNED BUILT-IN |
 
 ### Generators
 
-| Command | Description |
-|---------|-------------|
-| `password` | Generate secure passwords |
-| `uuid` | Generate UUIDs |
-| `randomnum` | Generate random numbers ✅ SEEDED |
-| `roll` | Dice notation roller ❌ BUILT-IN |
-| `pick` | Random picker from list ❌ BUILT-IN (choose) |
-| `shuffle` | Shuffle a list |
-| `teampicker` | Random team assignment ✅ SEEDED |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `roll` | Dice notation roller | ❌ BUILT-IN (`roll.js`) |
+| `choose` | Random picker | ❌ BUILT-IN (`choose.js`) |
+| `password` | Generate secure passwords | 🚧 PLANNED BUILT-IN |
+| `uuid` | Generate UUIDs | 🚧 PLANNED BUILT-IN |
+| `randomnum` | Generate random numbers | 🚧 PLANNED BUILT-IN |
+| `shuffle` | Shuffle a list | 🚧 PLANNED BUILT-IN |
+| `teampicker` | Random team assignment | 🚧 PLANNED BUILT-IN |
 
 ### Lookup & Info
 
-| Command | Description |
-|---------|-------------|
-| `define` | Dictionary definitions ❌ BUILT-IN (urban) |
-| `urban` | Urban Dictionary lookup ❌ BUILT-IN |
-| `wiki` | Wikipedia summaries ❌ BUILT-IN |
-| `weather` | Weather information ❌ BUILT-IN |
-| `crypto` | Cryptocurrency prices |
-| `stock` | Stock market info |
-| `movie` | Movie/TV information ❌ BUILT-IN (imdb) |
-| `lyrics` | Song lyrics lookup |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `weather` | Weather info | ❌ BUILT-IN (`weather.js`) |
+| `urban` | Dictionary lookup | ❌ BUILT-IN (`urban.js`) |
+| `wiki` | Wikipedia search | ❌ BUILT-IN (`wiki.js`) |
+| `google` | Google search | ❌ BUILT-IN (`google.js`) |
+| `translate` | Text translation | ❌ BUILT-IN (`translate.js`) |
+| `crypto` | Cryptocurrency prices | 🚧 PLANNED BUILT-IN |
+| `stock` | Stock market info | 🚧 PLANNED BUILT-IN |
+| `lyrics` | Song lyrics lookup | 🚧 PLANNED BUILT-IN |
 
 ### Productivity
 
-| Command | Description |
-|---------|-------------|
-| `todo` | Personal todo lists ❌ BUILT-IN (list) |
-| `notes` | Save personal notes |
-| `pomodoro` | Study/focus timer |
-| `afk` | Set AFK status ❌ BUILT-IN |
-| `snooze` | Temporary DND mode |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `poll` | Create polls | ❌ BUILT-IN (`poll.js`) |
+| `todo` | Todo lists | ❌ BUILT-IN (`list.js`) |
+| `notes` | Personal notes | 🚧 PLANNED BUILT-IN |
+| `afk` | Set AFK status | ❌ BUILT-IN (`afk.js`) |
+| `snooze` | Temporary DND mode | 🚧 PLANNED BUILT-IN |
 
 ---
 
 ## 📊 INFORMATION & STATS
 
+*All Info & Stats should be Built-in.*
+
 ### User Stats
 
-| Command | Description |
-|---------|-------------|
-| `profile` | View user profile card ❌ BUILT-IN |
-| `userstats` | User activity statistics ✅ SEEDED |
-| `serverstats` | Server statistics ❌ BUILT-IN (info) |
-| `voicetime` | Voice channel time tracking |
-| `messagestats` | Message statistics ❌ BUILT-IN (messages) |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `userstats` | User profile/stats | ❌ BUILT-IN (`userinfo.js`) |
+| `avatar` | User avatar | ❌ BUILT-IN (`avatar.js`) |
+| `voicetime` | Voice channel time tracking | 🚧 PLANNED BUILT-IN |
 
 ### Server Info
 
-| Command | Description |
-|---------|-------------|
-| `serverinfo` | Server information ❌ BUILT-IN (info) |
-| `roleinfo` | Role details ❌ BUILT-IN |
-| `channelinfo` | Channel details |
-| `emojilist` | Server emoji list ❌ BUILT-IN (emotes) |
-| `boosters` | Server boost info |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `serverstats` | Server information | ❌ BUILT-IN (`info.js`) |
+| `roleinfo` | Role details | ❌ BUILT-IN (`roleinfo.js`) |
+| `channelinfo` | Channel details | 🚧 PLANNED BUILT-IN |
+| `emojilist` | Server emoji list | ❌ BUILT-IN (`emotes.js`) |
+| `boosters` | Server boost info | 🚧 PLANNED BUILT-IN |
 
----
+### Bot Info
 
-## 🎨 IMAGE & MEDIA
-
-### Avatar Manipulation
-
-| Command | Description |
-|---------|-------------|
-| `avatar` | Get user avatar ❌ BUILT-IN |
-| `ship` | Ship two users with heart frame |
-| `wanted` | Wanted poster with avatar |
-| `triggered` | TRIGGERED effect |
-| `pixel` | Pixelate avatar |
-| `glitch` | Glitch effect |
-| `petpet` | Petting GIF animation |
-| `drip` | Add drip/swag to avatar |
-| `jail` | Put avatar behind bars |
-| `rip` | Gravestone with avatar |
-| `trash` | Trash meme with avatar |
-| `beautiful` | "Beautiful" meme |
-| `facepalm` | Facepalm overlay |
-
-### Meme Generation
-
-| Command | Description |
-|---------|-------------|
-| `meme` | Fetch random memes |
-| `caption` | Add caption to images |
-| `drake` | Drake meme template |
-| `changemymind` | Change My Mind meme |
-| `distracted` | Distracted boyfriend meme |
-| `achievement` | Minecraft achievement |
-
-### Creative
-
-| Command | Description |
-|---------|-------------|
-| `ascii` | Convert image to ASCII |
-| `qrcode` | Generate QR codes |
-| `banner` | Generate text banners |
-| `quote` | Create quote images ✅ SEEDED |
-| `polaroid` | Polaroid photo effect |
-| `album` | Album cover generator |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `stats` | Bot statistics | ❌ BUILT-IN (`stats.js`) |
+| `ping` | Latency check | ❌ BUILT-IN (`ping.js`) |
 
 ---
 
 ## 🎭 SOCIAL & FUN
 
+*All Social & Fun commands should be Built-in.*
+
 ### Social Features
 
-| Command | Description |
-|---------|-------------|
-| `hug` | Hug another user ❌ BUILT-IN |
-| `pat` | Pat another user ❌ BUILT-IN |
-| `slap` | Slap another user ❌ BUILT-IN |
-| `kiss` | Kiss another user |
-| `poke` | Poke another user |
-| `cuddle` | Cuddle another user |
-| `highfive` | High five another user |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `hug` | Hug user | ❌ BUILT-IN (`hug.js`) |
+| `pat` | Pat user | ❌ BUILT-IN (`pat.js`) |
+| `slap` | Slap user | ❌ BUILT-IN (`slap.js`) |
+| `poke` | Poke user | 🚧 PLANNED BUILT-IN |
+| `cuddle` | Cuddle user | 🚧 PLANNED BUILT-IN |
+| `kiss` | Kiss user | 🚧 PLANNED BUILT-IN |
+| `highfive` | High five user | 🚧 PLANNED BUILT-IN |
 
 ### Fun Commands
 
-| Command | Description |
-|---------|-------------|
-| `8ball` | Magic 8 ball answers ❌ BUILT-IN |
-| `fortune` | Fortune cookie ❌ BUILT-IN |
-| `horoscope` | Daily horoscope |
-| `tarot` | Tarot card reading |
-| `rps` | Rock Paper Scissors ✅ SEEDED |
-| `rate` | Rate something 0-10 |
-| `roast` | Playful roasts |
-| `compliment` | Random compliments |
-| `joke` | Random jokes ❌ BUILT-IN |
-| `fact` | Random facts ✅ SEEDED |
-| `dadjoke` | Dad jokes |
-| `pickup` | Pickup lines |
-| `shower` | Shower thoughts |
-| `advice` | Random advice |
-| `excuse` | Generate excuses |
-| `conspiracy` | Funny conspiracy theories |
-
-### Anonymous Systems
-
-| Command | Description |
-|---------|-------------|
-| `confess` | Anonymous confessions |
-| `vent` | Anonymous venting |
-| `suggest` | Anonymous suggestions |
-| `report` | Anonymous reports |
-
-### Mood & Tracking
-
-| Command | Description |
-|---------|-------------|
-| `mood` | Track daily mood ✅ SEEDED |
-| `vibecheck` | Anonymous server vibe poll |
-| `birthday` | Birthday tracking |
-| `seen` | Last seen tracking |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `8ball` | Magic 8-Ball | ❌ BUILT-IN (`8ball.js`) |
+| `roll` | Dice roll | ❌ BUILT-IN (`roll.js`) |
+| `choose` | Pick option | ❌ BUILT-IN (`choose.js`) |
+| `joke` | Random joke | ❌ BUILT-IN (`joke.js`) |
+| `meme` | Random meme | ❌ BUILT-IN (`meme.js`) |
+| `cat` | Cat pictures | ❌ BUILT-IN (`cat.js`) |
+| `dog` | Dog pictures | ❌ BUILT-IN (`dog.js`) |
+| `rate` | Rate something | 🚧 PLANNED BUILT-IN |
+| `lovecalc` | Love compatibility | 🚧 PLANNED BUILT-IN |
+| `compliment` | Give compliment | 🚧 PLANNED BUILT-IN |
+| `insult` | Generate insult | 🚧 PLANNED BUILT-IN |
+| `fact` | Random fact | 🚧 PLANNED BUILT-IN |
 
 ---
 
-## 🔧 SERVER MANAGEMENT
+## 🎮 GAMING (ALL EXTENSIONS)
 
-### Moderation Tools
+*All Gaming features must be Extensions.*
 
-| Command | Description |
-|---------|-------------|
-| `warn` | Warn users ❌ BUILT-IN (strike) |
-| `mute` | Mute users ❌ BUILT-IN |
-| `kick` | Kick users ❌ BUILT-IN |
-| `ban` | Ban users ❌ BUILT-IN |
-| `softban` | Softban (ban+unban) ❌ BUILT-IN |
-| `tempban` | Temporary ban ❌ BUILT-IN |
-| `purge` | Bulk delete messages ❌ BUILT-IN (nuke) |
-| `slowmode` | Set channel slowmode ❌ BUILT-IN |
-| `lock` | Lock channel ❌ BUILT-IN |
-| `unlock` | Unlock channel ❌ BUILT-IN |
+### Card Games
 
-### Anti-Raid
+| Command | Description | Status |
+|---------|-------------|--------|
+| `blackjack` | 21 Card Game | ✅ SEEDED (Batch 1) |
+| `poker` | Texas Hold'em | ✅ SEEDED (Batch 4) |
+| `uno` | Uno Card Game | ✅ SEEDED (Batch 3) |
+| `war` | Simple War card game | ✅ SEEDED |
+| `highlow` | Guess if next card higher/lower | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `raidshield` | Enable raid protection |
-| `jointhrottle` | Limit joins per minute |
-| `altdetector` | Flag potential alt accounts |
-| `accountage` | Require minimum account age |
+### Board Games
 
-### Verification
+| Command | Description | Status |
+|---------|-------------|--------|
+| `chess` | Chess | ✅ SEEDED (Batch 3) |
+| `checkers` | Checkers | ✅ SEEDED (Batch 5) |
+| `tictactoe` | Tic-Tac-Toe | ✅ SEEDED (Batch 5) |
+| `connect4` | Connect 4 | ✅ SEEDED (Batch 1) |
+| `minesweeper` | Minesweeper | ✅ SEEDED (Batch 2) |
+| `battleship` | Battleship | ✅ SEEDED (Batch 2) |
 
-| Command | Description |
-|---------|-------------|
-| `verify` | Verification system |
-| `captcha` | CAPTCHA verification |
-| `quizverify` | Quiz-based verification |
+### Word Games
 
-### Logging
+| Command | Description | Status |
+|---------|-------------|--------|
+| `wordle` | Daily word guess | ✅ SEEDED (Batch 2) |
+| `hangman` | Hangman | ✅ SEEDED (Batch 2) |
+| `scramble` | Unscramble words | 📦 EXTENSION |
+| `wordchain` | Each word starts with last letter | 📦 EXTENSION |
+| `anagram` | Find words from letters | 📦 EXTENSION |
+| `ghost` | Add letters without completing words | 📦 EXTENSION |
+| `acronym` | Create funny acronyms | 📦 EXTENSION |
+| `reversetype` | Type words backwards | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `modlog` | Moderation log ❌ BUILT-IN |
-| `auditlog` | Audit log viewer ❌ BUILT-IN (extended_logs) |
-| `joinlog` | Member join logging ❌ BUILT-IN (extended_logs) |
-| `messagelog` | Message edit/delete logging ❌ BUILT-IN (extended_logs) |
+### Trivia & Quiz
 
----
+| Command | Description | Status |
+|---------|-------------|--------|
+| `trivia` | Trivia Quiz | ❌ BUILT-IN (`trivia.js`) |
+| `musicquiz` | Lyrics Guessing | ✅ SEEDED (Batch 5) |
+| `flagquiz` | Flag Identification | ✅ SEEDED (Batch 5) |
+| `moviequiz` | Guess movies | 📦 EXTENSION |
+| `emojiquiz` | Guess words from emojis | 📦 EXTENSION |
+| `quotequiz` | Identify famous quotes | 📦 EXTENSION |
+| `aki` | Akinator | ✅ SEEDED (Batch 1) |
 
-## 📢 ANNOUNCEMENTS & EVENTS
+### Reaction Games
 
-### Welcome System
+| Command | Description | Status |
+|---------|-------------|--------|
+| `reaction` | Test reaction time | 📦 EXTENSION |
+| `typerace` | Speed typing competition | 📦 EXTENSION |
+| `emojisimon` | Repeat emoji sequences | 📦 EXTENSION |
+| `buttonrush` | Click button before it disappears | 📦 EXTENSION |
+| `dodge` | React with correct emoji | 📦 EXTENSION |
+| `mathsnap` | React to true equations | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `welcome` | Welcome message config ❌ REMOVED (duplicates built-in) |
-| `goodbye` | Leave message config ❌ REMOVED (duplicates built-in) |
-| `welcomeimage` | Welcome images |
-| `autorole` | Auto role assignment ❌ REMOVED (duplicates tier-locked feature) |
-| `onboarding` | Interactive onboarding |
+### Social Deduction
 
-### Events
+| Command | Description | Status |
+|---------|-------------|--------|
+| `mafia` | Social deduction | ✅ SEEDED (Batch 2) |
+| `spyfall` | Find the spy | 📦 EXTENSION |
+| `traitor` | Vote out traitor | 📦 EXTENSION |
+| `liar` | Detect who has different info | 📦 EXTENSION |
+| `secretroles` | Hidden role games | 📦 EXTENSION |
+| `alibi` | Murder mystery | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `event` | Create server events |
-| `giveaway` | Giveaway system ❌ BUILT-IN |
-| `poll` | Create polls ❌ BUILT-IN |
-| `vote` | Voting system |
-| `raffle` | Raffle system |
+### Puzzle Games
 
-### Scheduled Posts
+| Command | Description | Status |
+|---------|-------------|--------|
+| `2048` | Number puzzle | ✅ SEEDED (Batch 2) |
+| `escaperoom` | Text adventure puzzle | ✅ SEEDED (Batch 4) |
+| `riddle` | Solve riddles | 📦 EXTENSION |
+| `mastermind` | Crack the color code | 📦 EXTENSION |
+| `pattern` | Complete sequences | 📦 EXTENSION |
+| `cipher` | Decode encrypted messages | 📦 EXTENSION |
+| `maze` | Navigate text mazes | 📦 EXTENSION |
+| `nonogram` | Picross puzzles | 📦 EXTENSION |
+| `logicgrid` | Logic deduction puzzles | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `schedule` | Schedule messages |
-| `announce` | Announcement system |
-| `recurring` | Recurring messages |
+### Party Games
 
----
+| Command | Description | Status |
+|---------|-------------|--------|
+| `truthordare` | Truth or Dare | ✅ SEEDED (Batch 1) |
+| `wouldyourather` | Would You Rather | ✅ SEEDED (Batch 1) |
+| `neverhaveiever` | Never Have I Ever | ✅ SEEDED (Batch 1) |
+| `thisorthat` | This or That choices | 📦 EXTENSION |
+| `icebreaker` | Conversation starters | ✅ SEEDED |
+| `hottake` | Debate topics | ✅ SEEDED (Batch 5) |
+| `debateclash` | Assign pro/con for debates | 📦 EXTENSION |
+| `captionbattle` | Caption contest | ✅ SEEDED (Batch 5) |
+| `story` | Chain story | ✅ SEEDED (Batch 3) |
 
-## 🔗 INTEGRATIONS
+### RPG & Adventure
 
-### Social Media
+| Command | Description | Status |
+|---------|-------------|--------|
+| `duel` | PvP Combat | 📦 EXTENSION |
+| `bossraid` | Server Boss | 📦 EXTENSION |
+| `adventure` | Text Adventure | ✅ SEEDED (Batch 2) |
+| `dungeon` | Dungeon Crawler | ✅ SEEDED (Batch 2) |
+| `towerclimb` | Tower Climbing | ✅ SEEDED (Batch 4) |
+| `hunt` | Hunting mini-game | 📦 EXTENSION |
+| `pet` | Virtual pet | 📦 EXTENSION |
+| `flashcards` | Study cards | ✅ SEEDED (Batch 3) |
 
-| Command | Description |
-|---------|-------------|
-| `twitter` | Twitter feed notifications |
-| `youtube` | YouTube upload notifications |
-| `twitch` | Twitch live notifications |
-| `reddit` | Reddit post notifications |
-| `instagram` | Instagram post notifications |
+### Casino & Gambling
 
-### Developer Tools
-
-| Command | Description |
-|---------|-------------|
-| `github` | GitHub notifications |
-| `npm` | NPM package info |
-| `pypi` | PyPI package info |
-| `stackoverflow` | SO search |
-
----
-
-## 📚 CREATIVE & ROLEPLAY
-
-### Story Tools
-
-| Command | Description |
-|---------|-------------|
-| `storyseed` | Generate story prompts |
-| `storychain` | Collaborative story building |
-| `plottwist` | Generate plot twists |
-| `worldseed` | World building prompts |
-| `npc` | Generate NPC details |
-
-### Name Generators
-
-| Command | Description |
-|---------|-------------|
-| `namegen` | Character name generator |
-| `fantasynamegen` | Fantasy names |
-| `scifinamegen` | Sci-fi names |
-| `guildname` | Guild/clan name generator |
-
-### Character Tools
-
-| Command | Description |
-|---------|-------------|
-| `character` | Character sheet creator |
-| `backstory` | Generate backstories |
-| `flaw` | Generate character flaws |
-| `trait` | Generate character traits |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `slots` | Slot machine | 📦 EXTENSION |
+| `roulette` | Roulette | ✅ SEEDED (Batch 2) |
+| `crash` | Crash Game | ✅ SEEDED (Batch 2) |
+| `diceroll` | Dice rolling with bets | 📦 EXTENSION |
+| `fish` | Go fishing | 📦 EXTENSION |
+| `rps` | Rock Paper Scissors | ✅ SEEDED (Batch 1) |
 
 ---
 
-## 🎵 MUSIC & AUDIO
+## 🎨 IMAGE & MEDIA (EXTENSIONS - MIXED TIERS)
 
-### Music Features
+*Unless already built-in, these are Extensions.*
+*Basic image manipulation = Tier 1. High-res/AI generation = **Tier 2**.*
 
-| Command | Description |
-|---------|-------------|
-| `play` | Play music |
-| `queue` | View music queue |
-| `skip` | Skip current song |
-| `pause` | Pause playback |
-| `resume` | Resume playback |
-| `volume` | Adjust volume |
-| `nowplaying` | Current song info |
-| `lyrics` | Show lyrics |
-| `shuffle` | Shuffle queue |
-| `loop` | Loop song/queue |
+### Search
 
-### Soundboard
+| Command | Description | Status |
+|---------|-------------|--------|
+| `image` | Google Image Search | ❌ BUILT-IN (`image.js`) |
+| `gif` | Giphy Search | ❌ BUILT-IN (`gif.js`) |
 
-| Command | Description |
-|---------|-------------|
-| `soundboard` | Play sound effects |
-| `tts` | Text to speech |
+### Avatar Manipulation
 
----
+| Command | Description | Status |
+|---------|-------------|--------|
+| `ship` | Ship users image | 📦 EXTENSION |
+| `wanted` | Wanted poster | 📦 EXTENSION |
+| `triggered` | TRIGGERED effect | 📦 EXTENSION |
+| `pixel` | Pixelate image | 📦 EXTENSION |
+| `glitch` | Glitch effect | 📦 EXTENSION |
+| `petpet` | Petting GIF | 📦 EXTENSION |
+| `drip` | Add drip/swag | 📦 EXTENSION |
+| `jail` | Put behind bars | 📦 EXTENSION |
+| `rip` | Gravestone image | 📦 EXTENSION |
+| `trash` | Trash meme | 📦 EXTENSION |
+| `beautiful` | "Beautiful" meme | 📦 EXTENSION |
+| `facepalm` | Facepalm overlay | 📦 EXTENSION |
+| `wasted` | GTA Wasted effect | 📦 EXTENSION |
 
-## 🏆 COMPETITIONS & LEADERBOARDS
+### Meme Generation
 
-### Leaderboards
+| Command | Description | Status |
+|---------|-------------|--------|
+| `caption` | Meme captioner | ✅ SEEDED (Batch 5) |
+| `drake` | Drake meme template | 📦 EXTENSION |
+| `changemymind` | Change My Mind meme | 📦 EXTENSION |
+| `distracted` | Distracted boyfriend meme | 📦 EXTENSION |
+| `achievement` | Minecraft achievement | 📦 EXTENSION |
 
-| Command | Description |
-|---------|-------------|
-| `xpleaderboard` | XP rankings |
-| `voiceleaderboard` | Voice time rankings |
-| `messageleaderboard` | Message count rankings |
-| `gameleaderboard` | Game win rankings |
-| `economyleaderboard` | Wealth rankings |
+### Creative
 
-### Competitions
-
-| Command | Description |
-|---------|-------------|
-| `challenge` | Create challenges |
-| `tournament` | Tournament brackets |
-| `contest` | Creative contests |
-| `bracket` | Bracket management |
-
----
-
-## 📋 TICKETS & SUPPORT
-
-### Ticket System
-
-| Command | Description |
-|---------|-------------|
-| `ticket` | Open support ticket |
-| `ticketpanel` | Ticket panel with buttons |
-| `ticketclose` | Close ticket |
-| `ticketclaim` | Claim ticket |
-| `tickettranscript` | Export transcript |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `ascii` | Text to ASCII | 📦 EXTENSION |
+| `qrcode` | Text to QR | 📦 EXTENSION |
+| `banner` | Generate text banners | 📦 EXTENSION |
+| `quote` | Create quote images | 📦 EXTENSION |
+| `polaroid` | Polaroid photo effect | 📦 EXTENSION |
+| `album` | Album cover generator | 📦 EXTENSION |
 
 ---
 
-## ⭐ STARBOARD & HIGHLIGHTS
+## 📝 TEXT MANIPULATION (BUILT-IN)
 
-### Starboard
+*All Text commands should be Built-in.*
 
-| Command | Description |
-|---------|-------------|
-| `starboard` | Configure starboard ❌ BUILT-IN |
-| `star` | Manual star message |
-| `starstats` | Starboard statistics |
-| `multistar` | Multiple star thresholds |
-
----
-
-## 🎓 EDUCATIONAL
-
-### Study Tools
-
-| Command | Description |
-|---------|-------------|
-| `flashcard` | Flashcard system |
-| `studytimer` | Study timer with breaks |
-| `quiz` | Custom quiz maker |
-| `formula` | Formula lookup |
-
-### Language
-
-| Command | Description |
-|---------|-------------|
-| `translate` | Translate text ❌ BUILT-IN |
-| `conjugate` | Verb conjugation |
-| `wordofday` | Word of the day |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `zalgo` | Glitchy Zalgo text | 🚧 PLANNED BUILT-IN |
+| `mock` | mOcKiNg TeXt | 🚧 PLANNED BUILT-IN |
+| `owo` | OwO speak conversion | 🚧 PLANNED BUILT-IN |
+| `fancy` | Fancy Unicode fonts | 🚧 PLANNED BUILT-IN |
+| `reverse` | Reverse text | 🚧 PLANNED BUILT-IN |
+| `clap` | Add 👏 between words | 🚧 PLANNED BUILT-IN |
+| `spoiler` | Spoilerify text | 🚧 PLANNED BUILT-IN |
+| `tiny` | Tiny text conversion | 🚧 PLANNED BUILT-IN |
+| `vaporwave` | ｖａｐｏｒｗａｖｅ text | 🚧 PLANNED BUILT-IN |
 
 ---
 
-## CURRENTLY SEEDED EXTENSIONS
+## 🎧 MUSIC & AUDIO (TIER 2 - PREMIUM)
 
-> **Note:** Some items previously listed as seeded extensions are now marked as duplicates of built-in commands.
-> Extensions should provide functionality NOT available in built-in commands.
+**Tier-gated:** Requires Tier 2 (Premium) subscription due to streaming resources.
 
-### Commands (Unique - Not duplicating built-in)
+**Architecture:** Native integration into `Internals/Audio` with `AudioPlayer` class.
+**Dependencies Required:** `@discordjs/voice`, `ffmpeg-static`, `libsodium-wrappers`.
 
-1. ✅ Connect 4
-2. ✅ Rock Paper Scissors
-3. ✅ Truth or Dare
-4. ✅ Would You Rather
-5. ✅ Never Have I Ever
-6. ✅ This or That
-7. ✅ 8 Ball Advanced (key: 8ball2 - different from built-in 8ball)
-8. ✅ Coin Flip
-9. ❌ ~~Dice Roll~~ (built-in: roll)
-10. ✅ Random Number
-11. ✅ Team Picker
-12. ❌ ~~Countdown Timer~~ (built-in: countdown)
-13. ✅ User Stats
-14. ✅ Quote of the Day
-15. ✅ Fact Generator
-16. ✅ Mood Tracker
-17. ✅ Akinator
-18. ❌ ~~Trivia~~ (built-in: trivia)
-19. ✅ Hangman
-20. ✅ Blackjack
-21. ✅ Slots
-22. ✅ Daily Reward (economy-integrated)
-23. ❌ ~~Reminder~~ (built-in: remindme)
-24. ✅ Word Chain
-25. ✅ Type Race
-26. ✅ Reaction Test
-27. ✅ Scramble
-28. ✅ Riddle
-29. ❌ ~~Todo List~~ (built-in: list)
-30. ✅ Balance (economy-integrated)
-31. ✅ Work
-32. ❌ ~~Leaderboard~~ (built-in: ranks/messages)
-33. ✅ Pet
-34. ✅ Fish
-35. ✅ Hunt
-36. ✅ Rob
-37. ✅ Gamble (economy-integrated)
-38. ✅ Shop
-39. ✅ Inventory
-40. ❌ ~~Profile~~ (built-in: profile)
-41. ✅ Heist
-42. ❌ ~~Lottery~~ (built-in: lottery)
-43. ✅ Crime
-44. ✅ Give
-45. ❌ ~~Poll~~ (built-in: poll)
-46. ❌ ~~Emoji Info~~ (built-in: emoji)
-47. ✅ Color
-48. ✅ Timer
-49. ✅ Wordle
-50. ✅ Roulette
-51. ✅ Crash
-52. ✅ Mafia
-53. ✅ Adventure
-54. ✅ Dungeon
-55. ✅ Minesweeper
-56. ✅ Battleship
-57. ✅ Auction
-58. ✅ Deposit
-59. ✅ Withdraw
-60. ✅ Dice Duel
-61. ✅ UNO
-62. ✅ Chess (Puzzles)
-63. ✅ Story Chain
-64. ✅ Flashcards
-65. ✅ ASCII Art
-66. ✅ Highlow
-67. ✅ Anagram
-68. ✅ Mastermind
-69. ✅ Duel
-70. ✅ Gacha
-71. ✅ Escape Room
-72. ✅ Poker
-73. ✅ Boss Raid
-74. ✅ Spyfall
-75. ✅ Pattern
-76. ✅ Cipher
-77. ✅ Icebreaker
-78. ✅ War
-79. ✅ Checkers
-80. ✅ TicTacToe
-81. ✅ Music Quiz
-82. ✅ Flag Quiz
-83. ✅ Traitor
-84. ✅ Maze
-85. ✅ Tower Climb
-86. ✅ Hot Take
-87. ✅ Caption Battle
-
-### Unique Seeded Count: 74 (after removing built-in duplicates)
-
-### Events (0)
-
-*All event extensions removed - duplicated built-in features (status_messages, extended_logs, auto_roles, spam_filter)*
-
-### Keywords (4)
-
-1. ✅ Auto Reactions (nice, cool, awesome, etc.)
-2. ✅ Keyword Responder (help, support, etc.)
-3. ✅ Link Detector
-4. ✅ GG Responder
-
-### Timers (4)
-
-1. ✅ Daily Reminder (24h)
-2. ✅ Hourly Stats (1h)
-3. ✅ Bump Reminder (2h)
-4. ✅ Activity Check (30m)
+| Command | Description | Status |
+|---------|-------------|--------|
+| `play` | Play music | 🚧 PLANNED BUILT-IN |
+| `skip` | Skip song | 🚧 PLANNED BUILT-IN |
+| `queue` | View queue | 🚧 PLANNED BUILT-IN |
+| `lyrics` | Get lyrics | 🚧 PLANNED BUILT-IN |
+| `dj` | DJ Controls | 🚧 PLANNED BUILT-IN |
+| `filters` | Audio filters (bassboost, nightcore) | 🚧 PLANNED BUILT-IN |
 
 ---
 
-## PRIORITY RECOMMENDATIONS FOR NEXT BATCH
+## 🎫 TICKETS & SUPPORT (🔄 HYBRID)
 
-### High Priority (Most Requested/Engaging)
+**Architecture:**
 
-1. ~~**Wordle**~~ - ✅ SEEDED
-2. ~~**Roulette**~~ - ✅ SEEDED
-3. ~~**Crash**~~ - ✅ SEEDED
-4. ~~**Mafia**~~ - ✅ SEEDED
-5. ~~**Adventure**~~ - ✅ SEEDED
-6. ~~**Dungeon**~~ - ✅ SEEDED
+1. **Global System (Built-in):** Users DM bot → Opens ticket with Bot Admins/Maintainers.
+   - **Web Interface:** Maintainer Console (`Web/views/pages/maintainer-tickets.ejs`) for managing global tickets.
+   - Ticket queue, assignment, status tracking, transcript export.
 
-### Medium Priority (Good Additions)
+2. **Server System (Official Extension - Tier 2):** Server owners install "Ticket Panel" extension.
+   - **Tier-gated:** Requires Tier 2 (Premium) subscription.
+   - **Dashboard Integration:** When installed, adds ticket management UI to server dashboard.
+   - Panel config, category setup, auto-close rules, transcript channel.
+   - Only visible in dashboard if extension is active on that server.
 
-7. ~~**UNO**~~ - ✅ SEEDED
-8. ~~**Chess**~~ - ✅ SEEDED
-9. ~~**Battleship**~~ - ✅ SEEDED
-10. ~~**Minesweeper**~~ - ✅ SEEDED
-11. ~~**Gacha/Lootbox**~~ - ✅ SEEDED
-12. ~~**Auction**~~ - ✅ SEEDED
-
-### Nice to Have (Next Batch)
-
-13. ~~**Story Chain**~~ - ✅ SEEDED
-14. ~~**Flashcards**~~ - ✅ SEEDED
-15. ~~**Translate**~~ - ❌ BUILT-IN
-16. ~~**ASCII Art**~~ - ✅ SEEDED
-17. ~~**Gacha/Lootbox**~~ - ✅ SEEDED
-18. ~~**Escape Room**~~ - ✅ SEEDED
-19. ~~**Poker**~~ - ✅ SEEDED
-20. ~~**Spyfall**~~ - ✅ SEEDED
-21. ~~**Boss Raid**~~ - ✅ SEEDED
-22. ~~**Pattern**~~ - ✅ SEEDED
-23. ~~**Cipher**~~ - ✅ SEEDED
-24. ~~**Icebreaker**~~ - ✅ SEEDED
-25. ~~**War**~~ - ✅ SEEDED
+| Command | Description | Status |
+|---------|-------------|--------|
+| `ticket` | Open global ticket (DM) | 🚧 PLANNED BUILT-IN |
+| `ticketpanel` | Create server support panel | 📦 OFFICIAL EXTENSION |
+| `ticketclose` | Close and archive ticket | 🚧 PLANNED BUILT-IN |
+| `ticketcategory` | Manage ticket categories | 📦 OFFICIAL EXTENSION |
+| `ticketadd` | Add user to ticket | 🚧 PLANNED BUILT-IN |
+| `ticketremove` | Remove user from ticket | 🚧 PLANNED BUILT-IN |
+| `transcript` | Save transcript | 🚧 PLANNED BUILT-IN |
 
 ---
 
----
+## 🛡️ ADVANCED MODERATION (MIXED TIERS)
 
-## 🎌 ANIME & MANGA
+**Architecture:** Integrate into `Modules/Moderation`.
+*Basic moderation = Tier 1. Antiraid/Antinuke/Altcheck = **Tier 2**.*
 
-### Anime Commands
-
-| Command | Description |
-|---------|-------------|
-| `animesearch` | Search anime by title with MAL/Anilist ❌ BUILT-IN (anime) |
-| `animerandom` | Get a random anime recommendation |
-| `animeseason` | Show seasonal anime list |
-| `animeprofile` | Show user's MAL/Anilist profile |
-| `animecompare` | Compare two users' anime lists |
-| `animequote` | Random anime quote |
-| `animeguess` | Guess anime from opening/screenshot |
-
-### Manga Commands
-
-| Command | Description |
-|---------|-------------|
-| `mangasearch` | Search manga by title |
-| `mangatracker` | Track manga chapter releases |
-| `charactersearch` | Search anime/manga characters |
-| `waifuroll` | Roll random waifu/husbando |
-| `waifuclaim` | Claim rolled characters |
-| `waifuprofile` | View waifu collection |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `automod` | Auto-moderation rules | 🚧 PLANNED BUILT-IN |
+| `filter` | Word filtering | 🚧 PLANNED BUILT-IN |
+| `strike` | Give strikes | ❌ BUILT-IN (`strike.js`) |
+| `modlog` | Configure logs | ❌ BUILT-IN (`modlog.js`) |
+| `antispam` | Anti-spam system | 🚧 PLANNED BUILT-IN |
+| `antiraid` | Anti-raid system | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `altcheck` | Alt account check | 🚧 PLANNED BUILT-IN (Tier 2) |
 
 ---
 
-## 🎮 GAMING INTEGRATIONS
+## 📺 ANIME & GAMING INTEGRATIONS (TIER 2 EXTENSIONS)
+
+*Gaming integrations require external APIs - Extensions. **Tier-gated:** Requires Tier 2 (Premium) due to API costs.*
+
+### Anime Lookup
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `anime` | Search anime info | ❌ BUILT-IN |
+| `manga` | Search manga info | 📦 EXTENSION |
+| `character` | Search anime characters | 📦 EXTENSION |
+| `animequote` | Random anime quote | 📦 EXTENSION |
+| `animeguess` | Guess anime from screenshot | 📦 EXTENSION |
+| `waifuroll` | Roll random waifu/husbando | 📦 EXTENSION |
+| `waifuclaim` | Claim rolled characters | 📦 EXTENSION |
+| `waifuprofile` | View waifu collection | 📦 EXTENSION |
 
 ### Minecraft
 
-| Command | Description |
-|---------|-------------|
-| `mcstatus` | Check Minecraft server status |
-| `mcskin` | Display player skin |
-| `mcuuid` | Get player UUID |
-| `mcnamehistory` | Player name history |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `mcstatus` | Check server status | 📦 EXTENSION |
+| `mcskin` | Display player skin | 📦 EXTENSION |
+| `mcuuid` | Get player UUID | 📦 EXTENSION |
+| `mcnamehistory` | Player name history | 📦 EXTENSION |
 
 ### Valorant
 
-| Command | Description |
-|---------|-------------|
-| `valorantstats` | Player stats and rank |
-| `valorantmatch` | Last match details |
-| `valorantagent` | Agent statistics |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `valorantstats` | Player stats and rank | 📦 EXTENSION |
+| `valorantmatch` | Last match details | 📦 EXTENSION |
+| `valorantagent` | Agent statistics | 📦 EXTENSION |
 
 ### League of Legends
 
-| Command | Description |
-|---------|-------------|
-| `lolsummoner` | Summoner profile |
-| `lollive` | Live game lookup |
-| `lolbuild` | Champion builds |
-| `lolmastery` | Champion mastery stats |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `lolsummoner` | Summoner profile | 📦 EXTENSION |
+| `lollive` | Live game lookup | 📦 EXTENSION |
+| `lolbuild` | Champion builds | 📦 EXTENSION |
+| `lolmastery` | Champion mastery | 📦 EXTENSION |
 
 ### Fortnite
 
-| Command | Description |
-|---------|-------------|
-| `fortnitestats` | Player statistics |
-| `fortniteshop` | Daily item shop |
-| `fortnitetrack` | Track player stats |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `fortnitestats` | Player statistics | 📦 EXTENSION |
+| `fortniteshop` | Daily item shop | 📦 EXTENSION |
+| `fortnitetrack` | Track player stats | 📦 EXTENSION |
 
 ### General Gaming
 
-| Command | Description |
-|---------|-------------|
-| `steamprofile` | Steam profile info |
-| `steamgame` | Game information |
-| `lfg` | Looking for group system |
-| `gamestats` | Generic game stats lookup |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `steamprofile` | Steam profile info | 📦 EXTENSION |
+| `steamgame` | Game information | 📦 EXTENSION |
+| `lfg` | Looking for group | 📦 EXTENSION |
+| `gamestats` | Generic game stats | 📦 EXTENSION |
 
 ---
 
-## 💻 DEVELOPER TOOLS
+## 🤖 AI FEATURES (TIER 2 - PREMIUM)
+
+*AI features integrate with existing AI module. **Tier-gated:** Requires Tier 2 (Premium) due to API costs.*
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `aichat` | Chat with AI | ❌ BUILT-IN (`ai.js`) |
+| `aithread` | Persistent AI conversation | 🚧 PLANNED BUILT-IN |
+| `aisummarize` | Summarize text/messages | 🚧 PLANNED BUILT-IN |
+| `airewrite` | Rewrite in different tone | 🚧 PLANNED BUILT-IN |
+| `aiexplain` | Explain code/concepts | 🚧 PLANNED BUILT-IN |
+| `aiimage` | Generate image from prompt | 🚧 PLANNED BUILT-IN |
+| `aiavatar` | Stylized avatar generation | 🚧 PLANNED BUILT-IN |
+| `aivariations` | Image variations | 🚧 PLANNED BUILT-IN |
+
+---
+
+## 💻 DEVELOPER TOOLS (TIER 2 - PREMIUM)
+
+*Secure code execution via containerized Agent architecture. **Tier-gated:** Requires Tier 2 (Premium).*
+
+### Security Architecture: Agent Containers (gVisor)
+
+**Why gVisor?** User code executes in isolated containers with a user-space kernel that intercepts syscalls - attackers cannot reach the host kernel even if they escape the container.
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Main Bot Process                                           │
+│  ┌─────────────┐                                            │
+│  │ Code Runner │──► HTTP API ──► ┌────────────────────────┐ │
+│  │ Controller  │                 │ Agent Container        │ │
+│  └─────────────┘◄── Results ◄─── │ (gVisor + Docker)      │ │
+│                                  │ • No network access    │ │
+│  Timeout Monitor (10s max) ────► │ • Read-only filesystem │ │
+│                                  │ • 128MB memory limit   │ │
+│                                  │ • 50% CPU quota        │ │
+│                                  │ • Auto-destroyed       │ │
+│                                  └────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Implementation:**
+
+- Runtime: Docker with `runsc` (gVisor) runtime
+- Communication: HTTP API with signed payloads
+- Container image: `skynet-sandbox` with Node.js, Python
+- Lifecycle: Ephemeral (created per execution, auto-removed)
 
 ### Code Tools
 
-| Command | Description |
-|---------|-------------|
-| `coderun` | Execute code in sandbox |
-| `codeformat` | Format/highlight code |
-| `snippet` | Save/retrieve code snippets |
-| `lint` | Run linter on code |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `coderun` | Execute code in sandbox | 🚧 PLANNED BUILT-IN |
+| `codeformat` | Format/highlight code | 🚧 PLANNED BUILT-IN |
+| `snippet` | Save/retrieve code snippets | 🚧 PLANNED BUILT-IN |
+| `lint` | Run linter on code | 🚧 PLANNED BUILT-IN |
 
 ### Regex & JSON
 
-| Command | Description |
-|---------|-------------|
-| `regextest` | Test regex patterns |
-| `regexexplain` | Explain regex pattern |
-| `jsonpretty` | Pretty print JSON |
-| `jsonminify` | Minify JSON |
-| `jsonpath` | Query JSON with JSONPath |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `regextest` | Test regex patterns | 🚧 PLANNED BUILT-IN |
+| `regexexplain` | Explain regex pattern | 🚧 PLANNED BUILT-IN |
+| `jsonpretty` | Pretty print JSON | 🚧 PLANNED BUILT-IN |
+| `jsonminify` | Minify JSON | 🚧 PLANNED BUILT-IN |
+| `jsonpath` | Query JSON with JSONPath | 🚧 PLANNED BUILT-IN |
 
 ### Utilities
 
-| Command | Description |
-|---------|-------------|
-| `http` | Make HTTP requests |
-| `base64` | Encode/decode base64 |
-| `hash` | Generate hashes |
-| `timestamp` | Unix timestamp converter |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `http` | Make HTTP requests | 🚧 PLANNED BUILT-IN |
+| `base64` | Encode/decode base64 | 🚧 PLANNED BUILT-IN |
+| `hash` | Generate hashes | 🚧 PLANNED BUILT-IN |
+| `timestamp` | Unix timestamp converter | 🚧 PLANNED BUILT-IN |
 
 ---
 
-## 🤖 AI FEATURES
+## 📊 ADVANCED ANALYTICS (TIER 2 - PREMIUM)
 
-### Chat & Text
+*Analytics for server management. **Tier-gated:** Requires Tier 2 (Premium) subscription.*
 
-| Command | Description |
-|---------|-------------|
-| `aichat` | Chat with AI assistant |
-| `aithread` | Persistent AI conversation |
-| `aisummarize` | Summarize text/messages |
-| `airewrite` | Rewrite in different tone |
-| `aiexplain` | Explain code/concepts |
+**Architecture:** Integrate into `Modules/Analytics` with dashboard visualization in `Web/views/pages/dashboard`.
 
-### Image Generation
-
-| Command | Description |
-|---------|-------------|
-| `aiimage` | Generate image from prompt |
-| `aiavatar` | Stylized avatar generation |
-| `aivariations` | Image variations |
+| Command | Description | Status |
+|---------|-------------|--------|
+| `memberactivity` | Member activity stats | 🚧 PLANNED BUILT-IN |
+| `channelactivity` | Channel activity stats | 🚧 PLANNED BUILT-IN |
+| `roleengagement` | Role-based engagement | 🚧 PLANNED BUILT-IN |
+| `joinleave` | Join/leave analytics | 🚧 PLANNED BUILT-IN |
+| `commandstats` | Command usage stats | 🚧 PLANNED BUILT-IN |
+| `heatmap` | Activity heatmap | 🚧 PLANNED BUILT-IN |
+| `exportstats` | Export stats to CSV | 🚧 PLANNED BUILT-IN |
 
 ---
 
-## 📝 TEXT MANIPULATION
-
-### Fun Text
-
-| Command | Description |
-|---------|-------------|
-| `zalgo` | Glitchy Zalgo text |
-| `mock` | mOcKiNg TeXt |
-| `owo` | OwO speak conversion |
-| `fancy` | Fancy Unicode fonts |
-| `reverse` | Reverse text |
-| `clap` | Add 👏 between words |
-| `spoiler` | Spoilerify text |
-| `tiny` | Tiny text conversion |
-| `vaporwave` | ｖａｐｏｒｗａｖｅ text |
-| `scramble` | Scramble letters |
-
----
-
-## 📊 ADVANCED ANALYTICS
-
-### Server Stats
-
-| Command | Description |
-|---------|-------------|
-| `serverstats` | Server overview |
-| `memberactivity` | Member activity stats |
-| `channelactivity` | Channel activity stats |
-| `roleengagement` | Role-based engagement |
-| `joinleave` | Join/leave analytics |
-| `commandstats` | Command usage stats |
-| `heatmap` | Activity heatmap |
-| `exportstats` | Export stats to CSV |
-
----
-
-## 🔔 NOTIFICATIONS & FEEDS
-
-### Social Media
-
-| Command | Description |
-|---------|-------------|
-| `twitchnotify` | Twitch live notifications |
-| `youtubenotify` | YouTube upload notifications |
-| `twitternotify` | Twitter/X notifications |
-| `redditfeed` | Reddit post feed |
-| `rssfeed` | Custom RSS feeds |
-
-### Cross-posting
-
-| Command | Description |
-|---------|-------------|
-| `crosspost` | Mirror messages between channels |
-| `announce` | Multi-channel announcements |
-| `broadcast` | Broadcast to multiple servers |
-
----
-
-## 🎭 ROLE MANAGEMENT
-
-### Reaction Roles
-
-| Command | Description |
-|---------|-------------|
-| `rolepanel` | Create role selection panel |
-| `rolebutton` | Button-based role assign |
-| `roledropdown` | Dropdown role menu |
-| `rolemode` | Single/multi select mode |
-
-### Temporary Roles
-
-| Command | Description |
-|---------|-------------|
-| `temprole` | Give temporary role |
-| `temprolelist` | List temp roles |
-| `autorole` | Auto-assign on join |
-| `rolesync` | Sync roles between servers |
-
----
-
-## 🔊 VOICE FEATURES
-
-### Temp Channels
-
-| Command | Description |
-|---------|-------------|
-| `vchub` | Set up temp voice hub ❌ BUILT-IN (room) |
-| `vclock` | Lock temp channel |
-| `vcinvite` | Invite to locked channel |
-| `vctransfer` | Transfer ownership |
-| `vcsettings` | Temp channel settings |
-
-### Voice Tracking
-
-| Command | Description |
-|---------|-------------|
-| `voicestats` | Voice activity stats |
-| `voiceleaderboard` | Voice time rankings |
-| `voicenotify` | Join notifications |
-| `afkkick` | Auto-kick AFK users |
-
----
-
-## 📜 LOGGING & AUDIT
-
-### Logging
-
-| Command | Description |
-|---------|-------------|
-| `logsetup` | Configure logging |
-| `logevents` | Enable/disable events |
-| `logview` | View recent logs |
-| `logsearch` | Search logs |
-| `logexport` | Export logs |
-| `logignore` | Ignore channels |
-
-### Audit
-
-| Command | Description |
-|---------|-------------|
-| `audituser` | User action history |
-| `auditchannel` | Channel history |
-| `auditsnapshot` | Permission snapshot |
-
----
-
-## 🗳️ POLLS & VOTING
-
-### Advanced Polls
-
-| Command | Description |
-|---------|-------------|
-| `pollcreate` | Create advanced poll |
-| `pollweighted` | Weighted voting |
-| `pollranked` | Ranked choice voting |
-| `pollanon` | Anonymous polls |
-| `polllive` | Live updating results |
-| `pollreminder` | Vote reminders |
-| `pollaudit` | Vote audit log |
-
----
-
-## 💡 SUGGESTIONS & FEEDBACK
-
-### Suggestion System
-
-| Command | Description |
-|---------|-------------|
-| `suggest` | Submit suggestion ❌ BUILT-IN |
-| `suggestanon` | Anonymous suggestion |
-| `suggeststatus` | Update status |
-| `suggestlabel` | Add labels |
-| `suggesttop` | Top suggestions |
-| `suggestexport` | Export suggestions |
-
-### Feedback
-
-| Command | Description |
-|---------|-------------|
-| `feedbackform` | Create feedback form |
-| `feedbackview` | View feedback |
-| `feedbackstats` | Feedback analytics |
-
----
-
-## 😴 AFK & STATUS
-
-### AFK System
-
-| Command | Description |
-|---------|-------------|
-| `afkset` | Set AFK status ❌ BUILT-IN (afk) |
-| `afkauto` | Auto-AFK on inactivity |
-| `afklist` | List AFK members |
-| `afklog` | Missed pings while AFK |
-| `afkback` | Clear AFK status |
-
-### Custom Status
-
-| Command | Description |
-|---------|-------------|
-| `statusset` | Set server status |
-| `statusrole` | Link status to roles |
-| `presencestats` | Presence analytics |
-
----
-
-## ⭐ HIGHLIGHTS & PINS
-
-### Starboard
-
-| Command | Description |
-|---------|-------------|
-| `starboardsetup` | Configure starboard ❌ BUILT-IN (starboard) |
-| `starboardforce` | Force highlight |
-| `starboardremove` | Remove highlight |
-| `starboardtop` | Top highlights |
-| `starboardstats` | Starboard stats |
-
-### Pin Management
-
-| Command | Description |
-|---------|-------------|
-| `pinqueue` | Pin nomination queue |
-| `pinauto` | Auto-pin rules |
-| `pinrotate` | Rotate old pins |
-
----
-
-## 😀 EMOJI MANAGEMENT
-
-### Emoji Tools
-
-| Command | Description |
-|---------|-------------|
-| `emojiadd` | Add emoji |
-| `emojisteal` | Copy from other server |
-| `emojibulk` | Bulk add emojis |
-| `emojirename` | Rename emoji |
-| `emojistats` | Usage statistics |
-| `emojicleanup` | Remove unused |
-| `emojipack` | Save/load emoji packs |
-
----
-
-## 💾 BACKUP & RESTORE
-
-### Server Backup
-
-| Command | Description |
-|---------|-------------|
-| `backupcreate` | Create server backup |
-| `backupschedule` | Auto backup schedule |
-| `backuplist` | List backups |
-| `backuprestore` | Restore backup |
-| `backupdiff` | Compare to current |
-| `backupexport` | Export backup file |
-
----
-
-## 🛡️ ANTI-NUKE
-
-### Protection
-
-| Command | Description |
-|---------|-------------|
-| `antinukesetup` | Configure protection |
-| `antinukewhitelist` | Whitelist trusted users |
-| `antinukemode` | Set response level |
-| `antinukelog` | View incidents |
-| `antinukerollback` | Restore changes |
-
----
-
-## 📨 INVITE TRACKING
-
-### Invite Management
-
-| Command | Description |
-|---------|-------------|
-| `invitecreate` | Create tracked invite |
-| `inviteleaderboard` | Top inviters |
-| `inviteinfo` | Invite statistics |
-| `invitesource` | Who invited member |
-| `inviteclean` | Clean unused invites |
-| `invitereward` | Invite rewards |
-
----
-
-## 📁 CHANNEL MANAGEMENT
-
-### Automation
-
-| Command | Description |
-|---------|-------------|
-| `channeltemplate` | Save/apply templates |
-| `channelcleanup` | Archive inactive |
-| `channellockdown` | Lock channels |
-| `channelautoclear` | Auto-delete old messages |
-| `channelschedule` | Schedule open/close |
-| `channelroleview` | Permission matrix |
-
----
-
-## ✅ VERIFICATION
-
-### Member Verification
-
-| Command | Description |
-|---------|-------------|
-| `verifypanel` | Verification panel |
-| `verifycaptcha` | CAPTCHA verification |
-| `verifyquiz` | Quiz verification |
-| `verifymanual` | Manual verification |
-| `verifystatus` | Check status |
-
-### Onboarding
-
-| Command | Description |
-|---------|-------------|
-| `onboardwelcome` | Welcome flow |
-| `onboardroles` | Role selection |
-| `onboardpreview` | Preview flow |
-| `onboardstats` | Funnel metrics |
+## 🏗️ CORE SYSTEMS (PLANNED BUILT-IN)
+
+*These categories are core infrastructure and should be built-in.*
+
+### 🔔 Notifications & Feeds
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `twitchnotify` | Twitch alerts | ❌ BUILT-IN (`streamers.js`) |
+| `youtubenotify` | YouTube alerts | ❌ BUILT-IN (`youtube.js`) |
+| `rssfeed` | RSS Feeds | ❌ BUILT-IN (`rss.js`) |
+| `redditfeed` | Reddit Feeds | ❌ BUILT-IN (`reddit.js`) |
+| `twitternotify` | Twitter/X notifications | 🚧 PLANNED BUILT-IN |
+| `crosspost` | Mirror messages | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `announce` | Multi-channel announcements | 🚧 PLANNED BUILT-IN |
+
+### 🎭 Role Management
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `role` | Manage roles | ❌ BUILT-IN (`role.js`) |
+| `rolepanel` | Reaction roles | 🚧 PLANNED BUILT-IN |
+| `rolebutton` | Button-based role assign | 🚧 PLANNED BUILT-IN |
+| `roledropdown` | Dropdown role menu | 🚧 PLANNED BUILT-IN |
+| `temprole` | Give temporary role | 🚧 PLANNED BUILT-IN |
+| `autorole` | Join roles | 🚧 PLANNED BUILT-IN |
+| `rolesync` | Sync roles between servers | 🚧 PLANNED BUILT-IN (Tier 2) |
+
+### 🔊 Voice Features
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `vchub` | Temp voice channels | ❌ BUILT-IN (`room.js`) |
+| `vclock` | Lock temp channel | 🚧 PLANNED BUILT-IN |
+| `vcinvite` | Invite to locked channel | 🚧 PLANNED BUILT-IN |
+| `vctransfer` | Transfer ownership | 🚧 PLANNED BUILT-IN |
+| `voicestats` | Voice activity | 🚧 PLANNED BUILT-IN |
+| `voiceleaderboard` | Voice time rankings | 🚧 PLANNED BUILT-IN |
+| `afkkick` | Auto-kick AFK users | 🚧 PLANNED BUILT-IN |
+
+### 🗳️ Polls & Feedback
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `poll` | Create polls | ❌ BUILT-IN (`poll.js`) |
+| `pollweighted` | Weighted voting | 🚧 PLANNED BUILT-IN |
+| `pollranked` | Ranked choice voting | 🚧 PLANNED BUILT-IN |
+| `pollanon` | Anonymous polls | 🚧 PLANNED BUILT-IN |
+| `suggest` | Suggestions | ❌ BUILT-IN (`suggest.js`) |
+| `suggestanon` | Anonymous suggestion | 🚧 PLANNED BUILT-IN |
+| `feedbackform` | Create feedback form | 🚧 PLANNED BUILT-IN |
+
+### 📜 Logging & Audit
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `logsetup` | Configure logging | ❌ BUILT-IN (`modlog.js`) |
+| `logevents` | Enable/disable events | 🚧 PLANNED BUILT-IN |
+| `logview` | View recent logs | 🚧 PLANNED BUILT-IN |
+| `logsearch` | Search logs | 🚧 PLANNED BUILT-IN |
+| `logexport` | Export logs | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `logignore` | Ignore channels | 🚧 PLANNED BUILT-IN |
+| `audituser` | User action history | 🚧 PLANNED BUILT-IN |
+| `auditchannel` | Channel history | 🚧 PLANNED BUILT-IN |
+| `auditsnapshot` | Permission snapshot | 🚧 PLANNED BUILT-IN |
+
+### 😴 AFK & Status
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `afk` | Set AFK status | ❌ BUILT-IN (`afk.js`) |
+| `afkauto` | Auto-AFK on inactivity | 🚧 PLANNED BUILT-IN |
+| `afklist` | List AFK members | 🚧 PLANNED BUILT-IN |
+| `afklog` | Missed pings while AFK | 🚧 PLANNED BUILT-IN |
+| `statusset` | Set server status | 🚧 PLANNED BUILT-IN |
+| `statusrole` | Link status to roles | 🚧 PLANNED BUILT-IN |
+| `presencestats` | Presence analytics | 🚧 PLANNED BUILT-IN |
+
+### ⭐ Highlights & Pins
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `starboard` | Highlight messages | ❌ BUILT-IN (`starboard.js`) |
+| `starboardforce` | Force highlight | 🚧 PLANNED BUILT-IN |
+| `starboardremove` | Remove highlight | 🚧 PLANNED BUILT-IN |
+| `starboardtop` | Top highlights | 🚧 PLANNED BUILT-IN |
+| `pinqueue` | Pin nomination queue | 🚧 PLANNED BUILT-IN |
+| `pinauto` | Auto-pin rules | 🚧 PLANNED BUILT-IN |
+| `pinrotate` | Rotate old pins | 🚧 PLANNED BUILT-IN |
+
+### 😀 Emoji Management
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `emoji` | Manage emojis | ❌ BUILT-IN (`emoji.js`) |
+| `emojisteal` | Copy from other server | 🚧 PLANNED BUILT-IN |
+| `emojibulk` | Bulk add emojis | 🚧 PLANNED BUILT-IN |
+| `emojirename` | Rename emoji | 🚧 PLANNED BUILT-IN |
+| `emojistats` | Usage statistics | 🚧 PLANNED BUILT-IN |
+| `emojicleanup` | Remove unused | 🚧 PLANNED BUILT-IN |
+| `emojipack` | Save/load emoji packs | 🚧 PLANNED BUILT-IN |
+
+### 🔧 Server Management
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `nuke` | Clear channel | ❌ BUILT-IN (`nuke.js`) |
+| `invite` | Invite tracking | ❌ BUILT-IN (`invite.js`) |
+| `backup` | Server backup | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `backupschedule` | Auto backup schedule | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `backuprestore` | Restore backup | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `antinuke` | Server protection | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `antinukewhitelist` | Whitelist trusted | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `antinukerollback` | Restore changes | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `verify` | Member verification | 🚧 PLANNED BUILT-IN |
+| `verifycaptcha` | CAPTCHA verification | 🚧 PLANNED BUILT-IN |
+| `verifyquiz` | Quiz verification | 🚧 PLANNED BUILT-IN |
+| `channeltemplate` | Save/apply templates | 🚧 PLANNED BUILT-IN |
+| `channelcleanup` | Archive inactive | 🚧 PLANNED BUILT-IN |
+| `channellockdown` | Lock channels | 🚧 PLANNED BUILT-IN |
+| `channelautoclear` | Auto-delete old messages | 🚧 PLANNED BUILT-IN |
+
+### 📨 Invite Tracking
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `invitecreate` | Create tracked invite | 🚧 PLANNED BUILT-IN |
+| `inviteleaderboard` | Top inviters | 🚧 PLANNED BUILT-IN |
+| `inviteinfo` | Invite statistics | 🚧 PLANNED BUILT-IN |
+| `invitesource` | Who invited member | 🚧 PLANNED BUILT-IN |
+| `inviteclean` | Clean unused invites | 🚧 PLANNED BUILT-IN |
+| `invitereward` | Invite rewards | 🚧 PLANNED BUILT-IN |
+
+### ✅ Onboarding
+
+| Command | Description | Status |
+|---------|-------------|--------|
+| `onboardwelcome` | Welcome flow | 🚧 PLANNED BUILT-IN |
+| `onboardroles` | Role selection | 🚧 PLANNED BUILT-IN |
+| `onboardpreview` | Preview flow | 🚧 PLANNED BUILT-IN |
+| `onboardstats` | Funnel metrics | 🚧 PLANNED BUILT-IN |
 
 ---
 
@@ -1193,15 +787,17 @@ Organized by category with command names and descriptions.
 
 ### Priority Implementation Order
 
-1. Games (Trivia, Hangman, Akinator)
-2. Economy (Daily, Shop, Balance)
-3. Utilities (Reminders, Todo, Timer)
-4. Fun (Text manipulation, Generators)
-5. Anime/Gaming (API integrations)
-6. AI Features (Chat, Image gen)
-7. Advanced Moderation
-8. Analytics & Logging
+1. **Music & Audio** (Built-in)
+2. **Ticket System** (Hybrid)
+3. **Advanced Auto-Moderation** (Built-in)
+4. **Economy Features** (Built-in + Extensions)
+5. **Games** (Extensions)
+6. **Social & Fun** (Built-in)
+7. **Utilities** (Built-in)
+8. **Core Systems** (Built-in)
+9. **AI Features** (Built-in)
+10. **Analytics & Logging** (Built-in)
 
-*Last Updated: December 2024*
+*Last Updated: December 2025*
 *Total Ideas: 400+ commands*
-*Built-in duplicates identified: ~50+ commands*
+*Built-in duplicates identified: ~60+ commands*
