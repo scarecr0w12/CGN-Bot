@@ -1,5 +1,5 @@
 ---
-description: Specification for implementing progressive Discord moderation systems with strike tracking and automated escalation
+description: Specification for Discord bot's progressive moderation system including strikes, auto-escalation, and infraction tracking
 ---
 
 # === USER INSTRUCTIONS ===
@@ -63,50 +63,58 @@ $END$
 
 # moderation-system-model
 
-Progressive Strike System (Importance: 95/100)
-Path: Commands/Public/strike.js
-- Three-tiered strike accumulation (warning, mute, ban)
-- Configurable thresholds for automated punishment escalation
-- Strike decay over time with customizable half-life
-- Strike weight multipliers based on infraction severity
-- Permanent strike history with mod notes and timestamps
+Progressive Moderation System
+Importance Score: 90/100
 
-Automated Moderation Actions (Importance: 90/100)
-Path: Commands/Public/tempban.js, Commands/Public/softban.js
-- Scheduled temporary bans with auto-expiration
-- Softban implementation for message pruning
-- Configurable ban duration presets
-- Appeal cooldown system
-- Automated unban scheduling
+1. Strike Tracking System (Commands/Private/strike.js)
+- Multi-tier violation tracking with automatic escalation
+- Strike weight calculation based on infraction severity
+- Configurable thresholds for automated actions
+- Strike decay/expiration logic
+- Historical violation tracking per user/server
 
-Infraction Data Model (Importance: 85/100)
-Path: Commands/Public/modlog.js
-- Detailed infraction tracking with categorization
-- Mod action attribution and reason logging
-- Appeal status tracking
-- Automated punishment calculation based on history
-- Cross-server infraction sharing for connected guilds
+2. Auto-Moderation Rules (Internals/Events/messageCreate/Skynet.SpamHandler.js)
+- Spam detection using Levenshtein distance algorithm
+- Two-tier violation system with escalating consequences
+- Configurable thresholds per server
+- Point deduction system tied to violations
+- Auto-deletion of spam messages
 
-Escalation Rules Engine (Importance: 85/100)
-- Rule-based escalation triggers
-- Custom punishment matrices by infraction type
-- Server-specific threshold configuration
-- Auto-moderator integration points
-- Progressive timeout duration calculation
+3. Moderation Log System (Database/Schemas/serverModlogSchema.js)
+- Hierarchical moderation action tracking
+- Automated punishment escalation rules
+- Complete audit trail of all moderation actions
+- Reason tracking and documentation
+- Appeal tracking and resolution workflow
 
-Violation Categories:
-- SPAM: 3 strikes = 24h mute
-- HARASSMENT: 2 strikes = 48h ban
-- NSFW: 1 strike = immediate 72h ban
-- ADVERTISING: 2 strikes = 24h mute
-- TOXICITY: Progressive mute scaling (2h -> 12h -> 24h)
+4. Support Ticket Integration (Web/controllers/dashboard/tickets.js)
+- Category-based moderation ticket management
+- Staff assignment and tracking system
+- Auto-close logic based on resolution or inactivity
+- Transcript generation for moderation cases
+- Priority levels for different violation types
 
-Mod Dashboard Integration:
-- Real-time infraction monitoring
-- Strike decay visualization
-- User history lookup
-- Appeal management interface
-- Mod action audit logging
+Core Workflows:
+1. Strike Pipeline:
+- Infraction detection
+- Weight calculation
+- Historical context evaluation
+- Automated action triggering
+- Staff notification
+
+2. Auto-Moderation:
+- Real-time message analysis
+- Violation detection
+- Action execution
+- Log generation
+- Staff alerts
+
+3. Appeal Process:
+- Ticket creation
+- Staff assignment
+- Evidence collection
+- Resolution tracking
+- Action reversal workflow
 
 $END$
 

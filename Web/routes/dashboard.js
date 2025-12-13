@@ -78,4 +78,13 @@ module.exports = router => {
 	setupDashboardPage(router, "/subscription", [], controllers.dashboard.subscription.manage);
 	router.post("/:svrid/subscription/redeem", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.redeemPoints);
 	router.post("/:svrid/subscription/cancel", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.cancel);
+
+	// Ticket System (Tier 2)
+	setupDashboardPage(router, "/tickets/settings", [], controllers.dashboard.tickets.settings);
+	setupDashboardPage(router, "/tickets", [], controllers.dashboard.tickets.list);
+	setupDashboardPage(router, "/tickets/:ticketId", [], controllers.dashboard.tickets.view);
+	router.post("/:svrid/tickets/update", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.update);
+	router.post("/:svrid/tickets/category/add", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.addCategory);
+	router.post("/:svrid/tickets/category/delete", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.deleteCategory);
+	router.post("/:svrid/tickets/ticket/update", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.updateTicket);
 };

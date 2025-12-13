@@ -143,3 +143,4 @@ controllers.administration = require("./administration");
 controllers.other = require("./other");
 controllers.ai = require("./ai");
 controllers.subscription = require("./subscription");
+controllers.tickets = require("./tickets");

@@ -20,6 +20,8 @@ module.exports = {
 	RandomAnimals: require("./RandomAnimals.js"),
 	StringJS: require("./String"),
 	Temp: require("./Temp"),
+	TicketManager: require("./TicketManager.js"),
+	ServerTicketManager: require("./ServerTicketManager.js"),
 	TierManager: require("./TierManager.js"),
 	TokenEncryption: require("./TokenEncryption.js"),
 	Traffic: require("./Traffic.js"),

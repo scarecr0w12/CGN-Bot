@@ -187,53 +187,67 @@ Critical Implementation Paths:
 - Explain your OBSERVATIONS clearly, then provide REASONING to identify the exact issue. Add console logs when needed to gather more information.
 
 
-The Discord bot system implements several interconnected business domains:
+CORE BUSINESS SYSTEMS:
 
-Core Business Domains:
+1. Achievement System
+Importance Score: 85/100
+- Economy and social achievement categories
+- Tiered progression tracking
+- Automatic unlock detection
+- Integrated reward distribution
 
-1. AI Integration System (95/100)
-- Multi-provider AI management with OpenAI, Anthropic, and Groq
-- Vector-based conversation memory system
-- Custom token usage tracking and budget enforcement
-- Provider-specific rate limiting and quota management
-Path: Modules/AI/AIManager.js
+2. Auction Management
+Importance Score: 90/100
+- Real-time bidding mechanics
+- Automatic refund processing
+- Minimum increment enforcement
+- Time-based expiration
+- Winner selection and item transfer
 
-2. Economy & Currency System (90/100)
-- Multi-currency economy with voting rewards
-- Gambling system with progressive jackpots
-- Player-to-player trading and theft mechanics
-- Crafting and auction systems
-Paths: Commands/Public/gamble.js, auction.js
+3. Virtual Economy
+Importance Score: 80/100
+- Multi-currency wallet/bank system
+- Daily rewards with streak bonuses 
+- Crafting with recipe requirements
+- Risk-based gambling mechanics
+- Resource and durability management
 
-3. Premium Extension Marketplace (85/100)
-- Revenue sharing system for extension creators
-- Version control and compatibility checking
-- Premium feature gating and validation
-- Developer earnings and withdrawal system
-Paths: Web/controllers/extensions.js
+4. Quest Management
+Importance Score: 75/100
+- Daily/weekly quest rotation
+- Auto-reset progression tracking
+- Tiered reward structure
+- Completion validation
 
-4. Moderation Suite (85/100)
-- Progressive discipline system with strike tracking
-- Multi-tier admin hierarchy (0-3)
-- Auto-moderation with custom rulesets
-- Levenshtein-based spam detection
-Paths: Internals/SlashCommands/commands/strike.js
+5. Permission & Authorization
+Importance Score: 85/100
+- Server-specific admin levels
+- Role-based access control
+- Custom command permissions
+- Feature gating by tier
 
-5. Quest & Achievement System (80/100)
-- Daily/weekly quest progression tracking
-- Multi-category achievement milestones
-- Auto-resetting timers and validation
-- Tiered reward distribution
-Paths: Commands/Public/quest.js
+6. AI Integration
+Importance Score: 90/100
+- Multi-provider service management
+- Vector memory for context
+- Rate limiting and budgets
+- Custom prompt handling
 
-6. Vote Rewards Economy (80/100)
-- Dual-currency system with point redemption
-- Weekend multiplier bonuses
-- Multiple voting platform integration
-- Premium feature unlocking system
-Paths: Modules/VoteRewardsManager.js
+CRITICAL FILE PATHS:
 
-The system is built around a shard management architecture that coordinates these features across multiple bot instances, with centralized state management and cross-shard communication protocols.
+Core Systems:
+- Commands/Public/achievements.js
+- Commands/Public/auction.js
+- Commands/Public/gamble.js
+- Web/controllers/ai.js
+
+Business Rules:
+- Internals/Client.js
+- Internals/Constants.js
+- Modules/AI/AIManager.js
+- Database/Schema.js
+
+The system architecture centers around a sophisticated virtual economy with integrated achievement tracking, real-time auctions, and AI-powered interactions. Core business value derives from the seamless integration between economy mechanics, user progression systems, and automated moderation tools.
 
 $END$
 

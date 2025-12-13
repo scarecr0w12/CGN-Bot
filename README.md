@@ -15,6 +15,7 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 - **🛡️ Moderation** - Progressive strike system, auto-mod filters, audit logging
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
 - **🧩 Extensions** - Create, share, and install custom server extensions with slash command support
+- **🎫 Ticket System** - Per-server support tickets with categories, panels, and transcripts
 - **💎 Server Premium** - Per-server subscriptions with Stripe/PayPal/BTCPay
 - **🗳️ Vote Rewards** - Earn points from voting, spend on premium features
 - **🌐 Web Dashboard** - Full server management from the browser

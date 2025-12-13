@@ -1,5 +1,5 @@
 ---
-description: Documentation for extension marketplace system, validation flows, versioning and permission controls
+description: Specification for managing Discord bot extensions, their marketplace, validation, versioning and permissions
 ---
 
 # === USER INSTRUCTIONS ===
@@ -55,55 +55,64 @@ $END$
 
 # extension-management-flow
 
-The extension management system implements a complete marketplace and validation workflow for Discord bot extensions.
+## Extension Marketplace System
+Path: `/Web/controllers/extensions.js`
+Importance Score: 95/100
 
-## Extension Marketplace (Importance: 95/100)
-Path: `Web/controllers/extensions.js`
-- Custom extension format validation with semantic versioning
-- Publisher verification and revenue sharing model
-- Extension signing and integrity verification 
-- Usage analytics and popularity tracking
-- Per-server installation limits and quotas
+- Premium extension gating and licensing system
+- Version control with semantic compatibility checking
+- Server-specific extension configuration storage
+- Extension revenue sharing between platform and developers
+- Automated approval workflow for new extensions
 
-## Version Control (Importance: 90/100)
-Path: `Modules/PremiumExtensionsManager.js`
-- Semantic version comparison and compatibility checking
-- Automated dependency resolution between extensions
-- Version rollback capabilities with state preservation
-- Breaking change detection and notification system
-- Version migration assistance
+## Extension Runtime Environment
+Path: `/Internals/Worker.js`
+Importance Score: 90/100
 
-## Permission Management (Importance: 85/100)
-Path: `Web/routes/account.js`
-- Granular permission model for extension capabilities
-- Server-specific extension configuration
-- Role-based access control for extension features
-- Extension isolation and resource limiting
-- Cross-extension permission inheritance
+- Sandboxed execution environment for custom extensions
+- Controlled math evaluation system 
+- Extension state persistence
+- Inter-process communication for extension management
+- Extension memory/CPU usage monitoring
 
-## Validation Pipeline (Importance: 80/100)
-Path: `Internals/SlashCommands/SlashCommandHandler.js`
-- Multi-stage extension validation workflow
-- Code safety analysis and sandbox testing
-- Resource usage profiling and limits
-- Integration point validation
+## Extension Command Handler
+Path: `/Internals/SlashCommands/SlashCommandHandler.js`
+Importance Score: 85/100
+
+- Dynamic command loading from external sources
+- Permission hierarchy with admin levels (0-3)
+- Server-specific command configuration
+- Extension compatibility verification
 - Command conflict resolution
 
-## Gallery Management (Importance: 75/100)
-Path: `Database/Schemas/gallerySchema.js`
-- Extension categorization and tagging system
-- Rating and review management
-- Featured extension rotation
-- Installation tracking metrics
-- Support thread management
+## Premium Extensions Manager
+Path: `/Modules/PremiumExtensionsManager.js` 
+Importance Score: 80/100
 
-## Installation Flow (Importance: 70/100)
-Path: `Modules/Worker.js`
-- Atomic installation with rollback support
-- Dependency resolution and installation
-- Configuration validation and persistence
-- Post-install health checks
-- Extension warm-up and initialization
+- Marketplace transaction processing
+- Creator earnings distribution system
+- Purchase verification and access control
+- Usage analytics and tracking
+- Extension rating and review system
+
+Core Extension Workflows:
+1. Submission & Validation
+- Extension code analysis
+- Security scanning
+- Compatibility testing
+- Version management
+
+2. Marketplace Operations
+- Pricing tier management
+- Revenue distribution
+- License verification
+- Server-specific enablement
+
+3. Runtime Management  
+- Resource monitoring
+- State persistence
+- Error boundary handling
+- Cross-extension communication
 
 $END$
 

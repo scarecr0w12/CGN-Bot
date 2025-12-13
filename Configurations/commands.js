@@ -1392,13 +1392,117 @@ const commands = {
 		lyrics: {
 			usage: `<song name> or <artist> - <song>`,
 			aliases: ["songlyrics"],
-			description: `Look up song lyrics`,
+			description: `Look up song lyrics (Tier 2 Premium)`,
 			defaults: {
 				isEnabled: true,
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `Search & Media 🎬`,
+			category: `Music 🎵`,
+		},
+		play: {
+			usage: `<song name or URL>`,
+			aliases: ["p", "add"],
+			description: `Play music in voice channel (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		skip: {
+			usage: ``,
+			aliases: ["s", "next"],
+			description: `Skip the current song (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		queue: {
+			usage: `[<page>]`,
+			aliases: ["q", "list"],
+			description: `View the music queue (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		dj: {
+			usage: `<action> [<value>]`,
+			description: `DJ controls: pause, resume, stop, volume, loop, shuffle (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		filters: {
+			usage: `[<filter>]`,
+			aliases: ["filter", "fx"],
+			description: `Toggle audio filters: bassboost, nightcore, vaporwave, 8d (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		ticket: {
+			usage: `["create" [<category>] [<subject>]] or ["list"]`,
+			description: `Create or view support tickets (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketclose: {
+			usage: `[<reason>]`,
+			description: `Close the current ticket channel (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketadd: {
+			usage: `<@user>`,
+			description: `Add a user to the current ticket (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketremove: {
+			usage: `<@user>`,
+			description: `Remove a user from the current ticket (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketpanel: {
+			usage: `[<title>] [| <description>]`,
+			description: `Create a ticket panel with buttons (Admin, Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 3,
+			},
+			category: `Support 🎫`,
 		},
 		notes: {
 			usage: `["add" <content>] or ["view" or "delete" <id>] or ["search" <term>]`,

@@ -1,5 +1,5 @@
 ---
-description: Defines the activity scoring and weighted calculation system used to measure server engagement metrics
+description: Rules and implementation for calculating user activity scores and rewards within the server ecosystem
 ---
 
 # === USER INSTRUCTIONS ===
@@ -147,41 +147,54 @@ The system provides server administrators with customizable weights and threshol
 
 # activity-scoring-algorithm
 
-Activity scoring system implements a weighted formula to calculate server engagement scores based on multiple factors:
+Activity Score Calculation System
+Importance Score: 90/100
 
-Core Scoring Components (Importance: 90/100)
-Path: Web/controllers/activity.js
-- Base activity formula: (1.5 * memberCount) + (0.5 * messagesCount * (0.005 * memberCount))
-- Progressive multiplier based on server size tiers
-- Weighted channel activity tracking per message type
-- Score normalization across different server sizes
+Core Components:
 
-Participation Metrics (Importance: 85/100)
-Path: Internals/Client.js
-- Per-member engagement tracking
-- Voice channel participation weighting
-- Custom multipliers for interactive commands
-- Time-decay factor for historical activity
+1. Base Activity Tracking
+Path: /Modules/ActivityScoring/ActivityCalculator.js
+- Message frequency scoring with decay over time
+- Voice channel participation minutes
+- Server boost status multiplier (1.5x)
+- Custom command usage weighting
 
-Server Ranking Logic (Importance: 80/100)
-Path: Web/controllers/dashboard/stats.js
-- Server activity tier calculation 
-- Comparative ranking across similar-sized servers
-- Weekly/monthly trend analysis
-- Activity milestone achievements
+2. Engagement Multipliers
+Path: /Modules/ActivityScoring/MultiplierSystem.js 
+- Thread participation bonus (1.2x)
+- Event hosting bonus (1.5x)
+- Community helper role bonus (1.3x)
+- Weekend activity bonus (2x)
 
-Key weighted factors in scoring algorithm:
-1. Member count impact: 1.5x base multiplier
-2. Message volume: 0.5x with member count scaling
-3. Voice activity: 0.75x of message score equivalent
-4. Interactive commands: 1.25x standard message weight
-5. Time decay: -5% per day for historical actions
+3. Activity Rewards Distribution
+Path: /Commands/Public/activityrewards.js
+- Tiered reward thresholds (Bronze/Silver/Gold/Platinum)
+- Daily point caps to prevent abuse
+- Role-based rewards automation
+- Special event bonus periods
 
-The system focuses on balanced scoring that:
-- Rewards sustained engagement over burst activity
-- Scales appropriately for different server sizes
-- Prevents gaming through spam detection
-- Provides meaningful comparison metrics
+4. Decay System
+Path: /Modules/ActivityScoring/DecayManager.js
+- Progressive score decay over inactivity
+- Grace period for regular users (3 days)
+- Premium member extended grace (7 days)
+- Activity recovery acceleration
+
+Activity Score Formula:
+```
+FinalScore = (BaseMessageScore + VoiceMinutes + CommandPoints) 
+             * RoleMultiplier 
+             * EventMultiplier 
+             * TimeMultiplier
+             - DecayPenalty
+```
+
+Scoring Categories:
+- Messages: 1-5 points based on length
+- Voice: 1 point per minute
+- Commands: 2-10 points based on complexity
+- Thread Creation: 25 points
+- Event Hosting: 100 points
 
 $END$
 

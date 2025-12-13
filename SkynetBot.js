@@ -733,17 +733,26 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 * INTERACTION_CREATE (slash / context commands)
 	 */
 	client.on("interactionCreate", async interaction => {
-		if (!interaction.isChatInputCommand()) return;
 		if (!client.slashCommands) {
-			return interaction.reply({
-				content: "Slash commands are still loading. Please try again in a moment.",
-				ephemeral: true,
-			});
+			if (interaction.isRepliable()) {
+				return interaction.reply({
+					content: "Commands are still loading. Please try again in a moment.",
+					ephemeral: true,
+				});
+			}
+			return;
 		}
+
 		try {
-			await client.slashCommands.handleInteraction(interaction);
+			// Handle slash commands
+			if (interaction.isChatInputCommand()) {
+				await client.slashCommands.handleInteraction(interaction);
+			// Handle button interactions
+			} else if (interaction.isButton()) {
+				await client.slashCommands.handleButtonInteraction(interaction);
+			}
 		} catch (err) {
-			logger.warn("Failed to handle interactionCreate.", { interaction: interaction.commandName }, err);
+			logger.warn("Failed to handle interactionCreate.", { type: interaction.type }, err);
 		}
 	});
 

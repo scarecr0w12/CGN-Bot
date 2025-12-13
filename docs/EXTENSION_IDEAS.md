@@ -429,16 +429,16 @@ All extensions and high-resource built-in features must check Server Tiers.
 **Tier-gated:** Requires Tier 2 (Premium) subscription due to streaming resources.
 
 **Architecture:** Native integration into `Internals/Audio` with `AudioPlayer` class.
-**Dependencies Required:** `@discordjs/voice`, `ffmpeg-static`, `libsodium-wrappers`.
+**Dependencies Required:** `@discordjs/voice`, `ffmpeg-static`, `libsodium-wrappers`, `play-dl`.
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `play` | Play music | 🚧 PLANNED BUILT-IN |
-| `skip` | Skip song | 🚧 PLANNED BUILT-IN |
-| `queue` | View queue | 🚧 PLANNED BUILT-IN |
-| `lyrics` | Get lyrics | 🚧 PLANNED BUILT-IN |
-| `dj` | DJ Controls | 🚧 PLANNED BUILT-IN |
-| `filters` | Audio filters (bassboost, nightcore) | 🚧 PLANNED BUILT-IN |
+| `play` | Play music from YouTube/URL | ❌ BUILT-IN (`play.js`) |
+| `skip` | Skip current song | ❌ BUILT-IN (`skip.js`) |
+| `queue` | View music queue | ❌ BUILT-IN (`queue.js`) |
+| `lyrics` | Get song lyrics | ❌ BUILT-IN (`lyrics.js`) |
+| `dj` | DJ Controls (pause, resume, stop, volume, loop, shuffle) | ❌ BUILT-IN (`dj.js`) |
+| `filters` | Audio filters (bassboost, nightcore, vaporwave, 8d) | ❌ BUILT-IN (`filters.js`) |
 
 ---
 

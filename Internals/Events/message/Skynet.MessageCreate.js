@@ -1,6 +1,6 @@
 /* eslint-disable max-len, max-depth, no-console */
 const BaseEvent = require("../BaseEvent.js");
-const { MicrosoftTranslate: mstranslate, Utils } = require("../../../Modules/index");
+const { MicrosoftTranslate: mstranslate, Utils, TicketManager } = require("../../../Modules/index");
 const metrics = require("../../../Modules/Metrics");
 const {
 	Gist,
@@ -56,6 +56,20 @@ class MessageCreate extends BaseEvent {
 				}
 				return;
 			}
+
+			// Handle ticket system - check if this is a ticket-related DM
+			if (!this.configJSON.maintainers.includes(msg.author.id)) {
+				if (!this.client.ticketManager) {
+					this.client.ticketManager = new TicketManager(this.client);
+				}
+				try {
+					const handledAsTicket = await this.client.ticketManager.handleDM(msg);
+					if (handledAsTicket) return;
+				} catch (err) {
+					logger.warn("Failed to handle ticket DM", { usrid: msg.author.id }, err);
+				}
+			}
+
 			// Forward PM to maintainer(s) if enabled
 			if (!this.configJSON.maintainers.includes(msg.author.id) && this.configJSON.pmForward) {
 				let url = "";

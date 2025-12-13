@@ -44,6 +44,10 @@ if (databaseType === "mariadb") {
 			GlobalTrivia,
 			SiteSettings,
 			Feedback,
+			Tickets,
+			TicketMessages,
+			ServerTickets,
+			ServerTicketMessages,
 		] = [
 			new Model(db, "servers", require("./Schemas/serverSchema")),
 			new Model(db, "users", require("./Schemas/userSchema")),
@@ -62,6 +66,10 @@ if (databaseType === "mariadb") {
 			new Model(db, "global_trivia", require("./Schemas/globalTriviaSchema")),
 			new Model(db, "site_settings", require("./Schemas/siteSettingsSchema")),
 			new Model(db, "feedback", require("./Schemas/feedbackSchema")),
+			new Model(db, "tickets", require("./Schemas/ticketSchema")),
+			new Model(db, "ticket_messages", require("./Schemas/ticketMessageSchema")),
+			new Model(db, "server_tickets", require("./Schemas/serverTicketSchema")),
+			new Model(db, "server_ticket_messages", require("./Schemas/serverTicketMessageSchema")),
 		];
 		addToGlobal("Servers", Servers);
 		addToGlobal("Users", Users);
@@ -79,6 +87,10 @@ if (databaseType === "mariadb") {
 		addToGlobal("GlobalTrivia", GlobalTrivia);
 		addToGlobal("SiteSettings", SiteSettings);
 		addToGlobal("Feedback", Feedback);
+		addToGlobal("Tickets", Tickets);
+		addToGlobal("TicketMessages", TicketMessages);
+		addToGlobal("ServerTickets", ServerTickets);
+		addToGlobal("ServerTicketMessages", ServerTicketMessages);
 		addToGlobal("Client", db);
 		addToGlobal("Database", {
 			Servers, servers: Servers,
@@ -98,6 +110,10 @@ if (databaseType === "mariadb") {
 			GlobalTrivia, globalTrivia: GlobalTrivia,
 			SiteSettings, siteSettings: SiteSettings,
 			Feedback, feedback: Feedback,
+			Tickets, tickets: Tickets,
+			TicketMessages, ticketMessages: TicketMessages,
+			ServerTickets, serverTickets: ServerTickets,
+			ServerTicketMessages, serverTicketMessages: ServerTicketMessages,
 			client: db,
 			mongoClient,
 		});

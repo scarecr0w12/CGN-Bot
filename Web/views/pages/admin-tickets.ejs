@@ -1,0 +1,352 @@
+<%- include("../partials/header") %>
+<main>
+	<div class="container-fluid">
+		<div class="columns is-multiline">
+			<%- include("../partials/admin-menu") %>
+			<div class="column">
+				<h2 class="subtitle">
+					<strong>Ticket System Settings</strong>
+				</h2>
+				<p class="has-text-grey mb-4">Configure your server's ticket support system. This feature requires a Premium subscription.</p>
+
+				<!-- Stats Cards -->
+				<div class="columns mb-5">
+					<div class="column is-4">
+						<div class="card">
+							<div class="card-content has-text-centered">
+								<p class="heading">Open Tickets</p>
+								<p class="title has-text-info"><%= configData.stats.open %></p>
+							</div>
+						</div>
+					</div>
+					<div class="column is-4">
+						<div class="card">
+							<div class="card-content has-text-centered">
+								<p class="heading">Closed Tickets</p>
+								<p class="title has-text-success"><%= configData.stats.closed %></p>
+							</div>
+						</div>
+					</div>
+					<div class="column is-4">
+						<div class="card">
+							<div class="card-content has-text-centered">
+								<p class="heading">Total Tickets</p>
+								<p class="title"><%= configData.stats.total %></p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- General Settings -->
+				<div class="card mb-5">
+					<header class="card-header">
+						<p class="card-header-title">General Settings</p>
+					</header>
+					<div class="card-content">
+						<form id="ticket-settings-form">
+							<div class="field">
+								<div class="control">
+									<label class="checkbox">
+										<input type="checkbox" name="enabled" id="ticket-enabled" <%= configData.ticketConfig.enabled ? 'checked' : '' %>>
+										<strong>Enable Ticket System</strong>
+									</label>
+								</div>
+								<p class="help">Allow users to create support tickets on your server</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Ticket Category (Discord Category)</label>
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="ticket_category_id" id="ticket-category">
+											<option value="">No Category</option>
+											<% configData.categoryChannels.forEach(ch => { %>
+												<option value="<%= ch.id %>" <%= configData.ticketConfig.ticket_category_id === ch.id ? 'selected' : '' %>><%= ch.name %></option>
+											<% }) %>
+										</select>
+									</div>
+								</div>
+								<p class="help">Discord category where ticket channels will be created</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Transcript Channel</label>
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="transcript_channel_id" id="transcript-channel">
+											<option value="">Disabled</option>
+											<% configData.textChannels.forEach(ch => { %>
+												<option value="<%= ch.id %>" <%= configData.ticketConfig.transcript_channel_id === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+											<% }) %>
+										</select>
+									</div>
+								</div>
+								<p class="help">Channel where ticket transcripts will be saved when closed</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Log Channel</label>
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select name="log_channel_id" id="log-channel">
+											<option value="">Disabled</option>
+											<% configData.textChannels.forEach(ch => { %>
+												<option value="<%= ch.id %>" <%= configData.ticketConfig.log_channel_id === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+											<% }) %>
+										</select>
+									</div>
+								</div>
+								<p class="help">Channel for ticket event notifications (created, closed, etc.)</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Support Roles</label>
+								<div class="control">
+									<div class="select is-multiple is-fullwidth">
+										<select name="support_roles" id="support-roles" multiple size="4">
+											<% configData.roles.forEach(role => { %>
+												<option value="<%= role.id %>" <%= (configData.ticketConfig.support_roles || []).includes(role.id) ? 'selected' : '' %>><%= role.name %></option>
+											<% }) %>
+										</select>
+									</div>
+								</div>
+								<p class="help">Roles that can manage tickets (hold Ctrl/Cmd to select multiple)</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Channel Name Pattern</label>
+								<div class="control">
+									<input class="input" type="text" name="channel_name_pattern" id="channel-pattern" value="<%= configData.ticketConfig.channel_name_pattern || 'ticket-{number}' %>" placeholder="ticket-{number}">
+								</div>
+								<p class="help">Pattern for ticket channel names. Use {number} for ticket number, {user} for username</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Max Tickets Per User</label>
+								<div class="control">
+									<input class="input" type="number" name="max_tickets_per_user" id="max-tickets" value="<%= configData.ticketConfig.max_tickets_per_user || 3 %>" min="1" max="10">
+								</div>
+								<p class="help">Maximum number of open tickets a user can have at once</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Default Welcome Message</label>
+								<div class="control">
+									<textarea class="textarea" name="default_welcome_message" id="welcome-message" rows="3" placeholder="Thank you for creating a ticket! A staff member will be with you shortly."><%= configData.ticketConfig.default_welcome_message || '' %></textarea>
+								</div>
+								<p class="help">Message shown when a ticket is created (if no category-specific message)</p>
+							</div>
+
+							<div class="field">
+								<div class="control">
+									<button type="submit" class="button is-primary">Save Settings</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<!-- Categories -->
+				<div class="card mb-5">
+					<header class="card-header">
+						<p class="card-header-title">Ticket Categories</p>
+						<button class="card-header-icon" onclick="showAddCategoryModal()">
+							<span class="icon has-text-primary">
+								<i class="fas fa-plus"></i>
+							</span>
+						</button>
+					</header>
+					<div class="card-content">
+						<% if (configData.categories.length === 0) { %>
+							<p class="has-text-grey">No categories configured. Add categories to organize tickets.</p>
+						<% } else { %>
+							<table class="table is-fullwidth is-striped">
+								<thead>
+									<tr>
+										<th>Emoji</th>
+										<th>Name</th>
+										<th>Description</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% configData.categories.forEach(cat => { %>
+										<tr>
+											<td><%= cat.emoji || '🎫' %></td>
+											<td><strong><%= cat.name %></strong></td>
+											<td><%= cat.description || '-' %></td>
+											<td>
+												<button class="button is-small is-danger" onclick="deleteCategory('<%= cat._id %>')">
+													<span class="icon"><i class="fas fa-trash"></i></span>
+												</button>
+											</td>
+										</tr>
+									<% }) %>
+								</tbody>
+							</table>
+						<% } %>
+					</div>
+				</div>
+
+				<!-- Quick Links -->
+				<div class="card">
+					<header class="card-header">
+						<p class="card-header-title">Quick Links</p>
+					</header>
+					<div class="card-content">
+						<div class="buttons">
+							<a href="/dashboard/<%= svrid %>/tickets" class="button is-info">
+								<span class="icon"><i class="fas fa-list"></i></span>
+								<span>View All Tickets</span>
+							</a>
+						</div>
+						<p class="has-text-grey mt-3">
+							<strong>Tip:</strong> Use the <code>ticketpanel</code> command in Discord to create a ticket panel with buttons for users to open tickets.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<!-- Add Category Modal -->
+<div class="modal" id="add-category-modal">
+	<div class="modal-background" onclick="closeAddCategoryModal()"></div>
+	<div class="modal-card">
+		<header class="modal-card-head">
+			<p class="modal-card-title">Add Ticket Category</p>
+			<button class="delete" onclick="closeAddCategoryModal()"></button>
+		</header>
+		<section class="modal-card-body">
+			<form id="add-category-form">
+				<div class="field">
+					<label class="label">Name *</label>
+					<div class="control">
+						<input class="input" type="text" name="name" id="cat-name" required placeholder="General Support">
+					</div>
+				</div>
+				<div class="field">
+					<label class="label">Emoji</label>
+					<div class="control">
+						<input class="input" type="text" name="emoji" id="cat-emoji" placeholder="🎫">
+					</div>
+				</div>
+				<div class="field">
+					<label class="label">Description</label>
+					<div class="control">
+						<input class="input" type="text" name="description" id="cat-description" placeholder="General support questions">
+					</div>
+				</div>
+				<div class="field">
+					<label class="label">Welcome Message</label>
+					<div class="control">
+						<textarea class="textarea" name="welcome_message" id="cat-welcome" rows="2" placeholder="Custom welcome message for this category"></textarea>
+					</div>
+				</div>
+			</form>
+		</section>
+		<footer class="modal-card-foot">
+			<button class="button is-primary" onclick="addCategory()">Add Category</button>
+			<button class="button" onclick="closeAddCategoryModal()">Cancel</button>
+		</footer>
+	</div>
+</div>
+
+<script>
+function showAddCategoryModal() {
+	document.getElementById('add-category-modal').classList.add('is-active');
+}
+
+function closeAddCategoryModal() {
+	document.getElementById('add-category-modal').classList.remove('is-active');
+	document.getElementById('add-category-form').reset();
+}
+
+document.getElementById('ticket-settings-form').addEventListener('submit', async function(e) {
+	e.preventDefault();
+	
+	const formData = new FormData(this);
+	const data = {
+		enabled: document.getElementById('ticket-enabled').checked,
+		ticket_category_id: formData.get('ticket_category_id'),
+		transcript_channel_id: formData.get('transcript_channel_id'),
+		log_channel_id: formData.get('log_channel_id'),
+		support_roles: Array.from(document.getElementById('support-roles').selectedOptions).map(o => o.value),
+		channel_name_pattern: formData.get('channel_name_pattern'),
+		max_tickets_per_user: formData.get('max_tickets_per_user'),
+		default_welcome_message: formData.get('default_welcome_message'),
+	};
+
+	try {
+		const response = await fetch('/dashboard/<%= svrid %>/tickets/update', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await response.json();
+		if (result.success) {
+			SkynetUtil.showNotification('Settings saved successfully', 'success');
+		} else {
+			SkynetUtil.showNotification(result.error || 'Failed to save settings', 'error');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Failed to save settings', 'error');
+	}
+});
+
+async function addCategory() {
+	const form = document.getElementById('add-category-form');
+	const data = {
+		name: document.getElementById('cat-name').value,
+		emoji: document.getElementById('cat-emoji').value || '🎫',
+		description: document.getElementById('cat-description').value,
+		welcome_message: document.getElementById('cat-welcome').value,
+	};
+
+	if (!data.name) {
+		SkynetUtil.showNotification('Category name is required', 'error');
+		return;
+	}
+
+	try {
+		const response = await fetch('/dashboard/<%= svrid %>/tickets/category/add', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await response.json();
+		if (result.success) {
+			SkynetUtil.showNotification('Category added successfully', 'success');
+			location.reload();
+		} else {
+			SkynetUtil.showNotification(result.error || 'Failed to add category', 'error');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Failed to add category', 'error');
+	}
+}
+
+async function deleteCategory(categoryId) {
+	if (!confirm('Are you sure you want to delete this category?')) return;
+
+	try {
+		const response = await fetch('/dashboard/<%= svrid %>/tickets/category/delete', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ category_id: categoryId })
+		});
+		const result = await response.json();
+		if (result.success) {
+			SkynetUtil.showNotification('Category deleted', 'success');
+			location.reload();
+		} else {
+			SkynetUtil.showNotification(result.error || 'Failed to delete category', 'error');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Failed to delete category', 'error');
+	}
+}
+</script>
+
+<%- include("../partials/footer") %>

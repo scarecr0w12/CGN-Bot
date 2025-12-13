@@ -32,6 +32,11 @@ const menuSections = {
 		icon: 'fas fa-crown',
 		label: 'Subscription',
 		paths: ['subscription']
+	},
+	tickets: {
+		icon: 'fas fa-ticket-alt',
+		label: 'Tickets',
+		paths: ['tickets', 'tickets/settings']
 	}
 };
 
@@ -245,6 +250,27 @@ const menuItem = (path, label, icon = null) => {
 				<li>
 					<% if(isActive(`${basePath}/subscription`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('subscription', 'Server Premium') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.tickets) ? ' has-active' : '' %>" data-section="tickets">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.tickets.icon %>"></i></span>
+				<span><%= menuSections.tickets.label %></span>
+			</p>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/tickets/settings`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('tickets/settings', 'Ticket Settings') %>
+
+					<% if(isActive(`${basePath}/tickets`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('tickets', 'View Tickets') %>
 				</li>
 			</ul>
 		</div>

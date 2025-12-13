@@ -57,6 +57,15 @@ module.exports = router => {
 	router.post("/feedback/update", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.update);
 	router.post("/feedback/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.delete);
 
+	// Tickets System
+	setupConsolePage(router, "/tickets", "maintainer", [], controllers.console.tickets.list);
+	setupConsolePage(router, "/tickets/:ticketId", "maintainer", [], controllers.console.tickets.view);
+	router.post("/tickets/update", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.update);
+	router.post("/tickets/reply", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.reply);
+	router.post("/tickets/close", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.close);
+	router.post("/tickets/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.delete);
+	router.get("/tickets/:ticketId/transcript", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.transcript);
+
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);
 	router.get("/infrastructure/cloudflare/analytics", controllers.console.cloudflare.getAnalytics);

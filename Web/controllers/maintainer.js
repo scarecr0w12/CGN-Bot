@@ -1538,6 +1538,429 @@ controllers.feedback.submit = async (req, res) => {
 };
 
 // ============================================
+// TICKETS SYSTEM CONTROLLERS
+// ============================================
+
+controllers.tickets = {};
+
+/**
+ * Get next ticket number (auto-increment)
+ */
+const getNextTicketNumber = async () => {
+	// For MongoDB, we use a counter document
+	// For SQL, we use the ticket_counters table
+	try {
+		const result = await global.Tickets.aggregate([
+			{ $group: { _id: null, maxNumber: { $max: "$ticket_number" } } },
+		]);
+		return (result && result[0] && result[0].maxNumber ? result[0].maxNumber : 0) + 1;
+	} catch {
+		// Fallback: count existing tickets
+		const tickets = await global.Tickets.find({}).limit(1).sort({ ticket_number: -1 })
+			.exec();
+		return tickets && tickets.length > 0 ? (tickets[0].ticket_number || 0) + 1 : 1;
+	}
+};
+
+controllers.tickets.list = async (req, { res }) => {
+	const status = req.query.status || "";
+	const priority = req.query.priority || "";
+	const category = req.query.category || "";
+	const assignedTo = req.query.assigned || "";
+
+	// Build filter
+	const filter = {};
+	if (status) filter.status = status;
+	if (priority) filter.priority = priority;
+	if (category) filter.category = category;
+	if (assignedTo === "me") filter.assigned_to = req.user.id;
+	else if (assignedTo === "unassigned") filter.assigned_to = null;
+
+	// Get tickets sorted by last activity (newest first)
+	const tickets = await global.Tickets.find(filter)
+		.sort({ last_activity_at: -1 })
+		.limit(100)
+		.exec();
+
+	// Get counts per status and priority
+	const statusCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$status", count: { $sum: 1 } } },
+	]);
+	const priorityCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$priority", count: { $sum: 1 } } },
+	]);
+	const categoryCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$category", count: { $sum: 1 } } },
+	]);
+
+	// Enrich tickets with user avatars
+	for (const ticket of tickets) {
+		try {
+			const user = await req.app.client.users.fetch(ticket.user_id, true).catch(() => null);
+			ticket.user_avatar = user?.displayAvatarURL() || ticket.user_avatar || "/static/img/discord-icon.png";
+			ticket.username = ticket.username || user?.username || "Unknown";
+		} catch {
+			ticket.user_avatar = ticket.user_avatar || "/static/img/discord-icon.png";
+		}
+	}
+
+	// Get maintainers for assignment dropdown
+	const maintainers = await Promise.all(configJSON.maintainers.map(async id => {
+		try {
+			const user = await req.app.client.users.fetch(id, true).catch(() => null);
+			return { id, username: user?.username || "Unknown" };
+		} catch {
+			return { id, username: "Unknown" };
+		}
+	}));
+
+	res.setConfigData({
+		tickets,
+		statusCounts: statusCounts.reduce((acc, s) => { acc[s._id] = s.count; return acc; }, {}),
+		priorityCounts: priorityCounts.reduce((acc, p) => { acc[p._id] = p.count; return acc; }, {}),
+		categoryCounts: categoryCounts.reduce((acc, c) => { acc[c._id] = c.count; return acc; }, {}),
+		statuses: ["open", "in_progress", "awaiting_response", "on_hold", "resolved", "closed"],
+		priorities: ["low", "normal", "high", "urgent"],
+		categories: ["general", "bug", "feature", "billing", "account", "other"],
+		maintainers,
+	}).setPageData({
+		activeStatus: status,
+		activePriority: priority,
+		activeCategory: category,
+		activeAssigned: assignedTo,
+		page: "maintainer-tickets.ejs",
+	}).render();
+};
+
+controllers.tickets.view = async (req, { res }) => {
+	const ticketId = req.params.ticketId;
+
+	const ticket = await global.Tickets.findOne(ticketId);
+	if (!ticket) {
+		return res.redirect("/dashboard/maintainer/tickets");
+	}
+
+	// Get messages for this ticket
+	const messages = await global.TicketMessages.find({ ticket_id: ticketId })
+		.sort({ created_at: 1 })
+		.exec();
+
+	// Enrich messages with avatars
+	for (const msg of messages) {
+		try {
+			const user = await req.app.client.users.fetch(msg.author_id, true).catch(() => null);
+			msg.author_avatar = user?.displayAvatarURL() || msg.author_avatar || "/static/img/discord-icon.png";
+			msg.author_username = msg.author_username || user?.username || "Unknown";
+		} catch {
+			msg.author_avatar = msg.author_avatar || "/static/img/discord-icon.png";
+		}
+	}
+
+	// Enrich ticket with user avatar
+	try {
+		const user = await req.app.client.users.fetch(ticket.user_id, true).catch(() => null);
+		ticket.user_avatar = user?.displayAvatarURL() || ticket.user_avatar || "/static/img/discord-icon.png";
+		ticket.username = ticket.username || user?.username || "Unknown";
+	} catch {
+		ticket.user_avatar = ticket.user_avatar || "/static/img/discord-icon.png";
+	}
+
+	// Get maintainers for assignment dropdown
+	const maintainers = await Promise.all(configJSON.maintainers.map(async id => {
+		try {
+			const user = await req.app.client.users.fetch(id, true).catch(() => null);
+			return { id, username: user?.username || "Unknown" };
+		} catch {
+			return { id, username: "Unknown" };
+		}
+	}));
+
+	res.setConfigData({
+		ticket,
+		messages,
+		statuses: ["open", "in_progress", "awaiting_response", "on_hold", "resolved", "closed"],
+		priorities: ["low", "normal", "high", "urgent"],
+		categories: ["general", "bug", "feature", "billing", "account", "other"],
+		maintainers,
+	}).setPageData({
+		page: "maintainer-ticket-view.ejs",
+	}).render();
+};
+
+controllers.tickets.update = async (req, res) => {
+	const { id, status, priority, category, assigned_to: assignedTo, internal_notes: internalNotes, resolution_notes: resolutionNotes } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		const changes = [];
+
+		if (status && status !== ticket.status) {
+			ticket.query.set("status", status);
+			changes.push(`Status changed to ${status}`);
+			if (status === "closed" || status === "resolved") {
+				ticket.query.set("closed_at", new Date());
+			}
+		}
+		if (priority && priority !== ticket.priority) {
+			ticket.query.set("priority", priority);
+			changes.push(`Priority changed to ${priority}`);
+		}
+		if (category && category !== ticket.category) {
+			ticket.query.set("category", category);
+			changes.push(`Category changed to ${category}`);
+		}
+		if (assignedTo !== undefined) {
+			if (assignedTo === "" || assignedTo === "unassign") {
+				ticket.query.set("assigned_to", null);
+				ticket.query.set("assigned_to_username", "");
+				changes.push("Ticket unassigned");
+			} else if (assignedTo !== ticket.assigned_to) {
+				ticket.query.set("assigned_to", assignedTo);
+				// Fetch assignee username
+				try {
+					const user = await req.app.client.users.fetch(assignedTo, true).catch(() => null);
+					ticket.query.set("assigned_to_username", user?.username || "");
+					changes.push(`Assigned to ${user?.username || assignedTo}`);
+				} catch {
+					ticket.query.set("assigned_to_username", "");
+				}
+			}
+		}
+		if (internalNotes !== undefined) {
+			ticket.query.set("internal_notes", internalNotes);
+		}
+		if (resolutionNotes !== undefined) {
+			ticket.query.set("resolution_notes", resolutionNotes);
+		}
+
+		ticket.query.set("updated_at", new Date());
+		ticket.query.set("last_activity_at", new Date());
+
+		await ticket.save();
+
+		// Add system message for status changes if any
+		if (changes.length > 0) {
+			const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+			await global.TicketMessages.create({
+				_id: messageId,
+				ticket_id: id,
+				author_id: req.user.id,
+				author_username: req.user.username,
+				is_staff: true,
+				content: changes.join(". "),
+				is_system_message: true,
+				created_at: new Date(),
+			});
+		}
+
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to update ticket", { id }, err);
+		res.status(500).json({ error: "Failed to update ticket" });
+	}
+};
+
+controllers.tickets.reply = async (req, res) => {
+	const { id, content } = req.body;
+
+	if (!id || !content) {
+		return res.status(400).json({ error: "Ticket ID and content required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		// Create the message
+		const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		await global.TicketMessages.create({
+			_id: messageId,
+			ticket_id: id,
+			author_id: req.user.id,
+			author_username: req.user.username,
+			author_avatar: req.user.avatar ? `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png` : "",
+			is_staff: true,
+			content: content.substring(0, 4000),
+			is_system_message: false,
+			created_at: new Date(),
+		});
+
+		// Update ticket
+		ticket.query.set("message_count", (ticket.message_count || 0) + 1);
+		ticket.query.set("last_message_preview", content.substring(0, 100));
+		ticket.query.set("last_activity_at", new Date());
+		ticket.query.set("updated_at", new Date());
+		if (ticket.status === "awaiting_response") {
+			ticket.query.set("status", "in_progress");
+		}
+		await ticket.save();
+
+		// Send DM to user if we have a channel
+		if (ticket.dm_channel_id) {
+			try {
+				const user = await req.app.client.users.fetch(ticket.user_id);
+				if (user) {
+					await user.send({
+						embeds: [{
+							color: 0x3273dc,
+							author: {
+								name: `Support Reply - Ticket #${ticket.ticket_number}`,
+								icon_url: req.app.client.user.displayAvatarURL(),
+							},
+							description: content.substring(0, 2000),
+							footer: { text: "Reply to this message to continue the conversation" },
+							timestamp: new Date().toISOString(),
+						}],
+					}).catch(() => null);
+				}
+			} catch (dmErr) {
+				logger.debug("Could not send DM to ticket user", { userId: ticket.user_id }, dmErr);
+			}
+		}
+
+		res.json({ success: true, messageId });
+	} catch (err) {
+		logger.error("Failed to reply to ticket", { id }, err);
+		res.status(500).json({ error: "Failed to reply to ticket" });
+	}
+};
+
+controllers.tickets.close = async (req, res) => {
+	const { id, resolution_notes: resolutionNotes } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		ticket.query.set("status", "closed");
+		ticket.query.set("closed_at", new Date());
+		ticket.query.set("updated_at", new Date());
+		if (resolutionNotes) {
+			ticket.query.set("resolution_notes", resolutionNotes);
+		}
+		await ticket.save();
+
+		// Add system message
+		const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		await global.TicketMessages.create({
+			_id: messageId,
+			ticket_id: id,
+			author_id: req.user.id,
+			author_username: req.user.username,
+			is_staff: true,
+			content: `Ticket closed${resolutionNotes ? `: ${resolutionNotes}` : ""}`,
+			is_system_message: true,
+			created_at: new Date(),
+		});
+
+		// Notify user
+		try {
+			const user = await req.app.client.users.fetch(ticket.user_id);
+			if (user) {
+				await user.send({
+					embeds: [{
+						color: 0x48c774,
+						title: `Ticket #${ticket.ticket_number} Closed`,
+						description: resolutionNotes || "Your support ticket has been resolved and closed.",
+						footer: { text: "Thank you for contacting support!" },
+						timestamp: new Date().toISOString(),
+					}],
+				}).catch(() => null);
+			}
+		} catch {
+			// Ignore DM errors
+		}
+
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to close ticket", { id }, err);
+		res.status(500).json({ error: "Failed to close ticket" });
+	}
+};
+
+controllers.tickets.delete = async (req, res) => {
+	const { id } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		// Delete messages first
+		await global.TicketMessages.delete({ ticket_id: id });
+		// Delete ticket
+		await global.Tickets.delete({ _id: id });
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to delete ticket", { id }, err);
+		res.status(500).json({ error: "Failed to delete ticket" });
+	}
+};
+
+controllers.tickets.transcript = async (req, res) => {
+	const ticketId = req.params.ticketId;
+
+	try {
+		const ticket = await global.Tickets.findOne(ticketId);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		const messages = await global.TicketMessages.find({ ticket_id: ticketId })
+			.sort({ created_at: 1 })
+			.exec();
+
+		// Generate text transcript
+		let transcript = `=== TICKET #${ticket.ticket_number} TRANSCRIPT ===\n`;
+		transcript += `Subject: ${ticket.subject}\n`;
+		transcript += `Category: ${ticket.category}\n`;
+		transcript += `Status: ${ticket.status}\n`;
+		transcript += `Priority: ${ticket.priority}\n`;
+		transcript += `User: ${ticket.username} (${ticket.user_id})\n`;
+		transcript += `Created: ${new Date(ticket.created_at).toISOString()}\n`;
+		if (ticket.assigned_to) transcript += `Assigned to: ${ticket.assigned_to_username}\n`;
+		if (ticket.closed_at) transcript += `Closed: ${new Date(ticket.closed_at).toISOString()}\n`;
+		transcript += `\n${"=".repeat(50)}\n\n`;
+
+		for (const msg of messages) {
+			const date = new Date(msg.created_at).toISOString();
+			const author = msg.is_staff ? `[STAFF] ${msg.author_username}` : msg.author_username;
+			const prefix = msg.is_system_message ? "[SYSTEM] " : "";
+			transcript += `[${date}] ${prefix}${author}:\n${msg.content}\n\n`;
+		}
+
+		transcript += `\n${"=".repeat(50)}\n`;
+		transcript += `End of transcript - Generated ${new Date().toISOString()}\n`;
+
+		res.setHeader("Content-Type", "text/plain");
+		res.setHeader("Content-Disposition", `attachment; filename="ticket-${ticket.ticket_number}-transcript.txt"`);
+		res.send(transcript);
+	} catch (err) {
+		logger.error("Failed to generate transcript", { ticketId }, err);
+		res.status(500).json({ error: "Failed to generate transcript" });
+	}
+};
+
+// Export getNextTicketNumber for use in DM handler
+controllers.tickets.getNextTicketNumber = getNextTicketNumber;
+
+// ============================================
 // CLOUDFLARE INTEGRATION CONTROLLERS
 // ============================================
 

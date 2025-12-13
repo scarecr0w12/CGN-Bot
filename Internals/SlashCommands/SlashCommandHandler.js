@@ -4,6 +4,7 @@ const { readdir } = require("fs/promises");
 const { join } = require("path");
 
 const IsolatedSandbox = require("../Extensions/API/IsolatedSandbox");
+const { ServerTicketManager } = require("../../Modules/index");
 
 class SlashCommandHandler {
 	constructor (client) {
@@ -338,6 +339,175 @@ class SlashCommandHandler {
 			if (interaction.replied || interaction.deferred) {
 				await interaction.followUp(errorReply);
 			} else {
+				await interaction.reply(errorReply);
+			}
+		}
+	}
+
+	/**
+	 * Handle button interactions (for ticket system and other components)
+	 * @param {ButtonInteraction} interaction
+	 */
+	async handleButtonInteraction (interaction) {
+		if (!interaction.isButton()) return;
+
+		const customId = interaction.customId;
+
+		// Handle ticket-related buttons
+		if (customId.startsWith("ticket_")) {
+			await this.handleTicketButton(interaction);
+			return;
+		}
+
+		// Other button handlers can be added here
+	}
+
+	/**
+	 * Handle ticket-related button interactions
+	 * @param {ButtonInteraction} interaction
+	 */
+	async handleTicketButton (interaction) {
+		const customId = interaction.customId;
+		const parts = customId.split("_");
+		const action = parts[1]; // create, close, claim
+
+		// Get server document
+		const serverDocument = await Servers.findOne(interaction.guild.id);
+		if (!serverDocument) {
+			return interaction.reply({
+				content: "Failed to load server configuration.",
+				ephemeral: true,
+			});
+		}
+
+		// Initialize server ticket manager
+		if (!this.client.serverTicketManager) {
+			this.client.serverTicketManager = new ServerTicketManager(this.client);
+		}
+
+		const ticketManager = this.client.serverTicketManager;
+
+		// Check if ticket system is enabled
+		if (!ticketManager.isEnabled(serverDocument)) {
+			return interaction.reply({
+				content: "The ticket system is not available on this server.",
+				ephemeral: true,
+			});
+		}
+
+		try {
+			if (action === "create") {
+				// Format: ticket_create_{panelId}_{categoryId}
+				const categoryId = parts[3] || "general";
+
+				await interaction.deferReply({ ephemeral: true });
+
+				const { channel } = await ticketManager.createTicket(
+					interaction.guild,
+					serverDocument,
+					interaction.member,
+					categoryId,
+					"",
+				);
+
+				await interaction.editReply({
+					content: `Your ticket has been created: <#${channel.id}>`,
+				});
+			} else if (action === "close") {
+				// Format: ticket_close_{ticketId}
+				const ticketId = parts.slice(2).join("_");
+
+				// Check permissions
+				const ticket = await global.ServerTickets.findOne(ticketId);
+				if (!ticket) {
+					return interaction.reply({
+						content: "Ticket not found.",
+						ephemeral: true,
+					});
+				}
+
+				const isOwner = ticket.user_id === interaction.user.id;
+				const memberBotAdminLevel = this.client.getUserBotAdmin(
+					interaction.guild,
+					serverDocument,
+					interaction.member,
+				);
+				const isStaff = memberBotAdminLevel >= 1 ||
+					(serverDocument.tickets?.support_roles || []).some(r =>
+						interaction.member.roles.cache.has(r),
+					);
+
+				if (!isOwner && !isStaff) {
+					return interaction.reply({
+						content: "Only the ticket owner or staff can close this ticket.",
+						ephemeral: true,
+					});
+				}
+
+				await interaction.deferReply({ ephemeral: true });
+				await ticketManager.closeTicket(
+					interaction.guild,
+					serverDocument,
+					ticketId,
+					interaction.user,
+					"Closed via button",
+				);
+
+				await interaction.editReply({
+					content: "Ticket is being closed...",
+				});
+			} else if (action === "claim") {
+				// Format: ticket_claim_{ticketId}
+				const ticketId = parts.slice(2).join("_");
+
+				// Check staff permissions
+				const memberBotAdminLevel = this.client.getUserBotAdmin(
+					interaction.guild,
+					serverDocument,
+					interaction.member,
+				);
+				const isStaff = memberBotAdminLevel >= 1 ||
+					(serverDocument.tickets?.support_roles || []).some(r =>
+						interaction.member.roles.cache.has(r),
+					);
+
+				if (!isStaff) {
+					return interaction.reply({
+						content: "Only staff can claim tickets.",
+						ephemeral: true,
+					});
+				}
+
+				await interaction.deferReply({ ephemeral: true });
+				const ticket = await ticketManager.claimTicket(
+					interaction.guild,
+					ticketId,
+					interaction.member,
+				);
+
+				await interaction.editReply({
+					content: `You have claimed ticket #${ticket.ticket_number}.`,
+				});
+
+				// Update the original message to show claimed status
+				try {
+					await interaction.message.edit({
+						embeds: interaction.message.embeds,
+						components: [],
+					});
+				} catch {
+					// May not have permission
+				}
+			}
+		} catch (err) {
+			const errorReply = {
+				content: `Error: ${err.message}`,
+				ephemeral: true,
+			};
+
+			if (interaction.deferred) {
+				await interaction.editReply(errorReply);
+			} else if (!interaction.replied) {
 				await interaction.reply(errorReply);
 			}
 		}
