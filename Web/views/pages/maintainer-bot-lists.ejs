@@ -364,7 +364,7 @@
 	<%- include('../partials/footer') %>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		const syncBtn = document.getElementById('sync-commands-btn');
 		if (syncBtn) {
 			syncBtn.addEventListener('click', async function() {

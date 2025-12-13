@@ -192,10 +192,55 @@ SkynetUtil.searchUsers = (query) => {
 };
 </script>
 
-<% if ((pageData.activeSearchQuery && pageData.userProfile) || !pageData.activeSearchQuery) { %>
+<% if ((pageData.activeSearchQuery && pageData.userProfile) || (pageData.activeSearchQuery && pageData.searchResults) || !pageData.activeSearchQuery) { %>
 	<div class="columns is-centered">
 		<div class="column is-8">
-			<% if (pageData.activeSearchQuery && pageData.userProfile) { %>
+			<% if (pageData.activeSearchQuery && pageData.searchResults && pageData.searchResults.length > 0) { %>
+				<!-- Multiple Search Results -->
+				<div class="users-overview-card fade-in">
+					<div class="has-text-centered" style="margin-bottom: 1.5rem;">
+						<h2 class="title is-4">
+							<span class="icon"><i class="fa fa-search"></i></span>
+							Search Results
+						</h2>
+						<p class="subtitle is-6 has-text-grey">Found <%= pageData.searchResults.length %> user<%= pageData.searchResults.length === 1 ? '' : 's' %> matching "<%= pageData.activeSearchQuery %>"</p>
+					</div>
+					<div class="search-results-list">
+						<% pageData.searchResults.forEach(user => { %>
+							<a href="/activity/users?q=<%= user.id %>" class="search-result-item" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--color-bg-secondary); border-radius: var(--radius-lg); margin-bottom: 0.75rem; text-decoration: none; transition: all 0.2s ease;">
+								<img src="<%= user.avatar %>" alt="<%= user.username %>" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--color-border);">
+								<div style="flex-grow: 1;">
+									<div style="font-weight: 600; color: var(--color-text-primary);"><%= user.username %></div>
+									<div style="font-size: 0.8rem; color: var(--color-text-muted);">
+										<span class="icon is-small"><i class="fa fa-star"></i></span>
+										<%= user.points %> points
+									</div>
+								</div>
+								<span class="icon has-text-grey"><i class="fa fa-chevron-right"></i></span>
+							</a>
+						<% }); %>
+					</div>
+				</div>
+				<style>
+				.search-result-item:hover {
+					background: var(--color-bg-tertiary) !important;
+					transform: translateX(4px);
+				}
+				</style>
+			<% } else if (pageData.activeSearchQuery && pageData.searchResults && pageData.searchResults.length === 0) { %>
+				<!-- No Results -->
+				<div class="users-overview-card fade-in has-text-centered">
+					<div style="padding: 2rem;">
+						<span class="icon is-large has-text-grey-light"><i class="fa fa-user-times fa-3x"></i></span>
+						<h3 class="title is-5" style="margin-top: 1rem;">No Users Found</h3>
+						<p class="has-text-grey">No users match "<%= pageData.activeSearchQuery %>"</p>
+						<a href="/activity/users" class="button is-primary is-modern" style="margin-top: 1.5rem;">
+							<span class="icon"><i class="fa fa-arrow-left"></i></span>
+							<span>Back to Users</span>
+						</a>
+					</div>
+				</div>
+			<% } else if (pageData.activeSearchQuery && pageData.userProfile) { %>
 				<!-- User Profile View -->
 				<div class="user-profile-card fade-in">
 					<div class="user-profile-header has-text-centered">

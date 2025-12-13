@@ -54,6 +54,24 @@ module.exports = Schema.Map({
 		},
 	})],
 	profile_fields: Schema.Mixed,
+	// Server-specific profile
+	server_profile: new Schema({
+		bio: {
+			type: String,
+			maxlength: 500,
+		},
+		banner_color: {
+			type: String,
+			default: "#5865F2",
+		},
+		visibility: {
+			type: String,
+			enum: ["public", "members_only", "private"],
+			default: "public",
+		},
+	}),
+	// Track when user joined server (for profile display)
+	joined_at: Date,
 	muted: [new Schema({
 		_id: {
 			type: String,

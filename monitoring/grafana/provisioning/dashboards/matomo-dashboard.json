@@ -57,7 +57,7 @@
       },
       "id": 100,
       "panels": [],
-      "title": "Overview - Today",
+      "title": "Overview - Yesterday (Archived Data)",
       "type": "row"
     },
     {
@@ -111,21 +111,27 @@
       "pluginVersion": "12.3.0",
       "targets": [
         {
-          "columns": [],
+          "columns": [
+            {
+              "selector": "visits",
+              "text": "Visits",
+              "type": "number"
+            }
+          ],
           "filters": [],
           "format": "table",
           "refId": "A",
-          "root_selector": "",
+          "root_selector": "$[0]",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.getVisits&period=day&date=today",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Live.getCounters&lastMinutes=1440",
           "url_options": {
             "method": "GET"
           },
-          "parser": "simple"
+          "parser": "backend"
         }
       ],
-      "title": "Visits Today",
+      "title": "Visits (Last 24h)",
       "type": "stat"
     },
     {
@@ -186,7 +192,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.getUniqueVisitors&period=day&date=today",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.getUniqueVisitors&period=day&date=yesterday",
           "url_options": {
             "method": "GET"
           },
@@ -249,25 +255,25 @@
         {
           "columns": [
             {
-              "selector": "value",
-              "text": "Value",
+              "selector": "actions",
+              "text": "Actions",
               "type": "number"
             }
           ],
           "filters": [],
           "format": "table",
           "refId": "A",
-          "root_selector": "",
+          "root_selector": "$[0]",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.get&period=day&date=today&field=nb_pageviews",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Live.getCounters&lastMinutes=1440",
           "url_options": {
             "method": "GET"
           },
-          "parser": "simple"
+          "parser": "backend"
         }
       ],
-      "title": "Page Views",
+      "title": "Actions (Last 24h)",
       "type": "stat"
     },
     {
@@ -336,7 +342,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=today&field=bounce_rate",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=yesterday&field=bounce_rate",
           "url_options": {
             "method": "GET"
           },
@@ -410,7 +416,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=today&field=avg_time_on_site",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=yesterday&field=avg_time_on_site",
           "url_options": {
             "method": "GET"
           },
@@ -484,7 +490,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=today&field=nb_actions",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitsSummary.get&period=day&date=yesterday&field=nb_actions",
           "url_options": {
             "method": "GET"
           },
@@ -738,7 +744,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Live.getLastVisitsDetails&period=day&date=today&filter_limit=8",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Live.getLastVisitsDetails&period=day&date=yesterday&filter_limit=8",
           "url_options": {
             "method": "GET"
           },
@@ -839,7 +845,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getBrowsers&period=day&date=today&filter_limit=10",
+          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getBrowsers&period=day&date=yesterday&filter_limit=10",
           "url_options": {
             "method": "GET"
           },
@@ -927,7 +933,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getType&period=day&date=today",
+          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getType&period=day&date=yesterday",
           "url_options": {
             "method": "GET"
           },
@@ -1015,7 +1021,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getOsVersions&period=day&date=today&filter_limit=10",
+          "url": "http://172.17.0.1:8080/api/matomo?method=DevicesDetection.getOsVersions&period=day&date=yesterday&filter_limit=10",
           "url_options": {
             "method": "GET"
           },
@@ -1113,7 +1119,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getReferrerType&period=day&date=today",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getReferrerType&period=day&date=yesterday",
           "url_options": {
             "method": "GET"
           },
@@ -1219,7 +1225,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getWebsites&period=day&date=today&filter_limit=10",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getWebsites&period=day&date=yesterday&filter_limit=10",
           "url_options": {
             "method": "GET"
           },
@@ -1325,7 +1331,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getKeywords&period=day&date=today&filter_limit=10",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Referrers.getKeywords&period=day&date=yesterday&filter_limit=10",
           "url_options": {
             "method": "GET"
           },
@@ -1449,7 +1455,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getPageUrls&period=day&date=today&filter_limit=15&expanded=1&flat=1",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getPageUrls&period=day&date=yesterday&filter_limit=15&expanded=1&flat=1",
           "url_options": {
             "method": "GET"
           },
@@ -1560,7 +1566,7 @@
           "root_selector": "",
           "source": "url",
           "type": "json",
-          "url": "http://172.17.0.1:8080/api/matomo?method=UserCountry.getCountry&period=day&date=today&filter_limit=15",
+          "url": "http://172.17.0.1:8080/api/matomo?method=UserCountry.getCountry&period=day&date=yesterday&filter_limit=15",
           "url_options": {
             "method": "GET"
           },
@@ -1568,6 +1574,1419 @@
         }
       ],
       "title": "Top Countries",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 105,
+      "panels": [],
+      "title": "Page Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              },
+              {
+                "color": "red",
+                "value": 3000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 43
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_page_load_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Avg Page Load",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 500
+              },
+              {
+                "color": "red",
+                "value": 1500
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 43
+      },
+      "id": 31,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_dom_processing_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "DOM Processing",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 300
+              },
+              {
+                "color": "red",
+                "value": 800
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 43
+      },
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_network_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Network Time",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 200
+              },
+              {
+                "color": "red",
+                "value": 500
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 43
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_server_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Server Time",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 300
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 43
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_transfer_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Transfer Time",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 300
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 43
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=PagePerformance.get&period=day&date=yesterday&field=avg_dom_completion_time",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "DOM Completion",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 47
+      },
+      "id": 106,
+      "panels": [],
+      "title": "Visitor Behavior",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 48
+      },
+      "id": 40,
+      "options": {
+        "displayLabels": ["name", "percent"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": ["value", "percent"]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Type",
+              "type": "string"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Visits",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitFrequency.get&period=day&date=yesterday",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "backend"
+        }
+      ],
+      "title": "New vs Returning Visitors",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "A"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": ["last"]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "regex",
+                  "options": {
+                    "value": "nb_visits"
+                  }
+                },
+                "fieldName": "Field"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 48
+      },
+      "id": 41,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Hour",
+              "type": "string"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Visits",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=VisitTime.getVisitInformationPerLocalTime&period=day&date=yesterday",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Visits by Hour of Day",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 56
+      },
+      "id": 107,
+      "panels": [],
+      "title": "Entry & Exit Pages",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Entries"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 57
+      },
+      "id": 50,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Entries"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Page",
+              "type": "string"
+            },
+            {
+              "selector": "entry_nb_visits",
+              "text": "Entries",
+              "type": "number"
+            },
+            {
+              "selector": "entry_bounce_count",
+              "text": "Bounces",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getEntryPageUrls&period=day&date=yesterday&filter_limit=10&flat=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Entry Pages (Landing)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Exits"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-RdYlGr"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 57
+      },
+      "id": 51,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Exits"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Page",
+              "type": "string"
+            },
+            {
+              "selector": "exit_nb_visits",
+              "text": "Exits",
+              "type": "number"
+            },
+            {
+              "selector": "exit_rate",
+              "text": "Exit Rate %",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getExitPageUrls&period=day&date=yesterday&filter_limit=10&flat=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Exit Pages",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 65
+      },
+      "id": 108,
+      "panels": [],
+      "title": "Site Search & Events",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Searches"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-BlPu"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 66
+      },
+      "id": 60,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Searches"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Keyword",
+              "type": "string"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Searches",
+              "type": "number"
+            },
+            {
+              "selector": "nb_pages_per_search",
+              "text": "Pages/Search",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getSiteSearchKeywords&period=day&date=yesterday&filter_limit=10",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Site Search Keywords",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Events"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 66
+      },
+      "id": 61,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Events"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "Event Category",
+              "type": "string"
+            },
+            {
+              "selector": "nb_events",
+              "text": "Events",
+              "type": "number"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Visitors",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Events.getCategory&period=day&date=yesterday&filter_limit=10",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "Event Categories",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "id": 109,
+      "panels": [],
+      "title": "Downloads & Outlinks",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Downloads"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 75
+      },
+      "id": 70,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Downloads"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "File",
+              "type": "string"
+            },
+            {
+              "selector": "nb_hits",
+              "text": "Downloads",
+              "type": "number"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Visitors",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getDownloads&period=day&date=yesterday&filter_limit=10&flat=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "File Downloads",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "matomo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Clicks"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "continuous-GrYlRd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 75
+      },
+      "id": 71,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Clicks"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "label",
+              "text": "External Link",
+              "type": "string"
+            },
+            {
+              "selector": "nb_hits",
+              "text": "Clicks",
+              "type": "number"
+            },
+            {
+              "selector": "nb_visits",
+              "text": "Visitors",
+              "type": "number"
+            }
+          ],
+          "filters": [],
+          "format": "table",
+          "refId": "A",
+          "root_selector": "",
+          "source": "url",
+          "type": "json",
+          "url": "http://172.17.0.1:8080/api/matomo?method=Actions.getOutlinks&period=day&date=yesterday&filter_limit=10&flat=1",
+          "url_options": {
+            "method": "GET"
+          },
+          "parser": "simple"
+        }
+      ],
+      "title": "External Links (Outlinks)",
       "type": "table"
     }
   ],
@@ -1590,5 +3009,5 @@
   "timezone": "browser",
   "title": "Matomo Analytics",
   "uid": "matomo-analytics",
-  "version": 2
+  "version": 4
 }

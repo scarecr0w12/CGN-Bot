@@ -13,12 +13,20 @@ const ejs = require("ejs");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const MySQLStore = require("express-mysql-session")(session);
+// Lazy-load Redis session store to prevent crash if dependencies are missing
+let RedisStore = null;
+let Redis = null;
+try {
+	RedisStore = require("connect-redis").default;
+	Redis = require("../Database/Redis");
+} catch (err) {
+	// Redis session store not available - will use default session store
+}
 const passport = require("passport");
 const discordStrategy = require("passport-discord").Strategy;
 const discordOAuthScopes = ["identify", "guilds", "email"];
 const toobusy = require("toobusy-js");
 const fsn = require("fs-nextra");
-const reload = require("require-reload")(require);
 const Sentry = require("@sentry/node");
 
 const middleware = require("./middleware");
@@ -195,19 +203,28 @@ exports.open = async (client, auth, configJS, logger) => {
 		done(null, id);
 	});
 
-	// Session store - use MongoStore for MongoDB, MySQLStore for MariaDB
+	// Session store priority: Redis > MongoDB > MariaDB > Memory
 	const databaseType = process.env.DATABASE_TYPE || "mongodb";
 	let sessionStore;
 
-	if (databaseType === "mongodb" && Database.mongoClient) {
-		// connect-mongo v5 uses a different API
+	if (Redis && RedisStore && Redis.isEnabled() && Redis.isReady()) {
+		// Use Redis for sessions (fastest, cross-shard)
+		sessionStore = new RedisStore({
+			client: Redis.getClient(),
+			prefix: "sess:",
+			ttl: 604800, // 1 week in seconds
+		});
+		logger.info("Using Redis session store");
+	} else if (databaseType === "mongodb" && Database.mongoClient) {
+		// Fallback to MongoDB
 		sessionStore = MongoStore.create({
 			client: Database.mongoClient,
 			dbName: Database.mongoClient.options?.dbName || "skynet",
 			stringify: false,
 		});
+		logger.info("Using MongoDB session store");
 	} else if (databaseType === "mariadb") {
-		// Use MySQLStore for MariaDB session persistence
+		// Fallback to MariaDB
 		const mysqlOptions = {
 			host: process.env.MARIADB_HOST || "127.0.0.1",
 			port: parseInt(process.env.MARIADB_PORT, 10) || 3306,
@@ -228,7 +245,7 @@ exports.open = async (client, auth, configJS, logger) => {
 			},
 		};
 		sessionStore = new MySQLStore(mysqlOptions);
-		logger.info("Using MariaDB session store for persistent sessions");
+		logger.info("Using MariaDB session store");
 	} else {
 		// Fallback to memory store
 		logger.warn("Using memory session store - sessions will not persist across restarts");
@@ -272,6 +289,9 @@ exports.open = async (client, auth, configJS, logger) => {
 
 	app.use(middleware.logRequest);
 
+	// Load injection settings from database (cached)
+	app.use(middleware.loadInjection);
+
 	// (Horribly) serve public dir
 	const staticRouter = express.static(`${__dirname}/public/`, { maxAge: 86400000 });
 	app.use("/static", (req, res, next) => {
@@ -314,7 +334,11 @@ exports.open = async (client, auth, configJS, logger) => {
 		const param = msg.location;
 		try {
 			io.of(namespace).emit("update", { location: param, author: msg.author });
-			if (param === "maintainer") global.configJSON = reload("../Configurations/config.json");
+			// Clear injection cache when maintainer settings change
+			if (param === "maintainer") {
+				const { clearInjectionCache } = require("./middleware");
+				clearInjectionCache();
+			}
 		} catch (err) {
 			logger.warn("An error occurred while handling a dashboard WebSocket!", {}, err);
 		}

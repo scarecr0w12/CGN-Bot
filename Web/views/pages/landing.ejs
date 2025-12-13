@@ -19,7 +19,7 @@
 	<%- include("../partials/head") %>
 
 	<!-- FAQ Schema for Rich Snippets -->
-	<script type="application/ld+json">
+	<script type="application/ld+json"<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 	{
 		"@context": "https://schema.org",
 		"@type": "FAQPage",
@@ -558,9 +558,9 @@
 	<%- include("../partials/footer") %>
 	<%- include("../partials/scroll-top-button") %>
 	
-	<script>
+	<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 	// Scroll animations - Intersection Observer for fade-in effects
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {

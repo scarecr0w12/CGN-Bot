@@ -344,7 +344,7 @@
 		const defaultOpenAIModels = <%- JSON.stringify(pageData.embeddingModels) %>;
 		
 		// Initialize on load
-		document.addEventListener('DOMContentLoaded', () => {
+		document.addEventListener('turbolinks:load', () => {
 			toggleVectorConfig();
 			toggleEmbeddingProvider(true); // true = initial load
 		});

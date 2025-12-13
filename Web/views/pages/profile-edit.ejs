@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Edit Profile | Skynet</title>
+	<meta name="turbolinks-cache-control" content="no-cache">
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Edit Profile | Skynet",
+		description: "Edit your Skynet profile settings."
+	};
+	%>
+	<%- include('../partials/head') %>
+	<style>
+.edit-profile-container {
+	max-width: 700px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.edit-profile-card {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-xl);
+	padding: 2rem;
+	box-shadow: var(--shadow-card);
+}
+
+.edit-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	margin-bottom: 2rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--color-border);
+	flex-wrap: wrap;
+}
+
+.edit-header-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: var(--radius-md);
+	background: var(--gradient-primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.25rem;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.edit-header-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.edit-header h2 {
+	font-size: 1.5rem;
+	margin: 0;
+}
+
+.edit-header p {
+	color: var(--color-text-muted);
+	font-size: 0.875rem;
+	margin: 0;
+}
+
+.form-section {
+	margin-bottom: 2rem;
+}
+
+.form-section-title {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--color-text-primary);
+}
+
+.form-section-title i {
+	color: var(--color-accent);
+}
+
+.form-group {
+	margin-bottom: 1.5rem;
+}
+
+.form-label {
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-text-secondary);
+	margin-bottom: 0.5rem;
+}
+
+.form-input {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	background: var(--color-bg-secondary);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-md);
+	color: var(--color-text-primary);
+	font-size: 1rem;
+	transition: border-color 0.2s;
+}
+
+.form-input:focus {
+	outline: none;
+	border-color: var(--color-accent);
+}
+
+.form-textarea {
+	min-height: 100px;
+	resize: vertical;
+	font-family: inherit;
+}
+
+.form-hint {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	margin-top: 0.25rem;
+}
+
+.visibility-options {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.visibility-option {
+	flex: 1;
+	min-width: 120px;
+	padding: 1rem;
+	background: var(--color-bg-secondary);
+	border: 2px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	text-align: center;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.visibility-option:hover {
+	border-color: var(--color-accent);
+}
+
+.visibility-option.selected {
+	border-color: var(--color-accent);
+	background: rgba(88, 101, 242, 0.1);
+}
+
+.visibility-icon {
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+	color: var(--color-accent);
+}
+
+.visibility-label {
+	font-weight: 500;
+	font-size: 0.875rem;
+}
+
+.profile-fields-editor {
+	background: var(--color-bg-secondary);
+	padding: 1rem;
+	border-radius: var(--radius-lg);
+}
+
+.profile-field-row {
+	display: flex;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+	align-items: center;
+}
+
+.profile-field-row input {
+	flex: 1;
+}
+
+.profile-field-row .field-name {
+	flex: 1;
+}
+
+.profile-field-row .field-value {
+	flex: 2;
+}
+
+.add-field-btn {
+	width: 100%;
+	margin-top: 0.5rem;
+}
+
+.social-links-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+}
+
+@media (max-width: 500px) {
+	.social-links-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.social-input-group {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.social-input-group .icon {
+	width: 40px;
+	height: 40px;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-md);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-text-muted);
+	flex-shrink: 0;
+}
+
+.social-input-group input {
+	flex: 1;
+}
+
+.featured-servers-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.server-checkbox-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.server-checkbox-item:hover {
+	background: var(--color-bg-tertiary);
+}
+
+.server-checkbox-item.selected {
+	background: rgba(88, 101, 242, 0.1);
+	border: 1px solid var(--color-accent);
+}
+
+.server-checkbox-icon {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.server-checkbox-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.server-checkbox-name {
+	flex-grow: 1;
+	font-weight: 500;
+}
+
+.game-tracking-toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1rem;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+	margin-bottom: 0.75rem;
+}
+
+.toggle-info {
+	display: flex;
+	flex-direction: column;
+}
+
+.toggle-label {
+	font-weight: 500;
+}
+
+.toggle-desc {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+}
+
+.form-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--color-border);
+	flex-wrap: wrap;
+}
+
+.form-actions .button {
+	flex: 1;
+	min-width: 120px;
+}
+
+.color-picker-group {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.color-picker-group input[type="color"] {
+	width: 50px;
+	height: 40px;
+	border: none;
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	padding: 0;
+}
+
+.color-picker-group input[type="text"] {
+	width: 120px;
+}
+</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body" style="padding: 2rem 1.5rem;">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
+						<i class="fa fa-edit"></i> Edit Profile
+					</h1>
+					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+						Customize your profile
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+<section id="frame" class="section" style="background: var(--color-bg-secondary); min-height: calc(100vh - 200px);">
+	<div class="edit-profile-container">
+		<div class="edit-profile-card fade-in">
+			<div class="edit-header">
+				<% if (editType === 'server' && server) { %>
+					<div class="edit-header-icon">
+						<% if (server.icon) { %>
+							<img src="<%= server.icon %>" alt="<%= server.name %>">
+						<% } else { %>
+							<%= server.name.charAt(0) %>
+						<% } %>
+					</div>
+					<div>
+						<h2>Edit Server Profile</h2>
+						<p><%= server.name %></p>
+					</div>
+				<% } else { %>
+					<div class="edit-header-icon">
+						<i class="fa fa-user"></i>
+					</div>
+					<div>
+						<h2>Edit Primary Profile</h2>
+						<p>Your global profile across all servers</p>
+					</div>
+				<% } %>
+			</div>
+
+			<form id="profile-edit-form">
+				<% if (editType === 'primary') { %>
+					<!-- PRIMARY PROFILE EDIT -->
+					<div class="form-section">
+						<div class="form-section-title">
+							<i class="fa fa-user"></i> About You
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Bio</label>
+							<textarea class="form-input form-textarea" name="bio" placeholder="Tell others about yourself..." maxlength="1000"><%= profile.primaryProfile.bio || '' %></textarea>
+							<div class="form-hint">Max 1000 characters</div>
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Profile Visibility</label>
+							<div class="visibility-options">
+								<div class="visibility-option <%= profile.isProfilePublic !== false ? 'selected' : '' %>" data-value="true" onclick="selectVisibility(this)">
+									<div class="visibility-icon"><i class="fa fa-globe"></i></div>
+									<div class="visibility-label">Public</div>
+								</div>
+								<div class="visibility-option <%= profile.isProfilePublic === false ? 'selected' : '' %>" data-value="false" onclick="selectVisibility(this)">
+									<div class="visibility-icon"><i class="fa fa-lock"></i></div>
+									<div class="visibility-label">Private</div>
+								</div>
+							</div>
+							<input type="hidden" name="is_public" value="<%= profile.isProfilePublic !== false %>">
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Banner Color</label>
+							<div class="color-picker-group">
+								<input type="color" name="banner_color_picker" value="<%= profile.primaryProfile.banner_color || '#5865F2' %>" onchange="updateColorText(this)">
+								<input type="text" class="form-input" name="banner_color" value="<%= profile.primaryProfile.banner_color || '#5865F2' %>" pattern="^#[0-9A-Fa-f]{6}$" onchange="updateColorPicker(this)">
+								<span class="form-hint" style="margin: 0;">Used for profile highlights</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-section">
+						<div class="form-section-title">
+							<i class="fa fa-link"></i> Social Links
+						</div>
+						<div class="social-links-grid">
+							<div class="social-input-group">
+								<div class="icon"><i class="fab fa-twitter"></i></div>
+								<input type="text" class="form-input" name="social_twitter" placeholder="username" value="<%= profile.primaryProfile.social_links?.twitter || '' %>">
+							</div>
+							<div class="social-input-group">
+								<div class="icon"><i class="fab fa-github"></i></div>
+								<input type="text" class="form-input" name="social_github" placeholder="username" value="<%= profile.primaryProfile.social_links?.github || '' %>">
+							</div>
+							<div class="social-input-group">
+								<div class="icon"><i class="fab fa-twitch"></i></div>
+								<input type="text" class="form-input" name="social_twitch" placeholder="username" value="<%= profile.primaryProfile.social_links?.twitch || '' %>">
+							</div>
+							<div class="social-input-group">
+								<div class="icon"><i class="fab fa-youtube"></i></div>
+								<input type="text" class="form-input" name="social_youtube" placeholder="channel" value="<%= profile.primaryProfile.social_links?.youtube || '' %>">
+							</div>
+							<div class="social-input-group">
+								<div class="icon"><i class="fab fa-steam"></i></div>
+								<input type="text" class="form-input" name="social_steam" placeholder="username" value="<%= profile.primaryProfile.social_links?.steam || '' %>">
+							</div>
+							<div class="social-input-group">
+								<div class="icon"><i class="fa fa-globe"></i></div>
+								<input type="url" class="form-input" name="social_website" placeholder="https://..." value="<%= profile.primaryProfile.social_links?.website || '' %>">
+							</div>
+						</div>
+					</div>
+
+					<div class="form-section">
+						<div class="form-section-title">
+							<i class="fa fa-star"></i> Featured Servers (Max 3)
+						</div>
+						<div class="featured-servers-selector" id="featured-servers">
+							<% const featuredIds = profile.primaryProfile.featured_servers || []; %>
+							<% mutualServers.slice(0, 10).forEach(svr => { %>
+								<div class="server-checkbox-item <%= featuredIds.includes(svr.id) ? 'selected' : '' %>" data-server-id="<%= svr.id %>" onclick="toggleFeaturedServer(this)">
+									<div class="server-checkbox-icon">
+										<% if (svr.icon) { %>
+											<img src="<%= svr.icon %>" alt="<%= svr.name %>">
+										<% } else { %>
+											<div style="width:100%;height:100%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;font-weight:700;"><%= svr.name.charAt(0) %></div>
+										<% } %>
+									</div>
+									<span class="server-checkbox-name"><%= svr.name %></span>
+									<span class="icon"><i class="fa <%= featuredIds.includes(svr.id) ? 'fa-check-circle' : 'fa-circle-o' %>"></i></span>
+								</div>
+							<% }); %>
+						</div>
+						<input type="hidden" name="featured_servers" value="<%= JSON.stringify(featuredIds) %>">
+					</div>
+
+					<div class="form-section">
+						<div class="form-section-title">
+							<i class="fa fa-gamepad"></i> Game Tracking
+						</div>
+						<div class="game-tracking-toggle">
+							<div class="toggle-info">
+								<span class="toggle-label">Enable Game Tracking</span>
+								<span class="toggle-desc">Track games you play across servers</span>
+							</div>
+							<label class="switch">
+								<input type="checkbox" name="game_tracking_enabled" <%= profile.gameTracking?.enabled !== false ? 'checked' : '' %>>
+								<span class="slider round"></span>
+							</label>
+						</div>
+						<div class="game-tracking-toggle">
+							<div class="toggle-info">
+								<span class="toggle-label">Show on Profile</span>
+								<span class="toggle-desc">Display game activity on your profile</span>
+							</div>
+							<label class="switch">
+								<input type="checkbox" name="game_tracking_show" <%= profile.gameTracking?.show_on_profile !== false ? 'checked' : '' %>>
+								<span class="slider round"></span>
+							</label>
+						</div>
+						<div class="game-tracking-toggle">
+							<div class="toggle-info">
+								<span class="toggle-label">Show Non-Game Apps</span>
+								<span class="toggle-desc">Include apps like VS Code, Spotify</span>
+							</div>
+							<label class="switch">
+								<input type="checkbox" name="game_tracking_non_games" <%= profile.gameTracking?.show_non_games ? 'checked' : '' %>>
+								<span class="slider round"></span>
+							</label>
+						</div>
+					</div>
+
+				<% } else { %>
+					<!-- SERVER PROFILE EDIT -->
+					<div class="form-section">
+						<div class="form-section-title">
+							<i class="fa fa-user"></i> Server Profile
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Server Bio</label>
+							<textarea class="form-input form-textarea" name="bio" placeholder="Tell others about yourself in this server..." maxlength="500"><%= profile.serverProfile.bio || '' %></textarea>
+							<div class="form-hint">Max 500 characters</div>
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Profile Visibility</label>
+							<div class="visibility-options">
+								<div class="visibility-option <%= (profile.serverProfile.visibility || 'public') === 'public' ? 'selected' : '' %>" data-value="public" onclick="selectVisibility(this)">
+									<div class="visibility-icon"><i class="fa fa-globe"></i></div>
+									<div class="visibility-label">Public</div>
+								</div>
+								<div class="visibility-option <%= profile.serverProfile.visibility === 'members_only' ? 'selected' : '' %>" data-value="members_only" onclick="selectVisibility(this)">
+									<div class="visibility-icon"><i class="fa fa-users"></i></div>
+									<div class="visibility-label">Members Only</div>
+								</div>
+								<div class="visibility-option <%= profile.serverProfile.visibility === 'private' ? 'selected' : '' %>" data-value="private" onclick="selectVisibility(this)">
+									<div class="visibility-icon"><i class="fa fa-lock"></i></div>
+									<div class="visibility-label">Private</div>
+								</div>
+							</div>
+							<input type="hidden" name="visibility" value="<%= profile.serverProfile.visibility || 'public' %>">
+						</div>
+
+						<div class="form-group">
+							<label class="form-label">Accent Color</label>
+							<div class="color-picker-group">
+								<input type="color" name="banner_color_picker" value="<%= profile.serverProfile.banner_color || '#5865F2' %>" onchange="updateColorText(this)">
+								<input type="text" class="form-input" name="banner_color" value="<%= profile.serverProfile.banner_color || '#5865F2' %>" pattern="^#[0-9A-Fa-f]{6}$" onchange="updateColorPicker(this)">
+							</div>
+						</div>
+					</div>
+				<% } %>
+
+				<div class="form-section">
+					<div class="form-section-title">
+						<i class="fa fa-id-card"></i> Custom Profile Fields
+					</div>
+					<div class="profile-fields-editor" id="profile-fields-editor">
+						<% const fields = profile.profileFields || {}; %>
+						<% Object.entries(fields).forEach(([key, value], idx) => { %>
+							<div class="profile-field-row" data-field-idx="<%= idx %>">
+								<input type="text" class="form-input field-name" placeholder="Field name" value="<%= key %>" maxlength="100">
+								<input type="text" class="form-input field-value" placeholder="Value" value="<%= value %>" maxlength="500">
+								<button type="button" class="button is-danger is-small" onclick="removeField(this)">
+									<span class="icon"><i class="fa fa-times"></i></span>
+								</button>
+							</div>
+						<% }); %>
+					</div>
+					<button type="button" class="button is-light add-field-btn" onclick="addField()">
+						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span>Add Field</span>
+					</button>
+					<div class="form-hint">Up to 10 custom fields. 100 char name limit, 500 char value limit.</div>
+				</div>
+
+				<div class="form-actions">
+					<button type="submit" class="button is-primary is-modern">
+						<span class="icon"><i class="fa fa-save"></i></span>
+						<span>Save Changes</span>
+					</button>
+					<a href="/profile/me<%= editType === 'server' && server ? '/' + server.id : '' %>" class="button is-light">
+						<span class="icon"><i class="fa fa-times"></i></span>
+						<span>Cancel</span>
+					</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</section>
+
+<script>
+function selectVisibility(el) {
+	const parent = el.parentElement;
+	parent.querySelectorAll('.visibility-option').forEach(opt => opt.classList.remove('selected'));
+	el.classList.add('selected');
+	const hiddenInput = parent.parentElement.querySelector('input[type="hidden"]');
+	if (hiddenInput) {
+		hiddenInput.value = el.dataset.value;
+	}
+}
+
+function updateColorText(picker) {
+	const textInput = picker.parentElement.querySelector('input[type="text"]');
+	if (textInput) textInput.value = picker.value;
+}
+
+function updateColorPicker(textInput) {
+	const picker = textInput.parentElement.querySelector('input[type="color"]');
+	if (picker && /^#[0-9A-Fa-f]{6}$/.test(textInput.value)) {
+		picker.value = textInput.value;
+	}
+}
+
+function toggleFeaturedServer(el) {
+	const isSelected = el.classList.contains('selected');
+	const selectedCount = document.querySelectorAll('.server-checkbox-item.selected').length;
+	
+	if (!isSelected && selectedCount >= 3) {
+		SkynetUtil.showErrorModal('Maximum 3 Featured Servers', 'You can only feature up to 3 servers on your profile.');
+		return;
+	}
+	
+	el.classList.toggle('selected');
+	const icon = el.querySelector('.icon i');
+	if (icon) {
+		icon.className = el.classList.contains('selected') ? 'fa fa-check-circle' : 'fa fa-circle-o';
+	}
+	
+	updateFeaturedServersInput();
+}
+
+function updateFeaturedServersInput() {
+	const selected = Array.from(document.querySelectorAll('.server-checkbox-item.selected')).map(el => el.dataset.serverId);
+	document.querySelector('input[name="featured_servers"]').value = JSON.stringify(selected);
+}
+
+function addField() {
+	const editor = document.getElementById('profile-fields-editor');
+	const fieldCount = editor.querySelectorAll('.profile-field-row').length;
+	
+	if (fieldCount >= 10) {
+		SkynetUtil.showErrorModal('Maximum Fields Reached', 'You can only have up to 10 custom profile fields.');
+		return;
+	}
+	
+	const row = document.createElement('div');
+	row.className = 'profile-field-row';
+	row.innerHTML = `
+		<input type="text" class="form-input field-name" placeholder="Field name" maxlength="100">
+		<input type="text" class="form-input field-value" placeholder="Value" maxlength="500">
+		<button type="button" class="button is-danger is-small" onclick="removeField(this)">
+			<span class="icon"><i class="fa fa-times"></i></span>
+		</button>
+	`;
+	editor.appendChild(row);
+}
+
+function removeField(btn) {
+	btn.closest('.profile-field-row').remove();
+}
+
+function getProfileFields() {
+	const fields = {};
+	document.querySelectorAll('.profile-field-row').forEach(row => {
+		const name = row.querySelector('.field-name').value.trim();
+		const value = row.querySelector('.field-value').value.trim();
+		if (name && value) {
+			fields[name] = value;
+		}
+	});
+	return fields;
+}
+
+document.getElementById('profile-edit-form').addEventListener('submit', async function(e) {
+	e.preventDefault();
+	
+	const editType = '<%= editType %>';
+	const serverId = '<%= editType === "server" && server ? server.id : "" %>';
+	
+	const formData = new FormData(this);
+	const profileFields = getProfileFields();
+	
+	let payload = {
+		bio: formData.get('bio'),
+		banner_color: formData.get('banner_color'),
+		profile_fields: profileFields,
+	};
+	
+	if (editType === 'primary') {
+		payload.is_public = formData.get('is_public') === 'true';
+		payload.social_links = {
+			twitter: formData.get('social_twitter') || '',
+			github: formData.get('social_github') || '',
+			twitch: formData.get('social_twitch') || '',
+			youtube: formData.get('social_youtube') || '',
+			steam: formData.get('social_steam') || '',
+			website: formData.get('social_website') || '',
+		};
+		payload.featured_servers = JSON.parse(formData.get('featured_servers') || '[]');
+		payload.game_tracking = {
+			enabled: formData.get('game_tracking_enabled') === 'on',
+			show_on_profile: formData.get('game_tracking_show') === 'on',
+			show_non_games: formData.get('game_tracking_non_games') === 'on',
+		};
+	} else {
+		payload.visibility = formData.get('visibility');
+	}
+	
+	const url = editType === 'primary' ? '/api/profile' : `/api/profile/server/${serverId}`;
+	
+	try {
+		const response = await fetch(url, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+		});
+		
+		const result = await response.json();
+		
+		if (result.success) {
+			SkynetUtil.showSuccessModal('Profile Updated', 'Your profile has been saved successfully.');
+			setTimeout(() => {
+				window.location.href = '/profile/me' + (serverId ? '/' + serverId : '');
+			}, 1500);
+		} else {
+			SkynetUtil.showErrorModal('Error', result.error || 'Failed to save profile.');
+		}
+	} catch (err) {
+		console.error('Error saving profile:', err);
+		SkynetUtil.showErrorModal('Error', 'Failed to save profile. Please try again.');
+	}
+});
+</script>
+
+<%- include("../partials/footer") %>
+</body>
+</html>

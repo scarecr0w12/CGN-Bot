@@ -356,7 +356,7 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach((entry, index) => {
 				if (entry.isIntersecting) {

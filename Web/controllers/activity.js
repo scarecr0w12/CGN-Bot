@@ -183,16 +183,52 @@ module.exports = async (req, { res }) => {
 			req.query.q = "";
 		}
 		if (req.query.q) {
-			const userDocument = await Users.findOne({ $or: [{ _id: req.query.q }, { username: req.query.q }] });
-			if (userDocument) {
-				const usr = await req.app.client.users.fetch(userDocument._id, true);
-				const userProfile = await parsers.userData(req, usr, userDocument);
+			// Search for matching users - check exact ID first, then partial username match
+			let userDocuments = [];
+
+			// Try exact ID match first
+			const exactIdMatch = await Users.findOne({ _id: req.query.q });
+			if (exactIdMatch) {
+				userDocuments = [exactIdMatch];
+			} else {
+				// Try partial match using LIKE pattern (SQL compatible)
+				const searchPattern = `%${req.query.q.replace(/[%_]/g, "\\$&")}%`;
+				userDocuments = await Users.find({ username: { $like: searchPattern } }).limit(50).exec();
+			}
+
+
+			if (userDocuments.length === 1) {
+				// Single result - show profile directly
+				const usr = await req.app.client.users.fetch(userDocuments[0]._id, true).catch(() => null);
+				if (usr) {
+					const userProfile = await parsers.userData(req, usr, userDocuments[0]);
+					renderPage({
+						pageTitle: `${userProfile.username}'s Profile`,
+						userProfile,
+					});
+				} else {
+					renderPage({ pageTitle: `Lookup for user "${req.query.q}"`, searchResults: [] });
+				}
+			} else if (userDocuments.length > 1) {
+				// Multiple results - show list
+				const searchResults = [];
+				for (const doc of userDocuments) {
+					const usr = await req.app.client.users.fetch(doc._id, true).catch(() => null);
+					if (usr) {
+						searchResults.push({
+							id: usr.id,
+							username: usr.username,
+							avatar: usr.displayAvatarURL() || "/static/img/discord-icon.png",
+							points: doc.points || 0,
+						});
+					}
+				}
 				renderPage({
-					pageTitle: `${userProfile.username}'s Profile`,
-					userProfile,
+					pageTitle: `Search results for "${req.query.q}"`,
+					searchResults,
 				});
 			} else {
-				renderPage({ pageTitle: `Lookup for user "${req.query.q}"` });
+				renderPage({ pageTitle: `Lookup for user "${req.query.q}"`, searchResults: [] });
 			}
 		} else {
 			const userResult = await Users.aggregate([{

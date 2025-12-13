@@ -553,7 +553,7 @@
 	let serversData = [];
 
 	// Load servers on page load
-	document.addEventListener('DOMContentLoaded', loadServers);
+	document.addEventListener('turbolinks:load', loadServers);
 
 	async function loadServers() {
 		const container = document.getElementById('servers-list');
@@ -794,7 +794,7 @@
 	let voteRewardsData = null;
 
 	// Load vote rewards on page load
-	document.addEventListener('DOMContentLoaded', loadVoteRewards);
+	document.addEventListener('turbolinks:load', loadVoteRewards);
 
 	async function loadVoteRewards() {
 		const container = document.getElementById('vote-rewards-content');

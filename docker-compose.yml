@@ -9,7 +9,7 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-production}
       - SHARD_TOTAL=auto
     volumes:
       - .:/usr/src/app
@@ -142,5 +142,19 @@ services:
       - "9104:9104"
     volumes:
       - ./monitoring/mariadb-exporter/.my.cnf:/.my.cnf:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: skynetbot-redis-exporter
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "9121:9121"
+    environment:
+      - REDIS_ADDR=host.docker.internal:${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"

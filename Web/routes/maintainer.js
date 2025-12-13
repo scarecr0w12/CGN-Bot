@@ -10,6 +10,9 @@ module.exports = router => {
 	setupConsolePage(router, "/servers/server-list", "maintainer", [], controllers.console.servers.list);
 	setupConsolePage(router, "/servers/big-message", "maintainer", [], controllers.console.servers.bigmessage);
 
+	// Global Scan - scan all servers for members
+	router.post("/global-scan", mw.checkUnavailableAPI, (req, res, next) => { req.perm = "maintainer"; req.isAPI = true; next(); }, mw.authorizeConsoleAccess, controllers.console.globalScan);
+
 	// Global Settings
 	setupConsolePage(router, "/global-options/blocklist", "administration", [], controllers.console.options.blocklist);
 	setupConsolePage(router, "/global-options/bot-user", "administration", [], controllers.console.options.bot);

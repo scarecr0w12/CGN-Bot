@@ -264,7 +264,7 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		// Fade-in animations
 		const observer = new IntersectionObserver((entries) => {
 			entries.forEach(entry => {

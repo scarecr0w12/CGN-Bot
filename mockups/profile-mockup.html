@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile System - Mockup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --color-bg-dark: #0f0f23;
+            --color-bg-primary: #1a1a2e;
+            --color-bg-secondary: #16213e;
+            --color-bg-tertiary: #1f2940;
+            --color-accent: #5865F2;
+            --color-accent-hover: #4752c4;
+            --color-success: #57F287;
+            --color-warning: #FEE75C;
+            --color-danger: #ED4245;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #b9bbbe;
+            --color-text-muted: #72767d;
+            --color-border: #2d2d44;
+            --gradient-primary: linear-gradient(135deg, #5865F2 0%, #7289da 100%);
+            --gradient-gold: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .mockup-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .mockup-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+        }
+
+        .mockup-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mockup-header p {
+            color: var(--color-text-secondary);
+        }
+
+        .mockup-tabs {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .mockup-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .mockup-tab:hover {
+            border-color: var(--color-accent);
+            color: var(--color-text-primary);
+        }
+
+        .mockup-tab.active {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+        }
+
+        .mockup-section {
+            display: none;
+        }
+
+        .mockup-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--color-accent);
+        }
+
+        /* ============================================
+           PRIMARY PROFILE STYLES
+           ============================================ */
+        .primary-profile {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-banner {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+        }
+
+        .profile-banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(transparent, var(--color-bg-primary));
+        }
+
+        .profile-avatar-section {
+            display: flex;
+            align-items: flex-end;
+            gap: 1.5rem;
+            padding: 0 2rem;
+            margin-top: -80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 6px solid var(--color-bg-primary);
+            background: var(--color-bg-secondary);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name-section {
+            padding-bottom: 1rem;
+        }
+
+        .profile-username {
+            font-size: 2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-premium {
+            background: var(--gradient-gold);
+            color: #1a1a2e;
+        }
+
+        .badge-verified {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        .badge-staff {
+            background: var(--color-danger);
+            color: white;
+        }
+
+        .profile-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-success);
+        }
+
+        .profile-body {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .profile-bio {
+            background: var(--color-bg-secondary);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+        }
+
+        .profile-bio strong {
+            color: var(--color-text-primary);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--color-bg-secondary);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+        }
+
+        .profile-social-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            color: var(--color-text-secondary);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: var(--color-accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .featured-servers {
+            margin-top: 1.5rem;
+        }
+
+        .featured-servers h3 {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .server-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .server-mini-card {
+            background: var(--color-bg-secondary);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .server-mini-card:hover {
+            background: var(--color-bg-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .server-mini-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .server-mini-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .server-mini-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .server-mini-rank {
+            font-size: 0.75rem;
+            color: var(--color-success);
+        }
+
+        /* ============================================
+           SERVER PROFILE STYLES
+           ============================================ */
+        .server-profile {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .server-profile-main {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+
+        .server-header {
+            background: var(--color-bg-secondary);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .server-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .server-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .server-member-count {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .view-server-btn {
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: var(--color-accent);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .view-server-btn:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .member-profile-section {
+            padding: 1.5rem;
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .member-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid var(--color-accent);
+        }
+
+        .member-info h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .member-nickname {
+            color: var(--color-accent);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .member-joined {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .member-bio {
+            background: var(--color-bg-secondary);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+        }
+
+        .member-bio-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-bio p {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .server-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .server-stat-card {
+            background: var(--color-bg-secondary);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .server-stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-lg);
+            background: var(--color-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .server-stat-icon.messages { color: #5865F2; }
+        .server-stat-icon.voice { color: #57F287; }
+        .server-stat-icon.rank { color: #FEE75C; }
+        .server-stat-icon.score { color: #EB459E; }
+
+        .server-stat-info {
+            flex-grow: 1;
+        }
+
+        .server-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .server-stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+        }
+
+        .profile-fields-section {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+        }
+
+        .profile-fields-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .profile-field:last-child {
+            border-bottom: none;
+        }
+
+        .profile-field-key {
+            color: var(--color-text-muted);
+        }
+
+        .profile-field-value {
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        /* Sidebar */
+        .server-profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-card {
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .sidebar-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rank-display {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .rank-badge {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: var(--gradient-gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .rank-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fda085;
+        }
+
+        .rank-position {
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .rank-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--color-bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-gold);
+            width: 65%;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .leaderboard-preview {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            background: var(--color-bg-secondary);
+        }
+
+        .leaderboard-item.current {
+            background: rgba(88, 101, 242, 0.2);
+            border: 1px solid var(--color-accent);
+        }
+
+        .leaderboard-position {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--color-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .leaderboard-position.gold { background: #FFD700; color: #1a1a2e; }
+        .leaderboard-position.silver { background: #C0C0C0; color: #1a1a2e; }
+        .leaderboard-position.bronze { background: #CD7F32; color: #1a1a2e; }
+
+        .leaderboard-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .leaderboard-name {
+            flex-grow: 1;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .leaderboard-score {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .activity-chart {
+            height: 120px;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 1rem;
+            gap: 0.5rem;
+        }
+
+        .chart-bar {
+            width: 100%;
+            background: var(--color-accent);
+            border-radius: 4px 4px 0 0;
+            min-height: 10px;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+        }
+
+        /* Edit Profile Mockup */
+        .edit-profile-mockup {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--color-bg-primary);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-card);
+        }
+
+        .edit-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .edit-header h2 {
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .visibility-options {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .visibility-option {
+            flex: 1;
+            padding: 1rem;
+            background: var(--color-bg-secondary);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .visibility-option:hover {
+            border-color: var(--color-accent);
+        }
+
+        .visibility-option.selected {
+            border-color: var(--color-accent);
+            background: rgba(88, 101, 242, 0.1);
+        }
+
+        .visibility-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-accent);
+        }
+
+        .visibility-label {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--color-accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--color-bg-secondary);
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-bg-tertiary);
+        }
+
+        /* Game Activity Styles */
+        .game-activity-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .game-activity-section h3 {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .game-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-item:hover {
+            background: var(--color-bg-tertiary);
+            transform: translateX(4px);
+        }
+
+        .game-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #FF4654, #dc3545);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .game-info {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .game-name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .game-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .game-stats i {
+            color: var(--color-accent);
+            font-size: 0.7rem;
+        }
+
+        .game-playtime-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--color-bg-tertiary);
+        }
+
+        .playtime-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 0 3px 3px 0;
+        }
+
+        @media (max-width: 900px) {
+            .server-profile {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .server-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <div class="mockup-header">
+            <h1><i class="fas fa-user-circle"></i> User Profile System</h1>
+            <p>Interactive mockup preview - Click tabs to switch views</p>
+        </div>
+
+        <div class="mockup-tabs">
+            <button class="mockup-tab active" onclick="showSection('primary')">
+                <i class="fas fa-globe"></i> Primary Profile
+            </button>
+            <button class="mockup-tab" onclick="showSection('server')">
+                <i class="fas fa-server"></i> Server Profile
+            </button>
+            <button class="mockup-tab" onclick="showSection('edit')">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+
+        <!-- PRIMARY PROFILE -->
+        <div id="primary-section" class="mockup-section active">
+            <div class="section-title">
+                <i class="fas fa-globe"></i> Primary Profile View - /profile/scarecrow
+            </div>
+
+            <div class="primary-profile">
+                <div class="profile-banner">
+                    <div class="profile-banner-overlay"></div>
+                </div>
+                
+                <div class="profile-avatar-section">
+                    <div class="profile-avatar">
+                        <img src="https://cdn.discordapp.com/embed/avatars/0.png" alt="User Avatar">
+                    </div>
+                    <div class="profile-name-section">
+                        <div class="profile-username">
+                            Scarecrow
+                            <div class="profile-badges">
+                                <span class="badge badge-premium"><i class="fas fa-crown"></i> Premium</span>
+                                <span class="badge badge-verified"><i class="fas fa-check"></i> Verified</span>
+                            </div>
+                        </div>
+                        <div class="profile-status">
+                            <span class="status-dot"></span>
+                            Online
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-body">
+                    <div class="profile-bio">
+                        <strong><i class="fas fa-quote-left"></i> About Me</strong>
+                        Full-stack developer passionate about Discord bots and community building. 
+                        I love creating tools that help server owners manage their communities better.
+                    </div>
+
+                    <div class="profile-stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-star"></i></div>
+                            <div class="stat-value">42,850</div>
+                            <div class="stat-label">Total Points</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-server"></i></div>
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">Servers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                            <div class="stat-value">6 yrs</div>
+                            <div class="stat-label">Account Age</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Top Ranks</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-social-links">
+                        <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link" title="Twitch"><i class="fab fa-twitch"></i></a>
+                        <a href="#" class="social-link" title="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link" title="Website"><i class="fas fa-globe"></i></a>
+                    </div>
+
+                    <!-- GAME ACTIVITY SECTION -->
+                    <div class="game-activity-section">
+                        <h3><i class="fas fa-gamepad"></i> Game Activity</h3>
+                        <div class="game-list">
+                            <div class="game-item">
+                                <div class="game-icon">
+                                    <i class="fas fa-crosshairs"></i>
+                                </div>
+                                <div class="game-info">
+                                    <div class="game-name">VALORANT</div>
+                                    <div class="game-stats">
+                                        <span><i class="fas fa-clock"></i> 342 hours</span>
+                                        <span><i class="fas fa-calendar"></i> Last played today</span>
+                                    </div>
+                                </div>
+                                <div class="game-playtime-bar">
+                                    <div class="playtime-fill" style="width: 85%;"></div>
+                                </div>
+                            </div>
+                            <div class="game-item">
+                                <div class="game-icon" style="background: linear-gradient(135deg, #5865F2, #7289da);">
+                                    <i class="fab fa-discord"></i>
+                                </div>
+                                <div class="game-info">
+                                    <div class="game-name">Visual Studio Code</div>
+                                    <div class="game-stats">
+                                        <span><i class="fas fa-clock"></i> 156 hours</span>
+                                        <span><i class="fas fa-calendar"></i> Last played yesterday</span>
+                                    </div>
+                                </div>
+                                <div class="game-playtime-bar">
+                                    <div class="playtime-fill" style="width: 45%;"></div>
+                                </div>
+                            </div>
+                            <div class="game-item">
+                                <div class="game-icon" style="background: linear-gradient(135deg, #FF6B6B, #ee5a5a);">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                                <div class="game-info">
+                                    <div class="game-name">Minecraft</div>
+                                    <div class="game-stats">
+                                        <span><i class="fas fa-clock"></i> 89 hours</span>
+                                        <span><i class="fas fa-calendar"></i> Last played 3 days ago</span>
+                                    </div>
+                                </div>
+                                <div class="game-playtime-bar">
+                                    <div class="playtime-fill" style="width: 25%;"></div>
+                                </div>
+                            </div>
+                            <div class="game-item">
+                                <div class="game-icon" style="background: linear-gradient(135deg, #43B581, #3ca374);">
+                                    <i class="fas fa-music"></i>
+                                </div>
+                                <div class="game-info">
+                                    <div class="game-name">Spotify</div>
+                                    <div class="game-stats">
+                                        <span><i class="fas fa-clock"></i> 67 hours</span>
+                                        <span><i class="fas fa-calendar"></i> Last played today</span>
+                                    </div>
+                                </div>
+                                <div class="game-playtime-bar">
+                                    <div class="playtime-fill" style="width: 18%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="featured-servers">
+                        <h3><i class="fas fa-star"></i> Featured Servers</h3>
+                        <div class="server-cards">
+                            <div class="server-mini-card">
+                                <div class="server-mini-icon">CG</div>
+                                <div class="server-mini-info">
+                                    <div class="server-mini-name">CGN Community</div>
+                                    <div class="server-mini-rank"><i class="fas fa-crown"></i> Champion</div>
+                                </div>
+                            </div>
+                            <div class="server-mini-card">
+                                <div class="server-mini-icon">DB</div>
+                                <div class="server-mini-info">
+                                    <div class="server-mini-name">Dev Hub</div>
+                                    <div class="server-mini-rank"><i class="fas fa-medal"></i> Elite</div>
+                                </div>
+                            </div>
+                            <div class="server-mini-card">
+                                <div class="server-mini-icon">GG</div>
+                                <div class="server-mini-info">
+                                    <div class="server-mini-name">Gaming Guild</div>
+                                    <div class="server-mini-rank"><i class="fas fa-star"></i> Veteran</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SERVER PROFILE -->
+        <div id="server-section" class="mockup-section">
+            <div class="section-title">
+                <i class="fas fa-server"></i> Server Profile View - /profile/scarecrow/1234567890
+            </div>
+
+            <div class="server-profile">
+                <div class="server-profile-main">
+                    <div class="server-header">
+                        <div class="server-icon">CG</div>
+                        <div>
+                            <div class="server-name">CGN Community</div>
+                            <div class="server-member-count">12,450 members</div>
+                        </div>
+                        <button class="view-server-btn">
+                            <i class="fas fa-external-link-alt"></i> View Server
+                        </button>
+                    </div>
+
+                    <div class="member-profile-section">
+                        <div class="member-header">
+                            <img class="member-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar">
+                            <div class="member-info">
+                                <h2>Scarecrow</h2>
+                                <div class="member-nickname">Nicknamed: <strong>Crow</strong></div>
+                                <div class="member-joined">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    Joined Mar 15, 2022 (2 years ago)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="member-bio">
+                            <div class="member-bio-label">Server Bio</div>
+                            <p>Helping out with bot development and community moderation. Ask me anything about custom commands!</p>
+                        </div>
+
+                        <div class="server-stats-grid">
+                            <div class="server-stat-card">
+                                <div class="server-stat-icon messages">
+                                    <i class="fas fa-comment"></i>
+                                </div>
+                                <div class="server-stat-info">
+                                    <div class="server-stat-value">15,847</div>
+                                    <div class="server-stat-label">Messages</div>
+                                </div>
+                            </div>
+                            <div class="server-stat-card">
+                                <div class="server-stat-icon voice">
+                                    <i class="fas fa-microphone"></i>
+                                </div>
+                                <div class="server-stat-info">
+                                    <div class="server-stat-value">342h</div>
+                                    <div class="server-stat-label">Voice Time</div>
+                                </div>
+                            </div>
+                            <div class="server-stat-card">
+                                <div class="server-stat-icon rank">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="server-stat-info">
+                                    <div class="server-stat-value">Champion</div>
+                                    <div class="server-stat-label">Current Rank</div>
+                                </div>
+                            </div>
+                            <div class="server-stat-card">
+                                <div class="server-stat-icon score">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="server-stat-info">
+                                    <div class="server-stat-value">8,542</div>
+                                    <div class="server-stat-label">Rank Score</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-fields-section">
+                            <div class="profile-fields-title">
+                                <i class="fas fa-id-card"></i> Custom Profile Fields
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-key">Favorite Game</span>
+                                <span class="profile-field-value">Valorant</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-key">Timezone</span>
+                                <span class="profile-field-value">CST (UTC-6)</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="profile-field-key">Pronouns</span>
+                                <span class="profile-field-value">He/Him</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="server-profile-sidebar">
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">
+                            <i class="fas fa-crown"></i> Rank Progress
+                        </div>
+                        <div class="rank-display">
+                            <div class="rank-badge">👑</div>
+                            <div class="rank-name">Champion</div>
+                            <div class="rank-position">#3 on leaderboard</div>
+                            <div class="rank-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <div class="progress-text">8,542 / 10,000 to Legend</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">
+                            <i class="fas fa-list-ol"></i> Leaderboard
+                        </div>
+                        <ul class="leaderboard-preview">
+                            <li class="leaderboard-item">
+                                <span class="leaderboard-position gold">1</span>
+                                <img class="leaderboard-avatar" src="https://cdn.discordapp.com/embed/avatars/1.png" alt="">
+                                <span class="leaderboard-name">Nighthawk</span>
+                                <span class="leaderboard-score">12,450</span>
+                            </li>
+                            <li class="leaderboard-item">
+                                <span class="leaderboard-position silver">2</span>
+                                <img class="leaderboard-avatar" src="https://cdn.discordapp.com/embed/avatars/2.png" alt="">
+                                <span class="leaderboard-name">Phoenix</span>
+                                <span class="leaderboard-score">10,230</span>
+                            </li>
+                            <li class="leaderboard-item current">
+                                <span class="leaderboard-position bronze">3</span>
+                                <img class="leaderboard-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="">
+                                <span class="leaderboard-name">Scarecrow</span>
+                                <span class="leaderboard-score">8,542</span>
+                            </li>
+                            <li class="leaderboard-item">
+                                <span class="leaderboard-position">4</span>
+                                <img class="leaderboard-avatar" src="https://cdn.discordapp.com/embed/avatars/3.png" alt="">
+                                <span class="leaderboard-name">Raven</span>
+                                <span class="leaderboard-score">7,890</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">
+                            <i class="fas fa-chart-bar"></i> Weekly Activity
+                        </div>
+                        <div class="activity-chart">
+                            <div class="chart-bar" style="height: 40%"></div>
+                            <div class="chart-bar" style="height: 65%"></div>
+                            <div class="chart-bar" style="height: 85%"></div>
+                            <div class="chart-bar" style="height: 50%"></div>
+                            <div class="chart-bar" style="height: 70%"></div>
+                            <div class="chart-bar" style="height: 90%"></div>
+                            <div class="chart-bar" style="height: 60%"></div>
+                        </div>
+                        <div class="chart-labels">
+                            <span>M</span>
+                            <span>T</span>
+                            <span>W</span>
+                            <span>T</span>
+                            <span>F</span>
+                            <span>S</span>
+                            <span>S</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EDIT PROFILE -->
+        <div id="edit-section" class="mockup-section">
+            <div class="section-title">
+                <i class="fas fa-edit"></i> Edit Profile View - /profile/me/1234567890/edit
+            </div>
+
+            <div class="edit-profile-mockup">
+                <div class="edit-header">
+                    <div class="server-icon" style="width: 40px; height: 40px; font-size: 1rem;">CG</div>
+                    <h2>Edit Server Profile</h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Server Bio</label>
+                    <textarea class="form-input form-textarea" placeholder="Tell others about yourself in this server...">Helping out with bot development and community moderation. Ask me anything about custom commands!</textarea>
+                    <div class="form-hint">Max 500 characters • Markdown supported</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Profile Visibility</label>
+                    <div class="visibility-options">
+                        <div class="visibility-option selected">
+                            <div class="visibility-icon"><i class="fas fa-globe"></i></div>
+                            <div class="visibility-label">Public</div>
+                        </div>
+                        <div class="visibility-option">
+                            <div class="visibility-icon"><i class="fas fa-users"></i></div>
+                            <div class="visibility-label">Members Only</div>
+                        </div>
+                        <div class="visibility-option">
+                            <div class="visibility-icon"><i class="fas fa-lock"></i></div>
+                            <div class="visibility-label">Private</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Custom Profile Fields</label>
+                    <div style="background: var(--color-bg-secondary); padding: 1rem; border-radius: var(--radius-lg);">
+                        <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <input type="text" class="form-input" placeholder="Field name" value="Favorite Game" style="flex: 1;">
+                            <input type="text" class="form-input" placeholder="Value" value="Valorant" style="flex: 2;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem;"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; margin-bottom: 0.75rem;">
+                            <input type="text" class="form-input" placeholder="Field name" value="Timezone" style="flex: 1;">
+                            <input type="text" class="form-input" placeholder="Value" value="CST (UTC-6)" style="flex: 2;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem;"><i class="fas fa-times"></i></button>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;">
+                            <i class="fas fa-plus"></i> Add Field
+                        </button>
+                    </div>
+                    <div class="form-hint">Up to 10 custom fields • 100 char name limit • 500 char value limit</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Accent Color</label>
+                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                        <input type="color" value="#5865F2" style="width: 50px; height: 40px; border: none; border-radius: var(--radius-md); cursor: pointer;">
+                        <input type="text" class="form-input" value="#5865F2" style="width: 120px;">
+                        <span class="form-hint" style="margin: 0;">Used for profile highlights</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button class="btn btn-secondary" style="margin-left: auto; color: var(--color-danger);">
+                        <i class="fas fa-trash"></i> Reset Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.mockup-section').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.mockup-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(section + '-section').classList.add('active');
+            
+            // Activate clicked tab
+            event.target.closest('.mockup-tab').classList.add('active');
+        }
+
+        // Visibility option selection
+        document.querySelectorAll('.visibility-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.visibility-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>

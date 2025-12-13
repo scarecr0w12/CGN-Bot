@@ -69,6 +69,10 @@
                         <span><%= authUser.username %></span>
                     </a>
                     <div class="navbar-dropdown is-right" style="background: #fff;">
+                        <a class="navbar-item" href="/profile/me" style="color: #363636;">
+                            <span class="icon is-small"><i class="fa fa-id-card"></i></span>
+                            <span>My Profile</span>
+                        </a>
                         <a class="navbar-item" href="/dashboard" style="color: #363636;">
                             <span class="icon is-small"><i class="fa fa-tachometer"></i></span>
                             <span>Dashboard</span>
@@ -107,8 +111,8 @@
         </div>
     </nav>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    <script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
+        document.addEventListener('turbolinks:load', () => {
             // Get all "navbar-burger" elements
             const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 

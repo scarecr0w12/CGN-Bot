@@ -519,7 +519,7 @@ module.exports = class ModelSQL {
 				conditions.push(`(${andConditions.join(" AND ")})`);
 			} else if (typeof value === "object" && value !== null && !Array.isArray(value)) {
 				// Check if this is a comparison operator object or a nested value
-				const operators = ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists", "$regex"];
+				const operators = ["$eq", "$ne", "$gt", "$gte", "$lt", "$lte", "$in", "$nin", "$exists", "$regex", "$like"];
 				const hasOperator = Object.keys(value).some(k => operators.includes(k));
 
 				if (hasOperator) {
@@ -580,6 +580,10 @@ module.exports = class ModelSQL {
 								break;
 							case "$regex":
 								conditions.push(`${fieldRef} REGEXP ?`);
+								params.push(opValue);
+								break;
+							case "$like":
+								conditions.push(`LOWER(${fieldRef}) LIKE LOWER(?)`);
 								params.push(opValue);
 								break;
 							default:

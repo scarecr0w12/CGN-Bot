@@ -28,3 +28,8 @@ scrape_configs:
   - job_name: 'mariadb'
     static_configs:
       - targets: ['skynetbot-mariadb-exporter:9104']
+
+  # Redis Exporter - Cache metrics
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['skynetbot-redis-exporter:9121']

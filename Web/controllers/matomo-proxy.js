@@ -3,7 +3,29 @@ const http = require("http");
 const { URL } = require("url");
 
 module.exports = async (req, res) => {
-	const { method: apiMethod, idSite, period, date, lastMinutes, filter_limit, expanded, flat, field } = req.query;
+	const {
+		method: apiMethod,
+		idSite,
+		period,
+		date,
+		lastMinutes,
+		filter_limit,
+		expanded,
+		flat,
+		field,
+		// Additional parameters for enhanced API support
+		segment,
+		columns,
+		idGoal,
+		showColumns,
+		hideColumns,
+		filter_sort_column,
+		filter_sort_order,
+		filter_offset,
+		label,
+		depth,
+		idSubtable,
+	} = req.query;
 
 	// Get Matomo configuration from environment
 	const matomoUrl = process.env.MATOMO_URL;
@@ -26,12 +48,26 @@ module.exports = async (req, res) => {
 	params.append("format", "JSON");
 	params.append("token_auth", matomoToken);
 
+	// Standard parameters
 	if (period) params.append("period", period);
 	if (date) params.append("date", date);
 	if (lastMinutes) params.append("lastMinutes", lastMinutes);
 	if (filter_limit) params.append("filter_limit", filter_limit);
 	if (expanded) params.append("expanded", expanded);
 	if (flat) params.append("flat", flat);
+
+	// Enhanced parameters
+	if (segment) params.append("segment", segment);
+	if (columns) params.append("columns", columns);
+	if (idGoal) params.append("idGoal", idGoal);
+	if (showColumns) params.append("showColumns", showColumns);
+	if (hideColumns) params.append("hideColumns", hideColumns);
+	if (filter_sort_column) params.append("filter_sort_column", filter_sort_column);
+	if (filter_sort_order) params.append("filter_sort_order", filter_sort_order);
+	if (filter_offset) params.append("filter_offset", filter_offset);
+	if (label) params.append("label", label);
+	if (depth) params.append("depth", depth);
+	if (idSubtable) params.append("idSubtable", idSubtable);
 
 	const postData = params.toString();
 

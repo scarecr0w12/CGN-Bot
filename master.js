@@ -5,6 +5,13 @@ const { Stopwatch } = require("./Modules/Utils");
 const centralClient = new SkynetClient(null);
 
 const database = require("./Database/Driver.js");
+// Lazy-load Redis to prevent startup crash if ioredis is not installed
+let Redis = null;
+try {
+	Redis = require("./Database/Redis");
+} catch (err) {
+	// Redis module not available - will use in-memory caching only
+}
 const { loadConfigs } = require("./Configurations/env.js");
 const { auth, configJS, configJSON } = loadConfigs();
 const configWarnings = [];
@@ -36,6 +43,16 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 
 		if (db && !scope.safeMode) {
 			await logger.info(`Connected to ${isMariaDB ? "MariaDB" : "MongoDB"} successfully.`);
+
+			// Initialize Redis if configured and available
+			if (Redis && Redis.isEnabled()) {
+				try {
+					await Redis.createClient();
+					logger.info("Redis client initialized successfully.");
+				} catch (err) {
+					logger.warn("Redis initialization failed, falling back to in-memory caching", {}, err);
+				}
+			}
 
 			logger.silly("Confirming auth.js config values.");
 			if (Object.values(auth.tokens).some(token => token === "")) {

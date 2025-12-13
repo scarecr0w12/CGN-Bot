@@ -112,6 +112,65 @@
 							</a>
 						</div>
 					</div>
+					<!-- Global Actions -->
+					<article class="message is-info" style="margin-top: 1.5rem;">
+						<div class="message-header">
+							<p><span class="icon"><i class="fa fa-cogs"></i></span> Global Actions</p>
+						</div>
+						<div class="message-body">
+							<p style="margin-bottom: 1rem;">
+								<strong>Global Member Scan</strong> - Index all members from all servers into the database so they appear in user search on the Activity page.
+							</p>
+							<button id="global-scan-btn" class="button is-primary" onclick="SkynetUtil.globalScan()">
+								<span class="icon"><i class="fa fa-refresh"></i></span>
+								<span>Scan All Servers</span>
+							</button>
+							<div id="global-scan-result" style="margin-top: 1rem; display: none;"></div>
+						</div>
+					</article>
+
+					<script>
+					SkynetUtil.globalScan = async () => {
+						const btn = document.getElementById('global-scan-btn');
+						const resultDiv = document.getElementById('global-scan-result');
+						btn.classList.add('is-loading');
+						btn.disabled = true;
+						resultDiv.style.display = 'none';
+
+						try {
+							const response = await fetch('/dashboard/maintainer/global-scan', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' }
+							});
+							const data = await response.json();
+
+							if (data.success) {
+								let html = '<div class="notification is-success">' +
+									'<strong>Global Scan Complete!</strong><br>' +
+									'Servers Scanned: ' + data.serversScanned + '/' + data.totalServers + '<br>' +
+									'Total Members: ' + data.totalMembers + '<br>' +
+									'New Users Created: ' + data.created + '<br>' +
+									'Usernames Updated: ' + data.updated + '<br>' +
+									'Already Up-to-date: ' + data.skipped;
+								if (data.errors && data.errors.length > 0) {
+									html += '<br><br><strong>Errors:</strong><br>';
+									data.errors.forEach(e => { html += e.server + ': ' + e.error + '<br>'; });
+								}
+								html += '</div>';
+								resultDiv.innerHTML = html;
+							} else {
+								resultDiv.innerHTML = '<div class="notification is-danger">Error: ' + (data.error || 'Unknown error') + '</div>';
+							}
+						} catch (err) {
+							resultDiv.innerHTML = '<div class="notification is-danger">Error: ' + err.message + '</div>';
+						}
+
+						btn.classList.remove('is-loading');
+						btn.disabled = false;
+						resultDiv.style.display = 'block';
+					};
+					</script>
+
 					<div class="traffic-chart-container">
 						<h4 class="title is-4">Web Interface Traffic</h4>
 						<div class="box">

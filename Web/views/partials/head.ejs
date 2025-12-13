@@ -1,4 +1,12 @@
 <%
+// Defensive variable initialization for error pages and edge cases
+const _pageData = typeof pageData !== "undefined" ? pageData : {};
+const _hostingURL = typeof hostingURL !== "undefined" ? hostingURL : "";
+const _currentPath = typeof currentPath !== "undefined" ? currentPath : "";
+const _isProduction = typeof isProduction !== "undefined" ? isProduction : false;
+const _disableExternalScripts = typeof disableExternalScripts !== "undefined" ? disableExternalScripts : false;
+const _injection = typeof injection !== "undefined" ? injection : { headScript: "", pageScript: "" };
+
 // SEO Configuration - can be overridden per page via pageData.seo
 const defaultSeo = {
 	title: "Skynet - Free Discord Bot for Moderation, Fun & Server Management",
@@ -9,9 +17,9 @@ const defaultSeo = {
 	siteName: "Skynet Discord Bot"
 };
 
-const seo = typeof pageData !== "undefined" && pageData.seo ? { ...defaultSeo, ...pageData.seo } : defaultSeo;
-const currentUrl = typeof hostingURL !== "undefined" && typeof currentPath !== "undefined" ? hostingURL.replace(/\/$/, "") + currentPath : (typeof hostingURL !== "undefined" ? hostingURL : "");
-const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingURL !== "undefined" ? hostingURL.replace(/\/$/, "") + seo.image : seo.image);
+const seo = _pageData.seo ? { ...defaultSeo, ..._pageData.seo } : defaultSeo;
+const currentUrl = _hostingURL ? _hostingURL.replace(/\/$/, "") + _currentPath : "";
+const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _hostingURL.replace(/\/$/, "") + seo.image : seo.image);
 %>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -59,7 +67,7 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingU
 <link rel="apple-touch-icon" sizes="180x180" href="/static/img/logo.png">
 
 <!-- Structured Data - Organization -->
-<script type="application/ld+json">
+<script type="application/ld+json"<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 {
 	"@context": "https://schema.org",
 	"@type": "SoftwareApplication",
@@ -90,7 +98,7 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingU
 
 <% if (typeof pageData !== "undefined" && pageData.breadcrumbs) { %>
 <!-- Structured Data - Breadcrumbs -->
-<script type="application/ld+json">
+<script type="application/ld+json"<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 {
 	"@context": "https://schema.org",
 	"@type": "BreadcrumbList",
@@ -145,29 +153,38 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (typeof hostingU
 <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 
-<% if (typeof injection !== "undefined" && injection.headScript) { %>
-	<% if (typeof isProduction !== "undefined" && isProduction && !(typeof disableExternalScripts !== "undefined" && disableExternalScripts)) { %>
-		<%- injection.headScript %>
-	<% } %>
+<!-- Matomo Analytics -->
+<% const _matomoUrl = typeof matomoUrl !== "undefined" ? matomoUrl : ""; const _matomoSiteId = typeof matomoSiteId !== "undefined" ? matomoSiteId : ""; %>
+<% if (_isProduction && _matomoUrl && _matomoSiteId) { %>
+<script>
+  var _paq = window._paq = window._paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="<%= _matomoUrl %>";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '<%= _matomoSiteId %>']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
 <% } %>
 
-<% if (
-	typeof injection !== "undefined" &&
-	injection.pageScript &&
-	typeof isProduction !== "undefined" &&
-	isProduction &&
-	!(typeof disableExternalScripts !== "undefined" && disableExternalScripts)
-) { %>
-<script>
+<% if (_injection.headScript && _isProduction && !_disableExternalScripts) { %>
+	<%- _injection.headScript %>
+<% } %>
+
+<% if (_injection.pageScript && _isProduction && !_disableExternalScripts) { %>
+<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 	document.addEventListener("turbolinks:load", () => {
-		<%- injection.pageScript %>
+		<%- _injection.pageScript %>
 	});
 </script>
 <% } %>
 
 <% if (typeof officialMode !== "undefined" && officialMode) { %>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
+    <script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 	    (adsbygoogle = window.adsbygoogle || []).push({
 		    google_ad_client: "<%= adsense.ID %>",
 		    enable_page_level_ads: true

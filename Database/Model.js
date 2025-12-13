@@ -18,16 +18,34 @@ module.exports = class Model {
 		this._cache = new Map();
 	}
 
+	/**
+	 * Find documents matching the query
+	 * @param {Object} query MongoDB query object
+	 * @param {Object} [opts] MongoDB find options
+	 * @returns {Cursor} A custom Cursor instance
+	 */
 	find (query, opts) {
 		const rawCursor = this._find(query, opts, true);
 
 		return new Cursor(rawCursor, this);
 	}
 
+	/**
+	 * Perform an aggregation pipeline
+	 * @param {Array} pipeline Aggregation pipeline stages
+	 * @param {Object} [opts] Aggregation options
+	 * @returns {Promise<Array>} Array of results
+	 */
 	aggregate (pipeline, opts) {
 		return this._client.aggregate(pipeline, opts).toArray();
 	}
 
+	/**
+	 * Count documents matching the query
+	 * @param {Object} query MongoDB query object
+	 * @param {Object} [opts] Count options
+	 * @returns {Promise<number>} Count of documents
+	 */
 	count (query, opts) {
 		return this._client.countDocuments(query, opts);
 	}

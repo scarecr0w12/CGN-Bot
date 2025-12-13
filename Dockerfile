@@ -16,7 +16,10 @@ RUN apt-get update && apt-get install -y \
 COPY package*.json ./
 
 # Install dependencies - force rebuild of native modules from source
+# Add cache-bust argument to force fresh install
+ARG CACHEBUST=1
 RUN npm cache clean --force && \
+    rm -rf node_modules && \
     npm install --build-from-source
 
 # Bundle app source

@@ -191,4 +191,62 @@ module.exports = new Schema({
 			discordbotlist_last: Date,
 		}),
 	}),
+
+	// Primary Profile (global profile across all servers)
+	primary_profile: new Schema({
+		bio: {
+			type: String,
+			maxlength: 1000,
+		},
+		banner_image: String,
+		banner_color: {
+			type: String,
+			default: "#5865F2",
+		},
+		social_links: new Schema({
+			twitter: String,
+			github: String,
+			twitch: String,
+			youtube: String,
+			website: String,
+			steam: String,
+		}),
+		featured_servers: [String],
+	}),
+
+	// Game Activity Tracking (global)
+	game_activity: [new Schema({
+		_id: {
+			type: String,
+			required: true,
+		},
+		display_name: String,
+		total_minutes: {
+			type: Number,
+			default: 0,
+		},
+		session_count: {
+			type: Number,
+			default: 0,
+		},
+		last_played: Date,
+		first_played: Date,
+	})],
+
+	// Game tracking settings
+	game_tracking: new Schema({
+		enabled: {
+			type: Boolean,
+			default: true,
+		},
+		show_on_profile: {
+			type: Boolean,
+			default: true,
+		},
+		hidden_games: [String],
+		show_non_games: {
+			type: Boolean,
+			default: false,
+		},
+	}),
 });

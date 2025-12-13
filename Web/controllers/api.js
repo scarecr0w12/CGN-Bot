@@ -1,7 +1,6 @@
 const { APIResponses } = require("../../Internals/Constants");
 const { GetGuild } = require("../../Modules").getGuild;
 const parsers = require("../parsers");
-const { getUserList } = require("../helpers");
 
 const controllers = module.exports;
 
@@ -67,22 +66,18 @@ controllers.users = async (req, res) => {
 };
 
 controllers.users.list = async (req, res) => {
-	if (req.isAuthorized) {
-		await req.svr.fetchMember(req.svr.memberList);
-		res.json(getUserList(Object.values(req.svr.members).map(member => member.user)));
+	// Return list of usernames from database for autocomplete
+	const userDocuments = await Users.aggregate([{
+		$project: {
+			username: 1,
+		},
+	}]);
+	if (userDocuments) {
+		const response = userDocuments.map(usr => usr.username || null).filter(u => u !== null && u.split("#")[1] !== "0000").sort();
+		response.spliceNullElements();
+		res.json(response);
 	} else {
-		const userDocuments = await Users.aggregate([{
-			$project: {
-				username: 1,
-			},
-		}]);
-		if (userDocuments) {
-			const response = userDocuments.map(usr => usr.username || null).filter(u => u !== null && u.split("#")[1] !== "0000").sort();
-			response.spliceNullElements();
-			res.json(response);
-		} else {
-			res.status(500);
-		}
+		res.status(500).json([]);
 	}
 };
 

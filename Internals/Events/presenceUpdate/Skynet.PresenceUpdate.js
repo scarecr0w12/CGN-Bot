@@ -1,5 +1,6 @@
 const BaseEvent = require("../BaseEvent.js");
 const { StatusMessages } = require("../../Constants");
+const GameActivityTracker = require("../../../Modules/GameActivityTracker");
 
 class PresenceUpdate extends BaseEvent {
 	requirements (oldPresence, presence) {
@@ -10,6 +11,11 @@ class PresenceUpdate extends BaseEvent {
 	}
 
 	async handle (oldPresence, presence) {
+		// Track game activity regardless of status message settings
+		GameActivityTracker.handlePresenceUpdate(oldPresence, presence).catch(err => {
+			logger.debug(`Failed to track game activity`, { svrid: presence?.guild?.id, usrid: presence?.user?.id }, err);
+		});
+
 		const serverDocument = await Servers.findOne(presence.guild.id);
 		if (!serverDocument) {
 			// Silently skip - guild may not have initialized yet or status messages aren't configured

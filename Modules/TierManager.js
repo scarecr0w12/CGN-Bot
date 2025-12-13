@@ -11,22 +11,49 @@
  * - Caching tier/feature configurations for performance
  */
 
+// Lazy-load Redis to prevent startup crash if ioredis is not installed
+let Redis = null;
+try {
+	Redis = require("../Database/Redis");
+} catch (err) {
+	// Redis module not available - will use in-memory cache only
+}
+
 // Cache for site settings (tiers/features)
 let settingsCache = null;
 let settingsCacheTime = 0;
 // 1 minute cache TTL
 const CACHE_TTL = 60000;
+const REDIS_CACHE_KEY = "cache:site_settings";
 
 /**
- * Get site settings with caching
+ * Get site settings with caching (Redis > in-memory > database)
  * @returns {Promise<Object>}
  */
 const getSiteSettings = async () => {
 	const now = Date.now();
+
+	// Check in-memory cache first
 	if (settingsCache && (now - settingsCacheTime) < CACHE_TTL) {
 		return settingsCache;
 	}
 
+	// Try Redis cache if available
+	if (Redis && Redis.isEnabled() && Redis.isReady()) {
+		try {
+			const client = Redis.getClient();
+			const cached = await client.get(REDIS_CACHE_KEY);
+			if (cached) {
+				settingsCache = JSON.parse(cached);
+				settingsCacheTime = now;
+				return settingsCache;
+			}
+		} catch (err) {
+			logger.warn("Redis getSiteSettings cache read failed", {}, err);
+		}
+	}
+
+	// Fetch from database
 	settingsCache = await SiteSettings.findOne("main");
 	if (!settingsCache) {
 		// Create default settings if none exist
@@ -35,15 +62,36 @@ const getSiteSettings = async () => {
 		settingsCache = await SiteSettings.findOne("main");
 	}
 	settingsCacheTime = now;
+
+	// Store in Redis cache if available
+	if (Redis && Redis.isEnabled() && Redis.isReady() && settingsCache) {
+		try {
+			const client = Redis.getClient();
+			// Cache for 60 seconds
+			await client.setex(REDIS_CACHE_KEY, 60, JSON.stringify(settingsCache));
+		} catch (err) {
+			logger.warn("Redis getSiteSettings cache write failed", {}, err);
+		}
+	}
+
 	return settingsCache;
 };
 
 /**
  * Invalidate the settings cache (call after updates)
  */
-const invalidateCache = () => {
+const invalidateCache = async () => {
 	settingsCache = null;
 	settingsCacheTime = 0;
+
+	// Also invalidate Redis cache
+	if (Redis && Redis.isEnabled() && Redis.isReady()) {
+		try {
+			await Redis.getClient().del(REDIS_CACHE_KEY);
+		} catch (err) {
+			logger.warn("Redis invalidateCache failed", {}, err);
+		}
+	}
 };
 
 /**

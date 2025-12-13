@@ -1096,6 +1096,25 @@ SkynetPaths.wiki = () => {
 	});
 };
 
+SkynetPaths.profile = () => {
+	// Initialize profile page - handle modals and fade-in animations
+	$(".modal-button").click(function () {
+		const target = $(this).data("target");
+		$(target).addClass("is-active");
+		$("html").addClass("is-clipped");
+	});
+
+	$(".modal .delete, .modal .modal-close, .modal .modal-background").click(function () {
+		$(this).closest(".modal").removeClass("is-active");
+		$("html").removeClass("is-clipped");
+	});
+
+	// Fade-in animations
+	document.querySelectorAll(".fade-in").forEach(el => {
+		el.classList.add("is-visible");
+	});
+};
+
 SkynetPaths.dashboard = () => SkynetUtil.dashboardWrapper(() => {
 	$(".close-update-modal").unbind();
 	$(".close-update-modal").click(() => {

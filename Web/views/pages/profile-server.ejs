@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= profile.user.displayName %> in <%= profile.server.name %> | Skynet</title>
+	<meta name="turbolinks-cache-control" content="no-cache">
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: profile.user.displayName + " in " + profile.server.name + " | Skynet",
+		description: "View " + profile.user.displayName + "'s profile in " + profile.server.name + " on Skynet."
+	};
+	%>
+	<%- include('../partials/head') %>
+	<style>
+/* Server Profile Styles */
+.server-profile-container {
+	max-width: 1100px;
+	margin: 0 auto;
+	padding: 1rem;
+	display: grid;
+	grid-template-columns: 1fr 350px;
+	gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+	.server-profile-container {
+		grid-template-columns: 1fr;
+	}
+}
+
+.server-profile-main {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+}
+
+.server-header {
+	background: var(--color-bg-secondary);
+	padding: 1.25rem 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	border-bottom: 1px solid var(--color-border);
+	flex-wrap: wrap;
+}
+
+.server-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: var(--radius-md);
+	background: var(--gradient-primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 1.25rem;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.server-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.server-name {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.server-member-count {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+}
+
+.view-primary-btn {
+	margin-left: auto;
+}
+
+.member-profile-section {
+	padding: 1.5rem;
+}
+
+.member-header {
+	display: flex;
+	align-items: center;
+	gap: 1.25rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.member-avatar {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	border: 4px solid var(--color-accent);
+	flex-shrink: 0;
+}
+
+.member-info {
+	flex-grow: 1;
+}
+
+.member-info h2 {
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin-bottom: 0.25rem;
+}
+
+.member-nickname {
+	color: var(--color-accent);
+	font-size: 0.875rem;
+}
+
+.member-joined {
+	color: var(--color-text-muted);
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.member-bio {
+	background: var(--color-bg-secondary);
+	padding: 1.25rem;
+	border-radius: var(--radius-lg);
+	margin-bottom: 1.5rem;
+}
+
+.member-bio-label {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	margin-bottom: 0.5rem;
+}
+
+.member-bio p {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+	margin: 0;
+}
+
+.server-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+@media (max-width: 500px) {
+	.server-stats-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.server-stat-card {
+	background: var(--color-bg-secondary);
+	padding: 1.25rem;
+	border-radius: var(--radius-lg);
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.server-stat-icon {
+	width: 50px;
+	height: 50px;
+	border-radius: var(--radius-lg);
+	background: var(--color-bg-tertiary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.25rem;
+	flex-shrink: 0;
+}
+
+.server-stat-icon.messages { color: #5865F2; }
+.server-stat-icon.voice { color: #57F287; }
+.server-stat-icon.rank { color: #FEE75C; }
+.server-stat-icon.score { color: #EB459E; }
+
+.server-stat-info {
+	flex-grow: 1;
+}
+
+.server-stat-value {
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.server-stat-label {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+}
+
+.profile-fields-section {
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+	padding: 1.25rem;
+}
+
+.profile-fields-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.profile-field {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.75rem 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.profile-field:last-child {
+	border-bottom: none;
+}
+
+.profile-field-key {
+	color: var(--color-text-muted);
+}
+
+.profile-field-value {
+	color: var(--color-text-primary);
+	font-weight: 500;
+}
+
+/* Sidebar */
+.server-profile-sidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.sidebar-card {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-xl);
+	padding: 1.5rem;
+	box-shadow: var(--shadow-card);
+}
+
+.sidebar-title {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.rank-display {
+	text-align: center;
+	padding: 1.5rem;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+}
+
+.rank-badge {
+	width: 80px;
+	height: 80px;
+	margin: 0 auto 1rem;
+	background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
+}
+
+.rank-name {
+	font-size: 1.25rem;
+	font-weight: 700;
+	color: #fda085;
+}
+
+.rank-position {
+	color: var(--color-text-muted);
+	font-size: 0.875rem;
+	margin-top: 0.25rem;
+}
+
+.rank-progress {
+	margin-top: 1rem;
+}
+
+.progress-bar {
+	height: 8px;
+	background: var(--color-bg-tertiary);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.progress-fill {
+	height: 100%;
+	background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+	border-radius: 4px;
+}
+
+.progress-text {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	margin-top: 0.5rem;
+}
+
+.leaderboard-preview {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.leaderboard-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	border-radius: var(--radius-md);
+	margin-bottom: 0.5rem;
+	background: var(--color-bg-secondary);
+}
+
+.leaderboard-item.current {
+	background: rgba(88, 101, 242, 0.2);
+	border: 1px solid var(--color-accent);
+}
+
+.leaderboard-position {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--color-bg-tertiary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 0.875rem;
+	flex-shrink: 0;
+}
+
+.leaderboard-position.gold { background: #FFD700; color: #1a1a2e; }
+.leaderboard-position.silver { background: #C0C0C0; color: #1a1a2e; }
+.leaderboard-position.bronze { background: #CD7F32; color: #1a1a2e; }
+
+.leaderboard-avatar {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.leaderboard-name {
+	flex-grow: 1;
+	font-weight: 500;
+	font-size: 0.875rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.leaderboard-score {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+}
+</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body" style="padding: 2rem 1.5rem;">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
+						<i class="fa fa-server"></i> Server Profile
+					</h1>
+					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+						<%= profile.user.displayName %> in <%= profile.server.name %>
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+<section id="frame" class="section" style="background: var(--color-bg-secondary); min-height: calc(100vh - 200px);">
+	<div class="server-profile-container">
+		<div class="server-profile-main fade-in">
+			<div class="server-header">
+				<div class="server-icon">
+					<% if (profile.server.icon) { %>
+						<img src="<%= profile.server.icon %>" alt="<%= profile.server.name %>">
+					<% } else { %>
+						<%= profile.server.name.charAt(0) %>
+					<% } %>
+				</div>
+				<div>
+					<div class="server-name"><%= profile.server.name %></div>
+					<div class="server-member-count"><%= profile.server.memberCount.toLocaleString() %> members</div>
+				</div>
+				<div class="view-primary-btn">
+					<a href="/profile/<%= profile.user.id %>" class="button is-light is-small">
+						<span class="icon"><i class="fa fa-user"></i></span>
+						<span>Primary Profile</span>
+					</a>
+				</div>
+			</div>
+
+			<div class="member-profile-section">
+				<div class="member-header">
+					<img class="member-avatar" src="<%= profile.user.avatar %>" alt="<%= profile.user.username %>">
+					<div class="member-info">
+						<h2><%= profile.user.displayName %></h2>
+						<% if (profile.memberData.joinedAt) { %>
+							<div class="member-joined">
+								<i class="fa fa-calendar-plus"></i>
+								Joined <strong><%= new Date(profile.memberData.joinedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></strong>
+							</div>
+						<% } %>
+					</div>
+					<% if (profile.isOwnProfile) { %>
+						<a href="/profile/me/<%= profile.server.id %>/edit" class="button is-primary is-modern">
+							<span class="icon"><i class="fa fa-edit"></i></span>
+							<span>Edit</span>
+						</a>
+					<% } %>
+				</div>
+
+				<% if (profile.serverProfile.bio) { %>
+					<div class="member-bio">
+						<div class="member-bio-label">Server Bio</div>
+						<p><%= profile.serverProfile.bio %></p>
+					</div>
+				<% } %>
+
+				<div class="server-stats-grid">
+					<div class="server-stat-card">
+						<div class="server-stat-icon messages">
+							<i class="fa fa-comment"></i>
+						</div>
+						<div class="server-stat-info">
+							<div class="server-stat-value"><%= profile.memberData.messages.toLocaleString() %></div>
+							<div class="server-stat-label">Messages</div>
+						</div>
+					</div>
+					<div class="server-stat-card">
+						<div class="server-stat-icon voice">
+							<i class="fa fa-microphone"></i>
+						</div>
+						<div class="server-stat-info">
+							<div class="server-stat-value"><%= profile.memberData.voiceHours %>h</div>
+							<div class="server-stat-label">Voice Time</div>
+						</div>
+					</div>
+					<div class="server-stat-card">
+						<div class="server-stat-icon rank">
+							<i class="fa fa-trophy"></i>
+						</div>
+						<div class="server-stat-info">
+							<div class="server-stat-value"><%= profile.memberData.rank %></div>
+							<div class="server-stat-label">Current Rank</div>
+						</div>
+					</div>
+					<div class="server-stat-card">
+						<div class="server-stat-icon score">
+							<i class="fa fa-chart-line"></i>
+						</div>
+						<div class="server-stat-info">
+							<div class="server-stat-value"><%= profile.memberData.rankScore.toLocaleString() %></div>
+							<div class="server-stat-label">Rank Score</div>
+						</div>
+					</div>
+				</div>
+
+				<% const profileFields = profile.profileFields; %>
+				<% if (profileFields && Object.keys(profileFields).length > 0) { %>
+					<div class="profile-fields-section">
+						<div class="profile-fields-title">
+							<i class="fa fa-id-card"></i> Custom Profile Fields
+						</div>
+						<% for (const key in profileFields) { %>
+							<div class="profile-field">
+								<span class="profile-field-key"><%= key.charAt(0).toUpperCase() + key.slice(1) %></span>
+								<span class="profile-field-value"><%- profileFields[key] %></span>
+							</div>
+						<% } %>
+					</div>
+				<% } %>
+			</div>
+		</div>
+
+		<div class="server-profile-sidebar">
+			<% if (profile.rankProgress || profile.leaderboardPosition) { %>
+				<div class="sidebar-card fade-in">
+					<div class="sidebar-title">
+						<i class="fa fa-crown"></i> Rank Progress
+					</div>
+					<div class="rank-display">
+						<div class="rank-badge">
+							<% if (profile.memberData.rank === 'No Rank') { %>
+								<i class="fa fa-star" style="color: #1a1a2e;"></i>
+							<% } else { %>
+								👑
+							<% } %>
+						</div>
+						<div class="rank-name"><%= profile.memberData.rank %></div>
+						<% if (profile.leaderboardPosition) { %>
+							<div class="rank-position">#<%= profile.leaderboardPosition %> on leaderboard</div>
+						<% } %>
+						<% if (profile.rankProgress) { %>
+							<div class="rank-progress">
+								<div class="progress-bar">
+									<div class="progress-fill" style="width: <%= profile.rankProgress.progress %>%;"></div>
+								</div>
+								<div class="progress-text">
+									<%= profile.rankProgress.currentScore.toLocaleString() %> / <%= profile.rankProgress.nextScore.toLocaleString() %> to <%= profile.rankProgress.nextRank %>
+								</div>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			<% } %>
+
+			<% if (profile.leaderboardData.length > 0) { %>
+				<div class="sidebar-card fade-in">
+					<div class="sidebar-title">
+						<i class="fa fa-list-ol"></i> Leaderboard
+					</div>
+					<ul class="leaderboard-preview">
+						<% profile.leaderboardData.forEach(member => { %>
+							<li class="leaderboard-item <%= member.isCurrent ? 'current' : '' %>">
+								<span class="leaderboard-position <%= member.position === 1 ? 'gold' : member.position === 2 ? 'silver' : member.position === 3 ? 'bronze' : '' %>">
+									<%= member.position %>
+								</span>
+								<img class="leaderboard-avatar" src="<%= member.avatar %>" alt="<%= member.username %>">
+								<span class="leaderboard-name"><%= member.username %></span>
+								<span class="leaderboard-score"><%= member.rankScore.toLocaleString() %></span>
+							</li>
+						<% }); %>
+					</ul>
+				</div>
+			<% } %>
+
+			<div class="sidebar-card fade-in">
+				<div class="sidebar-title">
+					<i class="fa fa-info-circle"></i> Quick Stats
+				</div>
+				<div style="display: flex; flex-direction: column; gap: 0.75rem;">
+					<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border);">
+						<span style="color: var(--color-text-muted);">User ID</span>
+						<code style="font-size: 0.8rem;"><%= profile.user.id %></code>
+					</div>
+					<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border);">
+						<span style="color: var(--color-text-muted);">Server ID</span>
+						<code style="font-size: 0.8rem;"><%= profile.server.id %></code>
+					</div>
+					<% if (profile.memberData.lastActive) { %>
+						<div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+							<span style="color: var(--color-text-muted);">Last Active</span>
+							<span><%= new Date(profile.memberData.lastActive).toLocaleDateString() %></span>
+						</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<%- include("../partials/footer") %>
+</body>
+</html>

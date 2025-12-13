@@ -19,6 +19,65 @@ const TierManager = require("../../../Modules/TierManager");
 
 const controllers = module.exports;
 
+/**
+ * Scan server members and create user documents for any missing users
+ * POST /:svrid/administration/scan-members
+ */
+controllers.scanMembers = async (req, res) => {
+	try {
+		const guild = req.app.client.guilds.cache.get(req.svr.id);
+		if (!guild) {
+			return res.status(404).json({ error: "Server not found in cache" });
+		}
+
+		// Fetch all members
+		console.log(`[SCAN] Starting member scan for server ${guild.name} (${guild.id})`);
+		const members = await guild.members.fetch();
+
+		let created = 0;
+		let updated = 0;
+		let skipped = 0;
+
+		for (const [memberId, member] of members) {
+			// Skip bots
+			if (member.user.bot) {
+				skipped++;
+				continue;
+			}
+
+			let userDocument = await Users.findOne(memberId);
+			if (!userDocument) {
+				// Create new user document
+				userDocument = Users.new({ _id: memberId });
+				userDocument.username = member.user.username;
+				await userDocument.save();
+				created++;
+			} else if (!userDocument.username || userDocument.username !== member.user.username) {
+				// Update username if missing or changed
+				userDocument.query.set("username", member.user.username);
+				await userDocument.save();
+				updated++;
+			} else {
+				skipped++;
+			}
+		}
+
+		console.log(`[SCAN] Completed scan for ${guild.name}: created=${created}, updated=${updated}, skipped=${skipped}`);
+
+		res.json({
+			success: true,
+			serverName: guild.name,
+			totalMembers: members.size,
+			created,
+			updated,
+			skipped,
+		});
+	} catch (err) {
+		console.error("[SCAN ERROR]", err);
+		res.status(500).json({ error: err.message });
+	}
+};
+
 controllers.admins = async (req, { res }) => {
 	await req.svr.fetchCollection("roles");
 

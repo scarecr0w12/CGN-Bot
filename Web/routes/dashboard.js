@@ -50,6 +50,9 @@ module.exports = router => {
 	setupDashboardPage(router, "/administration/roles", [], controllers.dashboard.administration.roles);
 	setupDashboardPage(router, "/administration/logs", [], controllers.dashboard.administration.logs);
 
+	// Scan members API endpoint
+	router.post("/:svrid/administration/scan-members", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.administration.scanMembers);
+
 	// Other
 	setupDashboardPage(router, "/other/name-display", [], controllers.dashboard.other.nameDisplay);
 	setupDashboardPage(router, "/other/ongoing-activities", [], controllers.dashboard.other.activities);

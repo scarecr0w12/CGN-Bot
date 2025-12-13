@@ -230,7 +230,7 @@
 }
 </style>
 
-<script>
+<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
 (function() {
 	const toggle = document.getElementById('feedback-toggle');
 	const form = document.getElementById('feedback-form');

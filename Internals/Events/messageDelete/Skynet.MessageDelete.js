@@ -54,7 +54,8 @@ class MessageDelete extends BaseEvent {
 		}
 
 		// Find upvoted message and decrement points
-		for (const voteTrigger of configJS.voteTriggers) {
+		const voteTriggers = configJS.voteTriggers || [];
+		for (const voteTrigger of voteTriggers) {
 			if (msg.content.startsWith(voteTrigger)) {
 				const message = (await msg.channel.messages.fetch({
 					limit: 1,

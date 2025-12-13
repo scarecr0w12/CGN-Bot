@@ -1,21 +1,41 @@
 const { rateLimit } = require("express-rate-limit");
+const Redis = require("../../Database/Redis");
 
 const { setupResource } = require("../helpers");
 const middleware = require("../middleware");
 const controllers = require("../controllers");
 
+// Build rate limiter with Redis store if available (cross-shard rate limiting)
+const buildApiRateLimiter = () => {
+	const options = {
+		windowMs: 3600000, // 1 hour
+		max: 150,
+		standardHeaders: true,
+		legacyHeaders: false,
+		message: { error: "Too many requests, please try again later." },
+	};
+
+	if (Redis.isEnabled() && Redis.isReady()) {
+		const { RedisStore } = require("rate-limit-redis");
+		options.store = new RedisStore({
+			sendCommand: (...args) => Redis.getClient().call(...args),
+			prefix: "rl:api:",
+		});
+	}
+
+	return rateLimit(options);
+};
+
 // SkynetBot Data API
 module.exports = router => {
-	// Configure RateLimit
+	// Configure RateLimit with Redis store for cross-shard consistency
 	// Note: Rate limiting bypass checks user's servers for api_unlimited feature
-	// This is because API rate limiting is per-user (preventing abuse), while
-	// feature access is per-server. If user is admin of any premium server, they
-	// bypass rate limits.
+	const apiRateLimiter = buildApiRateLimiter();
+
 	router.use("/api/", async (req, res, next) => {
 		if (req.isAuthenticated()) {
 			const TierManager = require("../../Modules/TierManager");
 			// Check if any server the user owns/administers has api_unlimited
-			// For simplicity, we check if req.params.svrid exists and that server has it
 			const serverId = req.params?.svrid || req.query?.svrid;
 			if (serverId) {
 				const hasUnlimited = await TierManager.canAccess(serverId, "api_unlimited");
@@ -25,11 +45,7 @@ module.exports = router => {
 			}
 		}
 		// Apply rate limit for requests without premium server context
-		rateLimit({
-			windowMs: 3600000,
-			max: 150,
-			delayMs: 0,
-		})(req, res, next);
+		apiRateLimiter(req, res, next);
 	});
 
 	// Public endpoints (no api_access required)
@@ -46,7 +62,7 @@ module.exports = router => {
 	// Protected endpoints (require api_access feature)
 	setupResource(router, "/servers/:svrid/channels", [middleware.requireFeature("api_access")], controllers.api.servers.channels, "get", "authorization");
 	setupResource(router, "/list/servers", [middleware.requireFeature("api_access")], controllers.api.servers.list, "get", "authentication");
-	setupResource(router, "/list/users", [middleware.requireFeature("api_access"), middleware.authorizeGuildAccess], controllers.api.users.list, "get", "authentication");
+	setupResource(router, "/list/users", [], controllers.api.users.list, "get", "public");
 	setupResource(router, "/users", [middleware.requireFeature("api_access")], controllers.api.users, "get", "authentication");
 
 	// 404 handler

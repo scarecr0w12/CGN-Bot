@@ -149,6 +149,72 @@ controllers.servers.bigmessage.post = async (req, res) => {
 	}
 };
 
+/**
+ * Global scan - scan all servers for members and create user documents
+ * POST /dashboard/maintainer/global-scan
+ */
+controllers.globalScan = async (req, res) => {
+	try {
+		const guilds = req.app.client.guilds.cache;
+		console.log(`[GLOBAL SCAN] Starting global scan for ${guilds.size} servers`);
+
+		let totalCreated = 0;
+		let totalUpdated = 0;
+		let totalSkipped = 0;
+		let totalMembers = 0;
+		let serversScanned = 0;
+		const errors = [];
+
+		for (const [guildId, guild] of guilds) {
+			try {
+				const members = await guild.members.fetch();
+				totalMembers += members.size;
+
+				for (const [memberId, member] of members) {
+					if (member.user.bot) {
+						totalSkipped++;
+						continue;
+					}
+
+					let userDocument = await Users.findOne(memberId);
+					if (!userDocument) {
+						userDocument = Users.new({ _id: memberId });
+						userDocument.username = member.user.username;
+						await userDocument.save();
+						totalCreated++;
+					} else if (!userDocument.username || userDocument.username !== member.user.username) {
+						userDocument.query.set("username", member.user.username);
+						await userDocument.save();
+						totalUpdated++;
+					} else {
+						totalSkipped++;
+					}
+				}
+				serversScanned++;
+			} catch (err) {
+				console.error(`[GLOBAL SCAN] Error scanning ${guild.name}:`, err.message);
+				errors.push({ server: guild.name, error: err.message });
+			}
+		}
+
+		console.log(`[GLOBAL SCAN] Complete: servers=${serversScanned}, created=${totalCreated}, updated=${totalUpdated}, skipped=${totalSkipped}`);
+
+		res.json({
+			success: true,
+			serversScanned,
+			totalServers: guilds.size,
+			totalMembers,
+			created: totalCreated,
+			updated: totalUpdated,
+			skipped: totalSkipped,
+			errors: errors.length > 0 ? errors : undefined,
+		});
+	} catch (err) {
+		console.error("[GLOBAL SCAN ERROR]", err);
+		res.status(500).json({ error: err.message });
+	}
+};
+
 controllers.options = {};
 
 controllers.options.blocklist = async (req, { res }) => {
@@ -964,18 +1030,30 @@ controllers.management.shards.post = async (req, res) => {
 };
 
 controllers.management.injection = async (req, { res }) => {
+	const settings = await SiteSettings.findOne("main");
+	const injection = settings?.injection || { headScript: "", footerHTML: "" };
+
 	res.setConfigData({
-		injection: configJSON.injection,
+		injection,
 	}).setPageData({
 		page: "maintainer-injection.ejs",
 	}).render();
 };
 controllers.management.injection.post = async (req, res) => {
-	Object.keys(configJSON.injection).forEach(key => {
-		if (req.body[key] || req.body[key] === "") configJSON.injection[key] = req.body[key];
+	const siteSettings = await getSiteSettingsForWrite();
+
+	siteSettings.query.set("injection", {
+		headScript: req.body.headScript ?? "",
+		footerHTML: req.body.footerHTML ?? "",
 	});
 
-	save(req, res, true);
+	await siteSettings.save();
+
+	// Clear the middleware cache so changes take effect immediately
+	const { clearInjectionCache } = require("../middleware");
+	clearInjectionCache();
+
+	res.sendStatus(200);
 };
 
 controllers.management.version = async (req, { res }) => {

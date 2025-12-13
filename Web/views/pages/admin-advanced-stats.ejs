@@ -266,7 +266,7 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		<% if (pageData.hasAdvancedStats) { %>
 		// Points Distribution Chart
 		const pointsCtx = document.getElementById('pointsChart').getContext('2d');

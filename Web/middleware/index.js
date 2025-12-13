@@ -1,5 +1,34 @@
 const { parseAuthUser, fetchMaintainerPrivileges } = require("../helpers");
 
+// Cache for site settings injection (refreshed every 60 seconds)
+let cachedInjection = { headScript: "", footerHTML: "" };
+let lastInjectionFetch = 0;
+const INJECTION_CACHE_TTL = 60000; // 60 seconds
+
+const getInjection = async () => {
+	const now = Date.now();
+	if (now - lastInjectionFetch < INJECTION_CACHE_TTL && cachedInjection) {
+		return cachedInjection;
+	}
+	try {
+		// SiteSettings is a global variable set by Database/Driver.js
+		if (typeof global.SiteSettings !== "undefined" && global.SiteSettings?.findOne) {
+			const settings = await global.SiteSettings.findOne("main");
+			if (settings?.injection) {
+				cachedInjection = settings.injection;
+			}
+		}
+		lastInjectionFetch = now;
+	} catch (err) {
+		logger.warn("Failed to fetch injection from database", {}, err);
+	}
+	return cachedInjection;
+};
+
+// Export for use in other modules
+module.exports.getInjection = getInjection;
+module.exports.clearInjectionCache = () => { lastInjectionFetch = 0; };
+
 class SkynetResponse {
 	constructor (req, res, page) {
 		// SEO: Build canonical path (without query strings)
@@ -17,7 +46,10 @@ class SkynetResponse {
 				isEnabled: req.cookies.adsPreference !== "false",
 				ID: req.app.client.officialMode ? configJS.adsenseID : undefined,
 			},
-			injection: configJSON.injection,
+			injection: cachedInjection, // Will be populated by middleware
+			// Matomo Analytics - direct integration
+			matomoUrl: process.env.MATOMO_URL || "",
+			matomoSiteId: process.env.MATOMO_SITE_ID || "",
 		};
 
 		this.serverData = {
@@ -117,6 +149,12 @@ class SkynetResponse {
 }
 
 const middleware = module.exports;
+
+// Middleware to ensure injection is loaded from database
+middleware.loadInjection = async (req, res, next) => {
+	await getInjection();
+	next();
+};
 
 middleware.populateRequest = route => (req, res, next) => {
 	// Request information

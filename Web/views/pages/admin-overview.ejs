@@ -111,6 +111,62 @@
 						</div>
 					</div>
 					<% } %>
+
+					<!-- Server Actions -->
+					<article class="message is-info modern-card" style="margin-top: 1.5rem;">
+						<div class="message-header">
+							<p style="display: flex; align-items: center; gap: 0.5rem;">
+								<span class="icon"><i class="fa fa-cogs"></i></span>
+								Server Actions
+							</p>
+						</div>
+						<div class="message-body">
+							<p style="margin-bottom: 1rem;">
+								<strong>Scan Members</strong> - Index all server members into the database so they appear in user search on the Activity page.
+							</p>
+							<button id="scan-members-btn" class="button is-primary" onclick="SkynetUtil.scanServerMembers()">
+								<span class="icon"><i class="fa fa-refresh"></i></span>
+								<span>Scan Server Members</span>
+							</button>
+							<div id="scan-result" style="margin-top: 1rem; display: none;"></div>
+						</div>
+					</article>
+
+					<script>
+					SkynetUtil.scanServerMembers = async () => {
+						const btn = document.getElementById('scan-members-btn');
+						const resultDiv = document.getElementById('scan-result');
+						btn.classList.add('is-loading');
+						btn.disabled = true;
+						resultDiv.style.display = 'none';
+
+						try {
+							const response = await fetch('/dashboard/<%= serverData.id %>/administration/scan-members', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' }
+							});
+							const data = await response.json();
+
+							if (data.success) {
+								resultDiv.innerHTML = '<div class="notification is-success">' +
+									'<strong>Scan Complete!</strong><br>' +
+									'Total Members: ' + data.totalMembers + '<br>' +
+									'New Users Created: ' + data.created + '<br>' +
+									'Usernames Updated: ' + data.updated + '<br>' +
+									'Already Up-to-date: ' + data.skipped +
+									'</div>';
+							} else {
+								resultDiv.innerHTML = '<div class="notification is-danger">Error: ' + (data.error || 'Unknown error') + '</div>';
+							}
+						} catch (err) {
+							resultDiv.innerHTML = '<div class="notification is-danger">Error: ' + err.message + '</div>';
+						}
+
+						btn.classList.remove('is-loading');
+						btn.disabled = false;
+						resultDiv.style.display = 'block';
+					};
+					</script>
 				</div>
 			</div>
 		</div>

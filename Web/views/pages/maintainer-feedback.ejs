@@ -268,7 +268,7 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('turbolinks:load', function() {
 		// Status change handler
 		document.querySelectorAll('.status-select').forEach(select => {
 			select.addEventListener('change', async function() {

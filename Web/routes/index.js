@@ -11,6 +11,7 @@ const accountRouting = require("./account");
 const webhookRouting = require("./webhooks");
 const debugRouting = require("./debug");
 const setupAPI = require("./api");
+const profileController = require("../controllers/profile");
 
 const statusRouting = router => {
 	setupPage(router, "/status", [], controllers.status);
@@ -92,6 +93,20 @@ const officialRouting = router => {
 	setupPage(router, "/paperwork", [], controllers.paperwork);
 };
 
+const profileRouting = (router, apiRouter) => {
+	// Primary Profile Routes
+	router.routes.push(new Route(router, "/profile/:userId", [middleware.checkUnavailable], profileController.primaryProfile, "get", "general"));
+	router.routes.push(new Route(router, "/profile/:userId/edit", [middleware.checkUnavailable], profileController.editPrimaryProfile, "get", "general"));
+
+	// Server Profile Routes
+	router.routes.push(new Route(router, "/profile/:userId/:serverId", [middleware.checkUnavailable], profileController.serverProfile, "get", "general"));
+	router.routes.push(new Route(router, "/profile/:userId/:serverId/edit", [middleware.checkUnavailable], profileController.editServerProfile, "get", "general"));
+
+	// Profile API Routes
+	apiRouter.routes.push(new Route(apiRouter, "/profile", [middleware.checkUnavailableAPI], profileController.updatePrimaryProfile, "put", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/profile/server/:serverId", [middleware.checkUnavailableAPI], profileController.updateServerProfile, "put", "api"));
+};
+
 const membershipRouting = (router, apiRouter) => {
 	setupPage(router, "/membership", [], controllers.membership.pricing);
 	router.routes.push(new Route(router, "/membership/success", [middleware.checkUnavailable], controllers.membership.success, "get", "general"));
@@ -130,6 +145,7 @@ module.exports = app => {
 	blogRouting(routers.general);
 	officialRouting(routers.general);
 	membershipRouting(routers.general, routers.API);
+	profileRouting(routers.general, routers.API);
 	accountRouting(routers.general);
 	webhookRouting(routers.general);
 	dashboardRouting(routers.dashboard);

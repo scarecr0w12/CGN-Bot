@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= profile.user.displayName %>'s Profile | Skynet</title>
+	<meta name="turbolinks-cache-control" content="no-cache">
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: profile.user.displayName + "'s Profile | Skynet",
+		description: "View " + profile.user.displayName + "'s profile on Skynet Discord Bot."
+	};
+	%>
+	<%- include('../partials/head') %>
+	<style>
+/* Primary Profile Styles */
+.profile-container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.profile-card {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-xl);
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+}
+
+.profile-banner {
+	height: 200px;
+	background: <%= profile.primaryProfile.banner_color || profile.user.accentColor || 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)' %>;
+	<% if (profile.primaryProfile.banner_image) { %>
+	background-image: url('<%= profile.primaryProfile.banner_image %>');
+	background-size: cover;
+	background-position: center;
+	<% } %>
+	position: relative;
+}
+
+.profile-banner-overlay {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100px;
+	background: linear-gradient(transparent, var(--color-bg-primary));
+}
+
+.profile-avatar-section {
+	display: flex;
+	align-items: flex-end;
+	gap: 1.5rem;
+	padding: 0 2rem;
+	margin-top: -80px;
+	position: relative;
+	z-index: 1;
+}
+
+.profile-avatar {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	border: 6px solid var(--color-bg-primary);
+	background: var(--color-bg-secondary);
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.profile-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.profile-name-section {
+	padding-bottom: 1rem;
+	flex-grow: 1;
+}
+
+.profile-username {
+	font-size: 2rem;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.profile-badges {
+	display: flex;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.badge {
+	padding: 0.25rem 0.75rem;
+	border-radius: 20px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+}
+
+.badge-premium {
+	background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+	color: #1a1a2e;
+}
+
+.badge-verified {
+	background: var(--color-accent);
+	color: white;
+}
+
+.profile-meta {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--color-text-secondary);
+	margin-top: 0.25rem;
+	font-size: 0.9rem;
+}
+
+.profile-body {
+	padding: 1.5rem 2rem 2rem;
+}
+
+.profile-bio {
+	background: var(--color-bg-secondary);
+	padding: 1.25rem;
+	border-radius: var(--radius-lg);
+	margin-bottom: 1.5rem;
+	line-height: 1.6;
+	color: var(--color-text-secondary);
+}
+
+.profile-bio strong {
+	color: var(--color-text-primary);
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+.profile-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+	.profile-stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.profile-avatar-section {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+	.profile-username {
+		justify-content: center;
+	}
+	.profile-meta {
+		justify-content: center;
+	}
+}
+
+.stat-card {
+	background: var(--color-bg-secondary);
+	padding: 1.25rem;
+	border-radius: var(--radius-lg);
+	text-align: center;
+	transition: transform 0.2s;
+}
+
+.stat-card:hover {
+	transform: translateY(-2px);
+}
+
+.stat-icon {
+	font-size: 1.5rem;
+	color: var(--color-accent);
+	margin-bottom: 0.5rem;
+}
+
+.stat-value {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--color-text-primary);
+}
+
+.stat-label {
+	font-size: 0.75rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	margin-top: 0.25rem;
+}
+
+.profile-social-links {
+	display: flex;
+	gap: 0.75rem;
+	margin-bottom: 1.5rem;
+	flex-wrap: wrap;
+}
+
+.social-link {
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-md);
+	color: var(--color-text-secondary);
+	transition: all 0.2s;
+	text-decoration: none;
+}
+
+.social-link:hover {
+	background: var(--color-accent);
+	color: white;
+	transform: translateY(-2px);
+}
+
+/* Game Activity Styles */
+.section-title {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.section-title i {
+	color: var(--color-accent);
+}
+
+.game-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 1.5rem;
+}
+
+.game-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+	transition: all 0.2s;
+	position: relative;
+	overflow: hidden;
+}
+
+.game-item:hover {
+	background: var(--color-bg-tertiary);
+	transform: translateX(4px);
+}
+
+.game-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: var(--radius-md);
+	background: linear-gradient(135deg, var(--color-accent), #7289da);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.25rem;
+	color: white;
+	flex-shrink: 0;
+}
+
+.game-info {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.game-name {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--color-text-primary);
+	margin-bottom: 0.25rem;
+}
+
+.game-stats {
+	display: flex;
+	gap: 1rem;
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+	flex-wrap: wrap;
+}
+
+.game-stats span {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+.game-stats i {
+	color: var(--color-accent);
+	font-size: 0.7rem;
+}
+
+.game-playtime-bar {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--color-bg-tertiary);
+}
+
+.playtime-fill {
+	height: 100%;
+	background: var(--gradient-primary);
+	border-radius: 0 3px 3px 0;
+}
+
+/* Featured Servers */
+.server-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.server-mini-card {
+	background: var(--color-bg-secondary);
+	padding: 1rem;
+	border-radius: var(--radius-lg);
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	transition: all 0.2s;
+	cursor: pointer;
+	text-decoration: none;
+	color: inherit;
+}
+
+.server-mini-card:hover {
+	background: var(--color-bg-tertiary);
+	transform: translateY(-2px);
+}
+
+.server-mini-icon {
+	width: 40px;
+	height: 40px;
+	border-radius: var(--radius-md);
+	background: var(--gradient-primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.server-mini-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.server-mini-info {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.server-mini-name {
+	font-weight: 600;
+	font-size: 0.875rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.server-mini-rank {
+	font-size: 0.75rem;
+	color: var(--color-success);
+}
+
+/* Profile Fields */
+.profile-fields {
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-lg);
+	padding: 1.25rem;
+	margin-bottom: 1.5rem;
+}
+
+.profile-field {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.profile-field:last-child {
+	border-bottom: none;
+}
+
+.profile-field-key {
+	font-weight: 500;
+	color: var(--color-text-secondary);
+}
+
+.profile-field-value {
+	color: var(--color-text-primary);
+}
+
+.profile-actions {
+	display: flex;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body" style="padding: 2rem 1.5rem;">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
+						<i class="fa fa-user"></i> User Profile
+					</h1>
+					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+						<%= profile.user.displayName %>
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+<section id="frame" class="section" style="background: var(--color-bg-secondary); min-height: calc(100vh - 200px);">
+	<div class="profile-container">
+		<div class="profile-card fade-in">
+			<div class="profile-banner">
+				<div class="profile-banner-overlay"></div>
+			</div>
+			
+			<div class="profile-avatar-section">
+				<div class="profile-avatar">
+					<img src="<%= profile.user.avatar %>" alt="<%= profile.user.username %>">
+				</div>
+				<div class="profile-name-section">
+					<div class="profile-username">
+						<%= profile.user.displayName %>
+						<div class="profile-badges">
+							<% if (profile.user.document?.subscription?.tier_id && profile.user.document.subscription.tier_id !== 'free') { %>
+								<span class="badge badge-premium"><i class="fa fa-crown"></i> Premium</span>
+							<% } %>
+						</div>
+					</div>
+					<div class="profile-meta">
+						<i class="fa fa-calendar"></i>
+						Joined Discord <strong title="<%= profile.accountAge.raw %>"><%= profile.accountAge.text %> ago</strong>
+					</div>
+				</div>
+				<% if (profile.isOwnProfile) { %>
+					<a href="/profile/me/edit" class="button is-primary is-modern">
+						<span class="icon"><i class="fa fa-edit"></i></span>
+						<span>Edit Profile</span>
+					</a>
+				<% } %>
+			</div>
+
+			<div class="profile-body">
+				<% if (profile.primaryProfile.bio) { %>
+					<div class="profile-bio">
+						<strong><i class="fa fa-quote-left"></i> About Me</strong>
+						<%= profile.primaryProfile.bio %>
+					</div>
+				<% } %>
+
+				<div class="profile-stats-grid">
+					<div class="stat-card">
+						<div class="stat-icon"><i class="fa fa-star"></i></div>
+						<div class="stat-value"><%= profile.points.toLocaleString() %></div>
+						<div class="stat-label">Total Points</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon"><i class="fa fa-server"></i></div>
+						<div class="stat-value"><%= profile.stats.totalServers %></div>
+						<div class="stat-label">Servers</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon"><i class="fa fa-comment"></i></div>
+						<div class="stat-value"><%= profile.stats.totalMessages.toLocaleString() %></div>
+						<div class="stat-label">Messages</div>
+					</div>
+					<div class="stat-card">
+						<div class="stat-icon"><i class="fa fa-microphone"></i></div>
+						<div class="stat-value"><%= profile.stats.totalVoiceHours %>h</div>
+						<div class="stat-label">Voice Time</div>
+					</div>
+				</div>
+
+				<% const socialLinks = profile.socialLinks; %>
+				<% if (socialLinks.twitter || socialLinks.github || socialLinks.twitch || socialLinks.youtube || socialLinks.website || socialLinks.steam) { %>
+					<div class="profile-social-links">
+						<% if (socialLinks.twitter) { %>
+							<a href="https://twitter.com/<%= socialLinks.twitter %>" target="_blank" class="social-link" title="Twitter">
+								<i class="fab fa-twitter"></i>
+							</a>
+						<% } %>
+						<% if (socialLinks.github) { %>
+							<a href="https://github.com/<%= socialLinks.github %>" target="_blank" class="social-link" title="GitHub">
+								<i class="fab fa-github"></i>
+							</a>
+						<% } %>
+						<% if (socialLinks.twitch) { %>
+							<a href="https://twitch.tv/<%= socialLinks.twitch %>" target="_blank" class="social-link" title="Twitch">
+								<i class="fab fa-twitch"></i>
+							</a>
+						<% } %>
+						<% if (socialLinks.youtube) { %>
+							<a href="https://youtube.com/<%= socialLinks.youtube %>" target="_blank" class="social-link" title="YouTube">
+								<i class="fab fa-youtube"></i>
+							</a>
+						<% } %>
+						<% if (socialLinks.steam) { %>
+							<a href="https://steamcommunity.com/id/<%= socialLinks.steam %>" target="_blank" class="social-link" title="Steam">
+								<i class="fab fa-steam"></i>
+							</a>
+						<% } %>
+						<% if (socialLinks.website) { %>
+							<a href="<%= socialLinks.website %>" target="_blank" class="social-link" title="Website">
+								<i class="fa fa-globe"></i>
+							</a>
+						<% } %>
+					</div>
+				<% } %>
+
+				<% if (profile.gameActivity.length > 0 && profile.gameTrackingEnabled) { %>
+					<div class="section-title">
+						<i class="fa fa-gamepad"></i> Game Activity
+					</div>
+					<div class="game-list">
+						<% profile.gameActivity.forEach(game => { %>
+							<div class="game-item">
+								<div class="game-icon">
+									<i class="fa fa-gamepad"></i>
+								</div>
+								<div class="game-info">
+									<div class="game-name"><%= game.name %></div>
+									<div class="game-stats">
+										<span><i class="fa fa-clock"></i> <%= game.formattedTime %></span>
+										<span><i class="fa fa-calendar"></i> <%= game.lastPlayedText %></span>
+									</div>
+								</div>
+								<div class="game-playtime-bar">
+									<div class="playtime-fill" style="width: <%= game.percentOfMax %>%;"></div>
+								</div>
+							</div>
+						<% }); %>
+					</div>
+				<% } %>
+
+				<% if (profile.featuredServers.length > 0) { %>
+					<div class="section-title">
+						<i class="fa fa-star"></i> Featured Servers
+					</div>
+					<div class="server-cards">
+						<% profile.featuredServers.forEach(svr => { %>
+							<a href="/profile/<%= profile.user.id %>/<%= svr.id %>" class="server-mini-card">
+								<div class="server-mini-icon">
+									<% if (svr.icon) { %>
+										<img src="<%= svr.icon %>" alt="<%= svr.name %>">
+									<% } else { %>
+										<%= svr.name.charAt(0) %>
+									<% } %>
+								</div>
+								<div class="server-mini-info">
+									<div class="server-mini-name"><%= svr.name %></div>
+									<% if (svr.memberData?.rank && svr.memberData.rank !== 'No Rank') { %>
+										<div class="server-mini-rank"><i class="fa fa-trophy"></i> <%= svr.memberData.rank %></div>
+									<% } %>
+								</div>
+							</a>
+						<% }); %>
+					</div>
+				<% } %>
+
+				<% const profileFields = profile.profileFields; %>
+				<% if (profileFields && Object.keys(profileFields).length > 0) { %>
+					<div class="section-title">
+						<i class="fa fa-id-card"></i> Profile Information
+					</div>
+					<div class="profile-fields">
+						<% for (const key in profileFields) { %>
+							<div class="profile-field">
+								<span class="profile-field-key"><%= key.charAt(0).toUpperCase() + key.slice(1) %></span>
+								<span class="profile-field-value"><%- profileFields[key] %></span>
+							</div>
+						<% } %>
+					</div>
+				<% } %>
+
+				<% if (profile.mutualServers.length > 0) { %>
+					<div class="section-title">
+						<i class="fa fa-server"></i> Servers (<%= profile.allMutualServers.length %>)
+					</div>
+					<div class="server-cards">
+						<% profile.mutualServers.forEach(svr => { %>
+							<a href="/profile/<%= profile.user.id %>/<%= svr.id %>" class="server-mini-card">
+								<div class="server-mini-icon">
+									<% if (svr.icon) { %>
+										<img src="<%= svr.icon %>" alt="<%= svr.name %>">
+									<% } else { %>
+										<%= svr.name.charAt(0) %>
+									<% } %>
+								</div>
+								<div class="server-mini-info">
+									<div class="server-mini-name"><%= svr.name %></div>
+									<% if (svr.memberData?.rank && svr.memberData.rank !== 'No Rank') { %>
+										<div class="server-mini-rank"><i class="fa fa-trophy"></i> <%= svr.memberData.rank %></div>
+									<% } else { %>
+										<div class="server-mini-rank" style="color: var(--color-text-muted);"><%= svr.memberCount.toLocaleString() %> members</div>
+									<% } %>
+								</div>
+							</a>
+						<% }); %>
+					</div>
+					<% if (profile.allMutualServers.length > 6) { %>
+						<button class="button is-light is-fullwidth modal-button" data-target="#all-servers-modal">
+							<span class="icon"><i class="fa fa-server"></i></span>
+							<span>View All <%= profile.allMutualServers.length %> Servers</span>
+						</button>
+					<% } %>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</section>
+
+<% if (profile.allMutualServers.length > 6) { %>
+<div id="all-servers-modal" class="modal">
+	<div class="modal-background"></div>
+	<div class="modal-card" style="max-width: 600px;">
+		<header class="modal-card-head">
+			<p class="modal-card-title" style="color: white;">
+				<span class="icon"><i class="fa fa-server"></i></span>
+				All Servers (<%= profile.allMutualServers.length %>)
+			</p>
+			<button class="delete" aria-label="close"></button>
+		</header>
+		<section class="modal-card-body">
+			<% profile.allMutualServers.forEach(svr => { %>
+				<a href="/profile/<%= profile.user.id %>/<%= svr.id %>" style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: var(--color-bg-secondary); border-radius: var(--radius-lg); margin-bottom: 0.5rem; text-decoration: none; color: inherit;">
+					<div style="width: 40px; height: 40px; border-radius: var(--radius-md); overflow: hidden; flex-shrink: 0;">
+						<% if (svr.icon) { %>
+							<img src="<%= svr.icon %>" alt="<%= svr.name %>" style="width: 100%; height: 100%; object-fit: cover;">
+						<% } else { %>
+							<div style="width: 100%; height: 100%; background: var(--gradient-primary); display: flex; align-items: center; justify-content: center; font-weight: 700;"><%= svr.name.charAt(0) %></div>
+						<% } %>
+					</div>
+					<div style="flex-grow: 1; min-width: 0;">
+						<div style="font-weight: 600;"><%= svr.name %></div>
+						<div style="font-size: 0.8rem; color: var(--color-text-muted);"><%= svr.memberCount.toLocaleString() %> members</div>
+					</div>
+					<% if (svr.memberData?.rank && svr.memberData.rank !== 'No Rank') { %>
+						<span class="tag is-success"><%= svr.memberData.rank %></span>
+					<% } %>
+				</a>
+			<% }); %>
+		</section>
+	</div>
+	<button class="modal-close is-large" aria-label="close"></button>
+</div>
+<% } %>
+
+<%- include("../partials/footer") %>
+</body>
+</html>

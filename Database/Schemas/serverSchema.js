@@ -82,6 +82,21 @@ module.exports = new Schema({
 			required: true,
 		},
 	})],
+	// Active game sessions for tracking playtime
+	game_sessions: [new Schema({
+		_id: {
+			type: String,
+			required: true,
+		},
+		game_name: {
+			type: String,
+			required: true,
+		},
+		started_at: {
+			type: Date,
+			required: true,
+		},
+	})],
 	logs: [new Schema({
 		timestamp: {
 			type: Date,

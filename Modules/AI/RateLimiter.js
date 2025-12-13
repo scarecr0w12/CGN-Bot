@@ -1,19 +1,25 @@
 /**
  * RateLimiter - Manages rate limiting for AI commands
  * Supports cooldowns, per-user limits, and per-channel limits
+ * Uses Redis for cross-shard consistency when available, falls back to in-memory
  */
+
+const Redis = require("../../Database/Redis");
 
 class RateLimiter {
 	constructor () {
-		// Cooldown tracking: Map<"guildId:userId", timestamp>
-		this._cooldowns = new Map();
+		// Check if Redis is available for cross-shard rate limiting
+		this._useRedis = Redis.isEnabled() && Redis.isReady();
 
-		// Rate tracking: Map<"guildId:userId" or "guildId:channelId", { count, windowStart }>
+		// Fallback in-memory stores (used when Redis unavailable)
+		this._cooldowns = new Map();
 		this._userRates = new Map();
 		this._channelRates = new Map();
 
-		// Cleanup interval
-		this._cleanupInterval = setInterval(() => this._cleanup(), 60000);
+		// Only run cleanup for in-memory mode
+		if (!this._useRedis) {
+			this._cleanupInterval = setInterval(() => this._cleanup(), 60000);
+		}
 	}
 
 	/**
@@ -21,14 +27,33 @@ class RateLimiter {
 	 * @param {string} guildId - The guild ID
 	 * @param {string} userId - The user ID
 	 * @param {number} cooldownSec - Cooldown duration in seconds
-	 * @returns {string|null} Error message if on cooldown, null if allowed
+	 * @returns {Promise<string|null>} Error message if on cooldown, null if allowed
 	 */
-	checkCooldown (guildId, userId, cooldownSec) {
+	async checkCooldown (guildId, userId, cooldownSec) {
 		if (cooldownSec <= 0) return null;
 
-		const key = `${guildId}:${userId}`;
-		const lastUsed = this._cooldowns.get(key);
+		const key = `ai:cd:${guildId}:${userId}`;
 
+		if (this._useRedis) {
+			try {
+				const client = Redis.getClient();
+				const lastUsed = await client.get(key);
+				if (lastUsed) {
+					const elapsed = (Date.now() - parseInt(lastUsed, 10)) / 1000;
+					if (elapsed < cooldownSec) {
+						const remaining = Math.ceil(cooldownSec - elapsed);
+						return `Please wait ${remaining} second${remaining !== 1 ? "s" : ""} before using AI commands again.`;
+					}
+				}
+				return null;
+			} catch (err) {
+				logger.warn("Redis cooldown check failed, falling back to memory", {}, err);
+			}
+		}
+
+		// Fallback to in-memory
+		const memKey = `${guildId}:${userId}`;
+		const lastUsed = this._cooldowns.get(memKey);
 		if (lastUsed) {
 			const elapsed = (Date.now() - lastUsed) / 1000;
 			if (elapsed < cooldownSec) {
@@ -36,7 +61,6 @@ class RateLimiter {
 				return `Please wait ${remaining} second${remaining !== 1 ? "s" : ""} before using AI commands again.`;
 			}
 		}
-
 		return null;
 	}
 
@@ -45,27 +69,39 @@ class RateLimiter {
 	 * @param {string} guildId - The guild ID
 	 * @param {string} userId - The user ID
 	 * @param {number} perMinute - Max requests per minute
-	 * @returns {string|null} Error message if rate limited, null if allowed
+	 * @returns {Promise<string|null>} Error message if rate limited, null if allowed
 	 */
-	checkUserRate (guildId, userId, perMinute) {
+	async checkUserRate (guildId, userId, perMinute) {
 		if (perMinute <= 0) return null;
 
-		const key = `${guildId}:${userId}`;
-		const now = Date.now();
-		const windowMs = 60000;
+		const key = `ai:ur:${guildId}:${userId}`;
 
-		let rate = this._userRates.get(key);
-
-		if (!rate || now - rate.windowStart >= windowMs) {
-			// New window
-			rate = { count: 0, windowStart: now };
+		if (this._useRedis) {
+			try {
+				const client = Redis.getClient();
+				const count = await client.get(key);
+				if (count && parseInt(count, 10) >= perMinute) {
+					const ttl = await client.ttl(key);
+					return `You've reached your rate limit (${perMinute}/min). Please wait ${ttl > 0 ? ttl : 60} seconds.`;
+				}
+				return null;
+			} catch (err) {
+				logger.warn("Redis user rate check failed, falling back to memory", {}, err);
+			}
 		}
 
+		// Fallback to in-memory
+		const memKey = `${guildId}:${userId}`;
+		const now = Date.now();
+		const windowMs = 60000;
+		let rate = this._userRates.get(memKey);
+		if (!rate || now - rate.windowStart >= windowMs) {
+			rate = { count: 0, windowStart: now };
+		}
 		if (rate.count >= perMinute) {
 			const remaining = Math.ceil((rate.windowStart + windowMs - now) / 1000);
 			return `You've reached your rate limit (${perMinute}/min). Please wait ${remaining} seconds.`;
 		}
-
 		return null;
 	}
 
@@ -74,26 +110,39 @@ class RateLimiter {
 	 * @param {string} guildId - The guild ID
 	 * @param {string} channelId - The channel ID
 	 * @param {number} perMinute - Max requests per minute
-	 * @returns {string|null} Error message if rate limited, null if allowed
+	 * @returns {Promise<string|null>} Error message if rate limited, null if allowed
 	 */
-	checkChannelRate (guildId, channelId, perMinute) {
+	async checkChannelRate (guildId, channelId, perMinute) {
 		if (perMinute <= 0) return null;
 
-		const key = `${guildId}:${channelId}`;
+		const key = `ai:cr:${guildId}:${channelId}`;
+
+		if (this._useRedis) {
+			try {
+				const client = Redis.getClient();
+				const count = await client.get(key);
+				if (count && parseInt(count, 10) >= perMinute) {
+					const ttl = await client.ttl(key);
+					return `This channel has reached its rate limit (${perMinute}/min). Please wait ${ttl > 0 ? ttl : 60} seconds.`;
+				}
+				return null;
+			} catch (err) {
+				logger.warn("Redis channel rate check failed, falling back to memory", {}, err);
+			}
+		}
+
+		// Fallback to in-memory
+		const memKey = `${guildId}:${channelId}`;
 		const now = Date.now();
 		const windowMs = 60000;
-
-		let rate = this._channelRates.get(key);
-
+		let rate = this._channelRates.get(memKey);
 		if (!rate || now - rate.windowStart >= windowMs) {
 			rate = { count: 0, windowStart: now };
 		}
-
 		if (rate.count >= perMinute) {
 			const remaining = Math.ceil((rate.windowStart + windowMs - now) / 1000);
 			return `This channel has reached its rate limit (${perMinute}/min). Please wait ${remaining} seconds.`;
 		}
-
 		return null;
 	}
 
@@ -102,9 +151,37 @@ class RateLimiter {
 	 * @param {string} guildId - The guild ID
 	 * @param {string} userId - The user ID
 	 * @param {string} channelId - The channel ID
+	 * @returns {Promise<void>}
 	 */
-	recordUsage (guildId, userId, channelId) {
+	async recordUsage (guildId, userId, channelId) {
 		const now = Date.now();
+
+		if (this._useRedis) {
+			try {
+				const client = Redis.getClient();
+				const pipeline = client.pipeline();
+
+				// Set cooldown (expires after 5 minutes)
+				pipeline.set(`ai:cd:${guildId}:${userId}`, now, "EX", 300);
+
+				// Increment user rate (1 minute window)
+				const userKey = `ai:ur:${guildId}:${userId}`;
+				pipeline.incr(userKey);
+				pipeline.expire(userKey, 60);
+
+				// Increment channel rate (1 minute window)
+				const channelKey = `ai:cr:${guildId}:${channelId}`;
+				pipeline.incr(channelKey);
+				pipeline.expire(channelKey, 60);
+
+				await pipeline.exec();
+				return;
+			} catch (err) {
+				logger.warn("Redis usage recording failed, falling back to memory", {}, err);
+			}
+		}
+
+		// Fallback to in-memory
 		const windowMs = 60000;
 
 		// Update cooldown
