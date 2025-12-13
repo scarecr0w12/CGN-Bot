@@ -337,7 +337,7 @@ node -e "require('./Database/Driver').then(db => console.log('Connected!'))"
 
 ## Next Steps
 
-- [Configuration Guide](/guide/configuration) - Configure all features
-- [Getting Started](/guide/getting-started) - Set up your first server
-- [Testing Guide](/guide/testing) - Test your installation
-- [Troubleshooting](/guide/troubleshooting) - Common issues
+- [Configuration Guide](configuration) - Configure all features
+- [Getting Started](getting-started) - Set up your first server
+- [Testing Guide](testing) - Test your installation
+- [Troubleshooting](troubleshooting) - Common issues

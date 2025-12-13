@@ -49,14 +49,14 @@ Full server management from the browser with modern UI and real-time updates.
 
 | Guide | Description |
 |:------|:------------|
-| [Installation](/guide/installation) | Set up SkynetBot on your own server |
-| [Getting Started](/guide/getting-started) | Quick start guide for server owners |
-| [Commands](/guide/commands) | Full command reference |
-| [Configuration](/guide/configuration) | Configure all bot features |
-| [Extensions](/guide/extensions) | Create and install extensions |
-| [Testing](/guide/testing) | Test your installation |
-| [Troubleshooting](/guide/troubleshooting) | Common issues and solutions |
-| [API Reference](/api/) | REST API documentation |
+| [Installation](guide/installation) | Set up SkynetBot on your own server |
+| [Getting Started](guide/getting-started) | Quick start guide for server owners |
+| [Commands](guide/commands) | Full command reference |
+| [Configuration](guide/configuration) | Configure all bot features |
+| [Extensions](guide/extensions) | Create and install extensions |
+| [Testing](guide/testing) | Test your installation |
+| [Troubleshooting](guide/troubleshooting) | Common issues and solutions |
+| [API Reference](api/) | REST API documentation |
 
 ---
 

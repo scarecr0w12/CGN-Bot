@@ -328,6 +328,6 @@ Use this checklist for new installations:
 
 ## Next Steps
 
-- [Troubleshooting](/guide/troubleshooting) - Common issues
-- [Configuration](/guide/configuration) - Advanced setup
-- [API Reference](/api/) - API documentation
+- [Troubleshooting](troubleshooting) - Common issues
+- [Configuration](configuration) - Advanced setup
+- [API Reference](../api/) - API documentation

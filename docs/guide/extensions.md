@@ -372,6 +372,6 @@ module.exports = {
 
 ## Next Steps
 
-- Browse the [Extension Gallery](/extensions/gallery)
-- Read the [API Reference](/api/)
-- Check [Extension Ideas](/guide/extension-ideas)
+- Browse the Extension Gallery on the dashboard
+- Read the [API Reference](../api/)
+- Check the EXTENSION_IDEAS.md in the repository

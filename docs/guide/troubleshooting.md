@@ -396,6 +396,6 @@ If you can't resolve an issue:
 
 ## Next Steps
 
-- [Installation](/guide/installation) - Reinstall if needed
-- [Configuration](/guide/configuration) - Review settings
-- [Testing](/guide/testing) - Verify components
+- [Installation](installation) - Reinstall if needed
+- [Configuration](configuration) - Review settings
+- [Testing](testing) - Verify components

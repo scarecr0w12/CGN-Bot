@@ -2,6 +2,7 @@
 layout: default
 title: API Reference
 nav_order: 3
+has_children: false
 description: "REST API documentation for SkynetBot"
 permalink: /api/
 ---
@@ -517,6 +518,6 @@ data = response.json()
 
 ## Next Steps
 
-- [Getting Started](/guide/getting-started) - Basic setup
-- [Configuration](/guide/configuration) - API configuration
-- [Extensions](/guide/extensions) - Build integrations
+- [Getting Started](../guide/getting-started) - Basic setup
+- [Configuration](../guide/configuration) - API configuration
+- [Extensions](../guide/extensions) - Build integrations

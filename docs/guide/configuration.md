@@ -453,6 +453,6 @@ Add to crontab:
 
 ## Next Steps
 
-- [Installation](/guide/installation) - Initial setup
-- [Testing](/guide/testing) - Verify configuration
-- [Troubleshooting](/guide/troubleshooting) - Fix issues
+- [Installation](installation) - Initial setup
+- [Testing](testing) - Verify configuration
+- [Troubleshooting](troubleshooting) - Fix issues

@@ -240,6 +240,6 @@ Commands require specific admin levels:
 
 ## Next Steps
 
-- [Configuration](/guide/configuration) - Configure commands
-- [Extensions](/guide/extensions) - Add more commands
-- [Troubleshooting](/guide/troubleshooting) - Command issues
+- [Configuration](configuration) - Configure commands
+- [Extensions](extensions) - Add more commands
+- [Troubleshooting](troubleshooting) - Command issues

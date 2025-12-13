@@ -257,7 +257,7 @@ Grant only necessary permissions:
 
 ## Next Steps
 
-- [Commands Reference](/guide/commands) - Full command list
-- [Configuration Guide](/guide/configuration) - Advanced setup
-- [Extensions Guide](/guide/extensions) - Create extensions
-- [Troubleshooting](/guide/troubleshooting) - Common issues
+- [Commands Reference](commands) - Full command list
+- [Configuration Guide](configuration) - Advanced setup
+- [Extensions Guide](extensions) - Create extensions
+- [Troubleshooting](troubleshooting) - Common issues

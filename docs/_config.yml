@@ -40,12 +40,6 @@ aux_links:
   "View on GitHub":
     - "https://github.com/scarecr0w12/CGN-Bot"
 
-# Collections
-collections:
-  guide:
-    output: true
-    permalink: /guide/:name/
-
 # Defaults
 defaults:
   - scope:
@@ -54,6 +48,11 @@ defaults:
       layout: default
   - scope:
       path: "guide"
+      type: "pages"
     values:
       layout: default
-      nav_order: 2
+  - scope:
+      path: "api"
+      type: "pages"
+    values:
+      layout: default
