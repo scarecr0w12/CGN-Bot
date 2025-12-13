@@ -2807,25 +2807,21 @@ async function seedWiki() {
 		const existingCount = await Wiki.count({});
 		console.log(`📊 Existing wiki pages: ${existingCount}`);
 		
-		if (existingCount > 0) {
+		if (existingCount > 0 && !process.argv.includes("--force")) {
 			console.log("\n⚠️  Wiki already has content.");
 			console.log("   Run with --force to overwrite existing pages.");
-			
-			if (!process.argv.includes("--force")) {
-				console.log("\n❌ Aborting. Use --force to overwrite.");
-				process.exit(0);
-				return;
-			}
-			
-			console.log("\n🗑️  --force flag detected. Removing existing wiki pages...");
-			await Wiki.delete({});
-			console.log("✅ Existing pages removed\n");
+			console.log("\n❌ Aborting. Use --force to overwrite.");
+			process.exit(0);
+			return;
 		}
 		
-		// Insert wiki pages
-		console.log(`📝 Inserting ${wikiPages.length} wiki pages...\n`);
+		// Upsert wiki pages (delete then insert each one)
+		console.log(`📝 Upserting ${wikiPages.length} wiki pages...\n`);
 		
 		for (const page of wikiPages) {
+			// Delete existing page first
+			await Wiki.delete({ _id: page._id });
+			// Then insert new one
 			const doc = Wiki.new(page);
 			await doc.save();
 			console.log(`   ✅ Created: ${page._id}`);
