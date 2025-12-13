@@ -442,29 +442,36 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 ---
 
-## 🎫 TICKETS & SUPPORT (🔄 HYBRID)
+## 🎫 TICKETS & SUPPORT (✅ IMPLEMENTED)
 
 **Architecture:**
 
 1. **Global System (Built-in):** Users DM bot → Opens ticket with Bot Admins/Maintainers.
    - **Web Interface:** Maintainer Console (`Web/views/pages/maintainer-tickets.ejs`) for managing global tickets.
    - Ticket queue, assignment, status tracking, transcript export.
+   - **Database:** `Tickets`, `TicketMessages` models.
 
-2. **Server System (Official Extension - Tier 2):** Server owners install "Ticket Panel" extension.
+2. **Server System (Built-in - Tier 2):** Per-server ticket system for server owners.
    - **Tier-gated:** Requires Tier 2 (Premium) subscription.
-   - **Dashboard Integration:** When installed, adds ticket management UI to server dashboard.
-   - Panel config, category setup, auto-close rules, transcript channel.
-   - Only visible in dashboard if extension is active on that server.
+   - **Dashboard Integration:** Ticket settings and management in server dashboard.
+   - Panel config, category setup, support roles, transcript channel.
+   - **Database:** `ServerTickets`, `ServerTicketMessages` models.
+   - **Module:** `Modules/ServerTicketManager.js`
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `ticket` | Open global ticket (DM) | 🚧 PLANNED BUILT-IN |
-| `ticketpanel` | Create server support panel | 📦 OFFICIAL EXTENSION |
-| `ticketclose` | Close and archive ticket | 🚧 PLANNED BUILT-IN |
-| `ticketcategory` | Manage ticket categories | 📦 OFFICIAL EXTENSION |
-| `ticketadd` | Add user to ticket | 🚧 PLANNED BUILT-IN |
-| `ticketremove` | Remove user from ticket | 🚧 PLANNED BUILT-IN |
-| `transcript` | Save transcript | 🚧 PLANNED BUILT-IN |
+| `ticket` | Create/list server tickets | ✅ BUILT-IN (`ticket.js`) |
+| `ticketpanel` | Create server support panel | ✅ BUILT-IN (`ticketpanel.js`) |
+| `ticketclose` | Close and archive ticket | ✅ BUILT-IN (`ticketclose.js`) |
+| `ticketadd` | Add user to ticket | ✅ BUILT-IN (`ticketadd.js`) |
+| `ticketremove` | Remove user from ticket | ✅ BUILT-IN (`ticketremove.js`) |
+
+**Dashboard Pages:**
+- `admin-tickets.ejs` - Ticket settings and category management
+- `admin-tickets-list.ejs` - View server tickets
+- `admin-ticket-view.ejs` - Individual ticket view
+- `maintainer-tickets.ejs` - Global ticket management
+- `maintainer-ticket-view.ejs` - Global ticket details
 
 ---
 
