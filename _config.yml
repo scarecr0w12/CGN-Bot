@@ -4,6 +4,9 @@ description: Comprehensive documentation for SkynetBot - a feature-rich Discord 
 baseurl: "/CGN-Bot"
 url: "https://scarecr0w12.github.io"
 
+# Source directory
+source: docs
+
 # Theme
 remote_theme: just-the-docs/just-the-docs
 color_scheme: dark
