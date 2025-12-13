@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Music & Audio System (Tier 2 Premium)
+
+- **6 Music Commands**:
+  - `play` - Play music from YouTube videos and playlists
+  - `skip` - Skip the current track
+  - `queue` - View the music queue with pagination
+  - `dj` - DJ controls (pause, resume, stop, volume, loop, shuffle, disconnect)
+  - `filters` - Toggle audio filters (bassboost, nightcore, vaporwave, 8d)
+  - `lyrics` - Search for song lyrics
+  
+- **Audio Infrastructure**:
+  - `Internals/Audio/AudioManager.js` - Per-guild voice connection management
+  - `Internals/Audio/MusicQueue.js` - Queue with loop modes and shuffle
+  - `Internals/Audio/Track.js` - Track data model with duration formatting
+
 #### Ticket Support System (Tier 2 Premium)
 
 - **Maintainer Tickets** - Global support ticket system via DM for bot maintainers
