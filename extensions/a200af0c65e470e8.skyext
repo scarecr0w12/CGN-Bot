@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const sub = (command.suffix.trim().split(/s+/)[0] || '').toLowerCase();
+const sub = (command.suffix.trim().split(/\s+/)[0] || '').toLowerCase();
 const key = 'buttonrush_' + message.author.id;
 
 if (sub === 'start') {
@@ -14,11 +14,7 @@ if (sub === 'start') {
 	message.reply({
 		embeds: [embed.create({
 			title: '🟩 Button Rush',
-			description: 'Get ready...
-
-When I say GO, run: buttonrush click
-
-(Wait about ' + utils.format.number(delayMs) + 'ms)',
+			description: 'Get ready...\n\nWhen I say GO, run: buttonrush click\n\n(Wait about ' + utils.format.number(delayMs) + 'ms)',
 			color: embed.colors.GOLD,
 		})],
 	});
@@ -58,9 +54,7 @@ if (sub === 'click') {
 		message.reply({
 			embeds: [embed.create({
 				title: '⏱️ Too Early!',
-				description: 'You clicked ' + utils.format.number(Math.abs(reaction)) + 'ms before GO.
-
-Try again: buttonrush start',
+				description: 'You clicked ' + utils.format.number(Math.abs(reaction)) + 'ms before GO.\n\nTry again: buttonrush start',
 				color: embed.colors.ERROR,
 			})],
 		});

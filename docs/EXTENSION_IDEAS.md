@@ -280,7 +280,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `typerace` | Speed typing competition | ✅ SEEDED (Batch 1) |
 | `emojisimon` | Repeat emoji sequences | ✅ SEEDED (Batch 9) |
 | `buttonrush` | Click button before it disappears | ✅ SEEDED (Batch 9) |
-| `dodge` | React with correct emoji | 📦 EXTENSION |
+| `dodge` | React with correct emoji | ✅ SEEDED (Batch 17) |
 | `mathsnap` | React to true equations | ✅ SEEDED (Batch 9) |
 
 ### Social Deduction
@@ -291,7 +291,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `spyfall` | Find the spy | ✅ SEEDED (Batch 4) |
 | `traitor` | Vote out traitor | ✅ SEEDED (Batch 5) |
 | `liar` | Detect who has different info | ✅ SEEDED (Batch 9) |
-| `secretroles` | Hidden role games | 📦 EXTENSION |
+| `secretroles` | Hidden role games | ✅ SEEDED (Batch 17) |
 | `alibi` | Murder mystery | ✅ SEEDED (Batch 9) |
 
 ### Puzzle Games
@@ -327,7 +327,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | Command | Description | Status |
 |---------|-------------|--------|
 | `duel` | PvP Combat | ✅ SEEDED (Batch 3) |
-| `bossraid` | Server Boss | 📦 EXTENSION |
+| `bossraid` | Server Boss | ✅ SEEDED (Batch 17) |
 | `adventure` | Text Adventure | ✅ SEEDED (Batch 2) |
 | `dungeon` | Dungeon Crawler | ✅ SEEDED (Batch 2) |
 | `towerclimb` | Tower Climbing | ✅ SEEDED (Batch 4) |
@@ -342,7 +342,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `slots` | Slot machine | ✅ SEEDED (Batch 1) |
 | `roulette` | Roulette | ✅ SEEDED (Batch 2) |
 | `crash` | Crash Game | ✅ SEEDED (Batch 2) |
-| `diceroll` | Dice rolling with bets | 📦 EXTENSION |
+| `dicebet` | Dice rolling with bets | ✅ SEEDED (Batch 17) |
 | `fish` | Go fishing | ✅ SEEDED (Batch 1) |
 | `rps` | Rock Paper Scissors | ✅ SEEDED (Batch 1) |
 
@@ -489,18 +489,34 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 ## 🛡️ ADVANCED MODERATION (MIXED TIERS)
 
-**Architecture:** Integrate into `Modules/Moderation`.
-*Basic moderation = Tier 1. Antiraid/Antinuke/Altcheck = **Tier 2**.*
+**Architecture:** Integrated into `Modules/Moderation` with event handlers in `Internals/Events/guildMemberAdd/`.
+*Basic moderation = Tier 1. Antiraid/Altcheck = **Tier 2**.*
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `automod` | Auto-moderation rules | 🚧 PLANNED BUILT-IN |
-| `filter` | Word filtering | 🚧 PLANNED BUILT-IN |
-| `strike` | Give strikes | ❌ BUILT-IN (`strike.js`) |
-| `modlog` | Configure logs | ❌ BUILT-IN (`modlog.js`) |
-| `antispam` | Anti-spam system | 🚧 PLANNED BUILT-IN |
-| `antiraid` | Anti-raid system | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `altcheck` | Alt account check | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `automod` | Auto-moderation rules | ✅ BUILT-IN (`automod.js`) |
+| `filter` | Word filtering | ✅ BUILT-IN (`filter.js`) |
+| `strike` | Strike management | ✅ ENHANCED (`strike.js`) |
+| `modlog` | Moderation logging | ✅ ENHANCED (`modlog.js`) |
+| `antispam` | Anti-spam system | ✅ BUILT-IN (`antispam.js`) |
+| `antiraid` | Anti-raid system | ✅ BUILT-IN (`antiraid.js`) - Tier 2 |
+| `altcheck` | Alt account check | ✅ BUILT-IN (`altcheck.js`) - Tier 2 |
+
+**Implementation Details:**
+
+- **automod**: Unified interface for enabling/disabling moderation and configuring spam/mention filters
+- **filter**: Add/remove/import filtered words with preset lists (profanity, slurs, spam keywords)
+- **antispam**: Configure spam detection sensitivity, actions, ignored channels, violator roles
+- **antiraid**: Tier 2 - Join velocity detection, lockdown mode, min account age, whitelist roles
+- **altcheck**: Tier 2 - Account age detection, quarantine roles, manual user checks
+- **strike**: Full strike management - give, remove, clear, view with admin attribution
+- **modlog**: Enhanced logging - test entries, event filtering, history viewing
+- **Event Handler**: `Skynet.RaidDetection.js` monitors joins for raid patterns and alt accounts
+
+**Schema Updates:**
+
+- `serverConfigSchema.js`: Added `antiraid` and `altcheck` filter configurations
+- `serverModlogSchema.js`: Added `events` filtering and new entry types (Strike Removed, Raid Detected, etc.)
 
 ---
 
@@ -512,74 +528,97 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `anime` | Search anime info | ❌ BUILT-IN |
-| `manga` | Search manga info | 📦 EXTENSION |
-| `character` | Search anime characters | 📦 EXTENSION |
-| `animequote` | Random anime quote | 📦 EXTENSION |
+| `anime` | Search anime info | ✅ SEEDED (Batch 13 - Jikan API) |
+| `manga` | Search manga info | ✅ SEEDED (Batch 13 - Jikan API) |
+| `character` | Search anime characters | ✅ SEEDED (Batch 13 - Jikan API) |
+| `animequote` | Random anime quote | ✅ SEEDED (Batch 12) |
+| `randomanime` | Random anime recommendation | ✅ SEEDED (Batch 14 - Jikan API) |
+| `animetop` | View top rated anime | ✅ SEEDED (Batch 14 - Jikan API) |
+| `animeseason` | View seasonal anime | ✅ SEEDED (Batch 14 - Jikan API) |
+| `animeschedule` | View airing schedule | ✅ SEEDED (Batch 16 - Jikan API) |
+| `mangatop` | View top rated manga | ✅ SEEDED (Batch 16 - Jikan API) |
 | `animeguess` | Guess anime from screenshot | 📦 EXTENSION |
-| `waifuroll` | Roll random waifu/husbando | 📦 EXTENSION |
-| `waifuclaim` | Claim rolled characters | 📦 EXTENSION |
-| `waifuprofile` | View waifu collection | 📦 EXTENSION |
+| `waifuroll` | Roll random waifu/husbando | ✅ SEEDED (Batch 12) |
+| `waifuclaim` | Claim rolled characters | ✅ SEEDED (Batch 12) |
+| `waifuprofile` | View waifu collection | ✅ SEEDED (Batch 12) |
 
 ### Minecraft
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `mcstatus` | Check server status | 📦 EXTENSION |
-| `mcskin` | Display player skin | 📦 EXTENSION |
-| `mcuuid` | Get player UUID | 📦 EXTENSION |
+| `mcstatus` | Check server status | ✅ SEEDED (Batch 14 - mcsrvstat.us API) |
+| `mcskin` | Display player skin | ✅ SEEDED (Batch 13 - Mojang API) |
+| `mcuuid` | Get player UUID | ✅ SEEDED (Batch 13 - Mojang API) |
 | `mcnamehistory` | Player name history | 📦 EXTENSION |
 
 ### Valorant
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `valorantstats` | Player stats and rank | 📦 EXTENSION |
-| `valorantmatch` | Last match details | 📦 EXTENSION |
-| `valorantagent` | Agent statistics | 📦 EXTENSION |
+| `valorantstats` | Player stats and rank | ✅ SEEDED (Batch 15 - Henrik API) |
+| `valorantmatch` | Last match details | ✅ SEEDED (Batch 15 - Henrik API) |
+| `valorantagent` | Agent information | ✅ SEEDED (Batch 15 - Henrik API) |
 
 ### League of Legends
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `lolsummoner` | Summoner profile | 📦 EXTENSION |
-| `lollive` | Live game lookup | 📦 EXTENSION |
+| `lolchampion` | Champion information | ✅ SEEDED (Batch 16 - Data Dragon) |
+| `lolitem` | Item information | ✅ SEEDED (Batch 16 - Data Dragon) |
+| `lolrotation` | Free champion rotation | ✅ SEEDED (Batch 16 - Data Dragon) |
+| `lolrandom` | Random champion picker | ✅ SEEDED (Batch 16 - Data Dragon) |
+| `lolsummoner` | Summoner profile | 📦 EXTENSION (Requires Riot API Key) |
+| `lollive` | Live game lookup | 📦 EXTENSION (Requires Riot API Key) |
 | `lolbuild` | Champion builds | 📦 EXTENSION |
-| `lolmastery` | Champion mastery | 📦 EXTENSION |
+| `lolmastery` | Champion mastery | 📦 EXTENSION (Requires Riot API Key) |
 
 ### Fortnite
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `fortnitestats` | Player statistics | 📦 EXTENSION |
-| `fortniteshop` | Daily item shop | 📦 EXTENSION |
+| `fortnitestats` | Player statistics | ✅ SEEDED (Batch 15 - Fortnite API) |
+| `fortniteshop` | Daily item shop | ✅ SEEDED (Batch 15 - Fortnite API) |
+| `fortnitemap` | View current map | ✅ SEEDED (Batch 15 - Fortnite API) |
 | `fortnitetrack` | Track player stats | 📦 EXTENSION |
 
 ### General Gaming
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `steamprofile` | Steam profile info | 📦 EXTENSION |
-| `steamgame` | Game information | 📦 EXTENSION |
-| `lfg` | Looking for group | 📦 EXTENSION |
+| `steamprofile` | Steam profile info | ✅ SEEDED (Batch 14 - Steam API) |
+| `steamgame` | Game information | ✅ SEEDED (Batch 14 - Steam API) |
+| `lfg` | Looking for group | ✅ SEEDED (Batch 12) |
 | `gamestats` | Generic game stats | 📦 EXTENSION |
 
 ---
 
-## 🤖 AI FEATURES (TIER 2 - PREMIUM)
+## 🤖 AI FEATURES (✅ IMPLEMENTED - TIER 2 PREMIUM)
 
 *AI features integrate with existing AI module. **Tier-gated:** Requires Tier 2 (Premium) due to API costs.*
 
+**Architecture:** Multi-provider AI system in `Modules/AI/` with OpenAI, Anthropic, and Groq support.
+**Image Generation:** DALL-E 2/3 and GPT-Image-1 support via OpenAI API.
+
 | Command | Description | Status |
 |---------|-------------|--------|
-| `aichat` | Chat with AI | ❌ BUILT-IN (`ai.js`) |
-| `aithread` | Persistent AI conversation | 🚧 PLANNED BUILT-IN |
-| `aisummarize` | Summarize text/messages | 🚧 PLANNED BUILT-IN |
-| `airewrite` | Rewrite in different tone | 🚧 PLANNED BUILT-IN |
-| `aiexplain` | Explain code/concepts | 🚧 PLANNED BUILT-IN |
-| `aiimage` | Generate image from prompt | 🚧 PLANNED BUILT-IN |
-| `aiavatar` | Stylized avatar generation | 🚧 PLANNED BUILT-IN |
-| `aivariations` | Image variations | 🚧 PLANNED BUILT-IN |
+| `aichat` | Chat with AI | ✅ BUILT-IN (`ai.js`) |
+| `aithread` | Persistent AI conversation threads | ✅ BUILT-IN (`aithread.js`) |
+| `aisummarize` | Summarize text/messages | ✅ BUILT-IN (`aisummarize.js`) |
+| `airewrite` | Rewrite in different tone | ✅ BUILT-IN (`airewrite.js`) |
+| `aiexplain` | Explain code/concepts | ✅ BUILT-IN (`aiexplain.js`) |
+| `aiimage` | Generate image from prompt | ✅ BUILT-IN (`aiimage.js`) |
+| `aiavatar` | Stylized avatar generation | ✅ BUILT-IN (`aiavatar.js`) |
+| `aivariations` | Image variations | ✅ BUILT-IN (`aivariations.js`) |
+
+**Features:**
+- Multi-provider chat (OpenAI, Anthropic, Groq)
+- Conversation memory with vector memory support
+- Rate limiting and usage tracking
+- Image generation with DALL-E 3/2
+- Multiple avatar styles (anime, realistic, cartoon, pixel, fantasy, chibi, cyberpunk, watercolor)
+- Text summarization (brief, detailed, bullets)
+- Tone rewriting (professional, casual, formal, simple, academic, humorous, persuasive, concise)
+- Code/concept/error explanations with skill levels
 
 ---
 
@@ -644,21 +683,40 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 ---
 
-## 📊 ADVANCED ANALYTICS (TIER 2 - PREMIUM)
+## 📊 ADVANCED ANALYTICS (TIER 2 - PREMIUM) ✅ IMPLEMENTED
 
 *Analytics for server management. **Tier-gated:** Requires Tier 2 (Premium) subscription.*
 
-**Architecture:** Integrate into `Modules/Analytics` with dashboard visualization in `Web/views/pages/dashboard`.
+**Architecture:** `Modules/Analytics` with dashboard visualization in `Web/views/pages/admin-analytics.ejs`.
+
+**Core Files:**
+- `Modules/Analytics/AnalyticsCollector.js` - Data collection and aggregation
+- `Modules/Analytics/AnalyticsExporter.js` - CSV/JSON export functionality
+- `Modules/Analytics/AnalyticsAggregator.js` - Historical data management
+- `Database/Schemas/serverAnalyticsSchema.js` - Analytics data storage
+- `Internals/SlashCommands/commands/analytics.js` - Unified slash command
+- `Web/views/pages/admin-analytics.ejs` - Dashboard visualization
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `memberactivity` | Member activity stats | 🚧 PLANNED BUILT-IN |
-| `channelactivity` | Channel activity stats | 🚧 PLANNED BUILT-IN |
-| `roleengagement` | Role-based engagement | 🚧 PLANNED BUILT-IN |
-| `joinleave` | Join/leave analytics | 🚧 PLANNED BUILT-IN |
-| `commandstats` | Command usage stats | 🚧 PLANNED BUILT-IN |
-| `heatmap` | Activity heatmap | 🚧 PLANNED BUILT-IN |
-| `exportstats` | Export stats to CSV | 🚧 PLANNED BUILT-IN |
+| `/analytics members` | Member activity stats | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics channels` | Channel activity stats | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics roles` | Role-based engagement | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics joins` | Join/leave analytics | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics commands` | Command usage stats | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics heatmap` | Activity heatmap | ✅ BUILT-IN (`analytics.js`) |
+| `/analytics export` | Export stats to CSV | ✅ BUILT-IN (`analytics.js`) |
+
+**Features:**
+- Member activity tracking (messages, voice, ranks, activity rate)
+- Channel activity analysis with message distribution
+- Role engagement metrics (size, activity, engagement rate)
+- Join/leave analytics with account age distribution
+- Command usage statistics with percentages
+- Activity heatmap by day/hour
+- CSV export for all data types
+- Dashboard with Chart.js visualizations
+- Tab-based navigation for different analytics views
 
 ---
 

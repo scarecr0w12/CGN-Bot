@@ -1,0 +1,70 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const query = command.suffix.trim();
+if (!query) {
+	message.reply({
+		embeds: [embed.create({
+			title: '📚 Manga Search',
+			description: 'Usage: manga <query>\nExample: manga one piece',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/manga?q=' + encodeURIComponent(query) + '&limit=1&sfw=true',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Manga Search',
+			description: 'Failed to fetch manga data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '📚 Manga Search',
+			description: 'No results found for: **' + query + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const manga = data[0];
+const synopsis = manga.synopsis ? (manga.synopsis.length > 300 ? manga.synopsis.slice(0, 300) + '...' : manga.synopsis) : 'No synopsis available.';
+
+message.reply({
+	embeds: [embed.create({
+		title: manga.title,
+		url: manga.url,
+		description: synopsis,
+		thumbnail: { url: manga.images?.jpg?.image_url || '' },
+		fields: [
+			{ name: 'Score', value: String(manga.score || 'N/A'), inline: true },
+			{ name: 'Chapters', value: String(manga.chapters || 'N/A'), inline: true },
+			{ name: 'Volumes', value: String(manga.volumes || 'N/A'), inline: true },
+			{ name: 'Status', value: manga.status || 'N/A', inline: true },
+			{ name: 'Type', value: manga.type || 'N/A', inline: true },
+			{ name: 'Published', value: manga.published?.string || 'N/A', inline: true },
+		],
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Jikan/MyAnimeList' },
+	})],
+});
+})();

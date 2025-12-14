@@ -1,0 +1,94 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const champName = command.suffix.trim().toLowerCase();
+if (!champName) {
+	message.reply({
+		embeds: [embed.create({
+			title: '⚔️ LoL Champion',
+			description: 'Usage: lolchampion <champion name>\nExample: lolchampion ahri',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const versionRes = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/api/versions.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 5000,
+});
+
+const version = versionRes.success && versionRes.json?.[0] ? versionRes.json[0] : '14.1.1';
+
+const res = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/data/en_US/champion.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Champion',
+			description: 'Failed to fetch champion data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const champions = res.json?.data;
+if (!champions) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Champion',
+			description: 'No champion data available.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const champKey = Object.keys(champions).find(k => k.toLowerCase() === champName || champions[k].name.toLowerCase() === champName);
+if (!champKey) {
+	const available = Object.values(champions).map(c => c.name).slice(0, 20).join(', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Champion',
+			description: 'Champion not found: **' + champName + '**\n\nSome champions: ' + available + '...',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const champ = champions[champKey];
+const tags = champ.tags?.join(', ') || 'Unknown';
+const stats = champ.stats || {};
+
+const fields = [
+	{ name: 'Title', value: champ.title || 'Unknown', inline: true },
+	{ name: 'Role', value: tags, inline: true },
+	{ name: 'Difficulty', value: String(champ.info?.difficulty || 'N/A') + '/10', inline: true },
+	{ name: 'HP', value: String(stats.hp || 0), inline: true },
+	{ name: 'Armor', value: String(stats.armor || 0), inline: true },
+	{ name: 'Attack', value: String(stats.attackdamage || 0), inline: true },
+];
+
+message.reply({
+	embeds: [embed.create({
+		title: '⚔️ ' + champ.name,
+		description: champ.blurb || 'No description available.',
+		thumbnail: { url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/img/champion/' + champKey + '.png' },
+		fields: fields,
+		color: embed.colors.GOLD,
+		footer: { text: 'Powered by Riot Data Dragon | Patch ' + version },
+	})],
+});
+})();

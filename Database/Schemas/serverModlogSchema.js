@@ -10,6 +10,36 @@ module.exports = new Schema({
 		type: Number,
 		default: 0,
 	},
+	events: new Schema({
+		strikes: {
+			type: Boolean,
+			default: true,
+		},
+		kicks: {
+			type: Boolean,
+			default: true,
+		},
+		bans: {
+			type: Boolean,
+			default: true,
+		},
+		mutes: {
+			type: Boolean,
+			default: true,
+		},
+		filter_violations: {
+			type: Boolean,
+			default: true,
+		},
+		raid_alerts: {
+			type: Boolean,
+			default: true,
+		},
+		alt_detection: {
+			type: Boolean,
+			default: true,
+		},
+	}),
 	entries: [new Schema({
 		_id: {
 			// Based off current_id
@@ -34,11 +64,19 @@ module.exports = new Schema({
 				"Unban",
 				"Unmute",
 				"Strike",
+				"Strike Removed",
+				"Strikes Cleared",
 				"Temp Ban",
 				"Temp Mute",
 				"Delete Role",
 				"Modify Role",
 				"Create Role",
+				"Filter Violation",
+				"Spam Detected",
+				"Raid Detected",
+				"Kick (Alt Detection)",
+				"Ban (Alt Detection)",
+				"Quarantine",
 			],
 			required: true,
 		},

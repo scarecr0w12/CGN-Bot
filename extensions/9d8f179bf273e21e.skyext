@@ -1,0 +1,112 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const input = command.suffix.trim();
+if (!input) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Steam Profile',
+			description: 'Usage: steamprofile <steam id or vanity url>\nExample: steamprofile gaborules',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+let steamId = input;
+
+if (!/^[0-9]{17}$/.test(input)) {
+	const vanityRes = await http.request({
+		url: 'https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=' + (process.env.STEAM_API_KEY || '') + '&vanityurl=' + encodeURIComponent(input),
+		method: 'GET',
+		responseType: 'json',
+		timeoutMs: 8000,
+	});
+	
+	if (!vanityRes.success || vanityRes.json?.response?.success !== 1) {
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ Steam Profile',
+				description: 'Could not resolve Steam ID. Try using a 17-digit Steam ID instead.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+	steamId = vanityRes.json.response.steamid;
+}
+
+const res = await http.request({
+	url: 'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=' + (process.env.STEAM_API_KEY || '') + '&steamids=' + steamId,
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Steam Profile',
+			description: 'Failed to fetch profile: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const players = res.json?.response?.players;
+if (!players || !players.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Steam Profile',
+			description: 'Player not found.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const player = players[0];
+const statusMap = {
+	0: '🔴 Offline',
+	1: '🟢 Online',
+	2: '🟡 Busy',
+	3: '🟡 Away',
+	4: '🟡 Snooze',
+	5: '🔵 Looking to Trade',
+	6: '🔵 Looking to Play',
+};
+const status = statusMap[player.personastate] || 'Unknown';
+
+const fields = [
+	{ name: 'Status', value: status, inline: true },
+	{ name: 'Steam ID', value: '`' + steamId + '`', inline: true },
+];
+
+if (player.gameextrainfo) {
+	fields.push({ name: 'Playing', value: player.gameextrainfo, inline: true });
+}
+
+if (player.timecreated) {
+	const created = new Date(player.timecreated * 1000).toLocaleDateString();
+	fields.push({ name: 'Member Since', value: created, inline: true });
+}
+
+if (player.loccountrycode) {
+	fields.push({ name: 'Country', value: ':flag_' + player.loccountrycode.toLowerCase() + ':', inline: true });
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: player.personaname,
+		url: player.profileurl,
+		thumbnail: { url: player.avatarfull || player.avatar },
+		fields: fields,
+		color: embed.colors.BLUE,
+		footer: { text: 'Powered by Steam API' },
+	})],
+});
+})();

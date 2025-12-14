@@ -1,0 +1,19 @@
+const message = require('message');
+const embed = require('embed');
+const utils = require('utils');
+
+const emojis = ['⬆️', '⬇️', '⬅️', '➡️', '🔴', '🟢', '🔵', '🟡', '⭐', '💎'];
+const correctEmoji = utils.random.pick(emojis);
+const decoys = emojis.filter(e => e !== correctEmoji).slice(0, 3);
+const allEmojis = utils.random.shuffle([correctEmoji, ...decoys]);
+
+const timeLimit = utils.random.int(3, 6);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 DODGE!',
+		description: 'React with **' + correctEmoji + '** within ' + timeLimit + ' seconds!\n\nOptions: ' + allEmojis.join(' '),
+		color: embed.colors.WARNING,
+		footer: { text: 'First correct reaction wins!' },
+	})],
+});

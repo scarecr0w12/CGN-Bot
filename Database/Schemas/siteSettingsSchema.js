@@ -300,6 +300,66 @@ module.exports = new Schema({
 		},
 	}),
 
+	// Email Configuration
+	email: new Schema({
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+		provider: {
+			type: String,
+			default: "smtp",
+			enum: ["smtp", "sendgrid", "mailgun", "ses"],
+		},
+		from_name: {
+			type: String,
+			default: "",
+		},
+		from_email: {
+			type: String,
+			default: "",
+		},
+		admin_email: {
+			type: String,
+			default: "",
+		},
+		brand_color: {
+			type: String,
+			default: "#3273dc",
+		},
+		logo_url: {
+			type: String,
+			default: "",
+		},
+		footer_text: {
+			type: String,
+			default: "",
+		},
+		// Email notification preferences
+		notifications: new Schema({
+			send_receipts: {
+				type: Boolean,
+				default: true,
+			},
+			send_subscription_alerts: {
+				type: Boolean,
+				default: true,
+			},
+			send_expiry_reminders: {
+				type: Boolean,
+				default: true,
+			},
+			expiry_reminder_days: {
+				type: Number,
+				default: 7,
+			},
+			send_admin_alerts: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+	}),
+
 	// Payment Provider Configuration
 	payment_providers: new Schema({
 		stripe: new Schema({

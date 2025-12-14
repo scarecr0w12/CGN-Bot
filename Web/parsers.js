@@ -225,6 +225,12 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		hasPurchased,
 		fields: versionDocument.fields,
 		timeout: versionDocument.timeout,
+		network_capability: versionDocument.network_capability || "none",
+		network_approved: versionDocument.network_approved || false,
+		network_approved_by: versionDocument.network_approved_by || null,
+		network_approved_at: versionDocument.network_approved_at ?
+			moment(versionDocument.network_approved_at).fromNow() : null,
+		dashboard_settings: versionDocument.dashboard_settings || null,
 	};
 };
 

@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const gameKey = 'ghost_game_' + message.author.id;
@@ -41,11 +41,7 @@ if (sub === 'start') {
 		message.reply({
 			embeds: [embed.create({
 				title: '👻 Ghost',
-				description: 'A game is already running for you.
-
-Current fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '
-
-Use: ghost add <letter> or ghost end',
+				description: 'A game is already running for you.\n\nCurrent fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '\n\nUse: ghost add <letter> or ghost end',
 				color: embed.colors.WARNING,
 			})],
 		});
@@ -58,14 +54,7 @@ Use: ghost add <letter> or ghost end',
 	message.reply({
 		embeds: [embed.create({
 			title: '👻 Ghost - Started',
-			description: 'Game started!
-
-Rules:
-- You and the bot take turns adding 1 letter
-- If you complete a valid word (4+ letters), you lose
-- If you create a fragment that cannot lead to any word, you lose
-
-Use: ghost add <letter>',
+			description: 'Game started!\n\nRules:\n- You and the bot take turns adding 1 letter\n- If you complete a valid word (4+ letters), you lose\n- If you create a fragment that cannot lead to any word, you lose\n\nUse: ghost add <letter>',
 			color: embed.colors.SUCCESS,
 		})],
 	});
@@ -99,8 +88,7 @@ if (sub === 'status') {
 		embeds: [embed.create({
 			title: '👻 Ghost - Status',
 			description: current.active
-				? ('Active. Fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '
-Turns: ' + utils.format.number(current.turns || 0))
+				? ('Active. Fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '\nTurns: ' + utils.format.number(current.turns || 0))
 				: 'No active game. Use: ghost start',
 			color: embed.colors.BLUE,
 		})],
@@ -140,9 +128,7 @@ if (sub === 'add') {
 		message.reply({
 			embeds: [embed.create({
 				title: '👻 You Lost!',
-				description: 'You completed the word: ' + utils.discord.bold(fragment) + '
-
-Game over.',
+				description: 'You completed the word: ' + utils.discord.bold(fragment) + '\n\nGame over.',
 				color: embed.colors.ERROR,
 			})],
 		});
@@ -156,9 +142,7 @@ Game over.',
 		message.reply({
 			embeds: [embed.create({
 				title: '👻 You Lost!',
-				description: 'Fragment ' + utils.discord.bold(fragment) + ' cannot form a word from the dictionary.
-
-Game over.',
+				description: 'Fragment ' + utils.discord.bold(fragment) + ' cannot form a word from the dictionary.\n\nGame over.',
 				color: embed.colors.ERROR,
 			})],
 		});
@@ -191,9 +175,7 @@ Game over.',
 		message.reply({
 			embeds: [embed.create({
 				title: '👻 You Win!',
-				description: 'Bot completed the word: ' + utils.discord.bold(fragment) + '
-
-You win!',
+				description: 'Bot completed the word: ' + utils.discord.bold(fragment) + '\n\nYou win!',
 				color: embed.colors.SUCCESS,
 			})],
 		});
@@ -206,12 +188,7 @@ You win!',
 	message.reply({
 		embeds: [embed.create({
 			title: '👻 Ghost',
-			description: 'You added: ' + utils.discord.bold(letter) + '
-Bot added: ' + utils.discord.bold(botLetter) + '
-
-Current fragment: ' + utils.discord.bold(fragment) + '
-
-Next: ghost add <letter>',
+			description: 'You added: ' + utils.discord.bold(letter) + '\nBot added: ' + utils.discord.bold(botLetter) + '\n\nCurrent fragment: ' + utils.discord.bold(fragment) + '\n\nNext: ghost add <letter>',
 			color: embed.colors.PURPLE,
 		})],
 	});
@@ -221,11 +198,7 @@ Next: ghost add <letter>',
 message.reply({
 	embeds: [embed.create({
 		title: '👻 Ghost',
-		description: 'Usage:
-- ghost start
-- ghost add <letter>
-- ghost status
-- ghost end',
+		description: 'Usage:\n- ghost start\n- ghost add <letter>\n- ghost status\n- ghost end',
 		color: embed.colors.DEFAULT,
 	})],
 });

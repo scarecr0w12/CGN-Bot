@@ -54,10 +54,15 @@
 						<div class="field">
 							<label class="label">Default Model</label>
 							<div class="control">
-								<input name="model-name" id="model-name" class="input is-primary" type="text" value="<%= configData.ai.model.name %>" placeholder="e.g., gpt-4o-mini">
+								<div class="select is-primary is-fullwidth" id="model-select-wrapper">
+									<select name="model-name" id="model-name">
+										<option value="<%= configData.ai.model.name %>"><%= configData.ai.model.name %></option>
+									</select>
+								</div>
 								<input type="hidden" name="model-provider" id="model-provider" value="<%= configData.ai.model.provider %>">
 							</div>
-							<p class="help">Enter the model name. Common models: gpt-4o-mini, claude-3-5-sonnet-20241022, llama-3.1-70b-versatile</p>
+							<p class="help" id="model-help">Select a model from the list. Models are fetched from your configured provider.</p>
+							<p class="help" id="model-status" style="display: none;"></p>
 						</div>
 
 						<hr>
@@ -306,10 +311,131 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-		function updateModelOptions() {
+		// Make serverData available to JavaScript
+		const serverData = {
+			id: '<%= serverData.id %>',
+			name: '<%= serverData.name %>'
+		};
+		const currentModel = '<%= configData.ai.model.name %>';
+		const fallbackModels = {
+			openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo'],
+			anthropic: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'],
+			groq: ['llama-3.1-70b-versatile', 'llama-3.1-8b-instant', 'mixtral-8x7b-32768'],
+			ollama: ['llama3.1', 'llama3', 'llama2', 'mistral', 'mixtral', 'codellama', 'phi3', 'gemma2', 'qwen2'],
+			openai_compatible: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'gpt-3.5-turbo', 'llama-3.1-70b', 'llama-3.1-8b', 'mistral-7b', 'mixtral-8x7b']
+		};
+
+		async function updateModelOptions() {
 			const provider = document.getElementById('defaultProvider').value;
 			document.getElementById('model-provider').value = provider;
+			
+			const modelElement = document.getElementById('model-name');
+			const modelStatus = document.getElementById('model-status');
+			let selectWrapper = document.getElementById('model-select-wrapper');
+			
+			// If it was converted to input, restore the select structure
+			if (!selectWrapper && modelElement && modelElement.tagName === 'INPUT') {
+				const currentValue = modelElement.value;
+				const parent = modelElement.parentElement;
+				const newWrapper = document.createElement('div');
+				newWrapper.className = 'select is-primary is-fullwidth';
+				newWrapper.id = 'model-select-wrapper';
+				const newSelect = document.createElement('select');
+				newSelect.name = 'model-name';
+				newSelect.id = 'model-name';
+				const opt = document.createElement('option');
+				opt.value = currentValue;
+				opt.textContent = currentValue;
+				newSelect.appendChild(opt);
+				newWrapper.appendChild(newSelect);
+				parent.replaceChild(newWrapper, modelElement);
+				selectWrapper = newWrapper;
+			}
+			
+			const modelSelect = document.getElementById('model-name');
+			
+			// Show loading state
+			modelSelect.disabled = true;
+			if (selectWrapper) selectWrapper.classList.add('is-loading');
+			modelStatus.style.display = 'block';
+			modelStatus.className = 'help has-text-info';
+			modelStatus.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching available models...';
+			
+			try {
+				const response = await fetch(`/dashboard/${serverData.id}/ai/models?provider=${provider}`);
+				const data = await response.json();
+				console.log('AI Models API response:', data);
+				
+				let models = [];
+				if (data.success && Array.isArray(data.models) && data.models.length > 0) {
+					models = data.models;
+					modelStatus.className = 'help has-text-success';
+					modelStatus.innerHTML = `<i class="fas fa-check"></i> Found ${models.length} models from API`;
+				} else {
+					// Use fallback models
+					models = fallbackModels[provider] || [];
+					if (models.length > 0) {
+						modelStatus.className = 'help has-text-warning';
+						modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${data.error || 'Could not fetch models'}. Using common models.`;
+					} else {
+						modelStatus.className = 'help has-text-warning';
+						modelStatus.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${data.error || 'No models available'}. Enter model name manually.`;
+					}
+				}
+				
+				populateModelSelect(models, provider);
+			} catch (error) {
+				// Use fallback models on error
+				const models = fallbackModels[provider] || [];
+				populateModelSelect(models, provider);
+				modelStatus.className = 'help has-text-danger';
+				modelStatus.innerHTML = `<i class="fas fa-times"></i> Error fetching models. Using defaults.`;
+			} finally {
+				const finalSelect = document.getElementById('model-name');
+				const finalWrapper = document.getElementById('model-select-wrapper');
+				if (finalSelect) finalSelect.disabled = false;
+				if (finalWrapper) finalWrapper.classList.remove('is-loading');
+			}
 		}
+
+		function populateModelSelect(models, provider) {
+			const modelSelect = document.getElementById('model-name');
+			const currentValue = modelSelect.value;
+			
+			modelSelect.innerHTML = '';
+			
+			if (models.length === 0) {
+				// Allow manual entry if no models available
+				const wrapper = document.getElementById('model-select-wrapper');
+				wrapper.outerHTML = `<input name="model-name" id="model-name" class="input is-primary" type="text" value="${currentValue}" placeholder="Enter model name manually">`;
+				return;
+			}
+			
+			// Add models to select
+			models.forEach(model => {
+				const option = document.createElement('option');
+				option.value = model;
+				option.textContent = model;
+				if (model === currentModel || model === currentValue) {
+					option.selected = true;
+				}
+				modelSelect.appendChild(option);
+			});
+			
+			// If current model not in list, add it as first option
+			if (currentValue && !models.includes(currentValue)) {
+				const option = document.createElement('option');
+				option.value = currentValue;
+				option.textContent = `${currentValue} (current)`;
+				option.selected = true;
+				modelSelect.insertBefore(option, modelSelect.firstChild);
+			}
+		}
+
+		// Load models on page load
+		document.addEventListener('DOMContentLoaded', function() {
+			updateModelOptions();
+		});
 	</script>
 </body>
 </html>

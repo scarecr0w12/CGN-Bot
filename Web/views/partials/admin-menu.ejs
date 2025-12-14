@@ -11,7 +11,7 @@ const menuSections = {
 	stats: {
 		icon: 'fa fa-star',
 		label: 'Stats & Points',
-		paths: ['stats-points/stats-collection', 'stats-points/ranks', 'stats-points/skynet-points', 'stats-points/economy', 'stats-points/economy-stats', 'stats-points/advanced-stats']
+		paths: ['stats-points/stats-collection', 'stats-points/ranks', 'stats-points/skynet-points', 'stats-points/economy', 'stats-points/economy-stats', 'stats-points/advanced-stats', 'stats-points/analytics']
 	},
 	admin: {
 		icon: 'fa fa-wrench',
@@ -135,6 +135,9 @@ const menuItem = (path, label, icon = null) => {
 
 					<% if(isActive(`${basePath}/stats-points/advanced-stats`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('stats-points/advanced-stats', 'Advanced Stats', 'fas fa-crown') %>
+
+					<% if(isActive(`${basePath}/stats-points/analytics`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('stats-points/analytics', 'Analytics Dashboard', 'fas fa-chart-bar') %>
 				</li>
 			</ul>
 		</div>

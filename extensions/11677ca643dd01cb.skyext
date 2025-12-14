@@ -1,5 +1,5 @@
 const extension = require('extension');
-const server = require('server');
+const server = require('guild');
 
 const activityLevel = Math.floor(Math.random() * 100);
 let status = 'Low';

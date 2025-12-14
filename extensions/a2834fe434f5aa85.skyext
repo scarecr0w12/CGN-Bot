@@ -81,22 +81,15 @@ function listPricesEmbed() {
 	const lines = TICKERS.map(t => {
 		const p = getPrice(t);
 		return '• ' + utils.discord.bold(t.symbol) + ' - ' + t.name + ' — ' + utils.discord.bold(formatMoney(p)) + ' pts';
-	}).join('
-');
+	}).join('\n');
 
 	return embed.create({
 		title: '📈 Virtual Stocks',
-		description: lines + '
-
-' +
-			'Commands:
-' +
-			'`stocks buy <TICKER> <shares>`
-' +
-			'`stocks sell <TICKER> <shares>`
-' +
-			'`stocks portfolio`
-' +
+		description: lines + '\n\n' +
+			'Commands:\n' +
+			'`stocks buy <TICKER> <shares>`\n' +
+			'`stocks sell <TICKER> <shares>`\n' +
+			'`stocks portfolio`\n' +
 			'`stocks chart <TICKER>`',
 		color: embed.colors.BLUE,
 		footer: { text: 'Prices update hourly (UTC) and vary day-to-day' },
@@ -128,8 +121,7 @@ function portfolioEmbed(userId) {
 
 	return embed.create({
 		title: '🧾 Portfolio',
-		description: lines.join('
-'),
+		description: lines.join('\n'),
 		color: embed.colors.PURPLE,
 		fields: [
 			{ name: 'Total Holdings Value', value: utils.discord.bold(formatMoney(totalValue) + ' pts'), inline: true },
@@ -169,12 +161,9 @@ function chartEmbed(symbol) {
 		return '▮'.repeat(blocks + 1);
 	});
 
-	let desc = utils.discord.bold(t.symbol) + ' - ' + t.name + '
-
-';
+	let desc = utils.discord.bold(t.symbol) + ' - ' + t.name + '\n\n';
 	for (let i = 0; i < days.length; i++) {
-		desc += days[i].slice(5) + ' ' + bars[i] + ' ' + formatMoney(prices[i]) + '
-';
+		desc += days[i].slice(5) + ' ' + bars[i] + ' ' + formatMoney(prices[i]) + '\n';
 	}
 
 	return embed.create({
@@ -210,8 +199,7 @@ if (sub === 'buy' || sub === 'sell') {
 		message.reply({
 			embeds: [embed.create({
 				title: '❌ Invalid Usage',
-				description: 'Usage: `stocks ' + sub + ' <TICKER> <shares>`
-Example: `stocks ' + sub + ' SKY 5`',
+				description: 'Usage: `stocks ' + sub + ' <TICKER> <shares>`\nExample: `stocks ' + sub + ' SKY 5`',
 				color: embed.colors.ERROR,
 			})],
 		});
@@ -240,10 +228,8 @@ Example: `stocks ' + sub + ' SKY 5`',
 		message.reply({
 			embeds: [embed.create({
 				title: '✅ Buy Executed',
-				description: 'Bought ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '
-' +
-					'Price: ' + formatMoney(price) + ' pts/share
-' +
+				description: 'Bought ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '\n' +
+					'Price: ' + formatMoney(price) + ' pts/share\n' +
 					'Total: ' + utils.discord.bold(formatMoney(total) + ' pts'),
 				color: embed.colors.SUCCESS,
 			})],
@@ -266,10 +252,8 @@ Example: `stocks ' + sub + ' SKY 5`',
 	message.reply({
 		embeds: [embed.create({
 			title: '✅ Sell Executed',
-			description: 'Sold ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '
-' +
-				'Price: ' + formatMoney(price) + ' pts/share
-' +
+			description: 'Sold ' + utils.discord.bold(String(shares)) + ' shares of ' + utils.discord.bold(ticker.symbol) + '\n' +
+				'Price: ' + formatMoney(price) + ' pts/share\n' +
 				'Total: ' + utils.discord.bold(formatMoney(total) + ' pts'),
 			color: embed.colors.GOLD,
 		})],

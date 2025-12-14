@@ -3,7 +3,7 @@ const command = require('command');
 const utils = require('utils');
 const embed = require('embed');
 
-const sub = (command.suffix.trim().split(/s+/)[0] || 'new').toLowerCase();
+const sub = (command.suffix.trim().split(/\s+/)[0] || 'new').toLowerCase();
 
 const LOCATIONS = ['a quiet mansion', 'a space station', 'a museum after hours', 'a luxury train', 'a small-town diner'];
 const WEAPONS = ['a candlestick', 'a poisoned drink', 'a mysterious device', 'a letter opener', 'a rare statue'];
@@ -32,19 +32,10 @@ message.reply({
 	embeds: [embed.create({
 		title: '🧩 Alibi - Mystery Prompt',
 		description:
-		utils.discord.bold('Scene:') + ' In ' + location + ', someone was murdered with ' + weapon + '.
-' +
-		utils.discord.bold('Motive:') + ' ' + motive + '
-
-' +
-		utils.discord.bold('Suspects:') + '
-- ' + suspects.join('
-- ') + '
-
-' +
-		utils.discord.bold('Clues:') + '
-- ' + clues.join('
-- '),
+		utils.discord.bold('Scene:') + ' In ' + location + ', someone was murdered with ' + weapon + '.\n' +
+		utils.discord.bold('Motive:') + ' ' + motive + '\n\n' +
+		utils.discord.bold('Suspects:') + '\n- ' + suspects.join('\n- ') + '\n\n' +
+		utils.discord.bold('Clues:') + '\n- ' + clues.join('\n- '),
 		color: embed.colors.PURPLE,
 		footer: { text: 'Use this to roleplay, debate, and deduce the culprit.' },
 	})],

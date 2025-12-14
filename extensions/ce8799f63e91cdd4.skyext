@@ -9,9 +9,7 @@ if (!input) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🔤 Acronym',
-			description: 'Usage: ' + command.prefix + command.key + ' <phrase>
-
-Example: ' + command.prefix + command.key + ' very important person',
+			description: 'Usage: ' + command.prefix + command.key + ' <phrase>\n\nExample: ' + command.prefix + command.key + ' very important person',
 			color: embed.colors.ERROR,
 		})],
 	});
@@ -19,7 +17,7 @@ Example: ' + command.prefix + command.key + ' very important person',
 }
 
 const words = input
-	.split(/s+/)
+	.split(/\s+/)
 	.map(w => w.trim())
 	.filter(Boolean);
 
@@ -39,11 +37,8 @@ const funny = [
 message.reply({
 	embeds: [embed.create({
 		title: '🔤 Acronym',
-		description: utils.discord.bold('Phrase:') + ' ' + input + '
-' +
-		utils.discord.bold('Acronym:') + ' ' + utils.discord.code(acronym) + '
-
-' +
+		description: utils.discord.bold('Phrase:') + ' ' + input + '\n' +
+		utils.discord.bold('Acronym:') + ' ' + utils.discord.code(acronym) + '\n\n' +
 		utils.discord.italic(utils.random.pick(funny)),
 		color: embed.colors.BLUE,
 	})],

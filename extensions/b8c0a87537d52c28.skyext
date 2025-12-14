@@ -1,0 +1,68 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+let day = command.suffix.trim().toLowerCase();
+
+if (!day) {
+	day = days[new Date().getDay()];
+} else if (!days.includes(day)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Schedule',
+			description: 'Invalid day. Valid days: ' + days.join(', '),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/schedules?filter=' + day + '&limit=15',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Schedule',
+			description: 'Failed to fetch schedule: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const anime = res.json?.data;
+if (!anime || !anime.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '📅 Anime Schedule',
+			description: 'No anime scheduled for ' + day + '.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const list = anime.slice(0, 10).map((a, i) => {
+	const score = a.score ? ' ⭐ ' + a.score : '';
+	return '**' + (i + 1) + '.** [' + a.title + '](' + a.url + ')' + score;
+}).join('\n');
+
+const dayCapitalized = day.charAt(0).toUpperCase() + day.slice(1);
+
+message.reply({
+	embeds: [embed.create({
+		title: '📅 ' + dayCapitalized + ' Anime Schedule',
+		description: list,
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Jikan/MyAnimeList' },
+	})],
+});
+})();

@@ -1142,6 +1142,78 @@ controllers.membership.servers.cancel = async (req, res) => {
 	}
 };
 
+// Email Configuration
+controllers.membership.email = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	const siteSettings = await getSiteSettingsForRead();
+
+	res.setConfigData({
+		email: siteSettings?.email || {},
+	}).setPageData({
+		page: "maintainer-email.ejs",
+	}).render();
+};
+
+controllers.membership.email.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const siteSettings = await getSiteSettingsForWrite();
+
+	// Provider settings
+	siteSettings.query.set("email.isEnabled", req.body.email_enabled === "on");
+	siteSettings.query.set("email.provider", req.body.email_provider || "smtp");
+
+	// Sender settings
+	siteSettings.query.set("email.from_name", req.body.from_name || "");
+	siteSettings.query.set("email.from_email", req.body.from_email || "");
+	siteSettings.query.set("email.admin_email", req.body.admin_email || "");
+
+	// Branding
+	siteSettings.query.set("email.brand_color", req.body.brand_color || "#3273dc");
+	siteSettings.query.set("email.logo_url", req.body.logo_url || "");
+	siteSettings.query.set("email.footer_text", req.body.footer_text || "");
+
+	// Notification preferences
+	siteSettings.query.set("email.notifications.send_receipts", req.body.send_receipts === "on");
+	siteSettings.query.set("email.notifications.send_subscription_alerts", req.body.send_subscription_alerts === "on");
+	siteSettings.query.set("email.notifications.send_expiry_reminders", req.body.send_expiry_reminders === "on");
+	siteSettings.query.set("email.notifications.expiry_reminder_days", parseInt(req.body.expiry_reminder_days) || 7);
+	siteSettings.query.set("email.notifications.send_admin_alerts", req.body.send_admin_alerts === "on");
+
+	try {
+		await siteSettings.save();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save email settings", {}, err);
+		renderError(res, "Failed to save email settings.");
+	}
+};
+
+controllers.membership.email.test = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.status(403).json({ error: "Forbidden" });
+
+	const { email } = req.body;
+	if (!email) {
+		return res.status(400).json({ error: "Email address required" });
+	}
+
+	try {
+		const EmailService = require("../../Modules/EmailService");
+		const emailService = new EmailService(req.app.client);
+		const result = await emailService.sendTestEmail(email);
+
+		if (result.success) {
+			res.json({ success: true, messageId: result.messageId });
+		} else {
+			res.status(400).json({ success: false, error: result.error });
+		}
+	} catch (err) {
+		logger.error("Failed to send test email", { email }, err);
+		res.status(500).json({ success: false, error: err.message });
+	}
+};
+
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {
@@ -1959,6 +2031,84 @@ controllers.tickets.transcript = async (req, res) => {
 
 // Export getNextTicketNumber for use in DM handler
 controllers.tickets.getNextTicketNumber = getNextTicketNumber;
+
+// ============================================
+// NETWORK APPROVALS CONTROLLER
+// ============================================
+
+controllers.networkApprovals = async (req, { res }) => {
+	const moment = require("moment");
+
+	// Find extensions with network capabilities that need approval
+	const pendingApprovals = [];
+	const recentApprovals = [];
+
+	try {
+		const extensions = await Gallery.find({
+			state: { $in: ["queue", "gallery"] },
+		}).exec();
+
+		for (const ext of extensions) {
+			const versionDoc = ext.versions.id(ext.version);
+			if (!versionDoc) continue;
+
+			const netCap = versionDoc.network_capability;
+			if (!netCap || !["network", "network_advanced"].includes(netCap)) continue;
+
+			// Fetch owner info
+			let owner = null;
+			try {
+				owner = await req.app.client.users.fetch(ext.owner_id, true);
+			} catch (_) {
+				// Ignore
+			}
+
+			if (!versionDoc.network_approved) {
+				pendingApprovals.push({
+					_id: ext._id,
+					name: ext.name,
+					owner_id: ext.owner_id,
+					owner: owner ? { username: owner.username } : null,
+					network_capability: netCap,
+					version: ext.version,
+					state: ext.state,
+				});
+			} else {
+				// Recently approved (last 30 days)
+				const approvedAt = versionDoc.network_approved_at;
+				if (approvedAt && moment(approvedAt).isAfter(moment().subtract(30, "days"))) {
+					let approvedByName = versionDoc.network_approved_by;
+					try {
+						const approver = await req.app.client.users.fetch(versionDoc.network_approved_by, true);
+						approvedByName = approver.username;
+					} catch (_) {
+						// Ignore
+					}
+
+					recentApprovals.push({
+						_id: ext._id,
+						name: ext.name,
+						network_capability: netCap,
+						network_approved_by: versionDoc.network_approved_by,
+						approved_by_name: approvedByName,
+						approved_at_formatted: moment(approvedAt).fromNow(),
+					});
+				}
+			}
+		}
+
+		// Sort recent approvals by date (newest first)
+		recentApprovals.sort((a, b) => b.approved_at - a.approved_at);
+	} catch (err) {
+		logger.error("Failed to fetch network approvals", {}, err);
+	}
+
+	res.setPageData({
+		page: "maintainer-network-approvals.ejs",
+		pendingApprovals,
+		recentApprovals: recentApprovals.slice(0, 10),
+	}).render();
+};
 
 // ============================================
 // CLOUDFLARE INTEGRATION CONTROLLERS

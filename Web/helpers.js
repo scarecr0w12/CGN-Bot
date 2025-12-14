@@ -248,6 +248,16 @@ module.exports = {
 			if (val.startsWith("scope_") && data[val]) newVersion.scopes.push(val.split("scope_")[1]);
 		});
 
+		// Network capability - defaults to 'none', requires approval for 'network' and 'network_advanced'
+		const validNetworkCaps = ["none", "allowlist_only", "network", "network_advanced"];
+		newVersion.network_capability = validNetworkCaps.includes(data.network_capability) ?
+			data.network_capability : "none";
+		// Network approval ALWAYS resets on new version - maintainers must review new code
+		// allowlist_only doesn't require approval (auto-approved)
+		newVersion.network_approved = newVersion.network_capability === "allowlist_only";
+		newVersion.network_approved_by = null;
+		newVersion.network_approved_at = null;
+
 		if (!Object.keys(newVersion).some(key => JSON.stringify(newVersion[key]) !== JSON.stringify(currentVersion[key]))) return false;
 		newVersion._id++;
 		newVersion.accepted = null;

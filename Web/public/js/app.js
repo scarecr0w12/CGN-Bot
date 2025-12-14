@@ -699,6 +699,19 @@ SkynetUtil.acceptExtension = extid => {
 	});
 };
 
+SkynetUtil.approveNetworkCapability = extid => {
+	NProgress.start();
+	$.post(`/extensions/${extid}/approve_network`).done(() => {
+		NProgress.done();
+		NProgress.remove();
+		Turbolinks.visit(window.location.href);
+	}).fail(() => {
+		NProgress.done();
+		NProgress.remove();
+		alert("Failed to approve network capability");
+	});
+};
+
 SkynetUtil.featureExtension = extid => {
 	const featureButton = $(`#feature-${extid}`);
 	const featured = featureButton.html().trim() !== "Feature";
@@ -771,6 +784,29 @@ SkynetUtil.uninstallExtension = extid => {
 	const element = $(`#extension-${extid}`);
 	const URL = `${window.location.pathname}/${extid}`;
 	SkynetUtil.removeElement(element, null, URL);
+};
+
+SkynetUtil.saveExtensionSettings = button => {
+	SkynetUtil.SFS();
+	NProgress.start();
+	button.addClass("is-loading");
+	const extid = button.data("extid");
+
+	const data = $(`#extension-settings-form-${extid}`).serialize();
+
+	$.ajax({
+		method: "POST",
+		url: `${window.location.pathname}/settings`,
+		data,
+	}).always(res => {
+		NProgress.done();
+		button.removeClass("is-loading");
+		if (res !== "OK" && res.status !== 200) {
+			swal("Failed to save settings.", "Check your input and try again.", "error");
+		} else {
+			swal("Settings saved!", "Extension settings have been updated.", "success");
+		}
+	});
 };
 
 // Extension Import Functions

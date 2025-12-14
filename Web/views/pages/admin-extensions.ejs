@@ -232,6 +232,92 @@
 									<span>Save</span>
 								</button>
 							</form>
+							<% if (extensionData.dashboard_settings && extensionData.dashboard_settings.enabled && extensionData.dashboard_settings.sections) { %>
+							<hr>
+							<form id="extension-settings-form-<%= extensionData._id %>" onsubmit="return false;">
+								<h4 class="title is-4">
+									<i class="fa fa-cog"></i> Extension Configuration
+									<span class="tag is-info">Server Settings</span>
+								</h4>
+								<p class="help mb-4">These settings are configured by the extension developer and stored per-server.</p>
+								<% extensionData.dashboard_settings.sections.forEach(section => { %>
+								<div class="box" style="background: #fafafa;">
+									<h5 class="title is-5"><%= section.title || section.id %></h5>
+									<% section.fields.forEach(field => { %>
+									<div class="field">
+										<label class="label">
+											<%= field.label || field.id %>
+											<% if (field.required) { %><span class="has-text-danger">*</span><% } %>
+										</label>
+										<div class="control">
+											<% const currentValue = extensionConfigDocument.settings && extensionConfigDocument.settings[field.id]; %>
+											<% if (field.type === 'text') { %>
+											<input name="setting_<%= field.id %>" class="input" type="text" 
+												value="<%= currentValue || field.default || '' %>" 
+												placeholder="<%= field.placeholder || '' %>"
+												<%= field.required ? 'required' : '' %>>
+											<% } else if (field.type === 'textarea') { %>
+											<textarea name="setting_<%= field.id %>" class="textarea" 
+												placeholder="<%= field.placeholder || '' %>"
+												<%= field.required ? 'required' : '' %>><%= currentValue || field.default || '' %></textarea>
+											<% } else if (field.type === 'number') { %>
+											<input name="setting_<%= field.id %>" class="input" type="number" 
+												value="<%= currentValue || field.default || '' %>"
+												<%= field.min !== undefined ? `min="${field.min}"` : '' %>
+												<%= field.max !== undefined ? `max="${field.max}"` : '' %>
+												<%= field.required ? 'required' : '' %>>
+											<% } else if (field.type === 'secret') { %>
+											<input name="secret_<%= field.id %>" class="input" type="password" 
+												placeholder="<%= extensionConfigDocument.secrets && extensionConfigDocument.secrets[field.id] ? '••••••••' : (field.placeholder || 'Enter secret...') %>"
+												autocomplete="new-password">
+											<span class="help has-text-warning"><i class="fa fa-lock"></i> Secrets are encrypted and never shown again</span>
+											<% } else if (field.type === 'toggle') { %>
+											<label class="checkbox">
+												<input name="setting_<%= field.id %>" type="checkbox" <%= currentValue || field.default ? 'checked' : '' %>>
+												<%= field.placeholder || 'Enabled' %>
+											</label>
+											<% } else if (field.type === 'select' && field.options) { %>
+											<div class="select">
+												<select name="setting_<%= field.id %>" <%= field.required ? 'required' : '' %>>
+													<% field.options.forEach(opt => { %>
+													<option value="<%= opt.value %>" <%= currentValue === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+													<% }); %>
+												</select>
+											</div>
+											<% } else if (field.type === 'channel_select') { %>
+											<div class="select">
+												<select name="setting_<%= field.id %>" <%= field.required ? 'required' : '' %>>
+													<option value="">Select a channel...</option>
+													<% serverData.channelData.forEach(ch => { %>
+													<option value="<%= ch.id %>" <%= currentValue === ch.id ? 'selected' : '' %>>#<%= ch.name %></option>
+													<% }); %>
+												</select>
+											</div>
+											<% } else if (field.type === 'role_select') { %>
+											<div class="select">
+												<select name="setting_<%= field.id %>" <%= field.required ? 'required' : '' %>>
+													<option value="">Select a role...</option>
+													<% serverData.roleData.forEach(role => { %>
+													<option value="<%= role.id %>" <%= currentValue === role.id ? 'selected' : '' %>><%= role.name %></option>
+													<% }); %>
+												</select>
+											</div>
+											<% } %>
+										</div>
+										<% if (field.help) { %>
+										<p class="help"><%= field.help %></p>
+										<% } %>
+									</div>
+									<% }); %>
+								</div>
+								<% }); %>
+								<input class="is-hidden" name="id" value="<%= extensionData._id %>">
+								<button type="submit" class="button is-info" onclick="SkynetUtil.saveExtensionSettings($(this));" data-extid="<%= extensionData._id %>">
+									<span class="icon"><i class="fa fa-save"></i></span>
+									<span>Save Settings</span>
+								</button>
+							</form>
+							<% } %>
 						</div>
 					</div>
 					<% } %>

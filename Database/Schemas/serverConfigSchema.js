@@ -241,6 +241,80 @@ module.exports = new Schema({
 					default: "",
 				},
 			}),
+			antiraid: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				join_threshold: {
+					type: Number,
+					default: 10,
+					min: 3,
+					max: 50,
+				},
+				time_window: {
+					type: Number,
+					default: 10,
+					min: 5,
+					max: 60,
+				},
+				action: {
+					type: String,
+					default: "lockdown",
+					enum: ["lockdown", "kick", "ban", "notify"],
+				},
+				lockdown_duration: {
+					type: Number,
+					default: 300,
+					min: 60,
+					max: 3600,
+				},
+				whitelist_role_ids: [String],
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				auto_verify: {
+					type: Boolean,
+					default: false,
+				},
+				min_account_age: {
+					type: Number,
+					default: 7,
+					min: 0,
+					max: 365,
+				},
+			}),
+			altcheck: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				min_account_age_days: {
+					type: Number,
+					default: 7,
+					min: 1,
+					max: 365,
+				},
+				action: {
+					type: String,
+					default: "flag",
+					enum: ["flag", "kick", "ban", "quarantine"],
+				},
+				quarantine_role_id: {
+					type: String,
+					default: "",
+				},
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				whitelist_user_ids: [String],
+				require_verification: {
+					type: Boolean,
+					default: false,
+				},
+			}),
 		}),
 		status_messages: new Schema({
 			server_name_updated_message: new Schema({

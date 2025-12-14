@@ -1,0 +1,88 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const server = command.suffix.trim();
+if (!server) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 MC Server Status',
+			description: 'Usage: mcstatus <server address>\nExample: mcstatus hypixel.net',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const serverClean = server.replace(/[^a-zA-Z0-9.:_-]/g, '');
+if (!serverClean || serverClean.length > 100) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ MC Server Status',
+			description: 'Invalid server address format.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.mcsrvstat.us/3/' + encodeURIComponent(serverClean),
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ MC Server Status',
+			description: 'Failed to fetch server status: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json;
+if (!data || data.online === false) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔴 ' + serverClean,
+			description: 'Server is **offline** or unreachable.',
+			color: embed.colors.ERROR,
+			footer: { text: 'Powered by mcsrvstat.us' },
+		})],
+	});
+	return;
+}
+
+const motd = data.motd?.clean?.join('\n') || 'No MOTD';
+const players = data.players?.online || 0;
+const maxPlayers = data.players?.max || 0;
+const version = data.version || 'Unknown';
+
+const fields = [
+	{ name: 'Status', value: '🟢 Online', inline: true },
+	{ name: 'Players', value: players + '/' + maxPlayers, inline: true },
+	{ name: 'Version', value: version, inline: true },
+];
+
+if (data.players?.list && data.players.list.length > 0) {
+	const playerList = data.players.list.slice(0, 10).map(p => p.name || p).join(', ');
+	fields.push({ name: 'Sample Players', value: playerList, inline: false });
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + serverClean,
+		description: motd.length > 200 ? motd.slice(0, 200) + '...' : motd,
+		thumbnail: data.icon ? { url: data.icon } : undefined,
+		fields: fields,
+		color: embed.colors.GREEN,
+		footer: { text: 'Powered by mcsrvstat.us' },
+	})],
+});
+})();

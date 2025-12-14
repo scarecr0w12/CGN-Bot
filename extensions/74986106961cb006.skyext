@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const key = 'emojiquiz_' + message.author.id;
@@ -24,11 +24,7 @@ if (sub === 'start' || !sub) {
 	message.reply({
 		embeds: [embed.create({
 			title: '😀 Emoji Quiz',
-			description: 'Guess the phrase:
-
-' + utils.discord.bold(q.emojis) + '
-
-Answer with: emojiquiz answer <your guess>',
+			description: 'Guess the phrase:\n\n' + utils.discord.bold(q.emojis) + '\n\nAnswer with: emojiquiz answer <your guess>',
 			color: embed.colors.PURPLE,
 		})],
 	});

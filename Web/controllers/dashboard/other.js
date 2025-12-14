@@ -2,7 +2,7 @@ const fs = require("fs-nextra");
 const moment = require("moment");
 const ObjectId = require("../../../Database/ObjectID");
 const { ChannelType } = require("discord.js");
-const { AllowedEvents, Scopes } = require("../../../Internals/Constants");
+const { AllowedEvents, Scopes, NetworkCapabilities } = require("../../../Internals/Constants");
 const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCodeID, writeExtensionData, validateExtensionData } = require("../../helpers");
 const parsers = require("../../parsers");
 const TierManager = require("../../../Modules/TierManager");
@@ -208,12 +208,14 @@ controllers.extensions = async (req, { res }) => {
 
 	extensionData.spliceNullElements();
 
+	const { getRoleData } = require("../../helpers");
 	res.setPageData({
 		page: "admin-extensions.ejs",
 		extensionData: extensionData,
 	}).setConfigData({
 		extensions: serverExtensionDocuments,
 	}).setServerData("channelData", getChannelData(req.svr))
+		.setServerData("roleData", getRoleData(req.svr))
 		.render();
 };
 
@@ -303,6 +305,69 @@ controllers.extensions.post = async (req, { res }) => {
 	}
 };
 
+controllers.extensionSettings = async (req, { res }) => {
+	res.sendStatus(405);
+};
+
+controllers.extensionSettings.post = async (req, { res }) => {
+	const { document: serverDocument, queryDocument: serverQueryDocument } = req.svr;
+
+	if (!req.body.id) return res.sendStatus(400);
+
+	let extId;
+	try {
+		extId = new ObjectId(req.body.id);
+	} catch (_) {
+		return res.sendStatus(400);
+	}
+
+	const extensionConfigDocument = serverDocument.extensions.id(extId.toString());
+	if (!extensionConfigDocument) return res.sendStatus(404);
+
+	const galleryDocument = await Gallery.findOne(extId);
+	if (!galleryDocument) return res.sendStatus(404);
+
+	const versionDocument = galleryDocument.versions.id(extensionConfigDocument.version);
+	if (!versionDocument || !versionDocument.dashboard_settings || !versionDocument.dashboard_settings.enabled) {
+		return res.sendStatus(400);
+	}
+
+	const settings = extensionConfigDocument.settings || {};
+	const secrets = extensionConfigDocument.secrets || {};
+
+	const validFieldIds = [];
+	versionDocument.dashboard_settings.sections.forEach(section => {
+		section.fields.forEach(field => {
+			validFieldIds.push(field.id);
+		});
+	});
+
+	Object.keys(req.body).forEach(key => {
+		if (key.startsWith("setting_")) {
+			const fieldId = key.replace("setting_", "");
+			if (validFieldIds.includes(fieldId)) {
+				settings[fieldId] = req.body[key];
+			}
+		} else if (key.startsWith("secret_")) {
+			const fieldId = key.replace("secret_", "");
+			if (validFieldIds.includes(fieldId) && req.body[key]) {
+				secrets[fieldId] = req.body[key];
+			}
+		}
+	});
+
+	try {
+		serverQueryDocument.clone.id("extensions", extId.toString())
+			.set("settings", settings)
+			.set("secrets", secrets);
+		await serverDocument.save();
+		res.sendStatus(200);
+	} catch (err) {
+		logger.warn("Failed to save extension settings", { svrid: req.svr.id, extid: extId.toString() }, err);
+		res.sendStatus(500);
+	}
+};
+
 controllers.extensionBuilder = async (req, { res }) => {
 	const renderPage = (extensionData, extensionConfigData) => {
 		res.setServerData("channelData", getChannelData(req.svr))
@@ -313,6 +378,7 @@ controllers.extensionBuilder = async (req, { res }) => {
 				versionData: extensionData.versions ? extensionData.versions.id(extensionData.version) : {},
 				events: AllowedEvents,
 				scopes: Scopes,
+				networkCapabilities: NetworkCapabilities,
 			})
 			.render();
 	};

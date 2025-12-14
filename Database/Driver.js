@@ -48,6 +48,7 @@ if (databaseType === "mariadb") {
 			TicketMessages,
 			ServerTickets,
 			ServerTicketMessages,
+			ServerAnalytics,
 		] = [
 			new Model(db, "servers", require("./Schemas/serverSchema")),
 			new Model(db, "users", require("./Schemas/userSchema")),
@@ -70,6 +71,7 @@ if (databaseType === "mariadb") {
 			new Model(db, "ticket_messages", require("./Schemas/ticketMessageSchema")),
 			new Model(db, "server_tickets", require("./Schemas/serverTicketSchema")),
 			new Model(db, "server_ticket_messages", require("./Schemas/serverTicketMessageSchema")),
+			new Model(db, "server_analytics", require("./Schemas/serverAnalyticsSchema")),
 		];
 		addToGlobal("Servers", Servers);
 		addToGlobal("Users", Users);
@@ -91,6 +93,7 @@ if (databaseType === "mariadb") {
 		addToGlobal("TicketMessages", TicketMessages);
 		addToGlobal("ServerTickets", ServerTickets);
 		addToGlobal("ServerTicketMessages", ServerTicketMessages);
+		addToGlobal("ServerAnalytics", ServerAnalytics);
 		addToGlobal("Client", db);
 		addToGlobal("Database", {
 			Servers, servers: Servers,
@@ -114,6 +117,7 @@ if (databaseType === "mariadb") {
 			TicketMessages, ticketMessages: TicketMessages,
 			ServerTickets, serverTickets: ServerTickets,
 			ServerTicketMessages, serverTicketMessages: ServerTicketMessages,
+			ServerAnalytics, serverAnalytics: ServerAnalytics,
 			client: db,
 			mongoClient,
 		});

@@ -1,0 +1,67 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const query = command.suffix.trim();
+if (!query) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🧑‍🎤 Character Search',
+			description: 'Usage: character <query>\nExample: character goku',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/characters?q=' + encodeURIComponent(query) + '&limit=1',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Character Search',
+			description: 'Failed to fetch character data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🧑‍🎤 Character Search',
+			description: 'No results found for: **' + query + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const char = data[0];
+const about = char.about ? (char.about.length > 400 ? char.about.slice(0, 400) + '...' : char.about) : 'No description available.';
+const nicknames = char.nicknames && char.nicknames.length ? char.nicknames.slice(0, 3).join(', ') : 'None';
+
+message.reply({
+	embeds: [embed.create({
+		title: char.name,
+		url: char.url,
+		description: about,
+		thumbnail: { url: char.images?.jpg?.image_url || '' },
+		fields: [
+			{ name: 'Nicknames', value: nicknames, inline: true },
+			{ name: 'Favorites', value: String(char.favorites || 0), inline: true },
+		],
+		color: embed.colors.GOLD,
+		footer: { text: 'Powered by Jikan/MyAnimeList' },
+	})],
+});
+})();

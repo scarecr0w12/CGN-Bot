@@ -1,0 +1,71 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const query = command.suffix.trim();
+if (!query) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Steam Game',
+			description: 'Usage: steamgame <game name or app id>\nExample: steamgame counter-strike 2',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+let appId = query;
+
+if (!/^[0-9]+$/.test(query)) {
+	const searchRes = await http.request({
+		url: 'https://steamcommunity.com/actions/SearchApps/' + encodeURIComponent(query),
+		method: 'GET',
+		responseType: 'json',
+		timeoutMs: 8000,
+	});
+	
+	if (!searchRes.success || !searchRes.json || !searchRes.json.length) {
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ Steam Game',
+				description: 'No games found for: **' + query + '**',
+				color: embed.colors.WARNING,
+			})],
+		});
+		return;
+	}
+	appId = searchRes.json[0].appid;
+}
+
+const res = await http.request({
+	url: 'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=' + appId,
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+const playerCount = res.success && res.json?.response?.result === 1 ? res.json.response.player_count : null;
+
+const fields = [
+	{ name: 'App ID', value: '`' + appId + '`', inline: true },
+];
+
+if (playerCount !== null) {
+	fields.push({ name: 'Current Players', value: playerCount.toLocaleString(), inline: true });
+}
+
+fields.push({ name: 'Store Page', value: '[View on Steam](https://store.steampowered.com/app/' + appId + ')', inline: false });
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 Steam Game Info',
+		description: 'App ID: **' + appId + '**',
+		thumbnail: { url: 'https://cdn.cloudflare.steamstatic.com/steam/apps/' + appId + '/header.jpg' },
+		fields: fields,
+		color: embed.colors.BLUE,
+		footer: { text: 'Powered by Steam API' },
+	})],
+});
+})();

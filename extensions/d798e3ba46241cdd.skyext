@@ -1,0 +1,81 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const roleFilter = command.suffix.trim().toLowerCase();
+
+const versionRes = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/api/versions.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 5000,
+});
+
+const version = versionRes.success && versionRes.json?.[0] ? versionRes.json[0] : '14.1.1';
+
+const res = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/data/en_US/champion.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success || !res.json?.data) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Random Champion',
+			description: 'Failed to fetch champion data.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+let champions = Object.values(res.json.data);
+
+if (roleFilter) {
+	const validRoles = ['fighter', 'mage', 'assassin', 'tank', 'marksman', 'support'];
+	if (!validRoles.includes(roleFilter)) {
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ Random Champion',
+				description: 'Invalid role. Valid roles: ' + validRoles.join(', '),
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+	champions = champions.filter(c => c.tags?.some(t => t.toLowerCase() === roleFilter));
+}
+
+if (!champions.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Random Champion',
+			description: 'No champions found for that role.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const champ = champions[Math.floor(Math.random() * champions.length)];
+const champKey = champ.id;
+const tags = champ.tags?.join(', ') || 'Unknown';
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎲 ' + champ.name,
+		description: champ.title + '\n\n' + champ.blurb,
+		thumbnail: { url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/img/champion/' + champKey + '.png' },
+		fields: [
+			{ name: 'Role', value: tags, inline: true },
+			{ name: 'Difficulty', value: String(champ.info?.difficulty || 'N/A') + '/10', inline: true },
+		],
+		color: embed.colors.GOLD,
+		footer: { text: 'Powered by Riot Data Dragon | Patch ' + version },
+	})],
+});
+})();

@@ -8,18 +8,14 @@ if (!raw) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🔁 Reverse Type',
-			description: 'Usage: ' + command.prefix + command.key + ' [all|words] <text>
-
-Examples:
-- ' + command.prefix + command.key + ' all hello world
-- ' + command.prefix + command.key + ' words hello world',
+			description: 'Usage: ' + command.prefix + command.key + ' [all|words] <text>\n\nExamples:\n- ' + command.prefix + command.key + ' all hello world\n- ' + command.prefix + command.key + ' words hello world',
 			color: embed.colors.ERROR,
 		})],
 	});
 	return;
 }
 
-const parts = raw.split(/s+/).filter(Boolean);
+const parts = raw.split(/\s+/).filter(Boolean);
 const mode = (parts[0] || '').toLowerCase();
 let text;
 let out;
@@ -36,7 +32,7 @@ if (mode === 'words') {
 		});
 		return;
 	}
-	out = text.split(/s+/).map(w => w.split('').reverse().join('')).join(' ');
+	out = text.split(/\s+/).map(w => w.split('').reverse().join('')).join(' ');
 } else {
 	text = mode === 'all' ? parts.slice(1).join(' ') : raw;
 	out = text.split('').reverse().join('');
@@ -45,8 +41,7 @@ if (mode === 'words') {
 message.reply({
 	embeds: [embed.create({
 		title: '🔁 Reverse Type',
-		description: utils.discord.bold('Input:') + ' ' + text + '
-' + utils.discord.bold('Output:') + ' ' + out,
+		description: utils.discord.bold('Input:') + ' ' + text + '\n' + utils.discord.bold('Output:') + ' ' + out,
 		color: embed.colors.PURPLE,
 	})],
 });

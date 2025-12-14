@@ -19,8 +19,7 @@ if (!players || players.length < 2) {
 	message.reply({
 		embeds: [embed.create({
 			title: '⚔️ Debate Clash',
-			description: 'Mention at least 2 players.
-Example: debateclash @user1 @user2 @user3',
+			description: 'Mention at least 2 players.\nExample: debateclash @user1 @user2 @user3',
 			color: embed.colors.ERROR,
 		})],
 	});

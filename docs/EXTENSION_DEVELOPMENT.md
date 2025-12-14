@@ -605,6 +605,111 @@ extension.version       // Version string
 extension.type          // "command", "keyword", "event", "timer"
 ```
 
+### HTTP Module (Tier 2 Only)
+
+The HTTP module allows extensions to make external API requests. **This is a premium feature requiring Tier 2 subscription and the `http_request` scope.**
+
+```javascript
+const http = require("http"); // Requires http_request scope + Tier 2
+
+// Make a GET request
+const res = await http.request({
+    url: "https://api.jikan.moe/v4/anime?q=naruto&limit=1",
+    method: "GET",           // GET or POST only
+    responseType: "json",    // "json" or "text"
+    timeoutMs: 8000,         // Max 15000ms
+    maxBytes: 1048576,       // Max response size (default 1MB)
+});
+
+// Response object
+res.success     // Boolean - true if request succeeded
+res.error       // Error string if success is false
+res.status      // HTTP status code (e.g., 200)
+res.headers     // Response headers object
+res.body        // Raw response text
+res.json        // Parsed JSON (if responseType is "json")
+
+// Make a POST request
+const postRes = await http.request({
+    url: "https://api.example.com/data",
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: { key: "value" },  // Object auto-serialized to JSON
+    responseType: "json",
+});
+```
+
+#### Security Restrictions
+
+- **HTTPS only** - HTTP URLs are rejected
+- **Host allowlist** - Only approved API hosts are allowed:
+  - `api.jikan.moe` (Anime/Manga)
+  - `api.mojang.com`, `sessionserver.mojang.com` (Minecraft)
+  - `api.steampowered.com`, `steamcommunity.com` (Steam)
+  - `mc-heads.net` (Minecraft skins)
+- **Rate limiting** - 30 requests per minute per extension per server
+- **No redirects** - Redirect responses are blocked
+- **Size limits** - Request body max 100KB, response max 1MB
+- **No private IPs** - localhost and internal IPs are blocked
+
+#### Error Codes
+
+| Error | Description |
+|-------|-------------|
+| `MISSING_SCOPES` | Extension lacks `http_request` scope |
+| `TIER_REQUIRED` | Server doesn't have Tier 2 subscription |
+| `RATE_LIMIT` | Exceeded 30 requests/minute |
+| `MISSING_URL` | No URL provided |
+| `METHOD_NOT_ALLOWED` | Only GET and POST are allowed |
+| `HOST_NOT_ALLOWED` | URL host not in allowlist |
+| `HTTPS_REQUIRED` | HTTP URLs are not allowed |
+| `PRIVATE_IP` | Cannot access private/internal IPs |
+| `BODY_TOO_LARGE` | Request body exceeds 100KB |
+| `RESPONSE_TOO_LARGE` | Response exceeds maxBytes |
+
+#### Example: Anime Search
+
+```javascript
+const message = require("message");
+const command = require("command");
+const embed = require("embed");
+const http = require("http");
+
+const query = command.suffix.trim();
+if (!query) {
+    message.reply("Usage: anime <query>");
+    return;
+}
+
+const res = await http.request({
+    url: "https://api.jikan.moe/v4/anime?q=" + encodeURIComponent(query) + "&limit=1",
+    method: "GET",
+    responseType: "json",
+    timeoutMs: 8000,
+});
+
+if (!res.success || !res.json?.data?.length) {
+    message.reply("No results found for: **" + query + "**");
+    return;
+}
+
+const anime = res.json.data[0];
+message.reply({
+    embeds: [embed.create({
+        title: anime.title,
+        url: anime.url,
+        description: anime.synopsis?.slice(0, 300) + "...",
+        thumbnail: { url: anime.images?.jpg?.image_url },
+        fields: [
+            { name: "Score", value: String(anime.score || "N/A"), inline: true },
+            { name: "Episodes", value: String(anime.episodes || "N/A"), inline: true },
+        ],
+        color: embed.colors.BLUE,
+        footer: { text: "Powered by Jikan/MyAnimeList" },
+    })],
+});
+```
+
 ### Bot Module
 
 ```javascript
@@ -650,6 +755,9 @@ Extensions must declare which scopes they need. Users installing the extension w
 | `messages_write` | Send messages | Can send messages in all channels |
 | `messages_manage` | Manage messages | Can delete messages |
 | `config` | Read config | Can read Skynet configuration |
+| `storage` | Extension storage | Can use persistent extension storage |
+| `economy_manage` | Manage economy | Can add/remove/transfer points |
+| `http_request` | HTTP requests | Can make external API requests (Tier 2 only) |
 
 ---
 
@@ -861,12 +969,12 @@ message.reply({ embeds: [lbEmbed] });
 
 ## Limitations
 
-1. **Execution Timeout**: Extensions have a maximum execution time (default 5 seconds)
+1. **Execution Timeout**: Extensions have a maximum execution time (default 5 seconds, up to 10s for HTTP extensions)
 2. **Memory Limit**: Isolated VM has 128MB memory limit
 3. **Storage Limit**: 25KB per extension per server
-4. **No External Requests**: `fetch`, `rss`, and `xmlparser` modules are not available in isolated-vm
+4. **External Requests**: The `http` module is available for Tier 2 servers only, with host allowlist restrictions. Legacy `fetch`, `rss`, and `xmlparser` modules are not available.
 5. **No File System Access**: Extensions cannot read/write files
-6. **Rate Limits**: Discord's rate limits still apply
+6. **Rate Limits**: Discord's rate limits still apply; HTTP requests are limited to 30/minute per extension
 
 ---
 

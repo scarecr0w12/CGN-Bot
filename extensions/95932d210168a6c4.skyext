@@ -1,0 +1,23 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const utils = require('utils');
+
+const defaultRoles = ['Villager', 'Villager', 'Werewolf', 'Seer', 'Doctor', 'Villager'];
+const mentions = command.suffix.match(/<@!?(\d+)>/g) || [];
+
+if (mentions.length < 2) {
+	message.reply({ embeds: [embed.create({ title: '🎭 Secret Roles', description: 'Mention at least 2 players to assign secret roles.\nExample: secretroles @user1 @user2 @user3', color: embed.colors.INFO })] });
+	return;
+}
+
+const userIds = mentions.map(m => m.replace(/<@!?|>/g, ''));
+const roles = utils.random.shuffle([...defaultRoles]).slice(0, userIds.length);
+while (roles.length < userIds.length) roles.push('Villager');
+const shuffledRoles = utils.random.shuffle(roles);
+const assignments = [];
+for (let i = 0; i < userIds.length; i++) {
+	assignments.push({ user: utils.discord.userMention(userIds[i]), role: shuffledRoles[i] });
+}
+const roleList = assignments.map((a, i) => (i + 1) + '. ' + a.user + ': ||' + a.role + '||').join('\n');
+message.reply({ embeds: [embed.create({ title: '🎭 Roles Assigned!', description: 'Click spoilers to reveal:\n\n' + roleList, color: embed.colors.PURPLE, footer: { text: 'Each player should only reveal their own role!' } })] });

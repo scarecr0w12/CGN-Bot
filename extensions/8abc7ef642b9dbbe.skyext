@@ -8,9 +8,7 @@ if (!input || !input.includes('|')) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🎵 Drake Meme',
-			description: 'Usage: drake <no text> | <yes text>
-
-Example: drake Working hard | Using Discord bots',
+			description: 'Usage: drake <no text> | <yes text>\n\nExample: drake Working hard | Using Discord bots',
 			color: embed.colors.ERROR,
 		})],
 	});

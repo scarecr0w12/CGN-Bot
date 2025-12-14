@@ -55,8 +55,7 @@ for (const c of text) {
 	}
 }
 
-const banner = rows.map(r => r.join(' ')).join('
-');
+const banner = rows.map(r => r.join(' ')).join('\n');
 
 message.reply({
 	embeds: [embed.create({

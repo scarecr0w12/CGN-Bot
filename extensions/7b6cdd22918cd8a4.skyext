@@ -1,0 +1,64 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const utils = require('utils');
+const economy = require('economy');
+
+const args = command.suffix.trim().split(/\s+/);
+if (args.length < 3) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎲 Dice Bet',
+			description: 'Usage: dicebet <amount> <over|under|exact> <number>\nExample: dicebet 100 over 7\n\nTwo dice are rolled (2-12). Predict the sum!',
+			color: embed.colors.INFO,
+		})],
+	});
+	return;
+}
+
+const amount = parseInt(args[0]);
+const betType = args[1].toLowerCase();
+const target = parseInt(args[2]);
+
+if (isNaN(amount) || amount < 10 || amount > 1000) {
+	message.reply({ embeds: [embed.create({ title: '❌ Dice Bet', description: 'Bet amount must be between 10 and 1000.', color: embed.colors.ERROR })] });
+	return;
+}
+
+if (!['over', 'under', 'exact'].includes(betType)) {
+	message.reply({ embeds: [embed.create({ title: '❌ Dice Bet', description: 'Bet type must be: over, under, or exact.', color: embed.colors.ERROR })] });
+	return;
+}
+
+if (isNaN(target) || target < 2 || target > 12) {
+	message.reply({ embeds: [embed.create({ title: '❌ Dice Bet', description: 'Target number must be between 2 and 12.', color: embed.colors.ERROR })] });
+	return;
+}
+
+const userData = economy.getSelf();
+if (userData.rankScore < amount) {
+	message.reply({ embeds: [embed.create({ title: '❌ Dice Bet', description: 'Not enough points! Balance: ' + userData.rankScore, color: embed.colors.ERROR })] });
+	return;
+}
+
+const die1 = utils.random.int(1, 6);
+const die2 = utils.random.int(1, 6);
+const sum = die1 + die2;
+
+let won = false;
+let multiplier = 1;
+
+if (betType === 'exact' && sum === target) { won = true; multiplier = 3; }
+else if (betType === 'over' && sum > target) { won = true; }
+else if (betType === 'under' && sum < target) { won = true; }
+
+const diceDisplay = '🎲 ' + die1 + ' + 🎲 ' + die2 + ' = **' + sum + '**';
+
+if (won) {
+	const winnings = amount * multiplier;
+	economy.addPoints(message.author.id, winnings, 'Dice bet win');
+	message.reply({ embeds: [embed.create({ title: '🎉 You Won!', description: diceDisplay + '\n\nWinnings: **+' + winnings + '** points', color: embed.colors.SUCCESS })] });
+} else {
+	economy.removePoints(message.author.id, amount, 'Dice bet loss');
+	message.reply({ embeds: [embed.create({ title: '😢 You Lost', description: diceDisplay + '\n\nLost: **-' + amount + '** points', color: embed.colors.ERROR })] });
+}

@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const key = 'moviequiz_' + message.author.id;
@@ -36,8 +36,7 @@ const letters = ['a','b','c','d'];
 const formatChoices = (q) => {
 	let out = '';
 	for (let i = 0; i < q.choices.length; i++) {
-		out += utils.discord.bold(letters[i].toUpperCase() + ':') + ' ' + q.choices[i] + '
-';
+		out += utils.discord.bold(letters[i].toUpperCase() + ':') + ' ' + q.choices[i] + '\n';
 	}
 	return out;
 };
@@ -48,10 +47,7 @@ if (sub === 'start' || !sub) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🎬 Movie Quiz',
-			description: utils.discord.bold('Clue:') + ' ' + q.clue + '
-
-' + formatChoices(q) + '
-Answer with: moviequiz answer <a|b|c|d>',
+			description: utils.discord.bold('Clue:') + ' ' + q.clue + '\n\n' + formatChoices(q) + '\nAnswer with: moviequiz answer <a|b|c|d>',
 			color: embed.colors.GOLD,
 		})],
 	});
@@ -89,8 +85,7 @@ if (sub === 'answer') {
 		embeds: [embed.create({
 			title: guess === correct ? '✅ Correct!' : '❌ Wrong!',
 			description:
-			utils.discord.bold('Your answer:') + ' ' + guess.toUpperCase() + '
-' +
+			utils.discord.bold('Your answer:') + ' ' + guess.toUpperCase() + '\n' +
 			utils.discord.bold('Correct:') + ' ' + correct.toUpperCase() + ' (' + state.q.choices[letters.indexOf(correct)] + ')',
 			color: guess === correct ? embed.colors.SUCCESS : embed.colors.ERROR,
 		})],

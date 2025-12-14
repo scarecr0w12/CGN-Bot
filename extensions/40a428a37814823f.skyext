@@ -1,0 +1,63 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const page = parseInt(command.suffix.trim()) || 1;
+if (page < 1 || page > 10) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Manga Top',
+			description: 'Page must be between 1 and 10.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/top/manga?page=' + page + '&limit=10',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Manga Top',
+			description: 'Failed to fetch top manga: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Manga Top',
+			description: 'No data available.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const list = data.map((manga, i) => {
+	const rank = ((page - 1) * 10) + i + 1;
+	const score = manga.score ? ' ⭐ ' + manga.score : '';
+	return '**' + rank + '.** [' + manga.title + '](' + manga.url + ')' + score;
+}).join('\n');
+
+message.reply({
+	embeds: [embed.create({
+		title: '📚 Top Manga (Page ' + page + ')',
+		description: list,
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Jikan/MyAnimeList | Use mangatop <page> for more' },
+	})],
+});
+})();

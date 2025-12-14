@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 const key = 'nonogram_' + message.author.id;
 
@@ -68,11 +68,7 @@ const getHints = (rows) => {
 };
 
 const renderEmptyGrid = () => {
-	return '⬜⬜⬜⬜⬜
-⬜⬜⬜⬜⬜
-⬜⬜⬜⬜⬜
-⬜⬜⬜⬜⬜
-⬜⬜⬜⬜⬜';
+	return '⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜\n⬜⬜⬜⬜⬜';
 };
 
 if (sub === 'new' || !sub) {
@@ -84,19 +80,10 @@ if (sub === 'new' || !sub) {
 		embeds: [embed.create({
 			title: '🧩 Nonogram (5x5) - ' + p.name,
 			description:
-			utils.discord.bold('Column hints:') + ' ' + hints.colHints.join(' | ') + '
-' +
-			utils.discord.bold('Row hints:') + '
-' + hints.rowHints.map((h, i) => (i+1) + ': ' + h).join('
-') + '
-
-' +
-			utils.discord.bold('Grid:') + '
-' + renderEmptyGrid() + '
-
-' +
-			'Solve with: nonogram solve <25 chars of 0/1>
-Example: nonogram solve 0111011111111110111000100',
+			utils.discord.bold('Column hints:') + ' ' + hints.colHints.join(' | ') + '\n' +
+			utils.discord.bold('Row hints:') + '\n' + hints.rowHints.map((h, i) => (i+1) + ': ' + h).join('\n') + '\n\n' +
+			utils.discord.bold('Grid:') + '\n' + renderEmptyGrid() + '\n\n' +
+			'Solve with: nonogram solve <25 chars of 0/1>\nExample: nonogram solve 0111011111111110111000100',
 			color: embed.colors.BLUE,
 		})],
 	});
@@ -143,9 +130,7 @@ if (sub === 'solve') {
 		embeds: [embed.create({
 			title: correct ? '✅ Correct Nonogram!' : '❌ Not Quite',
 			description: correct
-			? 'You solved it!
-
-Use nonogram new for another.'
+			? 'You solved it!\n\nUse nonogram new for another.'
 			: 'That solution does not match. Try again.',
 			color: correct ? embed.colors.SUCCESS : embed.colors.ERROR,
 		})],

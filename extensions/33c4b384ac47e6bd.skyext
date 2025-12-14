@@ -9,9 +9,7 @@ if (!input) {
 	message.reply({
 		embeds: [embed.create({
 			title: '💬 Quote Image',
-			description: 'Usage: quoteimg <quote text> | <author>
-
-Example: quoteimg Be yourself | Oscar Wilde',
+			description: 'Usage: quoteimg <quote text> | <author>\n\nExample: quoteimg Be yourself | Oscar Wilde',
 			color: embed.colors.ERROR,
 		})],
 	});
@@ -29,18 +27,12 @@ if (input.includes('|')) {
 }
 
 // Style it nicely with Discord formatting
-const styledQuote = '╔══════════════════════╗
-' +
-'║
-' +
-'║   ' + utils.discord.italic('"' + quoteText.slice(0, 100) + '"') + '
-' +
-'║
-' +
-'║         — ' + utils.discord.bold(author.slice(0, 30)) + '
-' +
-'║
-' +
+const styledQuote = '╔══════════════════════╗\n' +
+'║\n' +
+'║   ' + utils.discord.italic('"' + quoteText.slice(0, 100) + '"') + '\n' +
+'║\n' +
+'║         — ' + utils.discord.bold(author.slice(0, 30)) + '\n' +
+'║\n' +
 '╚══════════════════════╝';
 
 message.reply({

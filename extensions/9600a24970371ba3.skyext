@@ -8,9 +8,7 @@ if (!text) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🏆 Achievement',
-			description: 'Usage: achievement <text>
-
-Example: achievement Got Wood',
+			description: 'Usage: achievement <text>\n\nExample: achievement Got Wood',
 			color: embed.colors.ERROR,
 		})],
 	});

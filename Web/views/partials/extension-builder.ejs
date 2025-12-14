@@ -260,6 +260,60 @@
 	
 	<div class="field">
 		<label class="label">
+			<i class="fa fa-globe"></i> Network Capability
+			<span class="tag is-warning is-light ml-2">External API Access</span>
+		</label>
+		<span class="help mb-3">Choose what level of external network access your extension needs. Higher levels require maintainer approval.</span>
+		
+		<div class="control">
+			<% const networkCaps = pageData.networkCapabilities || {}; %>
+			<% const currentNetworkCap = pageData.versionData.network_capability || 'none'; %>
+			
+			<div class="columns is-multiline">
+				<% Object.values(networkCaps).forEach(cap => { %>
+				<div class="column is-half-tablet is-one-quarter-desktop">
+					<label class="radio network-cap-item box mb-0" style="display: block; padding: 1rem; cursor: pointer; <%= currentNetworkCap === cap.level ? 'border: 2px solid #3273dc;' : '' %>">
+						<div class="level is-mobile mb-2">
+							<div class="level-left">
+								<input type="radio" name="network_capability" value="<%= cap.level %>" <%= currentNetworkCap === cap.level ? 'checked' : '' %>>
+								<span class="icon ml-2"><i class="fa <%= cap.icon %>"></i></span>
+							</div>
+							<div class="level-right">
+								<% if (cap.requiresApproval) { %>
+								<span class="tag is-warning is-small">Requires Approval</span>
+								<% } else { %>
+								<span class="tag is-success is-small">Auto-Approved</span>
+								<% } %>
+							</div>
+						</div>
+						<p class="has-text-weight-semibold mb-1"><%= cap.name %></p>
+						<p class="help mb-0"><%= cap.description %></p>
+						<% if (cap.tierRequired > 0) { %>
+						<p class="help has-text-info mb-0">Requires Tier <%= cap.tierRequired %>+ server</p>
+						<% } %>
+					</label>
+				</div>
+				<% }); %>
+			</div>
+		</div>
+		
+		<% if (pageData.versionData.network_capability && ['network', 'network_advanced'].includes(pageData.versionData.network_capability)) { %>
+		<div class="notification is-info is-light mt-3">
+			<p class="mb-2"><strong>Network Capability Status:</strong></p>
+			<% if (pageData.versionData.network_approved) { %>
+			<span class="tag is-success"><i class="fa fa-check mr-1"></i> Approved</span>
+			<% } else { %>
+			<span class="tag is-warning"><i class="fa fa-clock mr-1"></i> Pending Approval</span>
+			<p class="help mt-1">A maintainer will review your extension before network access is enabled.</p>
+			<% } %>
+		</div>
+		<% } %>
+	</div>
+	
+	<hr>
+	
+	<div class="field">
+		<label class="label">
 			<i class="fa fa-code"></i> Code Editor
 		</label>
 		<div class="level is-mobile mb-2">

@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const key = 'emojisimon_' + message.author.id;
@@ -20,12 +20,7 @@ if (sub === 'start') {
 	message.reply({
 		embeds: [embed.create({
 			title: '🧠 Emoji Simon - Round 1',
-			description: 'Memorize this sequence:
-
-' + utils.discord.bold(seq.join(' ')) + '
-
-Repeat it with: emojisimon repeat <sequence>
-Example: emojisimon repeat 🔴 🔵 🟢',
+			description: 'Memorize this sequence:\n\n' + utils.discord.bold(seq.join(' ')) + '\n\nRepeat it with: emojisimon repeat <sequence>\nExample: emojisimon repeat 🔴 🔵 🟢',
 			color: embed.colors.GOLD,
 		})],
 	});
@@ -66,10 +61,7 @@ if (sub === 'repeat') {
 		message.reply({
 			embeds: [embed.create({
 				title: '❌ Wrong Sequence!',
-				description: 'Your answer: ' + utils.discord.bold(guessStr || '(empty)') + '
-Correct: ' + utils.discord.bold(expectedStr) + '
-
-Game over.',
+				description: 'Your answer: ' + utils.discord.bold(guessStr || '(empty)') + '\nCorrect: ' + utils.discord.bold(expectedStr) + '\n\nGame over.',
 				color: embed.colors.ERROR,
 			})],
 		});
@@ -83,11 +75,7 @@ Game over.',
 	message.reply({
 		embeds: [embed.create({
 			title: '✅ Correct! Round ' + nextRound,
-			description: 'New sequence:
-
-' + utils.discord.bold(nextSeq.join(' ')) + '
-
-Repeat it with: emojisimon repeat <sequence>',
+			description: 'New sequence:\n\n' + utils.discord.bold(nextSeq.join(' ')) + '\n\nRepeat it with: emojisimon repeat <sequence>',
 			color: embed.colors.SUCCESS,
 		})],
 	});

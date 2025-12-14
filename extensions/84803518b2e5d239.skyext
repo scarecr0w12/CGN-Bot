@@ -1,0 +1,71 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const args = command.suffix.trim().toLowerCase().split(/\s+/);
+const seasons = ['winter', 'spring', 'summer', 'fall'];
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth() + 1;
+
+let year = currentYear;
+let season = seasons[Math.floor((currentMonth - 1) / 3)];
+
+if (args[0]) {
+	const parsedYear = parseInt(args[0]);
+	if (!isNaN(parsedYear) && parsedYear >= 1900 && parsedYear <= currentYear + 1) {
+		year = parsedYear;
+	}
+}
+if (args[1] && seasons.includes(args[1])) {
+	season = args[1];
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/seasons/' + year + '/' + season + '?limit=15',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Season',
+			description: 'Failed to fetch seasonal anime: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Season',
+			description: 'No anime found for ' + season + ' ' + year + '.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const list = data.slice(0, 10).map((anime, i) => {
+	const score = anime.score ? ' ⭐ ' + anime.score : '';
+	return '**' + (i + 1) + '.** [' + anime.title + '](' + anime.url + ')' + score;
+}).join('\n');
+
+const seasonEmoji = { winter: '❄️', spring: '🌸', summer: '☀️', fall: '🍂' };
+
+message.reply({
+	embeds: [embed.create({
+		title: seasonEmoji[season] + ' ' + season.charAt(0).toUpperCase() + season.slice(1) + ' ' + year + ' Anime',
+		description: list,
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Jikan/MyAnimeList | Usage: animeseason [year] [season]' },
+	})],
+});
+})();

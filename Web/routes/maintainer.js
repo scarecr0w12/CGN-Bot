@@ -34,6 +34,7 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/bot-lists", "administration", [], controllers.console.options.botLists);
 	setupConsolePage(router, "/global-options/premium-extensions", "administration", [], controllers.console.options.premiumExtensions);
 	setupConsolePage(router, "/global-options/premium-extensions/sales", "administration", [], controllers.console.options.premiumExtensionsSales);
+	setupConsolePage(router, "/global-options/network-approvals", "administration", [], controllers.console.networkApprovals);
 	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
 
 	// Membership System (Sudo/Host only)
@@ -41,6 +42,8 @@ module.exports = router => {
 	setupConsolePage(router, "/membership/tiers", "administration", [], controllers.console.membership.tiers);
 	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
 	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
+	setupConsolePage(router, "/membership/email", "administration", [], controllers.console.membership.email);
+	router.post("/membership/email/test", controllers.console.membership.email.test);
 	setupConsolePage(router, "/membership/servers", "administration", [], controllers.console.membership.servers);
 	router.post("/membership/servers/cancel", controllers.console.membership.servers.cancel);
 

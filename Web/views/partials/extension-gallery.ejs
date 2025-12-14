@@ -514,6 +514,14 @@
 						<% if (extension.level === "third") { %>
 						<span class="ext-badge" style="background:#ffebee;color:#c62828;">Local</span>
 						<% } %>
+						<% if (extension.network_capability && extension.network_capability !== 'none') { %>
+						<% const needsApproval = ['network', 'network_advanced'].includes(extension.network_capability); %>
+						<span class="ext-badge" style="background:<%= extension.network_approved ? '#e8f5e9' : (needsApproval ? '#ffebee' : '#fff3e0') %>;color:<%= extension.network_approved ? '#2e7d32' : (needsApproval ? '#c62828' : '#ef6c00') %>;" title="<%= extension.network_capability %><%= extension.network_approved && extension.network_approved_at ? ' - Approved ' + extension.network_approved_at : (needsApproval && !extension.network_approved ? ' - Pending Approval' : '') %>">
+							<i class="fa fa-globe"></i> 
+							<%= extension.network_capability === 'allowlist_only' ? 'Public APIs' : extension.network_capability === 'network' ? 'Network' : 'Advanced' %>
+							<% if (extension.network_approved) { %><i class="fa fa-check ml-1"></i><% } else if (needsApproval) { %><i class="fa fa-clock-o ml-1"></i><% } %>
+						</span>
+						<% } %>
 					</div>
 				</div>
 				<div class="ext-card-type-icon <%= extension.type %>" title="<%= extension.typeDescription %>">
@@ -555,6 +563,11 @@
 					<a id="feature-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
 						<i class="fa fa-star"></i> <%= extension.featured ? "Unfeature" : "Feature" %>
 					</a>
+					<% if (extension.network_capability && ['network', 'network_advanced'].includes(extension.network_capability) && !extension.network_approved) { %>
+					<a class="ext-card-action" style="color:#2e7d32;" onclick="SkynetUtil.approveNetworkCapability('<%= extension._id %>');">
+						<i class="fa fa-globe"></i> Approve Network
+					</a>
+					<% } %>
 					<% if (authUser.id !== extension.owner.id) { %>
 					<a class="ext-card-action danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
 						<i class="fa fa-trash"></i> Remove
@@ -564,6 +577,11 @@
 					<a class="ext-card-action" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
 						<i class="fa fa-check"></i> Accept
 					</a>
+					<% if (extension.network_capability && ['network', 'network_advanced'].includes(extension.network_capability) && !extension.network_approved) { %>
+					<a class="ext-card-action" style="color:#2e7d32;" onclick="SkynetUtil.approveNetworkCapability('<%= extension._id %>');">
+						<i class="fa fa-globe"></i> Approve Network
+					</a>
+					<% } %>
 					<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
 					<a class="ext-card-action danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
 						<i class="fa fa-times"></i> Reject

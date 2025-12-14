@@ -15,11 +15,7 @@ if (mentions.length >= 2) {
 	message.reply({
 		embeds: [embed.create({
 			title: '💕 Ship',
-			description: 'Mention one or two users to ship!
-
-Examples:
-- ship @user (ships with you)
-- ship @user1 @user2',
+			description: 'Mention one or two users to ship!\n\nExamples:\n- ship @user (ships with you)\n- ship @user1 @user2',
 			color: embed.colors.ERROR,
 		})],
 	});
@@ -53,12 +49,8 @@ const shipImageUrl = 'https://api.popcat.xyz/ship?user1=' + encodeURIComponent(a
 message.reply({
 	embeds: [embed.create({
 		title: '💕 ' + shipName,
-		description: user1.toString() + ' x ' + user2.toString() + '
-
-' +
-		bar + ' ' + utils.discord.bold(percentage + '%') + '
-
-' +
+		description: user1.toString() + ' x ' + user2.toString() + '\n\n' +
+		bar + ' ' + utils.discord.bold(percentage + '%') + '\n\n' +
 		utils.discord.bold(rating),
 		image: { url: shipImageUrl },
 		color: barColor,

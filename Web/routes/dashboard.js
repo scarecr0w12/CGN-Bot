@@ -34,7 +34,10 @@ module.exports = router => {
 	setupDashboardPage(router, "/stats-points/economy", [], controllers.dashboard.stats.economy);
 	setupDashboardPage(router, "/stats-points/economy-stats", [], controllers.dashboard.stats.economyStats);
 	setupDashboardPage(router, "/stats-points/advanced-stats", [], controllers.dashboard.stats.advancedStats);
-	// Premium analytics endpoint
+	setupDashboardPage(router, "/stats-points/analytics", [], controllers.dashboard.stats.analyticsOverview);
+	// Premium analytics endpoints
+	router.get("/:svrid/stats-points/analytics-data", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analyticsData);
+	router.get("/:svrid/stats-points/analytics-export", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analyticsExport);
 	router.get("/:svrid/stats-points/analytics", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analytics);
 
 	// Administration
@@ -61,6 +64,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/other/ongoing-activities", [], controllers.dashboard.other.activities);
 	setupDashboardPage(router, "/other/public-data", [], controllers.dashboard.other.public);
 	setupDashboardPage(router, "/other/extensions", [], controllers.dashboard.other.extensions, "extensions");
+	setupDashboardPage(router, "/other/extensions/settings", [], controllers.dashboard.other.extensionSettings);
 	setupDashboardPage(router, "/other/extension-builder", [], controllers.dashboard.other.extensionBuilder);
 	setupDashboardPage(router, "/other/export", [], controllers.dashboard.other.export);
 

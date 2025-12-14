@@ -78,19 +78,37 @@ The Feature Registry (`/maintainer/membership/features`) defines features that c
 
 ### `advanced_moderation` - Advanced Moderation
 
-**Status:**
+**Status:** 🟢 Implemented  
 **Priority:** Medium  
-**Description:** Advanced auto-mod filters and spam detection
+**Description:** Advanced auto-mod filters, spam detection, raid protection, and alt account detection
 
 **Implementation Notes:**
 
 - Moderation filters page now checks `advanced_moderation` feature
 - Non-premium users see feature but can't modify filter settings
 - POST handler rejects changes from non-premium users
+- **New Slash Commands:**
+  - `/automod` - Unified auto-moderation configuration
+  - `/filter` - Word filtering with preset imports
+  - `/antispam` - Spam detection settings
+  - `/antiraid` - Raid protection (Tier 2)
+  - `/altcheck` - Alt account detection (Tier 2)
+  - `/strike` - Enhanced with give/remove/clear/view subcommands
+  - `/modlog` - Enhanced with test/events/history subcommands
 
 **Files Modified:**
 
 - [x] `Web/controllers/dashboard/administration.js` - Added feature checks to filters controller
+- [x] `Internals/SlashCommands/commands/automod.js` - Auto-mod configuration
+- [x] `Internals/SlashCommands/commands/filter.js` - Word filter management
+- [x] `Internals/SlashCommands/commands/antispam.js` - Spam settings
+- [x] `Internals/SlashCommands/commands/antiraid.js` - Raid protection (Tier 2)
+- [x] `Internals/SlashCommands/commands/altcheck.js` - Alt detection (Tier 2)
+- [x] `Internals/SlashCommands/commands/strike.js` - Enhanced strike management
+- [x] `Internals/SlashCommands/commands/modlog.js` - Enhanced modlog
+- [x] `Internals/Events/guildMemberAdd/Skynet.RaidDetection.js` - Raid/alt event handler
+- [x] `Database/Schemas/serverConfigSchema.js` - Added antiraid/altcheck schemas
+- [x] `Database/Schemas/serverModlogSchema.js` - Added events filter and new entry types
 
 ---
 
@@ -435,6 +453,19 @@ controllers.premiumFeature = async (req, res) => {
 ---
 
 ## Recent Changes
+
+### December 13, 2024
+
+- ✅ `advanced_moderation` - Full implementation complete:
+  - `/automod` - Unified auto-mod configuration (spam/mention filters)
+  - `/filter` - Word filtering with preset imports (profanity, slurs, spam)
+  - `/antispam` - Spam detection settings (sensitivity, actions, ignored channels)
+  - `/antiraid` - Tier 2 raid protection (join velocity, lockdown, account age)
+  - `/altcheck` - Tier 2 alt detection (account age, quarantine, whitelist)
+  - `/strike` - Enhanced with give/remove/clear/view subcommands
+  - `/modlog` - Enhanced with test/events/history subcommands
+  - `Skynet.RaidDetection.js` - Event handler for raid/alt detection
+  - Schema updates for antiraid, altcheck, and modlog event filtering
 
 ### December 9, 2024
 

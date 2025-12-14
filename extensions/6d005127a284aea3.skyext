@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const roundKey = 'liar_round_' + (message.guild ? message.guild.id : 'global');
@@ -25,8 +25,7 @@ if (sub === 'start') {
 		message.reply({
 			embeds: [embed.create({
 				title: '🕵️ Liar',
-				description: 'Mention at least 3 players.
-Example: liar start @user1 @user2 @user3',
+				description: 'Mention at least 3 players.\nExample: liar start @user1 @user2 @user3',
 				color: embed.colors.ERROR,
 			})],
 		});
@@ -50,12 +49,8 @@ Example: liar start @user1 @user2 @user3',
 		embeds: [embed.create({
 			title: '🕵️ Liar - Round Started',
 			description:
-			'Players: ' + players.map(p => p.toString()).join(' ') + '
-
-' +
-			'Everyone run: liar roles
-
-Then discuss the topic and try to find the liar!',
+			'Players: ' + players.map(p => p.toString()).join(' ') + '\n\n' +
+			'Everyone run: liar roles\n\nThen discuss the topic and try to find the liar!',
 			color: embed.colors.GOLD,
 		})],
 	});
@@ -78,11 +73,8 @@ if (sub === 'roles') {
 		embeds: [embed.create({
 			title: '🕵️ Your Role',
 			description:
-			utils.discord.bold('Role:') + ' ' + (role.role === 'liar' ? 'LIAR' : 'TRUTH') + '
-' +
-			utils.discord.bold('Topic:') + ' ' + role.topic + '
-
-' +
+			utils.discord.bold('Role:') + ' ' + (role.role === 'liar' ? 'LIAR' : 'TRUTH') + '\n' +
+			utils.discord.bold('Topic:') + ' ' + role.topic + '\n\n' +
 			(role.role === 'liar'
 				? 'Try to blend in without getting caught.'
 				: 'Speak honestly and identify the liar.'),
@@ -107,10 +99,7 @@ if (sub === 'end') {
 message.reply({
 	embeds: [embed.create({
 		title: '🕵️ Liar',
-		description: 'Usage:
-- liar start @p1 @p2 @p3...
-- liar roles
-- liar end',
+		description: 'Usage:\n- liar start @p1 @p2 @p3...\n- liar roles\n- liar end',
 		color: embed.colors.DEFAULT,
 	})],
 });

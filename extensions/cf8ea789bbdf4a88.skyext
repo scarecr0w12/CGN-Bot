@@ -1,0 +1,50 @@
+(async () => {
+const message = require('message');
+const embed = require('embed');
+const http = require('http');
+
+const versionRes = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/api/versions.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 5000,
+});
+
+const version = versionRes.success && versionRes.json?.[0] ? versionRes.json[0] : '14.1.1';
+
+const res = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/data/en_US/champion.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success || !res.json?.data) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Rotation',
+			description: 'Failed to fetch champion data.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const champions = Object.values(res.json.data);
+const freeChamps = [];
+for (let i = 0; i < 15; i++) {
+	const idx = Math.floor(Math.random() * champions.length);
+	if (!freeChamps.includes(champions[idx].name)) {
+		freeChamps.push(champions[idx].name);
+	}
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔄 Free Champion Rotation',
+		description: freeChamps.join(', '),
+		color: embed.colors.GOLD,
+		footer: { text: 'Sample rotation | Patch ' + version + ' | Use lolchampion <name> for details' },
+	})],
+});
+})();

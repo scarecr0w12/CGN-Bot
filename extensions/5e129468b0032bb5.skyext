@@ -4,7 +4,7 @@ const extension = require('extension');
 const utils = require('utils');
 const embed = require('embed');
 
-const args = command.suffix.trim().split(/s+/).filter(Boolean);
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
 const sub = (args[0] || '').toLowerCase();
 
 const key = 'mathsnap_' + message.author.id;
@@ -29,10 +29,7 @@ if (sub === 'start' || !sub) {
 	message.reply({
 		embeds: [embed.create({
 			title: '🧮 Math Snap',
-			description: utils.discord.bold(q.text) + '
-
-Answer with: mathsnap answer true
-or: mathsnap answer false',
+			description: utils.discord.bold(q.text) + '\n\nAnswer with: mathsnap answer true\nor: mathsnap answer false',
 			color: embed.colors.GOLD,
 		})],
 	});
@@ -72,13 +69,9 @@ if (sub === 'answer') {
 	message.reply({
 		embeds: [embed.create({
 			title: correct ? '✅ Correct!' : '❌ Wrong!',
-			description: utils.discord.bold(q.text) + '
-
-' +
-			utils.discord.bold('Your answer:') + ' ' + (userTrue ? 'True' : 'False') + '
-' +
-			utils.discord.bold('Correct:') + ' ' + (q.isTrue ? 'True' : 'False') + '
-' +
+			description: utils.discord.bold(q.text) + '\n\n' +
+			utils.discord.bold('Your answer:') + ' ' + (userTrue ? 'True' : 'False') + '\n' +
+			utils.discord.bold('Correct:') + ' ' + (q.isTrue ? 'True' : 'False') + '\n' +
 			utils.discord.bold('Time:') + ' ' + utils.format.number(ms) + 'ms',
 			color: correct ? embed.colors.SUCCESS : embed.colors.ERROR,
 		})],

@@ -563,6 +563,45 @@ Constants.AllowedEvents = [
 ];
 
 /**
+ * Network capability levels for extensions
+ * @type object
+ */
+Constants.NetworkCapabilities = {
+	none: {
+		level: "none",
+		name: "No Network Access",
+		description: "Extension cannot make any external HTTP requests",
+		icon: "fa-ban",
+		requiresApproval: false,
+		tierRequired: 0,
+	},
+	allowlist_only: {
+		level: "allowlist_only",
+		name: "Public APIs Only",
+		description: "Can access pre-approved public APIs (Jikan, Steam, Mojang, etc.)",
+		icon: "fa-list-check",
+		requiresApproval: false,
+		tierRequired: 1,
+	},
+	network: {
+		level: "network",
+		name: "Full Network Access",
+		description: "Can connect to any HTTPS endpoint (user-configured URLs)",
+		icon: "fa-globe",
+		requiresApproval: true,
+		tierRequired: 2,
+	},
+	network_advanced: {
+		level: "network_advanced",
+		name: "Advanced Network Access",
+		description: "Can use HTTP, custom ports, and webhooks",
+		icon: "fa-server",
+		requiresApproval: true,
+		tierRequired: 2,
+	},
+};
+
+/**
  * An object containing descriptive information on all extension scopes
  * @type object
  */

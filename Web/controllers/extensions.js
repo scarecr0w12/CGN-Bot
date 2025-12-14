@@ -4,7 +4,7 @@ const ObjectId = require("../../Database/ObjectID");
 
 const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;
-const { AllowedEvents, Colors, Scopes } = require("../../Internals/Constants");
+const { AllowedEvents, Colors, Scopes, NetworkCapabilities } = require("../../Internals/Constants");
 const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateExtensionData, writeExtensionData } = require("../helpers");
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
@@ -339,6 +339,7 @@ controllers.builder = async (req, { res }) => {
 				versionData: extensionData.versions ? extensionData.versions.id(extensionData.version) : {},
 				events: AllowedEvents,
 				scopes: Scopes,
+				networkCapabilities: NetworkCapabilities,
 				premiumMarketplace,
 			});
 
@@ -633,6 +634,8 @@ controllers.import = async (req, res) => {
 			event: version.type === "event" ? version.event : null,
 			timeout: version.timeout || 5000,
 			scopes: version.scopes || [],
+			network_capability: version.network_capability || "none",
+			network_approved: false,
 			code_id: generateCodeID(extension.code),
 		};
 
@@ -671,7 +674,7 @@ controllers.import = async (req, res) => {
 controllers.gallery.modify = async (req, res) => {
 	if (req.isAuthenticated()) {
 		if (req.params.extid && req.params.action) {
-			if (["accept", "feature", "reject", "remove"].includes(req.params.action) && !configJSON.maintainers.includes(req.user.id)) {
+			if (["accept", "feature", "reject", "remove", "approve_network"].includes(req.params.action) && !configJSON.maintainers.includes(req.user.id)) {
 				res.sendStatus(403);
 				return;
 			}
@@ -742,7 +745,13 @@ controllers.gallery.modify = async (req, res) => {
 				}
 				case "accept": {
 					galleryQueryDocument.set("state", "gallery");
-					galleryQueryDocument.clone.id("versions", galleryDocument.version).set("accepted", true);
+					galleryQueryDocument.clone.id("versions", galleryDocument.version)
+						.set("accepted", true)
+						.push("approval_history", {
+							action: "accepted",
+							by: req.user.id,
+							at: new Date(),
+						});
 					galleryQueryDocument.set("published_version", galleryDocument.version);
 
 					try {
@@ -789,7 +798,16 @@ controllers.gallery.modify = async (req, res) => {
 						await ownerUserDocument2.save();
 					}
 
-					galleryQueryDocument.clone.id("versions", req.params.action === "remove" ? galleryDocument.published_version : galleryDocument.version).set("accepted", false);
+					const targetVersion = req.params.action === "remove" ?
+						galleryDocument.published_version : galleryDocument.version;
+					galleryQueryDocument.clone.id("versions", targetVersion)
+						.set("accepted", false)
+						.push("approval_history", {
+							action: "rejected",
+							by: req.user.id,
+							at: new Date(),
+							reason: req.body.reason || null,
+						});
 					galleryQueryDocument.set("state", "saved")
 						.set("featured", false)
 						.set("published_version", null);
@@ -851,6 +869,43 @@ controllers.gallery.modify = async (req, res) => {
 
 					res.sendStatus(200);
 					break;
+				case "approve_network": {
+					const versionDoc = galleryDocument.versions.id(galleryDocument.version);
+					if (!versionDoc) return res.sendStatus(404);
+
+					const netCap = versionDoc.network_capability;
+					if (!netCap || !["network", "network_advanced"].includes(netCap)) {
+						return res.sendStatus(400);
+					}
+
+					const approvalTimestamp = new Date();
+					galleryQueryDocument.clone.id("versions", galleryDocument.version)
+						.set("network_approved", true)
+						.set("network_approved_by", req.user.id)
+						.set("network_approved_at", approvalTimestamp)
+						.push("approval_history", {
+							action: "network_approved",
+							by: req.user.id,
+							at: approvalTimestamp,
+						});
+
+					try {
+						await galleryDocument.save();
+					} catch (_) {
+						return res.sendStatus(500);
+					}
+
+					messageOwner(galleryDocument.owner_id, {
+						embeds: [{
+							color: Colors.GREEN,
+							title: `Network capability approved for ${galleryDocument.name}! 🌐`,
+							description: `Your extension's ${netCap} capability has been approved by a maintainer.`,
+						}],
+					});
+
+					res.sendStatus(200);
+					break;
+				}
 				default:
 					res.sendStatus(400);
 					break;
