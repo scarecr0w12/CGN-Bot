@@ -1,0 +1,67 @@
+const message = require('message');
+const embed = require('embed');
+const storage = require('storage');
+
+const animeList = [
+	{ name: 'Naruto', hints: ['Ninja village', 'Orange jumpsuit', 'Believe it!'], genre: 'Shonen' },
+	{ name: 'One Piece', hints: ['Pirates', 'Straw hat', 'Grand Line'], genre: 'Shonen' },
+	{ name: 'Attack on Titan', hints: ['Giant humanoids', 'Walls', '3D Maneuver Gear'], genre: 'Action' },
+	{ name: 'Death Note', hints: ['Supernatural notebook', 'Shinigami', 'L vs Kira'], genre: 'Thriller' },
+	{ name: 'My Hero Academia', hints: ['Quirks', 'Hero school', 'Plus Ultra!'], genre: 'Shonen' },
+	{ name: 'Demon Slayer', hints: ['Breathing techniques', 'Slaying demons', 'Nezuko'], genre: 'Action' },
+	{ name: 'Fullmetal Alchemist', hints: ['Equivalent exchange', 'Automail', "Philosopher's Stone"], genre: 'Action' },
+	{ name: 'Dragon Ball Z', hints: ['Super Saiyan', 'Kamehameha', 'Capsule Corp'], genre: 'Shonen' },
+	{ name: 'Sword Art Online', hints: ['VR game', 'Trapped in game', 'Black swordsman'], genre: 'Isekai' },
+	{ name: 'Steins;Gate', hints: ['Time travel', 'Microwave phone', 'El Psy Kongroo'], genre: 'Sci-Fi' },
+	{ name: 'Code Geass', hints: ['Geass power', 'Mechs', 'Zero'], genre: 'Mecha' },
+	{ name: 'Tokyo Ghoul', hints: ['Half-ghoul', 'Kagune', 'Coffee shop'], genre: 'Horror' },
+	{ name: 'Hunter x Hunter', hints: ['Nen abilities', 'Hunter exam', 'Gon and Killua'], genre: 'Shonen' },
+	{ name: 'Jujutsu Kaisen', hints: ['Cursed energy', 'Sukuna', 'Domain Expansion'], genre: 'Shonen' },
+	{ name: 'Spy x Family', hints: ['Secret agent', 'Telepathic child', 'Fake family'], genre: 'Comedy' },
+];
+
+const gameKey = 'animeguess_' + message.channel.id;
+const activeGame = storage.get(gameKey);
+
+if (activeGame) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Game Already Active',
+			description: "There's already an anime guess game running!\nUse guess <anime name> to answer.",
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+const selected = animeList[Math.floor(Math.random() * animeList.length)];
+
+storage.set(gameKey, {
+	answer: selected.name.toLowerCase(),
+	displayName: selected.name,
+	hints: selected.hints,
+	hintIndex: 0,
+	startTime: Date.now(),
+	attempts: 0,
+});
+
+setTimeout(() => {
+	const game = storage.get(gameKey);
+	if (game && game.startTime === selected.startTime) {
+		storage.remove(gameKey);
+	}
+}, 60000);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎌 Anime Guess Game',
+		description: '**Guess the anime!**\n\n' +
+			'📝 **Hint 1:** ' + selected.hints[0] + '\n' +
+			'🎭 **Genre:** ' + selected.genre + '\n\n' +
+			'Use guess <anime name> to answer!\n' +
+			'Use animehint for another hint.\n\n' +
+			'*You have 60 seconds!*',
+		color: embed.colors.PURPLE,
+		footer: { text: 'Game started' },
+	})],
+});

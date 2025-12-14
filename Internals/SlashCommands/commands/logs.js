@@ -96,6 +96,25 @@ module.exports = {
 						.setRequired(true),
 				),
 		)
+		.addSubcommand(sub =>
+			sub.setName("export")
+				.setDescription("Export mod logs to a file (Tier 2)")
+				.addStringOption(opt =>
+					opt.setName("format")
+						.setDescription("Export format")
+						.setRequired(true)
+						.addChoices(
+							{ name: "CSV", value: "csv" },
+							{ name: "JSON", value: "json" },
+						),
+				)
+				.addIntegerOption(opt =>
+					opt.setName("days")
+						.setDescription("Export logs from last N days (default: 30)")
+						.setMinValue(1)
+						.setMaxValue(365),
+				),
+		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild),
 
 	async execute (interaction, _client, serverDocument) {
@@ -129,6 +148,9 @@ module.exports = {
 					break;
 				case "unignore":
 					await this.unignoreChannel(interaction, serverDocument);
+					break;
+				case "export":
+					await this.exportLogs(interaction, serverDocument);
 					break;
 			}
 		} catch (error) {
@@ -412,6 +434,118 @@ module.exports = {
 				description: `✅ ${channel} will now be included in logging.`,
 			}],
 			ephemeral: true,
+		});
+	},
+
+	async exportLogs (interaction, serverDocument) {
+		const TierManager = require("../../../Modules/TierManager");
+		const tierCheck = await TierManager.checkFeatureAccess(interaction.guild.id, "log_export");
+
+		if (!tierCheck.allowed) {
+			return interaction.reply({
+				embeds: [{
+					color: 0xED4245,
+					title: "⭐ Premium Feature",
+					description: "Log export is a **Tier 2 (Premium)** feature.\n\nUpgrade your server to access this functionality.",
+				}],
+				ephemeral: true,
+			});
+		}
+
+		await interaction.deferReply({ ephemeral: true });
+
+		const format = interaction.options.getString("format");
+		const days = interaction.options.getInteger("days") || 30;
+		const modLog = serverDocument.mod_log || [];
+
+		if (modLog.length === 0) {
+			return interaction.editReply({
+				embeds: [{
+					color: 0xFEE75C,
+					title: "📋 Export Logs",
+					description: "No moderation logs to export.",
+				}],
+			});
+		}
+
+		const cutoffDate = new Date();
+		cutoffDate.setDate(cutoffDate.getDate() - days);
+
+		const filteredLogs = modLog.filter(entry => {
+			if (!entry.timestamp) return true;
+			return new Date(entry.timestamp) >= cutoffDate;
+		});
+
+		if (filteredLogs.length === 0) {
+			return interaction.editReply({
+				embeds: [{
+					color: 0xFEE75C,
+					description: `No logs found in the last ${days} days.`,
+				}],
+			});
+		}
+
+		const enrichedLogs = await Promise.all(filteredLogs.map(async entry => {
+			const moderator = await interaction.client.users.fetch(entry.mod_id).catch(() => null);
+			const target = entry.user_id ?
+				await interaction.client.users.fetch(entry.user_id).catch(() => null) :
+				null;
+
+			return {
+				timestamp: entry.timestamp || "Unknown",
+				action: entry.action || "Unknown",
+				moderator_id: entry.mod_id,
+				moderator_name: moderator?.tag || "Unknown",
+				target_id: entry.user_id || "",
+				target_name: target?.tag || "",
+				reason: entry.reason || "",
+				duration: entry.duration || "",
+			};
+		}));
+
+		let fileContent;
+		let fileName;
+
+		if (format === "csv") {
+			const headers = ["Timestamp", "Action", "Moderator ID", "Moderator Name", "Target ID", "Target Name", "Reason", "Duration"];
+			const rows = enrichedLogs.map(log => [
+				log.timestamp,
+				log.action,
+				log.moderator_id,
+				log.moderator_name,
+				log.target_id,
+				log.target_name,
+				`"${(log.reason || "").replace(/"/g, '""')}"`,
+				log.duration,
+			]);
+			fileContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+			fileName = `modlogs_${interaction.guild.id}_${Date.now()}.csv`;
+		} else {
+			fileContent = JSON.stringify({
+				guild_id: interaction.guild.id,
+				guild_name: interaction.guild.name,
+				exported_at: new Date().toISOString(),
+				period_days: days,
+				total_entries: enrichedLogs.length,
+				logs: enrichedLogs,
+			}, null, 2);
+			fileName = `modlogs_${interaction.guild.id}_${Date.now()}.json`;
+		}
+
+		const { AttachmentBuilder } = require("discord.js");
+		const attachment = new AttachmentBuilder(Buffer.from(fileContent), { name: fileName });
+
+		await interaction.editReply({
+			embeds: [{
+				color: 0x57F287,
+				title: "📋 Mod Logs Exported",
+				description: `Exported **${enrichedLogs.length}** log entries from the last **${days}** days.`,
+				fields: [
+					{ name: "Format", value: format.toUpperCase(), inline: true },
+					{ name: "Period", value: `${days} days`, inline: true },
+				],
+			}],
+			files: [attachment],
 		});
 	},
 };

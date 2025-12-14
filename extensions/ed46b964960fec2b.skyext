@@ -1,0 +1,32 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const username = command.suffix.trim();
+
+if (!username) {
+	message.reply({
+		embeds: [embed.create({
+			title: '⛏️ MC Name History',
+			description: 'Usage: mcnamehistory <username>\n\nExample: mcnamehistory Notch',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '⛏️ Minecraft Profile: ' + username,
+		description: '⚠️ **Note:** Mojang removed the name history API in September 2022.\n\n' +
+			'You can still view:\n' +
+			'• Current skin with mcskin ' + username + '\n' +
+			'• UUID with mcuuid ' + username + '\n\n' +
+			'For name history, use third-party sites like:\n' +
+			'• [NameMC](https://namemc.com/profile/' + encodeURIComponent(username) + ')\n' +
+			'• [MinecraftUUID](https://minecraftuuid.com/?search=' + encodeURIComponent(username) + ')',
+		thumbnail: { url: 'https://mc-heads.net/avatar/' + encodeURIComponent(username) + '/128' },
+		color: embed.colors.GREEN,
+		footer: { text: 'Mojang API change - Use external sites for history' },
+	})],
+});

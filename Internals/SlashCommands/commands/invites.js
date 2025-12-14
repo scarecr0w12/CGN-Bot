@@ -69,10 +69,49 @@ module.exports = {
 			sub.setName("sync")
 				.setDescription("Sync invites with Discord (admin only)"),
 		)
+		.addSubcommandGroup(group =>
+			group.setName("rewards")
+				.setDescription("Manage invite rewards")
+				.addSubcommand(sub =>
+					sub.setName("add")
+						.setDescription("Add an invite reward")
+						.addIntegerOption(opt =>
+							opt.setName("invites")
+								.setDescription("Number of invites required")
+								.setMinValue(1)
+								.setMaxValue(1000)
+								.setRequired(true),
+						)
+						.addRoleOption(opt =>
+							opt.setName("role")
+								.setDescription("Role to give as reward")
+								.setRequired(true),
+						),
+				)
+				.addSubcommand(sub =>
+					sub.setName("remove")
+						.setDescription("Remove an invite reward")
+						.addIntegerOption(opt =>
+							opt.setName("invites")
+								.setDescription("Invite threshold to remove")
+								.setMinValue(1)
+								.setRequired(true),
+						),
+				)
+				.addSubcommand(sub =>
+					sub.setName("list")
+						.setDescription("List all invite rewards"),
+				)
+				.addSubcommand(sub =>
+					sub.setName("check")
+						.setDescription("Check and grant missing rewards to all users"),
+				),
+		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.CreateInstantInvite),
 
-	async execute (interaction, _client, _serverDocument) {
+	async execute (interaction, _client, serverDocument) {
 		const subcommand = interaction.options.getSubcommand();
+		const subcommandGroup = interaction.options.getSubcommandGroup();
 
 		try {
 			switch (subcommand) {
@@ -97,6 +136,23 @@ module.exports = {
 				case "sync":
 					await this.syncInvites(interaction);
 					break;
+			}
+
+			if (subcommandGroup === "rewards") {
+				switch (subcommand) {
+					case "add":
+						await this.addReward(interaction, serverDocument);
+						break;
+					case "remove":
+						await this.removeReward(interaction, serverDocument);
+						break;
+					case "list":
+						await this.listRewards(interaction, serverDocument);
+						break;
+					case "check":
+						await this.checkRewards(interaction, serverDocument);
+						break;
+				}
 			}
 		} catch (error) {
 			logger.error("Invites command error", { subcommand, guildId: interaction.guild.id }, error);
@@ -398,6 +454,180 @@ module.exports = {
 				title: "🔄 Invites Synced",
 				description: `Synced **${synced}** new invites.\nSkipped **${skipped}** already tracked.`,
 				footer: { text: "New member joins will now be tracked" },
+			}],
+		});
+	},
+
+	async addReward (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need the `Manage Server` permission to manage invite rewards.",
+				ephemeral: true,
+			});
+		}
+
+		const invites = interaction.options.getInteger("invites");
+		const role = interaction.options.getRole("role");
+
+		if (role.managed || role.id === interaction.guild.id) {
+			return interaction.reply({
+				content: "❌ Cannot use managed roles or @everyone as a reward.",
+				ephemeral: true,
+			});
+		}
+
+		if (!serverDocument.config.invite_rewards) {
+			serverDocument.query.set("config.invite_rewards", []);
+		}
+
+		const existingIndex = (serverDocument.config.invite_rewards || []).findIndex(r => r.invites === invites);
+
+		if (existingIndex !== -1) {
+			serverDocument.query.set(`config.invite_rewards.${existingIndex}.role_id`, role.id);
+		} else {
+			serverDocument.query.push("config.invite_rewards", {
+				invites: invites,
+				role_id: role.id,
+			});
+		}
+
+		await serverDocument.save();
+
+		await interaction.reply({
+			embeds: [{
+				color: 0x57F287,
+				title: "🎁 Invite Reward Added",
+				description: `Users who reach **${invites}** invites will receive ${role}.`,
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async removeReward (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need the `Manage Server` permission to manage invite rewards.",
+				ephemeral: true,
+			});
+		}
+
+		const invites = interaction.options.getInteger("invites");
+		const rewards = serverDocument.config.invite_rewards || [];
+
+		const existingIndex = rewards.findIndex(r => r.invites === invites);
+
+		if (existingIndex === -1) {
+			return interaction.reply({
+				content: `❌ No reward found for ${invites} invites.`,
+				ephemeral: true,
+			});
+		}
+
+		serverDocument.query.pull("config.invite_rewards", rewards[existingIndex]);
+		await serverDocument.save();
+
+		await interaction.reply({
+			embeds: [{
+				color: 0x57F287,
+				title: "🗑️ Invite Reward Removed",
+				description: `Removed reward for **${invites}** invites.`,
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async listRewards (interaction, serverDocument) {
+		const rewards = serverDocument.config.invite_rewards || [];
+
+		if (rewards.length === 0) {
+			return interaction.reply({
+				embeds: [{
+					color: 0xFEE75C,
+					title: "🎁 Invite Rewards",
+					description: "No invite rewards configured.\nUse `/invites rewards add` to create one.",
+				}],
+				ephemeral: true,
+			});
+		}
+
+		const sortedRewards = [...rewards].sort((a, b) => a.invites - b.invites);
+		const rewardList = sortedRewards.map(r => {
+			const role = interaction.guild.roles.cache.get(r.role_id);
+			return `**${r.invites}** invites → ${role || "Unknown Role"}`;
+		}).join("\n");
+
+		await interaction.reply({
+			embeds: [{
+				color: 0x5865F2,
+				title: "🎁 Invite Rewards",
+				description: rewardList,
+				footer: { text: `${rewards.length} reward(s) configured` },
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async checkRewards (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need the `Manage Server` permission to check rewards.",
+				ephemeral: true,
+			});
+		}
+
+		const rewards = serverDocument.config.invite_rewards || [];
+
+		if (rewards.length === 0) {
+			return interaction.reply({
+				content: "❌ No invite rewards configured.",
+				ephemeral: true,
+			});
+		}
+
+		await interaction.deferReply({ ephemeral: true });
+
+		const inviteData = await InviteTracking.find({ server_id: interaction.guild.id }).exec();
+
+		const inviterStats = {};
+		for (const invite of inviteData) {
+			if (!inviterStats[invite.inviter_id]) {
+				inviterStats[invite.inviter_id] = 0;
+			}
+			for (const member of invite.members || []) {
+				if (!member.left) {
+					inviterStats[invite.inviter_id]++;
+				}
+			}
+		}
+
+		let rolesGranted = 0;
+		let errors = 0;
+
+		for (const [userId, inviteCount] of Object.entries(inviterStats)) {
+			try {
+				const member = await interaction.guild.members.fetch(userId).catch(() => null);
+				if (!member) continue;
+
+				for (const reward of rewards) {
+					if (inviteCount >= reward.invites) {
+						const role = interaction.guild.roles.cache.get(reward.role_id);
+						if (role && !member.roles.cache.has(role.id)) {
+							await member.roles.add(role, `Invite reward: ${reward.invites} invites`);
+							rolesGranted++;
+						}
+					}
+				}
+			} catch {
+				errors++;
+			}
+		}
+
+		const errorText = errors > 0 ? `\n⚠️ ${errors} error(s) occurred.` : "";
+		await interaction.editReply({
+			embeds: [{
+				color: 0x57F287,
+				title: "✅ Rewards Checked",
+				description: `Granted **${rolesGranted}** role(s) to eligible members.${errorText}`,
 			}],
 		});
 	},

@@ -537,7 +537,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `animeseason` | View seasonal anime | ✅ SEEDED (Batch 14 - Jikan API) |
 | `animeschedule` | View airing schedule | ✅ SEEDED (Batch 16 - Jikan API) |
 | `mangatop` | View top rated manga | ✅ SEEDED (Batch 16 - Jikan API) |
-| `animeguess` | Guess anime from screenshot | 📦 EXTENSION |
+| `animeguess` | Guess anime from screenshot | ✅ SEEDED (Batch 19) |
 | `waifuroll` | Roll random waifu/husbando | ✅ SEEDED (Batch 12) |
 | `waifuclaim` | Claim rolled characters | ✅ SEEDED (Batch 12) |
 | `waifuprofile` | View waifu collection | ✅ SEEDED (Batch 12) |
@@ -549,7 +549,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `mcstatus` | Check server status | ✅ SEEDED (Batch 14 - mcsrvstat.us API) |
 | `mcskin` | Display player skin | ✅ SEEDED (Batch 13 - Mojang API) |
 | `mcuuid` | Get player UUID | ✅ SEEDED (Batch 13 - Mojang API) |
-| `mcnamehistory` | Player name history | 📦 EXTENSION |
+| `mcnamehistory` | Player name history | ✅ SEEDED (Batch 19) |
 
 ### Valorant
 
@@ -567,10 +567,10 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `lolitem` | Item information | ✅ SEEDED (Batch 16 - Data Dragon) |
 | `lolrotation` | Free champion rotation | ✅ SEEDED (Batch 16 - Data Dragon) |
 | `lolrandom` | Random champion picker | ✅ SEEDED (Batch 16 - Data Dragon) |
-| `lolsummoner` | Summoner profile | 📦 EXTENSION (Requires Riot API Key) |
-| `lollive` | Live game lookup | 📦 EXTENSION (Requires Riot API Key) |
-| `lolbuild` | Champion builds | 📦 EXTENSION |
-| `lolmastery` | Champion mastery | 📦 EXTENSION (Requires Riot API Key) |
+| `lolsummoner` | Summoner profile | ✅ SEEDED (Batch 19 - Links to stat sites) |
+| `lollive` | Live game lookup | ✅ SEEDED (Batch 19 - Links to stat sites) |
+| `lolbuild` | Champion builds | ✅ SEEDED (Batch 19) |
+| `lolmastery` | Champion mastery | ✅ SEEDED (Batch 19 - Links to stat sites) |
 
 ### Fortnite
 
@@ -579,7 +579,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `fortnitestats` | Player statistics | ✅ SEEDED (Batch 15 - Fortnite API) |
 | `fortniteshop` | Daily item shop | ✅ SEEDED (Batch 15 - Fortnite API) |
 | `fortnitemap` | View current map | ✅ SEEDED (Batch 15 - Fortnite API) |
-| `fortnitetrack` | Track player stats | 📦 EXTENSION |
+| `fortnitetrack` | Track player stats | ✅ SEEDED (Batch 19) |
 
 ### General Gaming
 
@@ -588,7 +588,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `steamprofile` | Steam profile info | ✅ SEEDED (Batch 14 - Steam API) |
 | `steamgame` | Game information | ✅ SEEDED (Batch 14 - Steam API) |
 | `lfg` | Looking for group | ✅ SEEDED (Batch 12) |
-| `gamestats` | Generic game stats | 📦 EXTENSION |
+| `gamestats` | Generic game stats | ✅ SEEDED (Batch 19) |
 
 ---
 
@@ -835,9 +835,8 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/poll results` | View current results | ✅ BUILT-IN (`poll.js`) |
 | `poll` | Legacy DM poll creation | ✅ BUILT-IN (`poll.js`) |
 | `suggest` | Suggestions | ✅ BUILT-IN (`suggest.js`) |
-| `pollweighted` | Weighted voting | 🚧 PLANNED BUILT-IN |
-| `pollranked` | Ranked choice voting | 🚧 PLANNED BUILT-IN |
-| `feedbackform` | Create feedback form | 🚧 PLANNED BUILT-IN |
+| `/poll weighted` | Weighted voting (role-based) | ✅ BUILT-IN (`poll.js`) |
+| `/poll ranked` | Ranked choice voting | ✅ BUILT-IN (`poll.js`) |
 
 **Features:**
 - **Timed Polls:** Set duration for auto-ending
@@ -863,8 +862,11 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/logs user` | View user action history | ✅ BUILT-IN (`logs.js`) |
 | `/logs ignore` | Ignore channel from logs | ✅ BUILT-IN (`logs.js`) |
 | `/logs unignore` | Unignore channel | ✅ BUILT-IN (`logs.js`) |
-| `logexport` | Export logs | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `auditsnapshot` | Permission snapshot | 🚧 PLANNED BUILT-IN |
+| `/logs export` | Export logs to CSV/JSON | ✅ BUILT-IN (`logs.js`) - Tier 2 |
+| `/audit snapshot` | Permission snapshot | ✅ BUILT-IN (`audit.js`) |
+| `/audit roles` | Audit role permissions | ✅ BUILT-IN (`audit.js`) |
+| `/audit channels` | Audit channel permissions | ✅ BUILT-IN (`audit.js`) |
+| `/audit dangerous` | Find dangerous permissions | ✅ BUILT-IN (`audit.js`) |
 
 **Features:**
 - **Event Configuration:** Toggle individual event types
@@ -887,9 +889,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/afk clear` | Clear AFK status | ✅ BUILT-IN (`afk.js`) |
 | `/afk list` | List AFK members | ✅ BUILT-IN (`afk.js`) |
 | `/afk check` | Check user's AFK | ✅ BUILT-IN (`afk.js`) |
-| `afkauto` | Auto-AFK on inactivity | 🚧 PLANNED BUILT-IN |
-| `statusset` | Set server status | 🚧 PLANNED BUILT-IN |
-| `statusrole` | Link status to roles | 🚧 PLANNED BUILT-IN |
+| `/afk auto` | Auto-AFK on inactivity | ✅ BUILT-IN (`afk.js`) |
+| `/afk voicekick` | Kick AFK users from voice | ✅ BUILT-IN (`afk.js`) |
+| `/afk status` | View AFK system config | ✅ BUILT-IN (`afk.js`) |
 
 **Features:**
 - **AFK Messages:** Set custom away messages
@@ -916,9 +918,13 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/starboard force` | Force message to starboard | ✅ BUILT-IN (`starboard.js`) |
 | `/starboard remove` | Remove from starboard | ✅ BUILT-IN (`starboard.js`) |
 | `/starboard top` | View top starred messages | ✅ BUILT-IN (`starboard.js`) |
-| `pinqueue` | Pin nomination queue | 🚧 PLANNED BUILT-IN |
-| `pinauto` | Auto-pin rules | 🚧 PLANNED BUILT-IN |
-| `pinrotate` | Rotate old pins | 🚧 PLANNED BUILT-IN |
+| `/pins queue` | Pin nomination queue | ✅ BUILT-IN (`pins.js`) |
+| `/pins nominate` | Nominate message for pin | ✅ BUILT-IN (`pins.js`) |
+| `/pins auto` | Auto-pin rules | ✅ BUILT-IN (`pins.js`) |
+| `/pins rotate` | Configure pin rotation | ✅ BUILT-IN (`pins.js`) |
+| `/pins cleanup` | Clean up old pins | ✅ BUILT-IN (`pins.js`) |
+| `/pins status` | View pin config | ✅ BUILT-IN (`pins.js`) |
+| `/pins archive` | Archive pins to channel | ✅ BUILT-IN (`pins.js`) |
 
 **Features:**
 - **Starboard Configuration:** Channel, threshold, custom emoji
@@ -945,7 +951,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/emoji list` | List all server emojis | ✅ BUILT-IN (`emoji.js`) |
 | `/emoji stats` | View usage statistics | ✅ BUILT-IN (`emoji.js`) |
 | `/emoji info` | Get emoji information | ✅ BUILT-IN (`emoji.js`) |
-| `emojipack` | Save/load emoji packs | 🚧 PLANNED BUILT-IN |
+| `/emoji pack export` | Export emojis as pack | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji pack import` | Import emoji pack | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji pack preview` | Preview pack contents | ✅ BUILT-IN (`emoji.js`) |
 
 **Features:**
 - **Emoji Stealing:** Copy emojis from other servers by pasting them
@@ -960,8 +968,12 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `nuke` | Clear channel | ❌ BUILT-IN (`nuke.js`) |
 | `invite` | Invite tracking | ❌ BUILT-IN (`invite.js`) |
-| `backup` | Server backup | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `backupschedule` | Auto backup schedule | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `/backup create` | Create server backup | ✅ BUILT-IN (`backup.js`) - Tier 2 |
+| `/backup list` | List server backups | ✅ BUILT-IN (`backup.js`) - Tier 2 |
+| `/backup info` | View backup details | ✅ BUILT-IN (`backup.js`) - Tier 2 |
+| `/backup restore` | Restore from backup | ✅ BUILT-IN (`backup.js`) - Tier 2 |
+| `/backup delete` | Delete a backup | ✅ BUILT-IN (`backup.js`) - Tier 2 |
+| `/backup schedule` | Configure auto backups | ✅ BUILT-IN (`backup.js`) - Tier 2 |
 | `/server info` | View server information | ✅ BUILT-IN (`server.js`) |
 | `/server settings` | View server settings | ✅ BUILT-IN (`server.js`) |
 | `/server prefix` | Set command prefix | ✅ BUILT-IN (`server.js`) |
@@ -972,9 +984,20 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/server slowmode all` | Set all channels slowmode | ✅ BUILT-IN (`server.js`) |
 | `/server cleanup` | Bulk delete messages | ✅ BUILT-IN (`server.js`) |
 | `/server nuke` | Recreate channel | ✅ BUILT-IN (`server.js`) |
-| `backuprestore` | Restore backup | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `antinuke` | Server protection | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `verify` | Member verification | 🚧 PLANNED BUILT-IN |
+| `/antinuke enable` | Enable anti-nuke protection | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke disable` | Disable anti-nuke | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke status` | View anti-nuke config | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke whitelist` | Whitelist user | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke thresholds` | Configure thresholds | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke action` | Set violation action | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/antinuke logs` | View incidents | ✅ BUILT-IN (`antinuke.js`) - Tier 2 |
+| `/verify setup` | Set up verification | ✅ BUILT-IN (`verify.js`) |
+| `/verify message` | Customize verification message | ✅ BUILT-IN (`verify.js`) |
+| `/verify post` | Post verification message | ✅ BUILT-IN (`verify.js`) |
+| `/verify disable` | Disable verification | ✅ BUILT-IN (`verify.js`) |
+| `/verify status` | View verification status | ✅ BUILT-IN (`verify.js`) |
+| `/verify manual` | Manually verify member | ✅ BUILT-IN (`verify.js`) |
+| `/verify unverify` | Remove verification | ✅ BUILT-IN (`verify.js`) |
 
 **Features:**
 - **Server Lockdown:** Lock/unlock all or specific channels
@@ -999,7 +1022,10 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `/invites list` | List all tracked invites | ✅ BUILT-IN (`invites.js`) |
 | `/invites delete` | Delete an invite | ✅ BUILT-IN (`invites.js`) |
 | `/invites sync` | Sync existing invites | ✅ BUILT-IN (`invites.js`) |
-| `invitereward` | Invite rewards | 🚧 PLANNED BUILT-IN |
+| `/invites rewards add` | Add invite reward | ✅ BUILT-IN (`invites.js`) |
+| `/invites rewards remove` | Remove invite reward | ✅ BUILT-IN (`invites.js`) |
+| `/invites rewards list` | List invite rewards | ✅ BUILT-IN (`invites.js`) |
+| `/invites rewards check` | Grant missing rewards | ✅ BUILT-IN (`invites.js`) |
 
 **Features:**
 - **Invite Leaderboard:** Track top inviters with active/left counts

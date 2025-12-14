@@ -370,6 +370,64 @@ class SlashCommandHandler {
 			await this.handleRulesAccept(interaction);
 			return;
 		}
+
+		// Handle verification button
+		if (customId === "verify_button") {
+			await this.handleVerifyButton(interaction);
+			return;
+		}
+	}
+
+	/**
+	 * Handle verification button interaction
+	 * @param {ButtonInteraction} interaction
+	 */
+	async handleVerifyButton (interaction) {
+		try {
+			const serverDocument = await Servers.findOne(interaction.guild.id);
+			if (!serverDocument) {
+				return interaction.reply({
+					content: "Failed to load server configuration.",
+					ephemeral: true,
+				});
+			}
+
+			const config = serverDocument.config.verification;
+			if (!config?.enabled || !config?.role_id) {
+				return interaction.reply({
+					content: "Verification is not configured on this server.",
+					ephemeral: true,
+				});
+			}
+
+			const role = interaction.guild.roles.cache.get(config.role_id);
+			if (!role) {
+				return interaction.reply({
+					content: "The verification role no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			if (interaction.member.roles.cache.has(role.id)) {
+				return interaction.reply({
+					content: "✅ You are already verified!",
+					ephemeral: true,
+				});
+			}
+
+			await interaction.member.roles.add(role, "Verified via button");
+
+			await interaction.reply({
+				content: `✅ Welcome to **${interaction.guild.name}**! You are now verified.`,
+				ephemeral: true,
+			});
+		} catch (err) {
+			logger.error("Failed to handle verification button", { guildId: interaction.guild.id }, err);
+			await interaction.reply({
+				content: `Error: ${err.message}`,
+				ephemeral: true,
+			});
+		}
 	}
 
 	/**

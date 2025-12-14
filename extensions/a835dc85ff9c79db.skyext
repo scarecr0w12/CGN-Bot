@@ -1,0 +1,87 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(' ');
+
+const games = {
+	valorant: { name: 'Valorant', color: 0xFD4556 },
+	fortnite: { name: 'Fortnite', color: 0x9D4DFF },
+	apex: { name: 'Apex Legends', color: 0xDA292A },
+	overwatch: { name: 'Overwatch 2', color: 0xFA9C1E },
+	csgo: { name: 'CS2', color: 0xDE9B35 },
+	cs2: { name: 'CS2', color: 0xDE9B35 },
+	pubg: { name: 'PUBG', color: 0xF7B500 },
+	rocket: { name: 'Rocket League', color: 0x0078F2 },
+};
+
+if (args.length < 2) {
+	const gameList = Object.keys(games).filter(function(g) { return g !== 'cs2'; }).join(', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Game Stats Lookup',
+			description: 'Usage: gamestats <game> <username>\n\n' +
+				'**Supported Games:**\n' + gameList + '\n\n' +
+				'**Examples:**\n' +
+				'• gamestats valorant Player#NA1\n' +
+				'• gamestats apex PlayerName\n' +
+				'• gamestats rocket EpicPlayer',
+			color: embed.colors.BLUE,
+		})],
+	});
+	return;
+}
+
+const game = args[0].toLowerCase();
+const username = args.slice(1).join(' ');
+
+if (!games[game]) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Unknown Game',
+			description: 'Supported games: ' + Object.keys(games).filter(function(g) { return g !== 'cs2'; }).join(', '),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const gameInfo = games[game];
+const encodedUsername = encodeURIComponent(username);
+
+var trackerLinks = '';
+
+if (game === 'valorant') {
+	trackerLinks = '• [Tracker.gg](https://tracker.gg/valorant/profile/riot/' + encodedUsername + ')\n' +
+		'• [Blitz.gg](https://blitz.gg/valorant/profile/' + encodedUsername + ')\n' +
+		'• [Valking.gg](https://valking.gg/player/' + encodedUsername + ')';
+} else if (game === 'fortnite') {
+	trackerLinks = '• [Fortnite Tracker](https://fortnitetracker.com/profile/all/' + encodedUsername + ')\n' +
+		'• [Tracker.gg](https://tracker.gg/fortnite/profile/epic/' + encodedUsername + ')';
+} else if (game === 'apex') {
+	trackerLinks = '• [Apex Tracker](https://apex.tracker.gg/apex/profile/origin/' + encodedUsername + ')\n' +
+		'• [ApexLegends.status](https://apexlegendsstatus.com/profile/PC/' + encodedUsername + ')';
+} else if (game === 'overwatch') {
+	trackerLinks = '• [Overbuff](https://www.overbuff.com/players/' + encodedUsername + ')\n' +
+		'• [OverTracker](https://overtracker.com/player/' + encodedUsername + ')';
+} else if (game === 'csgo' || game === 'cs2') {
+	trackerLinks = '• [CSStats](https://csstats.gg/player/' + encodedUsername + ')\n' +
+		'• [Leetify](https://leetify.com/app/profile/' + encodedUsername + ')';
+} else if (game === 'pubg') {
+	trackerLinks = '• [PUBG.OP.GG](https://pubg.op.gg/user/' + encodedUsername + ')\n' +
+		'• [PUBG Lookup](https://pubglookup.com/players/steam/' + encodedUsername + ')';
+} else if (game === 'rocket') {
+	trackerLinks = '• [Rocket League Tracker](https://rocketleague.tracker.network/profile/steam/' + encodedUsername + ')\n' +
+		'• [RLStats](https://rlstats.net/profile/steam/' + encodedUsername + ')';
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + gameInfo.name + ' Stats',
+		description: '**Player:** ' + username + '\n\n' +
+			'**📊 Stat Trackers:**\n' + trackerLinks + '\n\n' +
+			'💡 Click a link to view detailed statistics!',
+		color: gameInfo.color,
+		footer: { text: 'Stats provided by third-party trackers' },
+	})],
+});

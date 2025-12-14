@@ -80,12 +80,69 @@ module.exports = {
 						.setRequired(true),
 				),
 		)
+		.addSubcommandGroup(group =>
+			group.setName("pack")
+				.setDescription("Emoji pack management")
+				.addSubcommand(sub =>
+					sub.setName("export")
+						.setDescription("Export server emojis as a pack")
+						.addStringOption(opt =>
+							opt.setName("name")
+								.setDescription("Name for the pack")
+								.setRequired(true)
+								.setMaxLength(50),
+						)
+						.addStringOption(opt =>
+							opt.setName("filter")
+								.setDescription("Filter emojis (static, animated, or all)")
+								.addChoices(
+									{ name: "All", value: "all" },
+									{ name: "Static Only", value: "static" },
+									{ name: "Animated Only", value: "animated" },
+								),
+						),
+				)
+				.addSubcommand(sub =>
+					sub.setName("import")
+						.setDescription("Import emojis from a pack file (attach JSON)")
+						.addAttachmentOption(opt =>
+							opt.setName("file")
+								.setDescription("The emoji pack JSON file")
+								.setRequired(true),
+						),
+				)
+				.addSubcommand(sub =>
+					sub.setName("preview")
+						.setDescription("Preview a pack file without importing")
+						.addAttachmentOption(opt =>
+							opt.setName("file")
+								.setDescription("The emoji pack JSON file")
+								.setRequired(true),
+						),
+				),
+		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuildExpressions),
 
 	async execute (interaction, client, serverDocument) {
 		const subcommand = interaction.options.getSubcommand();
+		const subcommandGroup = interaction.options.getSubcommandGroup();
 
 		try {
+			if (subcommandGroup === "pack") {
+				switch (subcommand) {
+					case "export":
+						await this.exportPack(interaction);
+						break;
+					case "import":
+						await this.importPack(interaction);
+						break;
+					case "preview":
+						await this.previewPack(interaction);
+						break;
+				}
+				return;
+			}
+
 			switch (subcommand) {
 				case "steal":
 					await this.stealEmoji(interaction, client);
@@ -367,6 +424,187 @@ module.exports = {
 				thumbnail: { url: parsed.url },
 				fields,
 				footer: { text: `Direct URL: ${parsed.url}` },
+			}],
+		});
+	},
+
+	async exportPack (interaction) {
+		await interaction.deferReply({ ephemeral: true });
+
+		const packName = interaction.options.getString("name");
+		const filter = interaction.options.getString("filter") || "all";
+
+		let emojis = interaction.guild.emojis.cache;
+
+		if (filter === "static") {
+			emojis = emojis.filter(e => !e.animated);
+		} else if (filter === "animated") {
+			emojis = emojis.filter(e => e.animated);
+		}
+
+		if (emojis.size === 0) {
+			throw new Error("No emojis found matching the filter.");
+		}
+
+		const pack = {
+			pack_version: "1.0",
+			name: packName,
+			description: `Emoji pack from ${interaction.guild.name}`,
+			exported_at: new Date().toISOString(),
+			source_guild: {
+				id: interaction.guild.id,
+				name: interaction.guild.name,
+			},
+			emoji_count: emojis.size,
+			emojis: emojis.map(e => ({
+				name: e.name,
+				id: e.id,
+				animated: e.animated,
+				url: e.url,
+			})),
+		};
+
+		const { AttachmentBuilder } = require("discord.js");
+		const fileContent = JSON.stringify(pack, null, 2);
+		const fileName = `${packName.replace(/[^a-zA-Z0-9]/g, "_")}_emoji_pack.json`;
+		const attachment = new AttachmentBuilder(Buffer.from(fileContent), { name: fileName });
+
+		await interaction.editReply({
+			embeds: [{
+				color: 0x57F287,
+				title: "📦 Emoji Pack Exported",
+				description: `Exported **${emojis.size}** emojis as "${packName}".`,
+				fields: [
+					{ name: "Static", value: String(emojis.filter(e => !e.animated).size), inline: true },
+					{ name: "Animated", value: String(emojis.filter(e => e.animated).size), inline: true },
+				],
+				footer: { text: "Use /emoji pack import to import this pack to another server" },
+			}],
+			files: [attachment],
+		});
+	},
+
+	async importPack (interaction) {
+		await interaction.deferReply({ ephemeral: true });
+
+		const attachment = interaction.options.getAttachment("file");
+
+		if (!attachment.name.endsWith(".json")) {
+			throw new Error("Please provide a JSON file.");
+		}
+
+		if (attachment.size > 1024 * 1024) {
+			throw new Error("File too large. Maximum size is 1MB.");
+		}
+
+		const response = await fetch(attachment.url);
+		const pack = await response.json();
+
+		if (!pack.pack_version || !pack.emojis || !Array.isArray(pack.emojis)) {
+			throw new Error("Invalid emoji pack format.");
+		}
+
+		const existingEmojis = interaction.guild.emojis.cache;
+		const maxEmojis = interaction.guild.premiumTier === 0 ? 50 :
+			interaction.guild.premiumTier === 1 ? 100 :
+				interaction.guild.premiumTier === 2 ? 150 : 250;
+
+		let imported = 0;
+		let skipped = 0;
+		let failed = 0;
+		const errors = [];
+
+		for (const emoji of pack.emojis) {
+			if (!emoji.name || !emoji.url) {
+				skipped++;
+				continue;
+			}
+
+			if (existingEmojis.some(e => e.name === emoji.name)) {
+				skipped++;
+				continue;
+			}
+
+			const currentCount = emoji.animated ?
+				existingEmojis.filter(e => e.animated).size + imported :
+				existingEmojis.filter(e => !e.animated).size + imported;
+
+			if (currentCount >= maxEmojis) {
+				skipped++;
+				continue;
+			}
+
+			try {
+				await interaction.guild.emojis.create({
+					attachment: emoji.url,
+					name: emoji.name,
+					reason: `Imported from pack "${pack.name}" by ${interaction.user.tag}`,
+				});
+				imported++;
+
+				if (imported % 5 === 0) {
+					await new Promise(resolve => setTimeout(resolve, 1000));
+				}
+			} catch (err) {
+				failed++;
+				if (errors.length < 3) {
+					errors.push(`${emoji.name}: ${err.message}`);
+				}
+			}
+		}
+
+		const errorText = errors.length > 0 ? `\n\n**Errors:**\n${errors.join("\n")}` : "";
+		await interaction.editReply({
+			embeds: [{
+				color: imported > 0 ? 0x57F287 : 0xED4245,
+				title: "📦 Emoji Pack Import",
+				description: `**Pack:** ${pack.name}\n\n` +
+					`✅ Imported: **${imported}**\n` +
+					`⏭️ Skipped: **${skipped}**\n` +
+					`❌ Failed: **${failed}**${errorText}`,
+			}],
+		});
+	},
+
+	async previewPack (interaction) {
+		await interaction.deferReply({ ephemeral: true });
+
+		const attachment = interaction.options.getAttachment("file");
+
+		if (!attachment.name.endsWith(".json")) {
+			throw new Error("Please provide a JSON file.");
+		}
+
+		const response = await fetch(attachment.url);
+		const pack = await response.json();
+
+		if (!pack.pack_version || !pack.emojis || !Array.isArray(pack.emojis)) {
+			throw new Error("Invalid emoji pack format.");
+		}
+
+		const staticCount = pack.emojis.filter(e => !e.animated).length;
+		const animatedCount = pack.emojis.filter(e => e.animated).length;
+
+		const existingEmojis = interaction.guild.emojis.cache;
+		const duplicates = pack.emojis.filter(e => existingEmojis.some(ex => ex.name === e.name)).length;
+
+		const emojiPreview = pack.emojis.slice(0, 20).map(e => `:${e.name}:`).join(" ");
+
+		await interaction.editReply({
+			embeds: [{
+				color: 0x5865F2,
+				title: `📦 Pack Preview: ${pack.name}`,
+				description: pack.description || "No description",
+				fields: [
+					{ name: "Total Emojis", value: String(pack.emojis.length), inline: true },
+					{ name: "Static", value: String(staticCount), inline: true },
+					{ name: "Animated", value: String(animatedCount), inline: true },
+					{ name: "Already Exists", value: String(duplicates), inline: true },
+					{ name: "Source", value: pack.source_guild?.name || "Unknown", inline: true },
+					{ name: "Exported", value: pack.exported_at ? `<t:${Math.floor(new Date(pack.exported_at).getTime() / 1000)}:R>` : "Unknown", inline: true },
+					{ name: "Emoji Names (Preview)", value: emojiPreview || "None" },
+				],
+				footer: { text: "Use /emoji pack import to add these emojis" },
 			}],
 		});
 	},

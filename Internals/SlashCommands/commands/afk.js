@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, PermissionFlagsBits } = require("discord.js");
 
 module.exports = {
 	adminLevel: 0,
@@ -31,24 +31,77 @@ module.exports = {
 						.setDescription("User to check")
 						.setRequired(true),
 				),
+		)
+		.addSubcommand(sub =>
+			sub.setName("auto")
+				.setDescription("Configure auto-AFK on inactivity (admin)")
+				.addBooleanOption(opt =>
+					opt.setName("enabled")
+						.setDescription("Enable/disable auto-AFK")
+						.setRequired(true),
+				)
+				.addIntegerOption(opt =>
+					opt.setName("minutes")
+						.setDescription("Minutes of inactivity before auto-AFK (5-120)")
+						.setMinValue(5)
+						.setMaxValue(120),
+				),
+		)
+		.addSubcommand(sub =>
+			sub.setName("voicekick")
+				.setDescription("Configure AFK voice channel kick (admin)")
+				.addBooleanOption(opt =>
+					opt.setName("enabled")
+						.setDescription("Enable/disable voice kick for AFK users")
+						.setRequired(true),
+				)
+				.addIntegerOption(opt =>
+					opt.setName("minutes")
+						.setDescription("Minutes before kicking AFK users from voice (5-60)")
+						.setMinValue(5)
+						.setMaxValue(60),
+				),
+		)
+		.addSubcommand(sub =>
+			sub.setName("status")
+				.setDescription("View AFK system configuration (admin)"),
 		),
 
 	async execute (interaction, _client, serverDocument) {
 		const subcommand = interaction.options.getSubcommand();
 
-		switch (subcommand) {
-			case "set":
-				await this.setAfk(interaction, serverDocument);
-				break;
-			case "clear":
-				await this.clearAfk(interaction, serverDocument);
-				break;
-			case "list":
-				await this.listAfk(interaction, serverDocument);
-				break;
-			case "check":
-				await this.checkAfk(interaction, serverDocument);
-				break;
+		try {
+			switch (subcommand) {
+				case "set":
+					await this.setAfk(interaction, serverDocument);
+					break;
+				case "clear":
+					await this.clearAfk(interaction, serverDocument);
+					break;
+				case "list":
+					await this.listAfk(interaction, serverDocument);
+					break;
+				case "check":
+					await this.checkAfk(interaction, serverDocument);
+					break;
+				case "auto":
+					await this.configureAutoAfk(interaction, serverDocument);
+					break;
+				case "voicekick":
+					await this.configureVoiceKick(interaction, serverDocument);
+					break;
+				case "status":
+					await this.showStatus(interaction, serverDocument);
+					break;
+			}
+		} catch (error) {
+			logger.error("AFK command error", { subcommand, guildId: interaction.guild.id }, error);
+			const errorReply = { content: `❌ Error: ${error.message}`, ephemeral: true };
+			if (interaction.deferred || interaction.replied) {
+				await interaction.editReply(errorReply);
+			} else {
+				await interaction.reply(errorReply);
+			}
 		}
 	},
 
@@ -168,6 +221,120 @@ module.exports = {
 					{ name: "Since", value: since, inline: true },
 				],
 				thumbnail: { url: user.displayAvatarURL() },
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async configureAutoAfk (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need `Manage Server` permission to configure auto-AFK.",
+				ephemeral: true,
+			});
+		}
+
+		const enabled = interaction.options.getBoolean("enabled");
+		const minutes = interaction.options.getInteger("minutes") || 30;
+
+		serverDocument.query.set("config.afk_auto", {
+			enabled: enabled,
+			inactivity_minutes: minutes,
+		});
+		await serverDocument.save();
+
+		if (!enabled) {
+			return interaction.reply({
+				embeds: [{
+					color: 0xED4245,
+					title: "⏰ Auto-AFK Disabled",
+					description: "Users will no longer be automatically marked AFK.",
+				}],
+				ephemeral: true,
+			});
+		}
+
+		return interaction.reply({
+			embeds: [{
+				color: 0x57F287,
+				title: "⏰ Auto-AFK Enabled",
+				description: `Users will be automatically marked AFK after **${minutes} minutes** of inactivity.`,
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async configureVoiceKick (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need `Manage Server` permission to configure voice kick.",
+				ephemeral: true,
+			});
+		}
+
+		const enabled = interaction.options.getBoolean("enabled");
+		const minutes = interaction.options.getInteger("minutes") || 15;
+
+		serverDocument.query.set("config.afk_voicekick", {
+			enabled: enabled,
+			minutes: minutes,
+		});
+		await serverDocument.save();
+
+		if (!enabled) {
+			return interaction.reply({
+				embeds: [{
+					color: 0xED4245,
+					title: "🔇 Voice Kick Disabled",
+					description: "AFK users will no longer be kicked from voice channels.",
+				}],
+				ephemeral: true,
+			});
+		}
+
+		return interaction.reply({
+			embeds: [{
+				color: 0x57F287,
+				title: "🔇 Voice Kick Enabled",
+				description: `AFK users in voice channels will be disconnected after **${minutes} minutes**.`,
+			}],
+			ephemeral: true,
+		});
+	},
+
+	async showStatus (interaction, serverDocument) {
+		if (!interaction.memberPermissions.has(PermissionFlagsBits.ManageGuild)) {
+			return interaction.reply({
+				content: "❌ You need `Manage Server` permission to view AFK configuration.",
+				ephemeral: true,
+			});
+		}
+
+		const autoAfk = serverDocument.config.afk_auto || { enabled: false, inactivity_minutes: 30 };
+		const voiceKick = serverDocument.config.afk_voicekick || { enabled: false, minutes: 15 };
+
+		let afkCount = 0;
+		for (const memberData of Object.values(serverDocument.members || {})) {
+			if (memberData.afk_message) afkCount++;
+		}
+
+		return interaction.reply({
+			embeds: [{
+				color: 0x5865F2,
+				title: "💤 AFK System Status",
+				fields: [
+					{ name: "Currently AFK", value: String(afkCount), inline: true },
+					{
+						name: "Auto-AFK",
+						value: autoAfk.enabled ? `✅ ${autoAfk.inactivity_minutes} min` : "❌ Disabled",
+						inline: true,
+					},
+					{
+						name: "Voice Kick",
+						value: voiceKick.enabled ? `✅ ${voiceKick.minutes} min` : "❌ Disabled",
+						inline: true,
+					},
+				],
 			}],
 			ephemeral: true,
 		});
