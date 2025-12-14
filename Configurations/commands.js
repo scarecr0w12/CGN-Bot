@@ -1516,7 +1516,7 @@ const commands = {
 			category: `Utility 🔦`,
 		},
 		snooze: {
-			usage: `["on" [<duration>]] or ["off"] or ["status"]`,
+			usage: `[<duration>]`,
 			aliases: ["dnd", "donotdisturb"],
 			description: `Temporarily mute pings and collect them for later`,
 			defaults: {
@@ -1525,6 +1525,148 @@ const commands = {
 				adminLevel: 0,
 			},
 			category: `Utility 🔦`,
+		},
+		base64: {
+			usage: `<encode|decode> <text>`,
+			aliases: ["b64"],
+			description: `Encode or decode Base64 text (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		hash: {
+			usage: `<algorithm|all> <text>`,
+			description: `Generate cryptographic hashes (md5, sha1, sha256, sha512) (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		timestamp: {
+			usage: `[<unix timestamp|date|discord>]`,
+			aliases: ["ts", "unix"],
+			description: `Convert between Unix timestamps and dates with Discord format output (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonpretty: {
+			usage: `<json>`,
+			aliases: ["prettyjson", "formatjson"],
+			description: `Pretty print and format JSON with syntax highlighting (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonminify: {
+			usage: `<json>`,
+			aliases: ["minifyjson", "compactjson"],
+			description: `Minify JSON by removing whitespace (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonpath: {
+			usage: `<path> | <json>`,
+			aliases: ["jpath", "jq"],
+			description: `Query JSON data using JSONPath expressions (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		regextest: {
+			usage: `/<pattern>/[flags] | <test string>`,
+			aliases: ["regex", "re"],
+			description: `Test regular expressions against text (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		regexexplain: {
+			usage: `/<pattern>/[flags]`,
+			aliases: ["explainregex", "regexhelp"],
+			description: `Explain regex pattern tokens and syntax (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		codeformat: {
+			usage: `<language> [| <code>]`,
+			aliases: ["format", "highlight"],
+			description: `Format and syntax highlight code snippets (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		snippet: {
+			usage: `[save <name> | <code>] | [<name>] | [delete <name>] | [list]`,
+			aliases: ["snippets", "code"],
+			description: `Save, retrieve, and manage code snippets (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		http: {
+			usage: `[GET|POST|PUT|DELETE] <url> [| <body>]`,
+			aliases: ["fetch", "request", "curl"],
+			description: `Make HTTP requests to external APIs with rate limiting (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		coderun: {
+			usage: `<javascript code>`,
+			aliases: ["run", "exec", "js"],
+			description: `Execute JavaScript code in a sandboxed environment (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		lint: {
+			usage: `<javascript code>`,
+			aliases: ["jslint", "check"],
+			description: `Analyze JavaScript code for issues and style problems (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
 		},
 	},
 	shared: {

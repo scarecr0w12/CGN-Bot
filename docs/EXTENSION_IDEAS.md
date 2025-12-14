@@ -166,7 +166,7 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `userstats` | User profile/stats | ❌ BUILT-IN (`userinfo.js`) |
 | `avatar` | User avatar | ❌ BUILT-IN (`avatar.js`) |
-| `voicetime` | Voice channel time tracking | 🚧 PLANNED BUILT-IN |
+| `voicetime` | Voice channel time tracking | ❌ BUILT-IN (`voicetime.js`) |
 
 ### Server Info
 
@@ -174,9 +174,9 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `serverstats` | Server information | ❌ BUILT-IN (`info.js`) |
 | `roleinfo` | Role details | ❌ BUILT-IN (`roleinfo.js`) |
-| `channelinfo` | Channel details | 🚧 PLANNED BUILT-IN |
+| `channelinfo` | Channel details | ❌ BUILT-IN (`channelinfo.js`) |
 | `emojilist` | Server emoji list | ❌ BUILT-IN (`emotes.js`) |
-| `boosters` | Server boost info | 🚧 PLANNED BUILT-IN |
+| `boosters` | Server boost info | ❌ BUILT-IN (`boosters.js`) |
 
 ### Bot Info
 
@@ -198,10 +198,10 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `hug` | Hug user | ❌ BUILT-IN (`hug.js`) |
 | `pat` | Pat user | ❌ BUILT-IN (`pat.js`) |
 | `slap` | Slap user | ❌ BUILT-IN (`slap.js`) |
-| `poke` | Poke user | 🚧 PLANNED BUILT-IN |
-| `cuddle` | Cuddle user | 🚧 PLANNED BUILT-IN |
-| `kiss` | Kiss user | 🚧 PLANNED BUILT-IN |
-| `highfive` | High five user | 🚧 PLANNED BUILT-IN |
+| `poke` | Poke user | ❌ BUILT-IN (`poke.js`) |
+| `cuddle` | Cuddle user | ❌ BUILT-IN (`cuddle.js`) |
+| `kiss` | Kiss user | ❌ BUILT-IN (`kiss.js`) |
+| `highfive` | High five user | ❌ BUILT-IN (`highfive.js`) |
 
 ### Fun Commands
 
@@ -214,11 +214,11 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `meme` | Random meme | ❌ BUILT-IN (`meme.js`) |
 | `cat` | Cat pictures | ❌ BUILT-IN (`cat.js`) |
 | `dog` | Dog pictures | ❌ BUILT-IN (`dog.js`) |
-| `rate` | Rate something | 🚧 PLANNED BUILT-IN |
-| `lovecalc` | Love compatibility | 🚧 PLANNED BUILT-IN |
-| `compliment` | Give compliment | 🚧 PLANNED BUILT-IN |
-| `insult` | Generate insult | 🚧 PLANNED BUILT-IN |
-| `fact` | Random fact | 🚧 PLANNED BUILT-IN |
+| `rate` | Rate something | ❌ BUILT-IN (`rate.js`) |
+| `lovecalc` | Love compatibility | ❌ BUILT-IN (`lovecalc.js`) |
+| `compliment` | Give compliment | ❌ BUILT-IN (`compliment.js`) |
+| `insult` | Generate insult | ❌ BUILT-IN (`insult.js`) |
+| `fact` | Random fact | ❌ BUILT-IN (`fact.js`) |
 
 ---
 
@@ -368,14 +368,14 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `wanted` | Wanted poster | ✅ SEEDED (Batch 10) |
 | `triggered` | TRIGGERED effect | ✅ SEEDED (Batch 10) |
 | `pixel` | Pixelate image | ✅ SEEDED (Batch 10) |
-| `glitch` | Glitch effect | 📦 EXTENSION |
-| `petpet` | Petting GIF | 📦 EXTENSION |
-| `drip` | Add drip/swag | 📦 EXTENSION |
+| `glitch` | Glitch effect | ✅ SEEDED (Batch 18) |
+| `petpet` | Petting GIF | ✅ SEEDED (Batch 18) |
+| `drip` | Add drip/swag | ✅ SEEDED (Batch 18) |
 | `jail` | Put behind bars | ✅ SEEDED (Batch 10) |
 | `rip` | Gravestone image | ✅ SEEDED (Batch 10) |
-| `trash` | Trash meme | 📦 EXTENSION |
-| `beautiful` | "Beautiful" meme | 📦 EXTENSION |
-| `facepalm` | Facepalm overlay | 📦 EXTENSION |
+| `trash` | Trash meme | ✅ SEEDED (Batch 18) |
+| `beautiful` | "Beautiful" meme | ✅ SEEDED (Batch 18) |
+| `facepalm` | Facepalm overlay | ✅ SEEDED (Batch 18) |
 | `wasted` | GTA Wasted effect | ✅ SEEDED (Batch 10) |
 
 ### Meme Generation
@@ -384,8 +384,8 @@ All extensions and high-resource built-in features must check Server Tiers.
 |---------|-------------|--------|
 | `caption` | Meme captioner | ✅ SEEDED (Batch 5) |
 | `drake` | Drake meme template | ✅ SEEDED (Batch 10) |
-| `changemymind` | Change My Mind meme | 📦 EXTENSION |
-| `distracted` | Distracted boyfriend meme | 📦 EXTENSION |
+| `changemymind` | Change My Mind meme | ✅ SEEDED (Batch 18) |
+| `distracted` | Distracted boyfriend meme | ✅ SEEDED (Batch 18) |
 | `achievement` | Minecraft achievement | ✅ SEEDED (Batch 10) |
 
 ### Creative
@@ -396,8 +396,8 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `qrcode` | Text to QR | ✅ SEEDED (Batch 10) |
 | `banner` | Generate text banners | ✅ SEEDED (Batch 10) |
 | `quote` | Create quote images | ✅ SEEDED (Batch 10) |
-| `polaroid` | Polaroid photo effect | 📦 EXTENSION |
-| `album` | Album cover generator | 📦 EXTENSION |
+| `polaroid` | Polaroid photo effect | ✅ SEEDED (Batch 18) |
+| `album` | Album cover generator | ✅ SEEDED (Batch 18) |
 
 ---
 
@@ -657,29 +657,29 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `coderun` | Execute code in sandbox | 🚧 PLANNED BUILT-IN |
-| `codeformat` | Format/highlight code | 🚧 PLANNED BUILT-IN |
-| `snippet` | Save/retrieve code snippets | 🚧 PLANNED BUILT-IN |
-| `lint` | Run linter on code | 🚧 PLANNED BUILT-IN |
+| `coderun` | Execute code in sandbox | ✅ BUILT-IN (`coderun.js`) |
+| `codeformat` | Format/highlight code | ✅ BUILT-IN (`codeformat.js`) |
+| `snippet` | Save/retrieve code snippets | ✅ BUILT-IN (`snippet.js`) |
+| `lint` | Run linter on code | ✅ BUILT-IN (`lint.js`) |
 
 ### Regex & JSON
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `regextest` | Test regex patterns | 🚧 PLANNED BUILT-IN |
-| `regexexplain` | Explain regex pattern | 🚧 PLANNED BUILT-IN |
-| `jsonpretty` | Pretty print JSON | 🚧 PLANNED BUILT-IN |
-| `jsonminify` | Minify JSON | 🚧 PLANNED BUILT-IN |
-| `jsonpath` | Query JSON with JSONPath | 🚧 PLANNED BUILT-IN |
+| `regextest` | Test regex patterns | ✅ BUILT-IN (`regextest.js`) |
+| `regexexplain` | Explain regex pattern | ✅ BUILT-IN (`regexexplain.js`) |
+| `jsonpretty` | Pretty print JSON | ✅ BUILT-IN (`jsonpretty.js`) |
+| `jsonminify` | Minify JSON | ✅ BUILT-IN (`jsonminify.js`) |
+| `jsonpath` | Query JSON with JSONPath | ✅ BUILT-IN (`jsonpath.js`) |
 
 ### Utilities
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `http` | Make HTTP requests | 🚧 PLANNED BUILT-IN |
-| `base64` | Encode/decode base64 | 🚧 PLANNED BUILT-IN |
-| `hash` | Generate hashes | 🚧 PLANNED BUILT-IN |
-| `timestamp` | Unix timestamp converter | 🚧 PLANNED BUILT-IN |
+| `http` | Make HTTP requests | ✅ BUILT-IN (`http.js`) |
+| `base64` | Encode/decode base64 | ✅ BUILT-IN (`base64.js`) |
+| `hash` | Generate hashes | ✅ BUILT-IN (`hash.js`) |
+| `timestamp` | Unix timestamp converter | ✅ BUILT-IN (`timestamp.js`) |
 
 ---
 
@@ -724,103 +724,235 @@ All extensions and high-resource built-in features must check Server Tiers.
 
 *These categories are core infrastructure and should be built-in.*
 
-### 🔔 Notifications & Feeds
+### 🔔 Notifications & Feeds ✅ PARTIAL
+
+**Architecture:** `/announce` slash command for announcements and crossposting.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/announce.js` - Announcement management
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `twitchnotify` | Twitch alerts | ❌ BUILT-IN (`streamers.js`) |
-| `youtubenotify` | YouTube alerts | ❌ BUILT-IN (`youtube.js`) |
-| `rssfeed` | RSS Feeds | ❌ BUILT-IN (`rss.js`) |
-| `redditfeed` | Reddit Feeds | ❌ BUILT-IN (`reddit.js`) |
+| `twitchnotify` | Twitch alerts | ✅ BUILT-IN (`streamers.js`) |
+| `youtubenotify` | YouTube alerts | ✅ BUILT-IN (`youtube.js`) |
+| `rssfeed` | RSS Feeds | ✅ BUILT-IN (`rss.js`) |
+| `redditfeed` | Reddit Feeds | ✅ BUILT-IN (`reddit.js`) |
+| `/announce send` | Send announcement | ✅ BUILT-IN (`announce.js`) |
+| `/announce edit` | Edit announcement | ✅ BUILT-IN (`announce.js`) |
+| `/announce schedule` | Schedule announcement | ✅ BUILT-IN (`announce.js`) |
+| `/announce crosspost` | Crosspost to followers | ✅ BUILT-IN (`announce.js`) |
 | `twitternotify` | Twitter/X notifications | 🚧 PLANNED BUILT-IN |
-| `crosspost` | Mirror messages | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `announce` | Multi-channel announcements | 🚧 PLANNED BUILT-IN |
 
-### 🎭 Role Management
+**Features:**
+- **Announcements:** Custom embeds with titles and colors
+- **Scheduling:** Delay announcements by minutes
+- **Crossposting:** Publish to announcement channel followers
+- **Editing:** Update existing announcements
+
+### 🎭 Role Management ✅ IMPLEMENTED
+
+**Architecture:** Unified `/roles` slash command with subcommands for all role management features.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/roles.js` - Unified slash command
+- `Database/Schemas/rolePanelSchema.js` - Role panel configuration
+- `Database/Schemas/tempRoleSchema.js` - Temporary role assignments
+- `Modules/TempRoleManager.js` - Temp role expiry checker
+- `Internals/SlashCommands/SlashCommandHandler.js` - Button/dropdown handlers
+- `Internals/Events/messageReactionAdd/Skynet.RolePanel.js` - Reaction handler
+- `Internals/Events/messageReactionRemove/Skynet.RolePanel.js` - Reaction removal
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `role` | Manage roles | ❌ BUILT-IN (`role.js`) |
-| `rolepanel` | Reaction roles | 🚧 PLANNED BUILT-IN |
-| `rolebutton` | Button-based role assign | 🚧 PLANNED BUILT-IN |
-| `roledropdown` | Dropdown role menu | 🚧 PLANNED BUILT-IN |
-| `temprole` | Give temporary role | 🚧 PLANNED BUILT-IN |
-| `autorole` | Join roles | 🚧 PLANNED BUILT-IN |
+| `role` | Manage joinable roles | ✅ BUILT-IN (`role.js`) |
+| `/roles panel create` | Create role panel (button/dropdown/reaction) | ✅ BUILT-IN (`roles.js`) |
+| `/roles panel addrole` | Add role to panel | ✅ BUILT-IN (`roles.js`) |
+| `/roles panel removerole` | Remove role from panel | ✅ BUILT-IN (`roles.js`) |
+| `/roles panel list` | List all panels | ✅ BUILT-IN (`roles.js`) |
+| `/roles panel delete` | Delete a panel | ✅ BUILT-IN (`roles.js`) |
+| `/roles panel refresh` | Refresh panel message | ✅ BUILT-IN (`roles.js`) |
+| `/roles auto add` | Add autorole for new members | ✅ BUILT-IN (`roles.js`) |
+| `/roles auto remove` | Remove autorole | ✅ BUILT-IN (`roles.js`) |
+| `/roles auto list` | List autoroles | ✅ BUILT-IN (`roles.js`) |
+| `/roles temp` | Give temporary role | ✅ BUILT-IN (`roles.js`) |
+| `/roles templist` | List active temp roles | ✅ BUILT-IN (`roles.js`) |
+| `/roles tempremove` | Remove temp role early | ✅ BUILT-IN (`roles.js`) |
 | `rolesync` | Sync roles between servers | 🚧 PLANNED BUILT-IN (Tier 2) |
 
-### 🔊 Voice Features
+**Features:**
+- **Role Panels:** Button, dropdown, or reaction-based role selection
+- **Panel Modes:** Normal (toggle), Unique (one role only), Verify (add-only)
+- **Autoroles:** Auto-assign roles to new members on join
+- **Temporary Roles:** Time-limited role assignments with auto-expiry
+- **Interactive Components:** Discord buttons, select menus, and reactions
+- **Expiry Management:** Background checker removes expired temp roles
+
+### 🔊 Voice Features ✅ IMPLEMENTED
+
+**Architecture:** Unified `/voice` slash command with subcommands for voice channel management.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/voice.js` - Unified slash command
+- `Modules/VoiceStatsCollector.js` - Voice activity tracking
+- `Database/Schemas/serverConfigSchema.js` - room_data with owner_id
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `vchub` | Temp voice channels | ❌ BUILT-IN (`room.js`) |
-| `vclock` | Lock temp channel | 🚧 PLANNED BUILT-IN |
-| `vcinvite` | Invite to locked channel | 🚧 PLANNED BUILT-IN |
-| `vctransfer` | Transfer ownership | 🚧 PLANNED BUILT-IN |
-| `voicestats` | Voice activity | 🚧 PLANNED BUILT-IN |
-| `voiceleaderboard` | Voice time rankings | 🚧 PLANNED BUILT-IN |
+| `room` | Legacy temp channels | ✅ BUILT-IN (`room.js`) |
+| `/voice create` | Create temp voice channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice lock` | Lock voice channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice unlock` | Unlock voice channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice invite` | Invite user to locked channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice kick` | Kick user from channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice transfer` | Transfer channel ownership | ✅ BUILT-IN (`voice.js`) |
+| `/voice rename` | Rename voice channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice limit` | Set user limit | ✅ BUILT-IN (`voice.js`) |
+| `/voice claim` | Claim abandoned channel | ✅ BUILT-IN (`voice.js`) |
+| `/voice stats` | View voice activity stats | ✅ BUILT-IN (`voice.js`) |
+| `/voice leaderboard` | Voice time rankings | ✅ BUILT-IN (`voice.js`) |
+| `/voice delete` | Delete voice channel | ✅ BUILT-IN (`voice.js`) |
 | `afkkick` | Auto-kick AFK users | 🚧 PLANNED BUILT-IN |
 
-### 🗳️ Polls & Feedback
+**Features:**
+- **Temp Channels:** Create private or public voice channels
+- **Ownership:** Channel owners can lock, invite, kick, and transfer
+- **Claiming:** Take over abandoned channels when owner leaves
+- **Voice Stats:** Track personal voice time and leaderboard
+- **Premium Gated:** Voice channel creation requires premium tier
+
+### 🗳️ Polls & Feedback ✅ IMPLEMENTED
+
+**Architecture:** Enhanced `/poll` slash command with subcommands for poll management.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/poll.js` - Slash command
+- `Commands/Private/poll.js` - Legacy DM-based polls
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `poll` | Create polls | ❌ BUILT-IN (`poll.js`) |
+| `/poll create` | Create a poll with options | ✅ BUILT-IN (`poll.js`) |
+| `/poll end` | End poll and show results | ✅ BUILT-IN (`poll.js`) |
+| `/poll results` | View current results | ✅ BUILT-IN (`poll.js`) |
+| `poll` | Legacy DM poll creation | ✅ BUILT-IN (`poll.js`) |
+| `suggest` | Suggestions | ✅ BUILT-IN (`suggest.js`) |
 | `pollweighted` | Weighted voting | 🚧 PLANNED BUILT-IN |
 | `pollranked` | Ranked choice voting | 🚧 PLANNED BUILT-IN |
-| `pollanon` | Anonymous polls | 🚧 PLANNED BUILT-IN |
-| `suggest` | Suggestions | ❌ BUILT-IN (`suggest.js`) |
-| `suggestanon` | Anonymous suggestion | 🚧 PLANNED BUILT-IN |
 | `feedbackform` | Create feedback form | 🚧 PLANNED BUILT-IN |
 
-### 📜 Logging & Audit
+**Features:**
+- **Timed Polls:** Set duration for auto-ending
+- **Anonymous Mode:** Hide voter identities
+- **Visual Results:** Progress bars and percentages
+- **Custom Options:** Up to 10 poll options
+
+### 📜 Logging & Audit ✅ IMPLEMENTED
+
+**Architecture:** Unified `/logs` slash command for logging configuration and audit viewing.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/logs.js` - Slash command
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `logsetup` | Configure logging | ❌ BUILT-IN (`modlog.js`) |
-| `logevents` | Enable/disable events | 🚧 PLANNED BUILT-IN |
-| `logview` | View recent logs | 🚧 PLANNED BUILT-IN |
-| `logsearch` | Search logs | 🚧 PLANNED BUILT-IN |
+| `/logs channel` | Set logging channel | ✅ BUILT-IN (`logs.js`) |
+| `/logs enable` | Enable logging | ✅ BUILT-IN (`logs.js`) |
+| `/logs disable` | Disable logging | ✅ BUILT-IN (`logs.js`) |
+| `/logs status` | View configuration | ✅ BUILT-IN (`logs.js`) |
+| `/logs events` | Toggle event logging | ✅ BUILT-IN (`logs.js`) |
+| `/logs view` | View recent mod actions | ✅ BUILT-IN (`logs.js`) |
+| `/logs user` | View user action history | ✅ BUILT-IN (`logs.js`) |
+| `/logs ignore` | Ignore channel from logs | ✅ BUILT-IN (`logs.js`) |
+| `/logs unignore` | Unignore channel | ✅ BUILT-IN (`logs.js`) |
 | `logexport` | Export logs | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `logignore` | Ignore channels | 🚧 PLANNED BUILT-IN |
-| `audituser` | User action history | 🚧 PLANNED BUILT-IN |
-| `auditchannel` | Channel history | 🚧 PLANNED BUILT-IN |
 | `auditsnapshot` | Permission snapshot | 🚧 PLANNED BUILT-IN |
 
-### 😴 AFK & Status
+**Features:**
+- **Event Configuration:** Toggle individual event types
+- **Channel Ignore:** Exclude channels from logging
+- **Mod Action View:** View recent moderation actions
+- **User History:** View actions for/by specific users
+
+### 😴 AFK & Status ✅ IMPLEMENTED
+
+**Architecture:** Enhanced `/afk` slash command with subcommands for status management.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/afk.js` - Slash command
+- `Commands/PM/afk.js` - Legacy DM command
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `afk` | Set AFK status | ❌ BUILT-IN (`afk.js`) |
+| `afk` | Legacy AFK (DM) | ✅ BUILT-IN (`afk.js`) |
+| `/afk set` | Set AFK message | ✅ BUILT-IN (`afk.js`) |
+| `/afk clear` | Clear AFK status | ✅ BUILT-IN (`afk.js`) |
+| `/afk list` | List AFK members | ✅ BUILT-IN (`afk.js`) |
+| `/afk check` | Check user's AFK | ✅ BUILT-IN (`afk.js`) |
 | `afkauto` | Auto-AFK on inactivity | 🚧 PLANNED BUILT-IN |
-| `afklist` | List AFK members | 🚧 PLANNED BUILT-IN |
-| `afklog` | Missed pings while AFK | 🚧 PLANNED BUILT-IN |
 | `statusset` | Set server status | 🚧 PLANNED BUILT-IN |
 | `statusrole` | Link status to roles | 🚧 PLANNED BUILT-IN |
-| `presencestats` | Presence analytics | 🚧 PLANNED BUILT-IN |
 
-### ⭐ Highlights & Pins
+**Features:**
+- **AFK Messages:** Set custom away messages
+- **AFK List:** View all AFK members in server
+- **AFK Check:** Check specific user's AFK status
+- **Timestamp Tracking:** Shows when user went AFK
+
+### ⭐ Highlights & Pins ✅ IMPLEMENTED
+
+**Architecture:** Unified `/starboard` slash command with configuration and management subcommands.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/starboard.js` - Slash command
+- `Internals/Events/messageReactionAdd/Skynet.Starboard.js` - Reaction handler
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `starboard` | Highlight messages | ❌ BUILT-IN (`starboard.js`) |
-| `starboardforce` | Force highlight | 🚧 PLANNED BUILT-IN |
-| `starboardremove` | Remove highlight | 🚧 PLANNED BUILT-IN |
-| `starboardtop` | Top highlights | 🚧 PLANNED BUILT-IN |
+| `/starboard channel` | Set starboard channel | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard threshold` | Set reaction threshold | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard emoji` | Set starboard emoji | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard enable` | Enable starboard | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard disable` | Disable starboard | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard status` | View configuration | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard force` | Force message to starboard | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard remove` | Remove from starboard | ✅ BUILT-IN (`starboard.js`) |
+| `/starboard top` | View top starred messages | ✅ BUILT-IN (`starboard.js`) |
 | `pinqueue` | Pin nomination queue | 🚧 PLANNED BUILT-IN |
 | `pinauto` | Auto-pin rules | 🚧 PLANNED BUILT-IN |
 | `pinrotate` | Rotate old pins | 🚧 PLANNED BUILT-IN |
 
-### 😀 Emoji Management
+**Features:**
+- **Starboard Configuration:** Channel, threshold, custom emoji
+- **Force Star:** Manually add messages to starboard
+- **Remove Star:** Remove messages from starboard
+- **Top Stars:** View leaderboard of starred messages
+- **Auto-Update:** Star count updates as reactions change
+
+### 😀 Emoji Management ✅ IMPLEMENTED
+
+**Architecture:** Unified `/emoji` slash command with subcommands for emoji management.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/emoji.js` - Unified slash command
+- `Commands/Public/emoji.js` - Legacy jumbo command
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `emoji` | Manage emojis | ❌ BUILT-IN (`emoji.js`) |
-| `emojisteal` | Copy from other server | 🚧 PLANNED BUILT-IN |
-| `emojibulk` | Bulk add emojis | 🚧 PLANNED BUILT-IN |
-| `emojirename` | Rename emoji | 🚧 PLANNED BUILT-IN |
-| `emojistats` | Usage statistics | 🚧 PLANNED BUILT-IN |
-| `emojicleanup` | Remove unused | 🚧 PLANNED BUILT-IN |
+| `emoji` | Legacy jumbo emojis | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji steal` | Copy emoji from another server | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji add` | Add emoji from URL | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji rename` | Rename an emoji | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji delete` | Delete an emoji | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji list` | List all server emojis | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji stats` | View usage statistics | ✅ BUILT-IN (`emoji.js`) |
+| `/emoji info` | Get emoji information | ✅ BUILT-IN (`emoji.js`) |
 | `emojipack` | Save/load emoji packs | 🚧 PLANNED BUILT-IN |
+
+**Features:**
+- **Emoji Stealing:** Copy emojis from other servers by pasting them
+- **URL Import:** Add emojis from direct image URLs
+- **Management:** Rename and delete emojis with audit logging
+- **Statistics:** Track emoji usage (requires emoji_stats in serverDocument)
+- **Info Display:** View emoji details including creation date
 
 ### 🔧 Server Management
 
@@ -830,37 +962,74 @@ All extensions and high-resource built-in features must check Server Tiers.
 | `invite` | Invite tracking | ❌ BUILT-IN (`invite.js`) |
 | `backup` | Server backup | 🚧 PLANNED BUILT-IN (Tier 2) |
 | `backupschedule` | Auto backup schedule | 🚧 PLANNED BUILT-IN (Tier 2) |
+| `/server info` | View server information | ✅ BUILT-IN (`server.js`) |
+| `/server settings` | View server settings | ✅ BUILT-IN (`server.js`) |
+| `/server prefix` | Set command prefix | ✅ BUILT-IN (`server.js`) |
+| `/server lockdown start` | Lock all channels | ✅ BUILT-IN (`server.js`) |
+| `/server lockdown end` | Unlock all channels | ✅ BUILT-IN (`server.js`) |
+| `/server lockdown channel` | Lock/unlock channel | ✅ BUILT-IN (`server.js`) |
+| `/server slowmode set` | Set channel slowmode | ✅ BUILT-IN (`server.js`) |
+| `/server slowmode all` | Set all channels slowmode | ✅ BUILT-IN (`server.js`) |
+| `/server cleanup` | Bulk delete messages | ✅ BUILT-IN (`server.js`) |
+| `/server nuke` | Recreate channel | ✅ BUILT-IN (`server.js`) |
 | `backuprestore` | Restore backup | 🚧 PLANNED BUILT-IN (Tier 2) |
 | `antinuke` | Server protection | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `antinukewhitelist` | Whitelist trusted | 🚧 PLANNED BUILT-IN (Tier 2) |
-| `antinukerollback` | Restore changes | 🚧 PLANNED BUILT-IN (Tier 2) |
 | `verify` | Member verification | 🚧 PLANNED BUILT-IN |
-| `verifycaptcha` | CAPTCHA verification | 🚧 PLANNED BUILT-IN |
-| `verifyquiz` | Quiz verification | 🚧 PLANNED BUILT-IN |
-| `channeltemplate` | Save/apply templates | 🚧 PLANNED BUILT-IN |
-| `channelcleanup` | Archive inactive | 🚧 PLANNED BUILT-IN |
-| `channellockdown` | Lock channels | 🚧 PLANNED BUILT-IN |
-| `channelautoclear` | Auto-delete old messages | 🚧 PLANNED BUILT-IN |
 
-### 📨 Invite Tracking
+**Features:**
+- **Server Lockdown:** Lock/unlock all or specific channels
+- **Slowmode Control:** Set slowmode for individual or all channels
+- **Message Cleanup:** Bulk delete with user filter
+- **Channel Nuke:** Delete and recreate channel
+
+### 📨 Invite Tracking ✅ IMPLEMENTED
+
+**Architecture:** Unified `/invites` slash command with invite tracking and statistics.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/invites.js` - Slash command
+- `Database/Schemas/inviteTrackingSchema.js` - Tracking data
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `invitecreate` | Create tracked invite | 🚧 PLANNED BUILT-IN |
-| `inviteleaderboard` | Top inviters | 🚧 PLANNED BUILT-IN |
-| `inviteinfo` | Invite statistics | 🚧 PLANNED BUILT-IN |
-| `invitesource` | Who invited member | 🚧 PLANNED BUILT-IN |
-| `inviteclean` | Clean unused invites | 🚧 PLANNED BUILT-IN |
+| `/invites leaderboard` | View top inviters | ✅ BUILT-IN (`invites.js`) |
+| `/invites info` | View invite stats for user | ✅ BUILT-IN (`invites.js`) |
+| `/invites who` | See who invited a member | ✅ BUILT-IN (`invites.js`) |
+| `/invites create` | Create tracked invite with label | ✅ BUILT-IN (`invites.js`) |
+| `/invites list` | List all tracked invites | ✅ BUILT-IN (`invites.js`) |
+| `/invites delete` | Delete an invite | ✅ BUILT-IN (`invites.js`) |
+| `/invites sync` | Sync existing invites | ✅ BUILT-IN (`invites.js`) |
 | `invitereward` | Invite rewards | 🚧 PLANNED BUILT-IN |
 
-### ✅ Onboarding
+**Features:**
+- **Invite Leaderboard:** Track top inviters with active/left counts
+- **Invite Labels:** Create labeled invites for campaign tracking
+- **Source Tracking:** See who invited any member
+- **Sync System:** Import existing Discord invites
+
+### ✅ Onboarding ✅ IMPLEMENTED
+
+**Architecture:** Unified `/onboard` slash command for member onboarding configuration.
+
+**Core Files:**
+- `Internals/SlashCommands/commands/onboard.js` - Slash command
+- `Internals/SlashCommands/SlashCommandHandler.js` - Button/select handlers
 
 | Command | Description | Status |
 |---------|-------------|--------|
-| `onboardwelcome` | Welcome flow | 🚧 PLANNED BUILT-IN |
-| `onboardroles` | Role selection | 🚧 PLANNED BUILT-IN |
-| `onboardpreview` | Preview flow | 🚧 PLANNED BUILT-IN |
-| `onboardstats` | Funnel metrics | 🚧 PLANNED BUILT-IN |
+| `/onboard welcome` | Configure welcome messages | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard roles` | Configure role selection | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard rules` | Configure rules acceptance | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard dm` | Configure DM welcome | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard preview` | Preview welcome message | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard status` | View onboarding config | ✅ BUILT-IN (`onboard.js`) |
+| `/onboard disable` | Disable onboarding features | ✅ BUILT-IN (`onboard.js`) |
+
+**Features:**
+- **Welcome Messages:** Custom channel messages with placeholders
+- **DM Welcomes:** Private welcome messages to new members
+- **Rules Acceptance:** Button-based verification with role grant
+- **Role Selection:** Dropdown menu for role self-assignment
 
 ---
 

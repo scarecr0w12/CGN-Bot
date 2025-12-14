@@ -78,6 +78,10 @@ exports.initialize = async () => {
 		TicketMessages,
 		ServerTickets,
 		ServerTicketMessages,
+		ServerAnalytics,
+		RolePanels,
+		TempRoles,
+		Snippets,
 	] = [
 		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
 		new ModelSQL(getPool, "users", require("./Schemas/userSchema")),
@@ -100,6 +104,10 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "ticket_messages", require("./Schemas/ticketMessageSchema")),
 		new ModelSQL(getPool, "server_tickets", require("./Schemas/serverTicketSchema")),
 		new ModelSQL(getPool, "server_ticket_messages", require("./Schemas/serverTicketMessageSchema")),
+		new ModelSQL(getPool, "server_analytics", require("./Schemas/serverAnalyticsSchema")),
+		new ModelSQL(getPool, "role_panels", require("./Schemas/rolePanelSchema")),
+		new ModelSQL(getPool, "temp_roles", require("./Schemas/tempRoleSchema")),
+		new ModelSQL(getPool, "snippets", require("./Schemas/snippetSchema")),
 	];
 
 	addToGlobal("Servers", Servers);
@@ -122,6 +130,10 @@ exports.initialize = async () => {
 	addToGlobal("TicketMessages", TicketMessages);
 	addToGlobal("ServerTickets", ServerTickets);
 	addToGlobal("ServerTicketMessages", ServerTicketMessages);
+	addToGlobal("ServerAnalytics", ServerAnalytics);
+	addToGlobal("RolePanels", RolePanels);
+	addToGlobal("TempRoles", TempRoles);
+	addToGlobal("Snippets", Snippets);
 	addToGlobal("Client", pool);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -145,6 +157,10 @@ exports.initialize = async () => {
 		TicketMessages, ticketMessages: TicketMessages,
 		ServerTickets, serverTickets: ServerTickets,
 		ServerTicketMessages, serverTicketMessages: ServerTicketMessages,
+		ServerAnalytics, serverAnalytics: ServerAnalytics,
+		RolePanels, rolePanels: RolePanels,
+		TempRoles, tempRoles: TempRoles,
+		Snippets, snippets: Snippets,
 		client: pool,
 		pool,
 	});

@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2025-12-14
+
+### Added
+
+#### Developer Tools (Tier 2 Premium)
+
+Complete suite of 13 developer-focused commands for code execution, formatting, and utilities.
+
+- **Code Execution & Analysis**:
+  - `coderun` - Execute JavaScript in a sandboxed VM environment (3s timeout, rate limited)
+  - `lint` - Analyze JavaScript for syntax errors, warnings, and style issues
+  - `codeformat` - Format and syntax highlight code with language auto-detection
+  - `snippet` - Save, retrieve, and manage code snippets (per-user, per-server)
+
+- **Regex & JSON Tools**:
+  - `regextest` - Test regex patterns with match highlighting and capture groups
+  - `regexexplain` - Human-readable explanations of regex tokens and flags
+  - `jsonpretty` - Pretty print JSON with 2-space indentation
+  - `jsonminify` - Minify JSON with size reduction stats
+  - `jsonpath` - Query JSON data using path expressions
+
+- **Utilities**:
+  - `http` - Make HTTP requests to external APIs (rate limited, URL restrictions)
+  - `base64` - Encode/decode Base64 text
+  - `hash` - Generate cryptographic hashes (MD5, SHA1, SHA256, SHA512, SHA3)
+  - `timestamp` - Convert Unix timestamps with Discord format output
+
+- **Security Features**:
+  - All commands gated to Tier 2 (Premium) servers
+  - Rate limiting on `http` (10/min) and `coderun` (5/min)
+  - URL restrictions blocking localhost, private IPs, metadata endpoints
+  - VM sandbox with timeout, restricted context, no file/network access
+
+- **Infrastructure**:
+  - New `snippetSchema` for database storage
+  - SQL migration `012_add_snippets.sql`
+  - New `Developer 💻` command category
+
+---
+
 ## [1.5.0] - 2025-12-14
 
 ### Changed
