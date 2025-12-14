@@ -359,7 +359,224 @@ class SlashCommandHandler {
 			return;
 		}
 
-		// Other button handlers can be added here
+		// Handle role panel buttons
+		if (customId.startsWith("role_panel_")) {
+			await this.handleRolePanelButton(interaction);
+			return;
+		}
+
+		// Handle rules acceptance buttons
+		if (customId.startsWith("rules_accept_")) {
+			await this.handleRulesAccept(interaction);
+			return;
+		}
+	}
+
+	/**
+	 * Handle select menu interactions
+	 * @param {StringSelectMenuInteraction} interaction
+	 */
+	async handleSelectMenuInteraction (interaction) {
+		if (!interaction.isStringSelectMenu()) return;
+
+		const customId = interaction.customId;
+
+		// Handle role panel dropdowns
+		if (customId.startsWith("role_panel_select_")) {
+			await this.handleRolePanelSelect(interaction);
+			return;
+		}
+
+		// Handle onboarding role selection
+		if (customId === "onboard_roles") {
+			await this.handleOnboardRoles(interaction);
+			return;
+		}
+	}
+
+	/**
+	 * Handle role panel button interactions
+	 * @param {ButtonInteraction} interaction
+	 */
+	async handleRolePanelButton (interaction) {
+		const customId = interaction.customId;
+		// Format: role_panel_{panelId}_{roleId}
+		const parts = customId.split("_");
+		const panelId = parts[2];
+		const roleId = parts[3];
+
+		try {
+			const panel = await global.RolePanels.findOne(panelId);
+			if (!panel) {
+				return interaction.reply({
+					content: "This role panel no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			const role = interaction.guild.roles.cache.get(roleId);
+			if (!role) {
+				return interaction.reply({
+					content: "This role no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			// Check if role is in the panel
+			if (!panel.roles.some(r => r.role_id === roleId)) {
+				return interaction.reply({
+					content: "This role is no longer part of this panel.",
+					ephemeral: true,
+				});
+			}
+
+			// Check require_role if set
+			if (panel.require_role_id) {
+				if (!interaction.member.roles.cache.has(panel.require_role_id)) {
+					const reqRole = interaction.guild.roles.cache.get(panel.require_role_id);
+					return interaction.reply({
+						content: `You need the **${reqRole?.name || "required"}** role to use this panel.`,
+						ephemeral: true,
+					});
+				}
+			}
+
+			const hasRole = interaction.member.roles.cache.has(roleId);
+
+			// Handle different modes
+			if (panel.mode === "verify" && hasRole) {
+				return interaction.reply({
+					content: "You already have this role and cannot remove it.",
+					ephemeral: true,
+				});
+			}
+
+			if (panel.mode === "reverse") {
+				// Reverse mode: clicking adds if missing, removes if has
+				// But only allow removal
+				if (!hasRole) {
+					return interaction.reply({
+						content: "You don't have this role.",
+						ephemeral: true,
+					});
+				}
+			}
+
+			await interaction.deferReply({ ephemeral: true });
+
+			if (hasRole && panel.mode !== "verify") {
+				// Remove role
+				await interaction.member.roles.remove(role, "Role panel");
+				await interaction.editReply({
+					content: `✅ Removed the **${role.name}** role.`,
+				});
+			} else {
+				// Handle unique mode - remove other roles first
+				if (panel.mode === "unique") {
+					const currentRoles = panel.roles
+						.filter(r => interaction.member.roles.cache.has(r.role_id) && r.role_id !== roleId)
+						.map(r => r.role_id);
+
+					for (const rid of currentRoles) {
+						const rToRemove = interaction.guild.roles.cache.get(rid);
+						if (rToRemove) {
+							await interaction.member.roles.remove(rToRemove, "Role panel unique mode").catch(() => null);
+						}
+					}
+				}
+
+				// Add role
+				await interaction.member.roles.add(role, "Role panel");
+				await interaction.editReply({
+					content: `✅ Added the **${role.name}** role.`,
+				});
+			}
+		} catch (err) {
+			logger.error("Role panel button error", { customId }, err);
+			const errorReply = { content: `❌ Error: ${err.message}`, ephemeral: true };
+			if (interaction.deferred) {
+				await interaction.editReply(errorReply);
+			} else if (!interaction.replied) {
+				await interaction.reply(errorReply);
+			}
+		}
+	}
+
+	/**
+	 * Handle role panel dropdown interactions
+	 * @param {StringSelectMenuInteraction} interaction
+	 */
+	async handleRolePanelSelect (interaction) {
+		const customId = interaction.customId;
+		// Format: role_panel_select_{panelId}
+		const panelId = customId.replace("role_panel_select_", "");
+		const selectedRoleIds = interaction.values;
+
+		try {
+			const panel = await global.RolePanels.findOne(panelId);
+			if (!panel) {
+				return interaction.reply({
+					content: "This role panel no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			// Check require_role if set
+			if (panel.require_role_id) {
+				if (!interaction.member.roles.cache.has(panel.require_role_id)) {
+					const reqRole = interaction.guild.roles.cache.get(panel.require_role_id);
+					return interaction.reply({
+						content: `You need the **${reqRole?.name || "required"}** role to use this panel.`,
+						ephemeral: true,
+					});
+				}
+			}
+
+			await interaction.deferReply({ ephemeral: true });
+
+			const added = [];
+			const removed = [];
+
+			// Determine which roles to add and remove
+			for (const roleEntry of panel.roles) {
+				const roleId = roleEntry.role_id;
+				const role = interaction.guild.roles.cache.get(roleId);
+				if (!role) continue;
+
+				const hasRole = interaction.member.roles.cache.has(roleId);
+				const isSelected = selectedRoleIds.includes(roleId);
+
+				if (isSelected && !hasRole) {
+					// Add role
+					await interaction.member.roles.add(role, "Role panel dropdown").catch(() => null);
+					added.push(role.name);
+				} else if (!isSelected && hasRole && panel.mode !== "verify") {
+					// Remove role (unless verify mode)
+					await interaction.member.roles.remove(role, "Role panel dropdown").catch(() => null);
+					removed.push(role.name);
+				}
+			}
+
+			const messages = [];
+			if (added.length > 0) messages.push(`✅ Added: ${added.join(", ")}`);
+			if (removed.length > 0) messages.push(`❌ Removed: ${removed.join(", ")}`);
+
+			if (messages.length === 0) {
+				messages.push("No role changes made.");
+			}
+
+			await interaction.editReply({
+				content: messages.join("\n"),
+			});
+		} catch (err) {
+			logger.error("Role panel select error", { customId }, err);
+			const errorReply = { content: `❌ Error: ${err.message}`, ephemeral: true };
+			if (interaction.deferred) {
+				await interaction.editReply(errorReply);
+			} else if (!interaction.replied) {
+				await interaction.reply(errorReply);
+			}
+		}
 	}
 
 	/**
@@ -510,6 +727,97 @@ class SlashCommandHandler {
 			} else if (!interaction.replied) {
 				await interaction.reply(errorReply);
 			}
+		}
+	}
+
+	/**
+	 * Handle rules acceptance button
+	 * @param {ButtonInteraction} interaction
+	 */
+	async handleRulesAccept (interaction) {
+		const customId = interaction.customId;
+		// Format: rules_accept_{roleId}
+		const roleId = customId.replace("rules_accept_", "");
+
+		try {
+			const role = interaction.guild.roles.cache.get(roleId);
+			if (!role) {
+				return interaction.reply({
+					content: "The configured role no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			if (interaction.member.roles.cache.has(roleId)) {
+				return interaction.reply({
+					content: "✅ You have already accepted the rules!",
+					ephemeral: true,
+				});
+			}
+
+			await interaction.member.roles.add(role, "Accepted server rules");
+
+			await interaction.reply({
+				content: `✅ Welcome to **${interaction.guild.name}**! You now have access to the server.`,
+				ephemeral: true,
+			});
+		} catch (err) {
+			logger.error("Failed to handle rules acceptance", { guildId: interaction.guild.id }, err);
+			await interaction.reply({
+				content: `Error: ${err.message}`,
+				ephemeral: true,
+			});
+		}
+	}
+
+	/**
+	 * Handle onboarding role selection
+	 * @param {StringSelectMenuInteraction} interaction
+	 */
+	async handleOnboardRoles (interaction) {
+		try {
+			const selectedRoles = interaction.values;
+			const member = interaction.member;
+
+			// Get joinable roles from guild
+			await interaction.guild.populateDocument();
+			const { serverDocument } = interaction.guild;
+			const joinableRoles = serverDocument.config.custom_roles || [];
+
+			const added = [];
+			const removed = [];
+
+			// Process each joinable role
+			for (const roleId of joinableRoles) {
+				const role = interaction.guild.roles.cache.get(roleId);
+				if (!role) continue;
+
+				const hasRole = member.roles.cache.has(roleId);
+				const shouldHave = selectedRoles.includes(roleId);
+
+				if (shouldHave && !hasRole) {
+					await member.roles.add(role, "Onboarding role selection");
+					added.push(role.name);
+				} else if (!shouldHave && hasRole) {
+					await member.roles.remove(role, "Onboarding role selection");
+					removed.push(role.name);
+				}
+			}
+
+			const changes = [];
+			if (added.length > 0) changes.push(`✅ Added: ${added.join(", ")}`);
+			if (removed.length > 0) changes.push(`❌ Removed: ${removed.join(", ")}`);
+
+			await interaction.reply({
+				content: changes.length > 0 ? changes.join("\n") : "No changes made.",
+				ephemeral: true,
+			});
+		} catch (err) {
+			logger.error("Failed to handle onboard roles", { guildId: interaction.guild.id }, err);
+			await interaction.reply({
+				content: `Error: ${err.message}`,
+				ephemeral: true,
+			});
 		}
 	}
 }

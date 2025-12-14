@@ -1,175 +1,195 @@
-const HelpMenu = require("../../Modules/MessageUtils/ReactionMenus/HelpMenu");
+const ModernHelpMenu = require("../../Modules/MessageUtils/ReactionMenus/ModernHelpMenu");
 
-const getCommandHelp = (name, type, usage, description) => [
-	`» ${type} Command **::** **${name}** «`,
-	type !== "PM" ? `\t**Description**: ${description || "No description provided."}` : null,
-	`\t**Usage**: \`${usage || "No usage information provided."}\``,
-	type === "public" ? `\tClick [**here**](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands#${name}) for more info.` : null,
-].spliceNullElements().join("\n");
+/**
+ * Category configuration with colors and emojis
+ */
+const CATEGORY_CONFIG = {
+	"SkynetBot 🤖": { emoji: "🤖", color: 0x43B581, description: "Core bot commands and utilities" },
+	"AI & Assistant 🤖": { emoji: "🧠", color: 0x7289DA, description: "AI-powered chat and assistance" },
+	"Fun 🎪": { emoji: "🎪", color: 0x9ECDF2, description: "Games, jokes, and entertainment" },
+	"Moderation ⚒": { emoji: "⚒️", color: 0xCC0F16, description: "Server moderation tools" },
+	"Search & Media 🎬": { emoji: "🎬", color: 0x50FF60, description: "Search engines and media lookups" },
+	"NSFW 👹": { emoji: "🔞", color: 0xE55B0A, description: "Adult content (NSFW channels only)" },
+	"Stats & Points ⭐️": { emoji: "⭐", color: 0xFFFF00, description: "Statistics and point tracking" },
+	"Utility 🔦": { emoji: "🔦", color: 0x3669FA, description: "Helpful utility commands" },
+	"Extensions ⚙️": { emoji: "⚙️", color: 0x00FF00, description: "Custom server extensions" },
+};
 
-module.exports = async ({ client, Constants: { Colors, CategoryEmojiMap, HelpMenuEmojis } }, { serverDocument }, msg, commandData) => {
+/**
+ * Build a modern detailed help embed for a specific command
+ */
+const buildCommandHelpEmbed = (commands, prefix, Colors) => {
+	const fields = [];
+
+	for (const cmd of commands) {
+		fields.push({
+			name: `${cmd.type} Command`,
+			value: [
+				`**Name:** \`${cmd.name}\``,
+				cmd.description ? `**Description:** ${cmd.description}` : null,
+				`**Usage:** \`${prefix}${cmd.name} ${cmd.usage || ""}\``,
+				cmd.type === "Public" ? `[📖 Wiki Documentation](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands#${cmd.name})` : null,
+			].filter(Boolean).join("\n"),
+		});
+	}
+
+	return {
+		color: Colors.INFO,
+		author: {
+			name: "📖 Command Details",
+		},
+		fields,
+		footer: {
+			text: `Use ${prefix}help to see all available commands`,
+		},
+	};
+};
+
+module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, msg) => {
+	// Handle specific command help
 	if (msg.suffix) {
-		const description = [];
-		const [pmCmd, publicCmd, sharedCmd] = [client.getPMCommandMetadata(msg.suffix), client.getPublicCommandMetadata(msg.suffix), client.getSharedCommandMetadata(msg.suffix)];
-		pmCmd && description.push(getCommandHelp(pmCmd.command, "PM", pmCmd.usage, pmCmd.description));
-		publicCmd && description.push(getCommandHelp(publicCmd.command, "Public", publicCmd.usage, publicCmd.description));
-		sharedCmd && description.push(getCommandHelp(sharedCmd.command, "Shared", sharedCmd.usage, sharedCmd.description));
+		const searchTerm = msg.suffix.trim().toLowerCase();
+		const foundCommands = [];
+
+		const pmCmd = client.getPMCommandMetadata(searchTerm);
+		if (pmCmd) {
+			foundCommands.push({
+				type: "PM",
+				name: pmCmd.command,
+				usage: pmCmd.usage,
+				description: pmCmd.description,
+			});
+		}
+
+		const publicCmd = client.getPublicCommandMetadata(searchTerm);
+		if (publicCmd) {
+			foundCommands.push({
+				type: "Public",
+				name: publicCmd.command,
+				usage: publicCmd.usage,
+				description: publicCmd.description,
+			});
+		}
+
+		const sharedCmd = client.getSharedCommandMetadata(searchTerm);
+		if (sharedCmd) {
+			foundCommands.push({
+				type: "Shared",
+				name: sharedCmd.command,
+				usage: sharedCmd.usage,
+				description: sharedCmd.description,
+			});
+		}
+
+		// Check extensions
 		if (serverDocument.extensions.length) {
 			for (const extension of serverDocument.extensions) {
-				if (extension.type === "command" && msg.suffix.trim().toLowerCase() === extension.key) {
+				if (extension.type === "command" && searchTerm === extension.key) {
 					const extensionDocument = await Gallery.findOneByObjectID(extension._id);
-					const versionDocument = extensionDocument.versions.id(extension.version);
-					description.push(getCommandHelp(extension.key, "Extension", versionDocument.usage_help, versionDocument.extended_help));
-					// We won't add any more extensions with the same key
-					// If you have two or more of them, you're doing it wrong!
+					if (extensionDocument) {
+						const versionDocument = extensionDocument.versions.id(extension.version);
+						foundCommands.push({
+							type: "Extension",
+							name: extension.key,
+							usage: versionDocument?.usage_help,
+							description: versionDocument?.extended_help,
+						});
+					}
 					break;
 				}
 			}
 		}
-		description.length === 0 && description.push(`I'm unable to find any command called \`${msg.suffix.trim().toLowerCase()}\`!`);
+
+		if (foundCommands.length === 0) {
+			return msg.send({
+				embeds: [{
+					color: Colors.LIGHT_RED,
+					author: { name: "❌ Command Not Found" },
+					description: `No command found matching \`${searchTerm}\``,
+					footer: {
+						text: `Use ${msg.guild.commandPrefix}help to see all available commands`,
+					},
+				}],
+			});
+		}
+
 		return msg.send({
-			embeds: [{
-				color: Colors.INFO,
-				description: description.join("\n\n"),
-				footer: {
-					text: `Not what you're looking for? Run "${msg.guild.commandPrefix}help" to see all commands you can run!`,
-				},
-			}],
+			embeds: [buildCommandHelpEmbed(foundCommands, msg.guild.commandPrefix, Colors)],
 		});
 	}
 
-	const commands = { "Extensions ⚙️": [] };
-	commands["Extensions ⚙️"].temp = [];
-	const pages = {};
+	// Build categories for the modern menu
+	const categories = {};
 	const memberBotAdminLevel = client.getUserBotAdmin(msg.guild, serverDocument, msg.member);
-	let longest = 0;
+
+	// Initialize categories from config
+	for (const [categoryName, config] of Object.entries(CATEGORY_CONFIG)) {
+		categories[categoryName] = {
+			name: categoryName.replace(/ [^\s]+$/, ""), // Remove emoji from display name
+			emoji: config.emoji,
+			color: config.color,
+			description: config.description,
+			commands: [],
+		};
+	}
+
+	// Populate public commands
 	for (const command of client.getPublicCommandList()) {
 		const cmdData = client.getPublicCommandMetadata(command);
-		if (!commands[cmdData.category]) {
-			commands[cmdData.category] = [];
-			commands[cmdData.category].temp = [];
+		if (!cmdData?.category) continue;
+
+		// Ensure category exists
+		if (!categories[cmdData.category]) {
+			categories[cmdData.category] = {
+				name: cmdData.category.replace(/ [^\s]+$/, ""),
+				emoji: "📁",
+				color: Colors.INFO,
+				description: "Miscellaneous commands",
+				commands: [],
+			};
 		}
-		if (serverDocument.config.commands[command] && serverDocument.config.commands[command].isEnabled && memberBotAdminLevel >= serverDocument.config.commands[command].admin_level && !serverDocument.config.commands[command].disabled_channel_ids.includes(msg.channel.id)) {
-			const string = `${msg.guild.commandPrefix}${cmdData.command}`;
-			if (string.length > longest) longest = string.length;
-			commands[cmdData.category].temp.push([string, cmdData.usage || "No usage help provided."]);
+
+		// Check if command is enabled and accessible
+		const cmdConfig = serverDocument.config.commands[command];
+		if (cmdConfig?.isEnabled &&
+			memberBotAdminLevel >= (cmdConfig.admin_level || 0) &&
+			!cmdConfig.disabled_channel_ids?.includes(msg.channel.id)) {
+			categories[cmdData.category].commands.push({
+				name: cmdData.command,
+				usage: cmdData.usage,
+				description: cmdData.description,
+			});
 		}
 	}
 
+	// Add extension commands
 	if (serverDocument.extensions.length) {
 		for (const extension of serverDocument.extensions) {
-			if (memberBotAdminLevel >= extension.admin_level) {
-				const string = `${msg.guild.commandPrefix}${extension.key}`;
-				if (string.length > longest) longest = string.length;
+			if (extension.type === "command" && memberBotAdminLevel >= (extension.admin_level || 0)) {
 				const extensionDocument = await Gallery.findOneByObjectID(extension._id);
-				const versionDocument = extensionDocument.versions.id(extension.version);
-				commands["Extensions ⚙️"].temp.push([string, versionDocument.usage_help || "No usage help provided."]);
+				if (extensionDocument) {
+					const versionDocument = extensionDocument.versions.id(extension.version);
+					categories["Extensions ⚙️"].commands.push({
+						name: extension.key,
+						usage: versionDocument?.usage_help,
+						description: versionDocument?.extended_help,
+					});
+				}
 			}
 		}
 	}
 
-	for (const category of Object.keys(commands)) {
-		const { temp } = commands[category];
-		if (temp.length) {
-			for (const [cmdKey, usage] of temp) {
-				commands[category].push(`${cmdKey.padEnd(longest)} | ${usage}`);
-			}
-		} else if (category !== "Extensions ⚙️") {
-			commands[category].push(`== No Commands Enabled Here ==`);
+	// Remove empty categories (except Extensions which we want to show if it has commands)
+	for (const [key, category] of Object.entries(categories)) {
+		if (category.commands.length === 0) {
+			delete categories[key];
 		}
-		pages[CategoryEmojiMap[category]] = commands[category].sort((a, b) => a.replace(msg.guild.commandPrefix, "").split(" ")[0].localeCompare(b.replace(msg.guild.commandPrefix, "").split(" ")[0])).join("\n");
 	}
 
-	new HelpMenu(msg, {
-		embeds: [{
-			color: Colors.INFO,
-			author: {
-				name: `Welcome to the SkynetBot help menu!`,
-			},
-			title: `This menu will show you all commands you can run!`,
-			description: [
-				`The prefix is shown in front of all commands, but in case you forgot, it is **${msg.guild.commandPrefix}**.`,
-				`For more information about any command, run \`${msg.guild.commandPrefix}help <command>\`, or head over to our [**wiki**](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands).`,
-				`If you need support using SkynetBot or got any question, join our [**support server**](${configJS.discordLink})!`,
-				``,
-				`Click a button to see a list of all commands in that category. Here is what each emoji represents:`,
-				``,
-				`ℹ️ **--** This info page`,
-				`🤖 **--** SkynetBot Commands`,
-				`🎪 **--** Fun Commands`,
-				`⚒ **--** Moderation Commands`,
-				`🎬 **--** Search & Media Commands`,
-				`👹 **--** NSFW Commands`,
-				`⭐️ **--** Stats & Points Commands`,
-				`🔦 **--** Utility Commands`,
-				pages[HelpMenuEmojis.extension].length ? `⚙️ **--** Extension Commands` : null,
-				``,
-				`You can exit the menu by clicking the ⏹ button. Have fun! 😃🐬`,
-			].spliceNullElements().join("\n"),
-			footer: {
-				text: `For a list of commands you can use in PMs with me, just PM me "help", and I'll let you know!`,
-			},
-		}],
-	}, {
-		withExtensions: pages[HelpMenuEmojis.extension].length > 0,
-		pages: {
-			[HelpMenuEmojis.gab]: {
-				embeds: [{
-					color: Colors.LIGHT_GREEN,
-					title: `SkynetBot 🤖`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.gab]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.fun]: {
-				embeds: [{
-					color: Colors.LIGHT_BLUE,
-					title: `Fun 🎪`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.fun]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.mod]: {
-				embeds: [{
-					color: Colors.LIGHT_RED,
-					title: `Moderation ⚒`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.mod]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.media]: {
-				embeds: [{
-					// Don't ask
-					color: Colors.TRIVIA_START,
-					title: `Search & Media 🎬`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.media]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.nsfw]: {
-				embeds: [{
-					color: Colors.LIGHT_ORANGE,
-					title: `NSFW 👹`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.nsfw]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.stats]: {
-				embeds: [{
-					color: Colors.YELLOW,
-					title: `Stats & Points ⭐️`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.stats]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.util]: {
-				embeds: [{
-					color: Colors.BLUE,
-					title: `Utility 🔦`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.util]}\`\`\``,
-				}],
-			},
-			[HelpMenuEmojis.extension]: {
-				embeds: [{
-					color: Colors.GREEN,
-					title: `Extensions ⚙️`,
-					description: `\`\`\`css\n${pages[HelpMenuEmojis.extension]}\`\`\``,
-				}],
-			},
-		},
-	}).init(240000);
+	// Create and initialize the modern help menu
+	new ModernHelpMenu(msg, {
+		categories,
+		prefix: msg.guild.commandPrefix,
+		timeout: 180000, // 3 minutes
+	}).init();
 };

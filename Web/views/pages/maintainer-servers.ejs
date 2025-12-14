@@ -88,7 +88,7 @@
 							<span class="tag">Free</span>
 							<% } %>
 						</div>
-						<button class="button is-small is-info" onclick="openEditModal('<%= server._id %>', '<%= server.name %>', '<%= server.subscription?.tier_id || '' %>')">
+						<button class="button is-small is-info" onclick="openEditModal('<%= server._id %>', '<%= server.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>', '<%= server.subscription?.tier_id || '' %>')">
 							<span class="icon"><i class="fa fa-edit"></i></span>
 							<span>Edit</span>
 						</button>
@@ -138,7 +138,7 @@
 								<td><%= sub.subscription?.started_at ? new Date(sub.subscription.started_at).toLocaleDateString() : 'N/A' %></td>
 								<td><%= sub.subscription?.expires_at ? new Date(sub.subscription.expires_at).toLocaleDateString() : 'Never' %></td>
 								<td>
-									<button class="button is-small is-info" onclick="openEditModal('<%= sub._id %>', '<%= sub.name %>', '<%= sub.subscription?.tier_id || '' %>')">
+									<button class="button is-small is-info" onclick="openEditModal('<%= sub._id %>', '<%= sub.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>', '<%= sub.subscription?.tier_id || '' %>')">
 										Edit
 									</button>
 								</td>

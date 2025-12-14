@@ -23,6 +23,7 @@ module.exports = {
 	Temp: require("./Temp"),
 	TicketManager: require("./TicketManager.js"),
 	ServerTicketManager: require("./ServerTicketManager.js"),
+	TempRoleManager: require("./TempRoleManager.js"),
 	TierManager: require("./TierManager.js"),
 	TokenEncryption: require("./TokenEncryption.js"),
 	Traffic: require("./Traffic.js"),

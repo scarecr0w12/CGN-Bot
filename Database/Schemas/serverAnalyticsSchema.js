@@ -19,17 +19,22 @@ module.exports = new Schema({
 		required: true,
 	},
 	// Daily message counts per channel
-	channel_activity: [{
-		channel_id: String,
-		channel_name: String,
+	channel_activity: [new Schema({
+		_id: {
+			type: String,
+			required: true,
+		},
+		channel_name: {
+			type: String,
+		},
 		message_count: {
 			type: Number,
 			default: 0,
 		},
-	}],
+	})],
 	// Daily message counts per hour (0-23) for heatmap
-	hourly_activity: [{
-		hour: {
+	hourly_activity: [new Schema({
+		_id: {
 			type: Number,
 			min: 0,
 			max: 23,
@@ -38,9 +43,9 @@ module.exports = new Schema({
 			type: Number,
 			default: 0,
 		},
-	}],
+	})],
 	// Daily member activity
-	member_activity: {
+	member_activity: new Schema({
 		active_members: {
 			type: Number,
 			default: 0,
@@ -53,9 +58,9 @@ module.exports = new Schema({
 			type: Number,
 			default: 0,
 		},
-	},
+	}),
 	// Join/leave tracking
-	join_leave: {
+	join_leave: new Schema({
 		joins: {
 			type: Number,
 			default: 0,
@@ -68,13 +73,18 @@ module.exports = new Schema({
 			type: Number,
 			default: 0,
 		},
-	},
+	}),
 	// Command usage stats
 	command_usage: Schema.Mixed,
 	// Role engagement (members per role)
-	role_engagement: [{
-		role_id: String,
-		role_name: String,
+	role_engagement: [new Schema({
+		_id: {
+			type: String,
+			required: true,
+		},
+		role_name: {
+			type: String,
+		},
 		member_count: {
 			type: Number,
 			default: 0,
@@ -83,9 +93,9 @@ module.exports = new Schema({
 			type: Number,
 			default: 0,
 		},
-	}],
+	})],
 	// Summary stats
-	summary: {
+	summary: new Schema({
 		total_messages: {
 			type: Number,
 			default: 0,
@@ -99,8 +109,10 @@ module.exports = new Schema({
 			min: 0,
 			max: 23,
 		},
-		most_active_channel: String,
-	},
+		most_active_channel: {
+			type: String,
+		},
+	}),
 	created_at: {
 		type: Date,
 		default: Date.now,

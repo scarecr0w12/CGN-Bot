@@ -1,0 +1,33 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const input = command.suffix.trim();
+
+if (!input || !input.includes('|')) {
+	message.reply({
+		embeds: [embed.create({
+			title: '👀 Distracted Boyfriend',
+			description: 'Usage: distracted <boyfriend> | <girlfriend> | <other>
+
+Example: distracted Me | My responsibilities | Video games',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const parts = input.split('|').map(p => p.trim());
+const boyfriend = encodeURIComponent((parts[0] || 'Boyfriend').slice(0, 30));
+const girlfriend = encodeURIComponent((parts[1] || 'Girlfriend').slice(0, 30));
+const other = encodeURIComponent((parts[2] || 'Other').slice(0, 30));
+
+const imageUrl = 'https://api.popcat.xyz/distractedbf?boyfriend=' + boyfriend + '&girlfriend=' + girlfriend + '&woman=' + other;
+
+message.reply({
+	embeds: [embed.create({
+		title: '👀 Distracted Boyfriend',
+		image: { url: imageUrl },
+		color: embed.colors.GOLD,
+	})],
+});

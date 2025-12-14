@@ -546,6 +546,9 @@ module.exports = new Schema({
 			type: String,
 			required: true,
 		},
+		owner_id: {
+			type: String,
+		},
 		created_timestamp: {
 			type: Date,
 			default: Date.now,

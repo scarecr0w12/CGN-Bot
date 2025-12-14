@@ -390,13 +390,37 @@ controllers.analyticsOverview = async (req, { res }) => {
 	const serverDocument = req.svr.document;
 	const guild = req.svr;
 
-	// Get analytics data
-	let memberActivity = {};
-	let channelActivity = {};
-	let commandStats = {};
-	let roleEngagement = {};
-	let joinLeave = {};
-	let heatmap = {};
+	// Get analytics data - provide default structures for template safety
+	let memberActivity = {
+		overview: { totalTracked: 0, activeCount: 0, inactiveCount: 0, activityRate: 0 },
+		topByMessages: [],
+		topByVoice: [],
+		messageDistribution: { none: 0, low: 0, medium: 0, high: 0, veryHigh: 0 },
+		totalMessages: 0,
+		totalVoice: 0,
+	};
+	let channelActivity = {
+		overview: { totalChannels: 0, totalMessages: 0, averageMessagesPerChannel: 0 },
+		topChannels: [],
+	};
+	let commandStats = {
+		overview: { totalCommands: 0, totalUsage: 0 },
+		topCommands: [],
+	};
+	let roleEngagement = {
+		overview: { totalRoles: 0, totalMembers: 0 },
+		topBySize: [],
+	};
+	let joinLeave = {
+		overview: { periodDays: 30, totalJoins: 0, avgDailyJoins: 0, currentMembers: 0 },
+		recentJoins: [],
+	};
+	let heatmap = {
+		heatmap: [],
+		dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+		dailyTotals: [],
+		hourlyTotals: [],
+	};
 
 	if (hasAnalytics) {
 		try {

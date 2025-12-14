@@ -6,6 +6,7 @@ const {
 	PostShardedData,
 	Utils,
 	Giveaways,
+	TempRoleManager,
 } = require("../../../Modules/");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
 const metrics = require("../../../Modules/Metrics");
@@ -173,8 +174,19 @@ class Ready extends BaseEvent {
 		logger.debug("Started Prometheus metrics collection interval");
 	}
 
+	// Start temp role expiry checker
+	startTempRoleManager () {
+		if (this.client.shardID === "0") {
+			if (!this.client.tempRoleManager) {
+				this.client.tempRoleManager = new TempRoleManager(this.client);
+			}
+			this.client.tempRoleManager.start();
+		}
+	}
+
 	// Report to master that we're ok to go
 	showStartupMessage () {
+		this.startTempRoleManager();
 		const readyMsgs = [
 			"rock and roll!",
 			"PWN some n00bs.",

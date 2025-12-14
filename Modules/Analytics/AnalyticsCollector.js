@@ -172,7 +172,17 @@ class AnalyticsCollector {
 		const roleStats = new Map();
 
 		// Iterate through guild members to get role data
-		for (const [memberId, member] of guild.members.cache) {
+		const memberCache = guild.members?.cache;
+		if (!memberCache || typeof memberCache[Symbol.iterator] !== "function") {
+			return {
+				overview: { totalRoles: 0, totalMembers: guild.memberCount || 0, periodDays: days },
+				topBySize: [],
+				topByEngagement: [],
+				topByActivity: [],
+				allRoles: [],
+			};
+		}
+		for (const [memberId, member] of memberCache) {
 			const memberDoc = members.find(m => m._id === memberId);
 			const isActive = memberDoc?.last_active && new Date(memberDoc.last_active) > cutoffDate;
 
@@ -249,7 +259,17 @@ class AnalyticsCollector {
 
 		// Members who joined during period (from Discord API)
 		const recentJoins = [];
-		for (const [memberId, member] of guild.members.cache) {
+		const memberCache = guild.members?.cache;
+		if (!memberCache || typeof memberCache[Symbol.iterator] !== "function") {
+			return {
+				overview: { periodDays: days, totalJoins: 0, avgDailyJoins: 0, currentMembers: guild.memberCount || 0 },
+				recentJoins: [],
+				dailyJoins: {},
+				accountAgeDistribution: { new: 0, recent: 0, established: 0, veteran: 0 },
+				leaves: { note: "Leave tracking requires modlog events to be enabled" },
+			};
+		}
+		for (const [memberId, member] of memberCache) {
 			if (member.joinedAt && member.joinedAt > cutoffDate) {
 				recentJoins.push({
 					id: memberId,

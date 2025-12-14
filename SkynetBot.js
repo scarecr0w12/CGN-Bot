@@ -750,6 +750,9 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			// Handle button interactions
 			} else if (interaction.isButton()) {
 				await client.slashCommands.handleButtonInteraction(interaction);
+			// Handle select menu interactions
+			} else if (interaction.isStringSelectMenu()) {
+				await client.slashCommands.handleSelectMenuInteraction(interaction);
 			}
 		} catch (err) {
 			logger.warn("Failed to handle interactionCreate.", { type: interaction.type }, err);
