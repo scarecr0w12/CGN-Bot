@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-12-14
+
+### Changed
+
+#### Slash Command Optimization
+
+Reduced slash command count from 98 to 64 (34 slots saved) to stay well under Discord's 100 command limit.
+
+- **New Consolidated Commands**:
+  - `/interact` - Social interactions (hug, pat, slap, poke, highfive)
+  - `/animal` - Animal pictures and facts (cat, dog, fox, bird)
+  - `/search` - Search links for multiple platforms (Google, YouTube, Twitter, Reddit, GitHub, Images, Play Store, Wikipedia)
+  - `/channel` - Channel management (lock, unlock subcommands)
+  - `/media` - Media content (GIF search, memes, Reddit posts, Imgur upload)
+  - `/lookup` - Information lookup (anime, Pokémon, manga)
+  - `/toggle` - Enable/disable commands in channels
+
+- **Moved to Text-Only** (48 commands):
+  - Social: hug, pat, slap
+  - Animals: cat, dog, catfact, dogfact
+  - Search links: google, youtube, twitter, playstore, image
+  - Fun: joke, fortune, year, xkcd, 8ball, choose, roll, shorten
+  - NSFW: rule34, safebooru
+  - Utilities: calc, convert, wolfram, translate, time, countdown, emoji, emotes, urban, wiki, weather, imdb
+  - Media: gif, meme, reddit, imgur
+  - Lookup: anime, pokedex
+  - Admin: disable, enable, lock, unlock
+
+---
+
 ## [1.4.0] - 2025-12-13
 
 ### Added
