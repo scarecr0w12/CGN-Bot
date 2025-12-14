@@ -46,6 +46,20 @@ const message = require("message");
 message.reply(`You said: ${command.suffix}`);
 ```
 
+### Slash Command Extensions
+
+Triggered when a user runs a specific slash command (`/command`).
+
+```javascript
+const interaction = require("interaction");
+
+// interaction.options - Map of option names to values
+// interaction.user - The user who ran the command
+
+const name = interaction.options.name;
+await interaction.reply(`Hello, ${name || "User"}!`);
+```
+
 ### Keyword Extensions
 
 Triggered when specific keywords appear in messages.
