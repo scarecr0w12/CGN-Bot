@@ -388,6 +388,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		callback();
 	});
 
+	// Heartbeat handler for health monitoring
+	client.IPC.on("heartbeat", async (msg, callback) => {
+		callback({ timestamp: msg.timestamp, shard: client.shardID, ok: true });
+	});
+
 	client.IPC.on("restart", async (msg, callback) => {
 		const shouldReset = msg.soft;
 		if (!shouldReset) {

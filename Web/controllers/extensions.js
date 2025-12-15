@@ -4,7 +4,7 @@ const ObjectId = require("../../Database/ObjectID");
 
 const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;
-const { AllowedEvents, Colors, Scopes, NetworkCapabilities } = require("../../Internals/Constants");
+const { AllowedEvents, Colors, Scopes, NetworkCapabilities, ExtensionTags } = require("../../Internals/Constants");
 const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateExtensionData, writeExtensionData } = require("../helpers");
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
@@ -46,6 +46,9 @@ controllers.gallery = async (req, { res }) => {
 	const premiumFilter = req.query.premium;
 	const validPremiumFilters = ["all", "free", "premium"];
 
+	// Tag filter
+	const tagFilter = req.query.tag;
+
 	const renderPage = async (upvotedData, serverData) => {
 		const extensionState = req.path.substring(req.path.lastIndexOf("/") + 1);
 		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && configJSON.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
@@ -70,6 +73,11 @@ controllers.gallery = async (req, { res }) => {
 					{ name: { $regex: req.query.q } },
 					{ description: { $regex: req.query.q } },
 				];
+			}
+
+			// Filter by tag if specified
+			if (tagFilter && ExtensionTags.includes(tagFilter)) {
+				matchCriteria.tags = tagFilter;
 			}
 
 			// Get all extensions first, then filter by category client-side since type is in versions subdocument
@@ -110,6 +118,16 @@ controllers.gallery = async (req, { res }) => {
 				else premiumCounts.free++;
 			});
 
+			const tagCounts = {};
+			ExtensionTags.forEach(tag => { tagCounts[tag] = 0; });
+			allExtData.forEach(ext => {
+				if (ext.tags && Array.isArray(ext.tags)) {
+					ext.tags.forEach(tag => {
+						if (tagCounts[tag] !== undefined) tagCounts[tag]++;
+					});
+				}
+			});
+
 			// Filter by category if specified
 			if (categoryFilter && validCategories.includes(categoryFilter)) {
 				extensionData = extensionData.filter(ext => ext.type === categoryFilter);
@@ -137,8 +155,11 @@ controllers.gallery = async (req, { res }) => {
 				sortOption,
 				categoryFilter: categoryFilter || "all",
 				premiumFilter: premiumFilterValue,
+				tagFilter: tagFilter || "all",
+				extensionTags: ExtensionTags,
 				categoryCounts,
 				premiumCounts,
+				tagCounts,
 			});
 
 			res.render();
@@ -340,6 +361,7 @@ controllers.builder = async (req, { res }) => {
 				events: AllowedEvents,
 				scopes: Scopes,
 				networkCapabilities: NetworkCapabilities,
+				extensionTags: ExtensionTags,
 				premiumMarketplace,
 			});
 
@@ -401,7 +423,8 @@ controllers.builder.post = async (req, res) => {
 				const galleryQueryDocument = galleryDocument.query;
 
 				galleryQueryDocument.set("level", "gallery")
-					.set("description", req.body.description);
+					.set("description", req.body.description)
+					.set("tags", Array.isArray(req.body.tags) ? req.body.tags : req.body.tags ? [req.body.tags] : []);
 				const newVersion = writeExtensionData(galleryDocument, req.body);
 				if (newVersion && isUpdate) galleryQueryDocument.set("state", galleryDocument.state === "saved" ? "saved" : "version_queue");
 				else if (newVersion) galleryQueryDocument.set("state", "saved");

@@ -51,6 +51,7 @@ module.exports = router => {
 	// Public endpoints (no api_access required)
 	setupResource(router, "/", [], controllers.api.status, "get", "public");
 	setupResource(router, "/status", [], controllers.status.api, "get", "public");
+	setupResource(router, "/status/shards", [], controllers.status.shards, "get", "public");
 	setupResource(router, "/servers", [], controllers.api.servers, "get", "public");
 	setupResource(router, "/extensions", [], controllers.api.extensions, "get", "public");
 	setupResource(router, "/extensions/:extid/purchase", [], controllers.api.extensions.purchase, "post", "authentication");

@@ -75,6 +75,34 @@ const discordShardLatency = new client.Gauge({
 	registers: [register],
 });
 
+const discordShardFailures = new client.Gauge({
+	name: "skynetbot_discord_shard_failures_total",
+	help: "Total restart failures for each Discord shard",
+	labelNames: ["shard_id"],
+	registers: [register],
+});
+
+const discordShardRestarts = new client.Counter({
+	name: "skynetbot_discord_shard_restarts_total",
+	help: "Total number of shard restarts",
+	labelNames: ["shard_id"],
+	registers: [register],
+});
+
+const discordShardHeartbeatLatency = new client.Gauge({
+	name: "skynetbot_discord_shard_heartbeat_latency_ms",
+	help: "Heartbeat latency for each Discord shard in milliseconds",
+	labelNames: ["shard_id"],
+	registers: [register],
+});
+
+const discordShardMemory = new client.Gauge({
+	name: "skynetbot_discord_shard_memory_mb",
+	help: "Memory usage (RSS) of each Discord shard in megabytes",
+	labelNames: ["shard_id"],
+	registers: [register],
+});
+
 const discordCommandsTotal = new client.Counter({
 	name: "skynetbot_discord_commands_total",
 	help: "Total number of Discord commands executed",
@@ -211,7 +239,7 @@ function normalizeRoute(route) {
  * Update Discord client metrics
  * Call this periodically (e.g., every 30 seconds)
  */
-function updateDiscordMetrics(discordClient) {
+function updateDiscordMetrics (discordClient) {
 	if (!discordClient) return;
 
 	// Guild and user counts
@@ -227,6 +255,33 @@ function updateDiscordMetrics(discordClient) {
 			discordShardLatency.set({ shard_id: shardId }, shard.ping || 0);
 		});
 	}
+
+	// Memory usage for current shard
+	const shardId = discordClient.shardID || process.env.SHARDS || 0;
+	const memoryMB = Math.floor((process.memoryUsage().rss / 1024) / 1024);
+	discordShardMemory.set({ shard_id: shardId }, memoryMB);
+}
+
+/**
+ * Update shard health metrics from sharder data
+ * Call this from master process with sharder.getMetrics() data
+ */
+function updateShardHealthMetrics (shardData) {
+	if (!shardData || !Array.isArray(shardData.shards)) return;
+
+	shardData.shards.forEach(shard => {
+		discordShardFailures.set({ shard_id: shard.id }, shard.failures || 0);
+		if (shard.timeSinceHeartbeat !== undefined) {
+			discordShardHeartbeatLatency.set({ shard_id: shard.id }, shard.timeSinceHeartbeat);
+		}
+	});
+}
+
+/**
+ * Record a shard restart event
+ */
+function recordShardRestart (shardId) {
+	discordShardRestarts.inc({ shard_id: shardId });
 }
 
 /**
@@ -301,6 +356,8 @@ module.exports = {
 	metricsMiddleware,
 	getMetrics,
 	updateDiscordMetrics,
+	updateShardHealthMetrics,
+	recordShardRestart,
 	recordCommand,
 	recordMessage,
 	recordEvent,
@@ -318,6 +375,10 @@ module.exports = {
 		discordShardsTotal,
 		discordShardStatus,
 		discordShardLatency,
+		discordShardFailures,
+		discordShardRestarts,
+		discordShardHeartbeatLatency,
+		discordShardMemory,
 		discordCommandsTotal,
 		discordMessagesTotal,
 		discordEventsTotal,

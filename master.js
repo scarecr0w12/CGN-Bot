@@ -134,11 +134,20 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 			// Sharder events
 			sharder.ready = 0;
 			sharder.finished = 0;
-			sharder.IPC.on("ready", async () => {
+			sharder.IPC.on("ready", async (msg, callback) => {
 				sharder.ready++;
+				// Mark the shard as ready and reset its failure count
+				const shardId = msg?.shard ?? sharder.ready - 1;
+				const shard = sharder.shards.get(Number(shardId));
+				if (shard) {
+					shard.ready = true;
+					shard.failures = 0; // Reset failures on successful ready
+					shard.startHeartbeat();
+				}
 				if (sharder.ready === sharder.count) {
 					logger.info("All shards connected to Discord.");
 				}
+				if (callback) callback({ ok: true });
 			});
 
 			const shardFinished = () => {
@@ -364,13 +373,18 @@ Boot({ configJS, configJSON, auth }, scope).then(() => {
 	});
 
 	process.on("uncaughtException", err => {
-		logger.error("An unknown and unexpected error occurred, and we failed to handle it. Sorry! x.x\n", {}, err);
-		process.exit(1);
+		logger.error("Uncaught exception in master process. Shards will continue operating.\n", {}, err);
+		// Don't exit - let shards continue operating
+		// Only exit if this is a truly fatal error that prevents recovery
+		if (err.code === "EADDRINUSE" || err.code === "EACCES") {
+			logger.error("Fatal error - cannot recover. Shutting down.");
+			process.exit(1);
+		}
 	});
 
-	process.on("unhandledRejection", err => {
-		logger.error("An unknown and unexpected error occurred, and we failed to handle it. Sorry! x.x\n", {}, err);
-		process.exit(1);
+	process.on("unhandledRejection", (err, promise) => {
+		logger.error("Unhandled promise rejection in master process. Shards will continue operating.\n", { promise: String(promise) }, err);
+		// Don't exit on unhandled rejections - log and continue
 	});
 }).catch(err => {
 	throw err;

@@ -1,0 +1,266 @@
+<% const sectionTitle = "IndexNow SEO Integration"; %>
+<%- include("../partials/header") %>
+<section class="section">
+	<div class="container">
+		<div class="columns">
+			<div class="column is-one-quarter">
+				<%- include("../partials/maintainer-menu") %>
+			</div>
+			<div class="column">
+				<div class="card">
+					<header class="card-header">
+						<p class="card-header-title">
+							<span class="icon"><i class="fas fa-search"></i></span>
+							<span>IndexNow Status</span>
+						</p>
+					</header>
+					<div class="card-content">
+						<% if (!pageData.enabled) { %>
+							<div class="notification is-warning">
+								<span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
+								<span>IndexNow is not configured. Add <code>INDEXNOW_API_KEY</code> to your <code>.env</code> file.</span>
+							</div>
+							<div class="content">
+								<h5>Setup Instructions</h5>
+								<ol>
+									<li>Go to <a href="https://www.bing.com/webmasters" target="_blank">Bing Webmaster Tools</a> and verify your site</li>
+									<li>Navigate to <a href="https://www.bing.com/indexnow/getstarted" target="_blank">IndexNow Get Started</a></li>
+									<li>Generate an API key or use your own (32-character alphanumeric)</li>
+									<li>Add <code>INDEXNOW_API_KEY=your-key-here</code> to your <code>.env</code> file</li>
+									<li>Restart the bot</li>
+								</ol>
+							</div>
+						<% } else { %>
+							<!-- Configuration Status -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon has-text-success"><i class="fas fa-check-circle"></i></span>
+									Configuration
+								</h4>
+								<div class="columns">
+									<div class="column">
+										<strong>Status:</strong>
+										<span class="tag is-success">Enabled</span>
+									</div>
+									<div class="column">
+										<strong>Host:</strong>
+										<code><%= pageData.indexNow.host %></code>
+									</div>
+									<div class="column">
+										<strong>Key File:</strong>
+										<a href="<%= pageData.keyFileUrl %>" target="_blank" class="has-text-link">
+											<%= pageData.keyFileUrl %>
+										</a>
+									</div>
+								</div>
+							</div>
+
+							<!-- Submission Stats -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-chart-bar"></i></span>
+									Submission Statistics
+								</h4>
+								<div class="columns">
+									<div class="column has-text-centered">
+										<p class="heading">Total Submitted</p>
+										<p class="title is-4"><%= pageData.indexNow.submitted || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">Succeeded</p>
+										<p class="title is-4 has-text-success"><%= pageData.indexNow.succeeded || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">Failed</p>
+										<p class="title is-4 has-text-danger"><%= pageData.indexNow.failed || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">Queue</p>
+										<p class="title is-4"><%= pageData.indexNow.queueLength || 0 %></p>
+									</div>
+								</div>
+								<% if (pageData.indexNow.lastSubmission) { %>
+									<p class="has-text-grey is-size-7">
+										<strong>Last Submission:</strong> <%= pageData.indexNow.lastSubmission %>
+									</p>
+								<% } %>
+								<% if (pageData.indexNow.lastError) { %>
+									<div class="notification is-danger is-light mt-3">
+										<strong>Last Error:</strong> <%= pageData.indexNow.lastError %>
+									</div>
+								<% } %>
+							</div>
+
+							<!-- Test Configuration -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-vial"></i></span>
+									Test Configuration
+								</h4>
+								<p class="mb-3">Test your IndexNow configuration by submitting the homepage to search engines.</p>
+								<button id="testIndexNow" class="button is-primary">
+									<span class="icon"><i class="fas fa-play"></i></span>
+									<span>Run Test</span>
+								</button>
+								<div id="testResult" class="mt-4" style="display: none;">
+									<div id="testResultContent"></div>
+								</div>
+							</div>
+
+							<!-- Manual Submission -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-paper-plane"></i></span>
+									Manual Submission
+								</h4>
+								<p class="mb-3">Manually submit a URL to IndexNow for immediate indexing.</p>
+								<div class="field has-addons">
+									<div class="control is-expanded">
+										<input id="submitUrl" class="input" type="text" placeholder="/blog/my-article" value="/">
+									</div>
+									<div class="control">
+										<button id="submitIndexNow" class="button is-info">
+											<span class="icon"><i class="fas fa-upload"></i></span>
+											<span>Submit</span>
+										</button>
+									</div>
+								</div>
+								<div id="submitResult" class="mt-3" style="display: none;">
+									<div id="submitResultContent"></div>
+								</div>
+							</div>
+
+							<!-- Troubleshooting -->
+							<div class="box">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-question-circle"></i></span>
+									Troubleshooting
+								</h4>
+								<div class="content">
+									<p><strong>If you're getting 403 errors:</strong></p>
+									<ol>
+										<li>Verify your site in <a href="https://www.bing.com/webmasters" target="_blank">Bing Webmaster Tools</a></li>
+										<li>Ensure the key file is accessible at <code><%= pageData.keyFileUrl %></code></li>
+										<li>The key in the file must match <code>INDEXNOW_API_KEY</code> exactly</li>
+									</ol>
+									<p><strong>Note:</strong> Cloudflare's "Crawler Hints" feature also submits URLs to IndexNow automatically. If you have this enabled, you may see duplicate submissions.</p>
+								</div>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<% if (pageData.enabled) { %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const testBtn = document.getElementById('testIndexNow');
+	const submitBtn = document.getElementById('submitIndexNow');
+
+	if (testBtn) {
+		testBtn.addEventListener('click', async function() {
+			testBtn.classList.add('is-loading');
+			const resultDiv = document.getElementById('testResult');
+			const resultContent = document.getElementById('testResultContent');
+
+			try {
+				const response = await fetch('/dashboard/maintainer/infrastructure/indexnow/test', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' }
+				});
+				const data = await response.json();
+
+				resultDiv.style.display = 'block';
+				if (data.success) {
+					resultContent.innerHTML = `
+						<div class="notification is-success">
+							<span class="icon"><i class="fas fa-check-circle"></i></span>
+							<span><strong>Success!</strong> IndexNow configuration is working correctly. Status: ${data.statusCode}</span>
+						</div>
+					`;
+				} else {
+					let troubleshooting = '';
+					if (data.troubleshooting && data.troubleshooting.length > 0) {
+						troubleshooting = '<ul>' + data.troubleshooting.map(t => `<li>${t}</li>`).join('') + '</ul>';
+					}
+					resultContent.innerHTML = `
+						<div class="notification is-danger">
+							<span class="icon"><i class="fas fa-times-circle"></i></span>
+							<span><strong>Failed:</strong> ${data.error}</span>
+							${troubleshooting ? '<div class="mt-2"><strong>Troubleshooting:</strong>' + troubleshooting + '</div>' : ''}
+						</div>
+					`;
+				}
+			} catch (err) {
+				resultDiv.style.display = 'block';
+				resultContent.innerHTML = `
+					<div class="notification is-danger">
+						<span class="icon"><i class="fas fa-times-circle"></i></span>
+						<span><strong>Error:</strong> ${err.message}</span>
+					</div>
+				`;
+			}
+
+			testBtn.classList.remove('is-loading');
+		});
+	}
+
+	if (submitBtn) {
+		submitBtn.addEventListener('click', async function() {
+			const urlInput = document.getElementById('submitUrl');
+			const url = urlInput.value.trim();
+
+			if (!url) {
+				alert('Please enter a URL path');
+				return;
+			}
+
+			submitBtn.classList.add('is-loading');
+			const resultDiv = document.getElementById('submitResult');
+			const resultContent = document.getElementById('submitResultContent');
+
+			try {
+				const response = await fetch('/dashboard/maintainer/infrastructure/indexnow/submit', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ url })
+				});
+				const data = await response.json();
+
+				resultDiv.style.display = 'block';
+				if (data.success) {
+					resultContent.innerHTML = `
+						<div class="notification is-success">
+							<span class="icon"><i class="fas fa-check-circle"></i></span>
+							<span><strong>Success!</strong> URL "${data.url}" submitted to IndexNow. Status: ${data.statusCode}</span>
+						</div>
+					`;
+				} else {
+					resultContent.innerHTML = `
+						<div class="notification is-danger">
+							<span class="icon"><i class="fas fa-times-circle"></i></span>
+							<span><strong>Failed:</strong> ${data.error}</span>
+						</div>
+					`;
+				}
+			} catch (err) {
+				resultDiv.style.display = 'block';
+				resultContent.innerHTML = `
+					<div class="notification is-danger">
+						<span class="icon"><i class="fas fa-times-circle"></i></span>
+						<span><strong>Error:</strong> ${err.message}</span>
+					</div>
+				`;
+			}
+
+			submitBtn.classList.remove('is-loading');
+		});
+	}
+});
+</script>
+<% } %>
+
+<%- include("../partials/footer") %>

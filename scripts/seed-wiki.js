@@ -39,6 +39,8 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 🛡️ [Admin Levels](Admin-Levels) - Understanding permissions
 - 🧩 [Extensions](Extensions) - Extend your bot's functionality
 - 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
+- 🎵 [Music System](Music-Guide) - High-quality music playback (Premium)
+- 💻 [Developer Tools](Developer-Tools) - Code execution and utilities (Premium)
 - ⭐ [Premium Features](Premium-Features) - Server subscriptions
 - ❓ [FAQ](FAQ) - Frequently Asked Questions
 
@@ -55,6 +57,12 @@ Engage your community with games, memes, jokes, trivia, and interactive commands
 
 ### ⚒️ Powerful Moderation
 Keep your server safe with comprehensive moderation tools including bans, kicks, mutes, strikes, and detailed moderation logs.
+
+### 🎵 Music & Audio
+Listen to high-quality music with DJ controls, audio filters (Nightcore, Bassboost), and lyrics support. See the [Music Guide](Music-Guide).
+
+### 💻 Developer Tools
+Execute code, test regex, format JSON, and make API requests directly from Discord with our secure developer suite. See [Developer Tools](Developer-Tools).
 
 ### 📊 Statistics & Points
 Track server activity with SkynetPoints, leaderboards, ranks, and detailed server statistics.
@@ -740,7 +748,7 @@ Premium tiers (configured by the bot operator) typically include:
 - **Increased Limits**: Higher rate limits and quotas
 - **Advanced AI**: Access to more powerful AI models
 - **Priority Support**: Faster response times
-- **Exclusive Commands**: Premium-only features
+- **Exclusive Commands**: Premium-only features (Music, Dev Tools)
 - **Extended Storage**: More extension storage
 - **Custom Branding**: Remove bot branding
 
@@ -820,6 +828,22 @@ Premium servers may get:
 - Higher daily token limits
 - Longer conversation memory
 - Priority response times
+
+### Music System (Tier 2)
+- High-quality playback
+- DJ controls and audio filters
+- Queue management and lyrics
+
+### Developer Tools (Tier 2)
+- Code execution sandbox (JavaScript)
+- API testing tools (HTTP)
+- Regex and JSON utilities
+- Code formatting and linting
+
+### Ticket System (Tier 2)
+- Custom support ticket panels
+- Transcript logging
+- Staff management tools
 
 ### Increased Rate Limits
 - More commands per minute
@@ -1036,6 +1060,122 @@ See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Own
 		}],
 	},
 	{
+		_id: "Music-Guide",
+		content: \`# Music System Guide
+
+High-quality music playback for your server with DJ controls and audio filters.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Overview
+
+The music system allows you to play audio from YouTube and other supported sources directly in your voice channel. It features a robust queue system, DJ controls, and fun audio filters.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| \`!play <query/url>\` | Play a song or add to queue |
+| \`!skip\` | Skip the current track |
+| \`!queue\` | View the current music queue |
+| \`!dj\` | Access DJ controls (pause, stop, volume, loop) |
+| \`!filters\` | Apply audio filters (Bassboost, Nightcore, etc.) |
+| \`!lyrics\` | Get lyrics for the current song |
+
+## DJ Controls
+
+The \`!dj\` command opens a control panel with buttons for:
+- ⏯️ Pause/Resume
+- ⏹️ Stop & Clear
+- 🔊 Volume Control
+- 🔁 Loop Mode (Track/Queue/Off)
+- 🔀 Shuffle Queue
+
+## Audio Filters
+
+Enhance your listening experience with real-time audio filters:
+- **Bassboost** - Boost the low end
+- **Nightcore** - Speed up and raise pitch
+- **Vaporwave** - Slow down and lower pitch
+- **8D** - Simulate 8D audio surround sound
+
+Use \`!filters\` to toggle these effects.
+
+---
+
+See also: [Premium Features](Premium-Features) | [Commands](Commands)
+\`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Developer-Tools",
+		content: \`# Developer Tools
+
+A suite of advanced utilities for developers, including a JavaScript sandbox, code formatting, and API testing tools.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Code Execution
+
+### \`!coderun\`
+Execute JavaScript code in a secure, sandboxed environment.
+- **Timeout:** 3 seconds
+- **Environment:** Node.js-like (no file/network access)
+- **Usage:** \`!coderun console.log("Hello World");\`
+
+### \`!lint\`
+Analyze your JavaScript code for syntax errors and potential issues.
+
+### \`!codeformat\`
+Automatically format and beautify your code snippets.
+
+---
+
+## Utilities
+
+### \`!http\`
+Make HTTP requests to external APIs directly from Discord.
+- Supports GET and POST
+- Rate limited (10/min)
+- Restricted from accessing private IP ranges
+
+### \`!regex\`
+Test and explain Regular Expressions.
+- \`!regextest\` - Test a pattern against a string
+- \`!regexexplain\` - Get a human-readable explanation of a pattern
+
+### \`!json\`
+Tools for working with JSON data.
+- \`!jsonpretty\` - Format minified JSON
+- \`!jsonminify\` - Minify formatted JSON
+- \`!jsonpath\` - Query JSON using JSONPath syntax
+
+### \`!snippet\`
+Save and manage your frequently used code snippets.
+- Store snippets per-server or per-user
+- Syntax highlighting support
+
+---
+
+See also: [Premium Features](Premium-Features) | [Commands](Commands)
+\`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
 		_id: "Server-Owner-Guide",
 		content: `# Server Owner Guide
 
@@ -1059,6 +1199,7 @@ The web dashboard is your central hub for configuring SkynetBot. Access it by:
 | **Points & Ranks** | Set up the points system |
 | **Messages** | Automated welcome/leave messages |
 | **Logs** | View bot activity logs |
+| **Tickets** | Support ticket system management |
 
 ## Command Management
 
@@ -1169,6 +1310,17 @@ Get notified when configured streamers go live:
 1. Dashboard → Streamers
 2. Add Twitch/YouTube usernames
 3. Configure announcement channel
+
+## Data Management
+
+### Exporting Server Data
+You can export your server's configuration and data:
+1. Go to **Dashboard** → **Settings** → **Export Data**
+2. Choose data types (Config, Members, Moderation, etc.)
+3. Select format (JSON or CSV)
+4. Download the archive
+
+*Requires Tier 2 Premium.*
 
 ## Extensions
 
@@ -1496,6 +1648,23 @@ Extensions are JSON-based configurations that define:
 - Actions to perform
 - Response templates
 - Permission requirements
+
+## Import & Export
+
+Share your custom extensions with other servers or back them up.
+
+### Exporting
+1. Go to **My Extensions** in the dashboard
+2. Click the **Export** button on any extension
+3. Download the \`.skypkg\` file
+
+### Importing
+1. Go to **My Extensions**
+2. Click **Import Extension**
+3. Upload a \`.skypkg\` file
+4. Review the code and install
+
+*Note: You can only export extensions you own or that are published.*
 
 ### Submission Process
 1. Create extension in the builder

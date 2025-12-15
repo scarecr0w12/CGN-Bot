@@ -388,12 +388,16 @@
 	const categoryCounts = pageData.categoryCounts || { all: 0, command: 0, keyword: 0, timer: 0, event: 0 };
 	const premiumCounts = pageData.premiumCounts || { all: 0, free: 0, premium: 0 };
 	
-	const buildFilterUrl = (category, sort, premium) => {
+	const buildFilterUrl = (category, sort, premium, tag) => {
 		const params = new URLSearchParams();
 		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
 		if (category && category !== 'all') params.set('category', category);
 		if (premium && premium !== 'all') params.set('premium', premium);
 		if (sort && sort !== 'featured') params.set('sort', sort);
+		
+		const targetTag = tag !== undefined ? tag : (pageData.tagFilter || 'all');
+		if (targetTag && targetTag !== 'all') params.set('tag', targetTag);
+
 		const queryString = params.toString();
 		return `/extensions/${pageData.mode}${queryString ? '?' + queryString : ''}`;
 	};
@@ -459,6 +463,28 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- Tags Filter Row -->
+		<% if (pageData.extensionTags && pageData.extensionTags.length > 0) { %>
+		<div class="ext-filter-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+			<div class="ext-category-pills">
+				<span style="color: rgba(255,255,255,0.5); font-size: 0.85rem; font-weight: 600; margin-right: 0.5rem; display: flex; align-items: center;">
+					<i class="fa fa-tags mr-1"></i> Tags:
+				</span>
+				<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, 'all') %>" class="ext-category-pill <%= !pageData.tagFilter || pageData.tagFilter === 'all' ? 'is-active' : '' %>" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;">
+					All
+				</a>
+				<% pageData.extensionTags.forEach(tag => { %>
+				<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, tag) %>" class="ext-category-pill <%= pageData.tagFilter === tag ? 'is-active' : '' %>" style="padding: 0.3rem 0.8rem; font-size: 0.85rem;">
+					<%= tag %>
+					<% if (pageData.tagCounts && pageData.tagCounts[tag] > 0) { %>
+					<span class="pill-count"><%= pageData.tagCounts[tag] %></span>
+					<% } %>
+				</a>
+				<% }); %>
+			</div>
+		</div>
+		<% } %>
 	</div>
 	<% if (pageData.mode === "queue") { %>
 	<article class="message is-danger" title="Even Speedwagon is afraid!" style="margin-bottom: 1.5rem;">
@@ -521,6 +547,13 @@
 							<%= extension.network_capability === 'allowlist_only' ? 'Public APIs' : extension.network_capability === 'network' ? 'Network' : 'Advanced' %>
 							<% if (extension.network_approved) { %><i class="fa fa-check ml-1"></i><% } else if (needsApproval) { %><i class="fa fa-clock-o ml-1"></i><% } %>
 						</span>
+						<% } %>
+						<% if (extension.tags && extension.tags.length > 0) { %>
+							<% extension.tags.forEach(tag => { %>
+							<span class="ext-badge" style="background: #f5f5f5; color: #666; border: 1px solid #eee;">
+								<i class="fa fa-tag" style="font-size: 0.6rem;"></i> <%= tag %>
+							</span>
+							<% }); %>
 						<% } %>
 					</div>
 				</div>
@@ -658,6 +691,7 @@
 		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
 		if (categoryFilter && categoryFilter !== 'all') params.set('category', categoryFilter);
 		if (sortOption && sortOption !== 'featured') params.set('sort', sortOption);
+		if (pageData.tagFilter && pageData.tagFilter !== 'all') params.set('tag', pageData.tagFilter);
 		if (pageData.itemsPerPage) params.set('count', pageData.itemsPerPage);
 		params.set('page', pageNum);
 		return `/extensions/${pageData.mode}?${params.toString()}`;

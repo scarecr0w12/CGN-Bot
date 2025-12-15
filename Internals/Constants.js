@@ -602,6 +602,27 @@ Constants.NetworkCapabilities = {
 };
 
 /**
+ * Valid tags for extensions in the gallery
+ * @type {string[]}
+ */
+Constants.ExtensionTags = [
+	"Moderation",
+	"Utility",
+	"Fun",
+	"Economy",
+	"Leveling",
+	"Music",
+	"Administration",
+	"Social",
+	"Anime",
+	"Games",
+	"Security",
+	"Logging",
+	"Roleplay",
+	"Other",
+];
+
+/**
  * An object containing descriptive information on all extension scopes
  * @type object
  */

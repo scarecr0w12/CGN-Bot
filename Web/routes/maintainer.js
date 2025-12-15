@@ -69,6 +69,11 @@ module.exports = router => {
 	router.post("/tickets/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.delete);
 	router.get("/tickets/:ticketId/transcript", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.transcript);
 
+	// IndexNow SEO Integration (Management level)
+	setupConsolePage(router, "/infrastructure/indexnow", "management", [], controllers.console.indexnow.status);
+	router.post("/infrastructure/indexnow/test", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.test);
+	router.post("/infrastructure/indexnow/submit", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.submit);
+
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);
 	router.get("/infrastructure/cloudflare/analytics", controllers.console.cloudflare.getAnalytics);

@@ -213,6 +213,7 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		level: galleryDocument.level,
 		accepted: versionDocument.accepted,
 		points: galleryDocument.points,
+		tags: galleryDocument.tags || [],
 		relativeLastUpdated: moment(galleryDocument.last_updated).fromNow(),
 		rawLastUpdated: moment(galleryDocument.last_updated).format(configJS.moment_date_format),
 		scopes,

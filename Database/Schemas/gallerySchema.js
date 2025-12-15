@@ -23,6 +23,7 @@ module.exports = new Schema({
 		type: String,
 		maxlength: 2000,
 	},
+	tags: [String],
 	points: {
 		type: Number,
 		default: 0,

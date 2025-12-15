@@ -2111,6 +2111,12 @@ controllers.networkApprovals = async (req, { res }) => {
 };
 
 // ============================================
+// INDEXNOW SEO INTEGRATION CONTROLLERS
+// ============================================
+
+controllers.indexnow = require("./indexnow");
+
+// ============================================
 // CLOUDFLARE INTEGRATION CONTROLLERS
 // ============================================
 
