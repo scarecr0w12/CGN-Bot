@@ -191,7 +191,7 @@ const metricsMiddleware = (req, res, next) => {
 	// Capture the original end function
 	const originalEnd = res.end;
 
-	res.end = function(...args) {
+	res.end = function (...args) {
 		httpActiveRequests.dec();
 
 		const duration = Number(process.hrtime.bigint() - start) / 1e9;
@@ -204,7 +204,7 @@ const metricsMiddleware = (req, res, next) => {
 
 		httpRequestDuration.observe(
 			{ method, route: normalizedRoute, status_code: statusCode },
-			duration
+			duration,
 		);
 
 		httpRequestsTotal.inc({
@@ -223,7 +223,7 @@ const metricsMiddleware = (req, res, next) => {
  * Normalize route paths to avoid high cardinality metrics
  * Replaces dynamic segments with placeholders
  */
-function normalizeRoute(route) {
+function normalizeRoute (route) {
 	return route
 		// Replace Discord IDs (17-19 digit numbers)
 		.replace(/\/\d{17,19}/g, "/:id")
@@ -287,28 +287,28 @@ function recordShardRestart (shardId) {
 /**
  * Record a command execution
  */
-function recordCommand(commandName, type = "prefix") {
+function recordCommand (commandName, type = "prefix") {
 	discordCommandsTotal.inc({ command: commandName, type });
 }
 
 /**
  * Record a message processed
  */
-function recordMessage(type = "guild") {
+function recordMessage (type = "guild") {
 	discordMessagesTotal.inc({ type });
 }
 
 /**
  * Record a Discord gateway event
  */
-function recordEvent(eventName) {
+function recordEvent (eventName) {
 	discordEventsTotal.inc({ event: eventName });
 }
 
 /**
  * Record a database query
  */
-function recordDbQuery(operation, collection, duration, success = true) {
+function recordDbQuery (operation, collection, duration, success = true) {
 	dbQueryDuration.observe({ operation, collection }, duration);
 	dbQueriesTotal.inc({ operation, collection, status: success ? "success" : "error" });
 }
@@ -316,7 +316,7 @@ function recordDbQuery(operation, collection, duration, success = true) {
 /**
  * Update extension counts
  */
-function updateExtensionCounts(counts) {
+function updateExtensionCounts (counts) {
 	Object.entries(counts).forEach(([state, count]) => {
 		extensionsTotal.set({ state }, count);
 	});
@@ -325,7 +325,7 @@ function updateExtensionCounts(counts) {
 /**
  * Record an extension execution
  */
-function recordExtensionExecution(extensionId, success = true) {
+function recordExtensionExecution (extensionId, success = true) {
 	extensionExecutionsTotal.inc({
 		extension_id: extensionId,
 		status: success ? "success" : "error",
@@ -335,14 +335,14 @@ function recordExtensionExecution(extensionId, success = true) {
 /**
  * Update WebSocket connection count
  */
-function updateWsConnections(namespace, count) {
+function updateWsConnections (namespace, count) {
 	wsConnectionsActive.set({ namespace }, count);
 }
 
 /**
  * Get metrics endpoint handler
  */
-async function getMetrics(req, res) {
+async function getMetrics (req, res) {
 	try {
 		res.set("Content-Type", register.contentType);
 		res.end(await register.metrics());

@@ -166,7 +166,7 @@ module.exports = {
 							});
 						}
 					}
-				} else if (main.client.getUserBotAdmin(svr, serverDocument, member) > serverDocument.config.commands.giveaway.admin_level || await (require("../../Modules/ConfigManager")).isMaintainer(usr.id)) {
+				} else if (main.client.getUserBotAdmin(svr, serverDocument, member) > serverDocument.config.commands.giveaway.admin_level || await require("../../Modules/ConfigManager").isMaintainer(usr.id)) {
 					await initMsg.edit({
 						embeds: [{
 							color: Colors.INFO,

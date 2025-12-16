@@ -7,7 +7,7 @@ const fetch = require("node-fetch");
 const VoteRewardsManager = require("./VoteRewardsManager");
 
 class BotLists {
-	constructor(client) {
+	constructor (client) {
 		this.client = client;
 		this.postInterval = null;
 	}
@@ -15,7 +15,7 @@ class BotLists {
 	/**
 	 * Initialize the bot lists module - call after client is ready
 	 */
-	async init() {
+	async init () {
 		// Start auto-posting stats every 30 minutes
 		this.postInterval = setInterval(() => this.postAllStats(), 30 * 60 * 1000);
 		// Post immediately on startup (after 10 second delay)
@@ -28,7 +28,7 @@ class BotLists {
 	/**
 	 * Get current bot list configuration from site settings
 	 */
-	async getConfig() {
+	async getConfig () {
 		const siteSettings = await SiteSettings.findOne("main");
 		return siteSettings?.bot_lists || {};
 	}
@@ -36,7 +36,7 @@ class BotLists {
 	/**
 	 * Get vote reward configuration
 	 */
-	async getVoteRewardsConfig() {
+	async getVoteRewardsConfig () {
 		const siteSettings = await SiteSettings.findOne("main");
 		return siteSettings?.vote_rewards || {};
 	}
@@ -44,7 +44,7 @@ class BotLists {
 	/**
 	 * Post stats to all enabled bot lists
 	 */
-	async postAllStats() {
+	async postAllStats () {
 		const config = await this.getConfig();
 		const stats = {
 			guilds: this.client.guilds.cache.size,
@@ -64,12 +64,12 @@ class BotLists {
 	/**
 	 * Post stats to top.gg
 	 */
-	async postToTopgg(stats, token) {
+	async postToTopgg (stats, token) {
 		try {
 			const response = await fetch(`https://top.gg/api/bots/${this.client.user.id}/stats`, {
 				method: "POST",
 				headers: {
-					"Authorization": token,
+					Authorization: token,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
@@ -92,12 +92,12 @@ class BotLists {
 	/**
 	 * Post stats to discordbotlist.com
 	 */
-	async postToDiscordBotList(stats, token) {
+	async postToDiscordBotList (stats, token) {
 		try {
 			const response = await fetch(`https://discordbotlist.com/api/v1/bots/${this.client.user.id}/stats`, {
 				method: "POST",
 				headers: {
-					"Authorization": token,
+					Authorization: token,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
@@ -122,7 +122,7 @@ class BotLists {
 	 * @param {string} [token] - Optional API token override
 	 * @returns {Promise<{success: boolean, count?: number, error?: string}>}
 	 */
-	async postCommandsToDiscordBotList(token = null) {
+	async postCommandsToDiscordBotList (token = null) {
 		try {
 			const config = await this.getConfig();
 			const apiToken = token || config.discordbotlist?.api_token;
@@ -143,7 +143,7 @@ class BotLists {
 			const response = await fetch(`https://discordbotlist.com/api/v1/bots/${this.client.user.id}/commands`, {
 				method: "POST",
 				headers: {
-					"Authorization": `Bot ${apiToken}`,
+					Authorization: `Bot ${apiToken}`,
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(commandsData),
@@ -166,7 +166,7 @@ class BotLists {
 	/**
 	 * Sync commands to all enabled bot lists
 	 */
-	async syncAllCommands() {
+	async syncAllCommands () {
 		const config = await this.getConfig();
 		const results = {};
 
@@ -182,7 +182,7 @@ class BotLists {
 	 * @param {string} site - The site the vote came from (topgg, discordbotlist)
 	 * @param {object} data - The vote data from the webhook
 	 */
-	async processVote(site, data) {
+	async processVote (site, data) {
 		const userId = data.user || data.id;
 		if (!userId) {
 			logger.warn("Vote webhook missing user ID", { site, data });
@@ -237,7 +237,7 @@ class BotLists {
 	/**
 	 * Send a vote notification to a channel
 	 */
-	async sendVoteNotification(userId, site, points, channelId) {
+	async sendVoteNotification (userId, site, points, channelId) {
 		try {
 			const channel = await this.client.channels.fetch(channelId).catch(() => null);
 			if (!channel) return;
@@ -264,7 +264,7 @@ class BotLists {
 	/**
 	 * Check if it's currently a weekend (for bonus points)
 	 */
-	isWeekend() {
+	isWeekend () {
 		const day = new Date().getUTCDay();
 		return day === 0 || day === 6; // Sunday or Saturday
 	}
@@ -272,7 +272,7 @@ class BotLists {
 	/**
 	 * Get vote stats for a user
 	 */
-	async getUserVotes(userId, limit = 50) {
+	async getUserVotes (userId, limit = 50) {
 		return Database.Votes.find({ user_id: userId })
 			.sort({ timestamp: -1 })
 			.limit(limit)
@@ -282,7 +282,7 @@ class BotLists {
 	/**
 	 * Get recent votes across all users
 	 */
-	async getRecentVotes(limit = 50) {
+	async getRecentVotes (limit = 50) {
 		return Database.Votes.find({})
 			.sort({ timestamp: -1 })
 			.limit(limit)
@@ -292,7 +292,7 @@ class BotLists {
 	/**
 	 * Get vote count for a user in the last 12 hours
 	 */
-	async getRecentVoteCount(userId) {
+	async getRecentVoteCount (userId) {
 		const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000);
 		return Database.Votes.count({ user_id: userId, timestamp: { $gte: twelveHoursAgo } });
 	}
@@ -300,7 +300,7 @@ class BotLists {
 	/**
 	 * Get total vote counts by site
 	 */
-	async getVoteStats() {
+	async getVoteStats () {
 		const [topggCount, dblCount, totalCount] = await Promise.all([
 			Database.Votes.count({ site: "topgg" }),
 			Database.Votes.count({ site: "discordbotlist" }),
@@ -312,7 +312,7 @@ class BotLists {
 	/**
 	 * Clean up on shutdown
 	 */
-	destroy() {
+	destroy () {
 		if (this.postInterval) {
 			clearInterval(this.postInterval);
 			this.postInterval = null;

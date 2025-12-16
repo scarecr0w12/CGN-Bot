@@ -408,7 +408,7 @@ class ServerTicketManager {
 
 		for (const msg of messages) {
 			const timestamp = msg.created_at.toISOString().replace("T", " ").substr(0, 19);
-			const prefix = msg.is_system_message ? "[SYSTEM]" : (msg.is_staff ? "[STAFF]" : "[USER]");
+			const prefix = msg.is_system_message ? "[SYSTEM]" : msg.is_staff ? "[STAFF]" : "[USER]";
 			transcript += `[${timestamp}] ${prefix} ${msg.author_username}: ${msg.content}\n`;
 		}
 

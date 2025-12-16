@@ -118,11 +118,11 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 						value: pages[0],
 						inline: false,
 					},
-					...((currentPerks.length > 0) ? [{
+					...currentPerks.length > 0 ? [{
 						name: "✨ Current Perks",
 						value: currentPerks.map(p => `• ${p}`).join("\n"),
 						inline: false,
-					}] : []),
+					}] : [],
 				],
 				thumbnail: {
 					url: guild.iconURL({ size: 256 }) || null,

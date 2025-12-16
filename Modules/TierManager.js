@@ -386,8 +386,8 @@ const grantFeature = async (serverId, featureKey) => {
 	}
 
 	const oldSubscription = server.subscription || {};
-	const granted = [...(oldSubscription.granted_features || [])];
-	const revoked = [...(oldSubscription.revoked_features || [])];
+	const granted = [...oldSubscription.granted_features || []];
+	const revoked = [...oldSubscription.revoked_features || []];
 
 	// Add to granted if not present
 	if (!granted.includes(featureKey)) {
@@ -424,8 +424,8 @@ const revokeFeature = async (serverId, featureKey) => {
 	}
 
 	const oldSubscription = server.subscription || {};
-	const granted = [...(oldSubscription.granted_features || [])];
-	const revoked = [...(oldSubscription.revoked_features || [])];
+	const granted = [...oldSubscription.granted_features || []];
+	const revoked = [...oldSubscription.revoked_features || []];
 
 	// Add to revoked if not present
 	if (!revoked.includes(featureKey)) {
