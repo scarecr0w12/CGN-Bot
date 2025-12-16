@@ -191,7 +191,7 @@ module.exports = async ({ client, Constants: { Colors, Text, EmptySpace } }, { s
 			case "end":
 			case ".": {
 				if (channelDocument.lottery.isOngoing) {
-					if (channelDocument.lottery.creator_id === msg.author.id || client.getUserBotAdmin(msg.guild, serverDocument, msg.member) >= 1 || configJSON.maintainers.includes(msg.author.id)) {
+					if (channelDocument.lottery.creator_id === msg.author.id || client.getUserBotAdmin(msg.guild, serverDocument, msg.member) >= 1 || await require("../../Modules/ConfigManager").isMaintainer(msg.author.id)) {
 						const winner = await Lotteries.end(client, msg.guild, serverDocument, msg.channel, channelDocument);
 						if (!winner) {
 							msg.send({

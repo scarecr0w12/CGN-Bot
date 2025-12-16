@@ -1,4 +1,5 @@
-const { parseAuthUser, fetchMaintainerPrivileges } = require("../helpers");
+const { parseAuthUser } = require("../helpers");
+const { fetchMaintainerPrivilegesCached } = require("../../Modules/ConfigManager");
 
 // Cache for site settings injection (refreshed every 60 seconds)
 let cachedInjection = { headScript: "", footerHTML: "" };
@@ -66,14 +67,17 @@ class SkynetResponse {
 				isMaintainer: true,
 				isSudoMaintainer: req.level === 2 || req.level === 0,
 				isHost: req.level === 0,
-				accessPrivileges: fetchMaintainerPrivileges(req.user.id),
+				accessPrivileges: fetchMaintainerPrivilegesCached(req.user.id),
 			});
 			this.serverData.isMaintainer = true;
 		} else if (req.user) {
+			// Use cached settings synchronously - will be populated by middleware init
+			const ConfigManager = require("../../Modules/ConfigManager");
+			const mwSettings = ConfigManager.getCached();
 			Object.assign(this.template, {
-				isContributor: req.isAuthenticated() ? configJSON.wikiContributors.includes(req.user.id) || configJSON.maintainers.includes(req.user.id) : false,
-				isMaintainer: req.isAuthenticated() ? configJSON.maintainers.includes(parseAuthUser(req.user).id) : false,
-				isSudoMaintainer: req.isAuthenticated() ? configJSON.sudoMaintainers.includes(parseAuthUser(req.user).id) : false,
+				isContributor: req.isAuthenticated() ? mwSettings.wikiContributors.includes(req.user.id) || mwSettings.maintainers.includes(req.user.id) : false,
+				isMaintainer: req.isAuthenticated() ? mwSettings.maintainers.includes(parseAuthUser(req.user).id) : false,
+				isSudoMaintainer: req.isAuthenticated() ? mwSettings.sudoMaintainers.includes(parseAuthUser(req.user).id) : false,
 			});
 		} else {
 			Object.assign(this.template, {

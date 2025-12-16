@@ -52,7 +52,9 @@ controllers.gallery = async (req, { res }) => {
 
 	const renderPage = async (upvotedData, serverData) => {
 		const extensionState = req.path.substring(req.path.lastIndexOf("/") + 1);
-		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && configJSON.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
+		const ConfigManager = require("../../Modules/ConfigManager");
+		const extSettings = await ConfigManager.get();
+		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && extSettings.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
 		try {
 			// Base criteria for counting
 			const baseCriteria = {
@@ -262,7 +264,8 @@ controllers.installer = async (req, { res }) => {
 		`/extensions/${galleryDocument._id}/install`;
 	extensionData.slug = galleryDocument.slug;
 
-	if ((!extensionData.accepted && !configJSON.maintainers.includes(req.user.id)) || galleryDocument.level === "third") {
+	const installSettings = await require("../../Modules/ConfigManager").get();
+	if ((!extensionData.accepted && !installSettings.maintainers.includes(req.user.id)) || galleryDocument.level === "third") {
 		return renderError(res, "You do not have sufficient permission to install this extension.", undefined, 403);
 	}
 
@@ -735,7 +738,8 @@ controllers.import = async (req, res) => {
 controllers.gallery.modify = async (req, res) => {
 	if (req.isAuthenticated()) {
 		if (req.params.extid && req.params.action) {
-			if (["accept", "feature", "reject", "remove", "approve_network"].includes(req.params.action) && !configJSON.maintainers.includes(req.user.id)) {
+			const modifySettings = await require("../../Modules/ConfigManager").get();
+			if (["accept", "feature", "reject", "remove", "approve_network"].includes(req.params.action) && !modifySettings.maintainers.includes(req.user.id)) {
 				res.sendStatus(403);
 				return;
 			}

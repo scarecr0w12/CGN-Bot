@@ -385,6 +385,27 @@ const unblockGuild = async (guildId) => {
 const getCached = () => settingsCache || { ...DEFAULTS };
 
 /**
+ * Synchronous version of fetchMaintainerPrivileges using cached settings
+ * Use this in constructors or other sync contexts
+ * @param {string} userId - Discord user ID
+ * @returns {string[]} Array of action names the user can perform
+ */
+const fetchMaintainerPrivilegesCached = (userId) => {
+	const settings = getCached();
+	let permLevel;
+
+	if (process.env.SKYNET_HOST === userId) permLevel = 0;
+	else if (settings.sudoMaintainers.includes(userId)) permLevel = 2;
+	else if (settings.maintainers.includes(userId)) permLevel = 1;
+	else return [];
+
+	return Object.keys(settings.perms).filter(key => {
+		const actionLevel = settings.perms[key];
+		return actionLevel === permLevel || permLevel === 0 || (permLevel === 2 && actionLevel === 1);
+	});
+};
+
+/**
  * Initialize the config manager by loading settings
  * Call this during bot startup after database connection
  */
@@ -407,6 +428,7 @@ module.exports = {
 	getUserLevel,
 	checkSudoMode,
 	fetchMaintainerPrivileges,
+	fetchMaintainerPrivilegesCached,
 	addMaintainer,
 	removeMaintainer,
 	blockUser,

@@ -161,13 +161,14 @@ controllers.public = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
 
+	const otherSettings = await require("../../../Modules/ConfigManager").get();
 	res.setPageData({
 		page: "admin-public-data.ejs",
-		canUnban: configJSON.maintainers.includes(req.consolemember.user.id) || process.env.SKYNET_HOST === req.consolemember.user.id,
+		canUnban: otherSettings.maintainers.includes(req.consolemember.user.id) || process.env.SKYNET_HOST === req.consolemember.user.id,
 	});
 	res.setConfigData({
 		public_data: serverDocument.config.public_data,
-		isBanned: configJSON.activityBlocklist.includes(svr.id),
+		isBanned: otherSettings.activityBlocklist.includes(svr.id),
 	});
 	res.render();
 };

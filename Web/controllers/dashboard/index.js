@@ -48,7 +48,8 @@ controllers.home = async (req, { res }) => {
 		};
 		addServerData(0, () => {
 			serverData.sort((a, b) => a.name.localeCompare(b.name));
-			if (configJSON.maintainers.includes(req.user.id) || process.env.SKYNET_HOST === req.user.id) {
+			const dashSettings = require("../../../Modules/ConfigManager").getCached();
+			if (dashSettings.maintainers.includes(req.user.id) || process.env.SKYNET_HOST === req.user.id) {
 				serverData.push({
 					name: "Maintainer Console",
 					id: "maintainer",

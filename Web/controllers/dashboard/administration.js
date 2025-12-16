@@ -173,8 +173,9 @@ controllers.blocked = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
 
+	const adminSettings = await require("../../../Modules/ConfigManager").get();
 	const blockedMembers = svr.memberList.filter(member => serverDocument.config.blocked.includes(member))
-		.concat(configJSON.userBlocklist.filter(usrid => svr.memberList.includes(usrid)));
+		.concat(adminSettings.userBlocklist.filter(usrid => svr.memberList.includes(usrid)));
 	await svr.fetchMember(blockedMembers);
 
 	res.setConfigData({
@@ -184,7 +185,7 @@ controllers.blocked = async (req, { res }) => {
 				name: member.user.username,
 				id: member.user.id,
 				avatar: client.getAvatarURL(member.user.id, member.user.avatar) || "/static/img/discord-icon.png",
-				isGlobal: configJSON.userBlocklist.includes(member.user.id),
+				isGlobal: adminSettings.userBlocklist.includes(member.user.id),
 			};
 		}),
 		moderation: {

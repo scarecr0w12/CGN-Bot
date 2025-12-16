@@ -25,7 +25,8 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 		`🛡 Bot Admins: **${serverDocument.config.admins.length}**`,
 		`🗃 Server Category: **${publicData.server_listing.category}**`,
 	];
-	if (!configJSON.activityBlocklist.includes(guild.id) && publicData.isShown && publicData.server_listing.isEnabled) {
+	const settings = await require("../../Modules/ConfigManager").get();
+	if (!settings.activityBlocklist.includes(guild.id) && publicData.isShown && publicData.server_listing.isEnabled) {
 		serverConfigs.push(`🌎 Everyone can join the server from the activity page`);
 		serverConfigs.push(`ℹ You can join by using [**this invite URL**](${publicData.server_listing.invite_link})`);
 	}

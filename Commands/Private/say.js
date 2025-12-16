@@ -54,7 +54,9 @@ module.exports = {
 			}
 
 			if (ch && ch.type === ChannelType.GuildText) {
-				if (main.client.getUserBotAdmin(svr, serverDocument, member) > 0 || configJSON.maintainers.includes(usr.id)) {
+				const ConfigManager = require("../../Modules/ConfigManager");
+				const isMaintainer = await ConfigManager.isMaintainer(usr.id);
+				if (main.client.getUserBotAdmin(svr, serverDocument, member) > 0 || isMaintainer) {
 					if (!ch.permissionsFor(usr).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages])) {
 						await initMsg.delete();
 						usr && usr.send && usr.send({

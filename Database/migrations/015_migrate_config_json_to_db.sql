@@ -6,19 +6,25 @@
 -- For MariaDB/SQL, we need to ensure the columns exist
 
 -- Add new columns for maintainer and blocklist arrays (stored as JSON)
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS sudo_maintainers JSON DEFAULT '[]';
+-- Using camelCase to match the ORM schema
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS sudoMaintainers JSON DEFAULT '[]';
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS maintainers JSON DEFAULT '[]';
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS wiki_contributors JSON DEFAULT '[]';
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS user_blocklist JSON DEFAULT '[]';
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS guild_blocklist JSON DEFAULT '[]';
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS activity_blocklist JSON DEFAULT '[]';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS wikiContributors JSON DEFAULT '[]';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS userBlocklist JSON DEFAULT '[]';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS guildBlocklist JSON DEFAULT '[]';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS activityBlocklist JSON DEFAULT '[]';
 
 -- Add columns for bot presence settings
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS bot_status VARCHAR(20) DEFAULT 'online';
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS bot_activity JSON DEFAULT '{"name": "default", "type": "PLAYING", "twitchURL": ""}';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS botStatus VARCHAR(20) DEFAULT 'online';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS botActivity JSON DEFAULT '{"name": "default", "type": "PLAYING", "twitchURL": ""}';
 
 -- Add columns for permission levels
 ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS perms JSON DEFAULT '{"eval": 0, "sudo": 2, "management": 2, "administration": 1, "shutdown": 2}';
 
 -- Add column for PM forwarding
-ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS pm_forward BOOLEAN DEFAULT FALSE;
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS pmForward BOOLEAN DEFAULT FALSE;
+
+-- Add columns for homepage settings
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS homepageMessageHTML TEXT DEFAULT '';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS headerImage VARCHAR(255) DEFAULT 'header-bg.jpg';
+ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS injection JSON DEFAULT '{"headScript": "", "footerHTML": ""}';

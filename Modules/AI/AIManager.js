@@ -44,7 +44,7 @@ class AIManager {
 	 */
 	async resolveProviderAndModel (serverDocument) {
 		const aiConfig = serverDocument.config.ai || {};
-		const globalConfig = configJSON.ai || {};
+		const globalConfig = {}; // AI config is now per-server only
 
 		// Get model configuration (guild overrides global)
 		const model = aiConfig.model || globalConfig.defaultModel || {

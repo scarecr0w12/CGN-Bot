@@ -19,8 +19,10 @@ controllers.debug = require("./debug");
 controllers.membership = require("./membership");
 controllers.seo = require("./seo");
 
-controllers.headerImage = (req, res) => {
-	let headerImage = configJSON.headerImage || "header.png";
+controllers.headerImage = async (req, res) => {
+	const ConfigManager = require("../../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
+	let headerImage = settings.headerImage || "header.png";
 	if (req.get("Accept") && req.get("Accept").indexOf("image/webp") > -1 && headerImage.includes(".")) {
 		headerImage = `${headerImage.substring(0, headerImage.lastIndexOf("."))}.webp`;
 	}

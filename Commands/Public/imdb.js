@@ -23,8 +23,8 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 		query = parts.slice(1).join(" ");
 	}
 
-	// Check for OMDb API key
-	const apiKey = configJSON.apis && configJSON.apis.omdb_api_key;
+	// Check for OMDb API key (from environment)
+	const apiKey = process.env.OMDB_API_KEY;
 
 	if (!apiKey) {
 		return msg.send({

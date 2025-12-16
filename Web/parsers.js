@@ -50,6 +50,8 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 
 
 parsers.userData = async (req, usr, userDocument) => {
+	const ConfigManager = require("../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
 	const botServers = await GetGuild.getAll(req.app.client, { mutualOnlyTo: usr.id, fullResolveMembers: ["OWNER"], parse: "noKeys" });
 	const mutualServers = botServers.sort((a, b) => a.name.localeCompare(b.name));
 	const userProfile = {
@@ -67,9 +69,9 @@ parsers.userData = async (req, usr, userDocument) => {
 		rawLastSeen: userDocument.last_seen ? moment(userDocument.last_seen).format(configJS.moment_date_format) : null,
 		pastNameCount: (userDocument.past_names || {}).length || 0,
 		isAfk: userDocument.afk_message !== undefined && userDocument.afk_message !== "" && userDocument.afk_message !== null,
-		isMaintainer: configJSON.maintainers.includes(usr.id) || configJSON.sudoMaintainers.includes(usr.id),
-		isContributor: configJSON.wikiContributors.includes(usr.id) || configJSON.maintainers.includes(usr.id) || configJSON.sudoMaintainers.includes(usr.id),
-		isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+		isMaintainer: settings.maintainers.includes(usr.id) || settings.sudoMaintainers.includes(usr.id),
+		isContributor: settings.wikiContributors.includes(usr.id) || settings.maintainers.includes(usr.id) || settings.sudoMaintainers.includes(usr.id),
+		isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 		mutualServers: [],
 		mutualServerCount: mutualServers.length,
 	};
