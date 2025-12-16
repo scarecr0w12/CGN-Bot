@@ -606,20 +606,6 @@
 						<i class="fa fa-trash"></i> Remove
 					</a>
 					<% } %>
-					<% } else if (pageData.mode === "queue") { %>
-					<a class="ext-card-action" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
-						<i class="fa fa-check"></i> Accept
-					</a>
-					<% if (extension.network_capability && ['network', 'network_advanced'].includes(extension.network_capability) && !extension.network_approved) { %>
-					<a class="ext-card-action" style="color:#2e7d32;" onclick="SkynetUtil.approveNetworkCapability('<%= extension._id %>');">
-						<i class="fa fa-globe"></i> Approve Network
-					</a>
-					<% } %>
-					<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
-					<a class="ext-card-action danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
-						<i class="fa fa-times"></i> Reject
-					</a>
-					<% } %>
 					<% } %>
 				<% } %>
 				<% if (authUser && authUser.id === extension.owner.id && extension.level === "gallery") { %>

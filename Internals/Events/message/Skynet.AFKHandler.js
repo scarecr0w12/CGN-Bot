@@ -20,7 +20,7 @@ class AFKHandler extends BaseEvent {
 
 	async handle (msg) {
 		const { serverDocument } = msg.guild;
-		if (serverDocument && msg.mentions.members.cache.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
+		if (serverDocument && msg.mentions.members?.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
 			msg.mentions.members.forEach(async member => {
 				if (![this.client.user.id, msg.author.id].includes(member.id) && !serverDocument.config.blocked.includes(member.id) && !member.user.bot) {
 					// Check if they have a server AFK message

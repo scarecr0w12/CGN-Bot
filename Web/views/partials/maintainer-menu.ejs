@@ -12,7 +12,7 @@ const menuItem = (path, label, icon = null) => {
 };
 
 const serversPaths = ['servers/server-list', 'servers/big-message'];
-const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists', 'global-options/premium-extensions', 'global-options/network-approvals'];
+const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists', 'global-options/premium-extensions', 'global-options/network-approvals', 'global-options/extension-queue'];
 const membershipPaths = ['membership/features', 'membership/tiers', 'membership/oauth', 'membership/payments', 'membership/email', 'membership/servers'];
 const managementPaths = ['management/maintainers', 'management/shards', 'management/injection', 'management/version', 'management/eval', 'management/logs'];
 const infraPaths = ['infrastructure/cloudflare', 'infrastructure/indexnow'];
@@ -68,6 +68,7 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 					<%- menuItem('global-options/bot-lists', 'Bot List APIs') %>
 					<%- menuItem('global-options/premium-extensions', 'Premium Extensions') %>
 					<%- menuItem('global-options/network-approvals', 'Network Approvals') %>
+					<%- menuItem('global-options/extension-queue', 'Extension Queue') %>
 					<% } %>
 				</li>
 			</ul>

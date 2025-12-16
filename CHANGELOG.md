@@ -5,9 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.6.0] - 2025-12-14
+## [1.6.0] - 2025-12-15
 
 ### Added
+
+#### Maintainer Extension Queue
+
+- **Extension Queue Page** (`/maintainer/global-options/extension-queue`) - Review and approve gallery submissions
+  - View all extensions pending approval with code preview
+  - Accept or reject extensions with rejection reasons
+  - Approve network access for extensions requesting API capabilities
+  - Stats showing queue count and network pending count
+  - Author information with avatar and ID display
 
 #### Developer Tools (Tier 2 Premium)
 
@@ -437,6 +446,10 @@ Reduced slash command count from 98 to 64 (34 slots saved) to stay well under Di
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.6.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.6.0
+[1.5.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.5.0
+[1.4.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.4.0
+[1.3.1]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.3.1
 [1.3.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.3.0
 [1.2.1]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.2.1
 [1.2.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.2.0

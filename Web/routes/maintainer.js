@@ -35,6 +35,7 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/premium-extensions", "administration", [], controllers.console.options.premiumExtensions);
 	setupConsolePage(router, "/global-options/premium-extensions/sales", "administration", [], controllers.console.options.premiumExtensionsSales);
 	setupConsolePage(router, "/global-options/network-approvals", "administration", [], controllers.console.networkApprovals);
+	setupConsolePage(router, "/global-options/extension-queue", "administration", [], controllers.console.extensionQueue);
 	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
 
 	// Membership System (Sudo/Host only)

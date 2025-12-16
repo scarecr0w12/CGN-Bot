@@ -2054,6 +2054,66 @@ controllers.tickets.transcript = async (req, res) => {
 controllers.tickets.getNextTicketNumber = getNextTicketNumber;
 
 // ============================================
+// EXTENSION QUEUE CONTROLLER
+// ============================================
+
+controllers.extensionQueue = async (req, { res }) => {
+	const parsers = require("../parsers");
+	const fs = require("fs");
+
+	try {
+		// Find extensions in queue state
+		const queueDocs = await Gallery.find({
+			state: { $in: ["queue", "version_queue"] },
+		}).sort({ last_updated: -1 }).exec();
+
+		const extensions = [];
+		let networkPendingCount = 0;
+
+		for (const doc of queueDocs) {
+			const versionTag = doc.version;
+			const versionDoc = doc.versions.id(versionTag);
+			if (!versionDoc) continue;
+
+			// Count network pending
+			const netCap = versionDoc.network_capability;
+			if (netCap && ["network", "network_advanced"].includes(netCap) && !versionDoc.network_approved) {
+				networkPendingCount++;
+			}
+
+			// Parse extension data
+			const extData = await parsers.extensionData(req, doc, versionTag);
+
+			// Try to read the code
+			let code = "";
+			try {
+				const codePath = path.join(__dirname, `../../extensions/${versionDoc.code_id}.skyext`);
+				code = fs.readFileSync(codePath, "utf8");
+			} catch (_) {
+				code = "// Code file not found";
+			}
+
+			extensions.push({
+				...extData,
+				code,
+				network_capability: netCap,
+				network_approved: versionDoc.network_approved,
+			});
+		}
+
+		res.setPageData({
+			page: "maintainer-extension-queue.ejs",
+			extensions,
+			queueCount: extensions.length,
+			networkPendingCount,
+		}).render();
+	} catch (err) {
+		logger.error("Failed to fetch extension queue", {}, err);
+		renderError(res, "Failed to load extension queue.");
+	}
+};
+
+// ============================================
 // NETWORK APPROVALS CONTROLLER
 // ============================================
 
