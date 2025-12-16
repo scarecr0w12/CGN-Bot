@@ -1,5 +1,6 @@
 const discordOAuthScopes = ["identify", "guilds", "email"];
 const { renderError } = require("../helpers");
+const ConfigManager = require("../../Modules/ConfigManager");
 
 const controllers = module.exports;
 
@@ -16,8 +17,9 @@ controllers.logout = (req, res, next) => {
 	});
 };
 
-controllers.authenticate = (req, res) => {
-	if (configJSON.userBlocklist.indexOf(req.user.id) > -1 || req.user.verified === false) {
+controllers.authenticate = async (req, res) => {
+	const isBlocked = await ConfigManager.isUserBlocked(req.user.id);
+	if (isBlocked || req.user.verified === false) {
 		req.session.destroy(err => {
 			if (!err) renderError(res, "Your Discord account must have a verified email.", "<strong>Hah!</strong> Thought you were close, didn'tcha?");
 			else renderError(res, "Failed to destroy your session.");

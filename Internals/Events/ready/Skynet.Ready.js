@@ -7,6 +7,7 @@ const {
 	Utils,
 	Giveaways,
 	TempRoleManager,
+	ConfigManager,
 } = require("../../../Modules/");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
 const metrics = require("../../../Modules/Metrics");
@@ -24,8 +25,9 @@ const {
 class Ready extends BaseEvent {
 	async handle () {
 		let leftGuilds = 0;
-		if (this.configJSON.guildBlocklist.length) {
-			this.configJSON.guildBlocklist.forEach(guildID => {
+		const settings = await ConfigManager.get();
+		if (settings.guildBlocklist.length) {
+			settings.guildBlocklist.forEach(guildID => {
 				const guild = this.client.guilds.cache.get(guildID);
 				if (guild) {
 					guild.leave();
@@ -103,12 +105,13 @@ class Ready extends BaseEvent {
 	// Set bot's "now playing" activity
 	async setBotActivity () {
 		logger.debug("Setting bots playing activity.");
+		const settings = await ConfigManager.get();
 		let activity = {
-			name: configJSON.activity.name.format({ shard: this.client.shardID, totalShards: this.client.shard.count }),
-			type: ActivityType[configJSON.activity.type] || ActivityType.Playing,
-			url: configJSON.activity.twitchURL || null,
+			name: settings.botActivity.name.format({ shard: this.client.shardID, totalShards: this.client.shard.count }),
+			type: ActivityType[settings.botActivity.type] || ActivityType.Playing,
+			url: settings.botActivity.twitchURL || null,
 		};
-		if (configJSON.activity.name === "default") {
+		if (settings.botActivity.name === "default") {
 			activity = {
 				name: "https://skynetbot.net | Shard {shard}".format({ shard: this.client.shardID }),
 				type: ActivityType.Playing,
@@ -117,7 +120,7 @@ class Ready extends BaseEvent {
 		}
 		await this.client.user.setPresence({
 			activities: [activity],
-			status: configJSON.status,
+			status: settings.botStatus,
 		});
 		await this.startMessageCount();
 	}

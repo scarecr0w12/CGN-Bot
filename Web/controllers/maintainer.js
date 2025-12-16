@@ -1,6 +1,7 @@
 const path = require("path");
 const showdown = require("showdown");
 const ObjectId = require("../../Database/ObjectID");
+const ConfigManager = require("../../Modules/ConfigManager");
 // Feedback model is available via global.Feedback (initialized in Driver.js)
 const md = new showdown.Converter({
 	tables: true,
@@ -57,6 +58,7 @@ controllers.maintainer = async (req, { res }) => {
 	}
 
 	const trafficData = await req.app.client.traffic.data();
+	// configJSON now only contains version/branch from env
 	const version = await req.app.client.central.API("versions").branch(configJSON.branch).get(configJSON.version)
 		.catch(() => null);
 	let checkData = version && await version.check();
@@ -113,7 +115,7 @@ controllers.servers.list = async (req, { res }) => {
 			renderPage();
 		} else if (req.query.block !== undefined) {
 			req.app.client.IPC.send("leaveGuild", data[parseInt(req.query.i)].id);
-			configJSON.guildBlocklist.push(data[parseInt(req.query.i)].id);
+			await ConfigManager.blockGuild(data[parseInt(req.query.i)].id);
 			save(req, res, true, true);
 			renderPage();
 		} else if (req.query.message) {
@@ -128,12 +130,13 @@ controllers.servers.list = async (req, { res }) => {
 };
 
 controllers.servers.list.post = async (req, res) => {
-	if (req.body.removeFromActivity && !configJSON.activityBlocklist.includes(req.body.removeFromActivity)) {
-		configJSON.activityBlocklist.push(req.body.removeFromActivity);
+	const settings = await ConfigManager.get();
+	if (req.body.removeFromActivity && !settings.activityBlocklist.includes(req.body.removeFromActivity)) {
+		await ConfigManager.update({ activityBlocklist: [...settings.activityBlocklist, req.body.removeFromActivity] });
 	}
 	if (req.body.unbanFromActivity) {
-		const index = configJSON.activityBlocklist.indexOf(req.body.unbanFromActivity);
-		if (index > -1) configJSON.activityBlocklist.splice(index, 1);
+		const updatedList = settings.activityBlocklist.filter(id => id !== req.body.unbanFromActivity);
+		await ConfigManager.update({ activityBlocklist: updatedList });
 	}
 	save(req, res, true);
 };
@@ -435,8 +438,9 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 };
 
 controllers.options.blocklist = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		global_blocklist: await Promise.all(configJSON.userBlocklist.map(async a => {
+		global_blocklist: await Promise.all(settings.userBlocklist.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {};
 			return {
 				name: usr.username,
@@ -447,72 +451,77 @@ controllers.options.blocklist = async (req, { res }) => {
 	}).setPageData("page", "maintainer-blocklist.ejs").render();
 };
 controllers.options.blocklist.post = async (req, res) => {
+	const settings = await ConfigManager.get();
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 
-		if (usr && !configJSON.userBlocklist.includes(usr.id ? usr.id : usr._id) && !configJSON.maintainers.includes(usr.id ? usr.id : usr._id)) {
-			configJSON.userBlocklist.push(usr.id ? usr.id : usr._id);
+		const userId = usr.id ? usr.id : usr._id;
+		if (usr && !settings.userBlocklist.includes(userId) && !settings.maintainers.includes(userId)) {
+			await ConfigManager.blockUser(userId);
 		}
 	} else {
-		configJSON.userBlocklist.forEach(usrid => {
-			if (req.body[`block-${usrid}-removed`] !== undefined) {
-				configJSON.userBlocklist.splice(configJSON.userBlocklist.indexOf(usrid), 1);
-			}
-		});
+		const toRemove = settings.userBlocklist.filter(usrid => req.body[`block-${usrid}-removed`] !== undefined);
+		for (const usrid of toRemove) {
+			await ConfigManager.unblockUser(usrid);
+		}
 	}
 
 	save(req, res);
 };
 
 controllers.options.bot = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		status: configJSON.status,
-		type: configJSON.activity.type,
-		game: configJSON.activity.name,
-		game_default: configJSON.activity.name === "default",
-		twitchURL: configJSON.activity.twitchURL,
+		status: settings.botStatus,
+		type: settings.botActivity.type,
+		game: settings.botActivity.name,
+		game_default: settings.botActivity.name === "default",
+		twitchURL: settings.botActivity.twitchURL,
 		avatar: req.app.client.user.avatarURL({ type: "png", size: 512 }),
 	}).setPageData("page", "maintainer-bot-user.ejs").render();
 };
 controllers.options.bot.post = async (req, res) => {
 	req.app.client.IPC.send("updateBotUser", {
-		avatar: req.body.avatar,
-		username: req.body.username,
 		game: req.body.game,
 		status: req.body.status,
 		type: req.body.type,
 		twitchURL: req.body.twitch,
 	});
-	configJSON.activity.name = req.body.game;
-	configJSON.activity.type = req.body.type;
-	configJSON.activity.twitchURL = req.body.twitch;
-	if (req.body.game === "skynetbot.com") {
-		configJSON.activity.name = "default";
-	}
-	if (req.body.status) configJSON.status = req.body.status;
+	const updates = {
+		botActivity: {
+			name: req.body.game === "skynetbot.com" ? "default" : req.body.game,
+			type: req.body.type,
+			twitchURL: req.body.twitch,
+		},
+	};
+	if (req.body.status) updates.botStatus = req.body.status;
+	await ConfigManager.update(updates);
 	save(req, res, true);
 };
 
 controllers.options.homepage = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		headerImage: configJSON.headerImage,
-		homepageMessageHTML: configJSON.homepageMessageHTML,
+		headerImage: settings.headerImage,
+		homepageMessageHTML: settings.homepageMessageHTML,
 	}).setPageData({
 		dirname: path.join(__dirname, "../public/img/"),
 		page: "maintainer-homepage.ejs",
 	}).render();
 };
 controllers.options.homepage.post = async (req, res) => {
-	configJSON.homepageMessageHTML = req.body.homepageMessageHTML;
-	configJSON.headerImage = req.body.header_image;
-
+	await ConfigManager.update({
+		homepageMessageHTML: req.body.homepageMessageHTML,
+		headerImage: req.body.header_image,
+	});
 	save(req, res, true);
 };
 
 controllers.options.contributors = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		wiki_contributors: await Promise.all(configJSON.maintainers.map(async a => {
+		wiki_contributors: await Promise.all(settings.maintainers.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -522,9 +531,9 @@ controllers.options.contributors = async (req, { res }) => {
 				id: usr.id,
 				avatar: usr.avatarURL ? usr.displayAvatarURL() || "/static/img/discord-icon.png" : "/static/img/discord-icon.png",
 				isMaintainer: true,
-				isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+				isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 			};
-		}).concat(configJSON.wikiContributors.map(async a => {
+		}).concat(settings.wikiContributors.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -536,21 +545,22 @@ controllers.options.contributors = async (req, { res }) => {
 			};
 		}))),
 	}).setPageData({
-		showRemove: configJSON.maintainers.includes(req.user.id),
+		showRemove: settings.maintainers.includes(req.user.id),
 		page: "maintainer-wiki-contributors.ejs",
 	}).render();
 };
 controllers.options.contributors.post = async (req, res) => {
+	const settings = await ConfigManager.get();
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 		if (!usr.id) usr.id = usr._id;
-		if (usr && !configJSON.wikiContributors.includes(usr.id)) {
-			configJSON.wikiContributors.push(usr.id);
+		if (usr && !settings.wikiContributors.includes(usr.id)) {
+			await ConfigManager.update({ wikiContributors: [...settings.wikiContributors, usr.id] });
 		}
 	} else {
-		const i = configJSON.wikiContributors.indexOf(req.body["contributor-removed"]);
-		configJSON.wikiContributors.splice(i, 1);
+		const updated = settings.wikiContributors.filter(id => id !== req.body["contributor-removed"]);
+		await ConfigManager.update({ wikiContributors: updated });
 	}
 
 	save(req, res);
@@ -1217,8 +1227,9 @@ controllers.membership.email.test = async (req, res) => {
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		maintainers: await Promise.all(configJSON.maintainers.map(async id => {
+		maintainers: await Promise.all(settings.maintainers.map(async id => {
 			const usr = await req.app.client.users.fetch(id, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -1227,54 +1238,60 @@ controllers.management.maintainers = async (req, { res }) => {
 				name: usr.username,
 				id: usr.id,
 				avatar: usr.avatarURL ? usr.displayAvatarURL() || "/static/img/discord-icon.png" : "/static/img/discord-icon.png",
-				isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+				isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 			};
 		})),
-		perms: configJSON.perms,
+		perms: settings.perms,
 	}).setPageData("page", "maintainer-maintainers.ejs").render();
 };
 controllers.management.maintainers.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 		if (!usr.id) usr.id = usr._id;
 
-		if (usr && !configJSON.maintainers.includes(usr.id)) {
-			configJSON.maintainers.push(usr.id);
-		}
-		if (usr && req.body.isSudo === "true" && !configJSON.sudoMaintainers.includes(usr.id)) {
-			configJSON.sudoMaintainers.push(usr.id);
+		if (usr) {
+			await ConfigManager.addMaintainer(usr.id, req.body.isSudo === "true");
 		}
 	} else {
 		if (req.body[`maintainer-removed`]) {
-			configJSON.maintainers[configJSON.maintainers.indexOf(req.body[`maintainer-removed`])] = null;
-			configJSON.sudoMaintainers[configJSON.sudoMaintainers.indexOf(req.body[`maintainer-removed`])] = null;
+			await ConfigManager.removeMaintainer(req.body[`maintainer-removed`]);
 		}
 		if (req.body[`maintainer-sudo`]) {
-			if (configJSON.sudoMaintainers.includes(req.body[`maintainer-sudo`])) configJSON.sudoMaintainers[configJSON.sudoMaintainers.indexOf(req.body[`maintainer-sudo`])] = null;
-			else configJSON.sudoMaintainers.push(req.body[`maintainer-sudo`]);
+			// Toggle sudo status
+			const updatedSettings = await ConfigManager.get();
+			if (updatedSettings.sudoMaintainers.includes(req.body[`maintainer-sudo`])) {
+				const newSudoList = updatedSettings.sudoMaintainers.filter(id => id !== req.body[`maintainer-sudo`]);
+				await ConfigManager.update({ sudoMaintainers: newSudoList });
+			} else {
+				await ConfigManager.update({ sudoMaintainers: [...updatedSettings.sudoMaintainers, req.body[`maintainer-sudo`]] });
+			}
 		}
 
-		configJSON.maintainers.spliceNullElements();
-		configJSON.sudoMaintainers.spliceNullElements();
-
+		// Handle permission updates
 		const perms = Object.keys(req.body).filter(param => param.startsWith("perm-"));
-		perms.forEach(perm => {
-			const value = req.body[perm];
-			[, perm] = perm.split("-");
-			if (configJSON.perms[perm] === 0 && process.env.SKYNET_HOST !== req.user.id) return;
-			switch (value) {
-				case "sudo":
-					configJSON.perms[perm] = 2;
-					break;
-				case "host":
-					configJSON.perms[perm] = 0;
-					break;
-				default:
-					configJSON.perms[perm] = 1;
-			}
-		});
+		if (perms.length > 0) {
+			const currentSettings = await ConfigManager.get();
+			const newPerms = { ...currentSettings.perms };
+			perms.forEach(permKey => {
+				const value = req.body[permKey];
+				const [, perm] = permKey.split("-");
+				if (currentSettings.perms[perm] === 0 && process.env.SKYNET_HOST !== req.user.id) return;
+				switch (value) {
+					case "sudo":
+						newPerms[perm] = 2;
+						break;
+					case "host":
+						newPerms[perm] = 0;
+						break;
+					default:
+						newPerms[perm] = 1;
+				}
+			});
+			await ConfigManager.update({ perms: newPerms });
+		}
 	}
 
 	if (req.body["additional-perms"]) return save(req, res, true);
@@ -1421,8 +1438,10 @@ controllers.management.version.socket = async socket => {
 				socket.emit("installLog", log);
 			});
 			version.on("installFinish", async () => {
-				configJSON.version = version.tag;
-				configJSON.branch = version.branch;
+				// NOTE: Version/branch are now read-only from env vars (BOT_VERSION, BOT_BRANCH)
+				// After installing a new version, update your .env file and restart the bot
+				// The old configJSON.version/branch writes are no longer needed
+				logger.info(`Version ${version.tag} installed. Update BOT_VERSION and BOT_BRANCH env vars and restart.`);
 				socket.request.app = socket.route.router.app;
 				await save(socket.request, null, true, true);
 				socket.emit("installFinish");
@@ -1677,7 +1696,8 @@ controllers.tickets.list = async (req, { res }) => {
 	}
 
 	// Get maintainers for assignment dropdown
-	const maintainers = await Promise.all(configJSON.maintainers.map(async id => {
+	const siteConfig = await ConfigManager.get();
+	const maintainers = await Promise.all(siteConfig.maintainers.map(async id => {
 		try {
 			const user = await req.app.client.users.fetch(id, true).catch(() => null);
 			return { id, username: user?.username || "Unknown" };
@@ -1738,7 +1758,8 @@ controllers.tickets.view = async (req, { res }) => {
 	}
 
 	// Get maintainers for assignment dropdown
-	const maintainers = await Promise.all(configJSON.maintainers.map(async id => {
+	const siteConfig = await ConfigManager.get();
+	const maintainers = await Promise.all(siteConfig.maintainers.map(async id => {
 		try {
 			const user = await req.app.client.users.fetch(id, true).catch(() => null);
 			return { id, username: user?.username || "Unknown" };

@@ -8,6 +8,7 @@ const { AllowedEvents, Colors, Scopes, NetworkCapabilities, ExtensionTags } = re
 const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateExtensionData, writeExtensionData } = require("../helpers");
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+const { generateUniqueSlug } = require("../../Modules/Utils/Slug");
 
 const controllers = module.exports;
 
@@ -231,9 +232,36 @@ controllers.installer = async (req, { res }) => {
 	}
 	const galleryDocument = await Gallery.findOne(id);
 	if (!galleryDocument) return renderError(res, "That extension doesn't exist!", undefined, 404);
+
+	// Generate slug if missing (for existing extensions without slugs)
+	if (!galleryDocument.slug && galleryDocument.name) {
+		const checkSlugExists = async slug => {
+			const existing = await Gallery.findOne({ slug, _id: { $ne: id } });
+			return !!existing;
+		};
+		const newSlug = await generateUniqueSlug(galleryDocument.name, checkSlugExists);
+		if (newSlug) {
+			galleryDocument.query.set("slug", newSlug);
+			await galleryDocument.save().catch(() => null);
+		}
+	}
+
+	// Redirect legacy URL to canonical slug URL (301 for SEO)
+	if (galleryDocument.slug && !req.params.slug) {
+		const queryString = req.originalUrl.includes("?") ? req.originalUrl.substring(req.originalUrl.indexOf("?")) : "";
+		return res.redirect(301, `/extensions/${galleryDocument._id}/${galleryDocument.slug}/install${queryString}`);
+	}
+
 	const versionTag = parseInt(req.query.v) || galleryDocument.published_version;
 	if (!galleryDocument.versions.id(versionTag)) return renderError(res, "That extension version doesn't exist!", undefined, 404);
 	const extensionData = await parsers.extensionData(req, galleryDocument, versionTag);
+
+	// Add canonical URL to extension data for SEO meta tags
+	extensionData.canonicalUrl = galleryDocument.slug ?
+		`/extensions/${galleryDocument._id}/${galleryDocument.slug}/install` :
+		`/extensions/${galleryDocument._id}/install`;
+	extensionData.slug = galleryDocument.slug;
+
 	if ((!extensionData.accepted && !configJSON.maintainers.includes(req.user.id)) || galleryDocument.level === "third") {
 		return renderError(res, "You do not have sufficient permission to install this extension.", undefined, 403);
 	}
@@ -428,6 +456,16 @@ controllers.builder.post = async (req, res) => {
 				const newVersion = writeExtensionData(galleryDocument, req.body);
 				if (newVersion && isUpdate) galleryQueryDocument.set("state", galleryDocument.state === "saved" ? "saved" : "version_queue");
 				else if (newVersion) galleryQueryDocument.set("state", "saved");
+
+				// Generate slug for new extensions or if name changed and no slug exists
+				if (!galleryDocument.slug && req.body.name) {
+					const checkSlugExists = async slug => {
+						const existing = await Gallery.findOne({ slug, _id: { $ne: galleryDocument._id } });
+						return !!existing;
+					};
+					const newSlug = await generateUniqueSlug(req.body.name, checkSlugExists);
+					if (newSlug) galleryQueryDocument.set("slug", newSlug);
+				}
 
 				if (!isUpdate) {
 					galleryQueryDocument.set("owner_id", req.user.id);

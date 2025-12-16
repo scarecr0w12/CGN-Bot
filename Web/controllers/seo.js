@@ -99,12 +99,18 @@ const sitemapXml = async (req, res) => {
 	try {
 		// Get published extensions using global Gallery model
 		const extDocs = await Gallery.find({ state: "gallery" }).exec();
-		extensions = extDocs.map(doc => ({
-			url: `/extensions/${doc._id}/install`,
-			priority: "0.5",
-			changefreq: "weekly",
-			lastmod: doc.accepted_at ? new Date(doc.accepted_at).toISOString().split("T")[0] : now,
-		}));
+		extensions = extDocs.map(doc => {
+			// Use SEO-friendly slug URL if available
+			const extUrl = doc.slug ?
+				`/extensions/${doc._id}/${doc.slug}/install` :
+				`/extensions/${doc._id}/install`;
+			return {
+				url: extUrl,
+				priority: "0.5",
+				changefreq: "weekly",
+				lastmod: doc.accepted_at ? new Date(doc.accepted_at).toISOString().split("T")[0] : now,
+			};
+		});
 	} catch (err) {
 		logger.warn("Failed to fetch extensions for sitemap", {}, err);
 	}

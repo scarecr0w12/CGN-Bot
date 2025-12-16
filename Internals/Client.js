@@ -338,68 +338,28 @@ module.exports = class SkynetClient extends DJSClient {
 	}
 
 	async canRunSharedCommand (command, user) {
+		const ConfigManager = require("../Modules/ConfigManager");
 		command = this.getSharedCommandName(command);
-		if (!(configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id))) throw new SkynetError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
+		const isMaintainer = await ConfigManager.isMaintainer(user.id);
+		if (!isMaintainer) throw new SkynetError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
 		const commandData = this.getSharedCommandMetadata(command);
 		switch (commandData.perm) {
 			case "eval": {
-				const value = configJSON.perms.eval;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("eval", user.id);
 			}
 			case "administration":
 			case "admin": {
-				const value = configJSON.perms.administration;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("administration", user.id);
 			}
 			case "shutdown": {
-				const value = configJSON.perms.shutdown;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("shutdown", user.id);
 			}
 			case "none":
 			case "any": {
 				return true;
 			}
 			default: {
-				throw new SkynetError("SHARED_INVALID_MODE", {}, commandData.configJSON, command);
+				throw new SkynetError("SHARED_INVALID_MODE", {}, commandData.perm, command);
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 /* eslint-disable max-len, max-depth, no-console */
 const BaseEvent = require("../BaseEvent.js");
 const { MicrosoftTranslate: mstranslate, Utils, TicketManager } = require("../../../Modules/index");
+const ConfigManager = require("../../../Modules/ConfigManager");
 const metrics = require("../../../Modules/Metrics");
 const {
 	Gist,
@@ -18,7 +19,7 @@ const { MessageType, PermissionFlagsBits } = require("discord.js");
 const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
 
 class MessageCreate extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.channel.postable) {
 			logger.verbose(`Ignoring message in unpostable channel.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
@@ -27,12 +28,13 @@ class MessageCreate extends BaseEvent {
 			logger.verbose(`Ignoring non-standard message.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
 		}
-		if (msg.author.id === this.client.user.id || msg.author.bot || this.configJSON.userBlocklist.includes(msg.author.id)) {
+		const isUserBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (msg.author.id === this.client.user.id || msg.author.bot || isUserBlocked) {
 			if (msg.author.id === this.client.user.id) {
 				logger.silly(`Ignoring self-message.`, { msgid: msg.id });
 				return false;
 			} else {
-				logger.verbose(`Ignored ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: this.configJSON.userBlocklist.includes(msg.author.id) });
+				logger.verbose(`Ignored ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
@@ -58,7 +60,8 @@ class MessageCreate extends BaseEvent {
 			}
 
 			// Handle ticket system - check if this is a ticket-related DM
-			if (!this.configJSON.maintainers.includes(msg.author.id)) {
+			const settings = await ConfigManager.get();
+			if (!settings.maintainers.includes(msg.author.id)) {
 				if (!this.client.ticketManager) {
 					this.client.ticketManager = new TicketManager(this.client);
 				}
@@ -71,7 +74,7 @@ class MessageCreate extends BaseEvent {
 			}
 
 			// Forward PM to maintainer(s) if enabled
-			if (!this.configJSON.maintainers.includes(msg.author.id) && this.configJSON.pmForward) {
+			if (!settings.maintainers.includes(msg.author.id) && settings.pmForward) {
 				let url = "";
 				if (msg.content.length >= 1950) {
 					const GistUpload = new Gist(this.client);
@@ -83,7 +86,7 @@ class MessageCreate extends BaseEvent {
 						({ url } = res);
 					}
 				}
-				for (const maintainerID of this.configJSON.maintainers) {
+				for (const maintainerID of settings.maintainers) {
 					let user = this.client.users.cache.get(maintainerID);
 					if (!user) {
 						user = await this.client.users.fetch(maintainerID, true);

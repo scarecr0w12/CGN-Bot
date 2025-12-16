@@ -1,10 +1,12 @@
 const BaseEvent = require("../BaseEvent.js");
 const { NewServer: getNewServerData, PostShardedData } = require("../../../Modules/");
+const ConfigManager = require("../../../Modules/ConfigManager");
 // const { LoggingLevels } = require("../../Constants"); // Disabled: server join messages removed
 
 class GuildCreate extends BaseEvent {
 	async handle (guild) {
-		if (this.configJSON.guildBlocklist.includes(guild.id)) {
+		const settings = await ConfigManager.get();
+		if (settings.guildBlocklist.includes(guild.id)) {
 			logger.info(`Left "${guild}" due to it being blocklisted!`, { guild: guild.id });
 			guild.leave();
 		} else {

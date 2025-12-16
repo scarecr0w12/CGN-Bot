@@ -1,6 +1,7 @@
 module.exports = {
 	SkynetClient: require("./SkynetClient.js"),
 
+	ConfigManager: require("./ConfigManager.js"),
 	ConversionHandler: require("./ConversionHandler.js"),
 	EmailService: require("./EmailService.js"),
 	Encryption: require("./Encryption"),

@@ -251,7 +251,9 @@ class TicketManager {
 			}],
 		};
 
-		for (const maintainerId of global.configJSON.maintainers || []) {
+		const ConfigManager = require("./ConfigManager");
+		const settings = await ConfigManager.get();
+		for (const maintainerId of settings.maintainers || []) {
 			try {
 				const user = await this.client.users.fetch(maintainerId);
 				if (user) {
@@ -282,9 +284,11 @@ class TicketManager {
 		};
 
 		// Notify assigned maintainer first, or all maintainers if unassigned
+		const ConfigManager = require("./ConfigManager");
+		const notifySettings = await ConfigManager.get();
 		const notifyList = ticket.assigned_to ?
 			[ticket.assigned_to] :
-			global.configJSON.maintainers || [];
+			notifySettings.maintainers || [];
 
 		for (const maintainerId of notifyList) {
 			try {

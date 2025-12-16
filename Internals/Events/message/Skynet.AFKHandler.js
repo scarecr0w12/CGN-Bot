@@ -1,15 +1,17 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const ConfigManager = require("../../../Modules/ConfigManager");
 const { Colors } = require("../../Constants");
 
 class AFKHandler extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.guild) return false;
 		if (msg.editedAt || msg.type !== "DEFAULT") return false;
-		if (msg.author.id === this.client.user.id || msg.author.bot || this.configJSON.userBlocklist.includes(msg.author.id)) {
+		const isUserBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (msg.author.id === this.client.user.id || msg.author.bot || isUserBlocked) {
 			if (msg.author.id === this.client.user.id) {
 				return false;
 			} else {
-				logger.silly(`Ignored ${msg.author.tag} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: this.configJSON.userBlocklist.includes(msg.author.id) });
+				logger.silly(`Ignored ${msg.author.tag} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}

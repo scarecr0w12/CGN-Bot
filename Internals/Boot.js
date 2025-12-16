@@ -30,19 +30,19 @@ const token = (val, configJS, configJSON, auth) => {
 	auth.discord.clientToken = val;
 };
 
-const sudo = (val, configJS, configJSON) => {
-	const { writeJSONAtomic } = require("fs-nextra");
+const sudo = async (val, _configJS, _configJSON) => {
+	const ConfigManager = require("../Modules/ConfigManager");
 	if (typeof val !== "string" && typeof val !== "number") {
 		logger.error(`Argument --sudo requires a parameter.`);
 		return;
 	}
 	if (typeof val !== "string") val = val.toString();
-	if (configJSON.sudoMaintainers.includes(val)) return;
-	configJSON.sudoMaintainers.push(val);
-	configJSON.maintainers.push(val);
-	writeJSONAtomic(`${__dirname}/../Configurations/config.json`, configJSON, { spaces: 2 })
-		.then(() => logger.info(`Promoted user with ID ${val} to Sudo Maintainer.`, { usrid: val }))
-		.catch(err => logger.error(`Failed to promote user with ID ${val} to Sudo Maintainer.`, { usrid: val }, err));
+	try {
+		await ConfigManager.addMaintainer(val, true);
+		logger.info(`Promoted user with ID ${val} to Sudo Maintainer.`, { usrid: val });
+	} catch (err) {
+		logger.error(`Failed to promote user with ID ${val} to Sudo Maintainer.`, { usrid: val }, err);
+	}
 };
 
 const host = (val, configJS, configJSON) => {

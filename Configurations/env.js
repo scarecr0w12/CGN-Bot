@@ -18,19 +18,20 @@ const pickNumber = (envKey, fallback) => {
 	return Number.isNaN(parsed) ? fallback : parsed;
 };
 
+// Parse comma-separated list from env
+const parseList = (envKey, fallback) => {
+	const envVal = process.env[envKey];
+	if (envVal) return envVal.split(",").map(s => s.trim()).filter(Boolean);
+	return fallback || [];
+};
+
 const loadConfigs = () => {
+	// config.js contains static server configuration (not runtime-changeable)
 	const fileConfigJS = safeRequire("./config.js");
-	const fileConfigJSON = safeRequire("./config.json");
-	const templateConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : safeRequire("./config.template.json");
+	// auth.js contains API tokens and secrets
 	const fileAuth = safeRequire("./auth.js");
 
-	// Parse comma-separated list from env or use file config
-	const parseList = (envKey, fallback) => {
-		const envVal = process.env[envKey];
-		if (envVal) return envVal.split(",").map(s => s.trim()).filter(Boolean);
-		return fallback || [];
-	};
-
+	// configJS: Static server configuration from env + config.js fallback
 	const configJS = {
 		...fileConfigJS,
 		disableExternalScripts: pick("DISABLE_EXTERNAL_SCRIPTS", fileConfigJS.disableExternalScripts ?? "false") === "true",
@@ -64,27 +65,26 @@ const loadConfigs = () => {
 		encryptionIv: pick("ENCRYPTION_IV", fileConfigJS.encryptionIv),
 	};
 
-	const baseConfigJSON = Object.keys(fileConfigJSON).length ? fileConfigJSON : templateConfigJSON;
-
+	// configJSON: MINIMAL - only version/branch info from env
+	// All other runtime settings are now in the database (SiteSettings collection)
+	// and managed via ConfigManager module
+	//
+	// MIGRATION NOTE: The following fields have been moved to SiteSettings:
+	// - maintainers, sudoMaintainers, wikiContributors -> ConfigManager.get().maintainers, etc.
+	// - userBlocklist, guildBlocklist, activityBlocklist -> ConfigManager.get().userBlocklist, etc.
+	// - activity (name, type, twitchURL) -> ConfigManager.get().botActivity
+	// - status -> ConfigManager.get().botStatus
+	// - perms -> ConfigManager.get().perms
+	// - pmForward -> ConfigManager.get().pmForward
+	// - homepageMessageHTML, headerImage -> SiteSettings.homepageMessageHTML, etc.
+	// - injection -> SiteSettings.injection
 	const configJSON = {
-		...baseConfigJSON,
-		status: pick("BOT_STATUS", baseConfigJSON.status),
-		branch: pick("BOT_BRANCH", baseConfigJSON.branch),
-		version: pick("BOT_VERSION", baseConfigJSON.version),
-		maintainers: parseList("BOT_MAINTAINERS", baseConfigJSON.maintainers),
-		sudoMaintainers: parseList("BOT_SUDO_MAINTAINERS", baseConfigJSON.sudoMaintainers),
-		wikiContributors: parseList("BOT_WIKI_CONTRIBUTORS", baseConfigJSON.wikiContributors),
-		userBlocklist: parseList("BOT_USER_BLOCKLIST", baseConfigJSON.userBlocklist),
-		guildBlocklist: parseList("BOT_GUILD_BLOCKLIST", baseConfigJSON.guildBlocklist),
-		activityBlocklist: parseList("BOT_ACTIVITY_BLOCKLIST", baseConfigJSON.activityBlocklist),
-		activity: {
-			...baseConfigJSON.activity,
-			name: pick("BOT_ACTIVITY_NAME", baseConfigJSON.activity?.name),
-			type: pick("BOT_ACTIVITY_TYPE", baseConfigJSON.activity?.type),
-			twitchURL: pick("BOT_ACTIVITY_TWITCH_URL", baseConfigJSON.activity?.twitchURL),
-		},
+		// Version info - still from env (static per deployment)
+		version: pick("BOT_VERSION", "1.6.0"),
+		branch: pick("BOT_BRANCH", "production"),
 	};
 
+	// Token configuration from env + auth.js fallback
 	const tokenEnvMap = {
 		discordBotsOrg: "DISCORD_BOTS_ORG_TOKEN",
 		discordList: "DISCORD_LIST_TOKEN",

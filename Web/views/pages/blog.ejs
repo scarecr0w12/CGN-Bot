@@ -220,6 +220,22 @@
 	.blog-back-link:hover {
 		color: var(--color-primary);
 	}
+	.blog-controls {
+		background: var(--color-bg-primary);
+		padding: 1.5rem;
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-sm);
+		margin-bottom: 2rem;
+	}
+	.blog-search-form {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.blog-search-input {
+		flex: 1;
+		min-width: 200px;
+	}
 	</style>
 </head>
 <body>
@@ -275,9 +291,43 @@
 						<%- include('../partials/blog-article', { blogPost }) %>
 					</div>
 				<% } else if (pageData.mode === "list") { %>
-					<% if (pageData.data.length > 0) { %>
+					<% if (pageData.data.length > 0 || pageData.search || pageData.category) { %>
 						<div class="columns is-centered">
 							<div class="column is-8">
+								<div class="blog-controls fade-in">
+									<form action="/blog" method="GET" class="blog-search-form">
+										<div class="control has-icons-left blog-search-input">
+											<input class="input" type="text" name="search" placeholder="Search articles..." value="<%= pageData.search || '' %>">
+											<span class="icon is-small is-left">
+												<i class="fa fa-search"></i>
+											</span>
+										</div>
+										<div class="select">
+											<select name="category" onchange="this.form.submit()">
+												<option value="">All Categories</option>
+												<% pageData.categories.forEach(cat => { %>
+													<option value="<%= cat %>" <%= pageData.category === cat ? 'selected' : '' %>><%= cat %></option>
+												<% }); %>
+											</select>
+										</div>
+										<button type="submit" class="button is-primary">
+											Search
+										</button>
+										<% if (pageData.search || pageData.category) { %>
+											<a href="/blog" class="button is-light">
+												Clear
+											</a>
+										<% } %>
+									</form>
+								</div>
+
+								<% if (pageData.data.length === 0) { %>
+									<div class="has-text-centered" style="padding: 3rem;">
+										<h3 class="title is-4">No posts found</h3>
+										<p class="subtitle is-6">Try adjusting your search or filters</p>
+									</div>
+								<% } %>
+
 								<% pageData.data.forEach(blogPost => { %>
 								<article class="blog-post-card fade-in">
 									<div class="blog-post-header">
@@ -313,9 +363,14 @@
 								<% }); %>
 
 								<div class="blog-pagination">
+									<% 
+										let queryParams = '';
+										if (pageData.search) queryParams += `&search=${encodeURIComponent(pageData.search)}`;
+										if (pageData.category) queryParams += `&category=${encodeURIComponent(pageData.category)}`;
+									%>
 									<div>
 										<% if (pageData.currentPage < pageData.numPages) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %>">
+										<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %><%= queryParams %>">
 											<span class="icon"><i class="fa fa-chevron-left"></i></span>
 											<span>Older Posts</span>
 										</a>
@@ -323,7 +378,7 @@
 									</div>
 									<div>
 										<% if (pageData.currentPage > 1) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %>">
+										<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %><%= queryParams %>">
 											<span>Newer Posts</span>
 											<span class="icon"><i class="fa fa-chevron-right"></i></span>
 										</a>

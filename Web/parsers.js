@@ -193,9 +193,18 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		}
 	}
 
+	// Build SEO-friendly URL
+	const extId = galleryDocument._id.toString();
+	const slug = galleryDocument.slug;
+	const installUrl = slug ?
+		`/extensions/${extId}/${slug}/install` :
+		`/extensions/${extId}/install`;
+
 	return {
-		_id: galleryDocument._id.toString(),
+		_id: extId,
 		name: galleryDocument.name,
+		slug: slug || null,
+		installUrl,
 		version: versionTag || galleryDocument.published_version,
 		type: versionDocument.type,
 		typeIcon,

@@ -53,6 +53,9 @@ const galleryRouting = router => {
 	setupPage(router, "/extensions/(|gallery|queue)", [], controllers.extensions.gallery);
 	setupPage(router, "/extensions/my", [], controllers.extensions.my, true);
 	setupPage(router, "/extensions/builder", [], controllers.extensions.builder, true);
+	// SEO-friendly slug URL (canonical) - must be before :extid/install to take priority
+	setupPage(router, "/extensions/:extid/:slug/install", [], controllers.extensions.installer);
+	// Legacy ID-only URL (redirects to slug URL if slug exists)
 	setupPage(router, "/extensions/:extid/install", [], controllers.extensions.installer);
 	router.routes.push(new Route(router, "/extensions/builder", [middleware.checkUnavailable], controllers.extensions.builder.post, "post", "general"));
 	// Extension import endpoint (must be before :extid to avoid conflict)

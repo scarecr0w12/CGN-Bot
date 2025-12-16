@@ -1,11 +1,132 @@
 const Schema = require("../Schema");
 
 // Site-wide settings stored in MongoDB
+// This schema contains ALL runtime-configurable settings (migrated from config.json)
 module.exports = new Schema({
 	_id: {
 		type: String,
 		default: "main",
 	},
+
+	// ============================================
+	// MAINTAINER & ACCESS CONTROL (migrated from config.json)
+	// ============================================
+
+	// Sudo maintainers have highest privileges (level 2)
+	sudoMaintainers: {
+		type: Array,
+		default: [],
+	},
+	// Regular maintainers (level 1)
+	maintainers: {
+		type: Array,
+		default: [],
+	},
+	// Wiki contributors can edit wiki pages
+	wikiContributors: {
+		type: Array,
+		default: [],
+	},
+
+	// ============================================
+	// BLOCKLISTS (migrated from config.json)
+	// ============================================
+
+	// Globally blocked users - cannot use bot commands
+	userBlocklist: {
+		type: Array,
+		default: [],
+	},
+	// Blocked guilds - bot will leave if added
+	guildBlocklist: {
+		type: Array,
+		default: [],
+	},
+	// Servers excluded from activity rankings
+	activityBlocklist: {
+		type: Array,
+		default: [],
+	},
+
+	// ============================================
+	// BOT PRESENCE (migrated from config.json)
+	// ============================================
+
+	// Bot status: online, idle, dnd, invisible
+	botStatus: {
+		type: String,
+		default: "online",
+		enum: ["online", "idle", "dnd", "invisible"],
+	},
+	// Bot activity settings
+	botActivity: new Schema({
+		name: {
+			type: String,
+			default: "default",
+		},
+		type: {
+			type: String,
+			default: "PLAYING",
+			enum: ["PLAYING", "STREAMING", "LISTENING", "WATCHING", "COMPETING"],
+		},
+		twitchURL: {
+			type: String,
+			default: "",
+		},
+	}),
+
+	// ============================================
+	// PERMISSION LEVELS (migrated from config.json)
+	// Levels: 0 = Host only, 1 = All maintainers, 2 = Sudo maintainers only
+	// ============================================
+
+	perms: new Schema({
+		eval: {
+			type: Number,
+			default: 0,
+			min: 0,
+			max: 2,
+		},
+		sudo: {
+			type: Number,
+			default: 2,
+			min: 0,
+			max: 2,
+		},
+		management: {
+			type: Number,
+			default: 2,
+			min: 0,
+			max: 2,
+		},
+		administration: {
+			type: Number,
+			default: 1,
+			min: 0,
+			max: 2,
+		},
+		shutdown: {
+			type: Number,
+			default: 2,
+			min: 0,
+			max: 2,
+		},
+	}),
+
+	// ============================================
+	// MISCELLANEOUS BOT SETTINGS (migrated from config.json)
+	// ============================================
+
+	// Forward DMs to maintainers
+	pmForward: {
+		type: Boolean,
+		default: false,
+	},
+
+	// ============================================
+	// WEBSITE CUSTOMIZATION
+	// ============================================
+
 	donateSubtitle: {
 		type: String,
 		default: "",

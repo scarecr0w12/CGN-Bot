@@ -1,5 +1,6 @@
-const { renderError, checkSudoMode, canDo } = require("../helpers");
+const { renderError } = require("../helpers");
 const { GetGuild } = require("../../Modules").getGuild;
+const ConfigManager = require("../../Modules/ConfigManager");
 
 module.exports = middleware => {
 	// Middleware
@@ -59,7 +60,7 @@ module.exports = middleware => {
 					console.log("[AUTH] Member found:", !!member);
 					const adminLevel = req.app.client.getUserBotAdmin(svr, serverDocument, member);
 					console.log("[AUTH] Admin level:", adminLevel);
-					if (adminLevel >= 3 || checkSudoMode(usr.id)) {
+					if (adminLevel >= 3 || await ConfigManager.checkSudoMode(usr.id)) {
 						// Populate the request object with Authorization details
 						try {
 							console.log("[AUTH] Populating request object");
@@ -106,19 +107,20 @@ module.exports = middleware => {
 		}
 	};
 
-	middleware.authorizeConsoleAccess = (req, res, next) => {
+	middleware.authorizeConsoleAccess = async (req, res, next) => {
 		console.log("[CONSOLE AUTH] authorizeConsoleAccess called for:", req.path);
 		console.log("[CONSOLE AUTH] User authenticated:", req.isAuthenticated());
 		if (req.isAuthenticated()) {
+			const settings = await ConfigManager.get();
 			console.log("[CONSOLE AUTH] User ID:", req.user.id);
-			console.log("[CONSOLE AUTH] Maintainers list:", configJSON.maintainers);
-			console.log("[CONSOLE AUTH] Is maintainer:", configJSON.maintainers.includes(req.user.id));
-			if (configJSON.maintainers.includes(req.user.id)) {
+			console.log("[CONSOLE AUTH] Maintainers list:", settings.maintainers);
+			console.log("[CONSOLE AUTH] Is maintainer:", settings.maintainers.includes(req.user.id));
+			if (settings.maintainers.includes(req.user.id)) {
 				const { perm } = req;
 				console.log("[CONSOLE AUTH] Permission required:", perm);
-				if (perm === "maintainer" || canDo(perm, req.user.id)) {
+				if (perm === "maintainer" || await ConfigManager.canDo(perm, req.user.id)) {
 					req.isAuthorized = true;
-					req.level = process.env.SKYNET_HOST !== req.user.id ? configJSON.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
+					req.level = process.env.SKYNET_HOST !== req.user.id ? settings.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
 					// Only set template properties for non-API requests
 					if (res.res && res.res.template) {
 						res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
@@ -165,9 +167,10 @@ module.exports = middleware => {
 		else res.sendStatus(403);
 	};
 
-	middleware.authorizeWikiAccess = (req, res, next) => {
+	middleware.authorizeWikiAccess = async (req, res, next) => {
 		if (req.isAuthenticated()) {
-			if (configJSON.wikiContributors.includes(req.user.id) || configJSON.maintainers.includes(req.user.id)) {
+			const settings = await ConfigManager.get();
+			if (settings.wikiContributors.includes(req.user.id) || settings.maintainers.includes(req.user.id)) {
 				return next();
 			} else {
 				renderError(res, "You are not authorized to access this page.", "<strong>You</strong> shall not pass!");
@@ -177,9 +180,10 @@ module.exports = middleware => {
 		}
 	};
 
-	middleware.authorizeBlogAccess = (req, res, next) => {
+	middleware.authorizeBlogAccess = async (req, res, next) => {
 		if (req.isAuthenticated()) {
-			if (configJSON.maintainers.includes(req.user.id)) {
+			const settings = await ConfigManager.get();
+			if (settings.maintainers.includes(req.user.id)) {
 				return next();
 			} else {
 				renderError(res, "You are not authorized to access this page.", "<strong>You</strong> shall not pass!");
@@ -189,13 +193,14 @@ module.exports = middleware => {
 		}
 	};
 
-	middleware.authorizeConsoleSocketAccess = socket => {
+	middleware.authorizeConsoleSocketAccess = async socket => {
 		if (socket.request.user && socket.request.user.logged_in) {
-			if (configJSON.maintainers.includes(socket.request.user.id)) {
+			const settings = await ConfigManager.get();
+			if (settings.maintainers.includes(socket.request.user.id)) {
 				const { perm } = socket.request;
-				if (perm === "maintainer" || canDo(perm, socket.request.user.id)) {
+				if (perm === "maintainer" || await ConfigManager.canDo(perm, socket.request.user.id)) {
 					socket.request.isAuthorized = true;
-					socket.request.level = process.env.SKYNET_HOST !== socket.request.user.id ? configJSON.sudoMaintainers.includes(socket.request.user.id) ? 2 : 1 : 0;
+					socket.request.level = process.env.SKYNET_HOST !== socket.request.user.id ? settings.sudoMaintainers.includes(socket.request.user.id) ? 2 : 1 : 0;
 					return true;
 				} else {
 					socket.emit("err", { error: 403, fatal: true });

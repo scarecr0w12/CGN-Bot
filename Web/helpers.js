@@ -1,8 +1,7 @@
 /* eslint-disable max-len */
-const fs = require("fs-nextra");
-
 const mw = require("./middleware");
 const { LoggingLevels } = require("../Internals/Constants");
+const ConfigManager = require("../Modules/ConfigManager");
 
 module.exports = {
 	denyRequest: (res, isAPI) => isAPI ? res.sendStatus(403) : res.status(403).redirect("/dashboard"),
@@ -20,18 +19,11 @@ module.exports = {
 		});
 	},
 
-	checkSudoMode: id => configJSON.perms.sudo === 0 ? process.env.SKYNET_HOST === id : configJSON.perms.sudo === 2 ? configJSON.sudoMaintainers.includes(id) : configJSON.maintainers.includes(id),
+	checkSudoMode: async id => ConfigManager.checkSudoMode(id),
 
-	fetchMaintainerPrivileges: id => {
-		let permLevel;
-		if (process.env.SKYNET_HOST === id) permLevel = 0;
-		else if (configJSON.sudoMaintainers.includes(id)) permLevel = 2;
-		else if (configJSON.maintainers.includes(id)) permLevel = 1;
-		else return [];
-		return Object.keys(configJSON.perms).filter(key => configJSON.perms[key] === permLevel || permLevel === 0 || (permLevel === 2 && configJSON.perms[key] === 1));
-	},
+	fetchMaintainerPrivileges: async id => ConfigManager.fetchMaintainerPrivileges(id),
 
-	canDo: (action, id) => module.exports.fetchMaintainerPrivileges(id).includes(action),
+	canDo: async (action, id) => ConfigManager.canDo(action, id),
 
 	setupPage: (router, route, middleware, controller, acceptSockets = false) => {
 		middleware = [mw.checkUnavailable, ...middleware, mw.registerTraffic];
@@ -97,19 +89,21 @@ module.exports = {
 	},
 
 	saveMaintainerConsoleOptions: async (req, res, isAPI, silent) => {
-		fs.writeJSONAtomic(`${__dirname}/../Configurations/config.json`, configJSON, { spaces: 2 })
-			.then(() => {
-				module.exports.dashboardUpdate(req, req.path, "maintainer");
-				if (isAPI && !silent) {
-					res.sendStatus(200);
-				} else if (!silent) {
-					res.redirect(req.originalUrl);
-				}
-			})
-			.catch(err => {
-				logger.error(`Failed to update maintainer settings at ${req.path} '-'`, { usrid: req.consolemember && req.consolemember.user.id }, err);
-				module.exports.renderError(res, "An internal error occurred!");
-			});
+		try {
+			// Settings are now saved via ConfigManager - the caller should have already
+			// called ConfigManager.update() with the new values before calling this function.
+			// This function now just handles the response and dashboard update notification.
+			ConfigManager.invalidateCache();
+			module.exports.dashboardUpdate(req, req.path, "maintainer");
+			if (isAPI && !silent) {
+				res.sendStatus(200);
+			} else if (!silent) {
+				res.redirect(req.originalUrl);
+			}
+		} catch (err) {
+			logger.error(`Failed to update maintainer settings at ${req.path} '-'`, { usrid: req.consolemember && req.consolemember.user.id }, err);
+			module.exports.renderError(res, "An internal error occurred!");
+		}
 	},
 
 	setupResource: (router, route, middleware, controller, method, authType) => {

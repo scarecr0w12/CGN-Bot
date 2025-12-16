@@ -114,6 +114,102 @@ The \`!top\` command displays the server's most active members. It's a simple fe
 Enable the Points system in your server settings dashboard and watch your engagement metrics soar!
 `,
 		reactions: []
+	},
+	{
+		title: "Streamline Support with the New Ticket System",
+		author_id: AUTHOR_ID,
+		category: "New Stuff",
+		published_timestamp: new Date(),
+		content: `
+## Chaos in the DMs?
+Are your staff members overwhelmed with direct messages? Losing track of support requests? It's time to professionalize your server's support channel.
+
+## Introducing SkynetBot Tickets
+Our new Ticket System (Tier 2) offers a seamless way to handle user inquiries.
+*   **One-Click Creation:** Users simply click a button to open a private channel.
+*   **Dashboard Integration:** Manage, view, and close tickets directly from the web dashboard.
+*   **Transcripts:** Automatically generate HTML transcripts for record-keeping.
+
+## Setup is a Breeze
+1.  Go to your **Dashboard > Ticket Config**.
+2.  Select a category for new tickets.
+3.  Customize your "Open Ticket" message embed.
+4.  Post it to your support channel!
+
+Stop juggling DMs and start managing support like a pro.
+`,
+		reactions: []
+	},
+	{
+		title: "High-Fidelity Music for Your Community",
+		author_id: AUTHOR_ID,
+		category: "New Stuff",
+		published_timestamp: new Date(),
+		content: `
+## The Beat Goes On
+Music is the heartbeat of many communities. Whether it's a lo-fi study session, a gaming hype playlist, or a listening party, audio quality matters.
+
+## SkynetBot Music (Tier 2)
+We've rebuilt our music engine from the ground up to deliver:
+*   **Lossless Audio Pipeline:** Crystal clear sound with no buffering.
+*   **Advanced Filters:** Bassboost, Nightcore, Vaporwave, and more.
+*   **DJ Mode:** Give your trusted members control over the queue.
+
+## Commands to Know
+*   \`!play <query/url>\` - Start the party.
+*   \`!filters\` - Open the filter menu.
+*   \`!lyrics\` - Sing along with real-time lyrics.
+
+Upgrade your server's soundtrack today!
+`,
+		reactions: []
+	},
+	{
+		title: "Bring Your Server to Life with AI Conversations",
+		author_id: AUTHOR_ID,
+		category: "Development",
+		published_timestamp: new Date(),
+		content: `
+## Beyond Simple Chatbots
+Traditional chatbots rely on rigid commands. SkynetBot's AI module brings natural, context-aware conversations to your server.
+
+## Powered by Top Models
+We integrate with industry leaders like OpenAI, Anthropic, and Groq to provide:
+*   **Contextual Memory:** The bot remembers previous interactions (via Vector Memory).
+*   **Personality:** Configure the bot to act like a helpful assistant, a grumpy wizard, or anything in between.
+*   **Rate Limiting:** Smart quota management ensures fair usage for everyone.
+
+## Why Add AI?
+*   **Engagement:** It's fun! Users love testing the AI's limits.
+*   **Support:** It can answer basic questions about your server.
+*   **Activity:** It keeps chat moving even during slow hours.
+`,
+		reactions: []
+	},
+	{
+		title: "Mastering Discord Moderation: Automate Your Safety",
+		author_id: AUTHOR_ID,
+		category: "Tutorial",
+		published_timestamp: new Date(),
+		content: `
+## The 24/7 Mod Team
+You can't be online 24/7, but SkynetBot can. A robust moderation system is essential for any growing community.
+
+## The Strike System
+Instead of immediate bans, SkynetBot uses a progressive **Strike System**:
+1.  **Warning:** A gentle nudge.
+2.  **Mute:** A temporary timeout.
+3.  **Kick:** A firm removal.
+4.  **Ban:** The final straw.
+
+## Automated Protection
+*   **Anti-Spam:** Detects and deletes message floods.
+*   **Bad Word Filter:** Customizable censorship.
+*   **Invite Blocker:** Stops users from poaching your members.
+
+Configure your **Modlog** channel to keep a transparent record of all actions. A safe server is a happy server!
+`,
+		reactions: []
 	}
 ];
 

@@ -11,6 +11,12 @@ module.exports = new Schema({
 		maxlength: 100,
 		required: true,
 	},
+	slug: {
+		type: String,
+		minlength: 2,
+		maxlength: 60,
+		index: true,
+	},
 	level: {
 		type: String,
 		enum: [

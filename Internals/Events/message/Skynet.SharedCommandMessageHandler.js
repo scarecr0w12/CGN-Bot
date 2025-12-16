@@ -1,16 +1,15 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
 const { Constants } = require("../../index");
 const { Colors } = Constants;
+const ConfigManager = require("../../../Modules/ConfigManager");
 
 class MaintainerMessageCreate extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.channel.postable || msg.type !== "DEFAULT") return false;
-		if (configJSON.userBlocklist.includes(msg.author.id)) return false;
-		if (configJSON.sudoMaintainers.includes(msg.author.id) ||
-			configJSON.maintainers.includes(msg.author.id)) {
-			return true;
-		}
-		return false;
+		const isBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (isBlocked) return false;
+		const isMaintainer = await ConfigManager.isMaintainer(msg.author.id);
+		return isMaintainer;
 	}
 
 	async handle (msg) {

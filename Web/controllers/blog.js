@@ -17,6 +17,20 @@ const parsers = require("../parsers");
 const controllers = module.exports;
 
 controllers.index = async (req, { res }) => {
+	const { search, category } = req.query;
+	const query = {};
+
+	if (search) {
+		query.$or = [
+			{ title: { $regex: search, $options: "i" } },
+			{ content: { $regex: search, $options: "i" } },
+		];
+	}
+
+	if (category) {
+		query.category = category;
+	}
+
 	let count;
 	if (!req.query.count || isNaN(req.query.count)) {
 		count = 4;
@@ -31,12 +45,12 @@ controllers.index = async (req, { res }) => {
 	}
 
 	try {
-		let rawCount = await Blog.count({});
+		let rawCount = await Blog.count(query);
 		if (!rawCount) {
 			rawCount = 0;
 		}
 
-		const blogDocuments = await Blog.find({}).sort({ published_timestamp: -1 }).skip(count * (page - 1))
+		const blogDocuments = await Blog.find(query).sort({ published_timestamp: -1 }).skip(count * (page - 1))
 			.limit(count)
 			.exec();
 		let blogPosts = [];
@@ -52,6 +66,14 @@ controllers.index = async (req, { res }) => {
 			}));
 		}
 
+		const categories = [
+			"Development",
+			"Announcement",
+			"New Stuff",
+			"Tutorial",
+			"Random",
+		];
+
 		res.setPageData({
 			page: "blog.ejs",
 			mode: "list",
@@ -59,6 +81,9 @@ controllers.index = async (req, { res }) => {
 			numPages: Math.ceil(rawCount / (count === 0 ? rawCount : count)),
 			pageTitle: "Skynet Blog",
 			data: blogPosts,
+			search,
+			category,
+			categories,
 		});
 		res.render();
 	} catch (err) {

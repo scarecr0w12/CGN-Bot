@@ -1,8 +1,11 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const ConfigManager = require("../../../Modules/ConfigManager");
 
 class UsernameUpdater extends BaseEvent {
-	requirements (oldUser, newUser) {
-		return oldUser.id !== this.client.user.id && !oldUser.bot && !this.configJSON.userBlocklist.includes(oldUser.id) && oldUser.tag !== newUser.tag;
+	async requirements (oldUser, newUser) {
+		if (oldUser.id === this.client.user.id || oldUser.bot || oldUser.tag === newUser.tag) return false;
+		const isBlocked = await ConfigManager.isUserBlocked(oldUser.id);
+		return !isBlocked;
 	}
 
 	async handle (oldUser, newUser) {
