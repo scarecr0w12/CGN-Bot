@@ -67,6 +67,10 @@ module.exports = router => {
 	setupDashboardPage(router, "/other/extensions/settings", [], controllers.dashboard.other.extensionSettings);
 	setupDashboardPage(router, "/other/extension-builder", [], controllers.dashboard.other.extensionBuilder);
 	setupDashboardPage(router, "/other/export", [], controllers.dashboard.other.export);
+	// Widgets
+	setupPage(router, "/:svrid/widgets", [], controllers.widgets.widgetGenerator);
+	// Server Profile (Tier 1+)
+	setupPage(router, "/:svrid/server-profile", [], controllers.server.profileEditor);
 
 	// AI
 	setupDashboardPage(router, "/ai/settings", [], controllers.dashboard.ai.settings);

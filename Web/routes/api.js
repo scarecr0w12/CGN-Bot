@@ -68,6 +68,9 @@ module.exports = router => {
 	setupResource(router, "/list/users", [], controllers.api.users.list, "get", "public");
 	setupResource(router, "/users", [middleware.requireFeature("api_access")], controllers.api.users, "get", "authentication");
 
+	// Server Profile API (Tier 1+) - must be before 404 handler
+	setupResource(router, "/server/:serverId/profile", [], controllers.server.updateProfile, "post", "authentication");
+
 	// 404 handler
 	setupResource(router, "/*", [], (req, res) => res.sendStatus(404), "all", "public");
 };

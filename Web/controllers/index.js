@@ -18,6 +18,10 @@ controllers.api = require("./api");
 controllers.debug = require("./debug");
 controllers.membership = require("./membership");
 controllers.seo = require("./seo");
+controllers.server = require("./server");
+controllers.referral = require("./referral");
+controllers.templates = require("./templates");
+controllers.widgets = require("./widgets");
 
 controllers.headerImage = async (req, res) => {
 	const ConfigManager = require("../../Modules/ConfigManager");

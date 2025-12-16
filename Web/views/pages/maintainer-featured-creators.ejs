@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Featured Creators - Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title"><i class="fas fa-award"></i> Featured Creators</h1>
+					<p class="subtitle">Manage the Featured Creator program and recognize top extension developers</p>
+
+					<!-- Add New Featured Creator -->
+					<div class="box mb-5">
+			<h3 class="title is-5"><i class="fas fa-plus-circle"></i> Add Featured Creator</h3>
+			<div class="columns">
+				<div class="column is-4">
+					<div class="field">
+						<label class="label">User ID</label>
+						<div class="control">
+							<input class="input" type="text" id="newCreatorUserId" placeholder="Discord User ID">
+						</div>
+					</div>
+				</div>
+				<div class="column is-4">
+					<div class="field">
+						<label class="label">Reason / Bio</label>
+						<div class="control">
+							<input class="input" type="text" id="newCreatorReason" placeholder="Why are they featured?">
+						</div>
+					</div>
+				</div>
+				<div class="column is-2">
+					<div class="field">
+						<label class="label">Bonus Revenue %</label>
+						<div class="control">
+							<input class="input" type="number" id="newCreatorBonus" value="5" min="0" max="15">
+						</div>
+						<p class="help">Added to base 70%</p>
+					</div>
+				</div>
+				<div class="column is-2">
+					<div class="field">
+						<label class="label">&nbsp;</label>
+						<div class="control">
+							<button class="button is-primary is-fullwidth" onclick="addFeaturedCreator()">
+								<i class="fas fa-star"></i> Feature
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Tier System Info -->
+		<div class="box modern-box mb-5">
+			<h3 class="title is-5"><i class="fas fa-layer-group"></i> Creator Tier System</h3>
+			<div class="columns is-multiline">
+				<% Object.entries(pageData.tierThresholds).forEach(([tier, threshold]) => { %>
+				<div class="column is-one-fifth">
+					<div class="notification" style="background: <%= tier === 'diamond' ? '#b9f2ff' : tier === 'platinum' ? '#e5e4e2' : tier === 'gold' ? '#ffd700' : tier === 'silver' ? '#c0c0c0' : '#cd7f32' %>20; border-left: 4px solid <%= tier === 'diamond' ? '#b9f2ff' : tier === 'platinum' ? '#e5e4e2' : tier === 'gold' ? '#ffd700' : tier === 'silver' ? '#c0c0c0' : '#cd7f32' %>;">
+						<p class="has-text-weight-bold is-capitalized"><%= tier %></p>
+						<p class="is-size-7">
+							<%= threshold.installs %>+ installs<br>
+							<%= threshold.extensions %>+ extensions<br>
+							<%= threshold.rating > 0 ? threshold.rating + '+ rating' : 'Any rating' %>
+						</p>
+					</div>
+				</div>
+				<% }); %>
+			</div>
+		</div>
+
+		<!-- Featured Creators List -->
+		<div class="box modern-box">
+			<h3 class="title is-5"><i class="fas fa-users"></i> Current Featured Creators (<%= pageData.featuredCreators.length %>)</h3>
+			
+			<% if (pageData.featuredCreators.length === 0) { %>
+			<div class="notification is-info is-light">
+				<p>No featured creators yet. Add one above to recognize top extension developers!</p>
+			</div>
+			<% } else { %>
+			<div class="table-container">
+				<table class="table is-fullwidth is-hoverable">
+					<thead>
+						<tr>
+							<th>Creator</th>
+							<th>Tier</th>
+							<th>Extensions</th>
+							<th>Installs</th>
+							<th>Badges</th>
+							<th>Featured Reason</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% pageData.featuredCreators.forEach(creator => { %>
+						<tr>
+							<td>
+								<div class="is-flex is-align-items-center">
+									<% if (creator.avatar) { %>
+									<figure class="image is-32x32 mr-2">
+										<img class="is-rounded" src="<%= creator.avatar %>" alt="Avatar">
+									</figure>
+									<% } %>
+									<div>
+										<strong><%= creator.username || 'Unknown' %></strong>
+										<br><small class="has-text-grey"><%= creator.id %></small>
+									</div>
+								</div>
+							</td>
+							<td>
+								<span class="tag" style="background: <%= creator.tier === 'diamond' ? '#b9f2ff' : creator.tier === 'platinum' ? '#e5e4e2' : creator.tier === 'gold' ? '#ffd700' : creator.tier === 'silver' ? '#c0c0c0' : '#cd7f32' %>;">
+									<i class="fas fa-<%= creator.tier === 'diamond' ? 'gem' : creator.tier === 'platinum' ? 'trophy' : 'medal' %> mr-1"></i>
+									<span class="is-capitalized"><%= creator.tier %></span>
+								</span>
+							</td>
+							<td><%= creator.total_extensions %></td>
+							<td><%= creator.total_installs %></td>
+							<td>
+								<% if (creator.badges && creator.badges.length > 0) { %>
+									<% creator.badges.slice(0, 3).forEach(badge => { %>
+									<span class="icon has-text-warning" title="<%= badge.name %>">
+										<i class="fas <%= badge.icon %>"></i>
+									</span>
+									<% }); %>
+									<% if (creator.badges.length > 3) { %>
+									<span class="has-text-grey">+<%= creator.badges.length - 3 %></span>
+									<% } %>
+								<% } else { %>
+									<span class="has-text-grey">-</span>
+								<% } %>
+							</td>
+							<td>
+								<span class="is-size-7"><%= creator.featured_reason || '-' %></span>
+							</td>
+							<td>
+								<div class="buttons are-small">
+									<button class="button is-info is-light" onclick="refreshStats('<%= creator.id %>')" title="Refresh Stats">
+										<i class="fas fa-sync-alt"></i>
+									</button>
+									<button class="button is-danger is-light" onclick="removeFeatured('<%= creator.id %>')" title="Remove Featured">
+										<i class="fas fa-times"></i>
+									</button>
+								</div>
+							</td>
+						</tr>
+						<% }); %>
+					</tbody>
+				</table>
+			</div>
+			<% } %>
+		</div>
+
+		<!-- Available Badges Reference -->
+		<div class="box modern-box mt-5">
+			<h3 class="title is-5"><i class="fas fa-certificate"></i> Available Badges</h3>
+			<div class="columns is-multiline">
+				<% Object.values(pageData.badgeInfo).forEach(badge => { %>
+				<div class="column is-3">
+					<div class="is-flex is-align-items-center">
+						<span class="icon has-text-warning is-medium mr-2">
+							<i class="fas <%= badge.icon %> fa-lg"></i>
+						</span>
+						<div>
+							<strong><%= badge.name %></strong>
+							<br><small class="has-text-grey"><%= badge.description %></small>
+						</div>
+					</div>
+				</div>
+				<% }); %>
+			</div>
+		</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+<script>
+async function addFeaturedCreator() {
+	const userId = document.getElementById('newCreatorUserId').value.trim();
+	const reason = document.getElementById('newCreatorReason').value.trim();
+	const bonusShare = parseInt(document.getElementById('newCreatorBonus').value) || 5;
+
+	if (!userId) {
+		SkynetUtil.showNotification('Please enter a User ID', 'warning');
+		return;
+	}
+
+	try {
+		const response = await fetch('/dashboard/maintainer/global-options/featured-creators/set', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userId, isFeatured: true, reason, bonusShare })
+		});
+
+		const data = await response.json();
+		if (data.success) {
+			SkynetUtil.showNotification('Creator featured successfully!', 'success');
+			setTimeout(() => location.reload(), 1000);
+		} else {
+			SkynetUtil.showNotification(data.error || 'Failed to feature creator', 'danger');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Error: ' + err.message, 'danger');
+	}
+}
+
+async function removeFeatured(userId) {
+	if (!confirm('Remove this creator from featured status?')) return;
+
+	try {
+		const response = await fetch('/dashboard/maintainer/global-options/featured-creators/set', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userId, isFeatured: false })
+		});
+
+		const data = await response.json();
+		if (data.success) {
+			SkynetUtil.showNotification('Featured status removed', 'success');
+			setTimeout(() => location.reload(), 1000);
+		} else {
+			SkynetUtil.showNotification(data.error || 'Failed to update', 'danger');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Error: ' + err.message, 'danger');
+	}
+}
+
+async function refreshStats(userId) {
+	try {
+		const response = await fetch('/dashboard/maintainer/global-options/featured-creators/update-stats', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ userId })
+		});
+
+		const data = await response.json();
+		if (data.success) {
+			SkynetUtil.showNotification('Stats updated! Tier: ' + data.stats.tier, 'success');
+			setTimeout(() => location.reload(), 1000);
+		} else {
+			SkynetUtil.showNotification(data.error || 'Failed to update stats', 'danger');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Error: ' + err.message, 'danger');
+	}
+}
+</script>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

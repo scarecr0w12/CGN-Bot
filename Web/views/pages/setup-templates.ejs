@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= pageData.pageTitle %> | Skynet Bot</title>
+	<%
+	if (typeof pageData !== "undefined") {
+		pageData.seo = {
+			title: pageData.pageTitle + " | Skynet Bot",
+			description: "Choose a server template to quickly configure your Discord server with Skynet Bot.",
+			keywords: "Discord bot setup, server templates, one-click setup"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Dashboard", url: "/dashboard" },
+			{ name: "Setup", url: "#" },
+			{ name: "Templates", url: `/setup/templates/${pageData.serverData.id}` }
+		];
+	}
+	%>
+	<%- include('../partials/head') %>
+	
+	<style>
+	.setup-hero {
+		background: var(--gradient-primary);
+		padding: 3rem 0;
+		text-align: center;
+	}
+	.server-icon-header {
+		width: 80px;
+		height: 80px;
+		border-radius: var(--radius-lg);
+		border: 4px solid rgba(255, 255, 255, 0.3);
+		margin-bottom: 1rem;
+	}
+	.template-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 1.5rem;
+		margin-top: 2rem;
+	}
+	.template-card {
+		background: var(--color-card);
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		text-align: center;
+		box-shadow: var(--shadow-card);
+		cursor: pointer;
+		transition: all 0.3s ease;
+		border: 3px solid transparent;
+		position: relative;
+	}
+	.template-card:hover {
+		transform: translateY(-4px);
+		box-shadow: var(--shadow-card-hover);
+	}
+	.template-card.is-selected {
+		border-color: var(--color-accent);
+	}
+	.template-card.is-applied {
+		border-color: #2ecc71;
+	}
+	.template-card.is-applied::after {
+		content: "Currently Applied";
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		background: #2ecc71;
+		color: white;
+		font-size: 0.7rem;
+		padding: 0.25rem 0.5rem;
+		border-radius: var(--radius-sm);
+		font-weight: 600;
+	}
+	.template-icon {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 0 auto 1.5rem;
+		font-size: 2rem;
+		color: white;
+	}
+	.template-name {
+		font-size: 1.25rem;
+		font-weight: 700;
+		margin-bottom: 0.5rem;
+	}
+	.template-description {
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+		line-height: 1.5;
+	}
+	.apply-button {
+		margin-top: 2rem;
+	}
+	.skip-link {
+		display: inline-block;
+		margin-top: 1rem;
+		color: var(--color-text-muted);
+		text-decoration: underline;
+	}
+	.loading-overlay {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.7);
+		z-index: 1000;
+		align-items: center;
+		justify-content: center;
+	}
+	.loading-overlay.is-active {
+		display: flex;
+	}
+	.loading-content {
+		text-align: center;
+		color: white;
+	}
+	.loading-spinner {
+		width: 60px;
+		height: 60px;
+		border: 4px solid rgba(255, 255, 255, 0.2);
+		border-top-color: var(--color-accent);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+		margin: 0 auto 1rem;
+	}
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+	</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body setup-hero">
+			<div class="container">
+				<img src="<%= pageData.serverData.icon %>" alt="<%= pageData.serverData.name %>" class="server-icon-header" onerror="this.src='/static/img/discord-icon.png'">
+				<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+					Set Up <%= pageData.serverData.name %>
+				</h1>
+				<p class="subtitle is-5" style="color: rgba(255,255,255,0.8);">
+					Choose a template to quickly configure your server, or start from scratch.
+				</p>
+			</div>
+		</div>
+	</header>
+	
+	<main class="section" role="main">
+		<div class="container">
+			<div class="has-text-centered">
+				<h2 class="title is-4">Choose a Template</h2>
+				<p style="color: var(--color-text-muted); max-width: 600px; margin: 0 auto;">
+					Templates pre-configure commands, features, and settings based on your server type. You can always customize everything later.
+				</p>
+			</div>
+			
+			<div class="template-grid">
+				<% pageData.templates.forEach(template => { %>
+					<div class="template-card <%= pageData.appliedTemplate === template.id ? 'is-applied' : '' %>" 
+						 data-template-id="<%= template.id %>"
+						 onclick="selectTemplate('<%= template.id %>')">
+						<div class="template-icon" style="background: <%= template.color %>;">
+							<i class="fas <%= template.icon %>"></i>
+						</div>
+						<h3 class="template-name"><%= template.name %></h3>
+						<p class="template-description"><%= template.description %></p>
+					</div>
+				<% }); %>
+			</div>
+			
+			<div class="has-text-centered apply-button">
+				<button id="apply-btn" class="button is-primary is-large is-modern" onclick="applyTemplate()" disabled>
+					<span class="icon"><i class="fas fa-magic"></i></span>
+					<span>Apply Template</span>
+				</button>
+				<br>
+				<a href="/dashboard/<%= pageData.serverData.id %>" class="skip-link">
+					Skip and configure manually →
+				</a>
+			</div>
+		</div>
+	</main>
+
+	<!-- Loading Overlay -->
+	<div id="loading-overlay" class="loading-overlay">
+		<div class="loading-content">
+			<div class="loading-spinner"></div>
+			<p>Applying template...</p>
+		</div>
+	</div>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scripts') %>
+	
+	<script>
+	let selectedTemplate = null;
+	
+	function selectTemplate(templateId) {
+		// Remove previous selection
+		document.querySelectorAll('.template-card').forEach(card => {
+			card.classList.remove('is-selected');
+		});
+		
+		// Select new template
+		const card = document.querySelector(`[data-template-id="${templateId}"]`);
+		if (card) {
+			card.classList.add('is-selected');
+			selectedTemplate = templateId;
+			document.getElementById('apply-btn').disabled = false;
+		}
+	}
+	
+	async function applyTemplate() {
+		if (!selectedTemplate) return;
+		
+		const overlay = document.getElementById('loading-overlay');
+		overlay.classList.add('is-active');
+		
+		try {
+			const response = await fetch('/api/templates/apply', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					serverId: '<%= pageData.serverData.id %>',
+					templateId: selectedTemplate,
+				}),
+			});
+			
+			const data = await response.json();
+			
+			if (data.success) {
+				// Show success and redirect to dashboard
+				SkynetUtil.showNotification('success', data.message);
+				setTimeout(() => {
+					window.location.href = '/dashboard/<%= pageData.serverData.id %>';
+				}, 1500);
+			} else {
+				overlay.classList.remove('is-active');
+				SkynetUtil.showNotification('error', data.error || 'Failed to apply template');
+			}
+		} catch (err) {
+			overlay.classList.remove('is-active');
+			SkynetUtil.showNotification('error', 'Failed to apply template');
+			console.error(err);
+		}
+	}
+	</script>
+</body>
+</html>

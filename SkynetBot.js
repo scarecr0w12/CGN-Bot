@@ -244,8 +244,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	client.IPC.on("traffic", async (msg, callback) => {
-		logger.info("Getting traffic data");
-		callback(client.traffic.get);
+		logger.debug("Getting traffic data for shard");
+		callback(client.traffic.getAndReset());
 	});
 
 	client.IPC.on("shardData", async (msg, callback) => {

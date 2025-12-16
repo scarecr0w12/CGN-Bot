@@ -809,19 +809,28 @@ controllers.gallery.modify = async (req, res) => {
 					break;
 				}
 				case "accept": {
+					const versionDoc = galleryDocument.versions.find(v => v._id === galleryDocument.version);
+					if (!versionDoc) {
+						logger.warn("Accept failed: version not found", { extid: req.params.extid, version: galleryDocument.version });
+						return res.sendStatus(404);
+					}
+					// Modify version in memory then set the whole versions array
+					// (nested JSON push doesn't work properly with MariaDB)
+					versionDoc.accepted = true;
+					if (!versionDoc.approval_history) versionDoc.approval_history = [];
+					versionDoc.approval_history.push({
+						action: "accepted",
+						by: req.user.id,
+						at: new Date(),
+					});
 					galleryQueryDocument.set("state", "gallery");
-					galleryQueryDocument.clone.id("versions", galleryDocument.version)
-						.set("accepted", true)
-						.push("approval_history", {
-							action: "accepted",
-							by: req.user.id,
-							at: new Date(),
-						});
+					galleryQueryDocument.set("versions", galleryDocument.versions);
 					galleryQueryDocument.set("published_version", galleryDocument.version);
 
 					try {
 						await galleryDocument.save();
-					} catch (_) {
+					} catch (err) {
+						logger.error("Failed to save extension acceptance", { extid: req.params.extid }, err);
 						return res.sendStatus(500);
 					}
 					res.sendStatus(200);
@@ -865,14 +874,20 @@ controllers.gallery.modify = async (req, res) => {
 
 					const targetVersion = req.params.action === "remove" ?
 						galleryDocument.published_version : galleryDocument.version;
-					galleryQueryDocument.clone.id("versions", targetVersion)
-						.set("accepted", false)
-						.push("approval_history", {
+					const versionDoc = galleryDocument.versions.find(v => v._id === targetVersion);
+					if (versionDoc) {
+						// Modify version in memory then set the whole versions array
+						// (nested JSON push doesn't work properly with MariaDB)
+						versionDoc.accepted = false;
+						if (!versionDoc.approval_history) versionDoc.approval_history = [];
+						versionDoc.approval_history.push({
 							action: "rejected",
 							by: req.user.id,
 							at: new Date(),
 							reason: req.body.reason || null,
 						});
+						galleryQueryDocument.set("versions", galleryDocument.versions);
+					}
 					galleryQueryDocument.set("state", "saved")
 						.set("featured", false)
 						.set("published_version", null);

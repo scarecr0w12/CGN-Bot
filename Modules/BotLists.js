@@ -1,6 +1,11 @@
 /**
  * Bot List Integration Module
- * Handles stats posting and vote webhook processing for top.gg and discordbotlist.com
+ * Handles stats posting and vote webhook processing for:
+ * - top.gg
+ * - discordbotlist.com
+ * - discord.bots.gg
+ * - discordlist.gg
+ * - bots.ondiscord.xyz
  */
 
 const fetch = require("node-fetch");
@@ -59,6 +64,18 @@ class BotLists {
 		if (config.discordbotlist?.isEnabled && config.discordbotlist?.api_token && config.discordbotlist?.auto_post_stats) {
 			await this.postToDiscordBotList(stats, config.discordbotlist.api_token);
 		}
+
+		if (config.discordbotsgg?.isEnabled && config.discordbotsgg?.api_token && config.discordbotsgg?.auto_post_stats) {
+			await this.postToDiscordBotsGG(stats, config.discordbotsgg.api_token);
+		}
+
+		if (config.discordlistgg?.isEnabled && config.discordlistgg?.api_token && config.discordlistgg?.auto_post_stats) {
+			await this.postToDiscordListGG(stats, config.discordlistgg.api_token);
+		}
+
+		if (config.botsondiscord?.isEnabled && config.botsondiscord?.api_token && config.botsondiscord?.auto_post_stats) {
+			await this.postToBotsOnDiscord(stats, config.botsondiscord.api_token);
+		}
 	}
 
 	/**
@@ -114,6 +131,88 @@ class BotLists {
 			}
 		} catch (err) {
 			logger.error("Error posting to discordbotlist.com", {}, err);
+		}
+	}
+
+	/**
+	 * Post stats to discord.bots.gg
+	 */
+	async postToDiscordBotsGG (stats, token) {
+		try {
+			const response = await fetch(`https://discord.bots.gg/api/v1/bots/${this.client.user.id}/stats`, {
+				method: "POST",
+				headers: {
+					Authorization: token,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					guildCount: stats.guilds,
+					shardCount: stats.shards,
+				}),
+			});
+
+			if (response.ok) {
+				logger.debug("Posted stats to discord.bots.gg", { guilds: stats.guilds });
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post stats to discord.bots.gg", { status: response.status, body: text });
+			}
+		} catch (err) {
+			logger.error("Error posting to discord.bots.gg", {}, err);
+		}
+	}
+
+	/**
+	 * Post stats to discordlist.gg
+	 */
+	async postToDiscordListGG (stats, token) {
+		try {
+			const response = await fetch(`https://api.discordlist.gg/v0/bots/${this.client.user.id}/guilds`, {
+				method: "PUT",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					count: stats.guilds,
+				}),
+			});
+
+			if (response.ok) {
+				logger.debug("Posted stats to discordlist.gg", { guilds: stats.guilds });
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post stats to discordlist.gg", { status: response.status, body: text });
+			}
+		} catch (err) {
+			logger.error("Error posting to discordlist.gg", {}, err);
+		}
+	}
+
+	/**
+	 * Post stats to bots.ondiscord.xyz
+	 */
+	async postToBotsOnDiscord (stats, token) {
+		try {
+			const response = await fetch(`https://bots.ondiscord.xyz/bot-api/bots/${this.client.user.id}/guilds`, {
+				method: "POST",
+				headers: {
+					Authorization: token,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					guildCount: stats.guilds,
+				}),
+			});
+
+			if (response.status === 204 || response.ok) {
+				logger.debug("Posted stats to bots.ondiscord.xyz", { guilds: stats.guilds });
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post stats to bots.ondiscord.xyz", { status: response.status, body: text });
+			}
+		} catch (err) {
+			logger.error("Error posting to bots.ondiscord.xyz", {}, err);
 		}
 	}
 
@@ -243,7 +342,14 @@ class BotLists {
 			if (!channel) return;
 
 			const user = await this.client.users.fetch(userId).catch(() => null);
-			const siteName = site === "topgg" ? "top.gg" : "Discord Bot List";
+			const siteNames = {
+				topgg: "top.gg",
+				discordbotlist: "Discord Bot List",
+				discordbotsgg: "Discord Bots GG",
+				discordlistgg: "DiscordList.gg",
+				botsondiscord: "Bots on Discord",
+			};
+			const siteName = siteNames[site] || site;
 
 			await channel.send({
 				embeds: [{

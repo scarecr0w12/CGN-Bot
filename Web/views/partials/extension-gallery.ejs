@@ -77,6 +77,37 @@
 	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 	color: #fff;
 }
+.ext-creator-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	padding: 0.15rem 0.4rem;
+	border-radius: 4px;
+	font-size: 0.65rem;
+	font-weight: 600;
+	margin-left: 0.3rem;
+	vertical-align: middle;
+}
+.ext-creator-badge.featured {
+	background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+	color: #fff;
+}
+.ext-creator-badge.tier-diamond {
+	background: linear-gradient(135deg, #b9f2ff 0%, #67e8f9 100%);
+	color: #155e75;
+}
+.ext-creator-badge.tier-platinum {
+	background: linear-gradient(135deg, #e5e4e2 0%, #9ca3af 100%);
+	color: #1f2937;
+}
+.ext-creator-badge.tier-gold {
+	background: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
+	color: #78350f;
+}
+.ext-creator-badge.tier-silver {
+	background: linear-gradient(135deg, #c0c0c0 0%, #9ca3af 100%);
+	color: #374151;
+}
 
 /* Card Grid */
 .ext-card-grid {
@@ -568,7 +599,14 @@
 				<div class="ext-card-author">
 					<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.name %>">
 					<div class="ext-card-author-info">
-						<div class="ext-card-author-name"><%= extension.owner.name %></div>
+						<div class="ext-card-author-name">
+							<%= extension.owner.name %>
+							<% if (extension.owner.isFeaturedCreator) { %>
+							<span class="ext-creator-badge featured" title="Featured Creator"><i class="fa fa-award"></i></span>
+							<% } else if (extension.owner.creatorTier && extension.owner.creatorTier !== 'bronze') { %>
+							<span class="ext-creator-badge tier-<%= extension.owner.creatorTier %>" title="<%= extension.owner.creatorTier.charAt(0).toUpperCase() + extension.owner.creatorTier.slice(1) %> Creator"><i class="fa fa-medal"></i></span>
+							<% } %>
+						</div>
 						<div class="ext-card-updated" title="<%= extension.rawLastUpdated %>"><%= extension.relativeLastUpdated %></div>
 					</div>
 				</div>

@@ -29,39 +29,47 @@
 				"name": "Is Skynet Discord bot free to use?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Yes! Skynet is completely free to use with all core features including moderation, fun commands, leveling, giveaways, and the web dashboard. Premium tiers are available for additional features and higher limits."
+					"text": "Yes! Skynet is completely free with all core features including moderation, leveling, fun commands, giveaways, and a full web dashboard. Premium tiers unlock extras like Music, AI chat, Developer Tools, and Tickets."
 				}
 			},
 			{
 				"@type": "Question",
-				"name": "How do I add Skynet to my Discord server?",
+				"name": "How do I set up Skynet on my server?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Click the 'Add to Server' button on our website, select your server from the dropdown, and authorize the bot. Skynet will be added instantly and you can configure it through the web dashboard."
+					"text": "Click Add to Server, select your Discord server, and authorize. Skynet is ready instantly! Use the web dashboard to customize settings, or type /help in Discord to get started with commands."
 				}
 			},
 			{
 				"@type": "Question",
-				"name": "What moderation features does Skynet offer?",
+				"name": "What are Extensions and how do they work?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Skynet includes auto-moderation with spam detection, word filters, raid protection, warning/strike system, timed mutes and bans, moderation logs, and customizable punishment escalation."
+					"text": "Extensions are custom commands built with JavaScript that run in a secure sandbox. Create your own using our Extension Builder, or browse the community gallery to install ready-made extensions. Share your creations with other servers!"
 				}
 			},
 			{
 				"@type": "Question",
-				"name": "Can I create custom commands with Skynet?",
+				"name": "What premium features are available?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Yes! Skynet has a powerful extension system that lets you create custom commands, automated responses, and event-triggered actions using JavaScript. You can also browse and install community-created extensions."
+					"text": "Premium tiers include: Music System with DJ controls and audio filters, AI-powered chat with multiple providers, Developer Tools for code execution, and a Ticket System for support management. All premium features are server-based."
 				}
 			},
 			{
 				"@type": "Question",
-				"name": "Does Skynet have a web dashboard?",
+				"name": "How does the leveling and points system work?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Yes, Skynet includes a comprehensive web dashboard where you can configure all bot settings, manage moderation, set up leveling and ranks, create custom commands, and view server statistics."
+					"text": "Members earn SkynetPoints for chatting and participating. Points contribute to levels and can unlock custom ranks you define. View leaderboards, set role rewards for reaching levels, and track activity through the dashboard analytics."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I migrate from another bot?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet makes it easy to transition! Most features work out of the box. Use the dashboard to quickly configure moderation rules, set up leveling, and import your server's preferences. Join our Discord for migration help."
 				}
 			}
 		]
@@ -79,12 +87,12 @@
 		"logo": "<%= baseUrl %>/static/img/logo.png",
 		"sameAs": [
 			"https://github.com/scarecr0w12/CGN-Bot",
-			"https://discord.gg/GSZfe5sBp6"
+			"https://discord.gg/SE6xHmvKrZ"
 		],
 		"contactPoint": {
 			"@type": "ContactPoint",
 			"contactType": "customer support",
-			"url": "https://discord.gg/GSZfe5sBp6"
+			"url": "https://discord.gg/SE6xHmvKrZ"
 		}
 	}
 	</script>
@@ -140,6 +148,138 @@
 	}
 	.faq-item.active .faq-icon {
 		transform: rotate(180deg);
+	}
+
+	/* Extension Carousel Styles */
+	.extension-carousel-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		max-width: 100%;
+	}
+	.extension-carousel {
+		overflow: hidden;
+		flex: 1;
+	}
+	.carousel-track {
+		display: flex;
+		gap: 1.5rem;
+		transition: transform 0.5s ease;
+	}
+	.carousel-slide {
+		flex: 0 0 280px;
+		min-width: 280px;
+	}
+	.extension-card-carousel {
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 16px;
+		padding: 1.5rem;
+		height: 220px;
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+	.extension-card-carousel:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+		border-color: rgba(20, 184, 166, 0.5);
+	}
+	.ext-featured-badge {
+		position: absolute;
+		top: -8px;
+		right: 16px;
+		background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+		color: white;
+		font-size: 0.7rem;
+		font-weight: 600;
+		padding: 4px 10px;
+		border-radius: 20px;
+		text-transform: uppercase;
+	}
+	.ext-card-title {
+		color: white;
+		font-size: 1.1rem;
+		font-weight: 700;
+		margin-bottom: 0.5rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.ext-card-desc {
+		color: rgba(255, 255, 255, 0.6);
+		font-size: 0.85rem;
+		line-height: 1.4;
+		flex: 1;
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+	.ext-card-meta {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		margin: 0.75rem 0;
+	}
+	.ext-points {
+		color: #14b8a6;
+		font-size: 0.85rem;
+		font-weight: 600;
+	}
+	.ext-tag {
+		background: rgba(20, 184, 166, 0.2);
+		color: #14b8a6;
+		padding: 2px 8px;
+		border-radius: 12px;
+		font-size: 0.75rem;
+	}
+	.ext-view-btn {
+		margin-top: auto;
+		width: 100%;
+	}
+	.carousel-btn {
+		background: rgba(255, 255, 255, 0.1);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		color: white;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.3s ease;
+		flex-shrink: 0;
+	}
+	.carousel-btn:hover {
+		background: rgba(20, 184, 166, 0.3);
+		border-color: #14b8a6;
+	}
+	.carousel-btn:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
+	@media screen and (max-width: 768px) {
+		.carousel-btn {
+			display: none;
+		}
+		.carousel-slide {
+			flex: 0 0 260px;
+			min-width: 260px;
+		}
+		.extension-carousel {
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			-webkit-overflow-scrolling: touch;
+		}
+		.carousel-slide {
+			scroll-snap-align: start;
+		}
 	}
 	</style>
 </head>
@@ -346,6 +486,60 @@
 		</div>
 	</section>
 
+	<!-- Featured Extensions Carousel -->
+	<% if (pageData.featuredExtensions && pageData.featuredExtensions.length > 0) { %>
+	<section id="extensions" class="section" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 4rem 0; overflow: hidden;">
+		<div class="container">
+			<div class="has-text-centered" style="margin-bottom: 2rem;">
+				<h2 class="title is-2" style="color: #f1f5f9; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Popular Extensions</h2>
+				<p class="subtitle is-5" style="color: rgba(255,255,255,0.85);">Discover community-created extensions to supercharge your server</p>
+			</div>
+			
+			<div class="extension-carousel-wrapper">
+				<button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)" aria-label="Previous">
+					<i class="fa fa-chevron-left"></i>
+				</button>
+				
+				<div class="extension-carousel" id="extensionCarousel">
+					<div class="carousel-track">
+						<% pageData.featuredExtensions.forEach(function(ext) { %>
+						<div class="carousel-slide">
+							<div class="extension-card-carousel">
+								<% if (ext.featured) { %>
+								<span class="ext-featured-badge"><i class="fa fa-star"></i> Featured</span>
+								<% } %>
+								<h4 class="ext-card-title"><%= ext.name %></h4>
+								<p class="ext-card-desc"><%= ext.description || "No description available" %></p>
+								<div class="ext-card-meta">
+									<span class="ext-points"><i class="fa fa-thumbs-up"></i> <%= ext.points %></span>
+									<% if (ext.tags && ext.tags.length > 0) { %>
+									<span class="ext-tag"><%= ext.tags[0] %></span>
+									<% } %>
+								</div>
+								<a href="/extensions/gallery?id=<%= ext._id %>" class="button is-small is-primary is-outlined ext-view-btn">
+									View Extension
+								</a>
+							</div>
+						</div>
+						<% }); %>
+					</div>
+				</div>
+				
+				<button class="carousel-btn carousel-next" onclick="moveCarousel(1)" aria-label="Next">
+					<i class="fa fa-chevron-right"></i>
+				</button>
+			</div>
+			
+			<div class="has-text-centered" style="margin-top: 2rem;">
+				<a href="/extensions/gallery" class="button is-primary is-modern">
+					<span>Browse All Extensions</span>
+					<span class="icon"><i class="fa fa-arrow-right"></i></span>
+				</a>
+			</div>
+		</div>
+	</section>
+	<% } %>
+
 	<!-- Dashboard Showcase Section -->
 	<section id="customizability" class="hero is-medium is-white">
 		<div class="hero-body">
@@ -409,47 +603,57 @@
 							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
-							<p>Yes! Skynet is completely free to use with all core features including moderation, fun commands, leveling, giveaways, and the web dashboard.</p>
+							<p>Yes! Skynet is completely free with all core features including moderation, leveling, fun commands, giveaways, and a full web dashboard. Premium tiers unlock extras like Music, AI chat, Developer Tools, and Tickets.</p>
 						</div>
 					</div>
 
 					<div class="faq-item fade-in">
 						<div class="faq-question">
-							How do I add Skynet to my Discord server?
+							How do I set up Skynet on my server?
 							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
-							<p>Click the 'Add to Server' button on our website, select your server from the dropdown, and authorize the bot. Skynet will be added instantly and you can configure it through the web dashboard.</p>
+							<p>Click <strong>Add to Server</strong>, select your Discord server, and authorize. Skynet is ready instantly! Use the web dashboard to customize settings, or type <code>/help</code> in Discord to get started with commands.</p>
 						</div>
 					</div>
 
 					<div class="faq-item fade-in">
 						<div class="faq-question">
-							What moderation features does Skynet offer?
+							What are Extensions and how do they work?
 							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
-							<p>Skynet includes auto-moderation with spam detection, word filters, raid protection, warning/strike system, timed mutes and bans, moderation logs, and customizable punishment escalation.</p>
+							<p>Extensions are custom commands built with JavaScript that run in a secure sandbox. Create your own using our <strong>Extension Builder</strong>, or browse the community gallery to install ready-made extensions. Share your creations with other servers!</p>
 						</div>
 					</div>
 
 					<div class="faq-item fade-in">
 						<div class="faq-question">
-							Can I create custom commands with Skynet?
+							What premium features are available?
 							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
-							<p>Yes! Skynet has a powerful extension system that lets you create custom commands, automated responses, and event-triggered actions using JavaScript. You can also browse and install community-created extensions.</p>
+							<p>Premium tiers include: <strong>Music System</strong> with DJ controls and audio filters, <strong>AI-powered chat</strong> with multiple providers, <strong>Developer Tools</strong> for code execution, and a <strong>Ticket System</strong> for support management. All premium features are server-based.</p>
 						</div>
 					</div>
 
 					<div class="faq-item fade-in">
 						<div class="faq-question">
-							Does Skynet have a web dashboard?
+							How does the leveling and points system work?
 							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
-							<p>Yes, Skynet includes a comprehensive web dashboard where you can configure all bot settings, manage moderation, set up leveling and ranks, create custom commands, and view server statistics.</p>
+							<p>Members earn <strong>SkynetPoints</strong> for chatting and participating. Points contribute to levels and can unlock custom ranks you define. View leaderboards, set role rewards for reaching levels, and track activity through the dashboard analytics.</p>
+						</div>
+					</div>
+
+					<div class="faq-item fade-in">
+						<div class="faq-question">
+							Can I migrate from another bot?
+							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+						</div>
+						<div class="faq-answer">
+							<p>Skynet makes it easy to transition! Most features work out of the box. Use the dashboard to quickly configure moderation rules, set up leveling, and import your server's preferences. Join our <a href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener">Discord</a> for migration help.</p>
 						</div>
 					</div>
 				</div>
@@ -467,7 +671,7 @@
 					<% if (pageData.roundedServerCount === 0) { pageData.roundedServerCount = pageData.rawServerCount } %>
 					Trusted by <strong style="color: #14b8a6;"><%= pageData.roundedServerCount %>+</strong> Communities
 				</h2>
-				<p class="subtitle is-5" style="color: rgba(255,255,255,0.85); max-width: 600px; margin: 0 auto 2rem;">
+				<p class="subtitle is-5" style="color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.3); max-width: 600px; margin: 0 auto 2rem;">
 					Join thousands of servers that rely on Skynet for moderation, engagement, and customization.
 				</p>
 				<a class="button is-modern is-primary is-medium" href="/activity/servers" style="background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);">
@@ -480,40 +684,75 @@
 		</div>
 	</section>
 
-	<section id="team" style="padding: 5rem 0; background: #f8fafc;">
+	<section id="team" style="padding: 5rem 0; background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);">
 		<div class="container">
 			<div class="has-text-centered" style="margin-bottom: 3rem;">
 				<h2 class="title is-2" style="color: #1e293b;">
 					Meet the <span class="text-gradient">Team</span>
 				</h2>
 				<p class="subtitle is-5" style="color: #64748b;">
-					The people who make the magic happen
+					The passionate developers behind Skynet
 				</p>
 			</div>
 			<div class="columns is-centered">
-				<div class="column is-4 fade-in">
-					<div class="modern-card" style="padding: 2rem; text-align: center;">
+				<div class="column is-5 fade-in">
+					<div class="modern-card" style="padding: 2.5rem; text-align: center; background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border: 1px solid rgba(20, 184, 166, 0.2); position: relative; overflow: hidden;">
+						<!-- Decorative gradient accent -->
+						<div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #14b8a6, #3b82f6, #8b5cf6);"></div>
+						
 						<div style="position: relative; display: inline-block; margin-bottom: 1.5rem;">
-							<img src="/static/img/logo.png" alt="Scarecr0w12" style="width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 10px 30px rgba(30, 58, 138, 0.2);">
-							<span style="position: absolute; bottom: 5px; right: 5px; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 3px solid white;">
+							<!-- Glow effect behind avatar -->
+							<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; background: radial-gradient(circle, rgba(20, 184, 166, 0.3) 0%, transparent 70%); border-radius: 50%;"></div>
+							<img src="/static/img/logo.png" alt="Scarecr0w12" style="position: relative; width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 10px 40px rgba(20, 184, 166, 0.3), 0 4px 12px rgba(0,0,0,0.1); border: 4px solid white;">
+							<span style="position: absolute; bottom: 5px; right: 5px; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid white; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);">
 								<i class="fa fa-code"></i>
 							</span>
 						</div>
-						<h3 class="title is-4" style="margin-bottom: 0.25rem; color: #1e293b;">Scarecr0w12</h3>
-						<p class="subtitle is-6" style="color: #14b8a6; margin-bottom: 1rem;">Project Lead & Developer</p>
-						<p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.95rem;">The Almighty Fish</p>
-						<div class="buttons is-centered">
-							<a class="button is-small is-rounded" href="https://github.com/Scarecr0w12" target="_blank" rel="noopener" style="background: #24292e; color: white;">
+						
+						<h3 class="title is-3" style="margin-bottom: 0.5rem; color: #1e293b; font-weight: 700;">Scarecr0w12</h3>
+						<p style="display: inline-block; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem;">Project Lead & Developer</p>
+						<p style="color: #64748b; margin-bottom: 1.5rem; font-size: 1rem; font-style: italic;">"The Almighty Fish"</p>
+						
+						<!-- Stats row -->
+						<div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; padding: 1rem; background: rgba(20, 184, 166, 0.05); border-radius: 12px;">
+							<div style="text-align: center;">
+								<p style="font-size: 1.25rem; font-weight: 700; color: #14b8a6;">2019</p>
+								<p style="font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Since</p>
+							</div>
+							<div style="text-align: center;">
+								<p style="font-size: 1.25rem; font-weight: 700; color: #3b82f6;">Node.js</p>
+								<p style="font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Stack</p>
+							</div>
+							<div style="text-align: center;">
+								<p style="font-size: 1.25rem; font-weight: 700; color: #8b5cf6;">Open</p>
+								<p style="font-size: 0.75rem; color: #64748b; text-transform: uppercase;">Source</p>
+							</div>
+						</div>
+						
+						<div class="buttons is-centered" style="margin-bottom: 0;">
+							<a class="button is-rounded" href="https://github.com/Scarecr0w12" target="_blank" rel="noopener" style="background: #24292e; color: white; font-weight: 600;">
 								<span class="icon"><i class="fa fa-github"></i></span>
 								<span>GitHub</span>
 							</a>
-							<a class="button is-small is-rounded" href="https://twitter.com/GG142_" target="_blank" rel="noopener" style="background: #1da1f2; color: white;">
+							<a class="button is-rounded" href="https://twitter.com/GG142_" target="_blank" rel="noopener" style="background: #1da1f2; color: white; font-weight: 600;">
 								<span class="icon"><i class="fa fa-twitter"></i></span>
 								<span>Twitter</span>
+							</a>
+							<a class="button is-rounded" href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener" style="background: #5865F2; color: white; font-weight: 600;">
+								<span class="icon"><i class="fa fa-comments"></i></span>
+								<span>Discord</span>
 							</a>
 						</div>
 					</div>
 				</div>
+			</div>
+			
+			<!-- Community callout -->
+			<div class="has-text-centered fade-in" style="margin-top: 2rem;">
+				<p style="color: #64748b; font-size: 0.95rem;">Want to contribute? Skynet is open source!</p>
+				<a href="https://github.com/Scarecr0w12/CGN-Bot" target="_blank" rel="noopener" style="color: #14b8a6; font-weight: 600; text-decoration: none;">
+					<i class="fa fa-code-fork" style="margin-right: 0.5rem;"></i>View on GitHub
+				</a>
 			</div>
 		</div>
 	</section>
@@ -535,7 +774,7 @@
 					<div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2.5rem;">
 						<p style="color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">Connect With Us</p>
 						<div class="buttons is-centered">
-							<a class="button is-medium is-rounded" href="https://discord.gg/qSCPNJ3Nnf" target="_blank" rel="noopener" style="background: #5865F2; color: white; border: none;">
+							<a class="button is-medium is-rounded" href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener" style="background: #5865F2; color: white; border: none;">
 								<span class="icon"><i class="fa fa-comments"></i></span>
 								<span>Discord</span>
 							</a>
@@ -593,7 +832,58 @@
 				parent.classList.toggle('active');
 			});
 		});
+
+		// Extension Carousel
+		initCarousel();
 	});
+
+	// Carousel functionality
+	let carouselPosition = 0;
+	const slideWidth = 280 + 24; // slide width + gap
+
+	function initCarousel() {
+		const carousel = document.getElementById('extensionCarousel');
+		if (!carousel) return;
+		
+		const track = carousel.querySelector('.carousel-track');
+		const slides = track ? track.querySelectorAll('.carousel-slide') : [];
+		if (slides.length === 0) return;
+
+		// Auto-rotate every 5 seconds
+		setInterval(() => {
+			const maxPosition = Math.max(0, slides.length - getVisibleSlides());
+			carouselPosition = (carouselPosition + 1) % (maxPosition + 1);
+			updateCarousel();
+		}, 5000);
+	}
+
+	function getVisibleSlides() {
+		const carousel = document.getElementById('extensionCarousel');
+		if (!carousel) return 3;
+		return Math.floor(carousel.offsetWidth / slideWidth) || 1;
+	}
+
+	function moveCarousel(direction) {
+		const carousel = document.getElementById('extensionCarousel');
+		if (!carousel) return;
+		
+		const track = carousel.querySelector('.carousel-track');
+		const slides = track ? track.querySelectorAll('.carousel-slide') : [];
+		const maxPosition = Math.max(0, slides.length - getVisibleSlides());
+		
+		carouselPosition = Math.max(0, Math.min(maxPosition, carouselPosition + direction));
+		updateCarousel();
+	}
+
+	function updateCarousel() {
+		const carousel = document.getElementById('extensionCarousel');
+		if (!carousel) return;
+		
+		const track = carousel.querySelector('.carousel-track');
+		if (track) {
+			track.style.transform = 'translateX(-' + (carouselPosition * slideWidth) + 'px)';
+		}
+	}
 	</script>
 </body>
 </html>

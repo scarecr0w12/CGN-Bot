@@ -696,36 +696,56 @@ controllers.options.botLists.post = async (req, res) => {
 	// WRITE operation - create if needed (will be saved below with actual data)
 	const siteSettings = await getSiteSettingsForWrite();
 
-	// Ensure nested objects exist for bot_lists
-	if (!siteSettings.bot_lists) siteSettings.bot_lists = {};
-	if (!siteSettings.bot_lists.topgg) siteSettings.bot_lists.topgg = {};
-	if (!siteSettings.bot_lists.discordbotlist) siteSettings.bot_lists.discordbotlist = {};
+	// Build complete bot_lists object to avoid nested query.set issues
+	const botLists = {
+		topgg: {
+			isEnabled: req.body.topgg_enabled === "on",
+			api_token: req.body.topgg_api_token || "",
+			webhook_secret: req.body.topgg_webhook_secret || "",
+			auto_post_stats: req.body.topgg_auto_post !== "off",
+		},
+		discordbotlist: {
+			isEnabled: req.body.dbl_enabled === "on",
+			api_token: req.body.dbl_api_token || "",
+			webhook_secret: req.body.dbl_webhook_secret || "",
+			auto_post_stats: req.body.dbl_auto_post !== "off",
+			sync_commands: req.body.dbl_sync_commands === "on",
+		},
+		discordbotsgg: {
+			isEnabled: req.body.discordbotsgg_enabled === "on",
+			api_token: req.body.discordbotsgg_api_token || "",
+			auto_post_stats: req.body.discordbotsgg_auto_post !== "off",
+		},
+		discordlistgg: {
+			isEnabled: req.body.discordlistgg_enabled === "on",
+			api_token: req.body.discordlistgg_api_token || "",
+			auto_post_stats: req.body.discordlistgg_auto_post !== "off",
+		},
+		botsondiscord: {
+			isEnabled: req.body.botsondiscord_enabled === "on",
+			api_token: req.body.botsondiscord_api_token || "",
+			auto_post_stats: req.body.botsondiscord_auto_post !== "off",
+		},
+	};
 
-	// Update top.gg settings
-	siteSettings.query.set("bot_lists.topgg.isEnabled", req.body.topgg_enabled === "on");
-	siteSettings.query.set("bot_lists.topgg.api_token", req.body.topgg_api_token || "");
-	siteSettings.query.set("bot_lists.topgg.webhook_secret", req.body.topgg_webhook_secret || "");
-	siteSettings.query.set("bot_lists.topgg.auto_post_stats", req.body.topgg_auto_post !== "off");
+	// Build complete vote_rewards object
+	const voteRewards = {
+		isEnabled: req.body.rewards_enabled === "on",
+		points_per_vote: parseInt(req.body.points_per_vote) || 100,
+		weekend_multiplier: parseInt(req.body.weekend_multiplier) || 2,
+		notification_channel_id: req.body.notification_channel_id || "",
+		redemption: {
+			isEnabled: req.body.redemption_enabled === "on",
+			points_per_dollar: parseInt(req.body.points_per_dollar) || 1000,
+			redeemable_tier_id: req.body.redeemable_tier_id || "",
+			min_redemption_days: parseInt(req.body.min_redemption_days) || 7,
+			max_redemption_days: parseInt(req.body.max_redemption_days) || 365,
+		},
+	};
 
-	// Update discordbotlist settings
-	siteSettings.query.set("bot_lists.discordbotlist.isEnabled", req.body.dbl_enabled === "on");
-	siteSettings.query.set("bot_lists.discordbotlist.api_token", req.body.dbl_api_token || "");
-	siteSettings.query.set("bot_lists.discordbotlist.webhook_secret", req.body.dbl_webhook_secret || "");
-	siteSettings.query.set("bot_lists.discordbotlist.auto_post_stats", req.body.dbl_auto_post !== "off");
-	siteSettings.query.set("bot_lists.discordbotlist.sync_commands", Boolean(req.body.dbl_sync_commands === "on"));
-
-	// Update vote rewards settings
-	siteSettings.query.set("vote_rewards.isEnabled", req.body.rewards_enabled === "on");
-	siteSettings.query.set("vote_rewards.points_per_vote", parseInt(req.body.points_per_vote) || 100);
-	siteSettings.query.set("vote_rewards.weekend_multiplier", parseInt(req.body.weekend_multiplier) || 2);
-	siteSettings.query.set("vote_rewards.notification_channel_id", req.body.notification_channel_id || "");
-
-	// Update redemption settings
-	siteSettings.query.set("vote_rewards.redemption.isEnabled", req.body.redemption_enabled === "on");
-	siteSettings.query.set("vote_rewards.redemption.points_per_dollar", parseInt(req.body.points_per_dollar) || 1000);
-	siteSettings.query.set("vote_rewards.redemption.redeemable_tier_id", req.body.redeemable_tier_id || "");
-	siteSettings.query.set("vote_rewards.redemption.min_redemption_days", parseInt(req.body.min_redemption_days) || 7);
-	siteSettings.query.set("vote_rewards.redemption.max_redemption_days", parseInt(req.body.max_redemption_days) || 365);
+	// Set entire objects at once to avoid nested path issues
+	siteSettings.query.set("bot_lists", botLists);
+	siteSettings.query.set("vote_rewards", voteRewards);
 
 	try {
 		await siteSettings.save();
@@ -1034,37 +1054,42 @@ controllers.membership.servers = async (req, { res }) => {
 	// READ operation - never create/save, use defaults if not found
 	const siteSettings = await getSiteSettingsForRead();
 
-	const searchResults = [];
-	const query = req.query.q;
+	const query = req.query.q || "";
+	const perPage = 20;
+	const currentPage = Math.max(1, parseInt(req.query.page) || 1);
 
+	// Get all guilds from cache
+	let allGuilds = Array.from(req.app.client.guilds.cache.values());
+
+	// Apply search filter
 	if (query) {
-		// Search by server ID first (exact match)
-		const directServer = await Servers.findOne(query);
-		if (directServer) {
-			const discordGuild = await req.app.client.guilds.fetch(query).catch(() => null);
-			searchResults.push({
-				...directServer,
-				name: discordGuild?.name || "Unknown Server",
-				icon: discordGuild?.iconURL() || null,
-				memberCount: discordGuild?.memberCount || 0,
-			});
-		} else {
-			// If not found by ID, search through bot's cached guilds by name
-			const matchingGuilds = req.app.client.guilds.cache
-				.filter(g => g.name.toLowerCase().includes(query.toLowerCase()))
-				.first(10);
+		const lowerQuery = query.toLowerCase();
+		allGuilds = allGuilds.filter(g =>
+			g.id === query || g.name.toLowerCase().includes(lowerQuery),
+		);
+	}
 
-			for (const guild of matchingGuilds) {
-				const serverDoc = await Servers.findOne(guild.id);
-				searchResults.push({
-					_id: guild.id,
-					subscription: serverDoc?.subscription || null,
-					name: guild.name,
-					icon: guild.iconURL() || null,
-					memberCount: guild.memberCount || 0,
-				});
-			}
-		}
+	// Sort by member count descending
+	allGuilds.sort((a, b) => b.memberCount - a.memberCount);
+
+	const totalServers = allGuilds.length;
+	const numPages = Math.ceil(totalServers / perPage);
+
+	// Paginate
+	const startIndex = (currentPage - 1) * perPage;
+	const paginatedGuilds = allGuilds.slice(startIndex, startIndex + perPage);
+
+	// Fetch subscription data for paginated servers
+	const servers = [];
+	for (const guild of paginatedGuilds) {
+		const serverDoc = await Servers.findOne(guild.id);
+		servers.push({
+			_id: guild.id,
+			subscription: serverDoc?.subscription || null,
+			name: guild.name,
+			icon: guild.iconURL() || null,
+			memberCount: guild.memberCount || 0,
+		});
 	}
 
 	// Get recent subscription changes - query servers that have subscription data
@@ -1079,7 +1104,7 @@ controllers.membership.servers = async (req, { res }) => {
 		recentSubscriptions = recentSubscriptions
 			.filter(s => s.subscription?.started_at)
 			.sort((a, b) => new Date(b.subscription.started_at) - new Date(a.subscription.started_at))
-			.slice(0, 20);
+			.slice(0, 10);
 	} catch {
 		// Fallback if query fails
 		recentSubscriptions = [];
@@ -1096,7 +1121,11 @@ controllers.membership.servers = async (req, { res }) => {
 		features: siteSettings?.features || [],
 	}).setPageData({
 		query,
-		searchResults,
+		servers,
+		totalServers,
+		currentPage,
+		numPages,
+		perPage,
 		recentSubscriptions,
 		page: "maintainer-servers.ejs",
 	}).render();
@@ -2189,6 +2218,110 @@ controllers.networkApprovals = async (req, { res }) => {
 		pendingApprovals,
 		recentApprovals: recentApprovals.slice(0, 10),
 	}).render();
+};
+
+// ============================================
+// FEATURED CREATOR MANAGEMENT CONTROLLERS
+// ============================================
+
+const CreatorManager = require("../../Modules/CreatorManager");
+
+controllers.featuredCreators = async (req, { res }) => {
+	try {
+		const featuredCreators = await CreatorManager.getFeaturedCreators(50);
+
+		// Enrich with user data
+		for (const creator of featuredCreators) {
+			try {
+				const user = await req.app.client.users.fetch(creator.id, true);
+				creator.avatar = user.displayAvatarURL({ size: 64 });
+				creator.username = user.username;
+			} catch (_) {
+				creator.avatar = null;
+			}
+		}
+
+		// Get tier info for display
+		const tierThresholds = CreatorManager.getTierThresholds();
+		const badgeInfo = CreatorManager.getBadgeInfo();
+
+		res.setPageData({
+			page: "maintainer-featured-creators.ejs",
+			featuredCreators,
+			tierThresholds,
+			badgeInfo,
+		}).render();
+	} catch (err) {
+		logger.error("Failed to load featured creators", {}, err);
+		renderError(res, "Failed to load featured creators.");
+	}
+};
+
+controllers.featuredCreators.setFeatured = async (req, res) => {
+	const { userId, isFeatured, reason, bonusShare } = req.body;
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID is required" });
+	}
+
+	try {
+		const result = await CreatorManager.setFeaturedStatus(
+			userId,
+			isFeatured !== false,
+			req.user.id,
+			reason || "",
+			parseInt(bonusShare, 10) || 5,
+		);
+
+		res.json(result);
+	} catch (err) {
+		logger.error("Failed to update featured status", { userId }, err);
+		res.status(500).json({ error: "Failed to update featured status" });
+	}
+};
+
+controllers.featuredCreators.updateStats = async (req, res) => {
+	const { userId } = req.body;
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID is required" });
+	}
+
+	try {
+		const stats = await CreatorManager.updateCreatorStats(userId);
+		if (!stats) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		res.json({ success: true, stats });
+	} catch (err) {
+		logger.error("Failed to update creator stats", { userId }, err);
+		res.status(500).json({ error: "Failed to update stats" });
+	}
+};
+
+controllers.featuredCreators.getCreatorStatus = async (req, res) => {
+	const { userId } = req.params;
+
+	try {
+		const status = await CreatorManager.getCreatorStatus(userId);
+
+		// Fetch user info
+		let user = null;
+		try {
+			user = await req.app.client.users.fetch(userId, true);
+		} catch (_) {
+			// Ignore
+		}
+
+		res.json({
+			...status,
+			username: user?.username,
+			avatar: user?.displayAvatarURL({ size: 128 }),
+		});
+	} catch (err) {
+		logger.error("Failed to get creator status", { userId }, err);
+		res.status(500).json({ error: "Failed to get creator status" });
+	}
 };
 
 // ============================================

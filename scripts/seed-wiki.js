@@ -81,7 +81,7 @@ Unlock advanced features for your server with premium subscriptions. See [Premiu
 ## Getting Help
 
 - Use \`@SkynetBot help\` or \`!help\` in Discord for command help
-- Visit our [support server](https://discord.gg/skynet) for assistance
+- Visit our [support server](https://discord.gg/SE6xHmvKrZ) for assistance
 - Check the [FAQ](FAQ) for common questions
 
 ---
@@ -1061,7 +1061,7 @@ See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Own
 	},
 	{
 		_id: "Music-Guide",
-		content: \`# Music System Guide
+		content: `# Music System Guide
 
 High-quality music playback for your server with DJ controls and audio filters.
 
@@ -1106,7 +1106,7 @@ Use \`!filters\` to toggle these effects.
 ---
 
 See also: [Premium Features](Premium-Features) | [Commands](Commands)
-\`,
+`,
 		reactions: [],
 		updates: [{
 			_id: "218536118591684613",
@@ -1116,7 +1116,7 @@ See also: [Premium Features](Premium-Features) | [Commands](Commands)
 	},
 	{
 		_id: "Developer-Tools",
-		content: \`# Developer Tools
+		content: `# Developer Tools
 
 A suite of advanced utilities for developers, including a JavaScript sandbox, code formatting, and API testing tools.
 
@@ -1167,7 +1167,7 @@ Save and manage your frequently used code snippets.
 ---
 
 See also: [Premium Features](Premium-Features) | [Commands](Commands)
-\`,
+`,
 		reactions: [],
 		updates: [{
 			_id: "218536118591684613",
@@ -2783,7 +2783,7 @@ No, server data is not shared with third parties.
 
 - Read the [Getting Started](Getting-Started) guide
 - Browse the full [Wiki](Home)
-- Join our [support server](https://discord.gg/skynet)
+- Join our [support server](https://discord.gg/SE6xHmvKrZ)
 `,
 		reactions: [],
 		updates: [{
@@ -2820,10 +2820,11 @@ Complete list of all SkynetBot commands organized by category.
 |----------|----------|
 `;
 	
-	// Add category links
+	// Add category links - slugify to match markdown anchor generation
+	const slugify = (text) => text.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "");
 	for (const category of Object.keys(categories).sort()) {
 		const count = categories[category].length;
-		const anchor = category.replace(/[^a-zA-Z]/g, "").toLowerCase();
+		const anchor = slugify(category);
 		content += `| [${category}](#${anchor}) | ${count} commands |\n`;
 	}
 	
@@ -2859,7 +2860,6 @@ For detailed information, visit the category-specific pages:
 
 	// Add each category section
 	for (const [category, cmdList] of Object.entries(categories).sort()) {
-		const anchor = category.replace(/[^a-zA-Z]/g, "").toLowerCase();
 		content += `## ${category}
 
 | Command | Description | Admin Level |

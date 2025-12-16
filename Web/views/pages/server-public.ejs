@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= pageData.pageTitle %> | Skynet Bot</title>
+	<%
+	// SEO for public server page
+	if (typeof pageData !== "undefined" && pageData.serverData) {
+		pageData.seo = {
+			title: pageData.pageTitle,
+			description: pageData.pageDescription,
+			keywords: `Discord server, ${pageData.serverData.category}, ${pageData.serverData.name}, Discord community, join Discord server`,
+			image: pageData.serverData.icon,
+			type: "website"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Servers", url: "/activity/servers" },
+			{ name: pageData.serverData.name, url: pageData.canonicalUrl }
+		];
+	}
+	%>
+	<%- include('../partials/head') %>
+	
+	<% if (pageData.jsonLd) { %>
+	<script type="application/ld+json">
+		<%- JSON.stringify(pageData.jsonLd) %>
+	</script>
+	<% } %>
+	
+	<style>
+	:root {
+		--profile-theme-color: <%= pageData.profile?.themeColor || '#14b8a6' %>;
+	}
+	.server-hero {
+		position: relative;
+		padding: 4rem 0;
+	}
+	.server-hero.has-banner {
+		background-size: cover;
+		background-position: center;
+		padding: 6rem 0;
+	}
+	.server-hero.has-banner::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+	}
+	.server-hero .container {
+		position: relative;
+		z-index: 1;
+	}
+	.server-icon-large {
+		width: 128px;
+		height: 128px;
+		border-radius: 50%;
+		border: 4px solid rgba(255, 255, 255, 0.3);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		background: rgba(255, 255, 255, 0.1);
+	}
+	.server-stats-card {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: var(--radius-lg);
+		padding: 1.25rem;
+		text-align: center;
+	}
+	.server-stats-value {
+		font-size: 1.75rem;
+		font-weight: 700;
+		color: white;
+	}
+	.server-stats-label {
+		font-size: 0.75rem;
+		color: rgba(255, 255, 255, 0.7);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.server-category-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: rgba(20, 184, 166, 0.2);
+		color: var(--profile-theme-color);
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-full);
+		font-size: 0.875rem;
+		font-weight: 600;
+	}
+	.server-tagline {
+		font-size: 1.25rem;
+		color: rgba(255, 255, 255, 0.9);
+		font-style: italic;
+		margin-top: 0.5rem;
+	}
+	.server-description-card {
+		background: var(--color-card);
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		box-shadow: var(--shadow-lg);
+	}
+	.join-button {
+		background: linear-gradient(135deg, var(--profile-theme-color) 0%, color-mix(in srgb, var(--profile-theme-color) 80%, black) 100%);
+		color: white;
+		font-weight: 600;
+		padding: 1rem 2rem;
+		border-radius: var(--radius-lg);
+		font-size: 1.125rem;
+		border: none;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.join-button:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px rgba(20, 184, 166, 0.4);
+		color: white;
+	}
+	.back-link {
+		color: rgba(255, 255, 255, 0.7);
+		transition: color 0.2s ease;
+	}
+	.back-link:hover {
+		color: white;
+	}
+	.social-links {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+	.social-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: var(--color-bg-secondary);
+		color: var(--profile-theme-color);
+		transition: all 0.2s ease;
+	}
+	.social-link:hover {
+		background: var(--profile-theme-color);
+		color: white;
+		transform: translateY(-2px);
+	}
+	.leaderboard-row {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 0.75rem;
+		border-radius: var(--radius-md);
+		background: var(--color-bg-secondary);
+		margin-bottom: 0.5rem;
+	}
+	.leaderboard-rank {
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 0.8rem;
+	}
+	.leaderboard-rank.rank-1 { background: linear-gradient(135deg, #ffd700, #ffb700); color: #1a1a2e; }
+	.leaderboard-rank.rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #1a1a2e; }
+	.leaderboard-rank.rank-3 { background: linear-gradient(135deg, #cd7f32, #b06e28); color: white; }
+	.leaderboard-rank.rank-other { background: var(--color-bg-tertiary); color: var(--color-text-muted); }
+	.leaderboard-points {
+		margin-left: auto;
+		font-weight: 600;
+		color: var(--profile-theme-color);
+	}
+	.rules-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.rules-list li {
+		padding: 0.75rem 0;
+		border-bottom: 1px solid var(--color-border-light);
+		display: flex;
+		align-items: flex-start;
+		gap: 0.75rem;
+	}
+	.rules-list li:last-child {
+		border-bottom: none;
+	}
+	.rule-number {
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: var(--profile-theme-color);
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 0.75rem;
+		font-weight: 700;
+		flex-shrink: 0;
+	}
+	.discord-widget-container {
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+	}
+	</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+			<div class="hero-body server-hero <%= pageData.profile?.enabled && pageData.profile?.bannerUrl ? 'has-banner' : '' %>" style="<%= pageData.profile?.enabled && pageData.profile?.bannerUrl ? 'background-image: url(' + pageData.profile.bannerUrl + ')' : '' %>">
+			<div class="container">
+				<!-- Back Link -->
+				<div style="margin-bottom: 1.5rem;">
+					<a href="/activity/servers" class="back-link">
+						<i class="fas fa-arrow-left"></i> Back to Server Directory
+					</a>
+				</div>
+				
+				<!-- Server Header -->
+				<div class="columns is-vcentered">
+					<div class="column is-narrow">
+						<figure class="image">
+							<img class="server-icon-large" src="<%= pageData.serverData.icon %>" alt="<%= pageData.serverData.name %> server icon" onerror="this.src='/static/img/discord-icon.png'">
+						</figure>
+					</div>
+					<div class="column">
+						<h1 class="title is-1" style="color: white; margin-bottom: 0.5rem;">
+							<%= pageData.serverData.name %>
+						</h1>
+						<% if (pageData.profile?.enabled && pageData.profile?.tagline) { %>
+							<p class="server-tagline">"<%= pageData.profile.tagline %>"</p>
+						<% } %>
+						<div style="margin-bottom: 1rem; margin-top: 0.5rem;">
+							<span class="server-category-badge">
+								<i class="fas fa-tag"></i>
+								<%= pageData.serverData.category || 'Community' %>
+							</span>
+						</div>
+						
+						<!-- Stats Row -->
+						<% if (!pageData.profile?.enabled || pageData.profile?.showSections?.stats !== false) { %>
+						<div class="columns is-mobile" style="margin-top: 1rem;">
+							<div class="column is-narrow">
+								<div class="server-stats-card">
+									<p class="server-stats-value"><%= pageData.serverData.memberCount.toLocaleString() %></p>
+									<p class="server-stats-label">Members</p>
+								</div>
+							</div>
+							<div class="column is-narrow">
+								<div class="server-stats-card">
+									<p class="server-stats-value"><%= pageData.serverData.messagesCount.toLocaleString() %></p>
+									<p class="server-stats-label">Messages Today</p>
+								</div>
+							</div>
+						</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	
+	<main class="section" role="main">
+		<div class="container">
+			<div class="columns">
+				<!-- Main Content -->
+				<div class="column is-8">
+					<!-- About Section -->
+					<div class="server-description-card" style="margin-bottom: 1.5rem;">
+						<h2 class="title is-4" style="margin-bottom: 1rem;">
+							<i class="fas fa-info-circle" style="color: var(--profile-theme-color);"></i>
+							About This Server
+						</h2>
+						<% if (pageData.profile?.enabled && pageData.profile?.about) { %>
+							<div class="content" style="white-space: pre-wrap; line-height: 1.7;">
+								<%= pageData.profile.about %>
+							</div>
+						<% } else if (pageData.serverData.description) { %>
+							<div class="content" style="white-space: pre-wrap; line-height: 1.7;">
+								<%= pageData.serverData.description %>
+							</div>
+						<% } else { %>
+							<p style="color: var(--color-text-muted); font-style: italic;">
+								This server hasn't added a description yet.
+							</p>
+						<% } %>
+					</div>
+
+					<!-- Rules Section (Tier 1+) -->
+					<% if (pageData.profile?.enabled && pageData.profile?.showSections?.rules && pageData.profile?.rules) { %>
+					<div class="server-description-card" style="margin-bottom: 1.5rem;">
+						<h2 class="title is-4" style="margin-bottom: 1rem;">
+							<i class="fas fa-scroll" style="color: var(--profile-theme-color);"></i>
+							Server Rules
+						</h2>
+						<ul class="rules-list">
+							<% pageData.profile.rules.split('\n').filter(r => r.trim()).forEach((rule, i) => { %>
+								<li>
+									<span class="rule-number"><%= i + 1 %></span>
+									<span><%= rule.trim() %></span>
+								</li>
+							<% }); %>
+						</ul>
+					</div>
+					<% } %>
+
+					<!-- Leaderboard Section (Tier 1+) -->
+					<% if (pageData.profile?.enabled && pageData.profile?.showSections?.leaderboard && pageData.profile?.leaderboard?.length > 0) { %>
+					<div class="server-description-card" style="margin-bottom: 1.5rem;">
+						<h2 class="title is-4" style="margin-bottom: 1rem;">
+							<i class="fas fa-trophy" style="color: var(--profile-theme-color);"></i>
+							Top Members
+						</h2>
+						<% pageData.profile.leaderboard.forEach(member => { %>
+							<div class="leaderboard-row">
+								<span class="leaderboard-rank <%= member.rank <= 3 ? 'rank-' + member.rank : 'rank-other' %>">
+									<%= member.rank %>
+								</span>
+								<span><%= member.username %></span>
+								<span class="leaderboard-points"><%= member.points.toLocaleString() %> pts</span>
+							</div>
+						<% }); %>
+					</div>
+					<% } %>
+
+					<!-- Discord Widget (Tier 2) -->
+					<% if (pageData.profile?.discordWidget?.enabled) { %>
+					<div class="server-description-card" style="margin-bottom: 1.5rem;">
+						<h2 class="title is-4" style="margin-bottom: 1rem;">
+							<i class="fab fa-discord" style="color: #5865f2;"></i>
+							Live Chat
+						</h2>
+						<div class="discord-widget-container">
+							<iframe 
+								src="https://discord.com/widget?id=<%= pageData.profile.discordWidget.serverId %>&theme=dark" 
+								width="100%" 
+								height="400" 
+								allowtransparency="true" 
+								frameborder="0" 
+								sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+							</iframe>
+						</div>
+					</div>
+					<% } %>
+				</div>
+				
+				<!-- Sidebar -->
+				<div class="column is-4">
+					<!-- Join Card -->
+					<div class="server-description-card" style="text-align: center; margin-bottom: 1.5rem;">
+						<h3 class="title is-5" style="margin-bottom: 1rem;">Join This Server</h3>
+						<% if (pageData.serverData.inviteLink) { %>
+							<a href="<%= pageData.serverData.inviteLink %>" target="_blank" rel="noopener noreferrer" class="join-button">
+								<i class="fab fa-discord"></i>
+								Join Server
+							</a>
+						<% } else { %>
+							<p style="color: var(--color-text-muted); font-size: 0.9rem;">
+								<i class="fas fa-lock" style="margin-right: 0.5rem;"></i>
+								Invite link not available
+							</p>
+						<% } %>
+					</div>
+
+					<!-- Social Links (Tier 1+) -->
+					<% if (pageData.profile?.enabled && pageData.profile?.showSections?.social && pageData.profile?.socialLinks?.length > 0) { %>
+					<div class="server-description-card" style="margin-bottom: 1.5rem;">
+						<h3 class="title is-5" style="margin-bottom: 1rem;">
+							<i class="fas fa-share-alt" style="color: var(--profile-theme-color);"></i>
+							Connect With Us
+						</h3>
+						<div class="social-links">
+							<% pageData.profile.socialLinks.forEach(link => { %>
+								<a href="<%= link.url %>" target="_blank" rel="noopener noreferrer" class="social-link" title="<%= link.platform %>">
+									<i class="fab <%= link.icon %>"></i>
+								</a>
+							<% }); %>
+						</div>
+					</div>
+					<% } %>
+					
+					<!-- Server Info Card -->
+					<div class="server-description-card">
+						<h3 class="title is-5" style="margin-bottom: 1rem;">
+							<i class="fas fa-chart-bar" style="color: var(--profile-theme-color);"></i>
+							Server Info
+						</h3>
+						<table class="table is-fullwidth" style="background: transparent;">
+							<tbody>
+								<tr>
+									<td><i class="fas fa-users" style="color: var(--profile-theme-color); margin-right: 0.5rem;"></i> Members</td>
+									<td style="text-align: right; font-weight: 600;"><%= pageData.serverData.memberCount.toLocaleString() %></td>
+								</tr>
+								<tr>
+									<td><i class="fas fa-comment" style="color: var(--profile-theme-color); margin-right: 0.5rem;"></i> Messages Today</td>
+									<td style="text-align: right; font-weight: 600;"><%= pageData.serverData.messagesCount.toLocaleString() %></td>
+								</tr>
+								<tr>
+									<td><i class="fas fa-folder" style="color: var(--profile-theme-color); margin-right: 0.5rem;"></i> Category</td>
+									<td style="text-align: right; font-weight: 600;"><%= pageData.serverData.category || 'Other' %></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<!-- Featured Channels (Tier 2) -->
+					<% if (pageData.profile?.enabled && pageData.profile?.showSections?.channels && pageData.profile?.featuredChannels?.length > 0) { %>
+					<div class="server-description-card" style="margin-top: 1.5rem;">
+						<h3 class="title is-5" style="margin-bottom: 1rem;">
+							<i class="fas fa-hashtag" style="color: var(--profile-theme-color);"></i>
+							Featured Channels
+						</h3>
+						<% pageData.profile.featuredChannels.forEach(ch => { %>
+							<div style="padding: 0.5rem; background: var(--color-bg-secondary); border-radius: var(--radius-md); margin-bottom: 0.5rem;">
+								<i class="fas fa-hashtag" style="color: var(--color-text-muted); margin-right: 0.5rem;"></i>
+								<%= ch.name %>
+							</div>
+						<% }); %>
+					</div>
+					<% } %>
+				</div>
+			</div>
+			
+			<!-- Related Servers Section -->
+			<div style="margin-top: 3rem;">
+				<h2 class="title is-4" style="margin-bottom: 1.5rem;">
+					<i class="fas fa-compass" style="color: var(--profile-theme-color);"></i>
+					Discover More Servers
+				</h2>
+				<div class="has-text-centered">
+					<a href="/activity/servers?category=<%= encodeURIComponent(pageData.serverData.category || 'All') %>" class="button is-primary is-outlined">
+						<span class="icon"><i class="fas fa-search"></i></span>
+						<span>Browse <%= pageData.serverData.category || 'All' %> Servers</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

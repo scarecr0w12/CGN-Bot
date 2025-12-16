@@ -115,8 +115,31 @@ const sitemapXml = async (req, res) => {
 		logger.warn("Failed to fetch extensions for sitemap", {}, err);
 	}
 
+	// Fetch public servers with listings enabled
+	let publicServers = [];
+	try {
+		const serverDocs = await Servers.find({
+			"config.public_data.isShown": true,
+			"config.public_data.server_listing.isEnabled": true,
+		}).exec();
+		publicServers = serverDocs.map(doc => {
+			const slug = doc.config?.public_data?.server_listing?.slug;
+			const serverUrl = slug ?
+				`/server/${doc._id}/${slug}` :
+				`/server/${doc._id}`;
+			return {
+				url: serverUrl,
+				priority: "0.6",
+				changefreq: "daily",
+				lastmod: now,
+			};
+		});
+	} catch (err) {
+		logger.warn("Failed to fetch public servers for sitemap", {}, err);
+	}
+
 	// Combine all pages
-	const allPages = [...staticPages, ...wikiPages, ...blogPosts, ...extensions];
+	const allPages = [...staticPages, ...wikiPages, ...blogPosts, ...extensions, ...publicServers];
 
 	// Generate sitemap XML
 	const urls = allPages.map(page => `

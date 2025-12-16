@@ -98,7 +98,7 @@ class ModernHelpMenu {
 					name: "🔗 Quick Links",
 					value: [
 						`• [Command Wiki](https://github.com/GilbertGobbels/SkynetBot/wiki/Commands)`,
-						`• [Support Server](${configJS.discordLink || "https://discord.gg/skynet"})`,
+						`• [Support Server](${configJS.discordLink || "https://discord.gg/SE6xHmvKrZ"})`,
 					].join("\n"),
 					inline: true,
 				},

@@ -1,6 +1,6 @@
 <!--
 If you need help with CGN-Bot self-hosting or usage, please go to our Discord instead:
-  https://discord.gg/NZwzJ9Q
+  https://discord.gg/SE6xHmvKrZ
 This issue tracker is only for bug reports and enhancement suggestions. You won't receive any basic help here.
 -->
 

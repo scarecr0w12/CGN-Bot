@@ -315,6 +315,65 @@ module.exports = new Schema({
 		},
 	}),
 
+	// Extension Creator Status - Featured Creator program
+	creator_status: new Schema({
+		// Featured creator badge (awarded by maintainers)
+		is_featured: {
+			type: Boolean,
+			default: false,
+		},
+		featured_at: Date,
+		featured_by: String,
+		// Featured reason/bio displayed on profile
+		featured_reason: {
+			type: String,
+			maxlength: 500,
+		},
+		// Bonus revenue share for featured creators (added to base 70%)
+		bonus_revenue_share: {
+			type: Number,
+			default: 0,
+			min: 0,
+			max: 15,
+		},
+		// Creator tier based on extension performance
+		tier: {
+			type: String,
+			enum: ["bronze", "silver", "gold", "platinum", "diamond"],
+			default: "bronze",
+		},
+		// Stats for tier calculation
+		total_extensions: {
+			type: Number,
+			default: 0,
+		},
+		total_installs: {
+			type: Number,
+			default: 0,
+		},
+		total_ratings: {
+			type: Number,
+			default: 0,
+		},
+		average_rating: {
+			type: Number,
+			default: 0,
+		},
+		// Badges earned through achievements
+		badges: [new Schema({
+			_id: {
+				type: String,
+				required: true,
+			},
+			name: String,
+			icon: String,
+			earned_at: {
+				type: Date,
+				default: Date.now,
+			},
+		})],
+	}),
+
 	// Primary Profile (global profile across all servers)
 	primary_profile: new Schema({
 		bio: {
@@ -371,5 +430,44 @@ module.exports = new Schema({
 			type: Boolean,
 			default: false,
 		},
+	}),
+
+	// Server Referral System - tracks users who refer new servers to add the bot
+	referrals: new Schema({
+		// Unique referral code for this user
+		referral_code: {
+			type: String,
+			maxlength: 16,
+		},
+		// Stats
+		total_referrals: {
+			type: Number,
+			default: 0,
+		},
+		total_points_earned: {
+			type: Number,
+			default: 0,
+		},
+		// List of servers referred by this user
+		referred_servers: [new Schema({
+			_id: {
+				type: String,
+				required: true,
+			},
+			server_name: String,
+			referred_at: {
+				type: Date,
+				default: Date.now,
+			},
+			points_awarded: {
+				type: Number,
+				default: 0,
+			},
+			// Bonus awarded after server stays active for 7 days
+			retention_bonus_awarded: {
+				type: Boolean,
+				default: false,
+			},
+		})],
 	}),
 });

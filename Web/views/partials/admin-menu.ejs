@@ -28,6 +28,11 @@ const menuSections = {
 		label: 'Extensions',
 		paths: ['other/extensions', 'other/extension-builder']
 	},
+	serverProfile: {
+		icon: 'fas fa-id-card',
+		label: 'Server Profile',
+		paths: ['server-profile', 'widgets']
+	},
 	subscription: {
 		icon: 'fas fa-crown',
 		label: 'Subscription',
@@ -235,6 +240,27 @@ const menuItem = (path, label, icon = null) => {
 
 					<% if(isActive(`${basePath}/other/extension-builder`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('other/extension-builder', 'Extension Builder') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.serverProfile) ? ' has-active' : '' %>" data-section="serverProfile">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.serverProfile.icon %>"></i></span>
+				<span><%= menuSections.serverProfile.label %></span>
+			</p>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/server-profile`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('server-profile', 'Edit Profile') %>
+
+					<% if(isActive(`${basePath}/widgets`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('widgets', 'Embeddable Widgets') %>
 				</li>
 			</ul>
 		</div>

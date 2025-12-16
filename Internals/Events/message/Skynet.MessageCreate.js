@@ -126,15 +126,8 @@ class MessageCreate extends BaseEvent {
 					logger.verbose(`Failed to save user document...`, { usrid: msg.author.id }, err);
 				});
 			} else if (!this.client.getSharedCommand(msg.command)) {
-				// Process chatterbot prompt
-				logger.verbose(`Treating "${msg.cleanContent}" as a PM chatterbot prompt`, { usrid: msg.author.id });
-				await msg.send({
-					embeds: [{
-						title: "Sorry!",
-						description: "The chatterbot is currently unavailable. Please check back later!",
-						color: Colors.SOFT_ERR,
-					}],
-				});
+				// Ignore non-command DMs - chatterbot is not available
+				logger.verbose(`Ignoring non-command DM: "${msg.cleanContent}"`, { usrid: msg.author.id });
 			}
 		} else {
 			// Handle public messages

@@ -3,6 +3,7 @@ module.exports = {
 
 	ConfigManager: require("./ConfigManager.js"),
 	ConversionHandler: require("./ConversionHandler.js"),
+	CreatorManager: require("./CreatorManager.js"),
 	EmailService: require("./EmailService.js"),
 	Encryption: require("./Encryption"),
 	ExtensionRunner: require("./ExtensionRunner.js"),
@@ -16,6 +17,7 @@ module.exports = {
 	MicrosoftTranslate: require("./MicrosoftTranslate.js"),
 	ModLog: require("./ModLog.js"),
 	NewServer: require("./NewServer.js"),
+	ServerTemplates: require("./ServerTemplates.js"),
 	Polls: require("./Polls.js"),
 	PostShardedData: require("./PostShardedData.js"),
 	PostTotalData: require("./PostTotalData.js"),

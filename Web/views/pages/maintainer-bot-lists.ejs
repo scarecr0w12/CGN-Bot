@@ -21,7 +21,8 @@
 					<article class="message is-primary">
 						<div class="message-body">
 							<div class="content">
-								Connect to top.gg, Discord Bot List, and other bot listing services to automatically post stats and receive vote notifications.
+								Connect to bot listing services to automatically post stats and receive vote notifications. Supported services:
+								<strong>top.gg</strong>, <strong>Discord Bot List</strong>, <strong>Discord Bots GG</strong>, <strong>DiscordList.gg</strong>, and <strong>Bots on Discord</strong>.
 							</div>
 						</div>
 					</article>
@@ -168,6 +169,117 @@
                     </button>
                 </div>
                 <p class="help">Manually sync slash commands to discordbotlist.com</p>
+            </div>
+        </div>
+
+        <!-- Discord Bots GG Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-list"></i></span>
+                Discord Bots GG Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordbotsgg_enabled" <%= configData.bot_lists?.discordbotsgg?.isEnabled ? 'checked' : '' %>>
+                        Enable Discord Bots GG integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="discordbotsgg_api_token" value="<%= configData.bot_lists?.discordbotsgg?.api_token || '' %>" placeholder="Your discord.bots.gg API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token in your bot's settings at <a href="https://discord.bots.gg/" target="_blank">discord.bots.gg</a></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordbotsgg_auto_post" <%= configData.bot_lists?.discordbotsgg?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- DiscordList.gg Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-th-list"></i></span>
+                DiscordList.gg Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordlistgg_enabled" <%= configData.bot_lists?.discordlistgg?.isEnabled ? 'checked' : '' %>>
+                        Enable DiscordList.gg integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="discordlistgg_api_token" value="<%= configData.bot_lists?.discordlistgg?.api_token || '' %>" placeholder="Your discordlist.gg API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token at <a href="https://discordlist.gg/" target="_blank">discordlist.gg</a> in your bot's settings</p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordlistgg_auto_post" <%= configData.bot_lists?.discordlistgg?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bots on Discord Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-globe"></i></span>
+                Bots on Discord Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="botsondiscord_enabled" <%= configData.bot_lists?.botsondiscord?.isEnabled ? 'checked' : '' %>>
+                        Enable Bots on Discord integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="botsondiscord_api_token" value="<%= configData.bot_lists?.botsondiscord?.api_token || '' %>" placeholder="Your bots.ondiscord.xyz API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Get your API key from <a href="https://bots.ondiscord.xyz/me/keys" target="_blank">bots.ondiscord.xyz/me/keys</a></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="botsondiscord_auto_post" <%= configData.bot_lists?.botsondiscord?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
             </div>
         </div>
 

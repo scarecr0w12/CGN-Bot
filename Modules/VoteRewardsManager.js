@@ -430,11 +430,13 @@ const getVoteSites = async () => {
 	const botLists = siteSettings?.bot_lists || {};
 	const sites = [];
 
+	const clientId = process.env.DISCORD_CLIENT_ID || process.env.CLIENT_ID;
+
 	if (botLists.topgg?.isEnabled) {
 		sites.push({
 			id: "topgg",
 			name: "top.gg",
-			url: `https://top.gg/bot/${process.env.CLIENT_ID}/vote`,
+			url: `https://top.gg/bot/${clientId}/vote`,
 			icon: "https://top.gg/images/dblnew.png",
 			cooldown: 12 * 60 * 60 * 1000, // 12 hours
 		});
@@ -444,7 +446,7 @@ const getVoteSites = async () => {
 		sites.push({
 			id: "discordbotlist",
 			name: "Discord Bot List",
-			url: `https://discordbotlist.com/bots/${process.env.CLIENT_ID}/upvote`,
+			url: `https://discordbotlist.com/bots/${clientId}/upvote`,
 			icon: "https://discordbotlist.com/icon.png",
 			cooldown: 12 * 60 * 60 * 1000, // 12 hours
 		});

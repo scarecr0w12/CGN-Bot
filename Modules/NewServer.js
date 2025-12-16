@@ -2,9 +2,11 @@
 const { get: getDatabase } = require("../Database/Driver");
 // const Utils = require("./Utils/"); // Disabled: no longer needed after removing startup message
 const { PermissionFlagsBits } = require("discord.js");
+const ServerTemplates = require("./ServerTemplates");
 
 // Set defaults for new server document
-module.exports = async (client, server, serverDocument) => {
+// @param {string} templateId - Optional template ID to apply preset configuration
+module.exports = async (client, server, serverDocument, templateId = null) => {
 	const DB = getDatabase();
 
 	// Default RSS feed
@@ -74,6 +76,12 @@ module.exports = async (client, server, serverDocument) => {
 	// Default tag reactions (only set if values exist)
 	if (defTagReactions && defTagReactions.length > 0) {
 		serverConfigQueryDocument.set("tag_reaction.messages", defTagReactions);
+	}
+
+	// Apply server template if specified
+	if (templateId && ServerTemplates.isValidTemplate(templateId)) {
+		await ServerTemplates.applyTemplate(serverDocument, templateId, client);
+		logger.info("Applied server template during setup", { svrid: server.id, templateId });
 	}
 
 	// Disabled: Don't send startup message to server owners/moderators

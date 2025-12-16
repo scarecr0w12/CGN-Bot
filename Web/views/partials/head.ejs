@@ -157,15 +157,11 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 <% const _matomoUrl = typeof matomoUrl !== "undefined" ? matomoUrl : ""; const _matomoSiteId = typeof matomoSiteId !== "undefined" ? matomoSiteId : ""; %>
 <% if (_isProduction && _matomoUrl && _matomoSiteId) { %>
 <script>
-  var _paq = window._paq = window._paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
+  var _mtm = window._mtm = window._mtm || [];
+  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
   (function() {
-    var u="<%= _matomoUrl %>";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
-    _paq.push(['setSiteId', '<%= _matomoSiteId %>']);
     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    g.async=true; g.src='https://analytics.thecorehosting.net/js/container_d7b4T81a.js'; s.parentNode.insertBefore(g,s);
   })();
 </script>
 <% } %>

@@ -48,6 +48,42 @@ const activityRouting = router => {
 	setupPage(router, "/activity/(|servers|users)", [], controllers.activity);
 };
 
+const serverRouting = router => {
+	// SEO-friendly public server pages with slugs
+	setupPage(router, "/server/:id/:slug", [], controllers.server.publicPage);
+	// Legacy URL (redirects to slug URL)
+	setupPage(router, "/server/:id", [], controllers.server.publicPage);
+	// Generate slug endpoint
+	router.routes.push(new Route(router, "/server/:id/generate-slug", [middleware.checkUnavailableAPI], controllers.server.generateSlug, "post", "general"));
+	// Note: Server profile API is registered in api.js before the 404 handler
+};
+
+const referralRouting = (router, apiRouter) => {
+	// Referral invite link handler
+	router.routes.push(new Route(router, "/invite/ref/:code", [middleware.checkUnavailable], controllers.referral.handleReferralInvite, "get", "general"));
+	// Referral dashboard page
+	setupPage(router, "/account/referrals", [], controllers.referral.referralDashboard, true);
+	// API endpoints
+	apiRouter.routes.push(new Route(apiRouter, "/referral/stats", [middleware.checkUnavailableAPI], controllers.referral.getReferralStats, "get", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/referral/generate-code", [middleware.checkUnavailableAPI], controllers.referral.generateReferralCode, "post", "api"));
+};
+
+const templatesRouting = (router, apiRouter) => {
+	// Template selection page
+	setupPage(router, "/setup/templates/:serverId", [], controllers.templates.templateSelectionPage, true);
+	// API endpoints
+	apiRouter.routes.push(new Route(apiRouter, "/templates", [middleware.checkUnavailableAPI], controllers.templates.getTemplates, "get", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/templates/apply", [middleware.checkUnavailableAPI], controllers.templates.applyTemplate, "post", "api"));
+};
+
+const widgetsRouting = router => {
+	// SVG widget endpoints (public, no auth required)
+	router.routes.push(new Route(router, "/widgets/server/:serverId/stats.svg", [], controllers.widgets.serverStatsSvg, "get", "general"));
+	router.routes.push(new Route(router, "/widgets/server/:serverId/leaderboard.svg", [], controllers.widgets.leaderboardSvg, "get", "general"));
+	// Iframe embed page
+	setupPage(router, "/widgets/server/:serverId/embed", [], controllers.widgets.embedPage, false);
+};
+
 const galleryRouting = router => {
 	setupRedirection(router, "/extensions", "/extensions/gallery");
 	setupPage(router, "/extensions/(|gallery|queue)", [], controllers.extensions.gallery);
@@ -145,6 +181,10 @@ module.exports = app => {
 	generalRouting(routers.general);
 	statusRouting(routers.general);
 	activityRouting(routers.general);
+	serverRouting(routers.general);
+	referralRouting(routers.general, routers.API);
+	templatesRouting(routers.general, routers.API);
+	widgetsRouting(routers.general);
 	galleryRouting(routers.general);
 	wikiRouting(routers.general);
 	blogRouting(routers.general);

@@ -54,7 +54,7 @@ module.exports = async (passport, configJS) => {
 				}
 
 				// Remove existing Google link if present
-				const existingAccounts = user.linked_accounts?.filter(a => a._id !== "google") || [];
+				const existingAccounts = Array.isArray(user.linked_accounts) ? user.linked_accounts.filter(a => a._id !== "google") : [];
 				existingAccounts.push(linkedAccount);
 				user.query.set("linked_accounts", existingAccounts);
 				await user.save();
@@ -97,7 +97,7 @@ module.exports = async (passport, configJS) => {
 					user = Users.new({ _id: req.user.id });
 				}
 
-				const existingAccounts = user.linked_accounts?.filter(a => a._id !== "github") || [];
+				const existingAccounts = Array.isArray(user.linked_accounts) ? user.linked_accounts.filter(a => a._id !== "github") : [];
 				existingAccounts.push(linkedAccount);
 				user.query.set("linked_accounts", existingAccounts);
 				await user.save();
@@ -141,7 +141,7 @@ module.exports = async (passport, configJS) => {
 					user = Users.new({ _id: req.user.id });
 				}
 
-				const existingAccounts = user.linked_accounts?.filter(a => a._id !== "twitch") || [];
+				const existingAccounts = Array.isArray(user.linked_accounts) ? user.linked_accounts.filter(a => a._id !== "twitch") : [];
 				existingAccounts.push(linkedAccount);
 				user.query.set("linked_accounts", existingAccounts);
 				await user.save();
@@ -185,7 +185,7 @@ module.exports = async (passport, configJS) => {
 					user = Users.new({ _id: req.user.id });
 				}
 
-				const existingAccounts = user.linked_accounts?.filter(a => a._id !== "patreon") || [];
+				const existingAccounts = Array.isArray(user.linked_accounts) ? user.linked_accounts.filter(a => a._id !== "patreon") : [];
 				existingAccounts.push(linkedAccount);
 				user.query.set("linked_accounts", existingAccounts);
 				await user.save();

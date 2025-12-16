@@ -321,12 +321,12 @@ async function acceptExtension(extId) {
 		
 		if (response.ok) {
 			document.getElementById('ext-card-' + extId).remove();
-			SkynetUtil.showNotification('Extension accepted successfully!', 'success');
+			swal('Extension Accepted', 'The extension has been published to the gallery.', 'success');
 		} else {
-			SkynetUtil.showNotification('Failed to accept extension', 'error');
+			swal('Failed', 'Failed to accept extension. Status: ' + response.status, 'error');
 		}
 	} catch (err) {
-		SkynetUtil.showNotification('Error: ' + err.message, 'error');
+		swal('Error', err.message, 'error');
 	}
 }
 
@@ -342,17 +342,17 @@ async function approveNetwork(extId) {
 		if (response.ok) {
 			location.reload();
 		} else {
-			SkynetUtil.showNotification('Failed to approve network access', 'error');
+			swal('Failed', 'Failed to approve network access. Status: ' + response.status, 'error');
 		}
 	} catch (err) {
-		SkynetUtil.showNotification('Error: ' + err.message, 'error');
+		swal('Error', err.message, 'error');
 	}
 }
 
 async function rejectExtension(extId) {
 	const reason = document.getElementById('reject-reason-' + extId).value;
 	if (!reason.trim()) {
-		SkynetUtil.showNotification('Please provide a rejection reason', 'warning');
+		swal('Missing Reason', 'Please provide a rejection reason', 'warning');
 		return;
 	}
 	
@@ -365,12 +365,12 @@ async function rejectExtension(extId) {
 		
 		if (response.ok) {
 			document.getElementById('ext-card-' + extId).remove();
-			SkynetUtil.showNotification('Extension rejected', 'success');
+			swal('Extension Rejected', 'The extension has been rejected and the owner notified.', 'success');
 		} else {
-			SkynetUtil.showNotification('Failed to reject extension', 'error');
+			swal('Failed', 'Failed to reject extension. Status: ' + response.status, 'error');
 		}
 	} catch (err) {
-		SkynetUtil.showNotification('Error: ' + err.message, 'error');
+		swal('Error', err.message, 'error');
 	}
 }
 </script>

@@ -70,6 +70,12 @@ module.exports = router => {
 	router.post("/tickets/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.delete);
 	router.get("/tickets/:ticketId/transcript", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.transcript);
 
+	// Featured Creators Management (Administration level)
+	setupConsolePage(router, "/global-options/featured-creators", "administration", [], controllers.console.featuredCreators);
+	router.post("/global-options/featured-creators/set", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.setFeatured);
+	router.post("/global-options/featured-creators/update-stats", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.updateStats);
+	router.get("/global-options/featured-creators/:userId", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.getCreatorStatus);
+
 	// IndexNow SEO Integration (Management level)
 	setupConsolePage(router, "/infrastructure/indexnow", "management", [], controllers.console.indexnow.status);
 	router.post("/infrastructure/indexnow/test", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.test);

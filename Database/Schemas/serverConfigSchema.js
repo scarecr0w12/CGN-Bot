@@ -509,6 +509,12 @@ module.exports = new Schema({
 				type: Boolean,
 				default: false,
 			},
+			// SEO-friendly URL slug for public server pages
+			slug: {
+				type: String,
+				minlength: 2,
+				maxlength: 60,
+			},
 			category: {
 				type: String,
 				default: "Other",
@@ -526,6 +532,65 @@ module.exports = new Schema({
 				maxlength: 3000,
 			},
 			invite_link: String,
+		}),
+		// Server Profile (Tier 1+)
+		server_profile: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			// Custom banner image URL
+			banner_url: {
+				type: String,
+				maxlength: 500,
+			},
+			// Short tagline/motto
+			tagline: {
+				type: String,
+				maxlength: 150,
+			},
+			// Extended about section (markdown supported)
+			about: {
+				type: String,
+				maxlength: 5000,
+			},
+			// Social links
+			social_links: [new Schema({
+				platform: {
+					type: String,
+					enum: ["website", "twitter", "youtube", "twitch", "reddit", "github", "instagram", "tiktok"],
+				},
+				url: {
+					type: String,
+					maxlength: 300,
+				},
+			})],
+			// Featured channels to display
+			featured_channels: [String],
+			// Server rules/guidelines to display
+			rules: {
+				type: String,
+				maxlength: 2000,
+			},
+			// Custom theme color
+			theme_color: {
+				type: String,
+				maxlength: 7,
+				default: "#14b8a6",
+			},
+			// What sections to show
+			show_sections: new Schema({
+				stats: { type: Boolean, default: true },
+				leaderboard: { type: Boolean, default: true },
+				rules: { type: Boolean, default: false },
+				social: { type: Boolean, default: true },
+				channels: { type: Boolean, default: false },
+			}),
+			// Discord widget embed (Tier 2)
+			discord_widget: new Schema({
+				isEnabled: { type: Boolean, default: false },
+				channel_id: String,
+			}),
 		}),
 	}),
 	ranks_list: [new Schema({

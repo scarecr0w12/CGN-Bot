@@ -316,6 +316,39 @@ module.exports = new Schema({
 				default: false,
 			},
 		}),
+		discordbotsgg: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+		discordlistgg: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+		botsondiscord: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+		}),
 	}),
 
 	// Vote reward settings

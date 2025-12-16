@@ -69,15 +69,33 @@
 						</form>
 					</div>
 
-					<% if (pageData.searchResults && pageData.searchResults.length > 0) { %>
-					<!-- Search Results -->
-					<h2 class="subtitle">Search Results</h2>
-					<% pageData.searchResults.forEach(server => { %>
+					<!-- Server Stats -->
+					<div class="level mb-4">
+						<div class="level-left">
+							<div class="level-item">
+								<p class="has-text-grey">
+									<strong><%= pageData.totalServers.toLocaleString() %></strong> servers total
+									<% if (pageData.query) { %> matching "<%= pageData.query %>"<% } %>
+								</p>
+							</div>
+						</div>
+						<div class="level-right">
+							<div class="level-item">
+								<p class="has-text-grey is-size-7">
+									Page <%= pageData.currentPage %> of <%= pageData.numPages || 1 %>
+								</p>
+							</div>
+						</div>
+					</div>
+
+					<% if (pageData.servers && pageData.servers.length > 0) { %>
+					<!-- Server List -->
+					<% pageData.servers.forEach(server => { %>
 					<div class="server-card">
 						<img src="<%= server.icon || '/static/img/discord-icon.png' %>" class="server-icon" alt="Server Icon">
 						<div class="server-info">
 							<p class="has-text-weight-bold"><%= server.name %></p>
-							<p class="is-size-7 has-text-grey">ID: <%= server._id %> • <%= server.memberCount || 0 %> members</p>
+							<p class="is-size-7 has-text-grey">ID: <%= server._id %> • <%= server.memberCount.toLocaleString() || 0 %> members</p>
 						</div>
 						<div>
 							<% if (server.subscription && server.subscription.tier_id && server.subscription.tier_id !== 'free') { %>
@@ -94,10 +112,59 @@
 						</button>
 					</div>
 					<% }); %>
-					<% } else if (pageData.query) { %>
+
+					<!-- Pagination -->
+					<% if (pageData.numPages > 1) { %>
+					<nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
+						<% const queryParam = pageData.query ? `&q=${encodeURIComponent(pageData.query)}` : ''; %>
+						<a class="pagination-previous" 
+						   <% if (pageData.currentPage <= 1) { %>disabled<% } else { %>
+						   href="<%= currentPage %>?page=<%= pageData.currentPage - 1 %><%= queryParam %>"<% } %>>
+							Previous
+						</a>
+						<a class="pagination-next"
+						   <% if (pageData.currentPage >= pageData.numPages) { %>disabled<% } else { %>
+						   href="<%= currentPage %>?page=<%= pageData.currentPage + 1 %><%= queryParam %>"<% } %>>
+							Next
+						</a>
+						<ul class="pagination-list">
+							<% 
+							const maxVisiblePages = 5;
+							let startPage = Math.max(1, pageData.currentPage - Math.floor(maxVisiblePages / 2));
+							let endPage = Math.min(pageData.numPages, startPage + maxVisiblePages - 1);
+							if (endPage - startPage + 1 < maxVisiblePages) {
+								startPage = Math.max(1, endPage - maxVisiblePages + 1);
+							}
+							%>
+							<% if (startPage > 1) { %>
+							<li><a class="pagination-link" href="<%= currentPage %>?page=1<%= queryParam %>">1</a></li>
+							<% if (startPage > 2) { %><li><span class="pagination-ellipsis">&hellip;</span></li><% } %>
+							<% } %>
+							<% for (let i = startPage; i <= endPage; i++) { %>
+							<li>
+								<a class="pagination-link <%= i === pageData.currentPage ? 'is-current' : '' %>" 
+								   href="<%= currentPage %>?page=<%= i %><%= queryParam %>"
+								   <% if (i === pageData.currentPage) { %>aria-current="page"<% } %>>
+									<%= i %>
+								</a>
+							</li>
+							<% } %>
+							<% if (endPage < pageData.numPages) { %>
+							<% if (endPage < pageData.numPages - 1) { %><li><span class="pagination-ellipsis">&hellip;</span></li><% } %>
+							<li><a class="pagination-link" href="<%= currentPage %>?page=<%= pageData.numPages %><%= queryParam %>"><%= pageData.numPages %></a></li>
+							<% } %>
+						</ul>
+					</nav>
+					<% } %>
+
+					<% } else { %>
 					<article class="message is-warning">
 						<div class="message-body">
+							<% if (pageData.query) { %>
 							No servers found matching "<%= pageData.query %>"
+							<% } else { %>
+							No servers found in the bot's cache.
+							<% } %>
 						</div>
 					</article>
 					<% } %>

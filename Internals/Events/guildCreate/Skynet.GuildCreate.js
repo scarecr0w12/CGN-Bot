@@ -1,6 +1,7 @@
 const BaseEvent = require("../BaseEvent.js");
 const { NewServer: getNewServerData, PostShardedData } = require("../../../Modules/");
 const ConfigManager = require("../../../Modules/ConfigManager");
+const ReferralManager = require("../../../Modules/ReferralManager");
 // const { LoggingLevels } = require("../../Constants"); // Disabled: server join messages removed
 
 class GuildCreate extends BaseEvent {
@@ -27,12 +28,77 @@ class GuildCreate extends BaseEvent {
 				try {
 					const newServerDocument = await getNewServerData(this.client, guild, Servers.new({ _id: guild.id }));
 					await newServerDocument.save();
+
+					// Process referral if a pending referral code exists for this guild
+					// Check for referral code stored in Redis or pending referrals
+					await this.processReferral(guild);
 				} catch (err) {
 					logger.warn(`Failed to create a new server document for new server >.>`, { svrid: guild.id }, err);
 				}
 				// Disabled: Don't send message to server owners/moderators on join
 				// this.client.logMessage(await Servers.findOne(guild.id), LoggingLevels.INFO, "I've been added to your server! (^-^)");
 			}
+		}
+	}
+
+	/**
+	 * Process referral for a newly joined guild
+	 * Checks Redis for pending referral codes and awards points to referrer
+	 */
+	async processReferral (guild) {
+		try {
+			// Check Redis for pending referral code
+			const redis = this.client.cache;
+			if (!redis) return;
+
+			// First check if there's a direct pending referral for this guild
+			let referralCode = await redis.get(`referral:pending:${guild.id}`);
+
+			// If not, check if the guild owner clicked a referral link recently
+			if (!referralCode && guild.ownerId) {
+				referralCode = await redis.get(`referral:clicker:${guild.ownerId}`);
+				if (referralCode) {
+					// Clear the clicker referral so it's only used once
+					await redis.del(`referral:clicker:${guild.ownerId}`);
+				}
+			}
+
+			if (!referralCode) return;
+
+			// Process the referral
+			const result = await ReferralManager.processReferral(guild, referralCode);
+
+			if (result.success) {
+				logger.info(`Referral processed for guild ${guild.name}`, {
+					svrid: guild.id,
+					referrerId: result.referrerId,
+					pointsAwarded: result.pointsAwarded,
+				});
+
+				// Notify the referrer via DM if possible
+				try {
+					const referrer = await this.client.users.fetch(result.referrerId);
+					if (referrer) {
+						await referrer.send({
+							embeds: [{
+								color: 0x14b8a6,
+								title: "🎉 Referral Successful!",
+								description: `**${result.serverName}** joined Skynet using your referral link!\n\nYou earned **${result.pointsAwarded} Vote Points**!`,
+								footer: { text: "If they stay active for 7 days, you'll earn a bonus!" },
+							}],
+						}).catch(() => null);
+					}
+				} catch (err) {
+					// Ignore DM errors
+				}
+			} else {
+				logger.debug(`Referral not processed: ${result.reason}`, { svrid: guild.id });
+			}
+
+			// Remove pending referral from Redis
+			await redis.del(`referral:pending:${guild.id}`);
+		} catch (err) {
+			logger.warn("Error processing referral", { svrid: guild.id }, err);
 		}
 	}
 }

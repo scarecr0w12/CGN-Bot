@@ -177,11 +177,11 @@ middleware.populateRequest = route => (req, res, next) => {
 };
 
 middleware.registerTraffic = (req, res, next) => {
-	if (!req.cookies.trafficID || req.cookies.trafficID !== req.app.client.traffic.TID) {
-		const { TID } = req.app.client.traffic;
-		res.cookie("trafficID", TID, { httpOnly: true });
-	}
-	req.app.client.traffic.count(req.cookies.trafficID, req.isAuthenticated());
+	// Use authenticated user ID, session ID, or IP for unique visitor tracking
+	const userIdentifier = req.isAuthenticated() && req.user?.id ?
+		`user:${req.user.id}` :
+		req.sessionID || req.clientIP || req.ip;
+	req.app.client.traffic.count(userIdentifier, req.isAuthenticated());
 	next();
 };
 
