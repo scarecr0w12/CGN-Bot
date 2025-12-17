@@ -106,7 +106,7 @@ ReferralManager.processReferral = async (guild, referralCode) => {
 
 	// Check if this server was already referred
 	const existingReferral = referrerDocument.referrals?.referred_servers?.find(
-		s => s._id === guild.id
+		s => s._id === guild.id,
 	);
 	if (existingReferral) {
 		return { success: false, reason: "already_referred" };
@@ -170,7 +170,7 @@ ReferralManager.processRetentionBonus = async guildId => {
 
 	for (const referrerDocument of referrers) {
 		const referral = referrerDocument.referrals?.referred_servers?.find(
-			s => s._id === guildId
+			s => s._id === guildId,
 		);
 
 		if (!referral || referral.retention_bonus_awarded) {
