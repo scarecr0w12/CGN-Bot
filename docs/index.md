@@ -22,6 +22,12 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 ### 🤖 AI Integration
 Multi-provider LLM support with OpenAI, Anthropic, Groq, and Ollama. Features conversation memory, web search, and customizable personalities.
 
+### 🧠 Sentiment Analysis
+AI-powered automod using Google Cloud Natural Language API or AI fallback. Detect toxic, insulting, threatening, or profane content with configurable sensitivity.
+
+### 🌍 Multilingual Support
+Full i18n support for 15 languages including English, Spanish, French, German, Japanese, Korean, Chinese, Russian, and more.
+
 ### 💰 Economy System
 Full virtual economy with daily rewards, jobs, shops, trading, quests, achievements, and gambling mini-games.
 
@@ -30,6 +36,9 @@ Full virtual economy with daily rewards, jobs, shops, trading, quests, achieveme
 
 ### 🛡️ Moderation
 Progressive strike system, auto-mod filters, spam detection, audit logging, and role hierarchy enforcement.
+
+### 🛠️ Developer Tools
+Code execution, linting, regex testing, JSON utilities, and HTTP testing for developers (Tier 2 Premium).
 
 ### 📊 Analytics
 Activity scoring, server statistics, leaderboards, and detailed analytics for premium servers.
@@ -40,8 +49,14 @@ Create, share, and install custom server extensions with slash command support.
 ### 🎫 Ticket System
 Per-server support tickets with categories, panels, transcripts, and staff management (Tier 2 Premium).
 
+### 🎮 Game Updates
+Monitor and announce updates for popular games like Minecraft, Rust, Terraria, Valheim, and more.
+
 ### 💎 Server Premium
 Per-server subscriptions with Stripe/PayPal/BTCPay payment processing.
+
+### 🗳️ Vote Rewards & Referrals
+Earn points from voting and server referrals, spend on premium features and extensions.
 
 ### 🌐 Web Dashboard
 Full server management from the browser with modern UI and real-time updates.
