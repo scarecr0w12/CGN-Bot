@@ -71,6 +71,9 @@ module.exports = router => {
 	// Server Profile API (Tier 1+) - must be before 404 handler
 	setupResource(router, "/server/:serverId/profile", [], controllers.server.updateProfile, "post", "authentication");
 
+	// User preferences API
+	setupResource(router, "/user/language", [], controllers.api.user.language, "post", "authentication");
+
 	// 404 handler
 	setupResource(router, "/*", [], (req, res) => res.sendStatus(404), "all", "public");
 };

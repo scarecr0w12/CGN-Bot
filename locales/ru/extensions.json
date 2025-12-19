@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[RU] Extension Gallery",
+		"subtitle": "[RU] Browse and install community-created extensions",
+		"search": "[RU] Search extensions...",
+		"filters": "[RU] Filters",
+		"category": "[RU] Category",
+		"tags": "[RU] Tags",
+		"sort": "[RU] Sort by",
+		"sortOptions": {
+			"popular": "[RU] Most Popular",
+			"recent": "[RU] Recently Updated",
+			"rating": "[RU] Highest Rated",
+			"installs": "[RU] Most Installs"
+		},
+		"noResults": "[RU] No extensions found matching your criteria.",
+		"featured": "[RU] Featured",
+		"trending": "[RU] Trending",
+		"new": "[RU] New"
+	},
+	"card": {
+		"by": "[RU] by {{author}}",
+		"installs": "[RU] {{count}} install",
+		"installs_plural": "[RU] {{count}} installs",
+		"rating": "[RU] {{rating}} / 5",
+		"version": "[RU] v{{version}}",
+		"install": "[RU] Install",
+		"installed": "[RU] Installed",
+		"update": "[RU] Update Available",
+		"premium": "[RU] Premium",
+		"free": "[RU] Free",
+		"viewDetails": "[RU] View Details"
+	},
+	"details": {
+		"title": "[RU] Extension Details",
+		"description": "[RU] Description",
+		"usage": "[RU] Usage",
+		"permissions": "[RU] Required Permissions",
+		"changelog": "[RU] Changelog",
+		"reviews": "[RU] Reviews",
+		"author": "[RU] Author",
+		"version": "[RU] Version",
+		"lastUpdated": "[RU] Last Updated",
+		"installs": "[RU] Total Installs",
+		"rating": "[RU] Rating",
+		"category": "[RU] Category",
+		"tags": "[RU] Tags",
+		"source": "[RU] View Source",
+		"report": "[RU] Report Extension"
+	},
+	"install": {
+		"title": "[RU] Install Extension",
+		"confirm": "[RU] Are you sure you want to install **{{name}}**?",
+		"permissions": "[RU] This extension requires the following permissions:",
+		"success": "[RU] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[RU] Failed to install extension.",
+		"alreadyInstalled": "[RU] This extension is already installed.",
+		"incompatible": "[RU] This extension is not compatible with your current setup.",
+		"premiumRequired": "[RU] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[RU] Uninstall Extension",
+		"confirm": "[RU] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[RU] This will remove all settings for this extension.",
+		"success": "[RU] Extension uninstalled.",
+		"failed": "[RU] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[RU] Extension Builder",
+		"create": "[RU] Create Extension",
+		"edit": "[RU] Edit Extension",
+		"name": "[RU] Extension Name",
+		"description": "[RU] Description",
+		"version": "[RU] Version",
+		"category": "[RU] Category",
+		"tags": "[RU] Tags",
+		"type": "[RU] Type",
+		"types": {
+			"command": "[RU] Command",
+			"event": "[RU] Event",
+			"slash": "[RU] Slash Command"
+		},
+		"commandKey": "[RU] Command Trigger",
+		"slashDescription": "[RU] Slash Command Description",
+		"code": "[RU] Code",
+		"scopes": "[RU] Scopes",
+		"timeout": "[RU] Timeout (ms)",
+		"adminLevel": "[RU] Required Admin Level",
+		"save": "[RU] Save Draft",
+		"submit": "[RU] Submit for Review",
+		"test": "[RU] Test Extension",
+		"export": "[RU] Export",
+		"import": "[RU] Import"
+	},
+	"myExtensions": {
+		"title": "[RU] My Extensions",
+		"created": "[RU] Created",
+		"installed": "[RU] Installed",
+		"noExtensions": "[RU] You haven't created any extensions yet.",
+		"noInstalled": "[RU] You haven't installed any extensions.",
+		"status": {
+			"draft": "[RU] Draft",
+			"pending": "[RU] Pending Review",
+			"approved": "[RU] Approved",
+			"rejected": "[RU] Rejected",
+			"published": "[RU] Published"
+		}
+	},
+	"review": {
+		"title": "[RU] Write a Review",
+		"rating": "[RU] Rating",
+		"comment": "[RU] Comment",
+		"submit": "[RU] Submit Review",
+		"edit": "[RU] Edit Review",
+		"delete": "[RU] Delete Review",
+		"helpful": "[RU] Helpful",
+		"report": "[RU] Report Review",
+		"noReviews": "[RU] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[RU] Extension not found.",
+		"loadFailed": "[RU] Failed to load extension.",
+		"executionFailed": "[RU] Extension execution failed.",
+		"timeout": "[RU] Extension timed out.",
+		"permissionDenied": "[RU] Permission denied.",
+		"invalidCode": "[RU] Invalid extension code.",
+		"scopeNotAllowed": "[RU] This extension requires a scope that is not allowed."
+	}
+}

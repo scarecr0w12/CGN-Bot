@@ -1,3 +1,5 @@
+const crypto = require("crypto");
+
 class Traffic {
 	constructor (IPC, isWorker) {
 		this.db = Database;
@@ -10,7 +12,23 @@ class Traffic {
 		this.uniqueUsers = 0;
 		this.seenUsers = new Set();
 
+		// Buffer for detailed request logs (flush periodically)
+		this.requestBuffer = [];
+		this.REQUEST_BUFFER_SIZE = 50;
+		this.REQUEST_BUFFER_FLUSH_INTERVAL = 30000; // 30 seconds
+
 		if (!isWorker) setInterval(this.fetch.bind(this), 3600000);
+
+		// Flush request buffer periodically
+		setInterval(() => this.flushRequestBuffer(), this.REQUEST_BUFFER_FLUSH_INTERVAL);
+	}
+
+	hashIP (ip) {
+		if (!ip) return null;
+		return crypto.createHash("sha256")
+			.update(ip + (process.env.IP_HASH_SALT || "skynet"))
+			.digest("hex")
+			.substring(0, 16);
 	}
 
 	getAndReset () {
@@ -33,12 +51,19 @@ class Traffic {
 		}
 		this.logger.verbose(`Flushing traffic data to DB: ${pageViews} views, ${authViews} auth, ${uniqueUsers} unique`);
 		await this.db.traffic.create({
-			_id: Date.now(),
+			_id: `agg_${Date.now()}`,
+			type: "aggregate",
+			timestamp: new Date(),
 			pageViews,
 			authViews,
 			uniqueUsers,
 		});
-		await this.db.traffic.delete({ _id: { $lt: Date.now() - 2629746000 } });
+		// Clean up old aggregate records (older than 1 month)
+		const oneMonthAgo = Date.now() - 2629746000;
+		await this.db.traffic.delete({ type: "aggregate", timestamp: { $lt: new Date(oneMonthAgo) } });
+		// Clean up old request records (older than 7 days to save space)
+		const sevenDaysAgo = Date.now() - 604800000;
+		await this.db.traffic.delete({ type: "request", timestamp: { $lt: new Date(sevenDaysAgo) } });
 	}
 
 	async fetch () {
@@ -75,6 +100,47 @@ class Traffic {
 		}
 	}
 
+	logRequest (requestData) {
+		const record = {
+			_id: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+			type: "request",
+			timestamp: new Date(),
+			path: requestData.path ? requestData.path.substring(0, 512) : null,
+			method: requestData.method || "GET",
+			status_code: requestData.statusCode || null,
+			response_time: requestData.responseTime || null,
+			user_agent: requestData.userAgent ? requestData.userAgent.substring(0, 1024) : null,
+			ip_hash: this.hashIP(requestData.ip),
+			referrer: requestData.referrer ? requestData.referrer.substring(0, 512) : null,
+			user_id: requestData.userId || null,
+			session_id: requestData.sessionId || null,
+			country: requestData.country || null,
+		};
+
+		this.requestBuffer.push(record);
+
+		if (this.requestBuffer.length >= this.REQUEST_BUFFER_SIZE) {
+			this.flushRequestBuffer();
+		}
+	}
+
+	async flushRequestBuffer () {
+		if (this.requestBuffer.length === 0) return;
+
+		const records = [...this.requestBuffer];
+		this.requestBuffer = [];
+
+		try {
+			for (const record of records) {
+				await this.db.traffic.create(record);
+			}
+			this.logger.debug(`Flushed ${records.length} request logs to database.`);
+		} catch (err) {
+			this.logger.error(`Failed to flush request logs:`, err);
+			this.requestBuffer.unshift(...records);
+		}
+	}
+
 	async data () {
 		const data = {};
 		data.current = {
@@ -83,7 +149,8 @@ class Traffic {
 			uniqueUsers: this.uniqueUsers,
 		};
 
-		const rawData = await this.db.traffic.find({}).exec();
+		// Only get aggregate records for stats display
+		const rawData = await this.db.traffic.find({ type: "aggregate" }).exec();
 
 		// Parse _id to number (stored as string in MariaDB)
 		rawData.forEach(t => {

@@ -1,0 +1,124 @@
+{
+	"tiers": {
+		"free": {
+			"name": "[DE] Free",
+			"description": "[DE] Basic features for everyone"
+		},
+		"starter": {
+			"name": "[DE] Starter",
+			"description": "[DE] Essential premium features"
+		},
+		"premium": {
+			"name": "[DE] Premium",
+			"description": "[DE] Advanced features for growing servers"
+		},
+		"enterprise": {
+			"name": "[DE] Enterprise",
+			"description": "[DE] Everything for large communities"
+		}
+	},
+	"features": {
+		"title": "[DE] Premium Features",
+		"music": {
+			"title": "[DE] Music System",
+			"description": "[DE] High-quality music playback with DJ controls and audio filters"
+		},
+		"ai": {
+			"title": "[DE] AI Chat",
+			"description": "[DE] Intelligent conversations powered by multiple AI providers"
+		},
+		"tickets": {
+			"title": "[DE] Ticket System",
+			"description": "[DE] Professional support ticket management"
+		},
+		"devTools": {
+			"title": "[DE] Developer Tools",
+			"description": "[DE] Code execution, linting, and debugging tools"
+		},
+		"analytics": {
+			"title": "[DE] Advanced Analytics",
+			"description": "[DE] Detailed server statistics and insights"
+		},
+		"customBot": {
+			"title": "[DE] Custom Bot",
+			"description": "[DE] Your own branded bot instance"
+		},
+		"prioritySupport": {
+			"title": "[DE] Priority Support",
+			"description": "[DE] Fast-track support from our team"
+		},
+		"unlimitedStorage": {
+			"title": "[DE] Unlimited Storage",
+			"description": "[DE] No limits on message logs and data"
+		}
+	},
+	"subscription": {
+		"title": "[DE] Subscription",
+		"current": "[DE] Current Plan",
+		"upgrade": "[DE] Upgrade",
+		"downgrade": "[DE] Downgrade",
+		"cancel": "[DE] Cancel Subscription",
+		"renews": "[DE] Renews on {{date}}",
+		"expires": "[DE] Expires on {{date}}",
+		"cancelled": "[DE] Subscription cancelled",
+		"active": "[DE] Active",
+		"inactive": "[DE] Inactive",
+		"lifetime": "[DE] Lifetime"
+	},
+	"checkout": {
+		"title": "[DE] Checkout",
+		"selectPlan": "[DE] Select a Plan",
+		"billingCycle": "[DE] Billing Cycle",
+		"monthly": "[DE] Monthly",
+		"yearly": "[DE] Yearly",
+		"yearlyDiscount": "[DE] Save {{percent}}% with yearly",
+		"price": "[DE] {{price}}/{{period}}",
+		"total": "[DE] Total",
+		"payWith": "[DE] Pay with",
+		"processing": "[DE] Processing payment...",
+		"success": "[DE] Payment successful! Thank you for subscribing.",
+		"failed": "[DE] Payment failed. Please try again.",
+		"cancelled": "[DE] Payment cancelled."
+	},
+	"votePoints": {
+		"title": "[DE] Vote Points",
+		"balance": "[DE] Your Balance",
+		"earn": "[DE] Earn Points",
+		"redeem": "[DE] Redeem Points",
+		"history": "[DE] Point History",
+		"vote": "[DE] Vote for {{botName}}",
+		"voteReward": "[DE] +{{points}} points",
+		"weekendBonus": "[DE] Weekend Bonus: 2x points!",
+		"redeemTier": "[DE] Redeem for {{tier}} ({{duration}})",
+		"redeemSuccess": "[DE] Successfully redeemed {{points}} points for {{tier}}!",
+		"insufficientPoints": "[DE] You don't have enough points.",
+		"voteAgain": "[DE] You can vote again in {{time}}",
+		"streak": "[DE] Vote Streak: {{count}} days",
+		"streakBonus": "[DE] Streak Bonus: +{{bonus}}%"
+	},
+	"trial": {
+		"title": "[DE] Free Trial",
+		"start": "[DE] Start Free Trial",
+		"active": "[DE] Trial Active",
+		"daysLeft": "[DE] {{days}} days left",
+		"expired": "[DE] Trial Expired",
+		"upgrade": "[DE] Upgrade to continue using premium features"
+	},
+	"gift": {
+		"title": "[DE] Gift Premium",
+		"send": "[DE] Send as Gift",
+		"redeem": "[DE] Redeem Gift Code",
+		"code": "[DE] Gift Code",
+		"recipient": "[DE] Recipient",
+		"message": "[DE] Message (optional)",
+		"success": "[DE] Gift sent successfully!",
+		"redeemed": "[DE] Gift code redeemed! Enjoy {{tier}} for {{duration}}.",
+		"invalid": "[DE] Invalid or expired gift code."
+	},
+	"limits": {
+		"reached": "[DE] You've reached the limit for this feature.",
+		"upgrade": "[DE] Upgrade to {{tier}} for higher limits.",
+		"current": "[DE] Current: {{used}}/{{limit}}",
+		"unlimited": "[DE] Unlimited"
+	}
+}

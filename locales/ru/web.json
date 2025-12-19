@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[RU] Home",
+		"features": "[RU] Features",
+		"commands": "[RU] Commands",
+		"dashboard": "[RU] Dashboard",
+		"extensions": "[RU] Extensions",
+		"wiki": "[RU] Wiki",
+		"blog": "[RU] Blog",
+		"support": "[RU] Support",
+		"login": "[RU] Login",
+		"logout": "[RU] Logout",
+		"invite": "[RU] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[RU] The Ultimate Discord Bot",
+			"subtitle": "[RU] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[RU] Trusted by {{count}} servers",
+			"addToServer": "[RU] Add to Server",
+			"viewFeatures": "[RU] View Features"
+		},
+		"features": {
+			"title": "[RU] Features",
+			"subtitle": "[RU] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[RU] Moderation",
+				"description": "[RU] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[RU] Fun Commands",
+				"description": "[RU] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[RU] Leveling System",
+				"description": "[RU] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[RU] Custom Extensions",
+				"description": "[RU] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[RU] Music",
+				"description": "[RU] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[RU] AI Chat",
+				"description": "[RU] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[RU] Ready to get started?",
+			"subtitle": "[RU] Add {{botName}} to your server in seconds.",
+			"button": "[RU] Add to Server"
+		},
+		"faq": {
+			"title": "[RU] Frequently Asked Questions",
+			"q1": "[RU] Is {{botName}} free to use?",
+			"a1": "[RU] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[RU] How do I set up the bot?",
+			"a2": "[RU] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[RU] What are Extensions?",
+			"a3": "[RU] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[RU] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[RU] Privacy Policy",
+			"terms": "[RU] Terms of Service",
+			"contact": "[RU] Contact",
+			"status": "[RU] Status"
+		},
+		"social": {
+			"discord": "[RU] Discord",
+			"github": "[RU] GitHub",
+			"twitter": "[RU] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[RU] Login with {{provider}}",
+		"loggingIn": "[RU] Logging in...",
+		"loginSuccess": "[RU] Successfully logged in!",
+		"loginFailed": "[RU] Login failed. Please try again.",
+		"logoutSuccess": "[RU] Successfully logged out.",
+		"welcome": "[RU] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[RU] Profile",
+		"myServers": "[RU] My Servers",
+		"settings": "[RU] Account Settings",
+		"linkedAccounts": "[RU] Linked Accounts",
+		"subscription": "[RU] Subscription",
+		"votePoints": "[RU] Vote Points",
+		"extensions": "[RU] My Extensions"
+	},
+	"servers": {
+		"title": "[RU] Select a Server",
+		"noServers": "[RU] You don't have any servers to manage.",
+		"manage": "[RU] Manage",
+		"notInServer": "[RU] Bot not in server",
+		"invite": "[RU] Invite Bot"
+	},
+	"membership": {
+		"title": "[RU] Premium Membership",
+		"subtitle": "[RU] Unlock powerful features for your server",
+		"currentTier": "[RU] Current Tier",
+		"free": "[RU] Free",
+		"starter": "[RU] Starter",
+		"premium": "[RU] Premium",
+		"enterprise": "[RU] Enterprise",
+		"perMonth": "[RU] /month",
+		"perYear": "[RU] /year",
+		"subscribe": "[RU] Subscribe",
+		"manage": "[RU] Manage Subscription",
+		"features": "[RU] Features",
+		"compare": "[RU] Compare Plans",
+		"faq": "[RU] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[RU] Access Denied",
+			"message": "[RU] You don't have permission to access this page.",
+			"goHome": "[RU] Go to Homepage"
+		},
+		"404": {
+			"title": "[RU] Page Not Found",
+			"message": "[RU] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[RU] Go to Homepage"
+		},
+		"500": {
+			"title": "[RU] Server Error",
+			"message": "[RU] Something went wrong on our end. Please try again later.",
+			"goHome": "[RU] Go to Homepage"
+		}
+	}
+}

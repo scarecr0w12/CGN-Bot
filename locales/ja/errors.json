@@ -1,0 +1,69 @@
+{
+	"generic": {
+		"somethingWentWrong": "[JA] Something went wrong!",
+		"internalError": "[JA] An internal error occurred.",
+		"tryAgain": "[JA] Please try again later.",
+		"contactSupport": "[JA] If this persists, please contact support.",
+		"unexpectedError": "[JA] An unexpected error occurred."
+	},
+	"permission": {
+		"noPermission": "[JA] You don't have permission to do this.",
+		"botNoPermission": "[JA] I don't have permission to do this.",
+		"missingPermissions": "[JA] Missing permissions: {{permissions}}",
+		"adminOnly": "[JA] This action requires administrator permissions.",
+		"ownerOnly": "[JA] This action can only be performed by the server owner.",
+		"moderatorOnly": "[JA] This action requires moderator permissions."
+	},
+	"validation": {
+		"required": "[JA] This field is required.",
+		"invalidFormat": "[JA] Invalid format.",
+		"tooShort": "[JA] Must be at least {{min}} characters.",
+		"tooLong": "[JA] Must be no more than {{max}} characters.",
+		"invalidNumber": "[JA] Must be a valid number.",
+		"numberTooLow": "[JA] Must be at least {{min}}.",
+		"numberTooHigh": "[JA] Must be no more than {{max}}.",
+		"invalidUrl": "[JA] Must be a valid URL.",
+		"invalidEmail": "[JA] Must be a valid email address.",
+		"invalidDate": "[JA] Must be a valid date.",
+		"invalidChoice": "[JA] Invalid choice. Please select from the available options."
+	},
+	"notFound": {
+		"user": "[JA] User not found.",
+		"member": "[JA] Member not found.",
+		"channel": "[JA] Channel not found.",
+		"role": "[JA] Role not found.",
+		"message": "[JA] Message not found.",
+		"server": "[JA] Server not found.",
+		"command": "[JA] Command not found.",
+		"page": "[JA] Page not found.",
+		"resource": "[JA] Resource not found."
+	},
+	"rateLimit": {
+		"tooManyRequests": "[JA] Too many requests. Please slow down.",
+		"cooldown": "[JA] Please wait {{time}} before trying again.",
+		"rateLimited": "[JA] You are being rate limited."
+	},
+	"auth": {
+		"notLoggedIn": "[JA] You must be logged in to do this.",
+		"sessionExpired": "[JA] Your session has expired. Please log in again.",
+		"invalidToken": "[JA] Invalid or expired token.",
+		"unauthorized": "[JA] You are not authorized to access this resource."
+	},
+	"server": {
+		"configNotLoaded": "[JA] Failed to load server configuration.",
+		"notConfigured": "[JA] This feature is not configured.",
+		"featureDisabled": "[JA] This feature is disabled on this server."
+	},
+	"premium": {
+		"required": "[JA] This feature requires a premium subscription.",
+		"tierRequired": "[JA] This feature requires {{tier}} tier or higher.",
+		"expired": "[JA] Your premium subscription has expired.",
+		"limitReached": "[JA] You have reached the limit for your subscription tier."
+	},
+	"bot": {
+		"botCannotTarget": "[JA] I cannot perform this action on myself.",
+		"cannotTargetOwner": "[JA] I cannot perform this action on the server owner.",
+		"cannotTargetHigherRole": "[JA] I cannot perform this action on users with a higher role than me.",
+		"cannotTargetSelf": "[JA] You cannot perform this action on yourself."
+	}
+}

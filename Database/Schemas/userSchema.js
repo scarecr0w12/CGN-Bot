@@ -209,6 +209,24 @@ module.exports = new Schema({
 		type: Boolean,
 		default: true,
 	},
+	preferences: new Schema({
+		language: {
+			type: String,
+			default: "en",
+			maxlength: 5,
+		},
+		timezone: String,
+		notifications: new Schema({
+			reminders: {
+				type: Boolean,
+				default: true,
+			},
+			levelUp: {
+				type: Boolean,
+				default: true,
+			},
+		}),
+	}),
 	upvoted_gallery_extensions: [String],
 	username: String,
 

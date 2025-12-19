@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[FR] Extension Gallery",
+		"subtitle": "[FR] Browse and install community-created extensions",
+		"search": "[FR] Search extensions...",
+		"filters": "[FR] Filters",
+		"category": "[FR] Category",
+		"tags": "[FR] Tags",
+		"sort": "[FR] Sort by",
+		"sortOptions": {
+			"popular": "[FR] Most Popular",
+			"recent": "[FR] Recently Updated",
+			"rating": "[FR] Highest Rated",
+			"installs": "[FR] Most Installs"
+		},
+		"noResults": "[FR] No extensions found matching your criteria.",
+		"featured": "[FR] Featured",
+		"trending": "[FR] Trending",
+		"new": "[FR] New"
+	},
+	"card": {
+		"by": "[FR] by {{author}}",
+		"installs": "[FR] {{count}} install",
+		"installs_plural": "[FR] {{count}} installs",
+		"rating": "[FR] {{rating}} / 5",
+		"version": "[FR] v{{version}}",
+		"install": "[FR] Install",
+		"installed": "[FR] Installed",
+		"update": "[FR] Update Available",
+		"premium": "[FR] Premium",
+		"free": "[FR] Free",
+		"viewDetails": "[FR] View Details"
+	},
+	"details": {
+		"title": "[FR] Extension Details",
+		"description": "[FR] Description",
+		"usage": "[FR] Usage",
+		"permissions": "[FR] Required Permissions",
+		"changelog": "[FR] Changelog",
+		"reviews": "[FR] Reviews",
+		"author": "[FR] Author",
+		"version": "[FR] Version",
+		"lastUpdated": "[FR] Last Updated",
+		"installs": "[FR] Total Installs",
+		"rating": "[FR] Rating",
+		"category": "[FR] Category",
+		"tags": "[FR] Tags",
+		"source": "[FR] View Source",
+		"report": "[FR] Report Extension"
+	},
+	"install": {
+		"title": "[FR] Install Extension",
+		"confirm": "[FR] Are you sure you want to install **{{name}}**?",
+		"permissions": "[FR] This extension requires the following permissions:",
+		"success": "[FR] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[FR] Failed to install extension.",
+		"alreadyInstalled": "[FR] This extension is already installed.",
+		"incompatible": "[FR] This extension is not compatible with your current setup.",
+		"premiumRequired": "[FR] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[FR] Uninstall Extension",
+		"confirm": "[FR] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[FR] This will remove all settings for this extension.",
+		"success": "[FR] Extension uninstalled.",
+		"failed": "[FR] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[FR] Extension Builder",
+		"create": "[FR] Create Extension",
+		"edit": "[FR] Edit Extension",
+		"name": "[FR] Extension Name",
+		"description": "[FR] Description",
+		"version": "[FR] Version",
+		"category": "[FR] Category",
+		"tags": "[FR] Tags",
+		"type": "[FR] Type",
+		"types": {
+			"command": "[FR] Command",
+			"event": "[FR] Event",
+			"slash": "[FR] Slash Command"
+		},
+		"commandKey": "[FR] Command Trigger",
+		"slashDescription": "[FR] Slash Command Description",
+		"code": "[FR] Code",
+		"scopes": "[FR] Scopes",
+		"timeout": "[FR] Timeout (ms)",
+		"adminLevel": "[FR] Required Admin Level",
+		"save": "[FR] Save Draft",
+		"submit": "[FR] Submit for Review",
+		"test": "[FR] Test Extension",
+		"export": "[FR] Export",
+		"import": "[FR] Import"
+	},
+	"myExtensions": {
+		"title": "[FR] My Extensions",
+		"created": "[FR] Created",
+		"installed": "[FR] Installed",
+		"noExtensions": "[FR] You haven't created any extensions yet.",
+		"noInstalled": "[FR] You haven't installed any extensions.",
+		"status": {
+			"draft": "[FR] Draft",
+			"pending": "[FR] Pending Review",
+			"approved": "[FR] Approved",
+			"rejected": "[FR] Rejected",
+			"published": "[FR] Published"
+		}
+	},
+	"review": {
+		"title": "[FR] Write a Review",
+		"rating": "[FR] Rating",
+		"comment": "[FR] Comment",
+		"submit": "[FR] Submit Review",
+		"edit": "[FR] Edit Review",
+		"delete": "[FR] Delete Review",
+		"helpful": "[FR] Helpful",
+		"report": "[FR] Report Review",
+		"noReviews": "[FR] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[FR] Extension not found.",
+		"loadFailed": "[FR] Failed to load extension.",
+		"executionFailed": "[FR] Extension execution failed.",
+		"timeout": "[FR] Extension timed out.",
+		"permissionDenied": "[FR] Permission denied.",
+		"invalidCode": "[FR] Invalid extension code.",
+		"scopeNotAllowed": "[FR] This extension requires a scope that is not allowed."
+	}
+}

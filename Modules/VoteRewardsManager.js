@@ -317,7 +317,25 @@ const redeemForTier = async (userId, serverId, tierId, durationDays) => {
 	const expiresAt = new Date();
 	expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-	await TierManager.setServerTier(serverId, tierId, "vote_rewards", expiresAt, "vote_redemption", userId);
+	try {
+		const result = await TierManager.setServerTier(serverId, tierId, "vote_rewards", expiresAt, "vote_redemption", userId);
+
+		if (!result) {
+			throw new Error("Failed to apply premium tier to server");
+		}
+	} catch (err) {
+		logger.error(`Failed to apply tier ${tierId} to server ${serverId} after point deduction. Refunding ${pointsCost} points to user ${userId}.`, err);
+
+		// Refund points
+		await addPoints(userId, pointsCost, "refund_tier_redemption_failed", {
+			server_id: serverId,
+			tier_id: tierId,
+			original_transaction_id: transaction.transactionId,
+			error: err.message,
+		});
+
+		throw new Error("Failed to apply premium tier. Points have been refunded.");
+	}
 
 	logger.info(`User ${userId} redeemed ${pointsCost} vote points for tier ${tierId} on server ${serverId} (${durationDays} days)`);
 

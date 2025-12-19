@@ -1,0 +1,69 @@
+{
+	"generic": {
+		"somethingWentWrong": "[PL] Something went wrong!",
+		"internalError": "[PL] An internal error occurred.",
+		"tryAgain": "[PL] Please try again later.",
+		"contactSupport": "[PL] If this persists, please contact support.",
+		"unexpectedError": "[PL] An unexpected error occurred."
+	},
+	"permission": {
+		"noPermission": "[PL] You don't have permission to do this.",
+		"botNoPermission": "[PL] I don't have permission to do this.",
+		"missingPermissions": "[PL] Missing permissions: {{permissions}}",
+		"adminOnly": "[PL] This action requires administrator permissions.",
+		"ownerOnly": "[PL] This action can only be performed by the server owner.",
+		"moderatorOnly": "[PL] This action requires moderator permissions."
+	},
+	"validation": {
+		"required": "[PL] This field is required.",
+		"invalidFormat": "[PL] Invalid format.",
+		"tooShort": "[PL] Must be at least {{min}} characters.",
+		"tooLong": "[PL] Must be no more than {{max}} characters.",
+		"invalidNumber": "[PL] Must be a valid number.",
+		"numberTooLow": "[PL] Must be at least {{min}}.",
+		"numberTooHigh": "[PL] Must be no more than {{max}}.",
+		"invalidUrl": "[PL] Must be a valid URL.",
+		"invalidEmail": "[PL] Must be a valid email address.",
+		"invalidDate": "[PL] Must be a valid date.",
+		"invalidChoice": "[PL] Invalid choice. Please select from the available options."
+	},
+	"notFound": {
+		"user": "[PL] User not found.",
+		"member": "[PL] Member not found.",
+		"channel": "[PL] Channel not found.",
+		"role": "[PL] Role not found.",
+		"message": "[PL] Message not found.",
+		"server": "[PL] Server not found.",
+		"command": "[PL] Command not found.",
+		"page": "[PL] Page not found.",
+		"resource": "[PL] Resource not found."
+	},
+	"rateLimit": {
+		"tooManyRequests": "[PL] Too many requests. Please slow down.",
+		"cooldown": "[PL] Please wait {{time}} before trying again.",
+		"rateLimited": "[PL] You are being rate limited."
+	},
+	"auth": {
+		"notLoggedIn": "[PL] You must be logged in to do this.",
+		"sessionExpired": "[PL] Your session has expired. Please log in again.",
+		"invalidToken": "[PL] Invalid or expired token.",
+		"unauthorized": "[PL] You are not authorized to access this resource."
+	},
+	"server": {
+		"configNotLoaded": "[PL] Failed to load server configuration.",
+		"notConfigured": "[PL] This feature is not configured.",
+		"featureDisabled": "[PL] This feature is disabled on this server."
+	},
+	"premium": {
+		"required": "[PL] This feature requires a premium subscription.",
+		"tierRequired": "[PL] This feature requires {{tier}} tier or higher.",
+		"expired": "[PL] Your premium subscription has expired.",
+		"limitReached": "[PL] You have reached the limit for your subscription tier."
+	},
+	"bot": {
+		"botCannotTarget": "[PL] I cannot perform this action on myself.",
+		"cannotTargetOwner": "[PL] I cannot perform this action on the server owner.",
+		"cannotTargetHigherRole": "[PL] I cannot perform this action on users with a higher role than me.",
+		"cannotTargetSelf": "[PL] You cannot perform this action on yourself."
+	}
+}

@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[KO] Overview",
+		"commands": "[KO] Commands",
+		"commandList": "[KO] Command List",
+		"moderation": "[KO] Moderation",
+		"strikes": "[KO] Strikes",
+		"filters": "[KO] Filters",
+		"logs": "[KO] Logs",
+		"automod": "[KO] Auto-Moderation",
+		"members": "[KO] Members",
+		"roles": "[KO] Roles",
+		"channels": "[KO] Channels",
+		"extensions": "[KO] Extensions",
+		"points": "[KO] Points & Ranks",
+		"settings": "[KO] Settings",
+		"premium": "[KO] Premium",
+		"ai": "[KO] AI Settings"
+	},
+	"overview": {
+		"title": "[KO] Server Overview",
+		"quickStats": "[KO] Quick Stats",
+		"members": "[KO] Members",
+		"channels": "[KO] Channels",
+		"roles": "[KO] Roles",
+		"commands": "[KO] Commands Used",
+		"recentActivity": "[KO] Recent Activity",
+		"topMembers": "[KO] Top Members",
+		"serverHealth": "[KO] Server Health"
+	},
+	"commands": {
+		"title": "[KO] Command Settings",
+		"enableAll": "[KO] Enable All",
+		"disableAll": "[KO] Disable All",
+		"search": "[KO] Search commands...",
+		"category": "[KO] Category",
+		"status": "[KO] Status",
+		"adminLevel": "[KO] Admin Level",
+		"disabledChannels": "[KO] Disabled Channels",
+		"enabled": "[KO] Enabled",
+		"disabled": "[KO] Disabled",
+		"noCommands": "[KO] No commands found."
+	},
+	"moderation": {
+		"title": "[KO] Moderation Settings",
+		"strikes": {
+			"title": "[KO] Strike System",
+			"description": "[KO] Configure automatic actions based on strike count.",
+			"threshold": "[KO] Strike Threshold",
+			"action": "[KO] Action",
+			"duration": "[KO] Duration",
+			"actions": {
+				"warn": "[KO] Warn",
+				"mute": "[KO] Mute",
+				"kick": "[KO] Kick",
+				"ban": "[KO] Ban"
+			}
+		},
+		"filters": {
+			"title": "[KO] Message Filters",
+			"spam": "[KO] Spam Filter",
+			"invites": "[KO] Invite Links",
+			"links": "[KO] External Links",
+			"caps": "[KO] Excessive Caps",
+			"mentions": "[KO] Mass Mentions",
+			"words": "[KO] Word Blacklist"
+		},
+		"logs": {
+			"title": "[KO] Moderation Logs",
+			"channel": "[KO] Log Channel",
+			"events": "[KO] Logged Events",
+			"messageDelete": "[KO] Message Deletes",
+			"messageEdit": "[KO] Message Edits",
+			"memberJoin": "[KO] Member Joins",
+			"memberLeave": "[KO] Member Leaves",
+			"memberBan": "[KO] Member Bans",
+			"roleChanges": "[KO] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[KO] Member Management",
+		"search": "[KO] Search members...",
+		"filter": "[KO] Filter by role",
+		"sort": "[KO] Sort by",
+		"actions": "[KO] Actions",
+		"warn": "[KO] Warn",
+		"mute": "[KO] Mute",
+		"kick": "[KO] Kick",
+		"ban": "[KO] Ban",
+		"viewProfile": "[KO] View Profile",
+		"viewStrikes": "[KO] View Strikes"
+	},
+	"extensions": {
+		"title": "[KO] Server Extensions",
+		"installed": "[KO] Installed",
+		"available": "[KO] Available",
+		"browse": "[KO] Browse Gallery",
+		"install": "[KO] Install",
+		"uninstall": "[KO] Uninstall",
+		"configure": "[KO] Configure",
+		"enabled": "[KO] Enabled",
+		"disabled": "[KO] Disabled",
+		"version": "[KO] Version",
+		"author": "[KO] Author",
+		"noExtensions": "[KO] No extensions installed."
+	},
+	"points": {
+		"title": "[KO] Points & Ranks",
+		"pointsPerMessage": "[KO] Points per Message",
+		"cooldown": "[KO] Cooldown (seconds)",
+		"ranks": "[KO] Custom Ranks",
+		"addRank": "[KO] Add Rank",
+		"rankName": "[KO] Rank Name",
+		"requiredPoints": "[KO] Required Points",
+		"roleReward": "[KO] Role Reward",
+		"leaderboard": "[KO] Leaderboard",
+		"resetPoints": "[KO] Reset All Points"
+	},
+	"settings": {
+		"title": "[KO] Server Settings",
+		"general": {
+			"title": "[KO] General",
+			"prefix": "[KO] Command Prefix",
+			"language": "[KO] Language",
+			"timezone": "[KO] Timezone",
+			"nickname": "[KO] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[KO] Welcome Messages",
+			"enabled": "[KO] Enable Welcome Messages",
+			"channel": "[KO] Welcome Channel",
+			"message": "[KO] Welcome Message",
+			"dmEnabled": "[KO] Send DM",
+			"dmMessage": "[KO] DM Message"
+		},
+		"leave": {
+			"title": "[KO] Leave Messages",
+			"enabled": "[KO] Enable Leave Messages",
+			"channel": "[KO] Leave Channel",
+			"message": "[KO] Leave Message"
+		},
+		"admins": {
+			"title": "[KO] Bot Admins",
+			"description": "[KO] Users who can manage bot settings",
+			"addAdmin": "[KO] Add Admin",
+			"level": "[KO] Admin Level",
+			"levels": {
+				"1": "[KO] Moderator",
+				"2": "[KO] Administrator",
+				"3": "[KO] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[KO] Premium Features",
+		"currentTier": "[KO] Current Tier",
+		"upgrade": "[KO] Upgrade",
+		"features": "[KO] Available Features",
+		"usage": "[KO] Usage",
+		"expires": "[KO] Expires",
+		"neverExpires": "[KO] Never expires",
+		"redeemCode": "[KO] Redeem Code",
+		"useVotePoints": "[KO] Use Vote Points"
+	},
+	"ai": {
+		"title": "[KO] AI Settings",
+		"enabled": "[KO] Enable AI Chat",
+		"provider": "[KO] AI Provider",
+		"model": "[KO] Model",
+		"channels": "[KO] Enabled Channels",
+		"personality": "[KO] Bot Personality",
+		"maxTokens": "[KO] Max Tokens",
+		"temperature": "[KO] Temperature",
+		"usage": "[KO] Monthly Usage",
+		"limit": "[KO] Monthly Limit"
+	},
+	"common": {
+		"save": "[KO] Save Changes",
+		"saved": "[KO] Changes saved!",
+		"saving": "[KO] Saving...",
+		"reset": "[KO] Reset to Default",
+		"cancel": "[KO] Cancel",
+		"confirm": "[KO] Confirm",
+		"delete": "[KO] Delete",
+		"edit": "[KO] Edit",
+		"add": "[KO] Add",
+		"remove": "[KO] Remove",
+		"enable": "[KO] Enable",
+		"disable": "[KO] Disable",
+		"unsavedChanges": "[KO] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[KO] Loading...",
+		"error": "[KO] An error occurred",
+		"success": "[KO] Success!"
+	}
+}

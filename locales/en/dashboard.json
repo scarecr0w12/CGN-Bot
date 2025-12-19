@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "Overview",
+		"commands": "Commands",
+		"commandList": "Command List",
+		"moderation": "Moderation",
+		"strikes": "Strikes",
+		"filters": "Filters",
+		"logs": "Logs",
+		"automod": "Auto-Moderation",
+		"members": "Members",
+		"roles": "Roles",
+		"channels": "Channels",
+		"extensions": "Extensions",
+		"points": "Points & Ranks",
+		"settings": "Settings",
+		"premium": "Premium",
+		"ai": "AI Settings"
+	},
+	"overview": {
+		"title": "Server Overview",
+		"quickStats": "Quick Stats",
+		"members": "Members",
+		"channels": "Channels",
+		"roles": "Roles",
+		"commands": "Commands Used",
+		"recentActivity": "Recent Activity",
+		"topMembers": "Top Members",
+		"serverHealth": "Server Health"
+	},
+	"commands": {
+		"title": "Command Settings",
+		"enableAll": "Enable All",
+		"disableAll": "Disable All",
+		"search": "Search commands...",
+		"category": "Category",
+		"status": "Status",
+		"adminLevel": "Admin Level",
+		"disabledChannels": "Disabled Channels",
+		"enabled": "Enabled",
+		"disabled": "Disabled",
+		"noCommands": "No commands found."
+	},
+	"moderation": {
+		"title": "Moderation Settings",
+		"strikes": {
+			"title": "Strike System",
+			"description": "Configure automatic actions based on strike count.",
+			"threshold": "Strike Threshold",
+			"action": "Action",
+			"duration": "Duration",
+			"actions": {
+				"warn": "Warn",
+				"mute": "Mute",
+				"kick": "Kick",
+				"ban": "Ban"
+			}
+		},
+		"filters": {
+			"title": "Message Filters",
+			"spam": "Spam Filter",
+			"invites": "Invite Links",
+			"links": "External Links",
+			"caps": "Excessive Caps",
+			"mentions": "Mass Mentions",
+			"words": "Word Blacklist"
+		},
+		"logs": {
+			"title": "Moderation Logs",
+			"channel": "Log Channel",
+			"events": "Logged Events",
+			"messageDelete": "Message Deletes",
+			"messageEdit": "Message Edits",
+			"memberJoin": "Member Joins",
+			"memberLeave": "Member Leaves",
+			"memberBan": "Member Bans",
+			"roleChanges": "Role Changes"
+		}
+	},
+	"members": {
+		"title": "Member Management",
+		"search": "Search members...",
+		"filter": "Filter by role",
+		"sort": "Sort by",
+		"actions": "Actions",
+		"warn": "Warn",
+		"mute": "Mute",
+		"kick": "Kick",
+		"ban": "Ban",
+		"viewProfile": "View Profile",
+		"viewStrikes": "View Strikes"
+	},
+	"extensions": {
+		"title": "Server Extensions",
+		"installed": "Installed",
+		"available": "Available",
+		"browse": "Browse Gallery",
+		"install": "Install",
+		"uninstall": "Uninstall",
+		"configure": "Configure",
+		"enabled": "Enabled",
+		"disabled": "Disabled",
+		"version": "Version",
+		"author": "Author",
+		"noExtensions": "No extensions installed."
+	},
+	"points": {
+		"title": "Points & Ranks",
+		"pointsPerMessage": "Points per Message",
+		"cooldown": "Cooldown (seconds)",
+		"ranks": "Custom Ranks",
+		"addRank": "Add Rank",
+		"rankName": "Rank Name",
+		"requiredPoints": "Required Points",
+		"roleReward": "Role Reward",
+		"leaderboard": "Leaderboard",
+		"resetPoints": "Reset All Points"
+	},
+	"settings": {
+		"title": "Server Settings",
+		"general": {
+			"title": "General",
+			"prefix": "Command Prefix",
+			"language": "Language",
+			"timezone": "Timezone",
+			"nickname": "Bot Nickname"
+		},
+		"welcome": {
+			"title": "Welcome Messages",
+			"enabled": "Enable Welcome Messages",
+			"channel": "Welcome Channel",
+			"message": "Welcome Message",
+			"dmEnabled": "Send DM",
+			"dmMessage": "DM Message"
+		},
+		"leave": {
+			"title": "Leave Messages",
+			"enabled": "Enable Leave Messages",
+			"channel": "Leave Channel",
+			"message": "Leave Message"
+		},
+		"admins": {
+			"title": "Bot Admins",
+			"description": "Users who can manage bot settings",
+			"addAdmin": "Add Admin",
+			"level": "Admin Level",
+			"levels": {
+				"1": "Moderator",
+				"2": "Administrator",
+				"3": "Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "Premium Features",
+		"currentTier": "Current Tier",
+		"upgrade": "Upgrade",
+		"features": "Available Features",
+		"usage": "Usage",
+		"expires": "Expires",
+		"neverExpires": "Never expires",
+		"redeemCode": "Redeem Code",
+		"useVotePoints": "Use Vote Points"
+	},
+	"ai": {
+		"title": "AI Settings",
+		"enabled": "Enable AI Chat",
+		"provider": "AI Provider",
+		"model": "Model",
+		"channels": "Enabled Channels",
+		"personality": "Bot Personality",
+		"maxTokens": "Max Tokens",
+		"temperature": "Temperature",
+		"usage": "Monthly Usage",
+		"limit": "Monthly Limit"
+	},
+	"common": {
+		"save": "Save Changes",
+		"saved": "Changes saved!",
+		"saving": "Saving...",
+		"reset": "Reset to Default",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"delete": "Delete",
+		"edit": "Edit",
+		"add": "Add",
+		"remove": "Remove",
+		"enable": "Enable",
+		"disable": "Disable",
+		"unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+		"loading": "Loading...",
+		"error": "An error occurred",
+		"success": "Success!"
+	}
+}

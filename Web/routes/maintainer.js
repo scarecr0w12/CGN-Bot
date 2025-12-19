@@ -44,9 +44,9 @@ module.exports = router => {
 	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
 	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
 	setupConsolePage(router, "/membership/email", "administration", [], controllers.console.membership.email);
-	router.post("/membership/email/test", controllers.console.membership.email.test);
+	router.post("/membership/email/test", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.membership.email.test);
 	setupConsolePage(router, "/membership/servers", "administration", [], controllers.console.membership.servers);
-	router.post("/membership/servers/cancel", controllers.console.membership.servers.cancel);
+	router.post("/membership/servers/cancel", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.membership.servers.cancel);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);

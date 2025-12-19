@@ -10,6 +10,8 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 ## Features
 
 - **🤖 AI Integration** - Chat with AI and generate images using DALL-E/Stable Diffusion
+- **🧠 Sentiment Analysis** - AI-powered automod with Google Cloud NL API or AI fallback
+- **🌍 Multilingual** - Full i18n support for 15 languages
 - **💰 Economy System** - Full economy with daily rewards, jobs, shops, trading, quests, and achievements
 - **🎵 Music System** - High-quality music playback with filters, lyrics, and DJ controls
 - **🎮 Entertainment** - 60+ game extensions, polls, giveaways, and fun commands
@@ -18,8 +20,9 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
 - **🧩 Extensions** - Create, share, and install custom server extensions with slash command support
 - **🎫 Ticket System** - Per-server support tickets with categories, panels, and transcripts
+- **🎮 Game Updates** - Monitor and announce updates for Minecraft, Rust, Terraria, and more
 - **💎 Server Premium** - Per-server subscriptions with Stripe/PayPal/BTCPay
-- **🗳️ Vote Rewards** - Earn points from voting, spend on premium features
+- **🗳️ Vote Rewards** - Earn points from voting, referrals, and spend on premium features
 - **🌐 Web Dashboard** - Full server management from the browser
 - **🔐 OAuth Integration** - Link Google, GitHub, Twitch, Patreon accounts
 - **🗃️ Dual Database** - Support for MongoDB and MariaDB backends

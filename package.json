@@ -1,6 +1,6 @@
 {
   "name": "skynetbot",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Still the best Discord Bot!",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Scarecr0w12",
@@ -48,6 +48,9 @@
     "fs-nextra": "^0.5.1",
     "gifwrap": "^0.10.1",
     "helmet": "^8.0.0",
+    "i18next": "^25.7.3",
+    "i18next-fs-backend": "^2.6.1",
+    "i18next-http-middleware": "^3.9.1",
     "ioredis": "^5.8.2",
     "isolated-vm": "^5.0.1",
     "jimp": "^1.6.0",

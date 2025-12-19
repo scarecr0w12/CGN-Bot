@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "Extension Gallery",
+		"subtitle": "Browse and install community-created extensions",
+		"search": "Search extensions...",
+		"filters": "Filters",
+		"category": "Category",
+		"tags": "Tags",
+		"sort": "Sort by",
+		"sortOptions": {
+			"popular": "Most Popular",
+			"recent": "Recently Updated",
+			"rating": "Highest Rated",
+			"installs": "Most Installs"
+		},
+		"noResults": "No extensions found matching your criteria.",
+		"featured": "Featured",
+		"trending": "Trending",
+		"new": "New"
+	},
+	"card": {
+		"by": "by {{author}}",
+		"installs": "{{count}} install",
+		"installs_plural": "{{count}} installs",
+		"rating": "{{rating}} / 5",
+		"version": "v{{version}}",
+		"install": "Install",
+		"installed": "Installed",
+		"update": "Update Available",
+		"premium": "Premium",
+		"free": "Free",
+		"viewDetails": "View Details"
+	},
+	"details": {
+		"title": "Extension Details",
+		"description": "Description",
+		"usage": "Usage",
+		"permissions": "Required Permissions",
+		"changelog": "Changelog",
+		"reviews": "Reviews",
+		"author": "Author",
+		"version": "Version",
+		"lastUpdated": "Last Updated",
+		"installs": "Total Installs",
+		"rating": "Rating",
+		"category": "Category",
+		"tags": "Tags",
+		"source": "View Source",
+		"report": "Report Extension"
+	},
+	"install": {
+		"title": "Install Extension",
+		"confirm": "Are you sure you want to install **{{name}}**?",
+		"permissions": "This extension requires the following permissions:",
+		"success": "✅ **{{name}}** has been installed successfully!",
+		"failed": "Failed to install extension.",
+		"alreadyInstalled": "This extension is already installed.",
+		"incompatible": "This extension is not compatible with your current setup.",
+		"premiumRequired": "This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "Uninstall Extension",
+		"confirm": "Are you sure you want to uninstall **{{name}}**?",
+		"warning": "This will remove all settings for this extension.",
+		"success": "Extension uninstalled.",
+		"failed": "Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "Extension Builder",
+		"create": "Create Extension",
+		"edit": "Edit Extension",
+		"name": "Extension Name",
+		"description": "Description",
+		"version": "Version",
+		"category": "Category",
+		"tags": "Tags",
+		"type": "Type",
+		"types": {
+			"command": "Command",
+			"event": "Event",
+			"slash": "Slash Command"
+		},
+		"commandKey": "Command Trigger",
+		"slashDescription": "Slash Command Description",
+		"code": "Code",
+		"scopes": "Scopes",
+		"timeout": "Timeout (ms)",
+		"adminLevel": "Required Admin Level",
+		"save": "Save Draft",
+		"submit": "Submit for Review",
+		"test": "Test Extension",
+		"export": "Export",
+		"import": "Import"
+	},
+	"myExtensions": {
+		"title": "My Extensions",
+		"created": "Created",
+		"installed": "Installed",
+		"noExtensions": "You haven't created any extensions yet.",
+		"noInstalled": "You haven't installed any extensions.",
+		"status": {
+			"draft": "Draft",
+			"pending": "Pending Review",
+			"approved": "Approved",
+			"rejected": "Rejected",
+			"published": "Published"
+		}
+	},
+	"review": {
+		"title": "Write a Review",
+		"rating": "Rating",
+		"comment": "Comment",
+		"submit": "Submit Review",
+		"edit": "Edit Review",
+		"delete": "Delete Review",
+		"helpful": "Helpful",
+		"report": "Report Review",
+		"noReviews": "No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "Extension not found.",
+		"loadFailed": "Failed to load extension.",
+		"executionFailed": "Extension execution failed.",
+		"timeout": "Extension timed out.",
+		"permissionDenied": "Permission denied.",
+		"invalidCode": "Invalid extension code.",
+		"scopeNotAllowed": "This extension requires a scope that is not allowed."
+	}
+}

@@ -558,6 +558,17 @@ controllers.download = async (req, res) => {
 		return res.sendStatus(500);
 	}
 	if (extensionDocument && extensionDocument.state !== "saved") {
+		// Block source code access for premium extensions (only owner or maintainers can view)
+		if (extensionDocument.premium?.is_premium) {
+			const isOwner = req.isAuthenticated() && extensionDocument.owner_id === req.user.id;
+			const ConfigManager = require("../../Modules/ConfigManager");
+			const settings = await ConfigManager.get();
+			const isMaintainer = req.isAuthenticated() && settings.maintainers?.includes(req.user.id);
+			if (!isOwner && !isMaintainer) {
+				return res.status(403).send("Source code for premium extensions is protected");
+			}
+		}
+
 		const versionTag = parseInt(req.query.v) || extensionDocument.published_version;
 		const versionDocument = extensionDocument.versions.id(versionTag);
 		if (!versionDocument) return res.sendStatus(404);
@@ -592,6 +603,14 @@ controllers.export = async (req, res) => {
 	const isOwner = req.isAuthenticated() && extensionDocument.owner_id === req.user.id;
 	if (!isOwner && extensionDocument.state === "saved") {
 		return res.sendStatus(404);
+	}
+
+	// Block source code access for premium extensions (only owner or maintainers can export)
+	const ConfigManager = require("../../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
+	const isMaintainer = req.isAuthenticated() && settings.maintainers?.includes(req.user.id);
+	if (extensionDocument.premium?.is_premium && !isOwner && !isMaintainer) {
+		return res.status(403).json({ error: "Source code for premium extensions is protected" });
 	}
 
 	const versionTag = parseInt(req.query.v) || extensionDocument.published_version || extensionDocument.version;
@@ -950,7 +969,7 @@ controllers.gallery.modify = async (req, res) => {
 					res.sendStatus(200);
 					break;
 				case "approve_network": {
-					const versionDoc = galleryDocument.versions.id(galleryDocument.version);
+					const versionDoc = galleryDocument.versions.find(v => v._id === galleryDocument.version);
 					if (!versionDoc) return res.sendStatus(404);
 
 					const netCap = versionDoc.network_capability;
@@ -958,20 +977,24 @@ controllers.gallery.modify = async (req, res) => {
 						return res.sendStatus(400);
 					}
 
+					// Modify version in memory then set the whole versions array
+					// (nested JSON updates don't work properly with MariaDB)
 					const approvalTimestamp = new Date();
-					galleryQueryDocument.clone.id("versions", galleryDocument.version)
-						.set("network_approved", true)
-						.set("network_approved_by", req.user.id)
-						.set("network_approved_at", approvalTimestamp)
-						.push("approval_history", {
-							action: "network_approved",
-							by: req.user.id,
-							at: approvalTimestamp,
-						});
+					versionDoc.network_approved = true;
+					versionDoc.network_approved_by = req.user.id;
+					versionDoc.network_approved_at = approvalTimestamp;
+					if (!versionDoc.approval_history) versionDoc.approval_history = [];
+					versionDoc.approval_history.push({
+						action: "network_approved",
+						by: req.user.id,
+						at: approvalTimestamp,
+					});
+					galleryQueryDocument.set("versions", galleryDocument.versions);
 
 					try {
 						await galleryDocument.save();
-					} catch (_) {
+					} catch (err) {
+						logger.error("Failed to approve network capability", { extid: req.params.extid }, err);
 						return res.sendStatus(500);
 					}
 

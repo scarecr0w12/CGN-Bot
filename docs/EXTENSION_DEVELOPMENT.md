@@ -619,12 +619,23 @@ extension.version       // Version string
 extension.type          // "command", "keyword", "event", "timer"
 ```
 
-### HTTP Module (Tier 2 Only)
+### HTTP Module
 
-The HTTP module allows extensions to make external API requests. **This is a premium feature requiring Tier 2 subscription and the `http_request` scope.**
+The HTTP module allows extensions to make external API requests. **Requires the `http_request` scope and appropriate network capability level.**
+
+#### Network Capability Levels
+
+Configure in the Extension Builder under "Network Capability":
+
+| Level | Name | Description | Tier | Approval |
+|-------|------|-------------|------|----------|
+| `none` | No Network | Cannot make any HTTP requests | Any | N/A |
+| `allowlist_only` | Public APIs Only | Pre-approved APIs (Jikan, Steam, Mojang, etc.) | 1+ | Auto |
+| `network` | Full Network | Any HTTPS endpoint | 2+ | Required |
+| `network_advanced` | Advanced Network | HTTP, custom ports, webhooks | 2+ | Required |
 
 ```javascript
-const http = require("http"); // Requires http_request scope + Tier 2
+const http = require("http"); // Requires http_request scope + network capability
 
 // Make a GET request
 const res = await http.request({
@@ -655,12 +666,15 @@ const postRes = await http.request({
 
 #### Security Restrictions
 
-- **HTTPS only** - HTTP URLs are rejected
-- **Host allowlist** - Only approved API hosts are allowed:
+- **HTTPS only** - HTTP URLs rejected (except `network_advanced`)
+- **Host allowlist** (for `allowlist_only` level):
   - `api.jikan.moe` (Anime/Manga)
   - `api.mojang.com`, `sessionserver.mojang.com` (Minecraft)
   - `api.steampowered.com`, `steamcommunity.com` (Steam)
-  - `mc-heads.net` (Minecraft skins)
+  - `mc-heads.net`, `api.mcsrvstat.us` (Minecraft)
+  - `api.henrikdev.xyz` (Valorant)
+  - `fortnite-api.com` (Fortnite)
+  - `ddragon.leagueoflegends.com`, `raw.communitydragon.org` (LoL)
 - **Rate limiting** - 30 requests per minute per extension per server
 - **No redirects** - Redirect responses are blocked
 - **Size limits** - Request body max 100KB, response max 1MB
@@ -756,10 +770,13 @@ Extensions must declare which scopes they need. Users installing the extension w
 |-------|------------|-------------|
 | `ban` | Ban members | Can ban members from the guild |
 | `kick` | Kick members | Can kick members from the guild |
+| `timeout` | Timeout members | Can timeout members (communication disabled) |
+| `modlog` | Moderation log | Can read and write to moderation log |
 | `roles_read` | Read roles | Can access guild role information |
 | `roles_manage` | Manage roles | Can assign/remove roles from members |
 | `channels_read` | Read channels | Can access channel information |
 | `channels_manage` | Manage channels | Can modify channels, pin messages |
+| `threads` | Manage threads | Can create and manage threads |
 | `guild_read` | Read guild | Can access guild settings and info |
 | `guild_manage` | Manage guild | Can modify guild settings |
 | `members_read` | Read members | Can access member information |
@@ -768,10 +785,14 @@ Extensions must declare which scopes they need. Users installing the extension w
 | `messages_global` | Global messages | Can read messages in all channels |
 | `messages_write` | Send messages | Can send messages in all channels |
 | `messages_manage` | Manage messages | Can delete messages |
+| `embed_links` | Embed links | Can send rich embeds with links and images |
+| `reactions` | Manage reactions | Can add and manage reactions on messages |
 | `config` | Read config | Can read Skynet configuration |
 | `storage` | Extension storage | Can use persistent extension storage |
+| `economy_read` | Read economy | Can read points/leaderboard data |
 | `economy_manage` | Manage economy | Can add/remove/transfer points |
 | `http_request` | HTTP requests | Can make external API requests (Tier 2 only) |
+| `webhooks` | Use webhooks | Can create and use webhooks for sending messages |
 
 ---
 

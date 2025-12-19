@@ -1786,6 +1786,36 @@ const message = require("message");
 message.reply(\`You said: \${command.suffix}\`);
 \`\`\`
 
+### Slash Command Extensions
+
+Triggered when a user runs a Discord slash command (\`/command\`).
+
+\`\`\`javascript
+const interaction = require("interaction");
+
+// interaction.options - Map of option names to values
+// interaction.user - The user who ran the command
+// interaction.commandName - The slash command name
+
+const name = interaction.options.name;
+await interaction.reply(\`Hello, \${name || "User"}!\`);
+\`\`\`
+
+**Builder Configuration:**
+- **Slash command name**: The command name (lowercase, no spaces)
+- **Slash command description**: Shown in Discord's command picker
+- **Slash options (JSON)**: Array of option objects defining parameters
+
+**Slash Options Format:**
+\`\`\`json
+[
+  {"name": "query", "description": "Search query", "type": "string", "required": true},
+  {"name": "count", "description": "Number of results", "type": "integer", "required": false}
+]
+\`\`\`
+
+**Supported option types:** \`string\`, \`integer\`, \`number\`, \`boolean\`, \`user\`, \`channel\`, \`role\`, \`mentionable\`, \`attachment\`
+
 ### Keyword Extensions
 
 Triggered when specific keywords appear in messages.
@@ -1844,9 +1874,12 @@ console.log(\`Timer executed for \${guild.name}\`);
 | \`command\` | Command data (command type) | None |
 | \`keyword\` | Keyword data (keyword type) | None |
 | \`event\` | Event data (event type) | None |
-| \`extension\` | Extension metadata | None |
+| \`interaction\` | Slash command interaction | None |
+| \`extension\` | Extension metadata & storage | \`storage\` |
 | \`utils\` | Utility functions | None |
 | \`embed\` | Embed builder helper | None |
+| \`points\` / \`economy\` | Server economy/points data | \`members_read\` |
+| \`http\` | HTTP requests (Tier 2) | \`http_request\` |
 
 ---
 
@@ -2171,6 +2204,120 @@ embed.resolveColor("RANDOM")
 embed.resolveColor([255, 85, 0])
 \`\`\`
 
+### Interaction Module (Slash Commands)
+
+\`\`\`javascript
+const interaction = require("interaction"); // Only for slash command extensions
+
+// Properties
+interaction.id              // Interaction ID
+interaction.commandName     // The slash command name
+interaction.guildId         // Guild ID
+interaction.channelId       // Channel ID
+
+// User who triggered the command
+interaction.user.id         // User ID
+interaction.user.username   // Username
+interaction.user.tag        // User tag
+interaction.user.bot        // Is bot?
+
+// Options (parameters passed to the command)
+interaction.options         // Object of option name -> value
+
+// For user/channel/role options, value is { id, type }
+// For attachment options: { id, type, url, name }
+\`\`\`
+
+#### Interaction Methods
+
+\`\`\`javascript
+// Reply to the interaction
+await interaction.reply("Hello!");
+await interaction.reply({ content: "Hello!", ephemeral: true });
+await interaction.reply({ embeds: [myEmbed] });
+
+// Defer reply (for long operations)
+await interaction.deferReply();
+await interaction.deferReply({ ephemeral: true });
+
+// Edit a deferred reply
+await interaction.editReply("Done processing!");
+
+// Send follow-up messages
+await interaction.followUp("Additional info!");
+\`\`\`
+
+### Points/Economy Module
+
+Access the server's points and ranking system.
+
+\`\`\`javascript
+const points = require("points"); // Requires members_read scope
+// OR
+const economy = require("economy"); // Alias
+
+// Check if points system is enabled
+points.isEnabled              // Boolean
+points.canWrite               // Boolean - true if economy_manage scope granted
+
+// Your points data
+points.self.userId            // Your user ID
+points.self.rankScore         // Your rank score
+points.self.messages          // Total messages sent
+points.self.voice             // Voice activity time
+points.self.rank              // Current rank name
+points.self.position          // Leaderboard position
+
+// Server leaderboard (top 25 by default)
+points.leaderboard            // Array of user entries
+
+// Server ranks configuration
+points.ranks                  // Array of rank objects
+
+// --- READ METHODS ---
+points.getSelf()              // Get your points data
+points.getUser(userId)        // Get another user's points
+points.getLeaderboard(limit)  // Get leaderboard (max 100)
+
+// --- WRITE METHODS (require economy_manage scope) ---
+points.addPoints(userId, amount, reason)     // Add points (max 10,000)
+points.removePoints(userId, amount, reason)  // Remove points
+points.transfer(from, to, amount, reason)    // Transfer between users
+points.setPoints(userId, amount, reason)     // Set to specific value
+\`\`\`
+
+### HTTP Module (Tier 2 Only)
+
+Make external API requests from your extension.
+
+\`\`\`javascript
+const http = require("http"); // Requires http_request scope + appropriate network capability
+
+const res = await http.request({
+    url: "https://api.jikan.moe/v4/anime?q=naruto&limit=1",
+    method: "GET",           // GET or POST
+    responseType: "json",    // "json" or "text"
+    timeoutMs: 8000,         // Max 15000ms
+    maxBytes: 1048576,       // Max response size
+});
+
+// Response object
+res.success     // Boolean
+res.error       // Error string if failed
+res.status      // HTTP status code
+res.headers     // Response headers
+res.body        // Raw response text
+res.json        // Parsed JSON (if responseType is "json")
+\`\`\`
+
+**Network Capability Levels:**
+| Level | Description | Approval |
+|-------|-------------|----------|
+| \`none\` | No network access | N/A |
+| \`allowlist_only\` | Pre-approved APIs only (Jikan, Steam, Mojang) | Auto |
+| \`network\` | Any HTTPS endpoint | Requires approval |
+| \`network_advanced\` | HTTP, custom ports, webhooks | Requires approval |
+
 ### Extension Module
 
 \`\`\`javascript
@@ -2179,8 +2326,100 @@ const extension = require("extension");
 // Extension metadata
 extension.name          // Extension name
 extension.version       // Version string
-extension.type          // "command", "keyword", "event", "timer"
+extension.type          // "command", "slash", "keyword", "event", "timer"
+
+// Persistent storage (requires storage scope)
+extension.storage.get(key)           // Get stored value
+await extension.storage.write(key, value)  // Store value (25KB limit)
+await extension.storage.delete(key)  // Delete key
+await extension.storage.clear()      // Clear all storage
+
+// Server-admin configured settings (read-only)
+extension.settings.get(key)          // Get setting value
+extension.settings.getAll()          // Get all settings
 \`\`\`
+
+---
+
+## Dashboard Settings (Server Admin UI)
+
+Extension developers can add custom configuration panels to the server owner dashboard. Server admins see these fields when managing the extension.
+
+### Defining Dashboard Settings
+
+Add a \`dashboard_settings\` object to your extension version:
+
+\`\`\`json
+{
+  "dashboard_settings": {
+    "enabled": true,
+    "sections": [
+      {
+        "id": "api_config",
+        "title": "API Configuration",
+        "fields": [
+          {
+            "id": "api_url",
+            "type": "text",
+            "label": "API Endpoint",
+            "placeholder": "https://api.example.com",
+            "required": true
+          },
+          {
+            "id": "api_key",
+            "type": "secret",
+            "label": "API Key"
+          },
+          {
+            "id": "max_results",
+            "type": "number",
+            "label": "Max Results",
+            "default": 10,
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    ]
+  }
+}
+\`\`\`
+
+### Supported Field Types
+
+| Type | Description | Extra Options |
+|------|-------------|---------------|
+| \`text\` | Single-line text input | \`placeholder\` |
+| \`textarea\` | Multi-line text input | \`placeholder\` |
+| \`number\` | Numeric input | \`min\`, \`max\`, \`default\` |
+| \`toggle\` | Checkbox/boolean | \`default\` |
+| \`select\` | Dropdown menu | \`options: [{value, label}]\` |
+| \`secret\` | Password (encrypted) | Never shown after saving |
+| \`channel_select\` | Server channel picker | - |
+
+### Accessing Settings in Code
+
+\`\`\`javascript
+const extension = require("extension");
+const http = require("http");
+
+// Read server-admin configured values
+const apiUrl = extension.settings.get("api_url");
+const maxResults = extension.settings.get("max_results") || 10;
+
+// For HTTP requests with secrets (auto-injected into headers)
+const res = await http.request({
+    url: apiUrl + "/search",
+    method: "GET",
+    injectSecrets: { "Authorization": "api_key" }
+});
+\`\`\`
+
+### Security Notes
+
+- **Secrets are encrypted** at rest and never exposed to extension code
+- Secrets are injected into HTTP request headers by the sandbox runtime
+- Server admins configure these values in Dashboard → Extensions
 
 ### Bot Module
 
@@ -2210,23 +2449,70 @@ config.name_display     // Name display setting
 
 Extensions must declare which scopes they need. Users installing the extension will see what permissions it requires.
 
-| Scope | Permission | Description |
-|-------|------------|-------------|
-| \`ban\` | Ban members | Can ban members from the guild |
-| \`kick\` | Kick members | Can kick members from the guild |
-| \`roles_read\` | Read roles | Can access guild role information |
-| \`roles_manage\` | Manage roles | Can assign/remove roles from members |
-| \`channels_read\` | Read channels | Can access channel information |
-| \`channels_manage\` | Manage channels | Can modify channels, pin messages |
-| \`guild_read\` | Read guild | Can access guild settings and info |
-| \`guild_manage\` | Manage guild | Can modify guild settings |
-| \`members_read\` | Read members | Can access member information |
-| \`members_manage\` | Manage members | Can manage members (nicknames, etc.) |
-| \`messages_read\` | Read messages | Can read message history |
-| \`messages_global\` | Global messages | Can read messages in all channels |
-| \`messages_write\` | Send messages | Can send messages in all channels |
-| \`messages_manage\` | Manage messages | Can delete messages |
-| \`config\` | Read config | Can read Skynet configuration |
+### Message Scopes
+| Scope | Description |
+|-------|-------------|
+| \`messages_read\` | Read message history in current channel |
+| \`messages_global\` | Read messages in all channels |
+| \`messages_write\` | Send messages in all channels |
+| \`messages_manage\` | Delete messages |
+| \`embed_links\` | Send rich embeds with links/images |
+| \`reactions\` | Add and manage reactions |
+
+### Member Scopes
+| Scope | Description |
+|-------|-------------|
+| \`members_read\` | Access member information |
+| \`members_manage\` | Manage nicknames, etc. |
+
+### Role Scopes
+| Scope | Description |
+|-------|-------------|
+| \`roles_read\` | Access guild role information |
+| \`roles_manage\` | Assign/remove roles |
+
+### Channel Scopes
+| Scope | Description |
+|-------|-------------|
+| \`channels_read\` | Access channel information |
+| \`channels_manage\` | Modify channels, pin messages |
+| \`threads\` | Create and manage threads |
+
+### Server Scopes
+| Scope | Description |
+|-------|-------------|
+| \`guild_read\` | Access guild settings and info |
+| \`guild_manage\` | Modify guild settings |
+
+### Moderation Scopes
+| Scope | Description |
+|-------|-------------|
+| \`ban\` | Ban members from the guild |
+| \`kick\` | Kick members from the guild |
+| \`timeout\` | Timeout members (communication disabled) |
+| \`modlog\` | Read and write to moderation log |
+
+### Economy Scopes
+| Scope | Description |
+|-------|-------------|
+| \`economy_read\` | Read points/leaderboard data |
+| \`economy_manage\` | Add/remove/transfer points |
+
+### Data & Config Scopes
+| Scope | Description |
+|-------|-------------|
+| \`config\` | Read Skynet configuration |
+| \`storage\` | Use persistent extension storage |
+
+### Network Scopes
+| Scope | Description |
+|-------|-------------|
+| \`http_request\` | Make external HTTP requests |
+
+### Advanced Scopes
+| Scope | Description |
+|-------|-------------|
+| \`webhooks\` | Create and use webhooks |
 
 ---
 
@@ -2434,16 +2720,86 @@ const lbEmbed = embed.create({
 message.reply({ embeds: [lbEmbed] });
 \`\`\`
 
+### Slash Command Example
+
+\`\`\`javascript
+// Type: slash
+// Name: greet
+// Description: Greet someone with a custom message
+// Options: [{"name":"user","description":"User to greet","type":"user","required":true},{"name":"message","description":"Custom message","type":"string","required":false}]
+
+const interaction = require("interaction");
+const embed = require("embed");
+
+const targetUser = interaction.options.user;
+const customMsg = interaction.options.message || "Hello!";
+
+if (!targetUser) {
+    await interaction.reply({ content: "Please mention a user!", ephemeral: true });
+} else {
+    const greetEmbed = embed.create({
+        title: "👋 Greeting!",
+        description: \`<@\${targetUser.id}>, \${customMsg}\`,
+        color: embed.colors.GREEN,
+        footer: { text: \`From \${interaction.user.username}\` }
+    });
+    await interaction.reply({ embeds: [greetEmbed] });
+}
+\`\`\`
+
+### HTTP API Request Example
+
+\`\`\`javascript
+// Requires: http_request scope + allowlist_only or higher network capability
+const http = require("http");
+const message = require("message");
+const command = require("command");
+const embed = require("embed");
+
+const query = command.suffix.trim();
+if (!query) {
+    message.reply("Usage: anime <search query>");
+} else {
+    const res = await http.request({
+        url: "https://api.jikan.moe/v4/anime?q=" + encodeURIComponent(query) + "&limit=1",
+        method: "GET",
+        responseType: "json",
+        timeoutMs: 8000,
+    });
+
+    if (!res.success || !res.json?.data?.length) {
+        message.reply("No results found for: **" + query + "**");
+    } else {
+        const anime = res.json.data[0];
+        message.reply({
+            embeds: [embed.create({
+                title: anime.title,
+                url: anime.url,
+                description: (anime.synopsis || "").slice(0, 300) + "...",
+                thumbnail: { url: anime.images?.jpg?.image_url },
+                fields: [
+                    { name: "Score", value: String(anime.score || "N/A"), inline: true },
+                    { name: "Episodes", value: String(anime.episodes || "N/A"), inline: true },
+                ],
+                color: embed.colors.BLUE,
+                footer: { text: "Powered by Jikan/MyAnimeList" },
+            })],
+        });
+    }
+}
+\`\`\`
+
 ---
 
 ## Limitations
 
-1. **Execution Timeout**: Extensions have a maximum execution time (default 5 seconds)
+1. **Execution Timeout**: Extensions have a maximum execution time (100-10000ms, configurable)
 2. **Memory Limit**: Isolated VM has 128MB memory limit
 3. **Storage Limit**: 25KB per extension per server
-4. **No External Requests**: \`fetch\`, \`rss\`, and \`xmlparser\` modules are not available in isolated-vm
-5. **No File System Access**: Extensions cannot read/write files
-6. **Rate Limits**: Discord's rate limits still apply
+4. **HTTP Requests**: Available via \`http\` module with network capability (Tier 2 for full access)
+5. **Legacy Modules**: \`fetch\`, \`rss\`, and \`xmlparser\` modules are not available
+6. **No File System Access**: Extensions cannot read/write files
+7. **Rate Limits**: Discord's rate limits apply; HTTP requests limited to 30/minute per extension
 
 ---
 
@@ -2472,7 +2828,19 @@ You're trying to require a module that doesn't exist or isn't available for your
 ---
 
 *Last Updated: December 2024*
-*Extension API Version: 2.0*
+*Extension API Version: 2.1*
+
+## Builder Features
+
+The Extension Builder at \`/extensions/builder\` provides:
+
+- **Code Editor**: Monaco-based editor with syntax highlighting
+- **Upload/Download**: Import/export \`.js\`, \`.skyext\`, or \`.txt\` files
+- **Format Code**: Auto-format with Ctrl+Shift+F
+- **Shortcuts**: Ctrl+S (Save), Ctrl+/ (Comment), Ctrl+D (Duplicate), Ctrl+F (Find)
+- **Tags**: Categorize extensions (Moderation, Utility, Fun, Economy, etc.)
+- **Premium Settings**: Set pricing for marketplace extensions
+- **Import/Export Packages**: Share extensions via \`.skypkg\` files
 
 [← Back to Extensions](Extensions) | [Home](Home)
 `,

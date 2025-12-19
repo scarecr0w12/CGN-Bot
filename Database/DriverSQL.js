@@ -81,6 +81,7 @@ exports.initialize = async () => {
 		ServerAnalytics,
 		RolePanels,
 		TempRoles,
+		InviteTracking,
 		Snippets,
 	] = [
 		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
@@ -107,6 +108,7 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "server_analytics", require("./Schemas/serverAnalyticsSchema")),
 		new ModelSQL(getPool, "role_panels", require("./Schemas/rolePanelSchema")),
 		new ModelSQL(getPool, "temp_roles", require("./Schemas/tempRoleSchema")),
+		new ModelSQL(getPool, "invite_tracking", require("./Schemas/inviteTrackingSchema")),
 		new ModelSQL(getPool, "snippets", require("./Schemas/snippetSchema")),
 	];
 
@@ -133,6 +135,7 @@ exports.initialize = async () => {
 	addToGlobal("ServerAnalytics", ServerAnalytics);
 	addToGlobal("RolePanels", RolePanels);
 	addToGlobal("TempRoles", TempRoles);
+	addToGlobal("InviteTracking", InviteTracking);
 	addToGlobal("Snippets", Snippets);
 	addToGlobal("Client", pool);
 	addToGlobal("Database", {
@@ -160,6 +163,7 @@ exports.initialize = async () => {
 		ServerAnalytics, serverAnalytics: ServerAnalytics,
 		RolePanels, rolePanels: RolePanels,
 		TempRoles, tempRoles: TempRoles,
+		InviteTracking, inviteTracking: InviteTracking,
 		Snippets, snippets: Snippets,
 		client: pool,
 		pool,

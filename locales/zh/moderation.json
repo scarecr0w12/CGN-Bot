@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "[ZH] ⚠️ Warning Issued",
+			"description": "[ZH] {{user}} has been warned.",
+			"reason": "[ZH] Reason",
+			"moderator": "[ZH] Moderator",
+			"dmMessage": "[ZH] You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "[ZH] 🔇 Member Muted",
+			"description": "[ZH] {{user}} has been muted.",
+			"duration": "[ZH] Duration",
+			"reason": "[ZH] Reason",
+			"moderator": "[ZH] Moderator",
+			"dmMessage": "[ZH] You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "[ZH] 🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "[ZH] 👢 Member Kicked",
+			"description": "[ZH] {{user}} has been kicked from the server.",
+			"reason": "[ZH] Reason",
+			"moderator": "[ZH] Moderator",
+			"dmMessage": "[ZH] You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "[ZH] 🔨 Member Banned",
+			"description": "[ZH] {{user}} has been banned from the server.",
+			"duration": "[ZH] Duration",
+			"reason": "[ZH] Reason",
+			"moderator": "[ZH] Moderator",
+			"permanent": "[ZH] Permanent",
+			"dmMessage": "[ZH] You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "[ZH] {{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "[ZH] 🔨 Member Softbanned",
+			"description": "[ZH] {{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "[ZH] Reason",
+			"moderator": "[ZH] Moderator"
+		}
+	},
+	"strikes": {
+		"title": "[ZH] ⚡ Strike System",
+		"added": "[ZH] Strike added to {{user}}. Total: {{count}}",
+		"removed": "[ZH] Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "[ZH] All strikes cleared for {{user}}.",
+		"current": "[ZH] {{user}} has {{count}} strike.",
+		"current_plural": "[ZH] {{user}} has {{count}} strikes.",
+		"threshold": "[ZH] Strike threshold reached! Automatic {{action}} applied.",
+		"history": "[ZH] Strike History",
+		"noStrikes": "[ZH] No strikes on record."
+	},
+	"automod": {
+		"title": "[ZH] 🤖 Auto-Moderation",
+		"triggered": "[ZH] Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "[ZH] Spam Detected",
+			"description": "[ZH] Message flagged as spam."
+		},
+		"invites": {
+			"title": "[ZH] Invite Link Detected",
+			"description": "[ZH] Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "[ZH] External Link Detected",
+			"description": "[ZH] External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "[ZH] Excessive Caps",
+			"description": "[ZH] Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "[ZH] Mass Mentions",
+			"description": "[ZH] Too many mentions in one message."
+		},
+		"words": {
+			"title": "[ZH] Blacklisted Word",
+			"description": "[ZH] Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "[ZH] Negative Content Detected",
+			"description": "[ZH] Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "[ZH] 📋 Moderation Log",
+		"messageDeleted": "[ZH] Message Deleted",
+		"messageEdited": "[ZH] Message Edited",
+		"memberJoined": "[ZH] Member Joined",
+		"memberLeft": "[ZH] Member Left",
+		"memberBanned": "[ZH] Member Banned",
+		"memberUnbanned": "[ZH] Member Unbanned",
+		"memberMuted": "[ZH] Member Muted",
+		"memberUnmuted": "[ZH] Member Unmuted",
+		"memberKicked": "[ZH] Member Kicked",
+		"roleAdded": "[ZH] Role Added",
+		"roleRemoved": "[ZH] Role Removed",
+		"channelCreated": "[ZH] Channel Created",
+		"channelDeleted": "[ZH] Channel Deleted",
+		"before": "[ZH] Before",
+		"after": "[ZH] After",
+		"content": "[ZH] Content",
+		"attachments": "[ZH] Attachments",
+		"channel": "[ZH] Channel",
+		"executor": "[ZH] Executor"
+	},
+	"lockdown": {
+		"enabled": "[ZH] 🔒 Channel locked. Only staff can send messages.",
+		"disabled": "[ZH] 🔓 Channel unlocked.",
+		"serverEnabled": "[ZH] 🔒 Server lockdown enabled.",
+		"serverDisabled": "[ZH] 🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "[ZH] 🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "[ZH] Slowmode disabled.",
+		"cooldown": "[ZH] Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "[ZH] 🗑️ Deleted {{count}} message.",
+		"success_plural": "[ZH] 🗑️ Deleted {{count}} messages.",
+		"failed": "[ZH] Failed to delete messages.",
+		"tooOld": "[ZH] Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "[ZH] Reason updated for case #{{case}}.",
+		"notFound": "[ZH] Case #{{case}} not found.",
+		"noReason": "[ZH] No reason provided"
+	}
+}

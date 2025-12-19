@@ -22,6 +22,7 @@ controllers.server = require("./server");
 controllers.referral = require("./referral");
 controllers.templates = require("./templates");
 controllers.widgets = require("./widgets");
+controllers.vote = require("./vote");
 
 controllers.headerImage = async (req, res) => {
 	const ConfigManager = require("../../Modules/ConfigManager");

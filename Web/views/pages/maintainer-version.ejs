@@ -20,6 +20,20 @@
           			<h1 class="title">
 						Skynet Version
 					</h1>
+					<% if (pageData.devMode) { %>
+					<article class="message is-warning">
+						<div class="message-header">
+							<p>🛠️ Development Mode Active</p>
+						</div>
+						<div class="message-body">
+							<div class="content">
+								<strong>DEV_MODE</strong> is enabled in your <code>.env</code> file. Automatic updates are <strong>disabled</strong> to protect your local changes.
+								<br><br>
+								To enable updates, set <code>DEV_MODE=false</code> in your <code>.env</code> file and restart the bot.
+							</div>
+						</div>
+					</article>
+					<% } %>
 					<article class="message is-primary">
 						<div class="message-body">
 							<div class="content">

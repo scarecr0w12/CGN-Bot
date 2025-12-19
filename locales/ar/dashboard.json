@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[AR] Overview",
+		"commands": "[AR] Commands",
+		"commandList": "[AR] Command List",
+		"moderation": "[AR] Moderation",
+		"strikes": "[AR] Strikes",
+		"filters": "[AR] Filters",
+		"logs": "[AR] Logs",
+		"automod": "[AR] Auto-Moderation",
+		"members": "[AR] Members",
+		"roles": "[AR] Roles",
+		"channels": "[AR] Channels",
+		"extensions": "[AR] Extensions",
+		"points": "[AR] Points & Ranks",
+		"settings": "[AR] Settings",
+		"premium": "[AR] Premium",
+		"ai": "[AR] AI Settings"
+	},
+	"overview": {
+		"title": "[AR] Server Overview",
+		"quickStats": "[AR] Quick Stats",
+		"members": "[AR] Members",
+		"channels": "[AR] Channels",
+		"roles": "[AR] Roles",
+		"commands": "[AR] Commands Used",
+		"recentActivity": "[AR] Recent Activity",
+		"topMembers": "[AR] Top Members",
+		"serverHealth": "[AR] Server Health"
+	},
+	"commands": {
+		"title": "[AR] Command Settings",
+		"enableAll": "[AR] Enable All",
+		"disableAll": "[AR] Disable All",
+		"search": "[AR] Search commands...",
+		"category": "[AR] Category",
+		"status": "[AR] Status",
+		"adminLevel": "[AR] Admin Level",
+		"disabledChannels": "[AR] Disabled Channels",
+		"enabled": "[AR] Enabled",
+		"disabled": "[AR] Disabled",
+		"noCommands": "[AR] No commands found."
+	},
+	"moderation": {
+		"title": "[AR] Moderation Settings",
+		"strikes": {
+			"title": "[AR] Strike System",
+			"description": "[AR] Configure automatic actions based on strike count.",
+			"threshold": "[AR] Strike Threshold",
+			"action": "[AR] Action",
+			"duration": "[AR] Duration",
+			"actions": {
+				"warn": "[AR] Warn",
+				"mute": "[AR] Mute",
+				"kick": "[AR] Kick",
+				"ban": "[AR] Ban"
+			}
+		},
+		"filters": {
+			"title": "[AR] Message Filters",
+			"spam": "[AR] Spam Filter",
+			"invites": "[AR] Invite Links",
+			"links": "[AR] External Links",
+			"caps": "[AR] Excessive Caps",
+			"mentions": "[AR] Mass Mentions",
+			"words": "[AR] Word Blacklist"
+		},
+		"logs": {
+			"title": "[AR] Moderation Logs",
+			"channel": "[AR] Log Channel",
+			"events": "[AR] Logged Events",
+			"messageDelete": "[AR] Message Deletes",
+			"messageEdit": "[AR] Message Edits",
+			"memberJoin": "[AR] Member Joins",
+			"memberLeave": "[AR] Member Leaves",
+			"memberBan": "[AR] Member Bans",
+			"roleChanges": "[AR] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[AR] Member Management",
+		"search": "[AR] Search members...",
+		"filter": "[AR] Filter by role",
+		"sort": "[AR] Sort by",
+		"actions": "[AR] Actions",
+		"warn": "[AR] Warn",
+		"mute": "[AR] Mute",
+		"kick": "[AR] Kick",
+		"ban": "[AR] Ban",
+		"viewProfile": "[AR] View Profile",
+		"viewStrikes": "[AR] View Strikes"
+	},
+	"extensions": {
+		"title": "[AR] Server Extensions",
+		"installed": "[AR] Installed",
+		"available": "[AR] Available",
+		"browse": "[AR] Browse Gallery",
+		"install": "[AR] Install",
+		"uninstall": "[AR] Uninstall",
+		"configure": "[AR] Configure",
+		"enabled": "[AR] Enabled",
+		"disabled": "[AR] Disabled",
+		"version": "[AR] Version",
+		"author": "[AR] Author",
+		"noExtensions": "[AR] No extensions installed."
+	},
+	"points": {
+		"title": "[AR] Points & Ranks",
+		"pointsPerMessage": "[AR] Points per Message",
+		"cooldown": "[AR] Cooldown (seconds)",
+		"ranks": "[AR] Custom Ranks",
+		"addRank": "[AR] Add Rank",
+		"rankName": "[AR] Rank Name",
+		"requiredPoints": "[AR] Required Points",
+		"roleReward": "[AR] Role Reward",
+		"leaderboard": "[AR] Leaderboard",
+		"resetPoints": "[AR] Reset All Points"
+	},
+	"settings": {
+		"title": "[AR] Server Settings",
+		"general": {
+			"title": "[AR] General",
+			"prefix": "[AR] Command Prefix",
+			"language": "[AR] Language",
+			"timezone": "[AR] Timezone",
+			"nickname": "[AR] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[AR] Welcome Messages",
+			"enabled": "[AR] Enable Welcome Messages",
+			"channel": "[AR] Welcome Channel",
+			"message": "[AR] Welcome Message",
+			"dmEnabled": "[AR] Send DM",
+			"dmMessage": "[AR] DM Message"
+		},
+		"leave": {
+			"title": "[AR] Leave Messages",
+			"enabled": "[AR] Enable Leave Messages",
+			"channel": "[AR] Leave Channel",
+			"message": "[AR] Leave Message"
+		},
+		"admins": {
+			"title": "[AR] Bot Admins",
+			"description": "[AR] Users who can manage bot settings",
+			"addAdmin": "[AR] Add Admin",
+			"level": "[AR] Admin Level",
+			"levels": {
+				"1": "[AR] Moderator",
+				"2": "[AR] Administrator",
+				"3": "[AR] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[AR] Premium Features",
+		"currentTier": "[AR] Current Tier",
+		"upgrade": "[AR] Upgrade",
+		"features": "[AR] Available Features",
+		"usage": "[AR] Usage",
+		"expires": "[AR] Expires",
+		"neverExpires": "[AR] Never expires",
+		"redeemCode": "[AR] Redeem Code",
+		"useVotePoints": "[AR] Use Vote Points"
+	},
+	"ai": {
+		"title": "[AR] AI Settings",
+		"enabled": "[AR] Enable AI Chat",
+		"provider": "[AR] AI Provider",
+		"model": "[AR] Model",
+		"channels": "[AR] Enabled Channels",
+		"personality": "[AR] Bot Personality",
+		"maxTokens": "[AR] Max Tokens",
+		"temperature": "[AR] Temperature",
+		"usage": "[AR] Monthly Usage",
+		"limit": "[AR] Monthly Limit"
+	},
+	"common": {
+		"save": "[AR] Save Changes",
+		"saved": "[AR] Changes saved!",
+		"saving": "[AR] Saving...",
+		"reset": "[AR] Reset to Default",
+		"cancel": "[AR] Cancel",
+		"confirm": "[AR] Confirm",
+		"delete": "[AR] Delete",
+		"edit": "[AR] Edit",
+		"add": "[AR] Add",
+		"remove": "[AR] Remove",
+		"enable": "[AR] Enable",
+		"disable": "[AR] Disable",
+		"unsavedChanges": "[AR] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[AR] Loading...",
+		"error": "[AR] An error occurred",
+		"success": "[AR] Success!"
+	}
+}

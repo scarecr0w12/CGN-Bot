@@ -33,6 +33,7 @@ const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
 const metrics = require("../Modules/Metrics");
+const I18n = require("../Modules/I18n");
 const app = express();
 
 const listen = async configJS => {
@@ -288,6 +289,10 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.use(middleware.setHeaders);
 
 	app.use(middleware.logRequest);
+
+	// Initialize i18n for multilingual support
+	await I18n.initialize();
+	app.use(I18n.middleware());
 
 	// Load injection settings from database (cached)
 	app.use(middleware.loadInjection);

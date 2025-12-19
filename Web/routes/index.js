@@ -158,6 +158,12 @@ const membershipRouting = (router, apiRouter) => {
 	apiRouter.routes.push(new Route(apiRouter, "/membership/redemption-info", [middleware.checkUnavailableAPI], controllers.membership.getRedemptionInfo, "get", "api"));
 };
 
+const voteRouting = (router, apiRouter) => {
+	setupPage(router, "/vote", [], controllers.vote.index);
+	// API endpoint for dynamic vote status updates
+	apiRouter.routes.push(new Route(apiRouter, "/vote/status", [middleware.checkUnavailableAPI], controllers.vote.getStatus, "get", "api"));
+};
+
 module.exports = app => {
 	const routers = {
 		general: express.Router(),
@@ -190,6 +196,7 @@ module.exports = app => {
 	blogRouting(routers.general);
 	officialRouting(routers.general);
 	membershipRouting(routers.general, routers.API);
+	voteRouting(routers.general, routers.API);
 	profileRouting(routers.general, routers.API);
 	accountRouting(routers.general);
 	webhookRouting(routers.general);

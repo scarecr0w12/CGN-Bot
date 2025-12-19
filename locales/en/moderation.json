@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "⚠️ Warning Issued",
+			"description": "{{user}} has been warned.",
+			"reason": "Reason",
+			"moderator": "Moderator",
+			"dmMessage": "You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "🔇 Member Muted",
+			"description": "{{user}} has been muted.",
+			"duration": "Duration",
+			"reason": "Reason",
+			"moderator": "Moderator",
+			"dmMessage": "You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "👢 Member Kicked",
+			"description": "{{user}} has been kicked from the server.",
+			"reason": "Reason",
+			"moderator": "Moderator",
+			"dmMessage": "You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "🔨 Member Banned",
+			"description": "{{user}} has been banned from the server.",
+			"duration": "Duration",
+			"reason": "Reason",
+			"moderator": "Moderator",
+			"permanent": "Permanent",
+			"dmMessage": "You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "{{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "🔨 Member Softbanned",
+			"description": "{{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "Reason",
+			"moderator": "Moderator"
+		}
+	},
+	"strikes": {
+		"title": "⚡ Strike System",
+		"added": "Strike added to {{user}}. Total: {{count}}",
+		"removed": "Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "All strikes cleared for {{user}}.",
+		"current": "{{user}} has {{count}} strike.",
+		"current_plural": "{{user}} has {{count}} strikes.",
+		"threshold": "Strike threshold reached! Automatic {{action}} applied.",
+		"history": "Strike History",
+		"noStrikes": "No strikes on record."
+	},
+	"automod": {
+		"title": "🤖 Auto-Moderation",
+		"triggered": "Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "Spam Detected",
+			"description": "Message flagged as spam."
+		},
+		"invites": {
+			"title": "Invite Link Detected",
+			"description": "Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "External Link Detected",
+			"description": "External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "Excessive Caps",
+			"description": "Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "Mass Mentions",
+			"description": "Too many mentions in one message."
+		},
+		"words": {
+			"title": "Blacklisted Word",
+			"description": "Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "Negative Content Detected",
+			"description": "Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "📋 Moderation Log",
+		"messageDeleted": "Message Deleted",
+		"messageEdited": "Message Edited",
+		"memberJoined": "Member Joined",
+		"memberLeft": "Member Left",
+		"memberBanned": "Member Banned",
+		"memberUnbanned": "Member Unbanned",
+		"memberMuted": "Member Muted",
+		"memberUnmuted": "Member Unmuted",
+		"memberKicked": "Member Kicked",
+		"roleAdded": "Role Added",
+		"roleRemoved": "Role Removed",
+		"channelCreated": "Channel Created",
+		"channelDeleted": "Channel Deleted",
+		"before": "Before",
+		"after": "After",
+		"content": "Content",
+		"attachments": "Attachments",
+		"channel": "Channel",
+		"executor": "Executor"
+	},
+	"lockdown": {
+		"enabled": "🔒 Channel locked. Only staff can send messages.",
+		"disabled": "🔓 Channel unlocked.",
+		"serverEnabled": "🔒 Server lockdown enabled.",
+		"serverDisabled": "🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "Slowmode disabled.",
+		"cooldown": "Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "🗑️ Deleted {{count}} message.",
+		"success_plural": "🗑️ Deleted {{count}} messages.",
+		"failed": "Failed to delete messages.",
+		"tooOld": "Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "Reason updated for case #{{case}}.",
+		"notFound": "Case #{{case}} not found.",
+		"noReason": "No reason provided"
+	}
+}

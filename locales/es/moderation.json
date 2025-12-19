@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "⚠️ Advertencia Emitida",
+			"description": "{{user}} ha sido advertido.",
+			"reason": "Razón",
+			"moderator": "Moderador",
+			"dmMessage": "Has sido advertido en **{{server}}**.\nRazón: {{reason}}"
+		},
+		"mute": {
+			"title": "🔇 Miembro Silenciado",
+			"description": "{{user}} ha sido silenciado.",
+			"duration": "Duración",
+			"reason": "Razón",
+			"moderator": "Moderador",
+			"dmMessage": "Has sido silenciado en **{{server}}** por {{duration}}.\nRazón: {{reason}}",
+			"unmuted": "🔊 {{user}} ha sido des-silenciado."
+		},
+		"kick": {
+			"title": "👢 Miembro Expulsado",
+			"description": "{{user}} ha sido expulsado del servidor.",
+			"reason": "Razón",
+			"moderator": "Moderador",
+			"dmMessage": "Has sido expulsado de **{{server}}**.\nRazón: {{reason}}"
+		},
+		"ban": {
+			"title": "🔨 Miembro Baneado",
+			"description": "{{user}} ha sido baneado del servidor.",
+			"duration": "Duración",
+			"reason": "Razón",
+			"moderator": "Moderador",
+			"permanent": "Permanente",
+			"dmMessage": "Has sido baneado de **{{server}}**.\nRazón: {{reason}}",
+			"unbanned": "{{user}} ha sido desbaneado."
+		},
+		"softban": {
+			"title": "🔨 Miembro Softbaneado",
+			"description": "{{user}} ha sido softbaneado (baneado y desbaneado inmediatamente para eliminar mensajes).",
+			"reason": "Razón",
+			"moderator": "Moderador"
+		}
+	},
+	"strikes": {
+		"title": "⚡ Sistema de Strikes",
+		"added": "Strike añadido a {{user}}. Total: {{count}}",
+		"removed": "Strike eliminado de {{user}}. Total: {{count}}",
+		"cleared": "Todos los strikes eliminados para {{user}}.",
+		"current": "{{user}} tiene {{count}} strike.",
+		"current_plural": "{{user}} tiene {{count}} strikes.",
+		"threshold": "¡Umbral de strikes alcanzado! {{action}} automático aplicado.",
+		"history": "Historial de Strikes",
+		"noStrikes": "No hay strikes registrados."
+	},
+	"automod": {
+		"title": "🤖 Auto-Moderación",
+		"triggered": "Auto-mod activado: {{rule}}",
+		"spam": {
+			"title": "Spam Detectado",
+			"description": "Mensaje marcado como spam."
+		},
+		"invites": {
+			"title": "Enlace de Invitación Detectado",
+			"description": "Los enlaces de invitación de Discord no están permitidos."
+		},
+		"links": {
+			"title": "Enlace Externo Detectado",
+			"description": "Los enlaces externos no están permitidos en este canal."
+		},
+		"caps": {
+			"title": "Mayúsculas Excesivas",
+			"description": "Por favor evita usar demasiadas mayúsculas."
+		},
+		"mentions": {
+			"title": "Menciones Masivas",
+			"description": "Demasiadas menciones en un mensaje."
+		},
+		"words": {
+			"title": "Palabra Prohibida",
+			"description": "Tu mensaje contenía una palabra prohibida."
+		},
+		"sentiment": {
+			"title": "Contenido Negativo Detectado",
+			"description": "Tu mensaje fue marcado por contenido {{category}}."
+		}
+	},
+	"logs": {
+		"title": "📋 Registro de Moderación",
+		"messageDeleted": "Mensaje Eliminado",
+		"messageEdited": "Mensaje Editado",
+		"memberJoined": "Miembro Entró",
+		"memberLeft": "Miembro Salió",
+		"memberBanned": "Miembro Baneado",
+		"memberUnbanned": "Miembro Desbaneado",
+		"memberMuted": "Miembro Silenciado",
+		"memberUnmuted": "Miembro Des-silenciado",
+		"memberKicked": "Miembro Expulsado",
+		"roleAdded": "Rol Añadido",
+		"roleRemoved": "Rol Eliminado",
+		"channelCreated": "Canal Creado",
+		"channelDeleted": "Canal Eliminado",
+		"before": "Antes",
+		"after": "Después",
+		"content": "Contenido",
+		"attachments": "Adjuntos",
+		"channel": "Canal",
+		"executor": "Ejecutor"
+	},
+	"lockdown": {
+		"enabled": "🔒 Canal bloqueado. Solo el staff puede enviar mensajes.",
+		"disabled": "🔓 Canal desbloqueado.",
+		"serverEnabled": "🔒 Bloqueo del servidor activado.",
+		"serverDisabled": "🔓 Bloqueo del servidor desactivado."
+	},
+	"slowmode": {
+		"enabled": "🐌 Modo lento activado: {{duration}} entre mensajes.",
+		"disabled": "Modo lento desactivado.",
+		"cooldown": "Por favor espera {{time}} antes de enviar otro mensaje."
+	},
+	"purge": {
+		"success": "🗑️ Se eliminó {{count}} mensaje.",
+		"success_plural": "🗑️ Se eliminaron {{count}} mensajes.",
+		"failed": "Error al eliminar mensajes.",
+		"tooOld": "No se pueden eliminar mensajes de más de 14 días."
+	},
+	"reason": {
+		"updated": "Razón actualizada para el caso #{{case}}.",
+		"notFound": "Caso #{{case}} no encontrado.",
+		"noReason": "Sin razón proporcionada"
+	}
+}

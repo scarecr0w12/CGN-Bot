@@ -177,11 +177,31 @@ middleware.populateRequest = route => (req, res, next) => {
 };
 
 middleware.registerTraffic = (req, res, next) => {
+	const startTime = Date.now();
+
 	// Use authenticated user ID, session ID, or IP for unique visitor tracking
 	const userIdentifier = req.isAuthenticated() && req.user?.id ?
 		`user:${req.user.id}` :
 		req.sessionID || req.clientIP || req.ip;
 	req.app.client.traffic.count(userIdentifier, req.isAuthenticated());
+
+	// Log detailed request data on response finish
+	res.on("finish", () => {
+		const responseTime = Date.now() - startTime;
+		req.app.client.traffic.logRequest({
+			path: req.originalUrl || req.url,
+			method: req.method,
+			statusCode: res.statusCode,
+			responseTime,
+			userAgent: req.get("user-agent"),
+			ip: req.clientIP || req.ip,
+			referrer: req.get("referrer") || req.get("referer"),
+			userId: req.isAuthenticated() && req.user?.id ? req.user.id : null,
+			sessionId: req.sessionID || null,
+			country: req.get("cf-ipcountry") || null,
+		});
+	});
+
 	next();
 };
 

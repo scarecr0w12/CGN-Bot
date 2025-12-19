@@ -471,6 +471,7 @@ controllers.filters = async (req, { res }) => {
 
 	// Check if server has advanced_moderation feature (premium is per-server)
 	const hasAdvancedModeration = await TierManager.canAccess(req.svr.id, "advanced_moderation");
+	const hasSentimentAnalysis = await TierManager.canAccess(req.svr.id, "sentiment_analysis");
 
 	const filteredCommands = [];
 	for (const command in serverDocument.config.commands) {
@@ -485,6 +486,7 @@ controllers.filters = async (req, { res }) => {
 		channelData: getChannelData(svr),
 		roleData: getRoleData(svr),
 		hasAdvancedModeration,
+		hasSentimentAnalysis,
 	});
 	res.setConfigData({
 		moderation: {
@@ -528,7 +530,24 @@ controllers.filters.post = async (req, res) => {
 					break;
 				case "mention_sensitivity":
 				case "message_sensitivity":
+				case "min_message_length":
 					serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, parseInt(req.body[`${filter}-${key}`]));
+					break;
+				case "categories":
+					// Handle nested categories object for sentiment_filter
+					if (filter === "sentiment_filter") {
+						serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, {
+							toxic: req.body[`${filter}-${key}-toxic`] === "on",
+							insult: req.body[`${filter}-${key}-insult`] === "on",
+							threat: req.body[`${filter}-${key}-threat`] === "on",
+							profanity: req.body[`${filter}-${key}-profanity`] === "on",
+							identity_attack: req.body[`${filter}-${key}-identity_attack`] === "on",
+						});
+					}
+					break;
+				case "warn_user":
+				case "escalate_on_repeat":
+					serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, req.body[`${filter}-${key}`] === "on");
 					break;
 				default:
 					// eslint-disable-next-line max-len

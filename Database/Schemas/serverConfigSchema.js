@@ -70,6 +70,11 @@ module.exports = new Schema({
 		maxlength: 25,
 		minlength: 1,
 	},
+	language: {
+		type: String,
+		default: "en",
+		maxlength: 5,
+	},
 	commands: new Schema(getCommands()),
 	count_data: [new Schema({
 		_id: {
@@ -313,6 +318,83 @@ module.exports = new Schema({
 				require_verification: {
 					type: Boolean,
 					default: false,
+				},
+			}),
+			sentiment_filter: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				disabled_channel_ids: [String],
+				provider: {
+					type: String,
+					default: "google",
+					enum: ["google", "ai"],
+				},
+				google_api_key: {
+					type: String,
+					default: "",
+				},
+				sensitivity: {
+					type: String,
+					default: "normal",
+					enum: ["strict", "normal", "lenient"],
+				},
+				negative_threshold: {
+					type: Number,
+					default: -0.5,
+					min: -1,
+					max: 0,
+				},
+				categories: new Schema({
+					toxic: { type: Boolean, default: true },
+					insult: { type: Boolean, default: true },
+					threat: { type: Boolean, default: true },
+					profanity: { type: Boolean, default: true },
+					identity_attack: { type: Boolean, default: true },
+				}),
+				min_message_length: {
+					type: Number,
+					default: 10,
+					min: 1,
+					max: 100,
+				},
+				action: {
+					type: String,
+					default: "mute",
+					enum: ["none", "warn", "block", "mute", "kick", "ban"],
+				},
+				delete_message: {
+					type: Boolean,
+					default: true,
+				},
+				violator_role_id: {
+					type: String,
+					default: "",
+				},
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				warn_user: {
+					type: Boolean,
+					default: true,
+				},
+				escalate_on_repeat: {
+					type: Boolean,
+					default: true,
+				},
+				repeat_threshold: {
+					type: Number,
+					default: 3,
+					min: 2,
+					max: 10,
+				},
+				repeat_window_minutes: {
+					type: Number,
+					default: 60,
+					min: 5,
+					max: 1440,
 				},
 			}),
 		}),
@@ -745,6 +827,42 @@ module.exports = new Schema({
 		type: String,
 		default: "https://i.imgur.com/3QPLumg.gif",
 	},
+	// Game Update Announcer configuration
+	game_updates: new Schema({
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+		subscriptions: [new Schema({
+			game_id: {
+				type: String,
+				required: true,
+				enum: [
+					"minecraft_java",
+					"minecraft_bedrock",
+					"rust",
+					"terraria",
+					"valheim",
+					"ark",
+					"sevendaystodie",
+					"cs2",
+					"palworld",
+				],
+			},
+			channel_id: {
+				type: String,
+				required: true,
+			},
+			isEnabled: {
+				type: Boolean,
+				default: true,
+			},
+			mention_role_id: {
+				type: String,
+				default: "",
+			},
+		})],
+	}),
 	// AI configuration
 	ai: serverAISchema,
 });

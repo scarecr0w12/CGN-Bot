@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[ZH] Home",
+		"features": "[ZH] Features",
+		"commands": "[ZH] Commands",
+		"dashboard": "[ZH] Dashboard",
+		"extensions": "[ZH] Extensions",
+		"wiki": "[ZH] Wiki",
+		"blog": "[ZH] Blog",
+		"support": "[ZH] Support",
+		"login": "[ZH] Login",
+		"logout": "[ZH] Logout",
+		"invite": "[ZH] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[ZH] The Ultimate Discord Bot",
+			"subtitle": "[ZH] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[ZH] Trusted by {{count}} servers",
+			"addToServer": "[ZH] Add to Server",
+			"viewFeatures": "[ZH] View Features"
+		},
+		"features": {
+			"title": "[ZH] Features",
+			"subtitle": "[ZH] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[ZH] Moderation",
+				"description": "[ZH] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[ZH] Fun Commands",
+				"description": "[ZH] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[ZH] Leveling System",
+				"description": "[ZH] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[ZH] Custom Extensions",
+				"description": "[ZH] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[ZH] Music",
+				"description": "[ZH] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[ZH] AI Chat",
+				"description": "[ZH] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[ZH] Ready to get started?",
+			"subtitle": "[ZH] Add {{botName}} to your server in seconds.",
+			"button": "[ZH] Add to Server"
+		},
+		"faq": {
+			"title": "[ZH] Frequently Asked Questions",
+			"q1": "[ZH] Is {{botName}} free to use?",
+			"a1": "[ZH] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[ZH] How do I set up the bot?",
+			"a2": "[ZH] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[ZH] What are Extensions?",
+			"a3": "[ZH] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[ZH] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[ZH] Privacy Policy",
+			"terms": "[ZH] Terms of Service",
+			"contact": "[ZH] Contact",
+			"status": "[ZH] Status"
+		},
+		"social": {
+			"discord": "[ZH] Discord",
+			"github": "[ZH] GitHub",
+			"twitter": "[ZH] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[ZH] Login with {{provider}}",
+		"loggingIn": "[ZH] Logging in...",
+		"loginSuccess": "[ZH] Successfully logged in!",
+		"loginFailed": "[ZH] Login failed. Please try again.",
+		"logoutSuccess": "[ZH] Successfully logged out.",
+		"welcome": "[ZH] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[ZH] Profile",
+		"myServers": "[ZH] My Servers",
+		"settings": "[ZH] Account Settings",
+		"linkedAccounts": "[ZH] Linked Accounts",
+		"subscription": "[ZH] Subscription",
+		"votePoints": "[ZH] Vote Points",
+		"extensions": "[ZH] My Extensions"
+	},
+	"servers": {
+		"title": "[ZH] Select a Server",
+		"noServers": "[ZH] You don't have any servers to manage.",
+		"manage": "[ZH] Manage",
+		"notInServer": "[ZH] Bot not in server",
+		"invite": "[ZH] Invite Bot"
+	},
+	"membership": {
+		"title": "[ZH] Premium Membership",
+		"subtitle": "[ZH] Unlock powerful features for your server",
+		"currentTier": "[ZH] Current Tier",
+		"free": "[ZH] Free",
+		"starter": "[ZH] Starter",
+		"premium": "[ZH] Premium",
+		"enterprise": "[ZH] Enterprise",
+		"perMonth": "[ZH] /month",
+		"perYear": "[ZH] /year",
+		"subscribe": "[ZH] Subscribe",
+		"manage": "[ZH] Manage Subscription",
+		"features": "[ZH] Features",
+		"compare": "[ZH] Compare Plans",
+		"faq": "[ZH] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[ZH] Access Denied",
+			"message": "[ZH] You don't have permission to access this page.",
+			"goHome": "[ZH] Go to Homepage"
+		},
+		"404": {
+			"title": "[ZH] Page Not Found",
+			"message": "[ZH] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[ZH] Go to Homepage"
+		},
+		"500": {
+			"title": "[ZH] Server Error",
+			"message": "[ZH] Something went wrong on our end. Please try again later.",
+			"goHome": "[ZH] Go to Homepage"
+		}
+	}
+}

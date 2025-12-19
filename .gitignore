@@ -12,9 +12,7 @@ monitoring/mariadb-exporter/.my.cnf
 Temp/*.json
 
 # Logs
-logs/
-scripts/
-*.log
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -35,7 +33,18 @@ dev-debug.log
 # Task files
 tasks.json
 # Data persistence
-data/
+
 
 Temp/
 certs/
+data/
+
+.augment/
+
+.taskmaster/
+
+scripts/
+extensions/
+
+# i18n missing translation files (auto-generated)
+locales/**/*.missing.json

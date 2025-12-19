@@ -1,6 +1,7 @@
 const BaseEvent = require("../BaseEvent");
 const levenshtein = require("fast-levenshtein");
 const { LoggingLevels, Colors } = require("../../Constants");
+const ModLog = require("../../../Modules/ModLog");
 
 class SpamHandler extends BaseEvent {
 	requirements (msg) {
@@ -100,7 +101,7 @@ class SpamHandler extends BaseEvent {
 						admin: this.client.user.id,
 						reason: `First-time spam violation in #${msg.channel.name} (${msg.channel})`,
 					});
-					// TODO: ModLog.create
+					ModLog.create(msg.guild, "Spam Warning", msg.member, this.client.user, `First-time spam violation in #${msg.channel.name}`);
 				} else if (spamDocument.val.message_count === serverDocument.config.moderation.filters.spam_filter.message_sensitivity * 2) {
 					// Second-time spam filter violation
 					// eslint-disable-next-line max-len

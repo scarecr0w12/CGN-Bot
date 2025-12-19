@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[AR] Extension Gallery",
+		"subtitle": "[AR] Browse and install community-created extensions",
+		"search": "[AR] Search extensions...",
+		"filters": "[AR] Filters",
+		"category": "[AR] Category",
+		"tags": "[AR] Tags",
+		"sort": "[AR] Sort by",
+		"sortOptions": {
+			"popular": "[AR] Most Popular",
+			"recent": "[AR] Recently Updated",
+			"rating": "[AR] Highest Rated",
+			"installs": "[AR] Most Installs"
+		},
+		"noResults": "[AR] No extensions found matching your criteria.",
+		"featured": "[AR] Featured",
+		"trending": "[AR] Trending",
+		"new": "[AR] New"
+	},
+	"card": {
+		"by": "[AR] by {{author}}",
+		"installs": "[AR] {{count}} install",
+		"installs_plural": "[AR] {{count}} installs",
+		"rating": "[AR] {{rating}} / 5",
+		"version": "[AR] v{{version}}",
+		"install": "[AR] Install",
+		"installed": "[AR] Installed",
+		"update": "[AR] Update Available",
+		"premium": "[AR] Premium",
+		"free": "[AR] Free",
+		"viewDetails": "[AR] View Details"
+	},
+	"details": {
+		"title": "[AR] Extension Details",
+		"description": "[AR] Description",
+		"usage": "[AR] Usage",
+		"permissions": "[AR] Required Permissions",
+		"changelog": "[AR] Changelog",
+		"reviews": "[AR] Reviews",
+		"author": "[AR] Author",
+		"version": "[AR] Version",
+		"lastUpdated": "[AR] Last Updated",
+		"installs": "[AR] Total Installs",
+		"rating": "[AR] Rating",
+		"category": "[AR] Category",
+		"tags": "[AR] Tags",
+		"source": "[AR] View Source",
+		"report": "[AR] Report Extension"
+	},
+	"install": {
+		"title": "[AR] Install Extension",
+		"confirm": "[AR] Are you sure you want to install **{{name}}**?",
+		"permissions": "[AR] This extension requires the following permissions:",
+		"success": "[AR] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[AR] Failed to install extension.",
+		"alreadyInstalled": "[AR] This extension is already installed.",
+		"incompatible": "[AR] This extension is not compatible with your current setup.",
+		"premiumRequired": "[AR] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[AR] Uninstall Extension",
+		"confirm": "[AR] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[AR] This will remove all settings for this extension.",
+		"success": "[AR] Extension uninstalled.",
+		"failed": "[AR] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[AR] Extension Builder",
+		"create": "[AR] Create Extension",
+		"edit": "[AR] Edit Extension",
+		"name": "[AR] Extension Name",
+		"description": "[AR] Description",
+		"version": "[AR] Version",
+		"category": "[AR] Category",
+		"tags": "[AR] Tags",
+		"type": "[AR] Type",
+		"types": {
+			"command": "[AR] Command",
+			"event": "[AR] Event",
+			"slash": "[AR] Slash Command"
+		},
+		"commandKey": "[AR] Command Trigger",
+		"slashDescription": "[AR] Slash Command Description",
+		"code": "[AR] Code",
+		"scopes": "[AR] Scopes",
+		"timeout": "[AR] Timeout (ms)",
+		"adminLevel": "[AR] Required Admin Level",
+		"save": "[AR] Save Draft",
+		"submit": "[AR] Submit for Review",
+		"test": "[AR] Test Extension",
+		"export": "[AR] Export",
+		"import": "[AR] Import"
+	},
+	"myExtensions": {
+		"title": "[AR] My Extensions",
+		"created": "[AR] Created",
+		"installed": "[AR] Installed",
+		"noExtensions": "[AR] You haven't created any extensions yet.",
+		"noInstalled": "[AR] You haven't installed any extensions.",
+		"status": {
+			"draft": "[AR] Draft",
+			"pending": "[AR] Pending Review",
+			"approved": "[AR] Approved",
+			"rejected": "[AR] Rejected",
+			"published": "[AR] Published"
+		}
+	},
+	"review": {
+		"title": "[AR] Write a Review",
+		"rating": "[AR] Rating",
+		"comment": "[AR] Comment",
+		"submit": "[AR] Submit Review",
+		"edit": "[AR] Edit Review",
+		"delete": "[AR] Delete Review",
+		"helpful": "[AR] Helpful",
+		"report": "[AR] Report Review",
+		"noReviews": "[AR] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[AR] Extension not found.",
+		"loadFailed": "[AR] Failed to load extension.",
+		"executionFailed": "[AR] Extension execution failed.",
+		"timeout": "[AR] Extension timed out.",
+		"permissionDenied": "[AR] Permission denied.",
+		"invalidCode": "[AR] Invalid extension code.",
+		"scopeNotAllowed": "[AR] This extension requires a scope that is not allowed."
+	}
+}

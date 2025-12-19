@@ -405,7 +405,17 @@ controllers.redeemPoints = async (req, res) => {
 		expiresAt.setDate(expiresAt.getDate() + requestedDays);
 
 		// Assign the tier
-		await TierManager.setUserTier(req.user.id, tierId, "vote_redemption", expiresAt, "point_redemption");
+		try {
+			await TierManager.setUserTier(req.user.id, tierId, "vote_redemption", expiresAt, "point_redemption");
+		} catch (err) {
+			logger.error("Failed to set user tier after point deduction, refunding points", { userId: req.user.id, points: pointsRequired }, err);
+
+			// Refund points
+			userDoc.query.inc("points", pointsRequired);
+			await userDoc.save();
+
+			throw new Error("Failed to redeem points. Points have been refunded.");
+		}
 
 		logger.info("User redeemed points for tier", {
 			userId: req.user.id,

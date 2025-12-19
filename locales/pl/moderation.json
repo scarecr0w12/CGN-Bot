@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "[PL] ⚠️ Warning Issued",
+			"description": "[PL] {{user}} has been warned.",
+			"reason": "[PL] Reason",
+			"moderator": "[PL] Moderator",
+			"dmMessage": "[PL] You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "[PL] 🔇 Member Muted",
+			"description": "[PL] {{user}} has been muted.",
+			"duration": "[PL] Duration",
+			"reason": "[PL] Reason",
+			"moderator": "[PL] Moderator",
+			"dmMessage": "[PL] You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "[PL] 🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "[PL] 👢 Member Kicked",
+			"description": "[PL] {{user}} has been kicked from the server.",
+			"reason": "[PL] Reason",
+			"moderator": "[PL] Moderator",
+			"dmMessage": "[PL] You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "[PL] 🔨 Member Banned",
+			"description": "[PL] {{user}} has been banned from the server.",
+			"duration": "[PL] Duration",
+			"reason": "[PL] Reason",
+			"moderator": "[PL] Moderator",
+			"permanent": "[PL] Permanent",
+			"dmMessage": "[PL] You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "[PL] {{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "[PL] 🔨 Member Softbanned",
+			"description": "[PL] {{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "[PL] Reason",
+			"moderator": "[PL] Moderator"
+		}
+	},
+	"strikes": {
+		"title": "[PL] ⚡ Strike System",
+		"added": "[PL] Strike added to {{user}}. Total: {{count}}",
+		"removed": "[PL] Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "[PL] All strikes cleared for {{user}}.",
+		"current": "[PL] {{user}} has {{count}} strike.",
+		"current_plural": "[PL] {{user}} has {{count}} strikes.",
+		"threshold": "[PL] Strike threshold reached! Automatic {{action}} applied.",
+		"history": "[PL] Strike History",
+		"noStrikes": "[PL] No strikes on record."
+	},
+	"automod": {
+		"title": "[PL] 🤖 Auto-Moderation",
+		"triggered": "[PL] Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "[PL] Spam Detected",
+			"description": "[PL] Message flagged as spam."
+		},
+		"invites": {
+			"title": "[PL] Invite Link Detected",
+			"description": "[PL] Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "[PL] External Link Detected",
+			"description": "[PL] External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "[PL] Excessive Caps",
+			"description": "[PL] Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "[PL] Mass Mentions",
+			"description": "[PL] Too many mentions in one message."
+		},
+		"words": {
+			"title": "[PL] Blacklisted Word",
+			"description": "[PL] Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "[PL] Negative Content Detected",
+			"description": "[PL] Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "[PL] 📋 Moderation Log",
+		"messageDeleted": "[PL] Message Deleted",
+		"messageEdited": "[PL] Message Edited",
+		"memberJoined": "[PL] Member Joined",
+		"memberLeft": "[PL] Member Left",
+		"memberBanned": "[PL] Member Banned",
+		"memberUnbanned": "[PL] Member Unbanned",
+		"memberMuted": "[PL] Member Muted",
+		"memberUnmuted": "[PL] Member Unmuted",
+		"memberKicked": "[PL] Member Kicked",
+		"roleAdded": "[PL] Role Added",
+		"roleRemoved": "[PL] Role Removed",
+		"channelCreated": "[PL] Channel Created",
+		"channelDeleted": "[PL] Channel Deleted",
+		"before": "[PL] Before",
+		"after": "[PL] After",
+		"content": "[PL] Content",
+		"attachments": "[PL] Attachments",
+		"channel": "[PL] Channel",
+		"executor": "[PL] Executor"
+	},
+	"lockdown": {
+		"enabled": "[PL] 🔒 Channel locked. Only staff can send messages.",
+		"disabled": "[PL] 🔓 Channel unlocked.",
+		"serverEnabled": "[PL] 🔒 Server lockdown enabled.",
+		"serverDisabled": "[PL] 🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "[PL] 🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "[PL] Slowmode disabled.",
+		"cooldown": "[PL] Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "[PL] 🗑️ Deleted {{count}} message.",
+		"success_plural": "[PL] 🗑️ Deleted {{count}} messages.",
+		"failed": "[PL] Failed to delete messages.",
+		"tooOld": "[PL] Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "[PL] Reason updated for case #{{case}}.",
+		"notFound": "[PL] Case #{{case}} not found.",
+		"noReason": "[PL] No reason provided"
+	}
+}

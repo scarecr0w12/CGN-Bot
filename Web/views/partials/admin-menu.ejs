@@ -6,7 +6,7 @@ const menuSections = {
 	commands: {
 		icon: 'fa fa-cogs',
 		label: 'Commands',
-		paths: ['commands/command-options', 'commands/command-list', 'commands/rss-feeds', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets', 'commands/api-keys', 'commands/tag-reaction']
+		paths: ['commands/command-options', 'commands/command-list', 'commands/rss-feeds', 'commands/game-updates', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets', 'commands/api-keys', 'commands/tag-reaction']
 	},
 	stats: {
 		icon: 'fa fa-star',
@@ -84,13 +84,14 @@ const menuItem = (path, label, icon = null) => {
 					<% } %>
 					<%- menuItem('commands/command-options', 'Command Options') %>
 
-					<% const cmdListPages = ['commands/command-list', 'commands/rss-feeds', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets'];
+					<% const cmdListPages = ['commands/command-list', 'commands/rss-feeds', 'commands/game-updates', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets'];
 					   const onCmdListPage = cmdListPages.some(p => isActive(`${basePath}/${p}`)); %>
 					<% if (onCmdListPage) { %>
 					<%- include('../partials/admin-sudo.ejs') %>
 					<a class="<%= isActive(`${basePath}/commands/command-list`) ? 'is-active' : '' %>" href="<%= isActive(`${basePath}/commands/command-list`) ? '#' : `${basePath}/commands/command-list` %>">Command List</a>
 					<ul>
 						<li><%- menuItem('commands/rss-feeds', 'RSS Feeds') %></li>
+						<li><%- menuItem('commands/game-updates', 'Game Updates') %></li>
 						<li><%- menuItem('commands/streamers', 'Streamers') %></li>
 						<li><%- menuItem('commands/tags', 'Tags') %></li>
 						<li><%- menuItem('commands/auto-translation', 'Auto Translation') %></li>
@@ -173,6 +174,7 @@ const menuItem = (path, label, icon = null) => {
 						<li><%- menuItem('administration/strikes', 'Strikes') %></li>
 						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/status-messages`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/status-messages`) ? '#' : `${basePath}/administration/status-messages` %>">Status Messages</a></li>
 						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/filters`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/filters`) ? '#' : `${basePath}/administration/filters` %>">Filters</a></li>
+						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/filters`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/filters`) ? '#' : `${basePath}/administration/filters#sentiment` %>"><span class="icon is-small"><i class="fas fa-brain"></i></span> Sentiment <span class="tag is-info is-small">Tier 1</span></a></li>
 					</ul>
 					<% } else { %>
 					<a href="<%= basePath %>/administration/moderation">Moderation &#9662;</a>

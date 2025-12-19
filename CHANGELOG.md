@@ -5,6 +5,111 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-12-19
+
+### Added
+
+#### AI Sentiment Analysis (Tier 1 Premium)
+
+- **SentimentAnalyzer Module** (`Modules/SentimentAnalyzer.js`) - AI-powered message sentiment detection
+  - Google Cloud Natural Language API (primary provider)
+  - AI-based fallback using existing providers (OpenAI, Anthropic, Groq)
+  - Configurable sensitivity thresholds (strict, normal, lenient)
+  - Category detection: toxic, insult, threat, profanity, identity_attack
+  - Result caching to reduce API costs (5-minute TTL)
+
+- **Automod Integration**:
+  - `/automod sentiment` - Slash command group for configuration
+  - Subcommands: enable, disable, status, provider, apikey, sensitivity, action, logchannel
+  - Actions: none, warn, block, mute, kick, ban
+  - Features: delete messages, warn user, log channel, escalate on repeat
+
+- **Dashboard UI** (`Web/views/pages/admin-filters.ejs`) - Visual configuration for sentiment filter
+
+#### Multilingual Support (i18next)
+
+- **I18n Module** (`Modules/I18n.js`) - Complete internationalization system
+- **15 Supported Languages**: English, Spanish, French, German, Portuguese, Japanese, Korean, Chinese, Russian, Italian, Dutch, Polish, Turkish, Arabic, Hindi
+- **8 Translation Namespaces**: common, commands, errors, web, dashboard, moderation, extensions, premium
+- **Language Detection Priority**: User preference → Server preference → Browser Accept-Language → Cookie → Default (en)
+
+- **Bot Integration**:
+  - `/language` slash command with subcommands: user, server, list, current
+  - `createBotTranslator()` for command translations
+
+- **Web Integration**:
+  - Express middleware for automatic language detection
+  - Language selector partial (`Web/views/partials/language-selector.ejs`)
+  - Account settings language dropdown
+  - API endpoint: `POST /api/user/language`
+
+- **Database Schema Updates**:
+  - `serverConfigSchema.js`: Added `config.language` field
+  - `userSchema.js`: Added `preferences.language` field
+  - Migration: `022_add_language_support.sql`
+
+#### Game Update Announcer
+
+- **GameUpdateAnnouncer Module** (`Modules/GameUpdateAnnouncer.js`) - Monitor and announce game updates
+- **Supported Games**: Minecraft (Java & Bedrock), Rust, Terraria, Valheim, ARK: Survival Evolved, 7 Days to Die, Counter-Strike 2, Palworld
+- **Features**:
+  - Automatic update detection via Steam API and game-specific sources
+  - Rich embeds with version info, changelog links, and game icons
+  - Per-server channel configuration
+  - Configurable check intervals
+
+- **Dashboard Page** (`Web/views/pages/admin-game-updates.ejs`) - Configure game announcements
+- **Slash Command**: `/gameupdates` for in-Discord configuration
+
+#### Server Referral System
+
+- **ReferralManager Module** (`Modules/ReferralManager.js`) - Track server referrals and rewards
+- **Features**:
+  - Unique referral codes per user (8-character alphanumeric)
+  - Base points (50) when server joins via referral link
+  - Retention bonus (100 points) if server stays 7+ days
+  - Minimum server size requirement (10 members) to prevent abuse
+  - Track referred servers and total points earned
+
+- **Database Schema Updates**:
+  - `userSchema.js`: Added `referrals` object (referral_code, total_referrals, total_points_earned, referred_servers)
+
+#### Dedicated Vote Page
+
+- **Vote Controller** (`Web/controllers/vote.js`) - Dedicated voting hub
+- **Vote Page** (`Web/views/pages/vote.ejs`) - User-facing vote interface
+- **Features**:
+  - Display all vote sites with cooldown timers
+  - User vote stats (balance, lifetime earned/spent, total votes)
+  - Vote leaderboard (top 10)
+  - Weekend multiplier display
+  - Points-per-vote configuration
+
+### Changed
+
+- **Landing Page** - Updated Discord invite links and added server profile/creator features
+- **Extension Gallery** - Added tag filtering system for better categorization
+- **Shard Health Monitoring** - Enhanced diagnostics for shard status
+- **IndexNow Integration** - Improved diagnostics and error handling
+
+### Fixed
+
+- **ReferralManager** - Added missing trailing commas causing syntax errors
+- **Lint Errors** - Resolved ESLint issues across codebase
+- **Extension Tags** - Fixed tag saving and filtering in gallery
+
+### Database Migrations
+
+- `017_fix_missing_columns.sql` - Fix missing database columns
+- `018_add_server_analytics.sql` - Server analytics tracking
+- `019_add_invite_tracking.sql` - Invite tracking support
+- `020_update_traffic_table.sql` - Traffic table updates
+- `021_add_sentiment_filter.sql` - Sentiment filter configuration
+- `022_add_language_support.sql` - Language preference storage
+- `023_add_email_settings.sql` - Email notification settings
+
+---
+
 ## [1.6.0] - 2025-12-15
 
 ### Added
@@ -446,6 +551,7 @@ Reduced slash command count from 98 to 64 (34 slots saved) to stay well under Di
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.7.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.7.0
 [1.6.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.6.0
 [1.5.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.5.0
 [1.4.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.4.0

@@ -1222,6 +1222,8 @@ controllers.membership.email.post = async (req, res) => {
 
 	try {
 		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		await TierManager.invalidateCache();
 		res.redirect(req.originalUrl);
 	} catch (err) {
 		logger.error("Failed to save email settings", {}, err);
@@ -1405,6 +1407,7 @@ controllers.management.version = async (req, { res }) => {
 			installedVersion: version,
 			utd: checkData.utd,
 			isDownloaded,
+			devMode: process.env.DEV_MODE === "true" || process.env.DEV_MODE === "1",
 			page: "maintainer-version.ejs",
 		}).setConfigData({
 			version: configJSON.version,

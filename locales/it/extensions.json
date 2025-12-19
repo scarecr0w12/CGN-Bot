@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[IT] Extension Gallery",
+		"subtitle": "[IT] Browse and install community-created extensions",
+		"search": "[IT] Search extensions...",
+		"filters": "[IT] Filters",
+		"category": "[IT] Category",
+		"tags": "[IT] Tags",
+		"sort": "[IT] Sort by",
+		"sortOptions": {
+			"popular": "[IT] Most Popular",
+			"recent": "[IT] Recently Updated",
+			"rating": "[IT] Highest Rated",
+			"installs": "[IT] Most Installs"
+		},
+		"noResults": "[IT] No extensions found matching your criteria.",
+		"featured": "[IT] Featured",
+		"trending": "[IT] Trending",
+		"new": "[IT] New"
+	},
+	"card": {
+		"by": "[IT] by {{author}}",
+		"installs": "[IT] {{count}} install",
+		"installs_plural": "[IT] {{count}} installs",
+		"rating": "[IT] {{rating}} / 5",
+		"version": "[IT] v{{version}}",
+		"install": "[IT] Install",
+		"installed": "[IT] Installed",
+		"update": "[IT] Update Available",
+		"premium": "[IT] Premium",
+		"free": "[IT] Free",
+		"viewDetails": "[IT] View Details"
+	},
+	"details": {
+		"title": "[IT] Extension Details",
+		"description": "[IT] Description",
+		"usage": "[IT] Usage",
+		"permissions": "[IT] Required Permissions",
+		"changelog": "[IT] Changelog",
+		"reviews": "[IT] Reviews",
+		"author": "[IT] Author",
+		"version": "[IT] Version",
+		"lastUpdated": "[IT] Last Updated",
+		"installs": "[IT] Total Installs",
+		"rating": "[IT] Rating",
+		"category": "[IT] Category",
+		"tags": "[IT] Tags",
+		"source": "[IT] View Source",
+		"report": "[IT] Report Extension"
+	},
+	"install": {
+		"title": "[IT] Install Extension",
+		"confirm": "[IT] Are you sure you want to install **{{name}}**?",
+		"permissions": "[IT] This extension requires the following permissions:",
+		"success": "[IT] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[IT] Failed to install extension.",
+		"alreadyInstalled": "[IT] This extension is already installed.",
+		"incompatible": "[IT] This extension is not compatible with your current setup.",
+		"premiumRequired": "[IT] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[IT] Uninstall Extension",
+		"confirm": "[IT] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[IT] This will remove all settings for this extension.",
+		"success": "[IT] Extension uninstalled.",
+		"failed": "[IT] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[IT] Extension Builder",
+		"create": "[IT] Create Extension",
+		"edit": "[IT] Edit Extension",
+		"name": "[IT] Extension Name",
+		"description": "[IT] Description",
+		"version": "[IT] Version",
+		"category": "[IT] Category",
+		"tags": "[IT] Tags",
+		"type": "[IT] Type",
+		"types": {
+			"command": "[IT] Command",
+			"event": "[IT] Event",
+			"slash": "[IT] Slash Command"
+		},
+		"commandKey": "[IT] Command Trigger",
+		"slashDescription": "[IT] Slash Command Description",
+		"code": "[IT] Code",
+		"scopes": "[IT] Scopes",
+		"timeout": "[IT] Timeout (ms)",
+		"adminLevel": "[IT] Required Admin Level",
+		"save": "[IT] Save Draft",
+		"submit": "[IT] Submit for Review",
+		"test": "[IT] Test Extension",
+		"export": "[IT] Export",
+		"import": "[IT] Import"
+	},
+	"myExtensions": {
+		"title": "[IT] My Extensions",
+		"created": "[IT] Created",
+		"installed": "[IT] Installed",
+		"noExtensions": "[IT] You haven't created any extensions yet.",
+		"noInstalled": "[IT] You haven't installed any extensions.",
+		"status": {
+			"draft": "[IT] Draft",
+			"pending": "[IT] Pending Review",
+			"approved": "[IT] Approved",
+			"rejected": "[IT] Rejected",
+			"published": "[IT] Published"
+		}
+	},
+	"review": {
+		"title": "[IT] Write a Review",
+		"rating": "[IT] Rating",
+		"comment": "[IT] Comment",
+		"submit": "[IT] Submit Review",
+		"edit": "[IT] Edit Review",
+		"delete": "[IT] Delete Review",
+		"helpful": "[IT] Helpful",
+		"report": "[IT] Report Review",
+		"noReviews": "[IT] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[IT] Extension not found.",
+		"loadFailed": "[IT] Failed to load extension.",
+		"executionFailed": "[IT] Extension execution failed.",
+		"timeout": "[IT] Extension timed out.",
+		"permissionDenied": "[IT] Permission denied.",
+		"invalidCode": "[IT] Invalid extension code.",
+		"scopeNotAllowed": "[IT] This extension requires a scope that is not allowed."
+	}
+}

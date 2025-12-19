@@ -621,9 +621,11 @@
 					<i class="fa fa-download"></i> Install
 				</a>
 				<% } %>
+				<% if (!extension.isPremium || (authUser && (authUser.id === extension.owner.id || isMaintainer))) { %>
 				<a class="ext-card-action" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
 					<i class="fa fa-code"></i> Source
 				</a>
+				<% } %>
 				<% if (authUser) { %>
 				<a id="vote-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
 					<i class="fa fa-thumbs-up"></i> <%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>

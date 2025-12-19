@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "[KO] ⚠️ Warning Issued",
+			"description": "[KO] {{user}} has been warned.",
+			"reason": "[KO] Reason",
+			"moderator": "[KO] Moderator",
+			"dmMessage": "[KO] You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "[KO] 🔇 Member Muted",
+			"description": "[KO] {{user}} has been muted.",
+			"duration": "[KO] Duration",
+			"reason": "[KO] Reason",
+			"moderator": "[KO] Moderator",
+			"dmMessage": "[KO] You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "[KO] 🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "[KO] 👢 Member Kicked",
+			"description": "[KO] {{user}} has been kicked from the server.",
+			"reason": "[KO] Reason",
+			"moderator": "[KO] Moderator",
+			"dmMessage": "[KO] You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "[KO] 🔨 Member Banned",
+			"description": "[KO] {{user}} has been banned from the server.",
+			"duration": "[KO] Duration",
+			"reason": "[KO] Reason",
+			"moderator": "[KO] Moderator",
+			"permanent": "[KO] Permanent",
+			"dmMessage": "[KO] You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "[KO] {{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "[KO] 🔨 Member Softbanned",
+			"description": "[KO] {{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "[KO] Reason",
+			"moderator": "[KO] Moderator"
+		}
+	},
+	"strikes": {
+		"title": "[KO] ⚡ Strike System",
+		"added": "[KO] Strike added to {{user}}. Total: {{count}}",
+		"removed": "[KO] Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "[KO] All strikes cleared for {{user}}.",
+		"current": "[KO] {{user}} has {{count}} strike.",
+		"current_plural": "[KO] {{user}} has {{count}} strikes.",
+		"threshold": "[KO] Strike threshold reached! Automatic {{action}} applied.",
+		"history": "[KO] Strike History",
+		"noStrikes": "[KO] No strikes on record."
+	},
+	"automod": {
+		"title": "[KO] 🤖 Auto-Moderation",
+		"triggered": "[KO] Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "[KO] Spam Detected",
+			"description": "[KO] Message flagged as spam."
+		},
+		"invites": {
+			"title": "[KO] Invite Link Detected",
+			"description": "[KO] Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "[KO] External Link Detected",
+			"description": "[KO] External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "[KO] Excessive Caps",
+			"description": "[KO] Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "[KO] Mass Mentions",
+			"description": "[KO] Too many mentions in one message."
+		},
+		"words": {
+			"title": "[KO] Blacklisted Word",
+			"description": "[KO] Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "[KO] Negative Content Detected",
+			"description": "[KO] Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "[KO] 📋 Moderation Log",
+		"messageDeleted": "[KO] Message Deleted",
+		"messageEdited": "[KO] Message Edited",
+		"memberJoined": "[KO] Member Joined",
+		"memberLeft": "[KO] Member Left",
+		"memberBanned": "[KO] Member Banned",
+		"memberUnbanned": "[KO] Member Unbanned",
+		"memberMuted": "[KO] Member Muted",
+		"memberUnmuted": "[KO] Member Unmuted",
+		"memberKicked": "[KO] Member Kicked",
+		"roleAdded": "[KO] Role Added",
+		"roleRemoved": "[KO] Role Removed",
+		"channelCreated": "[KO] Channel Created",
+		"channelDeleted": "[KO] Channel Deleted",
+		"before": "[KO] Before",
+		"after": "[KO] After",
+		"content": "[KO] Content",
+		"attachments": "[KO] Attachments",
+		"channel": "[KO] Channel",
+		"executor": "[KO] Executor"
+	},
+	"lockdown": {
+		"enabled": "[KO] 🔒 Channel locked. Only staff can send messages.",
+		"disabled": "[KO] 🔓 Channel unlocked.",
+		"serverEnabled": "[KO] 🔒 Server lockdown enabled.",
+		"serverDisabled": "[KO] 🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "[KO] 🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "[KO] Slowmode disabled.",
+		"cooldown": "[KO] Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "[KO] 🗑️ Deleted {{count}} message.",
+		"success_plural": "[KO] 🗑️ Deleted {{count}} messages.",
+		"failed": "[KO] Failed to delete messages.",
+		"tooOld": "[KO] Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "[KO] Reason updated for case #{{case}}.",
+		"notFound": "[KO] Case #{{case}} not found.",
+		"noReason": "[KO] No reason provided"
+	}
+}

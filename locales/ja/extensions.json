@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[JA] Extension Gallery",
+		"subtitle": "[JA] Browse and install community-created extensions",
+		"search": "[JA] Search extensions...",
+		"filters": "[JA] Filters",
+		"category": "[JA] Category",
+		"tags": "[JA] Tags",
+		"sort": "[JA] Sort by",
+		"sortOptions": {
+			"popular": "[JA] Most Popular",
+			"recent": "[JA] Recently Updated",
+			"rating": "[JA] Highest Rated",
+			"installs": "[JA] Most Installs"
+		},
+		"noResults": "[JA] No extensions found matching your criteria.",
+		"featured": "[JA] Featured",
+		"trending": "[JA] Trending",
+		"new": "[JA] New"
+	},
+	"card": {
+		"by": "[JA] by {{author}}",
+		"installs": "[JA] {{count}} install",
+		"installs_plural": "[JA] {{count}} installs",
+		"rating": "[JA] {{rating}} / 5",
+		"version": "[JA] v{{version}}",
+		"install": "[JA] Install",
+		"installed": "[JA] Installed",
+		"update": "[JA] Update Available",
+		"premium": "[JA] Premium",
+		"free": "[JA] Free",
+		"viewDetails": "[JA] View Details"
+	},
+	"details": {
+		"title": "[JA] Extension Details",
+		"description": "[JA] Description",
+		"usage": "[JA] Usage",
+		"permissions": "[JA] Required Permissions",
+		"changelog": "[JA] Changelog",
+		"reviews": "[JA] Reviews",
+		"author": "[JA] Author",
+		"version": "[JA] Version",
+		"lastUpdated": "[JA] Last Updated",
+		"installs": "[JA] Total Installs",
+		"rating": "[JA] Rating",
+		"category": "[JA] Category",
+		"tags": "[JA] Tags",
+		"source": "[JA] View Source",
+		"report": "[JA] Report Extension"
+	},
+	"install": {
+		"title": "[JA] Install Extension",
+		"confirm": "[JA] Are you sure you want to install **{{name}}**?",
+		"permissions": "[JA] This extension requires the following permissions:",
+		"success": "[JA] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[JA] Failed to install extension.",
+		"alreadyInstalled": "[JA] This extension is already installed.",
+		"incompatible": "[JA] This extension is not compatible with your current setup.",
+		"premiumRequired": "[JA] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[JA] Uninstall Extension",
+		"confirm": "[JA] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[JA] This will remove all settings for this extension.",
+		"success": "[JA] Extension uninstalled.",
+		"failed": "[JA] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[JA] Extension Builder",
+		"create": "[JA] Create Extension",
+		"edit": "[JA] Edit Extension",
+		"name": "[JA] Extension Name",
+		"description": "[JA] Description",
+		"version": "[JA] Version",
+		"category": "[JA] Category",
+		"tags": "[JA] Tags",
+		"type": "[JA] Type",
+		"types": {
+			"command": "[JA] Command",
+			"event": "[JA] Event",
+			"slash": "[JA] Slash Command"
+		},
+		"commandKey": "[JA] Command Trigger",
+		"slashDescription": "[JA] Slash Command Description",
+		"code": "[JA] Code",
+		"scopes": "[JA] Scopes",
+		"timeout": "[JA] Timeout (ms)",
+		"adminLevel": "[JA] Required Admin Level",
+		"save": "[JA] Save Draft",
+		"submit": "[JA] Submit for Review",
+		"test": "[JA] Test Extension",
+		"export": "[JA] Export",
+		"import": "[JA] Import"
+	},
+	"myExtensions": {
+		"title": "[JA] My Extensions",
+		"created": "[JA] Created",
+		"installed": "[JA] Installed",
+		"noExtensions": "[JA] You haven't created any extensions yet.",
+		"noInstalled": "[JA] You haven't installed any extensions.",
+		"status": {
+			"draft": "[JA] Draft",
+			"pending": "[JA] Pending Review",
+			"approved": "[JA] Approved",
+			"rejected": "[JA] Rejected",
+			"published": "[JA] Published"
+		}
+	},
+	"review": {
+		"title": "[JA] Write a Review",
+		"rating": "[JA] Rating",
+		"comment": "[JA] Comment",
+		"submit": "[JA] Submit Review",
+		"edit": "[JA] Edit Review",
+		"delete": "[JA] Delete Review",
+		"helpful": "[JA] Helpful",
+		"report": "[JA] Report Review",
+		"noReviews": "[JA] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[JA] Extension not found.",
+		"loadFailed": "[JA] Failed to load extension.",
+		"executionFailed": "[JA] Extension execution failed.",
+		"timeout": "[JA] Extension timed out.",
+		"permissionDenied": "[JA] Permission denied.",
+		"invalidCode": "[JA] Invalid extension code.",
+		"scopeNotAllowed": "[JA] This extension requires a scope that is not allowed."
+	}
+}

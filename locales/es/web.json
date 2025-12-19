@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "Inicio",
+		"features": "Características",
+		"commands": "Comandos",
+		"dashboard": "Panel",
+		"extensions": "Extensiones",
+		"wiki": "Wiki",
+		"blog": "Blog",
+		"support": "Soporte",
+		"login": "Iniciar Sesión",
+		"logout": "Cerrar Sesión",
+		"invite": "Añadir al Servidor"
+	},
+	"landing": {
+		"hero": {
+			"title": "El Bot de Discord Definitivo",
+			"subtitle": "Moderación poderosa, comandos divertidos y personalización infinita para tu servidor.",
+			"trustedBy": "Usado por {{count}} servidores",
+			"addToServer": "Añadir al Servidor",
+			"viewFeatures": "Ver Características"
+		},
+		"features": {
+			"title": "Características",
+			"subtitle": "Todo lo que necesitas para gestionar y mejorar tu servidor de Discord",
+			"moderation": {
+				"title": "Moderación",
+				"description": "Herramientas poderosas para mantener tu servidor seguro con auto-moderación, advertencias y más."
+			},
+			"fun": {
+				"title": "Comandos Divertidos",
+				"description": "Juegos, chistes, memes y comandos interactivos para mantener tu comunidad activa."
+			},
+			"leveling": {
+				"title": "Sistema de Niveles",
+				"description": "Recompensa a los miembros activos con puntos, niveles y rangos personalizados."
+			},
+			"extensions": {
+				"title": "Extensiones Personalizadas",
+				"description": "Crea o instala comandos y funciones personalizadas desde nuestro mercado."
+			},
+			"music": {
+				"title": "Música",
+				"description": "Reproducción de música de alta calidad con controles de DJ y filtros de audio."
+			},
+			"ai": {
+				"title": "Chat IA",
+				"description": "Conversaciones inteligentes impulsadas por múltiples proveedores de IA."
+			}
+		},
+		"cta": {
+			"title": "¿Listo para comenzar?",
+			"subtitle": "Añade {{botName}} a tu servidor en segundos.",
+			"button": "Añadir al Servidor"
+		},
+		"faq": {
+			"title": "Preguntas Frecuentes",
+			"q1": "¿Es {{botName}} gratis?",
+			"a1": "¡Sí! Todas las funciones principales son completamente gratis. Los niveles premium desbloquean extras como Música y chat IA.",
+			"q2": "¿Cómo configuro el bot?",
+			"a2": "Haz clic en 'Añadir al Servidor', selecciona tu servidor y ¡listo! Usa el panel para personalizar.",
+			"q3": "¿Qué son las Extensiones?",
+			"a3": "Las extensiones son comandos personalizados que puedes crear o instalar desde la galería de la comunidad."
+		}
+	},
+	"footer": {
+		"copyright": "© {{year}} {{botName}}. Todos los derechos reservados.",
+		"links": {
+			"privacy": "Política de Privacidad",
+			"terms": "Términos de Servicio",
+			"contact": "Contacto",
+			"status": "Estado"
+		},
+		"social": {
+			"discord": "Discord",
+			"github": "GitHub",
+			"twitter": "Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "Iniciar sesión con {{provider}}",
+		"loggingIn": "Iniciando sesión...",
+		"loginSuccess": "¡Sesión iniciada exitosamente!",
+		"loginFailed": "Error al iniciar sesión. Por favor intenta de nuevo.",
+		"logoutSuccess": "Sesión cerrada exitosamente.",
+		"welcome": "¡Bienvenido, {{username}}!"
+	},
+	"profile": {
+		"title": "Perfil",
+		"myServers": "Mis Servidores",
+		"settings": "Configuración de Cuenta",
+		"linkedAccounts": "Cuentas Vinculadas",
+		"subscription": "Suscripción",
+		"votePoints": "Puntos de Voto",
+		"extensions": "Mis Extensiones"
+	},
+	"servers": {
+		"title": "Selecciona un Servidor",
+		"noServers": "No tienes servidores para gestionar.",
+		"manage": "Gestionar",
+		"notInServer": "Bot no está en el servidor",
+		"invite": "Invitar Bot"
+	},
+	"membership": {
+		"title": "Membresía Premium",
+		"subtitle": "Desbloquea funciones poderosas para tu servidor",
+		"currentTier": "Nivel Actual",
+		"free": "Gratis",
+		"starter": "Inicial",
+		"premium": "Premium",
+		"enterprise": "Empresarial",
+		"perMonth": "/mes",
+		"perYear": "/año",
+		"subscribe": "Suscribirse",
+		"manage": "Gestionar Suscripción",
+		"features": "Características",
+		"compare": "Comparar Planes",
+		"faq": "Preguntas Frecuentes"
+	},
+	"error": {
+		"404": {
+			"title": "Página No Encontrada",
+			"message": "La página que buscas no existe o ha sido movida.",
+			"goHome": "Ir al Inicio"
+		},
+		"500": {
+			"title": "Error del Servidor",
+			"message": "Algo salió mal de nuestro lado. Por favor intenta más tarde.",
+			"goHome": "Ir al Inicio"
+		},
+		"403": {
+			"title": "Acceso Denegado",
+			"message": "No tienes permiso para acceder a esta página.",
+			"goHome": "Ir al Inicio"
+		}
+	}
+}

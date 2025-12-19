@@ -1,0 +1,124 @@
+{
+	"tiers": {
+		"free": {
+			"name": "Free",
+			"description": "Basic features for everyone"
+		},
+		"starter": {
+			"name": "Starter",
+			"description": "Essential premium features"
+		},
+		"premium": {
+			"name": "Premium",
+			"description": "Advanced features for growing servers"
+		},
+		"enterprise": {
+			"name": "Enterprise",
+			"description": "Everything for large communities"
+		}
+	},
+	"features": {
+		"title": "Premium Features",
+		"music": {
+			"title": "Music System",
+			"description": "High-quality music playback with DJ controls and audio filters"
+		},
+		"ai": {
+			"title": "AI Chat",
+			"description": "Intelligent conversations powered by multiple AI providers"
+		},
+		"tickets": {
+			"title": "Ticket System",
+			"description": "Professional support ticket management"
+		},
+		"devTools": {
+			"title": "Developer Tools",
+			"description": "Code execution, linting, and debugging tools"
+		},
+		"analytics": {
+			"title": "Advanced Analytics",
+			"description": "Detailed server statistics and insights"
+		},
+		"customBot": {
+			"title": "Custom Bot",
+			"description": "Your own branded bot instance"
+		},
+		"prioritySupport": {
+			"title": "Priority Support",
+			"description": "Fast-track support from our team"
+		},
+		"unlimitedStorage": {
+			"title": "Unlimited Storage",
+			"description": "No limits on message logs and data"
+		}
+	},
+	"subscription": {
+		"title": "Subscription",
+		"current": "Current Plan",
+		"upgrade": "Upgrade",
+		"downgrade": "Downgrade",
+		"cancel": "Cancel Subscription",
+		"renews": "Renews on {{date}}",
+		"expires": "Expires on {{date}}",
+		"cancelled": "Subscription cancelled",
+		"active": "Active",
+		"inactive": "Inactive",
+		"lifetime": "Lifetime"
+	},
+	"checkout": {
+		"title": "Checkout",
+		"selectPlan": "Select a Plan",
+		"billingCycle": "Billing Cycle",
+		"monthly": "Monthly",
+		"yearly": "Yearly",
+		"yearlyDiscount": "Save {{percent}}% with yearly",
+		"price": "{{price}}/{{period}}",
+		"total": "Total",
+		"payWith": "Pay with",
+		"processing": "Processing payment...",
+		"success": "Payment successful! Thank you for subscribing.",
+		"failed": "Payment failed. Please try again.",
+		"cancelled": "Payment cancelled."
+	},
+	"votePoints": {
+		"title": "Vote Points",
+		"balance": "Your Balance",
+		"earn": "Earn Points",
+		"redeem": "Redeem Points",
+		"history": "Point History",
+		"vote": "Vote for {{botName}}",
+		"voteReward": "+{{points}} points",
+		"weekendBonus": "Weekend Bonus: 2x points!",
+		"redeemTier": "Redeem for {{tier}} ({{duration}})",
+		"redeemSuccess": "Successfully redeemed {{points}} points for {{tier}}!",
+		"insufficientPoints": "You don't have enough points.",
+		"voteAgain": "You can vote again in {{time}}",
+		"streak": "Vote Streak: {{count}} days",
+		"streakBonus": "Streak Bonus: +{{bonus}}%"
+	},
+	"trial": {
+		"title": "Free Trial",
+		"start": "Start Free Trial",
+		"active": "Trial Active",
+		"daysLeft": "{{days}} days left",
+		"expired": "Trial Expired",
+		"upgrade": "Upgrade to continue using premium features"
+	},
+	"gift": {
+		"title": "Gift Premium",
+		"send": "Send as Gift",
+		"redeem": "Redeem Gift Code",
+		"code": "Gift Code",
+		"recipient": "Recipient",
+		"message": "Message (optional)",
+		"success": "Gift sent successfully!",
+		"redeemed": "Gift code redeemed! Enjoy {{tier}} for {{duration}}.",
+		"invalid": "Invalid or expired gift code."
+	},
+	"limits": {
+		"reached": "You've reached the limit for this feature.",
+		"upgrade": "Upgrade to {{tier}} for higher limits.",
+		"current": "Current: {{used}}/{{limit}}",
+		"unlimited": "Unlimited"
+	}
+}

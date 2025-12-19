@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[JA] Overview",
+		"commands": "[JA] Commands",
+		"commandList": "[JA] Command List",
+		"moderation": "[JA] Moderation",
+		"strikes": "[JA] Strikes",
+		"filters": "[JA] Filters",
+		"logs": "[JA] Logs",
+		"automod": "[JA] Auto-Moderation",
+		"members": "[JA] Members",
+		"roles": "[JA] Roles",
+		"channels": "[JA] Channels",
+		"extensions": "[JA] Extensions",
+		"points": "[JA] Points & Ranks",
+		"settings": "[JA] Settings",
+		"premium": "[JA] Premium",
+		"ai": "[JA] AI Settings"
+	},
+	"overview": {
+		"title": "[JA] Server Overview",
+		"quickStats": "[JA] Quick Stats",
+		"members": "[JA] Members",
+		"channels": "[JA] Channels",
+		"roles": "[JA] Roles",
+		"commands": "[JA] Commands Used",
+		"recentActivity": "[JA] Recent Activity",
+		"topMembers": "[JA] Top Members",
+		"serverHealth": "[JA] Server Health"
+	},
+	"commands": {
+		"title": "[JA] Command Settings",
+		"enableAll": "[JA] Enable All",
+		"disableAll": "[JA] Disable All",
+		"search": "[JA] Search commands...",
+		"category": "[JA] Category",
+		"status": "[JA] Status",
+		"adminLevel": "[JA] Admin Level",
+		"disabledChannels": "[JA] Disabled Channels",
+		"enabled": "[JA] Enabled",
+		"disabled": "[JA] Disabled",
+		"noCommands": "[JA] No commands found."
+	},
+	"moderation": {
+		"title": "[JA] Moderation Settings",
+		"strikes": {
+			"title": "[JA] Strike System",
+			"description": "[JA] Configure automatic actions based on strike count.",
+			"threshold": "[JA] Strike Threshold",
+			"action": "[JA] Action",
+			"duration": "[JA] Duration",
+			"actions": {
+				"warn": "[JA] Warn",
+				"mute": "[JA] Mute",
+				"kick": "[JA] Kick",
+				"ban": "[JA] Ban"
+			}
+		},
+		"filters": {
+			"title": "[JA] Message Filters",
+			"spam": "[JA] Spam Filter",
+			"invites": "[JA] Invite Links",
+			"links": "[JA] External Links",
+			"caps": "[JA] Excessive Caps",
+			"mentions": "[JA] Mass Mentions",
+			"words": "[JA] Word Blacklist"
+		},
+		"logs": {
+			"title": "[JA] Moderation Logs",
+			"channel": "[JA] Log Channel",
+			"events": "[JA] Logged Events",
+			"messageDelete": "[JA] Message Deletes",
+			"messageEdit": "[JA] Message Edits",
+			"memberJoin": "[JA] Member Joins",
+			"memberLeave": "[JA] Member Leaves",
+			"memberBan": "[JA] Member Bans",
+			"roleChanges": "[JA] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[JA] Member Management",
+		"search": "[JA] Search members...",
+		"filter": "[JA] Filter by role",
+		"sort": "[JA] Sort by",
+		"actions": "[JA] Actions",
+		"warn": "[JA] Warn",
+		"mute": "[JA] Mute",
+		"kick": "[JA] Kick",
+		"ban": "[JA] Ban",
+		"viewProfile": "[JA] View Profile",
+		"viewStrikes": "[JA] View Strikes"
+	},
+	"extensions": {
+		"title": "[JA] Server Extensions",
+		"installed": "[JA] Installed",
+		"available": "[JA] Available",
+		"browse": "[JA] Browse Gallery",
+		"install": "[JA] Install",
+		"uninstall": "[JA] Uninstall",
+		"configure": "[JA] Configure",
+		"enabled": "[JA] Enabled",
+		"disabled": "[JA] Disabled",
+		"version": "[JA] Version",
+		"author": "[JA] Author",
+		"noExtensions": "[JA] No extensions installed."
+	},
+	"points": {
+		"title": "[JA] Points & Ranks",
+		"pointsPerMessage": "[JA] Points per Message",
+		"cooldown": "[JA] Cooldown (seconds)",
+		"ranks": "[JA] Custom Ranks",
+		"addRank": "[JA] Add Rank",
+		"rankName": "[JA] Rank Name",
+		"requiredPoints": "[JA] Required Points",
+		"roleReward": "[JA] Role Reward",
+		"leaderboard": "[JA] Leaderboard",
+		"resetPoints": "[JA] Reset All Points"
+	},
+	"settings": {
+		"title": "[JA] Server Settings",
+		"general": {
+			"title": "[JA] General",
+			"prefix": "[JA] Command Prefix",
+			"language": "[JA] Language",
+			"timezone": "[JA] Timezone",
+			"nickname": "[JA] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[JA] Welcome Messages",
+			"enabled": "[JA] Enable Welcome Messages",
+			"channel": "[JA] Welcome Channel",
+			"message": "[JA] Welcome Message",
+			"dmEnabled": "[JA] Send DM",
+			"dmMessage": "[JA] DM Message"
+		},
+		"leave": {
+			"title": "[JA] Leave Messages",
+			"enabled": "[JA] Enable Leave Messages",
+			"channel": "[JA] Leave Channel",
+			"message": "[JA] Leave Message"
+		},
+		"admins": {
+			"title": "[JA] Bot Admins",
+			"description": "[JA] Users who can manage bot settings",
+			"addAdmin": "[JA] Add Admin",
+			"level": "[JA] Admin Level",
+			"levels": {
+				"1": "[JA] Moderator",
+				"2": "[JA] Administrator",
+				"3": "[JA] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[JA] Premium Features",
+		"currentTier": "[JA] Current Tier",
+		"upgrade": "[JA] Upgrade",
+		"features": "[JA] Available Features",
+		"usage": "[JA] Usage",
+		"expires": "[JA] Expires",
+		"neverExpires": "[JA] Never expires",
+		"redeemCode": "[JA] Redeem Code",
+		"useVotePoints": "[JA] Use Vote Points"
+	},
+	"ai": {
+		"title": "[JA] AI Settings",
+		"enabled": "[JA] Enable AI Chat",
+		"provider": "[JA] AI Provider",
+		"model": "[JA] Model",
+		"channels": "[JA] Enabled Channels",
+		"personality": "[JA] Bot Personality",
+		"maxTokens": "[JA] Max Tokens",
+		"temperature": "[JA] Temperature",
+		"usage": "[JA] Monthly Usage",
+		"limit": "[JA] Monthly Limit"
+	},
+	"common": {
+		"save": "[JA] Save Changes",
+		"saved": "[JA] Changes saved!",
+		"saving": "[JA] Saving...",
+		"reset": "[JA] Reset to Default",
+		"cancel": "[JA] Cancel",
+		"confirm": "[JA] Confirm",
+		"delete": "[JA] Delete",
+		"edit": "[JA] Edit",
+		"add": "[JA] Add",
+		"remove": "[JA] Remove",
+		"enable": "[JA] Enable",
+		"disable": "[JA] Disable",
+		"unsavedChanges": "[JA] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[JA] Loading...",
+		"error": "[JA] An error occurred",
+		"success": "[JA] Success!"
+	}
+}

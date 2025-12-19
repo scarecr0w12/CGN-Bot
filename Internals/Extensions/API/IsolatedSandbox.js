@@ -184,6 +184,9 @@ class IsolatedSandbox {
 
 		await this._setupHttpCallbacks(jail);
 
+		// Set up RCON callbacks for game server control
+		await this._setupRconCallbacks(jail);
+
 		// Set up the require function in the isolate
 		await this.vmContext.eval(`
 			const require = (name) => {
@@ -334,6 +337,25 @@ class IsolatedSandbox {
 							followUp: (payload) => call(__interactionFollowUpCallback__, (typeof payload === 'string') ? { content: payload } : payload),
 						};
 					}
+
+					// Wrap rcon module for game server RCON commands
+					if (name === 'rcon') {
+						const safeParse = (input) => {
+							if (!input) return { success: false, error: 'NO_RESPONSE' };
+							try { return JSON.parse(input); } catch (_) { return { success: false, error: 'BAD_RESPONSE' }; }
+						};
+						module = {
+							...module,
+							sendCommand: async (options) => {
+								const res = await __rconSendCommandCallback__(JSON.stringify(options || {}));
+								return safeParse(res);
+							},
+							testConnection: async (options) => {
+								const res = await __rconTestConnectionCallback__(JSON.stringify(options || {}));
+								return safeParse(res);
+							},
+						};
+					}
 					return module;
 				}
 				return moduleData.value;
@@ -476,6 +498,125 @@ class IsolatedSandbox {
 		}, { async: true });
 
 		await jail.set("__httpRequestCallback__", requestCallback);
+	}
+
+	/**
+	 * Set up callbacks for RCON operations (game server control)
+	 * @param {ivm.Reference} jail
+	 * @private
+	 */
+	async _setupRconCallbacks (jail) {
+		const { serverDocument, versionDocument, extensionConfigDocument } = this.context;
+		const RconManager = require("../../../Modules/RconManager");
+
+		// Get network capability - RCON requires network_advanced
+		const networkCapability = versionDocument?.network_capability || "none";
+		const networkApproved = versionDocument?.network_approved || false;
+
+		const safeParse = (input) => {
+			if (!input) return {};
+			try {
+				return JSON.parse(input);
+			} catch (_) {
+				return {};
+			}
+		};
+
+		const sendCommandCallback = new ivm.Callback(async (payloadJSON) => {
+			try {
+				// RCON requires network_advanced capability and approval
+				if (networkCapability !== "network_advanced") {
+					return JSON.stringify({ success: false, error: "RCON_REQUIRES_NETWORK_ADVANCED" });
+				}
+				if (!networkApproved) {
+					return JSON.stringify({ success: false, error: "NETWORK_NOT_APPROVED" });
+				}
+
+				// Tier 2 required for RCON
+				const svrid = serverDocument?._id;
+				if (svrid) {
+					const TierManager = require("../../../Modules/TierManager");
+					const hasTier2 = await TierManager.hasMinimumTierLevel(String(svrid), 2);
+					if (!hasTier2) {
+						return JSON.stringify({ success: false, error: "TIER_REQUIRED" });
+					}
+				}
+
+				const payload = safeParse(payloadJSON);
+
+				// Get credentials from extension settings (secrets)
+				let host = payload.host;
+				let port = payload.port;
+				let password = payload.password;
+
+				// Allow injecting from secrets
+				if (payload.injectSecrets && extensionConfigDocument?.secrets) {
+					if (payload.injectSecrets.host && extensionConfigDocument.secrets[payload.injectSecrets.host]) {
+						host = extensionConfigDocument.secrets[payload.injectSecrets.host];
+					}
+					if (payload.injectSecrets.port && extensionConfigDocument.secrets[payload.injectSecrets.port]) {
+						port = parseInt(extensionConfigDocument.secrets[payload.injectSecrets.port], 10);
+					}
+					if (payload.injectSecrets.password && extensionConfigDocument.secrets[payload.injectSecrets.password]) {
+						password = extensionConfigDocument.secrets[payload.injectSecrets.password];
+					}
+				}
+
+				const result = await RconManager.sendCommand({
+					type: payload.type || "webrcon",
+					host,
+					port: typeof port === "number" ? port : parseInt(port, 10),
+					password,
+					command: payload.command,
+					serverId: `${svrid || "unknown"}:${extensionConfigDocument?._id || "unknown"}`,
+				});
+
+				return JSON.stringify(result);
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message || "RCON_FAILED" });
+			}
+		}, { async: true });
+
+		const testConnectionCallback = new ivm.Callback(async (payloadJSON) => {
+			try {
+				if (networkCapability !== "network_advanced" || !networkApproved) {
+					return JSON.stringify({ success: false, error: "RCON_NOT_AVAILABLE" });
+				}
+
+				const payload = safeParse(payloadJSON);
+
+				// Get credentials from extension settings (secrets)
+				let host = payload.host;
+				let port = payload.port;
+				let password = payload.password;
+
+				if (payload.injectSecrets && extensionConfigDocument?.secrets) {
+					if (payload.injectSecrets.host && extensionConfigDocument.secrets[payload.injectSecrets.host]) {
+						host = extensionConfigDocument.secrets[payload.injectSecrets.host];
+					}
+					if (payload.injectSecrets.port && extensionConfigDocument.secrets[payload.injectSecrets.port]) {
+						port = parseInt(extensionConfigDocument.secrets[payload.injectSecrets.port], 10);
+					}
+					if (payload.injectSecrets.password && extensionConfigDocument.secrets[payload.injectSecrets.password]) {
+						password = extensionConfigDocument.secrets[payload.injectSecrets.password];
+					}
+				}
+
+				const result = await RconManager.testConnection({
+					type: payload.type || "webrcon",
+					host,
+					port: typeof port === "number" ? port : parseInt(port, 10),
+					password,
+				});
+
+				return JSON.stringify(result);
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message || "TEST_FAILED" });
+			}
+		}, { async: true });
+
+		await jail.set("__rconSendCommandCallback__", sendCommandCallback);
+		await jail.set("__rconTestConnectionCallback__", testConnectionCallback);
 	}
 
 	/**
@@ -758,6 +899,7 @@ class IsolatedSandbox {
 		modules.embed = { needsCallback: true };
 		modules.points = { needsCallback: true };
 		modules.economy = { needsCallback: true }; // Alias for points
+		modules.rcon = { needsCallback: true }; // RCON for game server control
 
 		return modules;
 	}
@@ -829,6 +971,8 @@ class IsolatedSandbox {
 			}
 			case "http":
 				return { available: true };
+			case "rcon":
+				return { available: true, types: ["webrcon", "source"] };
 			case "rss":
 			case "fetch":
 			case "xmlparser":

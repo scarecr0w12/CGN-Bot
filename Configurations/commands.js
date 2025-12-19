@@ -1668,6 +1668,213 @@ const commands = {
 			},
 			category: `Developer 💻`,
 		},
+		// AI Commands (Premium)
+		aiavatar: {
+			usage: `[<style>] <description>`,
+			description: `Generate stylized avatar portraits using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aiexplain: {
+			usage: `[code|concept|error] [beginner|intermediate|advanced] <content>`,
+			description: `Get AI explanations for code, concepts, or error messages (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aiimage: {
+			usage: `<prompt> [--size=1024x1024] [--quality=standard] [--style=vivid]`,
+			description: `Generate images from text descriptions using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		airewrite: {
+			usage: `[<tone>] <text>`,
+			description: `Rewrite text in different tones using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aisummarize: {
+			usage: `[brief|detailed|bullets] <text> or "channel" [<count>]`,
+			description: `Summarize text or channel messages using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aithread: {
+			usage: `["start" [<topic>]] or ["end"] or ["list"] or ["context"]`,
+			description: `Create persistent AI conversation threads with memory (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aivariations: {
+			usage: `[<size>] (attach image or reply to image)`,
+			description: `Generate variations of an existing image using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		imagine: {
+			usage: `<prompt> [--size=1024x1024] [--style=vivid]`,
+			description: `Generate AI images from text prompts (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: true,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		// Utility Commands
+		boosters: {
+			usage: ``,
+			description: `View server boost status and list of boosters`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		channelinfo: {
+			usage: `[<channel>]`,
+			aliases: ["ci"],
+			description: `Get detailed information about a channel`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		voicetime: {
+			usage: `[<user>]`,
+			aliases: ["vt", "vctime"],
+			description: `View voice channel activity statistics for a user`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Stats & Points ⭐️`,
+		},
+		fact: {
+			usage: `[general|animals|space|science]`,
+			aliases: ["facts", "randomfact"],
+			description: `Get a random interesting fact`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		// Social/Interaction Commands
+		compliment: {
+			usage: `[<user>]`,
+			description: `Give someone a nice compliment`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		cuddle: {
+			usage: `[<user>]`,
+			description: `Cuddle with someone!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		highfive: {
+			usage: `[<user>]`,
+			description: `Give someone a high-five!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		insult: {
+			usage: `[<user>]`,
+			description: `Playfully roast someone (nothing actually mean)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		kiss: {
+			usage: `[<user>]`,
+			description: `Give someone a kiss!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		lovecalc: {
+			usage: `<user1> [<user2>]`,
+			aliases: ["love", "ship"],
+			description: `Calculate love compatibility between two users`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		poke: {
+			usage: `[<user>]`,
+			description: `Poke someone to get their attention!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		rate: {
+			usage: `<thing>`,
+			description: `Rate anything on a scale of 0-10`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
 	},
 	shared: {
 		// _base: {

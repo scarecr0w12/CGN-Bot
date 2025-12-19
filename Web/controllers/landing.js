@@ -1,5 +1,17 @@
 const moment = require("moment");
 const { getRoundedUptime } = require("../helpers");
+const parsers = require("../parsers");
+const showdown = require("showdown");
+const md = new showdown.Converter({
+	tables: true,
+	simplifiedAutoLink: true,
+	strikethrough: true,
+	tasklists: true,
+	smoothLivePreview: true,
+	smartIndentationFix: true,
+	extensions: [require("showdown-xss-filter")],
+});
+md.setFlavor("github");
 
 module.exports = async (req, { res }) => {
 	const uptime = process.uptime();
@@ -26,6 +38,30 @@ module.exports = async (req, { res }) => {
 		console.error("[LANDING] Failed to fetch extensions for carousel:", err);
 	}
 
+	// Fetch latest blog posts
+	let featuredPosts = [];
+	try {
+		const blogDocuments = await Blog.find({})
+			.sort({ published_timestamp: -1 })
+			.limit(3)
+			.exec();
+
+		if (blogDocuments) {
+			featuredPosts = await Promise.all(blogDocuments.map(async blogDocument => {
+				const data = await parsers.blogData(req, blogDocument);
+				// Convert to HTML then strip tags to get clean text for excerpt
+				let excerpt = md.makeHtml(data.content).replace(/<[^>]*>?/gm, "");
+				if (excerpt.length > 150) {
+					excerpt = `${excerpt.substring(0, 150)}...`;
+				}
+				data.excerpt = excerpt;
+				return data;
+			}));
+		}
+	} catch (err) {
+		console.error("[LANDING] Failed to fetch blog posts:", err);
+	}
+
 	const ConfigManager = require("../../Modules/ConfigManager");
 	const settings = await ConfigManager.get();
 	res.setPageData({
@@ -37,6 +73,7 @@ module.exports = async (req, { res }) => {
 		rawUptime: moment.duration(uptime, "seconds").humanize(),
 		roundedUptime: getRoundedUptime(uptime),
 		featuredExtensions,
+		featuredPosts,
 	});
 
 	res.render();

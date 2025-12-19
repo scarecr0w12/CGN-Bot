@@ -145,3 +145,39 @@ controllers.extensions.ownership = async (req, res) => {
 		return res.status(500).json({ error: "Failed to check access" });
 	}
 };
+
+controllers.user = {};
+
+controllers.user.language = async (req, res) => {
+	if (!req.isAuthenticated()) {
+		return res.status(401).json({ error: "Not authenticated" });
+	}
+
+	const { language } = req.body;
+	const I18n = require("../../Modules/I18n");
+
+	if (!language || !I18n.isSupported(language)) {
+		return res.status(400).json({ error: "Invalid language code" });
+	}
+
+	try {
+		let userDocument = await Users.findOne(req.user.id);
+		if (!userDocument) {
+			userDocument = await Users.new({ _id: req.user.id });
+		}
+
+		if (!userDocument.preferences) {
+			userDocument.query.set("preferences", {});
+		}
+		userDocument.query.prop("preferences").set("language", language);
+		await userDocument.save();
+
+		// Set cookie as well
+		res.cookie("lang", language, { maxAge: 365 * 24 * 60 * 60 * 1000, path: "/" });
+
+		return res.json({ success: true, language });
+	} catch (err) {
+		logger.error("Failed to update user language", { usrid: req.user.id }, err);
+		return res.status(500).json({ error: "Failed to save language" });
+	}
+};

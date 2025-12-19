@@ -1,0 +1,69 @@
+{
+	"generic": {
+		"somethingWentWrong": "[HI] Something went wrong!",
+		"internalError": "[HI] An internal error occurred.",
+		"tryAgain": "[HI] Please try again later.",
+		"contactSupport": "[HI] If this persists, please contact support.",
+		"unexpectedError": "[HI] An unexpected error occurred."
+	},
+	"permission": {
+		"noPermission": "[HI] You don't have permission to do this.",
+		"botNoPermission": "[HI] I don't have permission to do this.",
+		"missingPermissions": "[HI] Missing permissions: {{permissions}}",
+		"adminOnly": "[HI] This action requires administrator permissions.",
+		"ownerOnly": "[HI] This action can only be performed by the server owner.",
+		"moderatorOnly": "[HI] This action requires moderator permissions."
+	},
+	"validation": {
+		"required": "[HI] This field is required.",
+		"invalidFormat": "[HI] Invalid format.",
+		"tooShort": "[HI] Must be at least {{min}} characters.",
+		"tooLong": "[HI] Must be no more than {{max}} characters.",
+		"invalidNumber": "[HI] Must be a valid number.",
+		"numberTooLow": "[HI] Must be at least {{min}}.",
+		"numberTooHigh": "[HI] Must be no more than {{max}}.",
+		"invalidUrl": "[HI] Must be a valid URL.",
+		"invalidEmail": "[HI] Must be a valid email address.",
+		"invalidDate": "[HI] Must be a valid date.",
+		"invalidChoice": "[HI] Invalid choice. Please select from the available options."
+	},
+	"notFound": {
+		"user": "[HI] User not found.",
+		"member": "[HI] Member not found.",
+		"channel": "[HI] Channel not found.",
+		"role": "[HI] Role not found.",
+		"message": "[HI] Message not found.",
+		"server": "[HI] Server not found.",
+		"command": "[HI] Command not found.",
+		"page": "[HI] Page not found.",
+		"resource": "[HI] Resource not found."
+	},
+	"rateLimit": {
+		"tooManyRequests": "[HI] Too many requests. Please slow down.",
+		"cooldown": "[HI] Please wait {{time}} before trying again.",
+		"rateLimited": "[HI] You are being rate limited."
+	},
+	"auth": {
+		"notLoggedIn": "[HI] You must be logged in to do this.",
+		"sessionExpired": "[HI] Your session has expired. Please log in again.",
+		"invalidToken": "[HI] Invalid or expired token.",
+		"unauthorized": "[HI] You are not authorized to access this resource."
+	},
+	"server": {
+		"configNotLoaded": "[HI] Failed to load server configuration.",
+		"notConfigured": "[HI] This feature is not configured.",
+		"featureDisabled": "[HI] This feature is disabled on this server."
+	},
+	"premium": {
+		"required": "[HI] This feature requires a premium subscription.",
+		"tierRequired": "[HI] This feature requires {{tier}} tier or higher.",
+		"expired": "[HI] Your premium subscription has expired.",
+		"limitReached": "[HI] You have reached the limit for your subscription tier."
+	},
+	"bot": {
+		"botCannotTarget": "[HI] I cannot perform this action on myself.",
+		"cannotTargetOwner": "[HI] I cannot perform this action on the server owner.",
+		"cannotTargetHigherRole": "[HI] I cannot perform this action on users with a higher role than me.",
+		"cannotTargetSelf": "[HI] You cannot perform this action on yourself."
+	}
+}

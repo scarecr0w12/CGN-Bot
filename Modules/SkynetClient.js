@@ -20,6 +20,14 @@ class SkynetClient {
 		};
 	}
 
+	/**
+	 * Check if development mode is enabled
+	 * @returns {boolean} True if DEV_MODE is enabled
+	 */
+	isDevMode () {
+		return process.env.DEV_MODE === "true" || process.env.DEV_MODE === "1";
+	}
+
 	API (api) {
 		return this._apis[api];
 	}
@@ -138,6 +146,14 @@ class Version extends EventEmitter {
 	}
 
 	async install () {
+		// Check if dev mode is enabled - prevent updates from overwriting local files
+		if (this.versionAPI.client.isDevMode()) {
+			this._log("install", "⚠️ DEV_MODE is enabled - updates are disabled to protect local changes.", "warn");
+			this._log("install", "Set DEV_MODE=false in .env to enable updates.", "warn");
+			this.emit("installFinish");
+			return;
+		}
+
 		await this.checkDownload();
 		const downloadedVersionPath = path.join(this._downloadPath, `${this.tag}.zip`);
 		if (!await FileExists(downloadedVersionPath)) throw new SkynetError("CENTRAL_VERSION_NOT_DOWNLOADED");
@@ -236,7 +252,55 @@ class Version extends EventEmitter {
 	}
 
 	async _checkForConflicts () {
-		// TODO: Implement this in a future version
+		const conflicts = [];
+		const botRoot = path.join(__dirname, `..`);
+
+		// Get list of files that will be patched
+		const [files, configFiles] = await this._generateFileList();
+		const allFiles = [...files, ...configFiles];
+
+		for (const filePath of allFiles) {
+			const targetPath = path.join(botRoot, filePath);
+			const patchPath = path.join(this._downloadPath, filePath);
+
+			// Check if target file exists and differs from patch
+			if (await FileExists(targetPath) && await FileExists(patchPath)) {
+				try {
+					const targetBuffer = await fs.promises.readFile(targetPath);
+					const patchBuffer = await fs.promises.readFile(patchPath);
+
+					// If files differ, check if it's a meaningful conflict
+					if (!targetBuffer.equals(patchBuffer)) {
+						// Skip binary files and certain auto-generated files
+						const ext = path.extname(filePath).toLowerCase();
+						const skipExtensions = [".zip", ".png", ".jpg", ".gif", ".ico", ".woff", ".woff2", ".ttf", ".eot"];
+
+						if (!skipExtensions.includes(ext)) {
+							conflicts.push({
+								file: filePath,
+								reason: "Local file differs from update",
+							});
+						}
+					}
+				} catch (err) {
+					// If we can't read the file, log but don't block
+					this._log("conflicts", `Warning: Could not check ${filePath}: ${err.message}`, "warn");
+				}
+			}
+		}
+
+		if (conflicts.length > 0) {
+			this._log("conflicts", `Found ${conflicts.length} file(s) that differ from the update. These will be overwritten.`, "warn");
+			for (const conflict of conflicts.slice(0, 10)) {
+				this._log("conflicts", `  - ${conflict.file}`, "warn");
+			}
+			if (conflicts.length > 10) {
+				this._log("conflicts", `  ... and ${conflicts.length - 10} more`, "warn");
+			}
+		}
+
+		// Store conflicts for potential rollback/review but don't block update
+		this._conflicts = conflicts;
 		return true;
 	}
 

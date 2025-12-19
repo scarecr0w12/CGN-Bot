@@ -462,3 +462,90 @@ controllers.reaction.post = async (req, res) => {
 
 	save(req, res, true);
 };
+
+// Game Updates Controller
+const GameUpdateAnnouncer = require("../../../Modules/GameUpdateAnnouncer");
+
+controllers.gameUpdates = async (req, { res }) => {
+	const { svr } = req;
+	const serverDocument = req.svr.document;
+
+	// Get available games
+	const availableGames = GameUpdateAnnouncer.getAvailableGames();
+
+	// Get current subscriptions
+	const subscriptions = serverDocument.config.game_updates?.subscriptions || [];
+
+	res.setConfigData({
+		game_updates: serverDocument.config.game_updates || { isEnabled: false, subscriptions: [] },
+	});
+	res.setPageData({
+		page: "admin-game-updates.ejs",
+		channelData: getChannelData(svr),
+		roleData: svr.roles ? Array.isArray(svr.roles) ? svr.roles : Object.values(svr.roles) : [],
+		availableGames,
+		subscriptions: subscriptions.map(sub => {
+			const gameInfo = availableGames.find(g => g.id === sub.game_id);
+			return {
+				...sub,
+				gameName: gameInfo?.name || sub.game_id,
+				gameIcon: gameInfo?.icon || "",
+				gameColor: gameInfo?.color || 0x5865F2,
+			};
+		}),
+	});
+	res.render();
+};
+
+controllers.gameUpdates.post = async (req, res) => {
+	const serverDocument = req.svr.document;
+	const serverQueryDocument = req.svr.queryDocument;
+
+	// Initialize game_updates if not exists
+	if (!serverDocument.config.game_updates) {
+		serverQueryDocument.set("config.game_updates", { isEnabled: true, subscriptions: [] });
+	}
+
+	// Handle adding new subscription
+	if (req.body["new-game"] && req.body["new-channel"]) {
+		const gameId = req.body["new-game"];
+		const channelId = req.body["new-channel"];
+		const mentionRole = req.body["new-mention"] || "";
+
+		// Check if subscription already exists
+		const existing = serverDocument.config.game_updates?.subscriptions?.find(s => s.game_id === gameId);
+		if (!existing) {
+			serverQueryDocument.push("config.game_updates.subscriptions", {
+				game_id: gameId,
+				channel_id: channelId,
+				isEnabled: true,
+				mention_role_id: mentionRole,
+			});
+		}
+	} else {
+		// Handle updates to existing subscriptions
+		serverQueryDocument.set("config.game_updates.isEnabled", req.body["game_updates-isEnabled"] === "on");
+
+		const subscriptions = serverDocument.config.game_updates?.subscriptions || [];
+		subscriptions.forEach((sub) => {
+			// Check if removed
+			if (req.body[`game_updates-${sub.game_id}-removed`]) {
+				serverQueryDocument.pull("config.game_updates.subscriptions", sub);
+			} else {
+				// Update subscription settings
+				const channelId = req.body[`game_updates-${sub.game_id}-channel`];
+				const mentionRole = req.body[`game_updates-${sub.game_id}-mention`] || "";
+				const isEnabled = req.body[`game_updates-${sub.game_id}-isEnabled`] === "on";
+
+				if (channelId) {
+					serverQueryDocument.id("config.game_updates.subscriptions", sub.game_id, "game_id")
+						.set("channel_id", channelId)
+						.set("mention_role_id", mentionRole)
+						.set("isEnabled", isEnabled);
+				}
+			}
+		});
+	}
+
+	save(req, res, true);
+};

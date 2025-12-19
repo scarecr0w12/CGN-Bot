@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[FR] Home",
+		"features": "[FR] Features",
+		"commands": "[FR] Commands",
+		"dashboard": "[FR] Dashboard",
+		"extensions": "[FR] Extensions",
+		"wiki": "[FR] Wiki",
+		"blog": "[FR] Blog",
+		"support": "[FR] Support",
+		"login": "[FR] Login",
+		"logout": "[FR] Logout",
+		"invite": "[FR] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[FR] The Ultimate Discord Bot",
+			"subtitle": "[FR] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[FR] Trusted by {{count}} servers",
+			"addToServer": "[FR] Add to Server",
+			"viewFeatures": "[FR] View Features"
+		},
+		"features": {
+			"title": "[FR] Features",
+			"subtitle": "[FR] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[FR] Moderation",
+				"description": "[FR] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[FR] Fun Commands",
+				"description": "[FR] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[FR] Leveling System",
+				"description": "[FR] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[FR] Custom Extensions",
+				"description": "[FR] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[FR] Music",
+				"description": "[FR] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[FR] AI Chat",
+				"description": "[FR] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[FR] Ready to get started?",
+			"subtitle": "[FR] Add {{botName}} to your server in seconds.",
+			"button": "[FR] Add to Server"
+		},
+		"faq": {
+			"title": "[FR] Frequently Asked Questions",
+			"q1": "[FR] Is {{botName}} free to use?",
+			"a1": "[FR] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[FR] How do I set up the bot?",
+			"a2": "[FR] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[FR] What are Extensions?",
+			"a3": "[FR] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[FR] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[FR] Privacy Policy",
+			"terms": "[FR] Terms of Service",
+			"contact": "[FR] Contact",
+			"status": "[FR] Status"
+		},
+		"social": {
+			"discord": "[FR] Discord",
+			"github": "[FR] GitHub",
+			"twitter": "[FR] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[FR] Login with {{provider}}",
+		"loggingIn": "[FR] Logging in...",
+		"loginSuccess": "[FR] Successfully logged in!",
+		"loginFailed": "[FR] Login failed. Please try again.",
+		"logoutSuccess": "[FR] Successfully logged out.",
+		"welcome": "[FR] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[FR] Profile",
+		"myServers": "[FR] My Servers",
+		"settings": "[FR] Account Settings",
+		"linkedAccounts": "[FR] Linked Accounts",
+		"subscription": "[FR] Subscription",
+		"votePoints": "[FR] Vote Points",
+		"extensions": "[FR] My Extensions"
+	},
+	"servers": {
+		"title": "[FR] Select a Server",
+		"noServers": "[FR] You don't have any servers to manage.",
+		"manage": "[FR] Manage",
+		"notInServer": "[FR] Bot not in server",
+		"invite": "[FR] Invite Bot"
+	},
+	"membership": {
+		"title": "[FR] Premium Membership",
+		"subtitle": "[FR] Unlock powerful features for your server",
+		"currentTier": "[FR] Current Tier",
+		"free": "[FR] Free",
+		"starter": "[FR] Starter",
+		"premium": "[FR] Premium",
+		"enterprise": "[FR] Enterprise",
+		"perMonth": "[FR] /month",
+		"perYear": "[FR] /year",
+		"subscribe": "[FR] Subscribe",
+		"manage": "[FR] Manage Subscription",
+		"features": "[FR] Features",
+		"compare": "[FR] Compare Plans",
+		"faq": "[FR] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[FR] Access Denied",
+			"message": "[FR] You don't have permission to access this page.",
+			"goHome": "[FR] Go to Homepage"
+		},
+		"404": {
+			"title": "[FR] Page Not Found",
+			"message": "[FR] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[FR] Go to Homepage"
+		},
+		"500": {
+			"title": "[FR] Server Error",
+			"message": "[FR] Something went wrong on our end. Please try again later.",
+			"goHome": "[FR] Go to Homepage"
+		}
+	}
+}

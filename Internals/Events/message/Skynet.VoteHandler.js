@@ -43,7 +43,8 @@ class VoteHandler extends BaseEvent {
 					let voteAction = null;
 
 					// Check for +1 triggers
-					for (const voteTrigger of this.configJS.voteTriggers) {
+					const voteTriggers = this.configJS.voteTriggers || [];
+					for (const voteTrigger of voteTriggers) {
 						if (voteString.startsWith(voteTrigger)) {
 							voteAction = "upvoted";
 							// Increment points and exit loop
@@ -99,7 +100,8 @@ class VoteHandler extends BaseEvent {
 		}
 
 		// Vote based on previous message
-		for (const voteTrigger of this.configJS.voteTriggers) {
+		const voteTriggersPrev = this.configJS.voteTriggers || [];
+		for (const voteTrigger of voteTriggersPrev) {
 			if (msg.content.trim().startsWith(voteTrigger)) {
 				// Get previous message
 				let fetchedMessages = await msg.channel.messages.fetch({ limit: 1, before: msg.id }).catch(err => {

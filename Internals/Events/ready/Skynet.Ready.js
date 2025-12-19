@@ -9,6 +9,7 @@ const {
 	TempRoleManager,
 	ConfigManager,
 } = require("../../../Modules/");
+const GameUpdateAnnouncer = require("../../../Modules/GameUpdateAnnouncer");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
 const metrics = require("../../../Modules/Metrics");
 const {
@@ -187,9 +188,20 @@ class Ready extends BaseEvent {
 		}
 	}
 
+	// Start Game Update Announcer
+	startGameUpdateAnnouncer () {
+		if (this.client.shardID === "0") {
+			if (!this.client.gameUpdateAnnouncer) {
+				this.client.gameUpdateAnnouncer = new GameUpdateAnnouncer(this.client);
+			}
+			this.client.gameUpdateAnnouncer.init();
+		}
+	}
+
 	// Report to master that we're ok to go
 	showStartupMessage () {
 		this.startTempRoleManager();
+		this.startGameUpdateAnnouncer();
 		const readyMsgs = [
 			"rock and roll!",
 			"PWN some n00bs.",

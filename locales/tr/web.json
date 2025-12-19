@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[TR] Home",
+		"features": "[TR] Features",
+		"commands": "[TR] Commands",
+		"dashboard": "[TR] Dashboard",
+		"extensions": "[TR] Extensions",
+		"wiki": "[TR] Wiki",
+		"blog": "[TR] Blog",
+		"support": "[TR] Support",
+		"login": "[TR] Login",
+		"logout": "[TR] Logout",
+		"invite": "[TR] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[TR] The Ultimate Discord Bot",
+			"subtitle": "[TR] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[TR] Trusted by {{count}} servers",
+			"addToServer": "[TR] Add to Server",
+			"viewFeatures": "[TR] View Features"
+		},
+		"features": {
+			"title": "[TR] Features",
+			"subtitle": "[TR] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[TR] Moderation",
+				"description": "[TR] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[TR] Fun Commands",
+				"description": "[TR] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[TR] Leveling System",
+				"description": "[TR] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[TR] Custom Extensions",
+				"description": "[TR] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[TR] Music",
+				"description": "[TR] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[TR] AI Chat",
+				"description": "[TR] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[TR] Ready to get started?",
+			"subtitle": "[TR] Add {{botName}} to your server in seconds.",
+			"button": "[TR] Add to Server"
+		},
+		"faq": {
+			"title": "[TR] Frequently Asked Questions",
+			"q1": "[TR] Is {{botName}} free to use?",
+			"a1": "[TR] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[TR] How do I set up the bot?",
+			"a2": "[TR] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[TR] What are Extensions?",
+			"a3": "[TR] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[TR] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[TR] Privacy Policy",
+			"terms": "[TR] Terms of Service",
+			"contact": "[TR] Contact",
+			"status": "[TR] Status"
+		},
+		"social": {
+			"discord": "[TR] Discord",
+			"github": "[TR] GitHub",
+			"twitter": "[TR] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[TR] Login with {{provider}}",
+		"loggingIn": "[TR] Logging in...",
+		"loginSuccess": "[TR] Successfully logged in!",
+		"loginFailed": "[TR] Login failed. Please try again.",
+		"logoutSuccess": "[TR] Successfully logged out.",
+		"welcome": "[TR] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[TR] Profile",
+		"myServers": "[TR] My Servers",
+		"settings": "[TR] Account Settings",
+		"linkedAccounts": "[TR] Linked Accounts",
+		"subscription": "[TR] Subscription",
+		"votePoints": "[TR] Vote Points",
+		"extensions": "[TR] My Extensions"
+	},
+	"servers": {
+		"title": "[TR] Select a Server",
+		"noServers": "[TR] You don't have any servers to manage.",
+		"manage": "[TR] Manage",
+		"notInServer": "[TR] Bot not in server",
+		"invite": "[TR] Invite Bot"
+	},
+	"membership": {
+		"title": "[TR] Premium Membership",
+		"subtitle": "[TR] Unlock powerful features for your server",
+		"currentTier": "[TR] Current Tier",
+		"free": "[TR] Free",
+		"starter": "[TR] Starter",
+		"premium": "[TR] Premium",
+		"enterprise": "[TR] Enterprise",
+		"perMonth": "[TR] /month",
+		"perYear": "[TR] /year",
+		"subscribe": "[TR] Subscribe",
+		"manage": "[TR] Manage Subscription",
+		"features": "[TR] Features",
+		"compare": "[TR] Compare Plans",
+		"faq": "[TR] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[TR] Access Denied",
+			"message": "[TR] You don't have permission to access this page.",
+			"goHome": "[TR] Go to Homepage"
+		},
+		"404": {
+			"title": "[TR] Page Not Found",
+			"message": "[TR] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[TR] Go to Homepage"
+		},
+		"500": {
+			"title": "[TR] Server Error",
+			"message": "[TR] Something went wrong on our end. Please try again later.",
+			"goHome": "[TR] Go to Homepage"
+		}
+	}
+}

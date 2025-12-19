@@ -80,6 +80,12 @@ const defaultFeatures = [
 		description: "Send webhook notifications for events",
 		isEnabled: true,
 	},
+	{
+		_id: "sentiment_analysis",
+		name: "Sentiment Analysis",
+		description: "AI-powered message sentiment analysis for automod",
+		isEnabled: true,
+	},
 ];
 
 const defaultTiers = [
@@ -109,6 +115,7 @@ const defaultTiers = [
 			"custom_prefix",
 			"custom_commands",
 			"auto_roles",
+			"sentiment_analysis",
 		],
 	},
 	{
@@ -134,6 +141,7 @@ const defaultTiers = [
 			"export_data",
 			"custom_branding",
 			"webhooks",
+			"sentiment_analysis",
 		],
 	},
 ];

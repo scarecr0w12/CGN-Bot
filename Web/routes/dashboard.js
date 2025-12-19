@@ -20,6 +20,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/commands/command-options", [], controllers.dashboard.commands.options);
 	setupDashboardPage(router, "/commands/command-list", [], controllers.dashboard.commands.list);
 	setupDashboardPage(router, "/commands/rss-feeds", [], controllers.dashboard.commands.rss, "rss_feeds");
+	setupDashboardPage(router, "/commands/game-updates", [], controllers.dashboard.commands.gameUpdates, "game_updates");
 	setupDashboardPage(router, "/commands/streamers", [], controllers.dashboard.commands.streamers, "streamers_data");
 	setupDashboardPage(router, "/commands/tags", [], controllers.dashboard.commands.tags, "tags");
 	setupDashboardPage(router, "/commands/auto-translation", [], controllers.dashboard.commands.translation, "translated_messages");

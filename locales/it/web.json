@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[IT] Home",
+		"features": "[IT] Features",
+		"commands": "[IT] Commands",
+		"dashboard": "[IT] Dashboard",
+		"extensions": "[IT] Extensions",
+		"wiki": "[IT] Wiki",
+		"blog": "[IT] Blog",
+		"support": "[IT] Support",
+		"login": "[IT] Login",
+		"logout": "[IT] Logout",
+		"invite": "[IT] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[IT] The Ultimate Discord Bot",
+			"subtitle": "[IT] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[IT] Trusted by {{count}} servers",
+			"addToServer": "[IT] Add to Server",
+			"viewFeatures": "[IT] View Features"
+		},
+		"features": {
+			"title": "[IT] Features",
+			"subtitle": "[IT] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[IT] Moderation",
+				"description": "[IT] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[IT] Fun Commands",
+				"description": "[IT] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[IT] Leveling System",
+				"description": "[IT] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[IT] Custom Extensions",
+				"description": "[IT] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[IT] Music",
+				"description": "[IT] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[IT] AI Chat",
+				"description": "[IT] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[IT] Ready to get started?",
+			"subtitle": "[IT] Add {{botName}} to your server in seconds.",
+			"button": "[IT] Add to Server"
+		},
+		"faq": {
+			"title": "[IT] Frequently Asked Questions",
+			"q1": "[IT] Is {{botName}} free to use?",
+			"a1": "[IT] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[IT] How do I set up the bot?",
+			"a2": "[IT] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[IT] What are Extensions?",
+			"a3": "[IT] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[IT] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[IT] Privacy Policy",
+			"terms": "[IT] Terms of Service",
+			"contact": "[IT] Contact",
+			"status": "[IT] Status"
+		},
+		"social": {
+			"discord": "[IT] Discord",
+			"github": "[IT] GitHub",
+			"twitter": "[IT] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[IT] Login with {{provider}}",
+		"loggingIn": "[IT] Logging in...",
+		"loginSuccess": "[IT] Successfully logged in!",
+		"loginFailed": "[IT] Login failed. Please try again.",
+		"logoutSuccess": "[IT] Successfully logged out.",
+		"welcome": "[IT] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[IT] Profile",
+		"myServers": "[IT] My Servers",
+		"settings": "[IT] Account Settings",
+		"linkedAccounts": "[IT] Linked Accounts",
+		"subscription": "[IT] Subscription",
+		"votePoints": "[IT] Vote Points",
+		"extensions": "[IT] My Extensions"
+	},
+	"servers": {
+		"title": "[IT] Select a Server",
+		"noServers": "[IT] You don't have any servers to manage.",
+		"manage": "[IT] Manage",
+		"notInServer": "[IT] Bot not in server",
+		"invite": "[IT] Invite Bot"
+	},
+	"membership": {
+		"title": "[IT] Premium Membership",
+		"subtitle": "[IT] Unlock powerful features for your server",
+		"currentTier": "[IT] Current Tier",
+		"free": "[IT] Free",
+		"starter": "[IT] Starter",
+		"premium": "[IT] Premium",
+		"enterprise": "[IT] Enterprise",
+		"perMonth": "[IT] /month",
+		"perYear": "[IT] /year",
+		"subscribe": "[IT] Subscribe",
+		"manage": "[IT] Manage Subscription",
+		"features": "[IT] Features",
+		"compare": "[IT] Compare Plans",
+		"faq": "[IT] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[IT] Access Denied",
+			"message": "[IT] You don't have permission to access this page.",
+			"goHome": "[IT] Go to Homepage"
+		},
+		"404": {
+			"title": "[IT] Page Not Found",
+			"message": "[IT] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[IT] Go to Homepage"
+		},
+		"500": {
+			"title": "[IT] Server Error",
+			"message": "[IT] Something went wrong on our end. Please try again later.",
+			"goHome": "[IT] Go to Homepage"
+		}
+	}
+}
