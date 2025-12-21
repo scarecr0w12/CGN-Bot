@@ -1,8 +1,0 @@
-nohup: ignoring input
-
-> skynetbot@1.0.0 start
-> node master.js
-
-[09-12-2025 11:08:51] [Master] [32minfo[39m: Connecting this Logger instance with Sentry. { config: { release: [32m'Skynet.development.5.0.0'[39m, environment: [32m'development'[39m, dsn: [32m'https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3'[39m } }
-[09-12-2025 11:08:51] [Master] [32minfo[39m: Logging to /root/bot/logs/master-skynetbot.log.
-[09-12-2025 11:08:51] [Master] [32minfo[39m: Connecting to MongoDB... { URL: [32m'mongodb://mongo:27017/'[39m, db: [32m'SkynetBot'[39m }
