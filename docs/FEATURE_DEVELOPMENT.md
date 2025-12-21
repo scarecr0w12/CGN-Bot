@@ -448,7 +448,7 @@ controllers.premiumFeature = async (req, res) => {
 | General | 4 | 2 | 0 | 0 |
 | **Total** | **22** | **20** | **0** | **0** |
 
-*UI-Only features (2) excluded from totals*
+> **Note:** UI-Only features (2) excluded from totals
 
 ---
 
@@ -494,7 +494,20 @@ controllers.premiumFeature = async (req, res) => {
 
 ---
 
-> *Last Updated: December 14, 2024*
+## Version History
+
+### December 21, 2024 (v1.7.1)
+
+- 🔒 **Security: Permission System Audit**
+  - Fixed channel lock/unlock commands requiring `ManageRoles` instead of `ManageChannels`
+  - Added bot permission validation to all voice/room management operations
+  - Enhanced role management with proper hierarchy checks
+  - Added permission checks to verification and role panel handlers
+  - Pre-validation prevents permission errors with clearer messaging
+
+---
+
+> *Last Updated: December 21, 2024*
 
 ## Implementation Complete
 
