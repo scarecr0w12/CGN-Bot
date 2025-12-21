@@ -14,6 +14,7 @@ const {
 	Constants,
 } = require("../../index");
 const { AIManager } = require("../../../Modules/AI");
+const TierManager = require("../../../Modules/TierManager");
 const { LoggingLevels, Colors, UserAgent } = Constants;
 const { MessageType, PermissionFlagsBits } = require("discord.js");
 const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
@@ -435,45 +436,78 @@ class MessageCreate extends BaseEvent {
 							};
 							const isBotMentioned = (msg.mentions.members && msg.mentions.members.has(this.client.user.id)) || msg.mentions.users.has(this.client.user.id);
 
+							// Check if the first word after mention could be a command
+							// This prevents AI from intercepting commands when prefix is @mention
+							const firstWord = prompt.split(/\s+/)[0]?.toLowerCase();
+							const couldBeCommand = firstWord && (
+								this.client.getPublicCommandName(firstWord) ||
+								this.client.getSharedCommandName(firstWord) ||
+								serverDocument.config.tags.list.id(firstWord)?.isCommand ||
+								serverDocument.extensions.some(ext => ext.key === firstWord)
+							);
+
 							// Run AI mention conversation when allowed
-							if (!extensionApplied && isBotMentioned && aiEnabledInChannel() && prompt.length > 0 && !this.client.getSharedCommand(msg.command)) {
-								try {
-									if (!this.client.aiManager) {
-										this.client.aiManager = new AIManager(this.client);
-										await this.client.aiManager.initialize();
+							// Requirements:
+							// 1. No extension was applied
+							// 2. Bot was mentioned
+							// 3. AI is explicitly enabled for this server
+							// 4. AI is enabled in this channel
+							// 5. There's a prompt
+							// 6. Not a shared command
+							// 7. First word is not a potential command (prevents overriding commands when prefix is @mention)
+							// 8. Server has the ai_chat tier feature
+							const shouldRunAI = !extensionApplied &&
+								isBotMentioned &&
+								aiConfig.isEnabled === true &&
+								aiEnabledInChannel() &&
+								prompt.length > 0 &&
+								!this.client.getSharedCommand(msg.command) &&
+								!couldBeCommand;
+
+							if (shouldRunAI) {
+								// Check tier access for ai_chat feature
+								const hasAIAccess = await TierManager.canAccess(msg.guild.id, "ai_chat");
+								if (!hasAIAccess) {
+									logger.verbose(`AI mention blocked - server lacks ai_chat feature`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+								} else {
+									try {
+										if (!this.client.aiManager) {
+											this.client.aiManager = new AIManager(this.client);
+											await this.client.aiManager.initialize();
+										}
+
+										const rateLimitError = await this.client.aiManager.checkAndRecordUsage(
+											serverDocument,
+											msg.channel,
+											msg.author,
+										);
+										if (rateLimitError) {
+											await msg.channel.send(rateLimitError);
+											return;
+										}
+
+										await msg.channel.sendTyping();
+
+										const response = await this.client.aiManager.chat({
+											serverDocument,
+											channel: msg.channel,
+											user: msg.author,
+											message: prompt,
+											stream: false,
+										});
+
+										const maxLength = 2000;
+										if (response.length > maxLength) {
+											await msg.channel.send(`${response.substring(0, maxLength - 3)}...`);
+										} else {
+											await msg.channel.send(response || "(No response)");
+										}
+									} catch (err) {
+										logger.warn(`AI mention error: ${err.message}`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+										await msg.channel.send(`AI error: ${err.message}`);
 									}
-
-									const rateLimitError = await this.client.aiManager.checkAndRecordUsage(
-										serverDocument,
-										msg.channel,
-										msg.author,
-									);
-									if (rateLimitError) {
-										await msg.channel.send(rateLimitError);
-										return;
-									}
-
-									await msg.channel.sendTyping();
-
-									const response = await this.client.aiManager.chat({
-										serverDocument,
-										channel: msg.channel,
-										user: msg.author,
-										message: prompt,
-										stream: false,
-									});
-
-									const maxLength = 2000;
-									if (response.length > maxLength) {
-										await msg.channel.send(`${response.substring(0, maxLength - 3)}...`);
-									} else {
-										await msg.channel.send(response || "(No response)");
-									}
-								} catch (err) {
-									logger.warn(`AI mention error: ${err.message}`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
-									await msg.channel.send(`AI error: ${err.message}`);
+									shouldRunChatterbot = false;
 								}
-								shouldRunChatterbot = false;
 							}
 
 							if ((msg.content.startsWith(`<@${this.client.user.id}>`) || msg.content.startsWith(`<@!${this.client.user.id}>`)) && msg.content.includes(" ") && msg.content.length > msg.content.indexOf(" ") && !this.client.getSharedCommand(msg.command) && prompt.toLowerCase().trim() === "help") {

@@ -28,9 +28,14 @@ const seoRouting = router => {
 	}
 };
 
+const matomoTagProxy = require("../controllers/matomo-tag-proxy");
+
 const generalRouting = router => {
 	setupPage(router, "/", [], controllers.landing);
 	setupPage(router, "/donate", [], controllers.donate);
+
+	// Matomo Tag Manager proxy - handles index.php requests for container assets
+	router.routes.push(new Route(router, "/index.php", [], matomoTagProxy, "get", "static"));
 
 	// Special routes that should not be considered "pages"
 	router.routes.push(new Route(router, "/header-image", [middleware.checkUnavailableAPI], controllers.headerImage, "get", "static"));

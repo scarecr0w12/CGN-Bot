@@ -712,3 +712,48 @@ controllers.discordbotlist = async (req, res) => {
 		res.status(500).json({ error: "Internal error" });
 	}
 };
+
+/**
+ * TopBotList Vote Webhook
+ * Receives vote notifications when users vote for the bot on topbotlist.net
+ * Webhook payload: { bot, user, type, isWeekend, query }
+ */
+controllers.topbotlist = async (req, res) => {
+	try {
+		const siteSettings = await SiteSettings.findOne("main");
+		const config = siteSettings?.bot_lists?.topbotlist;
+
+		if (!config?.isEnabled) {
+			return res.status(404).json({ error: "Not configured" });
+		}
+
+		// Verify webhook secret (sent in Authorization header)
+		const authHeader = req.headers.authorization;
+		if (config.webhook_secret && authHeader !== config.webhook_secret) {
+			logger.warn("topbotlist webhook auth failed", { received: authHeader?.substring(0, 10) });
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+
+		// TopBotList webhook payload format:
+		// { bot: "BOT_ID", user: "USER_ID", type: "vote", isWeekend: false, query: "?ref=..." }
+		const voteData = {
+			user: req.body.user,
+			type: req.body.type,
+			isWeekend: req.body.isWeekend || false,
+			query: req.body.query,
+		};
+
+		// Process the vote
+		const botLists = req.app.get("botLists");
+		if (botLists) {
+			await botLists.processVote("topbotlist", voteData);
+		} else {
+			logger.warn("BotLists module not initialized");
+		}
+
+		res.status(200).json({ success: true });
+	} catch (err) {
+		logger.error("Error processing topbotlist webhook", {}, err);
+		res.status(500).json({ error: "Internal error" });
+	}
+};

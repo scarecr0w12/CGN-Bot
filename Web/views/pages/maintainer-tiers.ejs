@@ -163,8 +163,7 @@
 										<div class="feature-tags">
 											<% configData.features.forEach(feature => { %>
 											<span class="tag is-medium feature-tag <%= (tier.features || []).includes(feature._id) ? 'is-selected' : '' %>" 
-												  data-feature="<%= feature._id %>"
-												  onclick="toggleFeature(this)">
+												  data-feature="<%= feature._id %>">
 												<%= feature.name %>
 											</span>
 											<% }); %>
@@ -178,7 +177,7 @@
 							<% } %>
 						</div>
 
-						<button type="button" class="button is-info" onclick="addTier()">
+						<button type="button" class="button is-info" id="add-tier-btn">
 							<span class="icon"><i class="fa fa-plus"></i></span>
 							<span>Add Tier</span>
 						</button>
@@ -197,14 +196,18 @@
 	const availableFeatures = <%- JSON.stringify(configData.features || []) %>;
 	let tierIndex = <%= (configData.tiers || []).length %>;
 
+	$('#add-tier-btn').on('click', addTier);
+	$('#tiers-container').on('click', '.tier-remove', removeTier);
+	$('#tiers-container').on('click', '.feature-tag', toggleFeature);
+
 	function addTier() {
 		const featureTags = availableFeatures.map(f => 
-			`<span class="tag is-medium feature-tag" data-feature="${f._id}" onclick="toggleFeature(this)">${f.name}</span>`
+			`<span class="tag is-medium feature-tag" data-feature="${f._id}">${f.name}</span>`
 		).join('');
 
 		$('#tiers-container').append(`
 			<div class="tier-card" data-index="${tierIndex}">
-				<button type="button" class="button is-danger is-small tier-remove" onclick="removeTier(this)">
+				<button type="button" class="button is-danger is-small tier-remove">
 					<span class="icon"><i class="fa fa-trash"></i></span>
 				</button>
 				

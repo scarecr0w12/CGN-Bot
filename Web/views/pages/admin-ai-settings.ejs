@@ -33,6 +33,19 @@
 					</article>
 					<% } else { %>
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
+						<!-- Enable/Disable AI -->
+						<div class="field">
+							<div class="control">
+								<label class="checkbox">
+									<input type="checkbox" name="isEnabled" <%= configData.ai.isEnabled ? 'checked' : '' %>>
+									<strong>Enable AI Chat</strong>
+								</label>
+							</div>
+							<p class="help">When enabled, users can chat with the AI by mentioning the bot. This must be explicitly enabled for AI to respond to mentions.</p>
+						</div>
+
+						<hr>
+
 						<!-- Provider Selection -->
 						<h4 class="subtitle is-4">
 							<i class="fas fa-plug"></i> Provider Configuration

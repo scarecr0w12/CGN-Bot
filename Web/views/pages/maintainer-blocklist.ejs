@@ -74,7 +74,7 @@
 										<%= user.id %>
 									</td>
 									<td>
-										<button class="button is-small is-danger" name="block-<%= user.id %>-removed" onclick="SkynetData.HUM = true;">
+										<button class="button is-small is-danger" name="block-<%= user.id %>-removed">
 											<span>Remove</span>
 											<span class="icon is-small">
 												<i class="fa fa-times"></i>
@@ -109,7 +109,7 @@
 										<input id="new-block-user" class="input user-autocomplete" type="text" placeholder="ID or Username" onkeypress="return event.keyCode !== 13;">
 									</div>
 									<div class="control">
-										<a class="button is-primary" onclick="newBlock();">
+										<a class="button is-primary" id="new-block-btn">
 											<span class="icon">
 										        <i class="fa fa-plus"></i>
 										    </span>

@@ -19,6 +19,10 @@ class VoteHandler extends BaseEvent {
 	}
 
 	async prerequisite (msg) {
+		if (!msg.guild) {
+			this.serverDocument = null;
+			return;
+		}
 		this.serverDocument = await Servers.findOne(msg.guild.id);
 	}
 

@@ -199,12 +199,12 @@ PATREON_WEBHOOK_SECRET=your_webhook_secret</pre>
 												</select>
 											</div>
 										</td>
-										<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+										<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 									</tr>
 									<% }); %>
 								</tbody>
 							</table>
-							<button type="button" class="button is-small is-info" onclick="addPatreonMapping()">
+							<button type="button" class="button is-small is-info" id="add-patreon-mapping-btn">
 								<span class="icon"><i class="fa fa-plus"></i></span>
 								<span>Add Mapping</span>
 							</button>
@@ -224,7 +224,12 @@ PATREON_WEBHOOK_SECRET=your_webhook_secret</pre>
 	<script>
 	const localTiers = <%- JSON.stringify(configData.tiers || []) %>;
 
-	function addPatreonMapping() {
+	$(document).on('click', '.remove-row-btn', function() {
+		$(this).closest('tr').remove();
+		SkynetData.HUM = true;
+	});
+
+	$('#add-patreon-mapping-btn').on('click', function() {
 		const tierOptions = localTiers.map(t => `<option value="${t._id}">${t.name}</option>`).join('');
 		$('#patreon-mapping-table tbody').append(`
 			<tr>
@@ -234,11 +239,11 @@ PATREON_WEBHOOK_SECRET=your_webhook_secret</pre>
 						<select name="patreon_local_tier[]">${tierOptions}</select>
 					</div>
 				</td>
-				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+				<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 			</tr>
 		`);
 		SkynetData.HUM = true;
-	}
+	});
 	</script>
 </body>
 </html>

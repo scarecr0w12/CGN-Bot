@@ -1,0 +1,1 @@
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"15-12-2025 17:08:15"}

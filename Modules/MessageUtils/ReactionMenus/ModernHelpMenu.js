@@ -255,6 +255,10 @@ class ModernHelpMenu {
 	 */
 	async handleEnd () {
 		try {
+			// Skip if channel is no longer cached (e.g., guild was deleted)
+			if (!this.msg?.channel) {
+				return;
+			}
 			// Disable all components
 			await this.msg.edit({
 				embeds: [this.buildExpiredEmbed()],

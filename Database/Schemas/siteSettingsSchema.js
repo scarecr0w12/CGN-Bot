@@ -349,6 +349,22 @@ module.exports = new Schema({
 				default: true,
 			},
 		}),
+		topbotlist: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			api_token: String,
+			webhook_secret: String,
+			auto_post_stats: {
+				type: Boolean,
+				default: true,
+			},
+			sync_commands: {
+				type: Boolean,
+				default: false,
+			},
+		}),
 	}),
 
 	// Vote reward settings
@@ -449,6 +465,57 @@ module.exports = new Schema({
 			min: 0,
 		},
 		approval_required: {
+			type: Boolean,
+			default: true,
+		},
+	}),
+
+	// ============================================
+	// EXTENSION SANDBOX SETTINGS
+	// ============================================
+
+	extension_sandbox: new Schema({
+		// HTTP allowlist for extension network requests
+		// Extensions can only make HTTP requests to these domains
+		http_allowlist: {
+			type: Array,
+			default: [
+				"api.jikan.moe",
+				"api.mojang.com",
+				"sessionserver.mojang.com",
+				"api.steampowered.com",
+				"steamcommunity.com",
+				"mc-heads.net",
+				"api.mcsrvstat.us",
+				"api.henrikdev.xyz",
+				"fortnite-api.com",
+				"ddragon.leagueoflegends.com",
+				"raw.communitydragon.org",
+			],
+		},
+		// Maximum memory limit for extension isolates (in MB)
+		memory_limit_mb: {
+			type: Number,
+			default: 128,
+			min: 32,
+			max: 512,
+		},
+		// Maximum execution timeout (in milliseconds)
+		execution_timeout_ms: {
+			type: Number,
+			default: 30000,
+			min: 1000,
+			max: 120000,
+		},
+		// Maximum HTTP requests per extension execution
+		max_http_requests: {
+			type: Number,
+			default: 10,
+			min: 1,
+			max: 50,
+		},
+		// Enable/disable network access for extensions entirely
+		network_enabled: {
 			type: Boolean,
 			default: true,
 		},

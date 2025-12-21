@@ -222,7 +222,7 @@
 						</div>
 						<div class="ext-queue-card-body">
 							<p class="ext-queue-card-description"><%- ext.description %></p>
-							<button class="button is-small is-outlined" onclick="toggleCodePreview('<%= ext._id %>')">
+							<button class="button is-small is-outlined toggle-code-btn" data-ext-id="<%= ext._id %>">
 								<span class="icon"><i class="fa fa-code"></i></span>
 								<span>View Code</span>
 							</button>
@@ -245,17 +245,17 @@
 							</div>
 						</div>
 						<div class="ext-queue-card-actions">
-							<button class="button is-success" onclick="acceptExtension('<%= ext._id %>')">
+							<button class="button is-success accept-ext-btn" data-ext-id="<%= ext._id %>">
 								<span class="icon"><i class="fa fa-check"></i></span>
 								<span>Accept</span>
 							</button>
 							<% if (ext.network_capability && ['network', 'network_advanced'].includes(ext.network_capability) && !ext.network_approved) { %>
-							<button class="button is-info" onclick="approveNetwork('<%= ext._id %>')">
+							<button class="button is-info approve-network-btn" data-ext-id="<%= ext._id %>">
 								<span class="icon"><i class="fa fa-globe"></i></span>
 								<span>Approve Network</span>
 							</button>
 							<% } %>
-							<button class="button is-danger" onclick="showRejectForm('<%= ext._id %>')">
+							<button class="button is-danger show-reject-btn" data-ext-id="<%= ext._id %>">
 								<span class="icon"><i class="fa fa-times"></i></span>
 								<span>Reject</span>
 							</button>
@@ -268,11 +268,11 @@
 								</div>
 							</div>
 							<div class="buttons">
-								<button class="button is-danger" onclick="rejectExtension('<%= ext._id %>')">
+								<button class="button is-danger confirm-reject-btn" data-ext-id="<%= ext._id %>">
 									<span class="icon"><i class="fa fa-times"></i></span>
 									<span>Confirm Rejection</span>
 								</button>
-								<button class="button" onclick="hideRejectForm('<%= ext._id %>')">Cancel</button>
+								<button class="button hide-reject-btn" data-ext-id="<%= ext._id %>">Cancel</button>
 							</div>
 						</div>
 					</div>
@@ -297,82 +297,99 @@
 <%- include('../partials/scroll-top-button') %>
 
 <script>
-function toggleCodePreview(extId) {
-	const preview = document.getElementById('code-preview-' + extId);
-	preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
-}
-
-function showRejectForm(extId) {
-	document.getElementById('reject-form-' + extId).classList.add('is-active');
-}
-
-function hideRejectForm(extId) {
-	document.getElementById('reject-form-' + extId).classList.remove('is-active');
-}
-
-async function acceptExtension(extId) {
-	if (!confirm('Are you sure you want to accept this extension?')) return;
-	
-	try {
-		const response = await fetch('/extensions/' + extId + '/accept', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' }
-		});
+(function() {
+	document.addEventListener('click', function(e) {
+		const target = e.target.closest('button');
+		if (!target) return;
 		
-		if (response.ok) {
-			document.getElementById('ext-card-' + extId).remove();
-			swal('Extension Accepted', 'The extension has been published to the gallery.', 'success');
-		} else {
-			swal('Failed', 'Failed to accept extension. Status: ' + response.status, 'error');
-		}
-	} catch (err) {
-		swal('Error', err.message, 'error');
-	}
-}
-
-async function approveNetwork(extId) {
-	if (!confirm('Are you sure you want to approve network access for this extension?')) return;
-	
-	try {
-		const response = await fetch('/extensions/' + extId + '/approve_network', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' }
-		});
+		const extId = target.dataset.extId;
+		if (!extId) return;
 		
-		if (response.ok) {
-			location.reload();
-		} else {
-			swal('Failed', 'Failed to approve network access. Status: ' + response.status, 'error');
+		if (target.classList.contains('toggle-code-btn')) {
+			const preview = document.getElementById('code-preview-' + extId);
+			preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
 		}
-	} catch (err) {
-		swal('Error', err.message, 'error');
-	}
-}
-
-async function rejectExtension(extId) {
-	const reason = document.getElementById('reject-reason-' + extId).value;
-	if (!reason.trim()) {
-		swal('Missing Reason', 'Please provide a rejection reason', 'warning');
-		return;
+		else if (target.classList.contains('show-reject-btn')) {
+			document.getElementById('reject-form-' + extId).classList.add('is-active');
+		}
+		else if (target.classList.contains('hide-reject-btn')) {
+			document.getElementById('reject-form-' + extId).classList.remove('is-active');
+		}
+		else if (target.classList.contains('accept-ext-btn')) {
+			acceptExtension(extId);
+		}
+		else if (target.classList.contains('approve-network-btn')) {
+			approveNetwork(extId);
+		}
+		else if (target.classList.contains('confirm-reject-btn')) {
+			rejectExtension(extId);
+		}
+	});
+	
+	async function acceptExtension(extId) {
+		if (!confirm('Are you sure you want to accept this extension?')) return;
+		
+		try {
+			const response = await fetch('/extensions/' + extId + '/accept', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			
+			if (response.ok) {
+				document.getElementById('ext-card-' + extId).remove();
+				swal('Extension Accepted', 'The extension has been published to the gallery.', 'success');
+			} else {
+				swal('Failed', 'Failed to accept extension. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
+		}
 	}
 	
-	try {
-		const response = await fetch('/extensions/' + extId + '/reject', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ reason: reason })
-		});
+	async function approveNetwork(extId) {
+		if (!confirm('Are you sure you want to approve network access for this extension?')) return;
 		
-		if (response.ok) {
-			document.getElementById('ext-card-' + extId).remove();
-			swal('Extension Rejected', 'The extension has been rejected and the owner notified.', 'success');
-		} else {
-			swal('Failed', 'Failed to reject extension. Status: ' + response.status, 'error');
+		try {
+			const response = await fetch('/extensions/' + extId + '/approve_network', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			
+			if (response.ok) {
+				location.reload();
+			} else {
+				swal('Failed', 'Failed to approve network access. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
 		}
-	} catch (err) {
-		swal('Error', err.message, 'error');
 	}
-}
+	
+	async function rejectExtension(extId) {
+		const reason = document.getElementById('reject-reason-' + extId).value;
+		if (!reason.trim()) {
+			swal('Missing Reason', 'Please provide a rejection reason', 'warning');
+			return;
+		}
+		
+		try {
+			const response = await fetch('/extensions/' + extId + '/reject', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ reason: reason })
+			});
+			
+			if (response.ok) {
+				document.getElementById('ext-card-' + extId).remove();
+				swal('Extension Rejected', 'The extension has been rejected and the owner notified.', 'success');
+			} else {
+				swal('Failed', 'Failed to reject extension. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
+		}
+	}
+})();
 </script>
 </body>
 </html>

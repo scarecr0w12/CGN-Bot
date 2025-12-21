@@ -76,6 +76,10 @@ class BotLists {
 		if (config.botsondiscord?.isEnabled && config.botsondiscord?.api_token && config.botsondiscord?.auto_post_stats) {
 			await this.postToBotsOnDiscord(stats, config.botsondiscord.api_token);
 		}
+
+		if (config.topbotlist?.isEnabled && config.topbotlist?.api_token && config.topbotlist?.auto_post_stats) {
+			await this.postToTopBotList(stats, config.topbotlist.api_token);
+		}
 	}
 
 	/**
@@ -167,15 +171,12 @@ class BotLists {
 	 */
 	async postToDiscordListGG (stats, token) {
 		try {
-			const response = await fetch(`https://api.discordlist.gg/v0/bots/${this.client.user.id}/guilds`, {
+			const guildCount = parseInt(stats.guilds, 10) || 0;
+			const response = await fetch(`https://api.discordlist.gg/v0/bots/${this.client.user.id}/guilds?count=${guildCount}`, {
 				method: "PUT",
 				headers: {
 					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({
-					count: stats.guilds,
-				}),
 			});
 
 			if (response.ok) {
@@ -213,6 +214,34 @@ class BotLists {
 			}
 		} catch (err) {
 			logger.error("Error posting to bots.ondiscord.xyz", {}, err);
+		}
+	}
+
+	/**
+	 * Post stats to topbotlist.net
+	 */
+	async postToTopBotList (stats, token) {
+		try {
+			const response = await fetch(`https://topbotlist.net/api/bots/${this.client.user.id}/stats`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					server_count: stats.guilds,
+					shard_count: stats.shards,
+				}),
+			});
+
+			if (response.ok) {
+				logger.debug("Posted stats to topbotlist.net", { guilds: stats.guilds });
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post stats to topbotlist.net", { status: response.status, body: text });
+			}
+		} catch (err) {
+			logger.error("Error posting to topbotlist.net", {}, err);
 		}
 	}
 
@@ -263,6 +292,52 @@ class BotLists {
 	}
 
 	/**
+	 * Post slash commands to topbotlist.net
+	 * @param {string} [token] - Optional API token override
+	 * @returns {Promise<{success: boolean, count?: number, error?: string}>}
+	 */
+	async postCommandsToTopBotList (token = null) {
+		try {
+			const config = await this.getConfig();
+			const apiToken = token || config.topbotlist?.api_token;
+
+			if (!apiToken) {
+				return { success: false, error: "No API token configured for topbotlist.net" };
+			}
+
+			// Get slash commands from handler
+			const slashHandler = this.client.slashCommands;
+			if (!slashHandler || !slashHandler.commands || slashHandler.commands.size === 0) {
+				return { success: false, error: "No slash commands loaded" };
+			}
+
+			// Convert commands to Discord API format (topbotlist expects same format)
+			const commandsData = slashHandler.commands.map(cmd => cmd.data.toJSON());
+
+			const response = await fetch(`https://topbotlist.net/api/bots/${this.client.user.id}/commands`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${apiToken}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(commandsData),
+			});
+
+			if (response.ok) {
+				logger.info("Posted slash commands to topbotlist.net", { count: commandsData.length });
+				return { success: true, count: commandsData.length };
+			} else {
+				const text = await response.text().catch(() => "");
+				logger.warn("Failed to post commands to topbotlist.net", { status: response.status, body: text });
+				return { success: false, error: `HTTP ${response.status}: ${text}` };
+			}
+		} catch (err) {
+			logger.error("Error posting commands to topbotlist.net", {}, err);
+			return { success: false, error: err.message };
+		}
+	}
+
+	/**
 	 * Sync commands to all enabled bot lists
 	 */
 	async syncAllCommands () {
@@ -271,6 +346,10 @@ class BotLists {
 
 		if (config.discordbotlist?.isEnabled && config.discordbotlist?.api_token && config.discordbotlist?.sync_commands) {
 			results.discordbotlist = await this.postCommandsToDiscordBotList(config.discordbotlist.api_token);
+		}
+
+		if (config.topbotlist?.isEnabled && config.topbotlist?.api_token && config.topbotlist?.sync_commands) {
+			results.topbotlist = await this.postCommandsToTopBotList(config.topbotlist.api_token);
 		}
 
 		return results;
@@ -348,6 +427,7 @@ class BotLists {
 				discordbotsgg: "Discord Bots GG",
 				discordlistgg: "DiscordList.gg",
 				botsondiscord: "Bots on Discord",
+				topbotlist: "TopBotList",
 			};
 			const siteName = siteNames[site] || site;
 
@@ -407,12 +487,13 @@ class BotLists {
 	 * Get total vote counts by site
 	 */
 	async getVoteStats () {
-		const [topggCount, dblCount, totalCount] = await Promise.all([
+		const [topggCount, dblCount, topbotlistCount, totalCount] = await Promise.all([
 			Database.Votes.count({ site: "topgg" }),
 			Database.Votes.count({ site: "discordbotlist" }),
+			Database.Votes.count({ site: "topbotlist" }),
 			Database.Votes.count({}),
 		]);
-		return { topgg: topggCount, discordbotlist: dblCount, total: totalCount };
+		return { topgg: topggCount, discordbotlist: dblCount, topbotlist: topbotlistCount, total: totalCount };
 	}
 
 	/**

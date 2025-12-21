@@ -156,7 +156,7 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 <!-- Matomo Analytics -->
 <% const _matomoUrl = typeof matomoUrl !== "undefined" ? matomoUrl : ""; const _matomoSiteId = typeof matomoSiteId !== "undefined" ? matomoSiteId : ""; %>
 <% if (_isProduction && _matomoUrl && _matomoSiteId) { %>
-<script>
+<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
   var _mtm = window._mtm = window._mtm || [];
   _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
   (function() {

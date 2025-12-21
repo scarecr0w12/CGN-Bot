@@ -7,46 +7,46 @@ module.exports = middleware => {
 
 	// Populate a request with Authorization details
 	middleware.authorizeGuildAccess = async (req, res, next) => {
-		console.log("[AUTH] authorizeGuildAccess started");
+		logger.debug("[AUTH] authorizeGuildAccess started", { path: req.path });
 		// Do not populate request if authorization is not required
 		if (!req.params.svrid && !req.query.svrid) return next();
 		// Confirm user is authenticated
 		if (req.isAuthenticated()) {
-			console.log("[AUTH] User is authenticated:", req.user.id);
+			logger.debug("[AUTH] User is authenticated", { usrid: req.user.id });
 			// Fetch user data from Discord
 			const usr = await req.app.client.users.fetch(req.user.id, true);
-			console.log("[AUTH] User fetched:", !!usr);
+			logger.debug("[AUTH] User fetched", { success: !!usr });
 			if (usr) {
 				// Legacy URL support
 				if (!req.params.svrid && req.query.svrid) req.params.svrid = req.query.svrid;
 				// Get server data from shard that has said server cached
-				console.log("[AUTH] Creating GetGuild for:", req.params.svrid);
+				logger.debug("[AUTH] Creating GetGuild", { svrid: req.params.svrid });
 				const svr = new GetGuild(req.app.client, req.params.svrid);
 				await svr.initialize([usr.id, "OWNER", req.app.client.user.id]);
-				console.log("[AUTH] GetGuild initialized, success:", svr.success);
+				logger.debug("[AUTH] GetGuild initialized", { success: svr.success });
 				// Confirm the svr and usr exist
 				if (svr.success) {
 					// Get server data from Database
-					console.log("[AUTH] Fetching server document");
+					logger.debug("[AUTH] Fetching server document", { svrid: svr.id });
 					let serverDocument;
 					try {
 						serverDocument = await Servers.findOne(svr.id);
-						console.log("[AUTH] Server document fetched:", !!serverDocument);
+						logger.debug("[AUTH] Server document fetched", { found: !!serverDocument });
 					} catch (err) {
-						console.error("[AUTH] Error fetching server document:", err);
+						logger.error("[AUTH] Error fetching server document", { svrid: svr.id }, err);
 						if (req.isAPI) return res.sendStatus(500);
 						renderError(res, "Something went wrong while fetching your server data.");
 					}
 					if (!serverDocument) {
-						console.log("[AUTH] No server document found, creating one...");
+						logger.debug("[AUTH] No server document found, creating one", { svrid: svr.id });
 						try {
 							// Create a basic server document without full initialization
 							const newServerDocument = Servers.new({ _id: svr.id });
 							await newServerDocument.save();
 							serverDocument = await Servers.findOne(svr.id);
-							console.log("[AUTH] Server document created:", !!serverDocument);
+							logger.debug("[AUTH] Server document created", { success: !!serverDocument });
 						} catch (createErr) {
-							console.error("[AUTH] Failed to create server document:", createErr);
+							logger.error("[AUTH] Failed to create server document", { svrid: svr.id }, createErr);
 							if (req.isAPI) return res.sendStatus(500);
 							return renderError(res, "Something went wrong while creating your server data.");
 						}
@@ -57,13 +57,13 @@ module.exports = middleware => {
 					}
 					// Authorize the user's request
 					const member = svr.members[usr.id];
-					console.log("[AUTH] Member found:", !!member);
+					logger.debug("[AUTH] Member lookup", { found: !!member, usrid: usr.id });
 					const adminLevel = req.app.client.getUserBotAdmin(svr, serverDocument, member);
-					console.log("[AUTH] Admin level:", adminLevel);
+					logger.debug("[AUTH] Admin level determined", { adminLevel, usrid: usr.id });
 					if (adminLevel >= 3 || await ConfigManager.checkSudoMode(usr.id)) {
 						// Populate the request object with Authorization details
 						try {
-							console.log("[AUTH] Populating request object");
+							logger.debug("[AUTH] Populating request object", { svrid: svr.id, usrid: usr.id });
 							req.isAuthorized = true;
 							req.isSudo = adminLevel !== 3;
 							req.consolemember = member;
@@ -73,15 +73,15 @@ module.exports = middleware => {
 							req.svr.queryDocument = serverDocument.query;
 							// Only call populateDashboard for page requests, not API
 							if (res.res && res.res.populateDashboard) {
-								console.log("[AUTH] Calling populateDashboard");
+								logger.debug("[AUTH] Calling populateDashboard");
 								res.res.populateDashboard(req);
-								console.log("[AUTH] populateDashboard completed, calling next()");
+								logger.debug("[AUTH] populateDashboard completed");
 							} else {
-								console.log("[AUTH] API request, skipping populateDashboard");
+								logger.debug("[AUTH] API request, skipping populateDashboard");
 							}
 							return next();
 						} catch (err) {
-							console.error(`[AUTH ERROR] ${req.method} ${req.path}:`, err);
+							logger.error(`[AUTH] Error during request population`, { method: req.method, path: req.path }, err);
 							logger.warn(`An error occurred during a ${req.protocol} ${req.method} request on ${req.path} 0.0`, {
 								params: req.params,
 								query: req.query,
@@ -108,16 +108,14 @@ module.exports = middleware => {
 	};
 
 	middleware.authorizeConsoleAccess = async (req, res, next) => {
-		console.log("[CONSOLE AUTH] authorizeConsoleAccess called for:", req.path);
-		console.log("[CONSOLE AUTH] User authenticated:", req.isAuthenticated());
+		logger.debug("[CONSOLE AUTH] authorizeConsoleAccess called", { path: req.path, authenticated: req.isAuthenticated() });
 		if (req.isAuthenticated()) {
 			const settings = await ConfigManager.get();
-			console.log("[CONSOLE AUTH] User ID:", req.user.id);
-			console.log("[CONSOLE AUTH] Maintainers list:", settings.maintainers);
-			console.log("[CONSOLE AUTH] Is maintainer:", settings.maintainers.includes(req.user.id));
-			if (settings.maintainers.includes(req.user.id)) {
+			const isMaintainer = settings.maintainers.includes(req.user.id);
+			logger.debug("[CONSOLE AUTH] Maintainer check", { usrid: req.user.id, isMaintainer });
+			if (isMaintainer) {
 				const { perm } = req;
-				console.log("[CONSOLE AUTH] Permission required:", perm);
+				logger.debug("[CONSOLE AUTH] Permission check", { perm, usrid: req.user.id });
 				if (perm === "maintainer" || await ConfigManager.canDo(perm, req.user.id)) {
 					req.isAuthorized = true;
 					req.level = process.env.SKYNET_HOST !== req.user.id ? settings.sudoMaintainers.includes(req.user.id) ? 2 : 1 : 0;
@@ -126,33 +124,33 @@ module.exports = middleware => {
 						res.res.template.isSudoMaintainer = req.level === 2 || req.level === 0;
 						res.res.template.isHost = req.level === 0;
 					}
-					console.log("[CONSOLE AUTH] Access granted, level:", req.level);
+					logger.debug("[CONSOLE AUTH] Access granted", { level: req.level, usrid: req.user.id });
 					return next();
 				} else {
-					console.log("[CONSOLE AUTH] Permission denied for perm:", perm);
+					logger.debug("[CONSOLE AUTH] Permission denied", { perm, usrid: req.user.id });
 					if (req.isAPI) return res.sendStatus(403);
 					res.redirect("/dashboard");
 				}
 			} else {
-				console.log("[CONSOLE AUTH] User is not a maintainer, redirecting");
+				logger.debug("[CONSOLE AUTH] User is not a maintainer", { usrid: req.user.id });
 				if (req.isAPI) return res.sendStatus(403);
 				res.redirect("/dashboard");
 			}
 		} else {
-			console.log("[CONSOLE AUTH] User not authenticated, redirecting to login");
+			logger.debug("[CONSOLE AUTH] User not authenticated, redirecting to login");
 			if (req.isAPI) return res.sendStatus(401);
 			res.redirect("/login");
 		}
 	};
 
 	middleware.authorizeDashboardAccess = (req, res, next) => {
-		console.log("[AUTH] authorizeDashboardAccess called for:", req.path);
+		logger.debug("[AUTH] authorizeDashboardAccess called", { path: req.path, svrid: req.params.svrid || req.query.svrid });
 		if (!req.params.svrid && !req.query.svrid) {
-			console.log("[AUTH] No svrid found, redirecting");
+			logger.debug("[AUTH] No svrid found, redirecting");
 			if (req.isAPI) return res.sendStatus(400);
 			return res.redirect("/dashboard");
 		}
-		console.log("[AUTH] Calling authorizeGuildAccess for svrid:", req.params.svrid);
+		logger.debug("[AUTH] Calling authorizeGuildAccess", { svrid: req.params.svrid });
 		middleware.authorizeGuildAccess(req, res, next);
 	};
 

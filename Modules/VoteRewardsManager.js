@@ -231,6 +231,8 @@ const processVote = async (userId, site, isWeekend = false) => {
 		siteVotes.topgg_last = now;
 	} else if (site === "discordbotlist") {
 		siteVotes.discordbotlist_last = now;
+	} else if (site === "topbotlist") {
+		siteVotes.topbotlist_last = now;
 	}
 
 	// Award points
@@ -470,6 +472,16 @@ const getVoteSites = async () => {
 		});
 	}
 
+	if (botLists.topbotlist?.isEnabled) {
+		sites.push({
+			id: "topbotlist",
+			name: "TopBotList",
+			url: `https://topbotlist.net/bot/${clientId}/vote`,
+			icon: "https://topbotlist.net/favicon.ico",
+			cooldown: 12 * 60 * 60 * 1000, // 12 hours
+		});
+	}
+
 	return sites;
 };
 
@@ -490,6 +502,8 @@ const canVote = async (userId, site) => {
 		lastVote = siteVotes.topgg_last;
 	} else if (site === "discordbotlist") {
 		lastVote = siteVotes.discordbotlist_last;
+	} else if (site === "topbotlist") {
+		lastVote = siteVotes.topbotlist_last;
 	}
 
 	if (!lastVote) {

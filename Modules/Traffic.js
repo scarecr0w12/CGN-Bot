@@ -152,9 +152,10 @@ class Traffic {
 		// Only get aggregate records for stats display
 		const rawData = await this.db.traffic.find({ type: "aggregate" }).exec();
 
-		// Parse _id to number (stored as string in MariaDB)
+		// Convert timestamp to numeric _id for chart compatibility
 		rawData.forEach(t => {
-			t._id = parseInt(t._id, 10);
+			// Use timestamp field (Date) instead of _id which has "agg_" prefix
+			t._id = t.timestamp instanceof Date ? t.timestamp.getTime() : new Date(t.timestamp).getTime();
 		});
 
 		// Sort by timestamp for proper graphing
@@ -166,14 +167,14 @@ class Traffic {
 			.filter(traffic => traffic._id > dayAgo)
 			.map(t => {
 				const obj = t.toObject ? t.toObject() : { ...t };
-				obj._id = parseInt(obj._id, 10);
+				obj._id = t._id; // Already converted to timestamp
 				return obj;
 			});
 
 		// Aggregate by day for monthly view
 		data.days = {};
 		rawData.forEach(traffic => {
-			const timestamp = parseInt(traffic._id, 10);
+			const timestamp = traffic._id; // Already numeric from conversion above
 			if (!timestamp || isNaN(timestamp)) return;
 			const date = new Date(timestamp);
 			if (isNaN(date.getTime())) return;

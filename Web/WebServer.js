@@ -29,6 +29,7 @@ const toobusy = require("toobusy-js");
 const fsn = require("fs-nextra");
 const Sentry = require("@sentry/node");
 
+const crypto = require("crypto");
 const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
@@ -147,9 +148,86 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Metrics endpoint for Prometheus scraping
 	app.get("/metrics", metrics.getMetrics);
 
-	// Security headers with helmet (configured for dashboard compatibility)
+	// Generate nonce for CSP inline scripts
+	app.use((req, res, next) => {
+		res.locals.nonce = crypto.randomBytes(16).toString("base64");
+		next();
+	});
+
+	// Security headers with helmet
+	// Note: 'unsafe-inline' and 'unsafe-eval' required for legacy scripts (morris.js, etc.)
+	// TODO: Migrate to modern charting library and add nonces to inline scripts
 	app.use(helmet({
-		contentSecurityPolicy: false, // Disable CSP for now due to inline scripts in dashboard
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				scriptSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					"'unsafe-eval'",
+					// CDN sources
+					"https://cdnjs.cloudflare.com",
+					"cdnjs.cloudflare.com",
+					"https://unpkg.com",
+					"unpkg.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					// Analytics
+					"https://analytics.thecorehosting.net",
+					"https://static.cloudflareinsights.com",
+					"https://www.googletagmanager.com",
+					"https://www.google-analytics.com",
+					"https://pagead2.googlesyndication.com",
+					"pagead2.googlesyndication.com",
+				],
+				styleSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					"https://cdnjs.cloudflare.com",
+					"cdnjs.cloudflare.com",
+					"https://fonts.googleapis.com",
+					"fonts.googleapis.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					"https://analytics.thecorehosting.net",
+				],
+				fontSrc: [
+					"'self'",
+					"https://fonts.gstatic.com",
+					"fonts.gstatic.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					"data:",
+				],
+				imgSrc: [
+					"'self'",
+					"data:",
+					"https:",
+					"http:",
+					"blob:",
+				],
+				connectSrc: [
+					"'self'",
+					"wss:",
+					"ws:",
+					"https://discord.com",
+					"https://analytics.thecorehosting.net",
+					"https://cdnjs.cloudflare.com",
+					"https://www.google-analytics.com",
+					"https://static.cloudflareinsights.com",
+				],
+				frameSrc: [
+					"'self'",
+					"https://discord.com",
+					"https://www.google.com",
+					"https://pagead2.googlesyndication.com",
+				],
+				objectSrc: ["'none'"],
+				baseUri: ["'self'", "https://analytics.thecorehosting.net"],
+				formAction: ["'self'"],
+				frameAncestors: ["'self'"],
+			},
+		},
 		crossOriginEmbedderPolicy: false,
 	}));
 

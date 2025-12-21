@@ -6,6 +6,11 @@
 const Schema = require("../Schema");
 
 module.exports = new Schema({
+	// Whether AI chat is explicitly enabled for this server
+	isEnabled: {
+		type: Boolean,
+		default: false,
+	},
 	// Default AI provider (openai, anthropic, groq, ollama, etc.)
 	defaultProvider: {
 		type: String,

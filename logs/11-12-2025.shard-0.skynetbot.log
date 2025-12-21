@@ -1,0 +1,553 @@
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"11-12-2025 23:09:14"}
+{"config":{"host":"127.0.0.1"},"level":"debug","message":"Connecting to MariaDB...","timestamp":"11-12-2025 23:09:14"}
+{"level":"info","message":"Successfully connected to MariaDB!","timestamp":"11-12-2025 23:09:14"}
+{"level":"debug","message":"Ensuring all guilds have a serverDocument.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Setting bots playing activity.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Creating messages_today timers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Resetting voice_data for all guilds.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Setting existing reminders for all users.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Setting existing countdowns in servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Setting existing giveaways for servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Starting MOTD timers for servers.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Posting stats data to Discord Bot listings.","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Reloading all commands.","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Hey boss, we're ready to help people out!","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Uptime Kuma push heartbeat not configured, skipping","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Started Prometheus metrics collection interval","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Cloudflare integration initialized","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"BotLists module initialized","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"IndexNow integration initialized","timestamp":"11-12-2025 23:09:15"}
+{"blockedCountries":0,"level":"info","message":"Cloudflare middleware enabled","requireProxy":false,"timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Using MariaDB session store for persistent sessions","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Sentry Express error handler initialized for web error tracking","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: 8ball","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: about","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: afk","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: ai","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: alert","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: anime","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: appstore","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: archive","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: avatar","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: ban","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: calc","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: cat","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: catfact","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: choose","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: convert","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: cool","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: count","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: countdown","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: disable","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: dog","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: dogfact","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: e621","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: emoji","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: emotes","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: enable","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: expand","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: fortune","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: games","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: gif","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: giveaway","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: google","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: help","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: hug","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: image","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: imdb","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: imgur","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: info","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: invite","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: joke","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: kick","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: list","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: lock","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: lottery","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: meme","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: messages","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: modlog","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: mute","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: nick","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: nuke","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: numfact","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: pat","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: ping","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: playstore","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: points","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: pokedex","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: poll","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: prefix","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: profile","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: quiet","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: ranks","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: reason","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: reddit","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: remindme","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: role","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: roleinfo","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: roll","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: room","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: rss","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: rule34","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: safebooru","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: say","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: shorten","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: slap","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: slowmode","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: snipe","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: softban","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: starboard","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: stats","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: streamers","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: strike","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: strikes","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: suggest","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: tag","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: tempban","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: time","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: translate","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: trivia","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: twitter","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: unban","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: unlock","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: unmute","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: urban","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: userinfo","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: weather","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: wiki","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: wolfram","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: xkcd","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: year","timestamp":"11-12-2025 23:09:15"}
+{"level":"debug","message":"Loaded slash command: youtube","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Loaded 99 slash commands","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Registering 99 slash commands...","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Opened http web interface on 0.0.0.0:8080","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"GitHub OAuth strategy initialized for account linking","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Registered 99 guild slash commands","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Slash commands initialized!","timestamp":"11-12-2025 23:09:15"}
+{"level":"info","message":"Worker for shard 0 is up and running!","timestamp":"11-12-2025 23:09:19"}
+{"guilds":8,"level":"debug","message":"Posted stats to discordbotlist.com","timestamp":"11-12-2025 23:09:25"}
+{"count":99,"level":"info","message":"Posted slash commands to discordbotlist.com","timestamp":"11-12-2025 23:09:30"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"11-12-2025 23:11:03"}
+{"config":{"host":"127.0.0.1"},"level":"debug","message":"Connecting to MariaDB...","timestamp":"11-12-2025 23:11:04"}
+{"level":"info","message":"Successfully connected to MariaDB!","timestamp":"11-12-2025 23:11:04"}
+{"level":"debug","message":"Ensuring all guilds have a serverDocument.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Setting bots playing activity.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Creating messages_today timers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Resetting voice_data for all guilds.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Setting existing reminders for all users.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Setting existing countdowns in servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Setting existing giveaways for servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Starting MOTD timers for servers.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Posting stats data to Discord Bot listings.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Reloading all commands.","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Hey boss, we're ready to activate mutually assured destruction sequences.","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Uptime Kuma push heartbeat not configured, skipping","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Started Prometheus metrics collection interval","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Cloudflare integration initialized","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"BotLists module initialized","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"IndexNow integration initialized","timestamp":"11-12-2025 23:11:05"}
+{"blockedCountries":0,"level":"info","message":"Cloudflare middleware enabled","requireProxy":false,"timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Using MariaDB session store for persistent sessions","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Sentry Express error handler initialized for web error tracking","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: 8ball","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: about","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: afk","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: ai","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: alert","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: anime","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: appstore","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: archive","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: avatar","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: ban","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: calc","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: cat","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: catfact","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: choose","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: convert","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: cool","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: count","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: countdown","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: disable","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: dog","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: dogfact","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: e621","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: emoji","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: emotes","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: enable","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: expand","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: fortune","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: games","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: gif","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: giveaway","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: google","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: help","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: hug","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: image","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: imdb","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: imgur","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: info","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: invite","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: joke","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: kick","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: list","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: lock","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: lottery","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: meme","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: messages","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: modlog","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: mute","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: nick","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: nuke","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: numfact","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: pat","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: ping","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: playstore","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: points","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: pokedex","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: poll","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: prefix","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: profile","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: quiet","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: ranks","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: reason","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: reddit","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: remindme","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: role","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: roleinfo","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: roll","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: room","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: rss","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: rule34","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: safebooru","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: say","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: shorten","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: slap","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: slowmode","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: snipe","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: softban","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: starboard","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: stats","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: streamers","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: strike","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: strikes","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: suggest","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: tag","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: tempban","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: time","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: translate","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: trivia","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: twitter","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: unban","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: unlock","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: unmute","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: urban","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: userinfo","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: weather","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: wiki","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: wolfram","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: xkcd","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: year","timestamp":"11-12-2025 23:11:05"}
+{"level":"debug","message":"Loaded slash command: youtube","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Loaded 99 slash commands","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Registering 99 slash commands...","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Opened http web interface on 0.0.0.0:8080","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"GitHub OAuth strategy initialized for account linking","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Registered 99 guild slash commands","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Slash commands initialized!","timestamp":"11-12-2025 23:11:05"}
+{"level":"info","message":"Worker for shard 0 is up and running!","timestamp":"11-12-2025 23:11:08"}
+{"guilds":8,"level":"debug","message":"Posted stats to discordbotlist.com","timestamp":"11-12-2025 23:11:15"}
+{"count":99,"level":"info","message":"Posted slash commands to discordbotlist.com","timestamp":"11-12-2025 23:11:20"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:18:07"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:20:00"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:21:05"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:21:05"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"11-12-2025 23:23:05"}
+{"config":{"host":"127.0.0.1"},"level":"debug","message":"Connecting to MariaDB...","timestamp":"11-12-2025 23:23:05"}
+{"level":"info","message":"Successfully connected to MariaDB!","timestamp":"11-12-2025 23:23:05"}
+{"level":"debug","message":"Ensuring all guilds have a serverDocument.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Setting bots playing activity.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Creating messages_today timers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Resetting voice_data for all guilds.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Setting existing reminders for all users.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Setting existing countdowns in servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Setting existing giveaways for servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Starting MOTD timers for servers.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Posting stats data to Discord Bot listings.","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Reloading all commands.","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Hey boss, we're ready to cause trouble!","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Uptime Kuma push heartbeat not configured, skipping","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Started Prometheus metrics collection interval","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Cloudflare integration initialized","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"BotLists module initialized","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"IndexNow integration initialized","timestamp":"11-12-2025 23:23:06"}
+{"blockedCountries":0,"level":"info","message":"Cloudflare middleware enabled","requireProxy":false,"timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Using MariaDB session store for persistent sessions","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Sentry Express error handler initialized for web error tracking","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: 8ball","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: about","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: afk","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: ai","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: alert","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: anime","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: appstore","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: archive","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: avatar","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: ban","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: calc","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: cat","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: catfact","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: choose","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: convert","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: cool","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: count","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: countdown","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: disable","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: dog","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: dogfact","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: e621","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: emoji","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: emotes","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: enable","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: expand","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: fortune","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: games","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: gif","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: giveaway","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: google","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: help","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: hug","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: image","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: imdb","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: imgur","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: info","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: invite","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: joke","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: kick","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: list","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: lock","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: lottery","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: meme","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: messages","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: modlog","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: mute","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: nick","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: nuke","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: numfact","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: pat","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: ping","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: playstore","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: points","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: pokedex","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: poll","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: prefix","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: profile","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: quiet","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: ranks","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: reason","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: reddit","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: remindme","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: role","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: roleinfo","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: roll","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: room","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: rss","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: rule34","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: safebooru","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: say","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: shorten","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: slap","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: slowmode","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: snipe","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: softban","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: starboard","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: stats","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: streamers","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: strike","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: strikes","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: suggest","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: tag","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: tempban","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: time","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: translate","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: trivia","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: twitter","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: unban","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: unlock","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: unmute","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: urban","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: userinfo","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: weather","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: wiki","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: wolfram","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: xkcd","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: year","timestamp":"11-12-2025 23:23:06"}
+{"level":"debug","message":"Loaded slash command: youtube","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Loaded 99 slash commands","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Registering 99 slash commands...","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Opened http web interface on 0.0.0.0:8080","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"GitHub OAuth strategy initialized for account linking","timestamp":"11-12-2025 23:23:06"}
+{"level":"info","message":"Registered 99 guild slash commands","timestamp":"11-12-2025 23:23:07"}
+{"level":"info","message":"Slash commands initialized!","timestamp":"11-12-2025 23:23:07"}
+{"level":"info","message":"Worker for shard 0 is up and running!","timestamp":"11-12-2025 23:23:11"}
+{"guilds":8,"level":"debug","message":"Posted stats to discordbotlist.com","timestamp":"11-12-2025 23:23:17"}
+{"count":99,"level":"info","message":"Posted slash commands to discordbotlist.com","timestamp":"11-12-2025 23:23:22"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/600375939951493130/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:24:14"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/600375939951493130/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:24:31"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/600375939951493130/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:28:51"}
+{"level":"info","message":"Joined server Dragon Cry","svrid":"1291174257707057214","timestamp":"11-12-2025 23:29:34"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:33:06"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:33:06"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:38:06"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"11-12-2025 23:38:44"}
+{"config":{"host":"127.0.0.1"},"level":"debug","message":"Connecting to MariaDB...","timestamp":"11-12-2025 23:38:44"}
+{"level":"info","message":"Successfully connected to MariaDB!","timestamp":"11-12-2025 23:38:44"}
+{"level":"debug","message":"Ensuring all guilds have a serverDocument.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Setting bots playing activity.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Creating messages_today timers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Resetting voice_data for all guilds.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Setting existing reminders for all users.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Setting existing countdowns in servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Setting existing giveaways for servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Starting MOTD timers for servers.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Posting stats data to Discord Bot listings.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Reloading all commands.","timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"Hey boss, we're ready to explore the depths of Discord.","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Uptime Kuma push heartbeat not configured, skipping","timestamp":"11-12-2025 23:38:45"}
+{"level":"debug","message":"Started Prometheus metrics collection interval","timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"Cloudflare integration initialized","timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"BotLists module initialized","timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"IndexNow integration initialized","timestamp":"11-12-2025 23:38:45"}
+{"blockedCountries":0,"level":"info","message":"Cloudflare middleware enabled","requireProxy":false,"timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"Using MariaDB session store for persistent sessions","timestamp":"11-12-2025 23:38:45"}
+{"level":"info","message":"Sentry Express error handler initialized for web error tracking","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: 8ball","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: about","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: afk","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: ai","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: alert","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: anime","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: appstore","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: archive","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: avatar","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: ban","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: calc","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: cat","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: catfact","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: choose","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: convert","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: cool","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: count","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: countdown","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: disable","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: dog","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: dogfact","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: e621","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: emoji","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: emotes","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: enable","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: expand","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: fortune","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: games","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: gif","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: giveaway","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: google","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: help","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: hug","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: image","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: imdb","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: imgur","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: info","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: invite","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: joke","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: kick","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: list","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: lock","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: lottery","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: meme","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: messages","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: modlog","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: mute","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: nick","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: nuke","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: numfact","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: pat","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: ping","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: playstore","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: points","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: pokedex","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: poll","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: prefix","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: profile","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: quiet","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: ranks","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: reason","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: reddit","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: remindme","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: role","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: roleinfo","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: roll","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: room","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: rss","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: rule34","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: safebooru","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: say","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: shorten","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: slap","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: slowmode","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: snipe","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: softban","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: starboard","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: stats","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: streamers","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: strike","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: strikes","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: suggest","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: tag","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: tempban","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: time","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: translate","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: trivia","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: twitter","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: unban","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: unlock","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: unmute","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: urban","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: userinfo","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: weather","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: wiki","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: wolfram","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: xkcd","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: year","timestamp":"11-12-2025 23:38:46"}
+{"level":"debug","message":"Loaded slash command: youtube","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Loaded 99 slash commands","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Registering 99 slash commands...","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Opened http web interface on 0.0.0.0:8080","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"GitHub OAuth strategy initialized for account linking","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Registered 99 guild slash commands","timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Slash commands initialized!","timestamp":"11-12-2025 23:38:46"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:38:46"}
+{"level":"info","message":"Worker for shard 0 is up and running!","timestamp":"11-12-2025 23:38:49"}
+{"guilds":9,"level":"debug","message":"Posted stats to discordbotlist.com","timestamp":"11-12-2025 23:38:56"}
+{"count":99,"level":"info","message":"Posted slash commands to discordbotlist.com","timestamp":"11-12-2025 23:39:01"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:39:16"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:39:19"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:39:22"}
+{"error":"TypeError: /usr/src/app/Web/views/pages/admin-command-list.ejs:105\n    103| \t\t\t\t\t\t\t\t\t<% for (let command of pageData.commandCategories[category]) { %>\n    104| \t\t\t\t\t\t\t\t\t\t<% if (command.name !== \"stats\") { %>\n >> 105| \t\t\t\t\t\t\t\t\t\t\t<% const commandData = configData.commands[command.name]; commandData.name = command.name; commandData.description = command.description; commandData.category = command.category; %>\n    106| \t\t\t\t\t\t\t\t\t\t\t<%- include('../partials/admin-command-item', { commandData: commandData, pageData: pageData }) %>\n    107| \t\t\t\t\t\t\t\t\t\t<% } %>\n    108| \t\t\t\t\t\t\t\t\t<% } %>\n\nCannot set properties of undefined (setting 'name')\n    at eval (\"/usr/src/app/Web/views/pages/admin-command-list.ejs\":51:80)\n    at admin-command-list (/usr/src/app/node_modules/ejs/lib/ejs.js:703:17)\n    at tryHandleCache (/usr/src/app/node_modules/ejs/lib/ejs.js:274:36)\n    at exports.renderFile [as engine] (/usr/src/app/node_modules/ejs/lib/ejs.js:491:10)\n    at View.render (/usr/src/app/node_modules/express/lib/view.js:135:8)\n    at tryRender (/usr/src/app/node_modules/express/lib/application.js:657:10)\n    at Function.render (/usr/src/app/node_modules/express/lib/application.js:609:3)\n    at ServerResponse.render (/usr/src/app/node_modules/express/lib/response.js:1049:7)\n    at SkynetResponse.render (/usr/src/app/Web/middleware/index.js:91:8)\n    at controllers.list [as controller] (/usr/src/app/Web/controllers/dashboard/commands.js:91:6) {\n  path: '/usr/src/app/Web/views/pages/admin-command-list.ejs'\n}","level":"error","message":"Unhandled error on GET /dashboard/470722987067441152/commands/command-list","params":{},"query":{},"timestamp":"11-12-2025 23:39:26"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:48:45"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:48:45"}
+{"level":"debug","message":"Collecting stats for servers.","timestamp":"11-12-2025 23:53:45"}
+{"level":"debug","message":"Starting streaming RSS timers for servers.","timestamp":"11-12-2025 23:58:45"}
+{"level":"debug","message":"Checking for streamers in servers.","timestamp":"11-12-2025 23:58:45"}

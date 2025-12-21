@@ -82,7 +82,7 @@
 						<div class="level-right">
 							<div class="level-item">
 								<p class="has-text-grey is-size-7">
-									Page <%= pageData.currentPage %> of <%= pageData.numPages || 1 %>
+									Page <%= pageData.currentPageNum %> of <%= pageData.numPages || 1 %>
 								</p>
 							</div>
 						</div>
@@ -106,10 +106,13 @@
 							<span class="tag">Free</span>
 							<% } %>
 						</div>
-						<button class="button is-small is-info" onclick="openEditModal('<%= server._id %>', '<%= server.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>', '<%= server.subscription?.tier_id || '' %>')">
-							<span class="icon"><i class="fa fa-edit"></i></span>
-							<span>Edit</span>
-						</button>
+						<button class="button is-small is-info edit-server-btn" 
+						data-server-id="<%= server._id %>" 
+						data-server-name="<%= server.name %>" 
+						data-tier-id="<%= server.subscription?.tier_id || '' %>">
+						<span class="icon"><i class="fa fa-edit"></i></span>
+						<span>Edit</span>
+					</button>
 					</div>
 					<% }); %>
 
@@ -118,19 +121,19 @@
 					<nav class="pagination is-centered mt-5" role="navigation" aria-label="pagination">
 						<% const queryParam = pageData.query ? `&q=${encodeURIComponent(pageData.query)}` : ''; %>
 						<a class="pagination-previous" 
-						   <% if (pageData.currentPage <= 1) { %>disabled<% } else { %>
-						   href="<%= currentPage %>?page=<%= pageData.currentPage - 1 %><%= queryParam %>"<% } %>>
+						   <% if (pageData.currentPageNum <= 1) { %>disabled<% } else { %>
+						   href="<%= currentPage %>?page=<%= pageData.currentPageNum - 1 %><%= queryParam %>"<% } %>>
 							Previous
 						</a>
 						<a class="pagination-next"
-						   <% if (pageData.currentPage >= pageData.numPages) { %>disabled<% } else { %>
-						   href="<%= currentPage %>?page=<%= pageData.currentPage + 1 %><%= queryParam %>"<% } %>>
+						   <% if (pageData.currentPageNum >= pageData.numPages) { %>disabled<% } else { %>
+						   href="<%= currentPage %>?page=<%= pageData.currentPageNum + 1 %><%= queryParam %>"<% } %>>
 							Next
 						</a>
 						<ul class="pagination-list">
 							<% 
 							const maxVisiblePages = 5;
-							let startPage = Math.max(1, pageData.currentPage - Math.floor(maxVisiblePages / 2));
+							let startPage = Math.max(1, pageData.currentPageNum - Math.floor(maxVisiblePages / 2));
 							let endPage = Math.min(pageData.numPages, startPage + maxVisiblePages - 1);
 							if (endPage - startPage + 1 < maxVisiblePages) {
 								startPage = Math.max(1, endPage - maxVisiblePages + 1);
@@ -142,9 +145,9 @@
 							<% } %>
 							<% for (let i = startPage; i <= endPage; i++) { %>
 							<li>
-								<a class="pagination-link <%= i === pageData.currentPage ? 'is-current' : '' %>" 
+								<a class="pagination-link <%= i === pageData.currentPageNum ? 'is-current' : '' %>" 
 								   href="<%= currentPage %>?page=<%= i %><%= queryParam %>"
-								   <% if (i === pageData.currentPage) { %>aria-current="page"<% } %>>
+								   <% if (i === pageData.currentPageNum) { %>aria-current="page"<% } %>>
 									<%= i %>
 								</a>
 							</li>
@@ -205,7 +208,10 @@
 								<td><%= sub.subscription?.started_at ? new Date(sub.subscription.started_at).toLocaleDateString() : 'N/A' %></td>
 								<td><%= sub.subscription?.expires_at ? new Date(sub.subscription.expires_at).toLocaleDateString() : 'Never' %></td>
 								<td>
-									<button class="button is-small is-info" onclick="openEditModal('<%= sub._id %>', '<%= sub.name.replace(/\\/g, '\\\\').replace(/'/g, "\\'") %>', '<%= sub.subscription?.tier_id || '' %>')">
+									<button class="button is-small is-info edit-server-btn" 
+										data-server-id="<%= sub._id %>" 
+										data-server-name="<%= sub.name %>" 
+										data-tier-id="<%= sub.subscription?.tier_id || '' %>">
 										Edit
 									</button>
 								</td>
@@ -221,11 +227,11 @@
 
 	<!-- Edit Modal -->
 	<div class="modal" id="edit-modal">
-		<div class="modal-background" onclick="closeEditModal()"></div>
+		<div class="modal-background" id="modal-close-bg"></div>
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title">Edit Server Tier</p>
-				<button class="delete" aria-label="close" onclick="closeEditModal()"></button>
+				<button class="delete" aria-label="close" id="modal-close-btn"></button>
 			</header>
 			<form id="edit-form" method="post" action="<%= currentPage %>">
 				<section class="modal-card-body">
@@ -286,8 +292,8 @@
 				</section>
 				<footer class="modal-card-foot">
 					<button type="submit" class="button is-success">Save Changes</button>
-					<button type="button" class="button" onclick="closeEditModal()">Cancel</button>
-					<button type="button" class="button is-danger is-outlined" onclick="cancelSubscription()">Cancel Subscription</button>
+					<button type="button" class="button" id="modal-cancel-btn">Cancel</button>
+					<button type="button" class="button is-danger is-outlined" id="cancel-subscription-btn">Cancel Subscription</button>
 				</footer>
 			</form>
 		</div>
@@ -297,37 +303,65 @@
 	<%- include('../partials/scroll-top-button') %>
 	
 	<script>
-	function openEditModal(serverId, serverName, currentTier) {
-		document.getElementById('edit-server-id').value = serverId;
-		document.getElementById('edit-server-name').value = serverName + ' (' + serverId + ')';
-		document.getElementById('edit-tier').value = currentTier || '';
-		document.getElementById('edit-modal').classList.add('is-active');
-	}
+	(function() {
+		const modal = document.getElementById('edit-modal');
+		const modalCloseBg = document.getElementById('modal-close-bg');
+		const modalCloseBtn = document.getElementById('modal-close-btn');
+		const cancelBtn = document.getElementById('cancel-subscription-btn');
 
-	function closeEditModal() {
-		document.getElementById('edit-modal').classList.remove('is-active');
-	}
-
-	async function cancelSubscription() {
-		const serverId = document.getElementById('edit-server-id').value;
-		if (!confirm('Are you sure you want to cancel this server\'s subscription?')) return;
-
-		try {
-			const response = await fetch('<%= currentPage %>/cancel', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ server_id: serverId }),
-			});
-
-			if (response.ok) {
-				location.reload();
-			} else {
-				alert('Failed to cancel subscription');
-			}
-		} catch (err) {
-			alert('An error occurred');
+		function openEditModal(serverId, serverName, currentTier) {
+			document.getElementById('edit-server-id').value = serverId;
+			document.getElementById('edit-server-name').value = serverName + ' (' + serverId + ')';
+			document.getElementById('edit-tier').value = currentTier || '';
+			modal.classList.add('is-active');
 		}
-	}
+
+		function closeEditModal() {
+			modal.classList.remove('is-active');
+		}
+
+		// Event delegation for edit buttons
+		document.addEventListener('click', function(e) {
+			if (e.target.closest('.edit-server-btn')) {
+				const btn = e.target.closest('.edit-server-btn');
+				const serverId = btn.dataset.serverId;
+				const serverName = btn.dataset.serverName;
+				const tierId = btn.dataset.tierId;
+				openEditModal(serverId, serverName, tierId);
+			}
+		});
+
+		// Modal close handlers
+		if (modalCloseBg) modalCloseBg.addEventListener('click', closeEditModal);
+		if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeEditModal);
+		
+		const modalCancelBtn = document.getElementById('modal-cancel-btn');
+		if (modalCancelBtn) modalCancelBtn.addEventListener('click', closeEditModal);
+
+		// Cancel subscription handler
+		if (cancelBtn) {
+			cancelBtn.addEventListener('click', async function() {
+				const serverId = document.getElementById('edit-server-id').value;
+				if (!confirm('Are you sure you want to cancel this server\'s subscription?')) return;
+
+				try {
+					const response = await fetch('<%= currentPage %>/cancel', {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ server_id: serverId }),
+					});
+
+					if (response.ok) {
+						location.reload();
+					} else {
+						alert('Failed to cancel subscription');
+					}
+				} catch (err) {
+					alert('An error occurred');
+				}
+			});
+		}
+	})();
 	</script>
 </body>
 </html>

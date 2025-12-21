@@ -20,26 +20,45 @@ const EXT_HTTP_RATE_MAX = 30;
 
 const extensionHttpRate = new Map();
 
-const getAllowedExtensionHttpHosts = () => {
-	const raw = process.env.EXTENSION_HTTP_ALLOWLIST || "";
-	const list = raw
-		.split(",")
-		.map(s => s.trim().toLowerCase())
-		.filter(Boolean);
-	if (list.length) return list;
-	return [
-		"api.jikan.moe",
-		"api.mojang.com",
-		"sessionserver.mojang.com",
-		"api.steampowered.com",
-		"steamcommunity.com",
-		"mc-heads.net",
-		"api.mcsrvstat.us",
-		"api.henrikdev.xyz",
-		"fortnite-api.com",
-		"ddragon.leagueoflegends.com",
-		"raw.communitydragon.org",
-	];
+// Default allowlist used when database settings are not available
+const DEFAULT_HTTP_ALLOWLIST = [
+	"api.jikan.moe",
+	"api.mojang.com",
+	"sessionserver.mojang.com",
+	"api.steampowered.com",
+	"steamcommunity.com",
+	"mc-heads.net",
+	"api.mcsrvstat.us",
+	"api.henrikdev.xyz",
+	"fortnite-api.com",
+	"ddragon.leagueoflegends.com",
+	"raw.communitydragon.org",
+];
+
+/**
+ * Get allowed HTTP hosts for extension sandbox
+ * Priority: Environment variable > Database settings > Default list
+ * @returns {Promise<string[]>} Array of allowed hostnames
+ */
+const getAllowedExtensionHttpHosts = async () => {
+	// Environment variable takes highest priority (for quick overrides)
+	const envRaw = process.env.EXTENSION_HTTP_ALLOWLIST || "";
+	const envList = envRaw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+	if (envList.length) return envList;
+
+	// Try to get from database settings
+	try {
+		if (typeof SiteSettings !== "undefined" && SiteSettings?.findOne) {
+			const settings = await SiteSettings.findOne("main");
+			if (settings?.extension_sandbox?.http_allowlist?.length) {
+				return settings.extension_sandbox.http_allowlist.map(h => h.toLowerCase());
+			}
+		}
+	} catch (err) {
+		logger.warn("IsolatedSandbox: Failed to fetch allowlist from database, using defaults", {}, err);
+	}
+
+	return DEFAULT_HTTP_ALLOWLIST;
 };
 
 const isPrivateIp = (ip) => {

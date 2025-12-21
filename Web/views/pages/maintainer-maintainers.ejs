@@ -113,7 +113,7 @@
 									<td>
 										<div class="field is-grouped">
 											<div class="control">
-												<button class="button is-small is-danger" name="maintainer-removed" value="<%= maintainer.id %>" onclick="SkynetData.HUM = true;"<% if (!isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
+												<button class="button is-small is-danger" name="maintainer-removed" value="<%= maintainer.id %>"<% if (!isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
 													<span>Remove</span>
 													<span class="icon is-small">
 														<i class="fa fa-times"></i>
@@ -121,9 +121,7 @@
 												</button>
 											</div>
 											<div class="control">
-												<button class="button is-small <% if (maintainer.isSudoMaintainer) { %>is-warning<% } else { %>is-primary<% } %>" name="maintainer-sudo" value="<%= maintainer.id %>"
-														onclick="SkynetData.HUM = true; return confirm('Are you sure<% if (maintainer.isSudoMaintainer) { %> you want to revoke Sudo Powers from <%= maintainer.name%>?<% } else { %> you want to grant <%= maintainer.name%> Sudo Powers?<% } %>');"<% if(!
-																isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
+												<button class="button is-small sudo-toggle-btn <% if (maintainer.isSudoMaintainer) { %>is-warning<% } else { %>is-primary<% } %>" name="maintainer-sudo" value="<%= maintainer.id %>" data-is-sudo="<%= maintainer.isSudoMaintainer %>" data-name="<%= maintainer.name %>"<% if(!isSudoMaintainer || authUser.id === maintainer.id) { %> disabled<% } %>>
 													<% if (maintainer.isSudoMaintainer) { %>
 														<span>Revoke Sudo</span>
 													<% } else { %>
@@ -173,7 +171,7 @@
 										</div>
 									</div>
 									<div class="control">
-										<a class="button is-primary" onclick="newMaintainer();">
+										<a class="button is-primary" id="new-maintainer-btn">
 											<span class="icon">
 										        <i class="fa fa-plus"></i>
 										    </span>

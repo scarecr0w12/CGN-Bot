@@ -1,0 +1,504 @@
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 00:56:10"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 01:32:30"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 01:32:30"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 01:32:30"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 01:32:30"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 01:32:30"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 01:32:30"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 01:32:31"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 01:32:31"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 01:32:31","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 01:32:32"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 01:32:32"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 02:03:57"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 02:03:57"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 02:03:57"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 02:03:57"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 02:03:57"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 02:03:57"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 02:03:57"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 02:03:57"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 02:03:57","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 02:03:59"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 02:04:00"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 02:23:09"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 02:23:09"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 02:23:09"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 02:23:09"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 02:23:09"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 02:23:09"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 02:23:09"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 02:23:09"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 02:23:09","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 02:23:10"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 02:23:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 02:54:45"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 02:54:45"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 02:54:45"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 02:54:45"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 02:54:45"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 02:54:45"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 02:54:45"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 02:54:45"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 02:54:45","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 02:54:47"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 02:54:47"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:00:34"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:00:34"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:00:34"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:00:34"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:00:34"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:00:34"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:00:34"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:00:34"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:00:34","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:00:36"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:00:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:01:43"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:01:43"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:01:43"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:01:43"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:01:43"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:01:43"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:01:43"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:01:43"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:01:43","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:01:45"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:01:45"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:15:59"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:15:59"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:15:59"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:15:59"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:15:59"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:15:59"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:15:59"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:15:59"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:15:59","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:16:00"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:16:01"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:19:09"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:19:09"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:19:09"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:19:10"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:19:10"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:19:10"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:19:10"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:19:10"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:19:10","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:19:11"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:19:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:22:03"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:22:03"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:22:03"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:22:03"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:22:03"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:22:03"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:22:03"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:22:03"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:22:03","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:22:04"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:22:05"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:23:59"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:23:59"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:23:59"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:23:59"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:23:59"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:23:59"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:24:00"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:24:00"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:24:00","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:24:01"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:24:01"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 03:25:49"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 03:25:49"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 03:25:49"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 03:25:49"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 03:25:49"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 03:25:49"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 03:25:49"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 03:25:49"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 03:25:49","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 03:25:50"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 03:25:51"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 04:18:42"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 04:18:42"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 04:18:42"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 04:18:43"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 04:18:43"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 04:18:43"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 04:18:43"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 04:18:43"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 04:18:43","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 04:18:44"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 04:18:45"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 05:18:43"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 05:27:38"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 05:27:38"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 05:27:38"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 05:27:38"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 05:27:38"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 05:27:38"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 05:27:38"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 05:27:38"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 05:27:38","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 05:27:39"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 05:27:39"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 05:33:23"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 05:33:23"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 05:33:23"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 05:33:23"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 05:33:23"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 05:33:23"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 05:33:24"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 05:33:24"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 05:33:24","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 05:33:25"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 05:33:26"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 05:55:37"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 05:55:37"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 05:55:37"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 05:55:37"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 05:55:37"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 05:55:37"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 05:55:37"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 05:55:37"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 05:55:37","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 05:55:38"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 05:55:39"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:05:40"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:05:40"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:05:40"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 06:05:40"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 06:05:40"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 06:05:40"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 06:05:40"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 06:05:40"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 06:05:40","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 06:05:41"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 06:05:42"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:38"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:38"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:38"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:38"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:39"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:39"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:39"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:39"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:40"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:40"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:40"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:40"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:42"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:42"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:42"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:42"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:43"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:43"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:43"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:43"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:46"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:46"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:46"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:46"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:50"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:50"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:50"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:50"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:37:57"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:37:57"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:37:57"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:37:57"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:38:11"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:38:11"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:38:11"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:38:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:38:37"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:38:37"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:38:37"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:38:37"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:05"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:05"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:05"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:05"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:06"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:06"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:06"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:06"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:07"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:07"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:07"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:07"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:08"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:08"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:08"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:08"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:10"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:10"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:10"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:10"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:13"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:13"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:13"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:13"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:17"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:17"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:17"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:17"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:24"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:24"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:24"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:24"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:39:38"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:39:38"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:39:38"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'name')\n    at new Definition (/usr/src/app/Database/Schema.js:236:31)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverAnalyticsSchema.js:8:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 06:39:38"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:40:05"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:40:05"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:40:05"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 06:40:05"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 06:40:05"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 06:40:05"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 06:40:05"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 06:40:05"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 06:40:05","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 06:40:10"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 06:40:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:40:32"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:40:32"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:40:32"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 06:40:32"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 06:40:32"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 06:40:32"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 06:40:32"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 06:40:32"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 06:40:32","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 06:40:33"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 06:40:33"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:41:32"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:41:32"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:41:32"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 06:41:32"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 06:41:32"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 06:41:32"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 06:41:33"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 06:41:33"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 06:41:33","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 06:41:34"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 06:41:34"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 06:47:05"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 06:47:05"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 06:47:05"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 06:47:05"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 06:47:05"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 06:47:05"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 06:47:05"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 06:47:06"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 06:47:06","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 06:47:07"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 06:47:07"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 07:12:30"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 07:12:30"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 07:12:30"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 07:12:30"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 07:12:30"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 07:12:30"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 07:12:31"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 07:12:31"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 07:12:31","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 07:12:32"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 07:12:32"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 07:13:56"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 07:13:56"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 07:13:56"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 07:13:57"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 07:13:57"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 07:13:57"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 07:13:57"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 07:13:57"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 07:13:57","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 07:13:58"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 07:13:59"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 07:15:13"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 07:15:13"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 07:15:13"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 07:15:13"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 07:15:13"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 07:15:13"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 07:15:13"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 07:15:13"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 07:15:13","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 07:15:14"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 07:15:15"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 07:29:11"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 07:29:11"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 07:29:11"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 07:29:11"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 07:29:11"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 07:29:11"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 07:29:11"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 07:29:11"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 07:29:11","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 07:29:13"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 07:29:13"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 08:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 09:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 10:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 11:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 12:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 13:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 14:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 15:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 16:29:11"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 17:29:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:33"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:33"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:33"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:33"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:34"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:34"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:34"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:34"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:35"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:35"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:35"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:35"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:36"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:36"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:36"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:38"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:38"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:38"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:38"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:41"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:41"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:41"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:41"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:45"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:45"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:45"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:45"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:19:52"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:19:52"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:19:52"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:19:52"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:20:06"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:20:06"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:20:06"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:20:06"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:20:32"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:20:32"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:20:32"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:20:32"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:21:24"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:21:24"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:21:24"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:21:25"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:22:25"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:22:25"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:22:25"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/gallerySchema.js:7:18)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"14-12-2025 18:22:26"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:23:08"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:23:08"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:23:08"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 18:23:08"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 18:23:08"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 18:23:08"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 18:23:09"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 18:23:09"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 18:23:09","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 18:23:10"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 18:23:11"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:55:34"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:55:34"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:55:34"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 18:55:34"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 18:55:34"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 18:55:34"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 18:55:34"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 18:55:34"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 18:55:34","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 18:55:35"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 18:55:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 18:56:50"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 18:56:50"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 18:56:50"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 18:56:50"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 18:56:50"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 18:56:50"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 18:56:51"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 18:56:51"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 18:56:51","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 18:56:52"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 18:56:52"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 19:01:45"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 19:01:45"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 19:01:45"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 19:01:45"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 19:01:45"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 19:01:45"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 19:01:46"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 19:01:46"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 19:01:46","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 19:01:47"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 19:01:47"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 19:02:30"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 19:02:30"}
+{"level":"debug","message":"Redis connecting...","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Redis client ready","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"14-12-2025 19:02:30"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 19:02:30"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 19:02:30"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 19:02:30","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 19:02:37"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 19:02:37"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 19:19:58"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 19:19:58"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 19:19:58"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 19:19:58"}
+{"level":"debug","message":"Redis connecting...","timestamp":"14-12-2025 19:19:58"}
+{"level":"info","message":"Redis client ready","timestamp":"14-12-2025 19:19:58"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"14-12-2025 19:19:58"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 19:19:58"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 19:19:58"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 19:19:59"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 19:19:59"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 19:19:59","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 19:20:00"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 19:20:00"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 19:21:50"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 19:21:50"}
+{"level":"debug","message":"Redis connecting...","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Redis client ready","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"14-12-2025 19:21:50"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 19:21:50"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 19:21:50"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 19:21:51","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 19:21:51"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 19:21:52"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.1.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"14-12-2025 19:23:33"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"14-12-2025 19:23:33"}
+{"level":"debug","message":"Redis connecting...","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Redis client ready","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"14-12-2025 19:23:33"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"14-12-2025 19:23:33"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"14-12-2025 19:23:33"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"14-12-2025 19:23:33","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"14-12-2025 19:23:34"}
+{"level":"info","message":"The best Discord Bot, version 1.1.0, is now ready!","timestamp":"14-12-2025 19:23:35"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 20:23:33"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 21:23:33"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 22:23:33"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"14-12-2025 23:23:33"}

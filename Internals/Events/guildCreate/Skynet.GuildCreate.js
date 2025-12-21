@@ -2,6 +2,7 @@ const BaseEvent = require("../BaseEvent.js");
 const { NewServer: getNewServerData, PostShardedData } = require("../../../Modules/");
 const ConfigManager = require("../../../Modules/ConfigManager");
 const ReferralManager = require("../../../Modules/ReferralManager");
+const Onboarding = require("./Skynet.Onboarding.js");
 // const { LoggingLevels } = require("../../Constants"); // Disabled: server join messages removed
 
 class GuildCreate extends BaseEvent {
@@ -32,11 +33,13 @@ class GuildCreate extends BaseEvent {
 					// Process referral if a pending referral code exists for this guild
 					// Check for referral code stored in Redis or pending referrals
 					await this.processReferral(guild);
+
+					// Send onboarding DMs to server owner and top admin role
+					const onboarding = new Onboarding(this.client);
+					await onboarding.handle(guild, true);
 				} catch (err) {
 					logger.warn(`Failed to create a new server document for new server >.>`, { svrid: guild.id }, err);
 				}
-				// Disabled: Don't send message to server owners/moderators on join
-				// this.client.logMessage(await Servers.findOne(guild.id), LoggingLevels.INFO, "I've been added to your server! (^-^)");
 			}
 		}
 	}

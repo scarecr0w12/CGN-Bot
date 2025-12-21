@@ -1,0 +1,949 @@
+{"level":"debug","message":"Fetching traffic data.","timestamp":"16-12-2025 00:08:14"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 00:48:11"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 00:48:11"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 00:48:11"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 00:48:11"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 00:48:11"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 00:48:11"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 00:48:11","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 00:48:14"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 00:48:15"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 00:49:34"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 00:49:34"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 00:49:34"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 00:49:34"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 00:49:34"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 00:49:34"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 00:49:34"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 00:49:34"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 00:49:34"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 00:49:35"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 00:49:35"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 00:49:35"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 00:49:35","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 00:49:36"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 00:49:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 00:51:41"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 00:51:41"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 00:51:41"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 00:51:41"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 00:51:41"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 00:51:41"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 00:51:41","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 00:51:42"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 00:51:43"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 00:57:39"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 00:57:39"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 00:57:39"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 00:57:39"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 00:57:39"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 00:57:39"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 00:57:39","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 00:57:40"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 00:57:41"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 01:01:49"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 01:01:49"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 01:01:49"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 01:01:49"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 01:01:49"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 01:01:49"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 01:01:49"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 01:01:49"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 01:01:49"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 01:01:50"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 01:01:50"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 01:01:50"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 01:01:50","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 01:01:51"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 01:01:51"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 01:04:23"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 01:04:23"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 01:04:23"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 01:04:23"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 01:04:23"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 01:04:23"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 01:04:23","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 01:04:24"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 01:04:24"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 01:16:21"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 01:16:21"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 01:16:21"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 01:16:21"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 01:16:21"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 01:16:21"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 01:16:21","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 01:16:22"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 01:16:23"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 01:20:19"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 01:20:19"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 01:20:19"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 01:20:19"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 01:20:19"}
+{"level":"warn","message":"Skynet version 1.6.0 was not found on branch production, you may need to reinstall Skynet in order to enable Versioning.","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 01:20:19"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 01:20:19","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 01:20:20"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 01:20:20"}
+{"level":"debug","message":"Fetching traffic data.","timestamp":"16-12-2025 02:20:19"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:05:00"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 03:05:00"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 03:05:00"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 03:05:00"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 03:05:00"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 03:05:00","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 03:05:01"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 03:05:02"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:36"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:36"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:36"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:37"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:37"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:37"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:37"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:39"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:39"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:39"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:39"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:40"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:40"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:40"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:40"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:42"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:42"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:42"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:42"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:44"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:44"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:44"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:44"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:48"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:48"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:48"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:48"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 03:59:56"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 03:59:56"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 03:59:56"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 03:59:56"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:00:09"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:00:09"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:00:09"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:00:09"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:00:36"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:00:36"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:00:36"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:00:36"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:01:28"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:01:28"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:01:28"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:01:28"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:02:29"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:02:29"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:02:29"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:02:29"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:03:29"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:03:29"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:03:29"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:03:30"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:04:30"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:04:30"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:04:30"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:04:30"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:05:31"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:05:31"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:05:31"}
+{"config":{"host":"10.10.20.105"},"error":"TypeError: Cannot read properties of undefined (reading 'toLowerCase')\n    at new Definition (/usr/src/app/Database/Schema.js:253:34)\n    at /usr/src/app/Database/Schema.js:355:31\n    at Array.forEach (<anonymous>)\n    at new Schema (/usr/src/app/Database/Schema.js:353:29)\n    at Object.<anonymous> (/usr/src/app/Database/Schemas/serverConfigSchema.js:537:19)\n    at Module._compile (node:internal/modules/cjs/loader:1469:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1548:10)\n    at Module.load (node:internal/modules/cjs/loader:1288:32)\n    at Module._load (node:internal/modules/cjs/loader:1104:12)\n    at Module.require (node:internal/modules/cjs/loader:1311:19)","level":"error","message":"An error occurred while connecting to MariaDB! x( Is the database online?","timestamp":"16-12-2025 04:05:31"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:06:32"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 04:06:32"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 04:06:32"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 04:06:32"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 04:06:32"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 04:06:32","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 04:06:34"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 04:06:34"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:07:07"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 04:07:07"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 04:07:07"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 04:07:07"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 04:07:07"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 04:07:07","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 04:07:08"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 04:07:09"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:13:43"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 04:13:43"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 04:13:43"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 04:13:43"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 04:13:43"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 04:13:43","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 04:13:44"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 04:13:45"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:18:53"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:18:53"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:18:53"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 04:18:54"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 04:18:54"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 04:18:54"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 04:18:54"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 04:18:54"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 04:18:54"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 04:18:54"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 04:18:54"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 04:18:54","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 04:18:55"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 04:18:55"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 04:24:16"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 04:24:16"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 04:24:16"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 04:24:16"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 04:24:16"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 04:24:16"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 04:24:16"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 04:24:16"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 04:24:16"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 04:24:17"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 04:24:17"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 04:24:17","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 04:24:18"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 04:24:18"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:04:53"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:04:53"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:04:53"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:04:54"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:04:54"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:04:54"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:04:54"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:04:54"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:04:54"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:04:54"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:04:54"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:04:54","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:04:55"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:04:56"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:24:44"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:24:44"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:24:44"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:24:45"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:24:45"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:24:45"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:24:45"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:24:45"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:24:45"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:24:45"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:24:45"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:24:45","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:24:46"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:24:46"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:27:27"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:27:27"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:27:27"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:27:27"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:27:27"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:27:27"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:27:27"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:27:27"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:27:27"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:27:28"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:27:28"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:27:28","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:27:29"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:27:29"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:30:14"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:30:14"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:30:14"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:30:14"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:30:14"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:30:14"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:30:14"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:30:14"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:30:14"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:30:15"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:30:15"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:30:15","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:30:16"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:30:16"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:31:58"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:31:58"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:31:58"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:31:58"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:31:58"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:31:58","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:31:59"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:32:00"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 05:36:45"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 05:36:45"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 05:36:45"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 05:36:45"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 05:36:45"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 05:36:45"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 05:36:45"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 05:36:45"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 05:36:45"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 05:36:46"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 05:36:46"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 05:36:46","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 05:36:47"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 05:36:47"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 06:33:13"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 06:33:13"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 06:33:13"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 06:33:13"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 06:33:13"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 06:33:14"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 06:33:14","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 06:33:15"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 06:33:15"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:11:20"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:11:20"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:11:20"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:11:21"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:11:21"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:11:21"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:11:21"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:11:21"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:11:21"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:11:21"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:11:21"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:11:21","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:11:22"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:11:23"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:18:25"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:18:25"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:18:25"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:18:25"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:18:25"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:18:25"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:18:25"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:18:25"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:18:25"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:18:26"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:18:26"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:18:26","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:18:27"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:18:27"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:19:47"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:19:47"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:19:47"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:19:48"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:19:48"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:19:48"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:19:48"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:19:48"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:19:48"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:19:48"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:19:48"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:19:48","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:19:49"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:19:49"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:24:02"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:24:02"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:24:02"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:24:02"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:24:02"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:24:02","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:24:03"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:24:04"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:28:02"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:28:02"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:28:02"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:28:02"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:28:02"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:28:03"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:28:03","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:28:04"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:28:04"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:30:43"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:30:43"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:30:43"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:30:43"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:30:43"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:30:44"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:30:44","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:30:45"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:30:45"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:32:15"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:32:15"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:32:15"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:32:15"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:32:15"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:32:15"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:32:15"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:32:15"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:32:15"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:32:16"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:32:16"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:32:16","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:32:17"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:32:17"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:32:26"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:32:26"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:32:26"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:32:26"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:32:26"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:32:26","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:32:28"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:32:28"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:33:47"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:33:47"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:33:47"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:33:47"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:33:47"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:33:47","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:33:48"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:33:49"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:35:33"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:35:33"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:35:33"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:35:33"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:35:33"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:35:34"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:35:34","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:35:35"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:35:35"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:35:37"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:35:37"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:35:37"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:35:37"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:35:37"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:35:37"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:35:37"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:35:37"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:35:37"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:35:38"}
+{"error":"Response { status: 429, statusText: 'Too Many Requests', headers: Headers { date: 'Tue, 16 Dec 2025 07:35:38 GMT', 'content-type': 'application/json', 'content-length': '77', connection: 'keep-alive', 'cf-ray': '9aec814eea49e811-ORD', 'retry-after': '1', 'x-ratelimit-scope': 'user', 'set-cookie': '__dcfduid=d0f1abaada5111f09549039d283882dc; Expires=Sun, 15-Dec-2030 07:35:38 GMT; Max-Age=157680000; Secure; HttpOnly; Path=/; SameSite=Lax, __sdcfduid=d0f1abaada5111f09549039d283882dceecd2af5f91457f16df16fe21c59273ee313df97b6b1db8ec36605101990c495; Expires=Sun, 15-Dec-2030 07:35:38 GMT; Max-Age=157680000; Secure; HttpOnly; Path=/; SameSite=Lax, _cfuvid=NBI5IGNfx7xiA1ygLSnIqMnbjqxycaS3f1cFIvqbnI0-1765870538138-0.0.1.1-604800000; path=/; domain=.discord.com; HttpOnly; Secure; SameSite=None', 'strict-transport-security': 'max-age=31536000; includeSubDomains; preload', 'x-ratelimit-bucket': '41f9cd5d28af77da04563bcb1d67fdfd', 'x-ratelimit-limit': '2', 'x-ratelimit-remaining': '0', 'x-ratelimit-reset': '1765870539.050', 'x-ratelimit-reset-after': '0.932', 'x-discord-features': 'bots', via: '1.1 google', 'alt-svc': 'h3=\":443\"; ma=86400', 'cf-cache-status': 'BYPASS', 'report-to': '{\"endpoints\":[{\"url\":\"https:\\\\/\\\\/a.nel.cloudflare.com\\\\/report\\\\/v4?s=cRieyEbEZb91w1hKSbdP4qiWOh06zYj%2BB%2BK1peubWyfIGlyoICmsH0MgKAVJCndCDBaJZo9WA8%2B39lt%2FXzUoaKG8Emnwly04Bps8pQQpcQG5%2BH89BkKQTEvAlsZt\"}],\"group\":\"cf-nel\",\"max_age\":604800}', nel: '{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}', vary: 'Accept-Encoding', 'x-content-type-options': 'nosniff', 'reporting-endpoints': 'csp-sentry=\"https://o64374.ingest.sentry.io/api/5441894/security/?sentry_key=8fbbce30bf5244ec9429546beef21870&sentry_environment=stable\"', 'content-security-policy': \"frame-ancestors 'none'; default-src https://o64374.ingest.sentry.io; report-to csp-sentry; report-uri https://o64374.ingest.sentry.io/api/5441894/security/?sentry_key=8fbbce30bf5244ec9429546beef21870&sentry_environment=stable\", server: 'cloudflare' }, body: ReadableStream { locked: false, state: 'readable', supportsBYOB: true }, bodyUsed: false, ok: false, redirected: false, type: 'basic', url: 'https://discord.com/api/v10/gateway/bot' }","level":"error","message":"Unhandled promise rejection in master process. Shards will continue operating.\n","promise":"[object Promise]","timestamp":"16-12-2025 07:35:38"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:36:19"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:36:19"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:36:19"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:36:20"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:36:20"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:36:20"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:36:20"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:36:20"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:36:20"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:36:20"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:36:20"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:36:20","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:36:21"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:36:21"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:38:05"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:38:05"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:38:05"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:38:05"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:38:05"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:38:05","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:38:06"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:38:06"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:39:42"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:39:42"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:39:42"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:39:42"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:39:42"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:39:43"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:39:43","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:39:44"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:39:44"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:43:58"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:43:58"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:43:58"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:43:58"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:43:58"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:43:59"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:43:59","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:44:00"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:44:00"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:49:41"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:49:41"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:49:41"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:49:41"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:49:41"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:49:41","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:49:42"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:49:43"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 07:54:29"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 07:54:29"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 07:54:29"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 07:54:29"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 07:54:29"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 07:54:29"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 07:54:29"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 07:54:29"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 07:54:29"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 07:54:30"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 07:54:30"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 07:54:30","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 07:54:31"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 07:54:31"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:02:43"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:02:43"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:02:43"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:02:43"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:02:43"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:02:43"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:02:43"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:02:43"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:02:43"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:02:44"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:02:44"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:02:44","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:02:45"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:02:45"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:14:38"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:14:38"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:14:38"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:14:38"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:14:38"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:14:38","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:14:40"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:14:40"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:17:46"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:17:46"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:17:46"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:17:46"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:17:46"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:17:46","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:17:47"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:17:48"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:24:21"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:24:21"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:24:21"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:24:21"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:24:21"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:24:21","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:24:22"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:24:23"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:26:31"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:26:31"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:26:31"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:26:31"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:26:31"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:26:31","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:26:33"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:26:33"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:29:39"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:29:39"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:29:39"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:29:39"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:29:39"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:29:39","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:29:40"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:29:41"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:34:02"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:34:02"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:34:02"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:34:02"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:34:02"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:34:02","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:34:03"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:34:04"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:36:19"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:36:19"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:36:19"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:36:19"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:36:19"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:36:19"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:36:19"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:36:19"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:36:19"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:36:20"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:36:20"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:36:20","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:36:21"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:36:21"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 08:40:37"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 08:40:37"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 08:40:37"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 08:40:37"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 08:40:37"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 08:40:37","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 08:40:39"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 08:40:39"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 09:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 10:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 11:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 12:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 13:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 14:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 15:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 16:40:37"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 17:40:37"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:03:30"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:03:30"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:03:30"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:03:30"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:03:30"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:03:31"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:03:31","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:03:32"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:03:33"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:05:01"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:05:01"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:05:01"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:05:01"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:05:01"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:05:01"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:05:01"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:05:01"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:05:01"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:05:02"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:05:02"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:05:02","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:05:03"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:05:04"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:21:25"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:21:25"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:21:25"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:21:25"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:21:25"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:21:26"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:21:26","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:21:27"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:21:28"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:23:14"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:23:14"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:23:14"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:23:14"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:23:14"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:23:14","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:23:15"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:23:16"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:24:52"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:24:52"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:24:52"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:24:52"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:24:52"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:24:52","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:24:53"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:24:54"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:25:04"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:25:04"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:25:04"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:25:05"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:25:05"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:25:05"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:25:05"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:25:05"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:25:05"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:25:05"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:25:05"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:25:05","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:25:06"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:25:06"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:25:47"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:25:47"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:25:47"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:25:47"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:25:47"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:25:48"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:25:48","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:25:49"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:25:49"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:27:52"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:27:52"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:27:52"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:27:52"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:27:52"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:27:52"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:27:52"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:27:52"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:27:52"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:27:53"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:27:53"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:27:53","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:27:54"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:27:55"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:29:15"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:29:15"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:29:15"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:29:15"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:29:15"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:29:15","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:29:16"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:29:17"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:32:16"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:32:16"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:32:16"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:32:16"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:32:16"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:32:16"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:32:16"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:32:16"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:32:16"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:32:17"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:32:17"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:32:17","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:32:18"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:32:19"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:45:02"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:45:02"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:45:02"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:45:02"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:45:02"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:45:02","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:45:04"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:45:04"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:47:19"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:47:19"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:47:19"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:47:19"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:47:19"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:47:20"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:47:20","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:47:21"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:47:21"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:48:16"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:48:16"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:48:16"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:48:16"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:48:16"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:48:16"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:48:16"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:48:16"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:48:16"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:48:17"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:48:17"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:48:17","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:48:18"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:48:18"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 18:50:01"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 18:50:01"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 18:50:01"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 18:50:01"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 18:50:01"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 18:50:01","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 18:50:03"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 18:50:03"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 19:50:01"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 20:50:01"}
+{"config":{"dsn":"https://0b7841092ddef2d463e8211da0772fc9@sentry.thecorehosting.net/3","environment":"production","release":"Skynet.production.1.6.0","tracesSampleRate":1},"level":"info","message":"Connecting this Logger instance with Sentry.","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Logging to /usr/src/app/logs/master-skynetbot.log.","timestamp":"16-12-2025 20:51:21"}
+{"database":"skynet","host":"10.10.20.105","level":"info","message":"Connecting to MariaDB...","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Connected to MariaDB successfully.","timestamp":"16-12-2025 20:51:21"}
+{"level":"debug","message":"Redis connecting...","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Redis client ready","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Redis client initialized successfully.","timestamp":"16-12-2025 20:51:21"}
+{"level":"warn","message":"You haven't supplied some auth tokens, make sure to fill in auth.js to make sure all Skynet features function!","timestamp":"16-12-2025 20:51:21"}
+{"level":"warn","message":"You are running SkynetBot on a non-standard port, if a reverse-proxy such as Nginx is being used, restart SkynetBot with the '--proxy' argument.","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Getting the recommended shards from Discord...","timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"SkynetBot will spawn 1 shard(s) as recommended by Discord.","shards":1,"timestamp":"16-12-2025 20:51:21"}
+{"level":"info","message":"Worker 1 launched.","timestamp":"16-12-2025 20:51:21","worker":1}
+{"level":"info","message":"All shards connected to Discord.","timestamp":"16-12-2025 20:51:22"}
+{"level":"info","message":"The best Discord Bot, version 1.6.0, is now ready!","timestamp":"16-12-2025 20:51:23"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 21:51:21"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 22:51:21"}
+{"level":"debug","message":"Fetching traffic data from all shards.","timestamp":"16-12-2025 23:51:21"}

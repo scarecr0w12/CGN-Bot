@@ -51,6 +51,8 @@ class SkynetResponse {
 			// Matomo Analytics - direct integration
 			matomoUrl: process.env.MATOMO_URL || "",
 			matomoSiteId: process.env.MATOMO_SITE_ID || "",
+			// CSP nonce for inline scripts
+			nonce: res.locals.nonce || "",
 		};
 
 		this.serverData = {

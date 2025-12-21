@@ -15,6 +15,7 @@ const botListCors = (req, res, next) => {
 	const allowedOrigins = [
 		"https://discordbotlist.com",
 		"https://top.gg",
+		"https://topbotlist.net",
 	];
 	const origin = req.headers.origin;
 	if (allowedOrigins.includes(origin)) {
@@ -44,4 +45,6 @@ module.exports = router => {
 	router.post("/webhooks/topgg", botListCors, controllers.topgg);
 	router.options("/webhooks/discordbotlist", botListCors, (req, res) => res.sendStatus(204));
 	router.post("/webhooks/discordbotlist", botListCors, controllers.discordbotlist);
+	router.options("/webhooks/topbotlist", botListCors, (req, res) => res.sendStatus(204));
+	router.post("/webhooks/topbotlist", botListCors, controllers.topbotlist);
 };

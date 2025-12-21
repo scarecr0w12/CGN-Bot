@@ -726,6 +726,13 @@ controllers.options.botLists.post = async (req, res) => {
 			api_token: req.body.botsondiscord_api_token || "",
 			auto_post_stats: req.body.botsondiscord_auto_post !== "off",
 		},
+		topbotlist: {
+			isEnabled: req.body.topbotlist_enabled === "on",
+			api_token: req.body.topbotlist_api_token || "",
+			webhook_secret: req.body.topbotlist_webhook_secret || "",
+			auto_post_stats: req.body.topbotlist_auto_post !== "off",
+			sync_commands: req.body.topbotlist_sync_commands === "on",
+		},
 	};
 
 	// Build complete vote_rewards object
@@ -1123,7 +1130,7 @@ controllers.membership.servers = async (req, { res }) => {
 		query,
 		servers,
 		totalServers,
-		currentPage,
+		currentPageNum: currentPage,
 		numPages,
 		perPage,
 		recentSubscriptions,
