@@ -408,6 +408,22 @@ class SlashCommandHandler {
 				});
 			}
 
+			// Check bot permissions and role hierarchy
+			const { PermissionFlagsBits } = require("discord.js");
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to verify you.",
+					ephemeral: true,
+				});
+			}
+
+			if (interaction.guild.members.me.roles.highest.position <= role.position) {
+				return interaction.reply({
+					content: "❌ I cannot assign the verification role - it's higher than or equal to my highest role.",
+					ephemeral: true,
+				});
+			}
+
 			if (interaction.member.roles.cache.has(role.id)) {
 				return interaction.reply({
 					content: "✅ You are already verified!",
@@ -476,6 +492,22 @@ class SlashCommandHandler {
 			if (!role) {
 				return interaction.reply({
 					content: "This role no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			// Check bot permissions and role hierarchy
+			const { PermissionFlagsBits } = require("discord.js");
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to manage roles.",
+					ephemeral: true,
+				});
+			}
+
+			if (interaction.guild.members.me.roles.highest.position <= role.position) {
+				return interaction.reply({
+					content: "❌ I cannot manage this role - it's higher than or equal to my highest role.",
 					ephemeral: true,
 				});
 			}
@@ -575,6 +607,15 @@ class SlashCommandHandler {
 			if (!panel) {
 				return interaction.reply({
 					content: "This role panel no longer exists.",
+					ephemeral: true,
+				});
+			}
+
+			// Check bot permissions
+			const { PermissionFlagsBits } = require("discord.js");
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to manage roles.",
 					ephemeral: true,
 				});
 			}
@@ -806,6 +847,22 @@ class SlashCommandHandler {
 				});
 			}
 
+			// Check bot permissions and role hierarchy
+			const { PermissionFlagsBits } = require("discord.js");
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to give you access.",
+					ephemeral: true,
+				});
+			}
+
+			if (interaction.guild.members.me.roles.highest.position <= role.position) {
+				return interaction.reply({
+					content: "❌ I cannot assign this role - it's higher than or equal to my highest role.",
+					ephemeral: true,
+				});
+			}
+
 			if (interaction.member.roles.cache.has(roleId)) {
 				return interaction.reply({
 					content: "✅ You have already accepted the rules!",
@@ -834,6 +891,15 @@ class SlashCommandHandler {
 	 */
 	async handleOnboardRoles (interaction) {
 		try {
+			// Check bot permissions
+			const { PermissionFlagsBits } = require("discord.js");
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to manage roles.",
+					ephemeral: true,
+				});
+			}
+
 			const selectedRoles = interaction.values;
 			const member = interaction.member;
 

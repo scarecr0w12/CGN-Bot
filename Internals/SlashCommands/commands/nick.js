@@ -22,11 +22,27 @@ module.exports = {
 		const user = interaction.options.getUser("user");
 		const nickname = interaction.options.getString("nickname");
 
+		// Check bot permissions
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageNicknames)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Nicknames** permission to change nicknames!",
+				ephemeral: true,
+			});
+		}
+
 		const member = await interaction.guild.members.fetch(user.id).catch(() => null);
 
 		if (!member) {
 			return interaction.reply({
 				content: "Could not find that user in this server!",
+				ephemeral: true,
+			});
+		}
+
+		// Check if bot can manage this member (role hierarchy)
+		if (!member.manageable) {
+			return interaction.reply({
+				content: "❌ I cannot manage this user. They may have a higher role than me.",
 				ephemeral: true,
 			});
 		}

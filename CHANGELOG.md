@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2025-12-21
+
+### Fixed
+
+#### Permission System Audit
+
+- **Channel Lock/Unlock Commands** - Fixed incorrect permission check (`ManageChannels` → `ManageRoles`)
+  - `Commands/Public/lock.js` - Now correctly requires `ManageRoles` for permission overwrites
+  - `Commands/Public/unlock.js` - Now correctly requires `ManageRoles` for permission overwrites
+  - `Internals/SlashCommands/commands/channel.js` - Added bot permission check before operations
+
+- **Server Lockdown** - Added `ManageRoles` permission check to `/server lockdown` commands
+  - `Internals/SlashCommands/commands/server.js` - Pre-validates bot permissions
+
+- **Voice/Room Management** - Added permission checks to all voice channel management operations
+  - `Internals/SlashCommands/commands/room.js` - Lock/unlock now check `ManageRoles`
+  - `Internals/SlashCommands/commands/voice.js` - Added checks to: lockChannel, inviteUser, kickUser, transferOwnership, claimChannel
+
+- **Role Management** - Added proper permission and hierarchy checks
+  - `Internals/SlashCommands/commands/nick.js` - Added `ManageNicknames` + member manageable check
+  - `Internals/SlashCommands/commands/role.js` - Added `ManageRoles` + role hierarchy validation
+  - `Commands/Public/role.js` - Added `ManageRoles` + role hierarchy validation
+
+- **Verification System** - Added permission checks to manual verify/unverify
+  - `Internals/SlashCommands/commands/verify.js` - manualVerify and unverify now validate bot permissions
+
+- **SlashCommandHandler** - Added permission checks to all role panel handlers
+  - Verification button handler - Checks `ManageRoles` + role hierarchy
+  - Role panel button handler - Checks `ManageRoles` + role hierarchy
+  - Role panel select handler - Checks `ManageRoles`
+  - Rules accept handler - Checks `ManageRoles` + role hierarchy
+  - Onboarding roles handler - Checks `ManageRoles`
+
+### Technical Notes
+
+- `permissionOverwrites.edit()` requires `ManageRoles` permission, not `ManageChannels`
+- All role management operations now validate bot's role position is higher than target role
+- Pre-validation provides clearer error messages vs try/catch fallbacks
+
+---
+
 ## [1.7.0] - 2025-12-19
 
 ### Added

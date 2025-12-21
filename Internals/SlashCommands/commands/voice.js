@@ -244,6 +244,14 @@ module.exports = {
 	},
 
 	async lockChannel (interaction, serverDocument, lock) {
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
@@ -264,6 +272,14 @@ module.exports = {
 	},
 
 	async inviteUser (interaction, serverDocument) {
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
@@ -301,6 +317,14 @@ module.exports = {
 	},
 
 	async kickUser (interaction, serverDocument) {
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
@@ -333,6 +357,14 @@ module.exports = {
 	},
 
 	async transferOwnership (interaction, serverDocument) {
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
@@ -418,6 +450,14 @@ module.exports = {
 	},
 
 	async claimChannel (interaction, serverDocument) {
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		await interaction.deferReply({ ephemeral: true });
 
 		const voiceChannel = interaction.member.voice?.channel;

@@ -120,6 +120,14 @@ module.exports = {
 					});
 				}
 
+				// Check bot permissions - ManageRoles is required to edit permission overwrites
+				if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+					return interaction.reply({
+						content: "❌ I need the **Manage Roles** permission to lock rooms!",
+						ephemeral: true,
+					});
+				}
+
 				try {
 					const channel = await interaction.guild.channels.fetch(userRoom.channel_id);
 					await channel.permissionOverwrites.edit(interaction.guild.id, { Connect: false });
@@ -140,6 +148,14 @@ module.exports = {
 				if (!userRoom) {
 					return interaction.reply({
 						content: "You don't have a temporary room!",
+						ephemeral: true,
+					});
+				}
+
+				// Check bot permissions - ManageRoles is required to edit permission overwrites
+				if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+					return interaction.reply({
+						content: "❌ I need the **Manage Roles** permission to unlock rooms!",
 						ephemeral: true,
 					});
 				}

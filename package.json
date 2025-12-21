@@ -1,6 +1,6 @@
 {
   "name": "skynetbot",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Still the best Discord Bot!",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Scarecr0w12",
@@ -15,7 +15,9 @@
   "scripts": {
     "start": "node master.js",
     "windows-install": "npm install -g --production windows-build-tools && npm install --production",
-    "test": "npm run lint",
+    "test": "npm run lint && npm run test:unit",
+    "test:unit": "jest tests/ --passWithNoTests",
+    "test:watch": "jest tests/ --watch",
     "lint": "eslint ."
   },
   "dependencies": {

@@ -338,6 +338,11 @@ module.exports = {
 			throw new Error("Verification system is not set up.");
 		}
 
+		// Check bot permissions
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			throw new Error("I need the **Manage Roles** permission to verify members.");
+		}
+
 		const user = interaction.options.getUser("user");
 		const member = await interaction.guild.members.fetch(user.id).catch(() => null);
 
@@ -348,6 +353,11 @@ module.exports = {
 		const role = interaction.guild.roles.cache.get(config.role_id);
 		if (!role) {
 			throw new Error("Verification role not found.");
+		}
+
+		// Check role hierarchy
+		if (interaction.guild.members.me.roles.highest.position <= role.position) {
+			throw new Error("I cannot assign the verification role. It's higher than or equal to my highest role.");
 		}
 
 		if (member.roles.cache.has(role.id)) {
@@ -373,6 +383,11 @@ module.exports = {
 			throw new Error("Verification system is not set up.");
 		}
 
+		// Check bot permissions
+		if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			throw new Error("I need the **Manage Roles** permission to unverify members.");
+		}
+
 		const user = interaction.options.getUser("user");
 		const member = await interaction.guild.members.fetch(user.id).catch(() => null);
 
@@ -383,6 +398,11 @@ module.exports = {
 		const role = interaction.guild.roles.cache.get(config.role_id);
 		if (!role) {
 			throw new Error("Verification role not found.");
+		}
+
+		// Check role hierarchy
+		if (interaction.guild.members.me.roles.highest.position <= role.position) {
+			throw new Error("I cannot remove the verification role. It's higher than or equal to my highest role.");
 		}
 
 		if (!member.roles.cache.has(role.id)) {

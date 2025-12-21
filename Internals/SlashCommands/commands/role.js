@@ -56,6 +56,14 @@ module.exports = {
 					ephemeral: true,
 				});
 			}
+
+			// Check bot permissions
+			if (!interaction.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+				return interaction.reply({
+					content: "❌ I need the **Manage Roles** permission to manage roles!",
+					ephemeral: true,
+				});
+			}
 		}
 
 		switch (subcommand) {
@@ -67,6 +75,14 @@ module.exports = {
 				if (!member) {
 					return interaction.reply({
 						content: "Could not find that user!",
+						ephemeral: true,
+					});
+				}
+
+				// Check role hierarchy - bot's highest role must be above the target role
+				if (interaction.guild.members.me.roles.highest.position <= role.position) {
+					return interaction.reply({
+						content: "❌ I cannot manage this role. It's higher than or equal to my highest role.",
 						ephemeral: true,
 					});
 				}
@@ -95,6 +111,14 @@ module.exports = {
 				if (!member) {
 					return interaction.reply({
 						content: "Could not find that user!",
+						ephemeral: true,
+					});
+				}
+
+				// Check role hierarchy - bot's highest role must be above the target role
+				if (interaction.guild.members.me.roles.highest.position <= role.position) {
+					return interaction.reply({
+						content: "❌ I cannot manage this role. It's higher than or equal to my highest role.",
 						ephemeral: true,
 					});
 				}

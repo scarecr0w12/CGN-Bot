@@ -163,6 +163,14 @@ module.exports = {
 		const guild = interaction.guild;
 		const everyoneRole = guild.roles.everyone;
 
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		if (!guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		if (subcommand === "start") {
 			const reason = interaction.options.getString("reason") || "Server lockdown";
 			await interaction.deferReply();

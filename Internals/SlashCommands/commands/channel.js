@@ -30,6 +30,15 @@ module.exports = {
 		const reason = interaction.options.getString("reason");
 		const everyoneRole = interaction.guild.roles.everyone;
 
+		// Check bot permissions - ManageRoles is required to edit permission overwrites
+		const botPerms = interaction.channel.permissionsFor(interaction.guild.members.me);
+		if (!botPerms.has(PermissionFlagsBits.ManageRoles)) {
+			return interaction.reply({
+				content: "❌ I need the **Manage Roles** permission to modify channel permissions!",
+				ephemeral: true,
+			});
+		}
+
 		if (subcommand === "lock") {
 			const lockReason = reason || "Channel locked by moderator";
 
