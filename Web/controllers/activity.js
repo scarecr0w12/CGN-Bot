@@ -165,6 +165,8 @@ module.exports = async (req, { res }) => {
 			serverData = serverDocuments.map(serverDocument => parsers.serverData(req, serverDocument, webp));
 		}
 		serverData = await Promise.all(serverData);
+		// Filter out null values from failed guild fetches
+		serverData = serverData.filter(server => server !== null);
 		let pageTitle = "Servers";
 		if (req.query.q) {
 			pageTitle = `Search for server "${req.query.q}"`;

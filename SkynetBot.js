@@ -775,7 +775,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				await client.events.onEvent("messageDelete", msg);
 			} catch (err) {
 				logger.error(`An unexpected error occurred while handling a MESSAGE_DELETE event! x.x`,
-					{ svrid: msg.guild && msg.guild.id, usrid: msg.author.id, chid: msg.channel.id, msgid: msg.id }, err);
+					{ svrid: msg.guild && msg.guild.id, usrid: msg.author && msg.author.id, chid: msg.channel && msg.channel.id, msgid: msg.id }, err);
 			}
 		}
 	});

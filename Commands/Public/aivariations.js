@@ -12,8 +12,8 @@ module.exports = async (main, documents, msg, commandData) => {
 	const { client, configJS } = main;
 	const { serverDocument } = documents;
 
-	// Check if server has access to ai_image feature (premium)
-	const hasAccess = await TierManager.canAccess(msg.guild.id, "ai_image");
+	// Check if server has access to ai_images feature (premium)
+	const hasAccess = await TierManager.canAccess(msg.guild.id, "ai_images");
 	if (!hasAccess) {
 		return msg.channel.send({
 			embeds: [{

@@ -82,7 +82,7 @@
 		SkynetData.HUM = true;
 	});
 
-	$('#add-charity-btn').on('click', function() {
+	$(document).on('click', '.add-charity-btn', function() {
 		$('#charities-table tbody').append(`
 			<tr>
 				<td><input class="input" type="text" name="name[]" value="" required></td>
