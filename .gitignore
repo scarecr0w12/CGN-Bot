@@ -49,3 +49,6 @@ extensions/
 
 # i18n missing translation files (auto-generated)
 locales/**/*.missing.json
+
+# Ad network files (contains sensitive publisher IDs)
+Web/public/ads.txt

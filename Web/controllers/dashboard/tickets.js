@@ -3,6 +3,7 @@
  */
 
 const controllers = module.exports;
+const logger = global.logger;
 
 /**
  * Check if server has Tier 2 access for tickets
@@ -65,6 +66,7 @@ controllers.settings = async (req, { res }) => {
 		categoryChannels,
 		roles,
 		stats,
+		svrid: req.svr.id,
 	}).setPageData({
 		page: "admin-tickets.ejs",
 	}).render();
@@ -255,6 +257,7 @@ controllers.list = async (req, { res }) => {
 		tickets: tickets || [],
 		statusCounts,
 		activeStatus: status,
+		svrid: req.svr.id,
 	}).setPageData({
 		page: "admin-tickets-list.ejs",
 	}).render();
@@ -283,6 +286,7 @@ controllers.view = async (req, { res }) => {
 	res.setConfigData({
 		ticket,
 		messages: messages || [],
+		svrid: req.svr.id,
 	}).setPageData({
 		page: "admin-ticket-view.ejs",
 	}).render();

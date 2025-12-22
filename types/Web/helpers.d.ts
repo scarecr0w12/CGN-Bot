@@ -1,0 +1,30 @@
+export function denyRequest(res: any, isAPI: any): any;
+export function renderUnavailable(req: any, res: any): any;
+export function renderError(res: any, text: any, line: any, code: number, err: any): any;
+export function checkSudoMode(id: any): Promise<boolean>;
+export function fetchMaintainerPrivileges(id: any): Promise<string[]>;
+export function canDo(action: any, id: any): Promise<boolean>;
+export function setupPage(router: any, route: any, middleware: any, controller: any, acceptSockets?: boolean): void;
+export function setupDashboardPage(router: any, route: any, middleware: any, controller: any, pullEndpointKey: any, middlewarePOST?: any[]): void;
+export function setupConsolePage(router: any, route: any, permission: any, middleware: any, controller: any, middlewarePOST?: any[]): void;
+export function saveAdminConsoleOptions(req: any, res: any, isAPI: any, afterSave: any): Promise<any>;
+export function saveMaintainerConsoleOptions(req: any, res: any, isAPI: any, silent: any): Promise<void>;
+export function setupResource(router: any, route: any, middleware: any, controller: any, method: any, authType: any): void;
+export function setupRedirection(router: any, route: any, redirection: any): void;
+export function parseAuthUser(user: any): {
+    username: any;
+    id: any;
+    avatar: string;
+};
+export function getRoundedUptime(uptime: any): string;
+export function createMessageOfTheDay(req: any, id: any): any;
+export function dashboardUpdate(req: any, namespace: any, location: any): any;
+export function getRoleData(svr: any): any;
+export function getChannelData(svr: any, type: any): any;
+export function getUserList(list: any): any;
+export function findQueryUser(query: any, guild: any): any;
+export function generateCodeID(code: any): string;
+export function validateExtensionData(data: any): boolean;
+export function pushExtensionVersionData(extensionDocument: any, data: any): any;
+export function writeExtensionData(extensionDocument: any, data: any): any;
+//# sourceMappingURL=helpers.d.ts.map

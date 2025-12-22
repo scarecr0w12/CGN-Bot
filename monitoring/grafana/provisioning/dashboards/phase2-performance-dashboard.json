@@ -1,0 +1,369 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "id": 100,
+      "title": "Cache Events Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 1},
+      "id": 101,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Cache Invalidations (Total)",
+      "type": "stat",
+      "targets": [{
+        "expr": "sum(rate(skynetbot_cache_invalidations_total[5m])) * 60",
+        "legendFormat": "per minute",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 1},
+      "id": 102,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Cache Handlers Registered",
+      "type": "stat",
+      "targets": [{
+        "expr": "skynetbot_cache_handlers_total",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.01},
+              {"color": "red", "value": 0.05}
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 1},
+      "id": 103,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["mean"]},
+        "textMode": "auto"
+      },
+      "title": "Cache Invalidation Latency (Avg)",
+      "type": "stat",
+      "targets": [{
+        "expr": "rate(skynetbot_cache_invalidation_duration_seconds_sum[5m]) / rate(skynetbot_cache_invalidation_duration_seconds_count[5m])",
+        "legendFormat": "{{invalidation_type}}",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 7},
+      "id": 104,
+      "title": "Cache Invalidation Duration (P95)",
+      "type": "graph",
+      "targets": [{
+        "expr": "histogram_quantile(0.95, rate(skynetbot_cache_invalidation_duration_seconds_bucket[5m]))",
+        "legendFormat": "p95 - {{invalidation_type}}",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 15},
+      "id": 200,
+      "title": "Command Executor Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 16},
+      "id": 201,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Commands Executed (Rate)",
+      "type": "stat",
+      "targets": [{
+        "expr": "sum(rate(skynetbot_command_execution_duration_seconds_count[5m])) * 60",
+        "legendFormat": "per minute",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 16},
+      "id": 202,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Active Cooldowns",
+      "type": "stat",
+      "targets": [{
+        "expr": "skynetbot_command_cooldowns_active",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 16},
+      "id": 203,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Validation Failures (Rate)",
+      "type": "stat",
+      "targets": [{
+        "expr": "sum(rate(skynetbot_command_validation_failures_total[5m])) * 60",
+        "legendFormat": "{{failure_type}}",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 22},
+      "id": 204,
+      "title": "Command Execution Duration (P50, P95, P99)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[5m])))",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[5m])))",
+          "legendFormat": "p95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[5m])))",
+          "legendFormat": "p99",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 22},
+      "id": 205,
+      "title": "Command Success Rate",
+      "type": "graph",
+      "targets": [{
+        "expr": "sum(rate(skynetbot_command_execution_duration_seconds_count{status=\"success\"}[5m])) / sum(rate(skynetbot_command_execution_duration_seconds_count[5m]))",
+        "legendFormat": "success rate",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 30},
+      "id": 300,
+      "title": "Middleware Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 31},
+      "id": 301,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Registered Middleware",
+      "type": "stat",
+      "targets": [{
+        "expr": "skynetbot_middleware_registered_total",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 31},
+      "id": 302,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["lastNotNull"]},
+        "textMode": "auto"
+      },
+      "title": "Middleware Blocks (Rate)",
+      "type": "stat",
+      "targets": [{
+        "expr": "sum(rate(skynetbot_middleware_blocked_total[5m])) * 60",
+        "legendFormat": "per minute",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.001},
+              {"color": "red", "value": 0.01}
+            ]
+          },
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 31},
+      "id": 303,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "orientation": "auto",
+        "reduceOptions": {"calcs": ["mean"]},
+        "textMode": "auto"
+      },
+      "title": "Middleware Execution Latency (Avg)",
+      "type": "stat",
+      "targets": [{
+        "expr": "rate(skynetbot_middleware_execution_duration_seconds_sum[5m]) / rate(skynetbot_middleware_execution_duration_seconds_count[5m])",
+        "refId": "A"
+      }]
+    },
+    {
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 37},
+      "id": 304,
+      "title": "Middleware Execution Duration by Name",
+      "type": "graph",
+      "targets": [{
+        "expr": "rate(skynetbot_middleware_execution_duration_seconds_sum[5m]) / rate(skynetbot_middleware_execution_duration_seconds_count[5m])",
+        "legendFormat": "{{middleware_name}}",
+        "refId": "A"
+      }]
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["performance", "phase2"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "timepicker": {},
+  "timezone": "",
+  "title": "CGN-Bot Phase 2 Performance",
+  "uid": "phase2-performance",
+  "version": 0,
+  "weekStart": ""
+}

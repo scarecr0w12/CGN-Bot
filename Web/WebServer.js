@@ -180,6 +180,7 @@ exports.open = async (client, auth, configJS, logger) => {
 					"https://pagead2.googlesyndication.com",
 					"pagead2.googlesyndication.com",
 				],
+				scriptSrcAttr: ["'unsafe-hashes'", "'unsafe-inline'"],
 				styleSrc: [
 					"'self'",
 					"'unsafe-inline'",
@@ -197,6 +198,7 @@ exports.open = async (client, auth, configJS, logger) => {
 					"fonts.gstatic.com",
 					"https://maxcdn.bootstrapcdn.com",
 					"maxcdn.bootstrapcdn.com",
+					"https://analytics.thecorehosting.net",
 					"data:",
 				],
 				imgSrc: [
@@ -215,12 +217,15 @@ exports.open = async (client, auth, configJS, logger) => {
 					"https://cdnjs.cloudflare.com",
 					"https://www.google-analytics.com",
 					"https://static.cloudflareinsights.com",
+					"https://*.google.com",
+					"https://*.doubleclick.net",
 				],
 				frameSrc: [
 					"'self'",
 					"https://discord.com",
 					"https://www.google.com",
 					"https://pagead2.googlesyndication.com",
+					"https://*.doubleclick.net",
 				],
 				objectSrc: ["'none'"],
 				baseUri: ["'self'", "https://analytics.thecorehosting.net"],
@@ -375,15 +380,38 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Load injection settings from database (cached)
 	app.use(middleware.loadInjection);
 
-	// (Horribly) serve public dir
-	const staticRouter = express.static(`${__dirname}/public/`, { maxAge: 86400000 });
+	// Serve specific root-level files (SEO, ad verification, etc.)
+	const rootLevelFiles = ["ads.txt", "robots.txt", "sitemap.xml"];
+	rootLevelFiles.forEach(file => {
+		app.get(`/${file}`, (req, res, next) => {
+			const filePath = `${__dirname}/public/${file}`;
+			res.sendFile(filePath, err => {
+				if (err) {
+					return next(); // File doesn't exist, continue to next handler
+				}
+			});
+		});
+	});
+
+	// Serve static files with WebP conversion for images
+	const staticOptions = {
+		maxAge: 86400000, // 1 day cache
+		etag: true,
+		lastModified: true,
+	};
+	const staticRouter = express.static(`${__dirname}/public/`, staticOptions);
+
 	app.use("/static", (req, res, next) => {
 		const fileExtension = req.path.substring(req.path.lastIndexOf("."));
-		if (req.get("Accept") && req.get("Accept").includes("image/webp") && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
-			res.redirect(`/static${req.path.substring(0, req.path.lastIndexOf("."))}.webp`);
-		} else {
-			return staticRouter(req, res, next);
+		const acceptsWebP = req.get("Accept")?.includes("image/webp");
+
+		// Convert to WebP if supported and not already WebP/GIF
+		if (acceptsWebP && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
+			const webpPath = `${req.path.substring(0, req.path.lastIndexOf("."))}.webp`;
+			return res.redirect(`/static${webpPath}`);
 		}
+
+		return staticRouter(req, res, next);
 	});
 
 	// Listen for incoming connections

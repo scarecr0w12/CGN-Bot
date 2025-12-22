@@ -11,12 +11,19 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - SHARD_TOTAL=auto
+      - REDIS_HOST=${REDIS_HOST:-127.0.0.1}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - ENABLE_DISTRIBUTED_CACHE=${ENABLE_DISTRIBUTED_CACHE:-true}
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
       - ./logs:/usr/src/app/logs
       - ./Temp:/usr/src/app/Temp
       - ./.env:/usr/src/app/.env
+    depends_on:
+      redis:
+        condition: service_healthy
 
   uptime-kuma:
     image: louislam/uptime-kuma:2
@@ -132,6 +139,30 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # ============================================
+  # Redis (Phase 6 - Distributed Systems)
+  # ============================================
+
+  redis:
+    image: redis:7-alpine
+    container_name: skynetbot-redis
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - ./data/redis:/data
+      - ./monitoring/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
   redis-exporter:
     image: oliver006/redis_exporter:latest
     container_name: skynetbot-redis-exporter
@@ -142,3 +173,6 @@ services:
     environment:
       - REDIS_ADDR=redis://127.0.0.1:${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    depends_on:
+      redis:
+        condition: service_healthy

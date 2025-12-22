@@ -1,12 +1,22 @@
-<%- include("../partials/header") %>
-<main>
-	<div class="container-fluid">
-		<div class="columns is-multiline">
-			<%- include("../partials/admin-menu") %>
-			<div class="column">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> - Ticket #<%= configData.ticket.ticket_number %> - Skynet</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
 				<nav class="breadcrumb" aria-label="breadcrumbs">
 					<ul>
-						<li><a href="/dashboard/<%= svrid %>/tickets">Tickets</a></li>
+						<li><a href="/dashboard/<%= serverData.id %>/tickets">Tickets</a></li>
 						<li class="is-active"><a href="#">#<%= configData.ticket.ticket_number %></a></li>
 					</ul>
 				</nav>
@@ -215,4 +225,7 @@ async function updateTicket() {
 }
 </script>
 
-<%- include("../partials/footer") %>
+<%- include('../partials/footer') %>
+
+</body>
+</html>

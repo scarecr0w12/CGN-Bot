@@ -173,6 +173,133 @@ const wsConnectionsActive = new client.Gauge({
 });
 
 // ============================================
+// Cache Events Metrics (Phase 2)
+// ============================================
+
+const cacheInvalidationsTotal = new client.Counter({
+	name: "skynetbot_cache_invalidations_total",
+	help: "Total number of cache invalidations",
+	labelNames: ["cache_key_pattern", "invalidation_type"],
+	registers: [register],
+});
+
+const cacheHandlersTotal = new client.Gauge({
+	name: "skynetbot_cache_handlers_total",
+	help: "Number of registered cache invalidation handlers",
+	registers: [register],
+});
+
+const cacheInvalidationDuration = new client.Histogram({
+	name: "skynetbot_cache_invalidation_duration_seconds",
+	help: "Duration of cache invalidation operations",
+	labelNames: ["invalidation_type"],
+	buckets: [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1],
+	registers: [register],
+});
+
+// ============================================
+// Command Executor Metrics (Phase 2)
+// ============================================
+
+const commandExecutionDuration = new client.Histogram({
+	name: "skynetbot_command_execution_duration_seconds",
+	help: "Duration of command execution including validation",
+	labelNames: ["command", "type", "status"],
+	buckets: [0.001, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5],
+	registers: [register],
+});
+
+const commandValidationDuration = new client.Histogram({
+	name: "skynetbot_command_validation_duration_seconds",
+	help: "Duration of command validation operations",
+	labelNames: ["validation_type"],
+	buckets: [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05],
+	registers: [register],
+});
+
+const commandCooldownsActive = new client.Gauge({
+	name: "skynetbot_command_cooldowns_active",
+	help: "Number of active command cooldowns",
+	registers: [register],
+});
+
+const commandValidationFailures = new client.Counter({
+	name: "skynetbot_command_validation_failures_total",
+	help: "Total number of command validation failures",
+	labelNames: ["failure_type"],
+	registers: [register],
+});
+
+// ============================================
+// Command Middleware Metrics (Phase 2)
+// ============================================
+
+const middlewareExecutionDuration = new client.Histogram({
+	name: "skynetbot_middleware_execution_duration_seconds",
+	help: "Duration of middleware execution",
+	labelNames: ["middleware_name"],
+	buckets: [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1],
+	registers: [register],
+});
+
+const middlewareTotal = new client.Gauge({
+	name: "skynetbot_middleware_registered_total",
+	help: "Number of registered middleware functions",
+	registers: [register],
+});
+
+const middlewareBlocked = new client.Counter({
+	name: "skynetbot_middleware_blocked_total",
+	help: "Total number of requests blocked by middleware",
+	labelNames: ["middleware_name", "reason"],
+	registers: [register],
+});
+
+// ============================================
+// Distributed Systems Metrics (Phase 6)
+// ============================================
+
+const distributedCacheMessagesReceived = new client.Counter({
+	name: "skynetbot_distributed_cache_messages_received_total",
+	help: "Total number of distributed cache messages received",
+	labelNames: ["channel"],
+	registers: [register],
+});
+
+const distributedCacheInvalidationsSent = new client.Counter({
+	name: "skynetbot_distributed_cache_invalidations_sent_total",
+	help: "Total number of distributed cache invalidations sent",
+	labelNames: ["type"],
+	registers: [register],
+});
+
+const distributedShardEventsSent = new client.Counter({
+	name: "skynetbot_distributed_shard_events_sent_total",
+	help: "Total number of shard events broadcast",
+	labelNames: ["event"],
+	registers: [register],
+});
+
+const redisConnectionState = new client.Gauge({
+	name: "skynetbot_redis_connection_state",
+	help: "Redis connection state (0=disconnected, 1=connected, 2=reconnecting)",
+	registers: [register],
+});
+
+const distributedLocksActive = new client.Gauge({
+	name: "skynetbot_distributed_locks_active",
+	help: "Number of active distributed locks",
+	registers: [register],
+});
+
+const distributedLockAcquisitions = new client.Counter({
+	name: "skynetbot_distributed_lock_acquisitions_total",
+	help: "Total distributed lock acquisition attempts",
+	labelNames: ["resource", "status"],
+	registers: [register],
+});
+
+// ============================================
 // Express Middleware
 // ============================================
 
@@ -340,6 +467,84 @@ function updateWsConnections (namespace, count) {
 }
 
 /**
+ * Record a cache invalidation
+ */
+function recordCacheInvalidation (cacheKeyPattern, invalidationType = "single") {
+	cacheInvalidationsTotal.inc({ cache_key_pattern: cacheKeyPattern, invalidation_type: invalidationType });
+}
+
+/**
+ * Update cache handler count
+ */
+function updateCacheHandlerCount (count) {
+	cacheHandlersTotal.set(count);
+}
+
+/**
+ * Time a cache invalidation operation
+ */
+function timeCacheInvalidation (invalidationType, fn) {
+	const end = cacheInvalidationDuration.startTimer({ invalidation_type: invalidationType });
+	try {
+		const result = fn();
+		end();
+		return result;
+	} catch (err) {
+		end();
+		throw err;
+	}
+}
+
+/**
+ * Record command execution with timing
+ */
+function recordCommandExecution (commandName, type, status, duration) {
+	commandExecutionDuration.observe({ command: commandName, type, status }, duration);
+}
+
+/**
+ * Record command validation with timing
+ */
+function recordCommandValidation (validationType, duration) {
+	commandValidationDuration.observe({ validation_type: validationType }, duration);
+}
+
+/**
+ * Update active cooldown count
+ */
+function updateCommandCooldowns (count) {
+	commandCooldownsActive.set(count);
+}
+
+/**
+ * Record a command validation failure
+ */
+function recordCommandValidationFailure (failureType) {
+	commandValidationFailures.inc({ failure_type: failureType });
+}
+
+/**
+ * Record middleware execution with timing
+ */
+function recordMiddlewareExecution (middlewareName, duration) {
+	middlewareExecutionDuration.observe({ middleware_name: middlewareName }, duration);
+}
+
+/**
+ * Update middleware count
+ */
+function updateMiddlewareCount (count) {
+	middlewareTotal.set(count);
+}
+
+/**
+ * Record a middleware block
+ */
+function recordMiddlewareBlock (middlewareName, reason) {
+	middlewareBlocked.inc({ middleware_name: middlewareName, reason });
+}
+
+/**
  * Get metrics endpoint handler
  */
 async function getMetrics (req, res) {
@@ -365,6 +570,17 @@ module.exports = {
 	updateExtensionCounts,
 	recordExtensionExecution,
 	updateWsConnections,
+	// Phase 2 metrics
+	recordCacheInvalidation,
+	updateCacheHandlerCount,
+	timeCacheInvalidation,
+	recordCommandExecution,
+	recordCommandValidation,
+	updateCommandCooldowns,
+	recordCommandValidationFailure,
+	recordMiddlewareExecution,
+	updateMiddlewareCount,
+	recordMiddlewareBlock,
 	// Export individual metrics for direct access if needed
 	metrics: {
 		httpRequestDuration,
@@ -387,5 +603,23 @@ module.exports = {
 		extensionsTotal,
 		extensionExecutionsTotal,
 		wsConnectionsActive,
+		// Phase 2 metrics
+		cacheInvalidationsTotal,
+		cacheHandlersTotal,
+		cacheInvalidationDuration,
+		commandExecutionDuration,
+		commandValidationDuration,
+		commandCooldownsActive,
+		commandValidationFailures,
+		middlewareExecutionDuration,
+		middlewareTotal,
+		middlewareBlocked,
+		// Phase 6 distributed metrics
+		distributedCacheMessagesReceived,
+		distributedCacheInvalidationsSent,
+		distributedShardEventsSent,
+		redisConnectionState,
+		distributedLocksActive,
+		distributedLockAcquisitions,
 	},
 };

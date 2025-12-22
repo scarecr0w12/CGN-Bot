@@ -1,10 +1,11 @@
 {
   "name": "skynetbot",
-  "version": "1.7.1",
+  "version": "1.8.0",
   "description": "Still the best Discord Bot!",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Scarecr0w12",
   "main": "master.js",
+  "types": "./types/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/scarecr0w12/CGN-Bot.git"
@@ -17,8 +18,24 @@
     "windows-install": "npm install -g --production windows-build-tools && npm install --production",
     "test": "npm run lint && npm run test:unit",
     "test:unit": "jest tests/ --passWithNoTests",
+    "test:integration": "jest tests/integration/ --passWithNoTests",
+    "test:all": "npm run lint && npm run test:unit && npm run test:integration",
     "test:watch": "jest tests/ --watch",
-    "lint": "eslint ."
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "prepare": "husky install",
+    "docs:commands": "node scripts/generate-command-docs.js",
+    "docs:api": "jsdoc -c jsdoc.json",
+    "docs:all": "npm run docs:commands && npm run docs:api",
+    "docs:serve": "npx http-server docs/api -p 8080",
+    "types:generate": "tsc",
+    "types:check": "tsc --noEmit"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "dependencies": {
     "@discordjs/voice": "^0.19.0",
@@ -102,10 +119,14 @@
     "xss-filters": "^1.2.7"
   },
   "devDependencies": {
+    "@types/node": "^25.0.3",
     "clean-css-cli": "^5.6.3",
     "eslint": "^8.57.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.1.0",
-    "jest": "^30.2.0"
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "lint-staged": "^16.2.7",
+    "typescript": "^5.9.3"
   }
 }

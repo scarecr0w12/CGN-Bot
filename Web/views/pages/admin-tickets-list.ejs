@@ -1,9 +1,19 @@
-<%- include("../partials/header") %>
-<main>
-	<div class="container-fluid">
-		<div class="columns is-multiline">
-			<%- include("../partials/admin-menu") %>
-			<div class="column">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> - Tickets - Skynet</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
 				<h2 class="subtitle">
 					<strong>Server Tickets</strong>
 				</h2>
@@ -12,30 +22,30 @@
 				<div class="tabs is-boxed mb-4">
 					<ul>
 						<li class="<%= !pageData.activeStatus ? 'is-active' : '' %>">
-							<a href="/dashboard/<%= svrid %>/tickets">
+							<a href="/dashboard/<%= serverData.id %>/tickets">
 								All (<%= (configData.statusCounts.open || 0) + (configData.statusCounts.in_progress || 0) + (configData.statusCounts.on_hold || 0) + (configData.statusCounts.closed || 0) %>)
 							</a>
 						</li>
 						<li class="<%= pageData.activeStatus === 'open' ? 'is-active' : '' %>">
-							<a href="/dashboard/<%= svrid %>/tickets?status=open">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=open">
 								<span class="icon has-text-success"><i class="fas fa-circle"></i></span>
 								<span>Open (<%= configData.statusCounts.open || 0 %>)</span>
 							</a>
 						</li>
 						<li class="<%= pageData.activeStatus === 'in_progress' ? 'is-active' : '' %>">
-							<a href="/dashboard/<%= svrid %>/tickets?status=in_progress">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=in_progress">
 								<span class="icon has-text-info"><i class="fas fa-circle"></i></span>
 								<span>In Progress (<%= configData.statusCounts.in_progress || 0 %>)</span>
 							</a>
 						</li>
 						<li class="<%= pageData.activeStatus === 'on_hold' ? 'is-active' : '' %>">
-							<a href="/dashboard/<%= svrid %>/tickets?status=on_hold">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=on_hold">
 								<span class="icon has-text-warning"><i class="fas fa-circle"></i></span>
 								<span>On Hold (<%= configData.statusCounts.on_hold || 0 %>)</span>
 							</a>
 						</li>
 						<li class="<%= pageData.activeStatus === 'closed' ? 'is-active' : '' %>">
-							<a href="/dashboard/<%= svrid %>/tickets?status=closed">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=closed">
 								<span class="icon has-text-danger"><i class="fas fa-circle"></i></span>
 								<span>Closed (<%= configData.statusCounts.closed || 0 %>)</span>
 							</a>
@@ -72,7 +82,7 @@
 										<tr>
 											<td><strong>#<%= ticket.ticket_number %></strong></td>
 											<td>
-												<a href="/dashboard/<%= svrid %>/tickets/<%= ticket._id %>">
+												<a href="/dashboard/<%= serverData.id %>/tickets/<%= ticket._id %>">
 													<%= ticket.subject ? ticket.subject.substring(0, 40) : 'No subject' %><%= ticket.subject && ticket.subject.length > 40 ? '...' : '' %>
 												</a>
 											</td>
@@ -108,7 +118,7 @@
 												<%= new Date(ticket.created_at).toLocaleDateString() %>
 											</td>
 											<td>
-												<a href="/dashboard/<%= svrid %>/tickets/<%= ticket._id %>" class="button is-small is-info">
+												<a href="/dashboard/<%= serverData.id %>/tickets/<%= ticket._id %>" class="button is-small is-info">
 													<span class="icon"><i class="fas fa-eye"></i></span>
 												</a>
 											</td>
@@ -122,13 +132,17 @@
 
 				<!-- Quick Link to Settings -->
 				<div class="mt-4">
-					<a href="/dashboard/<%= svrid %>/tickets/settings" class="button is-light">
+					<a href="/dashboard/<%= serverData.id %>/tickets/settings" class="button is-light">
 						<span class="icon"><i class="fas fa-cog"></i></span>
 						<span>Ticket Settings</span>
 					</a>
 				</div>
 			</div>
+				</div>
+			</div>
 		</div>
-	</div>
-</main>
-<%- include("../partials/footer") %>
+	</section>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>

@@ -31,7 +31,7 @@
 					<article class="message is-primary">
 						<div class="message-body">
 							<div class="content">
-								Skynet provides server listing capability, allowing people to discover new servers they might be interested in. You can allow your server to be shown on the <a href="/activity/servers">activity page</a> and create a detailed listing for everyone to see.
+								Skynet provides server listing capability, allowing people to discover new servers they might be interested in. You can control your server's privacy by choosing whether to show it publicly on the <a href="/activity/servers">activity page</a>. By default, servers are public, but you can mark yours as private at any time.
 							</div>
 						</div>
 					</article>
@@ -46,7 +46,8 @@
 									</div>
 								</div>
 								<div class="generic-feature-box-description">
-									<p>Show <%= serverData.name %> on the <a href="/activity/servers">server listings page</a></p>
+									<p><strong>Public Visibility:</strong> Show <%= serverData.name %> on the <a href="/activity/servers">server listings page</a></p>
+									<p class="help">When disabled, your server will be marked as private and hidden from public activity listings.</p>
 								</div>
 							</div>
 							<div id="public_data-options" class="generic-feature-addon"<%- configData.public_data.isShown ? '' : ' style="display: none;"' %>>

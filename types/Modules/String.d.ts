@@ -1,0 +1,48 @@
+declare function _exports(s: any): StringJS;
+export = _exports;
+declare class StringJS {
+    constructor(string: any);
+    s: any;
+    original: any;
+    get length(): any;
+    between(left: any, right: any): StringJS;
+    camelize(): StringJS;
+    capitalize(): StringJS;
+    charAt(index: any): any;
+    chompLeft(prefix: any): StringJS;
+    chompRight(suffix: any): StringJS;
+    collapseWhitespace(): StringJS;
+    contains(s: any): boolean;
+    count(s: any): number;
+    dasherize(): StringJS;
+    equalsIgnoredCase(string: any): boolean;
+    endsWith(...args: any[]): boolean;
+    escapeHTML(): StringJS;
+    ensureLeft(prefix: any): StringJS;
+    ensureRight(suffix: any): StringJS;
+    humanize(): StringJS;
+    isAlpha(): boolean;
+    isAlphaNumeric(): boolean;
+    isEmpty(): boolean;
+    isLower(): boolean;
+    isNumeric(): boolean;
+    isUpper(): boolean;
+    left(N: any): any;
+    lines(): any;
+    replaceAll(string: any, replace: any): StringJS;
+    strip(...args: any[]): StringJS;
+    startsWith(...args: any[]): boolean;
+    stripPunctuation(): StringJS;
+    times(n: any): StringJS;
+    titleCase(): StringJS;
+    toBoolean(): boolean;
+    toFloat(precision: any): number;
+    toInt(): number;
+    trim(): StringJS;
+    trimLeft(): StringJS;
+    trimRight(): StringJS;
+    toString(): any;
+    underscore(): StringJS;
+    valueOf(): any;
+}
+//# sourceMappingURL=String.d.ts.map

@@ -515,6 +515,228 @@ declare module "../Modules/QueryLogger" {
 }
 
 // ============================================
+// CACHE EVENTS TYPES (Phase 2)
+// ============================================
+
+export interface CacheInvalidationData {
+	reason?: string;
+	userId?: string;
+	serverId?: string;
+	extensionId?: string;
+	type?: string;
+	[key: string]: any;
+}
+
+export interface CacheEventsStats {
+	handlerCount: number;
+	totalHandlers: number;
+	listenerCount: number;
+}
+
+declare module "../Modules/CacheEvents" {
+	import { EventEmitter } from "events";
+	
+	export class CacheEvents extends EventEmitter {
+		onInvalidate(cacheKey: string, handler: (cacheKey: string, data: CacheInvalidationData) => void): void;
+		invalidate(cacheKey: string, data?: CacheInvalidationData): void;
+		invalidatePattern(pattern: RegExp | string, data?: CacheInvalidationData): void;
+		clearHandlers(): void;
+		getStats(): CacheEventsStats;
+	}
+	
+	export const cacheEvents: CacheEvents;
+	export function serverCacheKey(serverId: string, type: string): string;
+	export function userCacheKey(userId: string, type: string): string;
+	export function extensionCacheKey(extensionId: string, type: string): string;
+	export function invalidateServerCaches(serverId: string, types?: string[]): void;
+	export function invalidateUserCaches(userId: string, types?: string[]): void;
+	export function invalidateExtensionCaches(extensionId: string, types?: string[]): void;
+}
+
+// ============================================
+// COMMAND EXECUTOR TYPES (Phase 2)
+// ============================================
+
+export interface CommandObject {
+	name: string;
+	permissions?: string[];
+	botPermissions?: string[];
+	guildOnly?: boolean;
+	dmOnly?: boolean;
+	nsfw?: boolean;
+	cooldown?: number;
+	args?: CommandArgument[];
+	execute?(context: any, args: any): Promise<void>;
+	run?(context: any, args: any): Promise<void>;
+}
+
+export interface CommandArgument {
+	name: string;
+	type?: "string" | "number" | "integer" | "boolean";
+	required?: boolean;
+}
+
+export interface ValidationResult {
+	valid: boolean;
+	error?: string;
+}
+
+export interface CooldownResult {
+	allowed: boolean;
+	timeLeft?: number;
+}
+
+export interface ExecutionResult {
+	success: boolean;
+	error?: string;
+}
+
+export interface CooldownStats {
+	commands: number;
+	totalUsers: number;
+	[commandName: string]: number;
+}
+
+declare module "../Internals/CommandExecutor" {
+	import { Collection, Message, CommandInteraction } from "discord.js";
+	
+	export default class CommandExecutor {
+		constructor(client: any);
+		validatePermissions(command: CommandObject, context: Message | CommandInteraction): ValidationResult;
+		checkCooldown(command: CommandObject, userId: string): CooldownResult;
+		validateContext(command: CommandObject, context: Message | CommandInteraction): ValidationResult;
+		validateArguments(command: CommandObject, args: any[] | object, isSlash?: boolean): {
+			valid: boolean;
+			parsed?: object;
+			error?: string;
+		};
+		execute(command: CommandObject, context: Message | CommandInteraction, args?: any[] | object, isSlash?: boolean): Promise<ExecutionResult>;
+		getCooldownStats(): CooldownStats;
+		clearExpiredCooldowns(): number;
+	}
+}
+
+// ============================================
+// COMMAND MIDDLEWARE TYPES (Phase 2)
+// ============================================
+
+export type MiddlewareFunction = (context: any, next: () => Promise<any>) => Promise<void>;
+
+export interface MiddlewareEntry {
+	fn: MiddlewareFunction;
+	priority: number;
+}
+
+declare module "../Internals/CommandMiddleware" {
+	export class CommandMiddleware {
+		constructor();
+		use(middleware: MiddlewareFunction, priority?: number): void;
+		execute(context: any): Promise<{ continue: boolean; error?: string }>;
+		clear(): void;
+		count(): number;
+	}
+	
+	export const loggingMiddleware: MiddlewareFunction;
+	export function rateLimitMiddleware(maxCommands?: number, windowMs?: number): MiddlewareFunction;
+	export const analyticsMiddleware: MiddlewareFunction;
+	export function maintenanceModeMiddleware(allowedUserIds?: string[]): MiddlewareFunction;
+	export function guildBlacklistMiddleware(blacklistedGuilds?: string[]): MiddlewareFunction;
+	export function userBlacklistMiddleware(blacklistedUsers?: string[]): MiddlewareFunction;
+	export const validationMiddleware: MiddlewareFunction;
+}
+
+// ============================================
+// NETWORK VALIDATOR TYPES (Phase 2)
+// ============================================
+
+export interface UrlValidationResult {
+	ok: boolean;
+	url?: URL;
+	error?: string;
+}
+
+declare module "../Internals/Extensions/API/NetworkValidator" {
+	export function getAllowedExtensionHttpHosts(): Promise<string[]>;
+	export function isPrivateIp(ip: string): boolean;
+	export function isAllowedUrl(
+		rawUrl: string,
+		networkCapability: "none" | "allowlist_only" | "network" | "network_advanced",
+		networkApproved: boolean,
+		allowlist: string[]
+	): UrlValidationResult;
+	export const DEFAULT_HTTP_ALLOWLIST: string[];
+	export const EXT_HTTP_DEFAULT_MAX_BYTES: number;
+	export const EXT_HTTP_DEFAULT_TIMEOUT_MS: number;
+	export const EXT_HTTP_MAX_BODY_BYTES: number;
+	export const EXT_HTTP_RATE_WINDOW_MS: number;
+	export const EXT_HTTP_RATE_MAX: number;
+}
+
+// ============================================
+// SERIALIZERS TYPES (Phase 2)
+// ============================================
+
+export interface SerializedInteraction {
+	id: string;
+	commandName: string;
+	guildId: string;
+	channelId: string;
+	user: {
+		id: string;
+		username: string;
+		tag: string;
+		bot: boolean;
+	} | null;
+	member: { id: string } | null;
+	options: Record<string, any>;
+}
+
+export interface SerializedMessage {
+	id: string;
+	content: string;
+	author: {
+		id: string;
+		username: string;
+		discriminator: string;
+		tag: string;
+		bot: boolean;
+	};
+	channel: {
+		id: string;
+		name: string;
+		type: number;
+	};
+	guild: {
+		id: string;
+		name: string;
+	} | null;
+	createdAt: string;
+	suffix: string;
+}
+
+export interface EmbedHelper {
+	create(options?: any): any;
+	colors: Record<string, number>;
+	resolveColor(color: string | number | number[]): number;
+}
+
+declare module "../Internals/Extensions/API/Serializers" {
+	import { CommandInteraction, Message, Channel, Guild, GuildMember, User } from "discord.js";
+	
+	export function serializeInteraction(interaction: CommandInteraction): SerializedInteraction;
+	export function serializeMessage(msg: Message): SerializedMessage;
+	export function serializeChannel(channel: Channel): any;
+	export function serializeGuild(guild: Guild): any;
+	export function serializeBot(client: any, guild: Guild, serverDocument: any): any;
+	export function serializeEvent(eventData: any): any;
+	export function serializeMember(member: GuildMember, serializeUser: (user: User) => any): any;
+	export function serializeUser(user: User): any;
+	export function serializeRoles(guild: Guild): any;
+	export function getEmbedHelper(): EmbedHelper;
+	export function serializePointsModule(pointsModule: any): any;
+}
+
+// ============================================
 // GLOBAL DECLARATIONS
 // ============================================
 
