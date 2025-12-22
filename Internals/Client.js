@@ -547,7 +547,7 @@ module.exports = class SkynetClient extends DJSClient {
 						}
 					}
 					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
-					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles);
+					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ModerateMembers);
 					return obj;
 				}
 			}

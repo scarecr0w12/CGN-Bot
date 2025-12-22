@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- **Command Permissions** - Fixed incorrect permission checks in mute/unmute commands
+  - Updated `Internals/Client.js` - `canDoActionOnMember()` now checks for `ModerateMembers` instead of `ManageRoles` for mute actions
+  - Updated `Commands/Public/mute.js` - Error message now references correct "Moderate Members" permission
+  - Updated `Commands/Public/unmute.js` - Error message now references correct "Moderate Members" permission
+  - Verified all other moderation commands use correct Discord.js v14 permission flags
+  - Note: Slash commands were already using correct `ModerateMembers` permission
+
 ## [1.8.0] - 2025-12-21
 
 ### Added
