@@ -346,14 +346,12 @@ exports.open = async (client, auth, configJS, logger) => {
 	}));
 
 	passport.serializeUser((user, done) => {
-		// Only serialize the user ID to prevent session corruption
-		done(null, user.id);
+		// Serialize the full user profile to preserve guilds array
+		done(null, user);
 	});
 	passport.deserializeUser((obj, done) => {
-		// Reconstruct minimal user object from ID
-		// The full user object structure is expected by the app
-		const user = typeof obj === "string" ? { id: obj } : obj;
-		done(null, user);
+		// Return the full user object from session
+		done(null, obj);
 	});
 
 	// Session store priority: Redis > MongoDB > MariaDB > Memory
