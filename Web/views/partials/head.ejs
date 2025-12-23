@@ -157,12 +157,74 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 <% const _matomoUrl = typeof matomoUrl !== "undefined" ? matomoUrl : ""; const _matomoSiteId = typeof matomoSiteId !== "undefined" ? matomoSiteId : ""; %>
 <% if (_isProduction && _matomoUrl && _matomoSiteId) { %>
 <script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
-  var _mtm = window._mtm = window._mtm || [];
-  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+(function() {
+  // Initialize Matomo tracking
+  var _paq = window._paq = window._paq || [];
+  
+  // Track initial page view
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  _paq.push(['enableHeartBeatTimer']);
+  
+  // Set up the tracker
   (function() {
+    var u="<%= _matomoUrl %>";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '<%= _matomoSiteId %>']);
     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-    g.async=true; g.src='https://analytics.thecorehosting.net/js/container_d7b4T81a.js'; s.parentNode.insertBefore(g,s);
+    g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
   })();
+  
+  // Track Turbolinks page changes
+  document.addEventListener('turbolinks:load', function() {
+    if (typeof _paq !== 'undefined') {
+      _paq.push(['setCustomUrl', window.location.href]);
+      _paq.push(['setDocumentTitle', document.title]);
+      _paq.push(['trackPageView']);
+    }
+  });
+  
+  // Track outbound links
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a');
+    if (link && link.hostname && link.hostname !== window.location.hostname) {
+      if (typeof _paq !== 'undefined') {
+        _paq.push(['trackLink', link.href, 'link']);
+      }
+    }
+  }, true);
+  
+  // Track downloads
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a');
+    if (link && link.href) {
+      var downloadExtensions = /\.(zip|pdf|txt|docx|xlsx|pptx|skypkg|json)$/i;
+      if (downloadExtensions.test(link.pathname)) {
+        if (typeof _paq !== 'undefined') {
+          _paq.push(['trackLink', link.href, 'download']);
+        }
+      }
+    }
+  }, true);
+  
+  // Expose tracking helper for custom events
+  window.trackMatomoEvent = function(category, action, name, value) {
+    if (typeof _paq !== 'undefined') {
+      _paq.push(['trackEvent', category, action, name, value]);
+    }
+  };
+  
+  // Track form submissions
+  document.addEventListener('submit', function(e) {
+    var form = e.target;
+    if (form.id || form.className) {
+      var formName = form.id || form.className.split(' ')[0];
+      if (typeof _paq !== 'undefined') {
+        _paq.push(['trackEvent', 'Form', 'Submit', formName]);
+      }
+    }
+  }, true);
+})();
 </script>
 <% } %>
 

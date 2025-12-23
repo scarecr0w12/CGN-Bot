@@ -915,6 +915,41 @@
 	<%- include("../partials/scroll-top-button") %>
 	
 	<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
+	// Track landing page interactions
+	document.addEventListener('turbolinks:load', function() {
+		// Track CTA button clicks
+		const ctaButtons = document.querySelectorAll('[href="/add"], .cta-button');
+		ctaButtons.forEach(btn => {
+			btn.addEventListener('click', function() {
+				if (typeof trackMatomoEvent === 'function') {
+					trackMatomoEvent('CTA', 'Click', 'Add Bot to Server - Landing');
+				}
+			});
+		});
+		
+		// Track feature card interactions
+		const featureCards = document.querySelectorAll('.feature-card');
+		featureCards.forEach(card => {
+			card.addEventListener('click', function() {
+				const title = card.querySelector('h3')?.textContent || 'Unknown';
+				if (typeof trackMatomoEvent === 'function') {
+					trackMatomoEvent('Features', 'Click', title);
+				}
+			});
+		});
+		
+		// Track FAQ interactions
+		const faqItems = document.querySelectorAll('.faq-item');
+		faqItems.forEach(item => {
+			item.addEventListener('click', function() {
+				const question = item.querySelector('.faq-question')?.textContent || 'Unknown';
+				if (typeof trackMatomoEvent === 'function') {
+					trackMatomoEvent('FAQ', 'Expand', question);
+				}
+			});
+		});
+	});
+	
 	// Scroll animations - Intersection Observer for fade-in effects
 	document.addEventListener('turbolinks:load', function() {
 		const observer = new IntersectionObserver((entries) => {

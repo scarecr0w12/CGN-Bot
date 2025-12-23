@@ -393,7 +393,7 @@
 									<span>Downgrade not available</span>
 								</button>
 								<% } else { %>
-								<button class="button is-primary is-modern" onclick="subscribe('<%= tier._id %>')" style="background: <%= tier.color || 'var(--color-primary)' %>;">
+								<button class="button is-primary is-modern" onclick="subscribe('<%= tier._id %>'); if(typeof trackMatomoEvent==='function')trackMatomoEvent('Premium','Subscribe Click','<%= tier.name %>',<%= tier.price_monthly %>);" style="background: <%= tier.color || 'var(--color-primary)' %>;">
 									<span class="icon"><i class="fa fa-arrow-up"></i></span>
 									<span><%= pageData.serverTier && pageData.serverTier.level > 0 ? 'Upgrade' : 'Subscribe' %></span>
 								</button>

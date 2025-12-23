@@ -723,6 +723,10 @@ SkynetUtil.featureExtension = extid => {
 
 SkynetUtil.openExtensionInstaller = (extid, v, svrid) => {
 	SkynetUtil.log("Launching extension installer in window");
+	// Track extension install attempt
+	if (typeof trackMatomoEvent === "function") {
+		trackMatomoEvent("Extensions", "Install Start", extid);
+	}
 	const width = window.screen.width - 600;
 	const height = window.screen.height - 800;
 	SkynetData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "Skynet Extension Installer",
@@ -780,6 +784,10 @@ SkynetUtil.updateExtension = (button) => {
 };
 
 SkynetUtil.uninstallExtension = extid => {
+	// Track extension uninstall
+	if (typeof trackMatomoEvent === "function") {
+		trackMatomoEvent("Extensions", "Uninstall", extid);
+	}
 	NProgress.start();
 	const element = $(`#extension-${extid}`);
 	const URL = `${window.location.pathname}/${extid}`;
@@ -890,6 +898,12 @@ SkynetUtil.handleExtensionFileSelect = input => {
 
 SkynetUtil.submitExtensionImport = () => {
 	if (!SkynetData.extensions.pendingImport) return;
+
+	// Track extension import
+	if (typeof trackMatomoEvent === "function") {
+		const extName = SkynetData.extensions.pendingImport.extension?.name || "Unknown";
+		trackMatomoEvent("Extensions", "Import", extName);
+	}
 
 	const submitBtn = document.getElementById("import-submit-btn");
 	submitBtn.classList.add("is-loading");
