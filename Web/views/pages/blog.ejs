@@ -355,29 +355,28 @@
 							<% }); %>
 						</div>
 
-								<div class="blog-pagination">
-									<% 
-										let queryParams = '';
-										if (pageData.search) queryParams += `&search=${encodeURIComponent(pageData.search)}`;
-										if (pageData.category) queryParams += `&category=${encodeURIComponent(pageData.category)}`;
-									%>
-									<div>
-										<% if (pageData.currentPage < pageData.numPages) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %><%= queryParams %>">
-											<span class="icon"><i class="fa fa-chevron-left"></i></span>
-											<span>Older Posts</span>
-										</a>
-										<% } %>
-									</div>
-									<div>
-										<% if (pageData.currentPage > 1) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %><%= queryParams %>">
-											<span>Newer Posts</span>
-											<span class="icon"><i class="fa fa-chevron-right"></i></span>
-										</a>
-										<% } %>
-									</div>
-								</div>
+						<!-- Pagination -->
+						<div class="blog-pagination" style="max-width: 900px; margin: 3rem auto 0;">
+							<% 
+								let queryParams = '';
+								if (pageData.search) queryParams += `&search=${encodeURIComponent(pageData.search)}`;
+								if (pageData.category) queryParams += `&category=${encodeURIComponent(pageData.category)}`;
+							%>
+							<div>
+								<% if (pageData.currentPage < pageData.numPages) { %>
+								<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %><%= queryParams %>">
+									<span class="icon"><i class="fa fa-chevron-left"></i></span>
+									<span>Older Posts</span>
+								</a>
+								<% } %>
+							</div>
+							<div>
+								<% if (pageData.currentPage > 1) { %>
+								<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %><%= queryParams %>">
+									<span>Newer Posts</span>
+									<span class="icon"><i class="fa fa-chevron-right"></i></span>
+								</a>
+								<% } %>
 							</div>
 						</div>
 					<% } else { %>

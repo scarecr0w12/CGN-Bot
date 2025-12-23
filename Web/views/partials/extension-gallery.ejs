@@ -1,72 +1,30 @@
 <style>
-/* Extension Gallery Styles */
-.ext-gallery-filters {
-	background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-	border-radius: 12px;
-	padding: 1.25rem;
-	margin-bottom: 1.5rem;
-	box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-.ext-filter-row {
+/* Extension Gallery Styles - 2025 Mockup */
+.filter-bar-ext {
 	display: flex;
+	gap: var(--space-md);
+	margin-bottom: var(--space-lg);
 	flex-wrap: wrap;
-	gap: 1rem;
-	align-items: center;
-	justify-content: space-between;
 }
-.ext-category-pills {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5rem;
+.filter-bar-ext .search-input {
+	flex: 1;
+	min-width: 250px;
 }
-.ext-category-pill {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.4rem;
-	padding: 0.5rem 1rem;
-	border-radius: 50px;
-	font-size: 0.9rem;
+.filter-select-ext {
+	padding: 12px 16px;
+	border: 2px solid var(--surface-3);
+	border-radius: var(--radius-md);
+	background: var(--surface-0);
+	color: var(--text-primary);
+	font-size: 15px;
 	font-weight: 500;
-	text-decoration: none;
-	transition: all 0.2s ease;
-	border: 2px solid transparent;
-	background: rgba(255,255,255,0.08);
-	color: rgba(255,255,255,0.7);
+	cursor: pointer;
+	transition: all var(--transition-base);
 }
-.ext-category-pill:hover {
-	background: rgba(255,255,255,0.15);
-	color: #fff;
-	transform: translateY(-1px);
-}
-.ext-category-pill.is-active {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: #fff;
-	border-color: transparent;
-	box-shadow: 0 3px 10px rgba(102,126,234,0.4);
-}
-.ext-category-pill .pill-count {
-	background: rgba(0,0,0,0.2);
-	padding: 0.1rem 0.5rem;
-	border-radius: 50px;
-	font-size: 0.75rem;
-}
-.ext-sort-dropdown .select select {
-	background: rgba(255,255,255,0.1);
-	border: 1px solid rgba(255,255,255,0.2);
-	color: #fff;
-	border-radius: 8px;
-	padding-right: 2.5rem;
-}
-.ext-sort-dropdown .select::after {
-	border-color: #fff !important;
-}
-.ext-sort-dropdown .select select:hover {
-	border-color: rgba(255,255,255,0.4);
-}
-.ext-sort-dropdown label {
-	color: rgba(255,255,255,0.7);
-	font-size: 0.85rem;
-	margin-right: 0.5rem;
+.filter-select-ext:focus {
+	outline: none;
+	border-color: var(--color-accent);
+	box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
 .ext-badge-premium {
