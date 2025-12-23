@@ -387,36 +387,28 @@
 	<!-- Stats Section -->
 	<section id="stats" class="section-spacing" style="background: var(--gradient-dark);">
 		<div class="container-standard">
-				<div class="columns is-centered">
-					<div class="column is-3 has-text-centered fade-in">
-						<div class="modern-card-glass" style="padding: 2rem;">
-							<span class="icon is-large" style="color: #14b8a6; margin-bottom: 0.5rem;">
-								<i class="fa fa-server fa-2x"></i>
-							</span>
-							<p class="title is-2" style="color: white; margin-bottom: 0.25rem;"><%= pageData.rawServerCount %></p>
-							<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">Server<%= pageData.rawServerCount === 1 ? "" : "s" %></p>
-						</div>
-					</div>
-					<div class="column is-3 has-text-centered fade-in">
-						<div class="modern-card-glass" style="padding: 2rem;">
-							<span class="icon is-large" style="color: #14b8a6; margin-bottom: 0.5rem;">
-								<i class="fa fa-users fa-2x"></i>
-							</span>
-							<p class="title is-2" style="color: white; margin-bottom: 0.25rem;"><%= pageData.rawUserCount %></p>
-							<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">User<%= pageData.rawUserCount === 1 ? "" : "s" %></p>
-						</div>
-					</div>
-					<div class="column is-3 has-text-centered fade-in">
-						<div class="modern-card-glass" style="padding: 2rem;" title="<%= pageData.rawUptime %>">
-							<span class="icon is-large" style="color: #14b8a6; margin-bottom: 0.5rem;">
-								<i class="fa fa-clock-o fa-2x"></i>
-							</span>
-							<p class="title is-2" style="color: white; margin-bottom: 0.25rem;"><%= pageData.roundedUptime %></p>
-							<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">Uptime</p>
-						</div>
-					</div>
+			<div class="grid-3">
+				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);">
+					<span class="stat-icon">
+						<i class="fa fa-server"></i>
+					</span>
+					<div class="stat-value" style="color: white;"><%= pageData.rawServerCount %></div>
+					<div class="stat-label" style="color: rgba(255,255,255,0.7);">Server<%= pageData.rawServerCount === 1 ? "" : "s" %></div>
 				</div>
-			</div>
+				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);">
+					<span class="stat-icon">
+						<i class="fa fa-users"></i>
+					</span>
+					<div class="stat-value" style="color: white;"><%= pageData.rawUserCount %></div>
+					<div class="stat-label" style="color: rgba(255,255,255,0.7);">User<%= pageData.rawUserCount === 1 ? "" : "s" %></div>
+				</div>
+				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);" title="<%= pageData.rawUptime %>">
+					<span class="stat-icon">
+						<i class="fa fa-clock-o"></i>
+					</span>
+					<div class="stat-value" style="color: white;"><%= pageData.roundedUptime %></div>
+					<div class="stat-label" style="color: rgba(255,255,255,0.7);">Uptime</div>
+				</div>
 		</div>
 	</section>
 
@@ -428,66 +420,54 @@
 				<p class="subtitle is-5">Powerful tools to manage and grow your server</p>
 			</div>
 			
-			<div class="columns is-multiline">
+			<div class="grid-auto">
 				<!-- Moderation -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-gavel"></i>
-						</div>
-						<h3 class="feature-title">Advanced Moderation</h3>
-						<p class="feature-description">Keep your server safe with auto-moderation, spam detection, warnings, and customizable punishment escalation.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-gavel"></i>
 					</div>
+					<h3 class="feature-title">Advanced Moderation</h3>
+					<p class="feature-description">Keep your server safe with auto-moderation, spam detection, warnings, and customizable punishment escalation.</p>
 				</div>
 				<!-- Engagement -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-trophy"></i>
-						</div>
-						<h3 class="feature-title">Engagement System</h3>
-						<p class="feature-description">Reward activity with SkynetPoints, leveling, custom ranks, and leaderboards to keep members active.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-trophy"></i>
 					</div>
+					<h3 class="feature-title">Engagement System</h3>
+					<p class="feature-description">Reward activity with SkynetPoints, leveling, custom ranks, and leaderboards to keep members active.</p>
 				</div>
 				<!-- Fun -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-gamepad"></i>
-						</div>
-						<h3 class="feature-title">Fun & Games</h3>
-						<p class="feature-description">Entertain your community with Trivia, Polls, 8Ball, Memes, and Image manipulation commands.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-gamepad"></i>
 					</div>
+					<h3 class="feature-title">Fun & Games</h3>
+					<p class="feature-description">Entertain your community with Trivia, Polls, 8Ball, Memes, and Image manipulation commands.</p>
 				</div>
 				<!-- Utilities -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-cogs"></i>
-						</div>
-						<h3 class="feature-title">Server Utilities</h3>
-						<p class="feature-description">Essential tools like weather info, unit conversion, urban dictionary, and extensive server logging.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-cogs"></i>
 					</div>
+					<h3 class="feature-title">Server Utilities</h3>
+					<p class="feature-description">Essential tools like weather info, unit conversion, urban dictionary, and extensive server logging.</p>
 				</div>
 				<!-- Extensions -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-bolt"></i>
-						</div>
-						<h3 class="feature-title">Custom Extensions</h3>
-						<p class="feature-description">Build your own commands or install community extensions using our powerful JavaScript sandbox.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-bolt"></i>
 					</div>
+					<h3 class="feature-title">Custom Extensions</h3>
+					<p class="feature-description">Build your own commands or install community extensions using our powerful JavaScript sandbox.</p>
 				</div>
 				<!-- Web Dashboard -->
-				<div class="column is-4 fade-in">
-					<div class="feature-card" style="height: 100%;">
-						<div class="feature-icon">
-							<i class="fa fa-tachometer"></i>
-						</div>
-						<h3 class="feature-title">Web Dashboard</h3>
-						<p class="feature-description">Easily configure every aspect of the bot through our intuitive and modern web interface.</p>
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fa fa-tachometer"></i>
 					</div>
+					<h3 class="feature-title">Web Dashboard</h3>
+					<p class="feature-description">Easily configure every aspect of the bot through our intuitive and modern web interface.</p>
 				</div>
 			</div>
 		</div>

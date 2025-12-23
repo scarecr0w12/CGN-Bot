@@ -214,14 +214,13 @@ body {
     margin-bottom: var(--space-sm);
 }
 
-/* Feature Card Component */
+/* Feature Card Component (2025 Mockup Style) */
 .feature-card {
-    background: var(--color-bg-primary);
-    border-radius: var(--radius-xl);
+    background: var(--surface-0);
+    border-radius: var(--radius-md);
     padding: var(--space-xl);
-    text-align: center;
+    border: 1px solid var(--surface-3);
     transition: all var(--transition-base);
-    border: 1px solid transparent;
     position: relative;
     overflow: hidden;
 }
@@ -232,8 +231,8 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: var(--gradient-accent);
+    height: 3px;
+    background: var(--gradient-brand);
     transform: scaleX(0);
     transition: transform var(--transition-base);
 }
@@ -243,38 +242,38 @@ body {
 }
 
 .feature-card:hover {
-    box-shadow: var(--shadow-lg);
-    border-color: var(--color-border);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--surface-3);
 }
 
 .feature-card .feature-icon {
-    width: 64px;
-    height: 64px;
-    margin: 0 auto var(--space-lg);
-    background: var(--gradient-primary);
-    border-radius: var(--radius-lg);
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--space-md);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.5rem;
-    transition: transform var(--transition-bounce);
+    font-size: 24px;
+    transition: transform var(--transition-base);
 }
 
 .feature-card:hover .feature-icon {
-    transform: scale(1.1) rotate(5deg);
+    transform: scale(1.05);
 }
 
 .feature-card .feature-title {
-    font-size: 1.125rem;
+    font-size: 20px;
     font-weight: 600;
-    color: var(--color-text-primary);
+    color: var(--text-primary);
     margin-bottom: var(--space-sm);
 }
 
 .feature-card .feature-description {
-    font-size: 0.9375rem;
-    color: var(--color-text-secondary);
+    font-size: 15px;
+    color: var(--text-secondary);
     line-height: 1.6;
 }
 
