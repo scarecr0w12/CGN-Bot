@@ -204,13 +204,13 @@ module.exports = {
 
 		// Set timeout to end poll if duration specified
 		if (duration > 0) {
-			setTimeout(async () => {
+			interaction.client.setTimeout(async () => {
 				try {
 					await this.autoEndPoll(interaction.guild.id, interaction.channel.id, pollMsg.id);
 				} catch (err) {
 					logger.debug("Failed to auto-end poll", { msgId: pollMsg.id }, err);
 				}
-			}, duration * 60000);
+			}, duration * 60000, `poll-autoend-${pollMsg.id}`);
 		}
 	},
 
@@ -418,13 +418,13 @@ module.exports = {
 		});
 		await serverDocument.save();
 
-		setTimeout(async () => {
+		interaction.client.setTimeout(async () => {
 			try {
 				await this.endWeightedPoll(interaction.guild.id, interaction.channel.id, pollMsg.id);
 			} catch (err) {
 				logger.debug("Failed to auto-end weighted poll", { msgId: pollMsg.id }, err);
 			}
-		}, duration * 60000);
+		}, duration * 60000, `poll-weighted-${pollMsg.id}`);
 	},
 
 	async endWeightedPoll (guildId, channelId, messageId) {
@@ -552,13 +552,13 @@ module.exports = {
 		});
 		await serverDocument.save();
 
-		setTimeout(async () => {
+		interaction.client.setTimeout(async () => {
 			try {
 				await this.endRankedPoll(interaction.guild.id, interaction.channel.id, pollMsg.id);
 			} catch (err) {
 				logger.debug("Failed to auto-end ranked poll", { msgId: pollMsg.id }, err);
 			}
-		}, duration * 60000);
+		}, duration * 60000, `poll-ranked-${pollMsg.id}`);
 	},
 
 	async endRankedPoll (guildId, channelId, messageId) {

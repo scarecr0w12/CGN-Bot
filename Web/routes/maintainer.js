@@ -80,6 +80,7 @@ module.exports = router => {
 	setupConsolePage(router, "/infrastructure/indexnow", "management", [], controllers.console.indexnow.status);
 	router.post("/infrastructure/indexnow/test", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.test);
 	router.post("/infrastructure/indexnow/submit", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.submit);
+	router.post("/infrastructure/indexnow/reset", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.reset);
 
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);

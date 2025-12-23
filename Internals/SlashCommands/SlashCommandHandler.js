@@ -5,6 +5,7 @@ const { join } = require("path");
 
 const IsolatedSandbox = require("../Extensions/API/IsolatedSandbox");
 const { ServerTicketManager } = require("../../Modules/index");
+const metrics = require("../../Modules/Metrics");
 
 class SlashCommandHandler {
 	constructor (client) {
@@ -308,6 +309,26 @@ class SlashCommandHandler {
 			return;
 		}
 
+		// Check if command is disabled on this server
+		const commandConfig = serverDocument.config.commands[interaction.commandName];
+		if (commandConfig) {
+			// Check if command is globally disabled on server
+			if (commandConfig.isEnabled === false) {
+				return interaction.reply({
+					content: "This command is disabled on this server.",
+					ephemeral: true,
+				});
+			}
+
+			// Check if command is disabled in this channel
+			if (commandConfig.disabled_channel_ids && commandConfig.disabled_channel_ids.includes(interaction.channel.id)) {
+				return interaction.reply({
+					content: "This command is disabled in this channel.",
+					ephemeral: true,
+				});
+			}
+		}
+
 		// Check admin level if required
 		if (command.adminLevel && command.adminLevel > 0) {
 			const userAdminLevel = this.client.getUserBotAdmin(
@@ -323,9 +344,12 @@ class SlashCommandHandler {
 			}
 		}
 
+		const start = process.hrtime.bigint();
+		let status = "success";
 		try {
 			await command.execute(interaction, this.client, serverDocument);
 		} catch (err) {
+			status = "error";
 			logger.error(`Error executing slash command ${interaction.commandName}`, {
 				svrid: interaction.guild.id,
 				usrid: interaction.user.id,
@@ -341,6 +365,10 @@ class SlashCommandHandler {
 			} else {
 				await interaction.reply(errorReply);
 			}
+		} finally {
+			// Record command execution metrics
+			const duration = Number(process.hrtime.bigint() - start) / 1e9;
+			metrics.recordCommandExecution(interaction.commandName, "slash", status, duration);
 		}
 	}
 

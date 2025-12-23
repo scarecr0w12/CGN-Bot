@@ -1,4 +1,5 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const BatchWriteManager = require("../../../Modules/BatchWriteManager");
 const { LoggingLevels, Colors } = require("../../Constants");
 const TierManager = require("../../../Modules/TierManager");
 const SentimentAnalyzer = require("../../../Modules/SentimentAnalyzer");
@@ -134,7 +135,7 @@ class SentimentHandler extends BaseEvent {
 			});
 		}
 
-		await serverDocument.save();
+		BatchWriteManager.queue(serverDocument);
 	}
 
 	/**

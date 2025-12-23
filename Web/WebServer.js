@@ -172,13 +172,36 @@ exports.open = async (client, auth, configJS, logger) => {
 					"unpkg.com",
 					"https://maxcdn.bootstrapcdn.com",
 					"maxcdn.bootstrapcdn.com",
-					// Analytics
+					// Analytics (internal)
 					"https://analytics.thecorehosting.net",
 					"https://static.cloudflareinsights.com",
-					"https://www.googletagmanager.com",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://googletagmanager.com",
+					"https://tagmanager.google.com",
+					// Google Analytics
+					"https://*.google-analytics.com",
 					"https://www.google-analytics.com",
+					"https://ssl.google-analytics.com",
+					// Google Ads & AdSense
 					"https://pagead2.googlesyndication.com",
-					"pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					"https://googleads.g.doubleclick.net",
+					"https://*.googleadservices.com",
+					"https://partner.googleadservices.com",
+					"https://www.googletagservices.com",
+					"https://tpc.googlesyndication.com",
+					// Google Static Resources
+					"https://*.gstatic.com",
+					"https://www.gstatic.com",
+					"https://ssl.gstatic.com",
+					// Google Core & SODAR
+					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// DoubleClick
+					"https://*.doubleclick.net",
+					"https://static.doubleclick.net",
 				],
 				scriptSrcAttr: ["'unsafe-hashes'", "'unsafe-inline'"],
 				styleSrc: [
@@ -191,6 +214,7 @@ exports.open = async (client, auth, configJS, logger) => {
 					"https://maxcdn.bootstrapcdn.com",
 					"maxcdn.bootstrapcdn.com",
 					"https://analytics.thecorehosting.net",
+					"https://*.googleadservices.com",
 				],
 				fontSrc: [
 					"'self'",
@@ -207,25 +231,67 @@ exports.open = async (client, auth, configJS, logger) => {
 					"https:",
 					"http:",
 					"blob:",
+					// Note: Already allowing all https/http for broad compatibility
+					// This covers Google Analytics pixels, AdSense, GTM, and other tracking images
 				],
 				connectSrc: [
 					"'self'",
 					"wss:",
 					"ws:",
 					"https://discord.com",
+					// Analytics (internal)
 					"https://analytics.thecorehosting.net",
 					"https://cdnjs.cloudflare.com",
-					"https://www.google-analytics.com",
 					"https://static.cloudflareinsights.com",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://www.googletagmanager.com",
+					"https://googletagmanager.com",
+					// Google Analytics
+					"https://*.google-analytics.com",
+					"https://www.google-analytics.com",
+					"https://ssl.google-analytics.com",
+					"https://analytics.google.com",
+					"https://*.g.doubleclick.net",
+					"https://stats.g.doubleclick.net",
+					// Google Ads & AdSense
+					"https://pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					"https://googleads.g.doubleclick.net",
+					"https://*.googleadservices.com",
+					"https://www.googleadservices.com",
+					// Google Core & SODAR
 					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// DoubleClick
 					"https://*.doubleclick.net",
+					"https://ad.doubleclick.net",
+					// Google Static Resources
+					"https://*.gstatic.com",
 				],
 				frameSrc: [
 					"'self'",
 					"https://discord.com",
-					"https://www.google.com",
+					// Google Ads & AdSense iframes
+					"https://googleads.g.doubleclick.net",
+					"https://tpc.googlesyndication.com",
 					"https://pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					// DoubleClick Ad serving
 					"https://*.doubleclick.net",
+					"https://td.doubleclick.net",
+					"https://bid.g.doubleclick.net",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://googletagmanager.com",
+					// Google Core & SODAR
+					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// Google Services
+					"https://*.googleadservices.com",
+					"https://*.gstatic.com",
 				],
 				objectSrc: ["'none'"],
 				baseUri: ["'self'", "https://analytics.thecorehosting.net"],
@@ -280,11 +346,14 @@ exports.open = async (client, auth, configJS, logger) => {
 	}));
 
 	passport.serializeUser((user, done) => {
-		delete user.email;
-		done(null, user);
+		// Only serialize the user ID to prevent session corruption
+		done(null, user.id);
 	});
-	passport.deserializeUser((id, done) => {
-		done(null, id);
+	passport.deserializeUser((obj, done) => {
+		// Reconstruct minimal user object from ID
+		// The full user object structure is expected by the app
+		const user = typeof obj === "string" ? { id: obj } : obj;
+		done(null, user);
 	});
 
 	// Session store priority: Redis > MongoDB > MariaDB > Memory
@@ -434,9 +503,9 @@ exports.open = async (client, auth, configJS, logger) => {
 	io.use((socket, next) => {
 		if (socket.request.session?.passport?.user) {
 			socket.user = socket.request.session.passport.user;
-			next();
+			return next();
 		} else {
-			next(new Error("Unauthorized"));
+			return next(new Error("Unauthorized"));
 		}
 	});
 

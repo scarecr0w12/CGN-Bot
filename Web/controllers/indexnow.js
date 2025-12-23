@@ -72,3 +72,21 @@ controllers.submit = async (req, res) => {
 		url: urlPath,
 	});
 };
+
+/**
+ * Reset IndexNow statistics
+ */
+controllers.reset = async (req, res) => {
+	const indexNow = req.app.get("indexNow");
+
+	if (!indexNow) {
+		return res.status(500).json({ success: false, error: "IndexNow module not initialized" });
+	}
+
+	try {
+		await indexNow.resetStats();
+		res.json({ success: true, message: "Statistics reset successfully" });
+	} catch (err) {
+		res.status(500).json({ success: false, error: err.message });
+	}
+};

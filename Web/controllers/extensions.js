@@ -9,6 +9,7 @@ const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateEx
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 const { generateUniqueSlug } = require("../../Modules/Utils/Slug");
+const CacheManager = require("../../Modules/CacheManager");
 
 const controllers = module.exports;
 
@@ -182,7 +183,7 @@ controllers.gallery = async (req, { res }) => {
 				await svr.initialize(usr.id);
 				if (svr.success) {
 					try {
-						const serverDocument = await Servers.findOne(svr.id);
+						const serverDocument = await CacheManager.getServer(svr.id);
 						if (serverDocument) {
 							const member = svr.members[usr.id];
 							if (req.app.client.getUserBotAdmin(svr, serverDocument, member) >= 3) {
@@ -211,7 +212,7 @@ controllers.gallery = async (req, { res }) => {
 		};
 		addServerData(0, async () => {
 			serverData.sort((a, b) => a.name.localeCompare(b.name));
-			const userDocument = await Users.findOne(req.user.id);
+			const userDocument = await CacheManager.getUser(req.user.id);
 			if (userDocument) {
 				renderPage(userDocument.upvoted_gallery_extensions, serverData);
 			} else {
@@ -283,7 +284,7 @@ controllers.installer = async (req, { res }) => {
 				const svr = new GetGuild(req.app.client, req.user.guilds[i].id);
 				await svr.initialize(req.user.id);
 				if (svr.success) {
-					const serverDocument = await Servers.findOne(svr.id).catch(() => null);
+					const serverDocument = await CacheManager.getServer(svr.id);
 					if (serverDocument) {
 						const member = svr.members[req.user.id];
 						if (req.app.client.getUserBotAdmin(svr, serverDocument, member) >= 3) {
@@ -319,7 +320,7 @@ controllers.installer = async (req, { res }) => {
 				.render();
 		});
 	} else {
-		const serverDocument = await Servers.findOne(req.query.svrid);
+		const serverDocument = await CacheManager.getServer(req.query.svrid);
 		if (!serverDocument) return renderError(res, "That server doesn't exist!", undefined, 404);
 		const serverData = await parsers.serverData(req, serverDocument);
 		const svr = new GetGuild(req.app.client, serverDocument._id);
@@ -754,7 +755,7 @@ controllers.import = async (req, res) => {
 	}
 };
 
-controllers.gallery.modify = async (req, res) => {
+controllers.gallery.modify = async (req, { res }) => {
 	if (req.isAuthenticated()) {
 		if (req.params.extid && req.params.action) {
 			const modifySettings = await require("../../Modules/ConfigManager").get();
@@ -778,7 +779,7 @@ controllers.gallery.modify = async (req, res) => {
 				return doc;
 			};
 			const getUserDocument = async () => {
-				let userDocument = await Users.findOne(req.user.id);
+				let userDocument = await CacheManager.getUser(req.user.id);
 				if (userDocument) {
 					return userDocument;
 				} else {
@@ -819,7 +820,7 @@ controllers.gallery.modify = async (req, res) => {
 					await galleryDocument.save();
 					await userDocument.save();
 
-					let ownerUserDocument = await Users.findOne(galleryDocument.owner_id);
+					let ownerUserDocument = await CacheManager.getUser(galleryDocument.owner_id);
 					if (!ownerUserDocument) ownerUserDocument = await Users.new({ _id: galleryDocument.owner_id });
 					ownerUserDocument.query.inc("points", vote * 10);
 					await ownerUserDocument.save();
@@ -885,7 +886,7 @@ controllers.gallery.modify = async (req, res) => {
 					break;
 				case "reject":
 				case "remove": {
-					const ownerUserDocument2 = await Users.findOne(galleryDocument.owner_id);
+					const ownerUserDocument2 = await CacheManager.getUser(galleryDocument.owner_id);
 					if (ownerUserDocument2) {
 						ownerUserDocument2.query.inc("points", -(galleryDocument.points * 10));
 						await ownerUserDocument2.save();

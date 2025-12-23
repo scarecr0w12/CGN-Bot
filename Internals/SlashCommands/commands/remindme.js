@@ -39,7 +39,7 @@ module.exports = {
 		const remindAt = new Date(Date.now() + durationMs);
 
 		// Note: In production, this should be stored in database for persistence
-		setTimeout(async () => {
+		interaction.client.setTimeout(async () => {
 			try {
 				await interaction.user.send({
 					embeds: [{
@@ -52,7 +52,7 @@ module.exports = {
 			} catch (_) {
 				// DMs disabled
 			}
-		}, durationMs);
+		}, durationMs, `reminder-${interaction.user.id}-${Date.now()}`);
 
 		return interaction.reply({
 			embeds: [{

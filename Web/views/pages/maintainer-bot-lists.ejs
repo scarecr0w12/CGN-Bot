@@ -411,35 +411,11 @@
                 </div>
             </div>
 
-            <div class="columns">
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Points per Dollar</label>
-                        <div class="control">
-                            <input class="input" type="number" name="points_per_dollar" value="<%= configData.vote_rewards?.redemption?.points_per_dollar || 1000 %>" min="1">
-                        </div>
-                        <p class="help">How many points equal $1 of tier value</p>
-                    </div>
+            <article class="message is-info">
+                <div class="message-body">
+                    <strong>Note:</strong> Point redemption costs are now configured per-tier in the <a href="/dashboard/maintainer/membership/tiers">Membership Tiers</a> section. Set the "Points Cost" field for each tier you want to make redeemable with points (0 = not redeemable).
                 </div>
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Redeemable Tier</label>
-                        <div class="control">
-                            <div class="select is-fullwidth">
-                                <select name="redeemable_tier_id">
-                                    <option value="">-- Select Tier --</option>
-                                    <% (configData.tiers || []).forEach(tier => { %>
-                                    <option value="<%= tier._id %>" <%= configData.vote_rewards?.redemption?.redeemable_tier_id === tier._id ? 'selected' : '' %>>
-                                        <%= tier.name %> ($<%= tier.price_monthly || 0 %>/month)
-                                    </option>
-                                    <% }); %>
-                                </select>
-                            </div>
-                        </div>
-                        <p class="help">Which tier users can redeem points for</p>
-                    </div>
-                </div>
-            </div>
+            </article>
 
             <div class="columns">
                 <div class="column">
@@ -463,25 +439,27 @@
             </div>
 
             <% 
-            const pointsPerDollar = configData.vote_rewards?.redemption?.points_per_dollar || 1000;
-            const selectedTier = (configData.tiers || []).find(t => t._id === configData.vote_rewards?.redemption?.redeemable_tier_id);
-            const tierPrice = selectedTier?.price_monthly || 5;
-            const pointsPerMonth = pointsPerDollar * tierPrice;
+            const redeemableTiers = (configData.tiers || []).filter(t => t.points_cost && t.points_cost > 0);
             const pointsPerVote = configData.vote_rewards?.points_per_vote || 100;
-            const votesPerMonth = Math.ceil(pointsPerMonth / pointsPerVote);
             %>
-            <article class="message is-info">
+            <% if (redeemableTiers.length > 0) { %>
+            <article class="message is-success">
                 <div class="message-body">
-                    <strong>Redemption Calculator:</strong><br>
-                    <% if (selectedTier) { %>
-                    • <strong><%= selectedTier.name %></strong> costs $<%= tierPrice %>/month<br>
-                    • At <%= pointsPerDollar.toLocaleString() %> points/$1, one month = <strong><%= pointsPerMonth.toLocaleString() %> points</strong><br>
-                    • At <%= pointsPerVote %> points/vote, that's approximately <strong><%= votesPerMonth %> votes</strong> per month
-                    <% } else { %>
-                    Select a tier above to see redemption calculations.
-                    <% } %>
+                    <strong>Redeemable Tiers:</strong><br>
+                    <% redeemableTiers.forEach(tier => { 
+                        const votesPerMonth = Math.ceil(tier.points_cost / pointsPerVote);
+                    %>
+                    • <strong><%= tier.name %></strong>: <%= tier.points_cost.toLocaleString() %> points/month (~<%= votesPerMonth %> votes)<br>
+                    <% }); %>
                 </div>
             </article>
+            <% } else { %>
+            <article class="message is-warning">
+                <div class="message-body">
+                    No tiers are currently redeemable with points. Go to <a href="/dashboard/maintainer/membership/tiers">Membership Tiers</a> to set point costs.
+                </div>
+            </article>
+            <% } %>
         </div>
 
         <!-- Recent Votes -->

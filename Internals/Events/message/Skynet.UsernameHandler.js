@@ -1,4 +1,5 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const BatchWriteManager = require("../../../Modules/BatchWriteManager");
 
 /**
  * Username updates per message
@@ -15,7 +16,7 @@ class UsernameHandler extends BaseEvent {
 	async handle (msg) {
 		if (this.userDocument && this.userDocument.username !== msg.author.tag) {
 			this.userDocument.query.set("username", msg.author.tag);
-			await this.userDocument.save();
+			BatchWriteManager.queue(this.userDocument);
 		}
 	}
 }

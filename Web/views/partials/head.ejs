@@ -181,10 +181,14 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 <% if (typeof officialMode !== "undefined" && officialMode) { %>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
-	    (adsbygoogle = window.adsbygoogle || []).push({
-		    google_ad_client: "<%= adsense.ID %>",
-		    enable_page_level_ads: true
-	    });
+	    // Only initialize AdSense once (prevents Turbolinks re-initialization)
+	    if (!window.adsenseInitialized) {
+		    (adsbygoogle = window.adsbygoogle || []).push({
+			    google_ad_client: "<%= adsense.ID %>",
+			    enable_page_level_ads: true
+		    });
+		    window.adsenseInitialized = true;
+	    }
     </script>
 <% } %>
 

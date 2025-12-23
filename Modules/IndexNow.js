@@ -7,6 +7,15 @@
 
 const https = require("https");
 
+let Redis = null;
+try {
+	Redis = require("../Database/Redis");
+} catch (err) {
+	// Redis not available
+}
+
+const REDIS_KEY = "indexnow:stats";
+
 class IndexNow {
 	constructor (client) {
 		this.client = client;
@@ -19,7 +28,7 @@ class IndexNow {
 		this.flushTimer = null;
 		this.flushDelay = 5000; // 5 seconds delay for batching
 
-		// Stats tracking
+		// Stats tracking (will be loaded from Redis)
 		this.stats = {
 			submitted: 0,
 			succeeded: 0,
@@ -28,6 +37,42 @@ class IndexNow {
 			lastError: null,
 			lastResponse: null,
 		};
+
+		// Load stats from Redis
+		this.loadStats();
+	}
+
+	/**
+	 * Load statistics from Redis
+	 */
+	async loadStats () {
+		if (!Redis || !Redis.isEnabled()) return;
+
+		try {
+			const client = await Redis.getClient();
+			const data = await client.get(REDIS_KEY);
+			if (data) {
+				const parsed = JSON.parse(data);
+				this.stats = { ...this.stats, ...parsed };
+				logger.debug("IndexNow: Loaded stats from Redis", this.stats);
+			}
+		} catch (err) {
+			logger.warn("IndexNow: Failed to load stats from Redis", err);
+		}
+	}
+
+	/**
+	 * Save statistics to Redis
+	 */
+	async saveStats () {
+		if (!Redis || !Redis.isEnabled()) return;
+
+		try {
+			const client = await Redis.getClient();
+			await client.set(REDIS_KEY, JSON.stringify(this.stats));
+		} catch (err) {
+			logger.warn("IndexNow: Failed to save stats to Redis", err);
+		}
 	}
 
 	/**
@@ -149,11 +194,13 @@ class IndexNow {
 					logger.warn(`IndexNow: Failed to submit URLs - ${result.error}`, { urls, statusCode: result.statusCode });
 				}
 			}
+			await this.saveStats();
 			return result;
 		} catch (err) {
 			this.stats.failed += urls.length;
 			this.stats.lastError = err.message;
 			logger.error("IndexNow: Error submitting URLs", { urls }, err);
+			await this.saveStats();
 			return { success: false, error: err.message };
 		}
 	}
@@ -241,11 +288,13 @@ class IndexNow {
 				this.stats.lastError = result.error;
 				logger.warn(`IndexNow: Immediate submission failed`, { url: fullUrl, error: result.error, statusCode: result.statusCode });
 			}
+			await this.saveStats();
 			return result;
 		} catch (err) {
 			this.stats.failed += 1;
 			this.stats.lastError = err.message;
 			logger.error("IndexNow: Error in immediate submission", { url: fullUrl }, err);
+			await this.saveStats();
 			return { success: false, error: err.message };
 		}
 	}
@@ -340,6 +389,22 @@ class IndexNow {
 			],
 		};
 		return tips[statusCode] || ["Unknown error - check IndexNow documentation"];
+	}
+
+	/**
+	 * Reset statistics
+	 */
+	async resetStats () {
+		this.stats = {
+			submitted: 0,
+			succeeded: 0,
+			failed: 0,
+			lastSubmission: null,
+			lastError: null,
+			lastResponse: null,
+		};
+		await this.saveStats();
+		logger.info("IndexNow: Statistics reset");
 	}
 }
 

@@ -57,10 +57,16 @@
 
 							<!-- Submission Stats -->
 							<div class="box">
-								<h4 class="title is-5">
-									<span class="icon"><i class="fas fa-chart-bar"></i></span>
-									Submission Statistics
-								</h4>
+								<div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
+									<h4 class="title is-5 mb-0">
+										<span class="icon"><i class="fas fa-chart-bar"></i></span>
+										Submission Statistics
+									</h4>
+									<button id="resetStats" class="button is-small is-danger is-outlined">
+										<span class="icon"><i class="fas fa-redo"></i></span>
+										<span>Reset Stats</span>
+									</button>
+								</div>
 								<div class="columns">
 									<div class="column has-text-centered">
 										<p class="heading">Total Submitted</p>
@@ -159,6 +165,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const testBtn = document.getElementById('testIndexNow');
 	const submitBtn = document.getElementById('submitIndexNow');
+	const resetBtn = document.getElementById('resetStats');
 
 	if (testBtn) {
 		testBtn.addEventListener('click', async function() {
@@ -257,6 +264,35 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 
 			submitBtn.classList.remove('is-loading');
+		});
+	}
+
+	if (resetBtn) {
+		resetBtn.addEventListener('click', async function() {
+			if (!confirm('Are you sure you want to reset all IndexNow statistics? This cannot be undone.')) {
+				return;
+			}
+
+			resetBtn.classList.add('is-loading');
+
+			try {
+				const response = await fetch('/dashboard/maintainer/infrastructure/indexnow/reset', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' }
+				});
+				const data = await response.json();
+
+				if (data.success) {
+					// Reload the page to show updated stats
+					location.reload();
+				} else {
+					alert('Failed to reset statistics: ' + data.error);
+					resetBtn.classList.remove('is-loading');
+				}
+			} catch (err) {
+				alert('Error: ' + err.message);
+				resetBtn.classList.remove('is-loading');
+			}
 		});
 	}
 });

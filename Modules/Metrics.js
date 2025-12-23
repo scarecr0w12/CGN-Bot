@@ -161,6 +161,37 @@ const extensionExecutionsTotal = new client.Counter({
 	registers: [register],
 });
 
+// Batch write metrics
+const batchWritesQueued = new client.Counter({
+	name: "skynetbot_batch_writes_queued_total",
+	help: "Total number of database writes queued for batching",
+	registers: [register],
+});
+
+const batchWritesFlushed = new client.Counter({
+	name: "skynetbot_batch_writes_flushed_total",
+	help: "Total number of database writes flushed from batch queue",
+	registers: [register],
+});
+
+const batchWritesMerged = new client.Counter({
+	name: "skynetbot_batch_writes_merged_total",
+	help: "Total number of duplicate writes merged in batch queue",
+	registers: [register],
+});
+
+const batchWriteErrors = new client.Counter({
+	name: "skynetbot_batch_write_errors_total",
+	help: "Total number of errors during batch write operations",
+	registers: [register],
+});
+
+const batchQueueSize = new client.Gauge({
+	name: "skynetbot_batch_queue_size",
+	help: "Current number of documents in batch write queue",
+	registers: [register],
+});
+
 // ============================================
 // WebSocket Metrics
 // ============================================
@@ -621,5 +652,11 @@ module.exports = {
 		redisConnectionState,
 		distributedLocksActive,
 		distributedLockAcquisitions,
+		// Batch write metrics
+		batchWritesQueued,
+		batchWritesFlushed,
+		batchWritesMerged,
+		batchWriteErrors,
+		batchQueueSize,
 	},
 };

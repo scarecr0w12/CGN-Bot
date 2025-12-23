@@ -1,6 +1,7 @@
 module.exports = {
 	SkynetClient: require("./SkynetClient.js"),
 
+	BatchWriteManager: require("./BatchWriteManager.js"),
 	ConfigManager: require("./ConfigManager.js"),
 	ConversionHandler: require("./ConversionHandler.js"),
 	CreatorManager: require("./CreatorManager.js"),

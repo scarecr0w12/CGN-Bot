@@ -236,7 +236,7 @@ class RaidDetection extends BaseEvent {
 			}
 
 			// Schedule raid mode end
-			setTimeout(() => {
+			this.client.setTimeout(() => {
 				const currentTracker = joinTracker.get(guildId);
 				if (currentTracker) {
 					currentTracker.isRaidMode = false;
@@ -254,7 +254,7 @@ class RaidDetection extends BaseEvent {
 						}).catch(() => null);
 					}
 				}
-			}, lockdownDuration);
+			}, lockdownDuration, `raid-mode-${guildId}`);
 		}
 	}
 

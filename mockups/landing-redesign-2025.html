@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skynet Bot - Redesigned Homepage Mockup (2025)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== 2025 Design System Variables ===== */
+        :root {
+            /* Simplified Color System */
+            --color-primary: #1e3a8a;
+            --color-accent: #14b8a6;
+            
+            /* Single Brand Gradient (used sparingly) */
+            --gradient-brand: linear-gradient(135deg, #1e3a8a 0%, #14b8a6 100%);
+            
+            /* Tone-Based Surfaces */
+            --surface-0: #ffffff;
+            --surface-1: #f8fafc;
+            --surface-2: #f1f5f9;
+            --surface-3: #e2e8f0;
+            
+            /* Text Colors */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            
+            /* Semantic Colors */
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            
+            /* Container Widths */
+            --container-narrow: 800px;
+            --container-standard: 1200px;
+            --container-wide: 1400px;
+            
+            /* Consistent Spacing Scale */
+            --space-micro: 4px;
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            --space-3xl: 96px;
+            
+            /* Standard Component Sizes */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            /* Single Shadow Level */
+            --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+            
+            /* Typography Scale */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-display: 'Montserrat', var(--font-sans);
+        }
+
+        /* ===== Global Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== Container System ===== */
+        .container-narrow {
+            max-width: var(--container-narrow);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .container-standard {
+            max-width: var(--container-standard);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .container-wide {
+            max-width: var(--container-wide);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        /* ===== Section Spacing ===== */
+        .section-spacing {
+            padding: var(--space-2xl) 0;
+        }
+
+        .section-spacing-lg {
+            padding: var(--space-3xl) 0;
+        }
+
+        /* ===== Hero Section ===== */
+        .hero-modern {
+            background: var(--gradient-brand);
+            position: relative;
+            overflow: hidden;
+            padding: var(--space-3xl) 0 var(--space-2xl);
+        }
+
+        .hero-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+
+        .trust-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: var(--space-lg);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-logo {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin: 0 auto var(--space-lg);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-md);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            font-weight: 400;
+            opacity: 0.95;
+            margin-bottom: var(--space-xl);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 12px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 200ms ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== Stats Section ===== */
+        .stats-section {
+            background: var(--surface-1);
+            padding: var(--space-2xl) 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .stat-card {
+            background: var(--surface-0);
+            padding: var(--space-xl);
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--surface-3);
+            transition: all 200ms ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--color-accent);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto var(--space-md);
+            background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* ===== Features Section ===== */
+        .features-section {
+            background: var(--surface-0);
+            padding: var(--space-3xl) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .feature-card {
+            background: var(--surface-0);
+            padding: var(--space-xl);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--surface-3);
+            transition: all 200ms ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-brand);
+            transform: scaleX(0);
+            transition: transform 200ms ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--surface-3);
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* ===== CTA Section ===== */
+        .cta-section {
+            background: var(--gradient-brand);
+            padding: var(--space-3xl) 0;
+            color: white;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+
+        .cta-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: var(--space-xl);
+        }
+
+        /* ===== Navbar ===== */
+        .navbar-modern {
+            background: transparent;
+            padding: var(--space-md) 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: var(--space-lg);
+            align-items: center;
+        }
+
+        .navbar-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-sm);
+            transition: all 200ms ease;
+        }
+
+        .navbar-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* ===== Footer ===== */
+        .footer-modern {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: var(--space-2xl) 0 var(--space-xl);
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 200ms ease;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-menu {
+                display: none;
+            }
+        }
+
+        /* ===== Design Annotation Badge ===== */
+        .design-note {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #fbbf24;
+            color: #1e293b;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: var(--shadow-card);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Design Annotation -->
+    <div class="design-note">
+        🎨 2025 Redesign Mockup
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar-modern">
+        <div class="container-standard navbar-content">
+            <a href="#" class="navbar-brand">Skynet</a>
+            <div class="navbar-menu">
+                <a href="#features" class="navbar-link">Features</a>
+                <a href="#" class="navbar-link">Dashboard</a>
+                <a href="#" class="navbar-link">Extensions</a>
+                <a href="#" class="navbar-link">Premium</a>
+                <a href="#" class="btn btn-primary" style="background: white; color: var(--color-primary); padding: 8px 20px; font-size: 14px;">
+                    Add to Server
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-modern">
+        <div class="container-standard hero-content">
+            <div class="trust-badge">
+                <i class="fa fa-shield"></i> Trusted by 1,000+ Servers
+            </div>
+            
+            <img src="https://via.placeholder.com/140" alt="Skynet Logo" class="hero-logo">
+            
+            <h1 class="hero-title">
+                Elevate Your Discord Community
+            </h1>
+            
+            <p class="hero-subtitle">
+                The ultimate free bot for moderation, engagement, and server management. Simple, powerful, and built for growth.
+            </p>
+            
+            <div class="btn-group">
+                <a href="#" class="btn btn-primary">
+                    <i class="fa fa-plus"></i>
+                    Add to Server
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    Explore Features
+                    <i class="fa fa-chevron-down"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container-standard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa fa-server"></i>
+                    </div>
+                    <div class="stat-value">1,234</div>
+                    <div class="stat-label">Servers</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa fa-users"></i>
+                    </div>
+                    <div class="stat-value">456K</div>
+                    <div class="stat-label">Users</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container-standard">
+            <div class="section-header">
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-subtitle">Powerful tools to manage and grow your server</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-gavel"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced Moderation</h3>
+                    <p class="feature-description">
+                        Keep your server safe with auto-moderation, spam detection, warnings, and customizable punishment escalation.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-trophy"></i>
+                    </div>
+                    <h3 class="feature-title">Engagement System</h3>
+                    <p class="feature-description">
+                        Reward activity with SkynetPoints, leveling, custom ranks, and leaderboards to keep members active.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-gamepad"></i>
+                    </div>
+                    <h3 class="feature-title">Fun & Games</h3>
+                    <p class="feature-description">
+                        Entertain your community with Trivia, Polls, 8Ball, Memes, and Image manipulation commands.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-cogs"></i>
+                    </div>
+                    <h3 class="feature-title">Server Utilities</h3>
+                    <p class="feature-description">
+                        Essential tools like weather info, unit conversion, urban dictionary, and extensive server logging.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Custom Extensions</h3>
+                    <p class="feature-description">
+                        Build your own commands or install community extensions using our powerful JavaScript sandbox.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fa fa-tachometer"></i>
+                    </div>
+                    <h3 class="feature-title">Web Dashboard</h3>
+                    <p class="feature-description">
+                        Easily configure every aspect of the bot through our intuitive and modern web interface.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-standard">
+            <h2 class="cta-title">Ready to Transform Your Server?</h2>
+            <p class="cta-subtitle">Join thousands of communities using Skynet today</p>
+            <a href="#" class="btn btn-primary" style="font-size: 18px; padding: 16px 32px;">
+                <i class="fa fa-rocket"></i>
+                Get Started Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-modern">
+        <div class="container-standard footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Discord</a>
+                <a href="#" class="footer-link">GitHub</a>
+                <a href="#" class="footer-link">Documentation</a>
+                <a href="#" class="footer-link">Privacy</a>
+                <a href="#" class="footer-link">Terms</a>
+            </div>
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px;">
+                © 2025 Skynet Bot. Open Source & Free Forever.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

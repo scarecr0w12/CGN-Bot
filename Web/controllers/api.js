@@ -1,6 +1,7 @@
 const { APIResponses } = require("../../Internals/Constants");
 const { GetGuild } = require("../../Modules").getGuild;
 const parsers = require("../parsers");
+const CacheManager = require("../../Modules/CacheManager");
 
 const controllers = module.exports;
 
@@ -54,7 +55,7 @@ controllers.users = async (req, res) => {
 		if (!user) user = await req.app.client.users.fetch(req.query.id, true);
 
 		if (user) {
-			let userDocument = await Users.findOne(user.id);
+			let userDocument = await CacheManager.getUser(user.id);
 			if (!userDocument) userDocument = await Users.create({ _id: user.id });
 			res.json(APIResponses.users.success(await parsers.userData(req, user, userDocument)));
 		} else {
@@ -161,7 +162,7 @@ controllers.user.language = async (req, res) => {
 	}
 
 	try {
-		let userDocument = await Users.findOne(req.user.id);
+		let userDocument = await CacheManager.getUser(req.user.id);
 		if (!userDocument) {
 			userDocument = await Users.new({ _id: req.user.id });
 		}

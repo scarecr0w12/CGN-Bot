@@ -5,6 +5,7 @@
 
 const { ServerTemplates } = require("../../Modules");
 const { renderError } = require("../helpers");
+const CacheManager = require("../../Modules/CacheManager");
 const { GetGuild } = require("../../Modules").getGuild;
 
 const controllers = module.exports;
@@ -52,7 +53,7 @@ controllers.applyTemplate = async (req, res) => {
 			return res.status(404).json({ error: "Server not found" });
 		}
 
-		const serverDocument = await Servers.findOne(serverId);
+		const serverDocument = await CacheManager.getServer(serverId);
 		if (!serverDocument) {
 			return res.status(404).json({ error: "Server not found" });
 		}
@@ -98,7 +99,7 @@ controllers.templateSelectionPage = async (req, { res }) => {
 			return renderError(res, "Server not found", undefined, 404);
 		}
 
-		const serverDocument = await Servers.findOne(serverId);
+		const serverDocument = await CacheManager.getServer(serverId);
 		if (!serverDocument) {
 			return renderError(res, "Server not found", undefined, 404);
 		}

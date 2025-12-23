@@ -12,6 +12,8 @@ const {
 const GameUpdateAnnouncer = require("../../../Modules/GameUpdateAnnouncer");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
 const metrics = require("../../../Modules/Metrics");
+const { CommandMiddleware } = require("../../CommandMiddleware");
+const { cacheEvents } = require("../../../Modules/CacheEvents");
 const {
 	ClearServerStats: clearStats,
 	MessageOfTheDay: createMessageOfTheDay,
@@ -178,6 +180,27 @@ class Ready extends BaseEvent {
 		logger.debug("Started Prometheus metrics collection interval");
 	}
 
+	// Initialize Phase 2 systems
+	initializePhase2Systems () {
+		logger.debug("Initializing Phase 2 performance monitoring systems...");
+
+		// Initialize CommandMiddleware
+		if (!this.client.commandMiddleware) {
+			this.client.commandMiddleware = new CommandMiddleware();
+			logger.debug("CommandMiddleware initialized");
+
+			// Update middleware count metric to 0 initially
+			metrics.updateMiddlewareCount(0);
+		}
+
+		// Initialize CacheEvents handlers count
+		const cacheStats = cacheEvents.getStats();
+		metrics.updateCacheHandlerCount(cacheStats.totalHandlers);
+		logger.debug(`CacheEvents initialized with ${cacheStats.handlerCount} handler keys`);
+
+		logger.info("Phase 2 performance monitoring systems initialized successfully");
+	}
+
 	// Start temp role expiry checker
 	startTempRoleManager () {
 		if (this.client.shardID === "0") {
@@ -237,6 +260,9 @@ class Ready extends BaseEvent {
 
 		// Start Prometheus metrics collection
 		this.startMetricsCollection();
+
+		// Initialize Phase 2 performance monitoring systems
+		this.initializePhase2Systems();
 
 		this.client.IPC.send("finished", { id: this.client.shard.id });
 	}

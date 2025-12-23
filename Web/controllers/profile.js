@@ -5,6 +5,8 @@
 
 const { GetGuild } = require("../../Modules/GetGuild");
 const GameActivityTracker = require("../../Modules/GameActivityTracker");
+const CacheManager = require("../../Modules/CacheManager");
+const { renderError } = require("../helpers");
 
 /**
  * Get user data for profile display
@@ -17,7 +19,7 @@ const getUserData = async (client, userId) => {
 		const user = await client.users.fetch(userId).catch(() => null);
 		if (!user) return null;
 
-		const userDocument = await Users.findOne(userId);
+		const userDocument = await CacheManager.getUser(userId);
 
 		return {
 			id: user.id,
@@ -93,7 +95,7 @@ const getMutualServers = async (client, targetUserId, viewerUserId = null) => {
 				if (!viewerInServer) continue;
 			}
 
-			const serverDocument = await Servers.findOne(svr.id);
+			const serverDocument = await CacheManager.getServer(svr.id);
 			const memberDocument = serverDocument?.members?.[targetUserId];
 
 			mutualServers.push({
@@ -301,7 +303,7 @@ const serverProfile = async (req, res) => {
 	}
 
 	// Get server document
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 	const memberDocument = serverDocument?.members?.[targetUserId];
 
 	// Check if viewer is in server
@@ -476,7 +478,7 @@ const editServerProfile = async (req, res) => {
 		});
 	}
 
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 	const memberDocument = serverDocument?.members?.[userId];
 
 	res.render("pages/profile-edit.ejs", {
@@ -507,7 +509,7 @@ const updatePrimaryProfile = async (req, res) => {
 	const { bio, banner_color, social_links, featured_servers, profile_fields, is_public, game_tracking } = req.body;
 
 	try {
-		const userDocument = await Users.findOne(userId);
+		const userDocument = await CacheManager.getUser(userId);
 		if (!userDocument) {
 			return res.status(404).json({ error: "User not found" });
 		}
@@ -595,9 +597,9 @@ const updateServerProfile = async (req, res) => {
 			return res.status(403).json({ error: "Not a member of this server" });
 		}
 
-		const serverDocument = await Servers.findOne(serverId);
+		const serverDocument = await CacheManager.getServer(serverId);
 		if (!serverDocument) {
-			return res.status(404).json({ error: "Server not found" });
+			return renderError(res, "Server not found", undefined, 404);
 		}
 
 		// Validate bio length

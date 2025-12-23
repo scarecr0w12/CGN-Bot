@@ -35,19 +35,8 @@
 			top: 1rem;
 			right: 1rem;
 		}
-		.feature-tags {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 0.5rem;
+		.feature-checkboxes {
 			margin-top: 0.5rem;
-		}
-		.feature-tag {
-			cursor: pointer;
-			user-select: none;
-		}
-		.feature-tag.is-selected {
-			background-color: #3273dc;
-			color: white;
 		}
 	</style>
 </head>
@@ -126,14 +115,22 @@
 										</div>
 										<div class="column is-3">
 											<div class="field">
-												<label class="label">Monthly Price (cents)</label>
-												<input class="input" type="number" name="tier_price_monthly[]" value="<%= tier.price_monthly || 0 %>" min="0">
+												<label class="label">Monthly Price ($)</label>
+												<input class="input" type="number" name="tier_price_monthly[]" value="<%= tier.price_monthly || 0 %>" min="0" step="0.01">
+												<p class="help">Price in dollars (e.g., 5.00)</p>
 											</div>
 										</div>
-										<div class="column is-3">
+										<div class="column is-2">
 											<div class="field">
 												<label class="label">Yearly Discount (%)</label>
 												<input class="input" type="number" name="tier_yearly_discount[]" value="<%= tier.yearly_discount || 0 %>" min="0" max="100">
+											</div>
+										</div>
+										<div class="column is-2">
+											<div class="field">
+												<label class="label">Points Cost</label>
+												<input class="input" type="number" name="tier_points_cost[]" value="<%= tier.points_cost || 0 %>" min="0">
+												<p class="help">Points for 1 month (0 = not redeemable)</p>
 											</div>
 										</div>
 									</div>
@@ -160,12 +157,14 @@
 									<div class="field">
 										<label class="label">Included Features</label>
 										<input type="hidden" name="tier_features[]" value="<%= (tier.features || []).join(',') %>" class="tier-features-input">
-										<div class="feature-tags">
+										<div class="feature-checkboxes">
 											<% configData.features.forEach(feature => { %>
-											<span class="tag is-medium feature-tag <%= (tier.features || []).includes(feature._id) ? 'is-selected' : '' %>" 
-												  data-feature="<%= feature._id %>">
+											<label class="checkbox" style="display: block; margin-bottom: 0.5rem;">
+												<input type="checkbox" class="feature-checkbox" 
+													   data-feature="<%= feature._id %>"
+													   <%= (tier.features || []).includes(feature._id) ? 'checked' : '' %>>
 												<%= feature.name %>
-											</span>
+											</label>
 											<% }); %>
 										</div>
 										<% if (!configData.features || configData.features.length === 0) { %>
@@ -198,11 +197,14 @@
 
 	$('#add-tier-btn').on('click', addTier);
 	$('#tiers-container').on('click', '.tier-remove', removeTier);
-	$('#tiers-container').on('click', '.feature-tag', toggleFeature);
+	$('#tiers-container').on('change', '.feature-checkbox', updateFeatureInput);
 
 	function addTier() {
-		const featureTags = availableFeatures.map(f => 
-			`<span class="tag is-medium feature-tag" data-feature="${f._id}">${f.name}</span>`
+		const featureCheckboxes = availableFeatures.map(f => 
+			`<label class="checkbox" style="display: block; margin-bottom: 0.5rem;">
+				<input type="checkbox" class="feature-checkbox" data-feature="${f._id}">
+				${f.name}
+			</label>`
 		).join('');
 
 		$('#tiers-container').append(`
@@ -253,14 +255,22 @@
 					</div>
 					<div class="column is-3">
 						<div class="field">
-							<label class="label">Monthly Price (cents)</label>
-							<input class="input" type="number" name="tier_price_monthly[]" value="0" min="0">
+							<label class="label">Monthly Price ($)</label>
+							<input class="input" type="number" name="tier_price_monthly[]" value="0" min="0" step="0.01">
+							<p class="help">Price in dollars (e.g., 5.00)</p>
 						</div>
 					</div>
-					<div class="column is-3">
+					<div class="column is-2">
 						<div class="field">
 							<label class="label">Yearly Discount (%)</label>
 							<input class="input" type="number" name="tier_yearly_discount[]" value="0" min="0" max="100">
+						</div>
+					</div>
+					<div class="column is-2">
+						<div class="field">
+							<label class="label">Points Cost</label>
+							<input class="input" type="number" name="tier_points_cost[]" value="0" min="0">
+							<p class="help">Points for 1 month (0 = not redeemable)</p>
 						</div>
 					</div>
 				</div>
@@ -287,7 +297,7 @@
 				<div class="field">
 					<label class="label">Included Features</label>
 					<input type="hidden" name="tier_features[]" value="" class="tier-features-input">
-					<div class="feature-tags">${featureTags}</div>
+					<div class="feature-checkboxes">${featureCheckboxes}</div>
 					${availableFeatures.length === 0 ? '<p class="help is-warning">No features defined yet. <a href="/dashboard/maintainer/membership/features">Create features first</a>.</p>' : ''}
 				</div>
 			</div>
@@ -301,18 +311,13 @@
 		SkynetData.HUM = true;
 	}
 
-	function toggleFeature(tag) {
-		$(tag).toggleClass('is-selected');
-		updateFeatureInput(tag);
-		SkynetData.HUM = true;
-	}
-
-	function updateFeatureInput(tag) {
-		const card = $(tag).closest('.tier-card');
-		const selected = card.find('.feature-tag.is-selected').map(function() {
+	function updateFeatureInput(e) {
+		const card = $(e.target).closest('.tier-card');
+		const selected = card.find('.feature-checkbox:checked').map(function() {
 			return $(this).data('feature');
 		}).get();
 		card.find('.tier-features-input').val(selected.join(','));
+		SkynetData.HUM = true;
 	}
 	</script>
 </body>

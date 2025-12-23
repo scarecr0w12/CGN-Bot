@@ -7,6 +7,7 @@
 const parsers = require("../parsers");
 const { renderError } = require("../helpers");
 const { getGuild, TierManager } = require("../../Modules");
+const CacheManager = require("../../Modules/CacheManager");
 const { GetGuild } = getGuild;
 const { generateUniqueSlug } = require("../../Modules/Utils/Slug");
 
@@ -33,7 +34,7 @@ controllers.publicPage = async (req, { res }) => {
 	const serverId = req.params.id;
 
 	// Find server document
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 	if (!serverDocument) {
 		return renderError(res, "Server not found", undefined, 404);
 	}
@@ -219,7 +220,7 @@ controllers.generateSlug = async (req, res) => {
 	}
 
 	const serverId = req.params.id;
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 
 	if (!serverDocument) {
 		return res.status(404).json({ error: "Server not found" });
@@ -274,7 +275,7 @@ controllers.profileEditor = async (req, { res }) => {
 	}
 
 	const serverId = req.params.svrid;
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 
 	if (!serverDocument) {
 		return renderError(res, "Server not found", undefined, 404);
@@ -377,7 +378,7 @@ controllers.updateProfile = async (req, res) => {
 	console.log("[PROFILE UPDATE] User authenticated:", req.user.id);
 
 	const serverId = req.params.serverId;
-	const serverDocument = await Servers.findOne(serverId);
+	const serverDocument = await CacheManager.getServer(serverId);
 
 	if (!serverDocument) {
 		console.log("[PROFILE UPDATE] Server not found:", serverId);

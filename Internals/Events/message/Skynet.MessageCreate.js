@@ -1,6 +1,6 @@
 /* eslint-disable max-len, max-depth, no-console */
 const BaseEvent = require("../BaseEvent.js");
-const { MicrosoftTranslate: mstranslate, Utils, TicketManager } = require("../../../Modules/index");
+const { MicrosoftTranslate: mstranslate, Utils, TicketManager, BatchWriteManager } = require("../../../Modules/index");
 const ConfigManager = require("../../../Modules/ConfigManager");
 const metrics = require("../../../Modules/Metrics");
 const {
@@ -186,7 +186,7 @@ class MessageCreate extends BaseEvent {
 							}],
 						});
 						this.client.logMessage(serverDocument, LoggingLevels.INFO, `I was reactivated in ${inAllChannels ? "all channels!" : "a channel."}`, msg.channel.id, msg.author.id);
-						await serverDocument.save();
+						BatchWriteManager.queue(serverDocument);
 						return;
 					}
 				}
@@ -213,9 +213,8 @@ class MessageCreate extends BaseEvent {
 						}
 						this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You used a filtered word in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** used a filtered word (\`${msg.cleanContent}\`) in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Word filter violation ("${msg.cleanContent}") in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.custom_filter.action, violatorRoleID);
 					}
-					return userDocument.save().catch(err => {
-						logger.verbose(`Failed to save user document...`, { usrid: msg.author.id }, err);
-					});
+					BatchWriteManager.queue(userDocument);
+					return;
 				}
 
 				// Mention filter
@@ -246,9 +245,7 @@ class MessageCreate extends BaseEvent {
 							}
 							this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You put ${totalMentions} mentions in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** mentioned ${totalMentions} members / roles in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Mention spam (${totalMentions} members / roles) in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.mention_filter.action, violatorRoleID);
 						}
-						await userDocument.save().catch(err => {
-							logger.debug(`Failed to save user document...`, { usrid: msg.author.id }, err);
-						});
+						BatchWriteManager.queue(userDocument);
 					}
 				}
 
@@ -346,6 +343,8 @@ class MessageCreate extends BaseEvent {
 											}],
 										});
 									} else {
+										const start = process.hrtime.bigint();
+										let status = "success";
 										try {
 											const botObject = {
 												client: this.client,
@@ -371,9 +370,14 @@ class MessageCreate extends BaseEvent {
 											};
 											await commandFunction(botObject, documents, msg, commandData);
 										} catch (err) {
+											status = "error";
 											logger.warn(`Failed to process command "${cmd}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 											this.client.logMessage(serverDocument, LoggingLevels.ERROR, `Failed to process command "${cmd}" X.X`, msg.channel.id, msg.author.id);
 											msg.sendError(cmd, err.stack);
+										} finally {
+											// Record command execution metrics
+											const duration = Number(process.hrtime.bigint() - start) / 1e9;
+											metrics.recordCommandExecution(cmd, "prefix", status, duration);
 										}
 									}
 									await this.setCooldown(serverDocument, channelDocument, channelQueryDocument);
@@ -551,8 +555,8 @@ class MessageCreate extends BaseEvent {
 					} else {
 						translateMessage();
 					}
+					BatchWriteManager.queue(serverDocument);
 				}
-				await serverDocument.save();
 			}
 		}
 

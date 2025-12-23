@@ -735,7 +735,7 @@ controllers.options.botLists.post = async (req, res) => {
 		},
 	};
 
-	// Build complete vote_rewards object
+	// Build complete vote_rewards object (simplified - per-tier points costs are now on tiers)
 	const voteRewards = {
 		isEnabled: req.body.rewards_enabled === "on",
 		points_per_vote: parseInt(req.body.points_per_vote) || 100,
@@ -743,8 +743,6 @@ controllers.options.botLists.post = async (req, res) => {
 		notification_channel_id: req.body.notification_channel_id || "",
 		redemption: {
 			isEnabled: req.body.redemption_enabled === "on",
-			points_per_dollar: parseInt(req.body.points_per_dollar) || 1000,
-			redeemable_tier_id: req.body.redeemable_tier_id || "",
 			min_redemption_days: parseInt(req.body.min_redemption_days) || 7,
 			max_redemption_days: parseInt(req.body.max_redemption_days) || 365,
 		},
@@ -894,6 +892,7 @@ controllers.membership.tiers.post = async (req, res) => {
 	const badges = req.body.tier_badge ? Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge] : [];
 	const pricesMonthly = req.body.tier_price_monthly ? Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly] : [];
 	const discountsYearly = req.body.tier_yearly_discount ? Array.isArray(req.body.tier_yearly_discount) ? req.body.tier_yearly_discount : [req.body.tier_yearly_discount] : [];
+	const pointsCosts = req.body.tier_points_cost ? Array.isArray(req.body.tier_points_cost) ? req.body.tier_points_cost : [req.body.tier_points_cost] : [];
 	const featuresList = req.body.tier_features ? Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features] : [];
 	const purchasableList = req.body.tier_purchasable ? Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable] : [];
 	const defaultTier = req.body.tier_default || "";
@@ -909,8 +908,9 @@ controllers.membership.tiers.post = async (req, res) => {
 				description: descriptions[i] || "",
 				color: colors[i] || "#3273dc",
 				badge_icon: badges[i] || "",
-				price_monthly: parseInt(pricesMonthly[i]) || 0,
+				price_monthly: parseFloat(pricesMonthly[i]) || 0,
 				yearly_discount: parseInt(discountsYearly[i]) || 0,
+				points_cost: parseInt(pointsCosts[i]) || 0,
 				features: featuresList[i] ? featuresList[i].split(",").filter(f => f) : [],
 				is_purchasable: purchasableList.includes(ids[i]) || purchasableList.includes(`new_${i}`),
 				is_default: defaultTier === ids[i] || defaultTier === `new_${i}`,

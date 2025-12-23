@@ -225,11 +225,15 @@ module.exports = new Schema({
 		features: [String],
 		badge_icon: String,
 		color: String,
-		price_monthly: Number,
-		price_yearly: Number,
+		price_monthly: Number, // Price in dollars (e.g., 5.00)
+		price_yearly: Number, // Price in dollars (e.g., 50.00)
 		yearly_discount: {
 			type: Number,
 			default: 0,
+		},
+		points_cost: {
+			type: Number,
+			default: 0, // Vote points required to redeem this tier for 1 month (0 = not redeemable)
 		},
 		is_purchasable: {
 			type: Boolean,
@@ -382,17 +386,12 @@ module.exports = new Schema({
 			default: 2,
 		},
 		notification_channel_id: String,
-		// Point redemption settings
+		// Point redemption settings (simplified - per-tier costs are now on tiers themselves)
 		redemption: new Schema({
 			isEnabled: {
 				type: Boolean,
 				default: false,
 			},
-			points_per_dollar: {
-				type: Number,
-				default: 1000, // 1000 points = $1
-			},
-			redeemable_tier_id: String, // Which tier can be purchased with points
 			min_redemption_days: {
 				type: Number,
 				default: 7, // Minimum days to redeem at once

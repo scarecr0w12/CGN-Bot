@@ -1,4 +1,5 @@
 const BaseEvent = require("../BaseEvent.js");
+const BatchWriteManager = require("../../../Modules/BatchWriteManager");
 const ConfigManager = require("../../../Modules/ConfigManager");
 const { Colors } = require("../../Constants");
 
@@ -77,8 +78,8 @@ class AFKHandler extends BaseEvent {
 			changed = true;
 			serverDocument.query.id("members", msg.author.id).set("afk_message", null);
 		}
-		serverDocument.save();
-		if (userDocument) userDocument.save();
+		BatchWriteManager.queue(serverDocument);
+		if (userDocument) BatchWriteManager.queue(userDocument);
 		if (changed) {
 			msg.reply({
 				embeds: [{

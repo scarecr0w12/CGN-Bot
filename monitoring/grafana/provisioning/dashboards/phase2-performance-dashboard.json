@@ -145,11 +145,18 @@
       },
       "title": "Commands Executed (Rate)",
       "type": "stat",
-      "targets": [{
-        "expr": "sum(rate(skynetbot_command_execution_duration_seconds_count[5m])) * 60",
-        "legendFormat": "per minute",
-        "refId": "A"
-      }]
+      "targets": [
+        {
+          "expr": "sum(rate(skynetbot_command_execution_duration_seconds_count[5m])) * 60",
+          "legendFormat": "commands/min",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(skynetbot_command_execution_duration_seconds_count)",
+          "legendFormat": "total",
+          "refId": "B"
+        }
+      ]
     },
     {
       "datasource": {"type": "prometheus", "uid": "prometheus"},

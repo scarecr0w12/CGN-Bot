@@ -1,0 +1,33 @@
+-- Migration: Convert tier prices from cents to dollars
+-- This migration updates existing tier pricing from cent values to dollar values
+-- 
+-- Changes:
+-- - price_monthly: Convert from cents (e.g., 500) to dollars (e.g., 5.00)
+-- - price_yearly: Convert from cents to dollars
+-- - Add points_cost field (default 0)
+-- - Remove global points_per_dollar and redeemable_tier_id from vote_rewards
+--
+-- Manual Steps Required:
+-- Since tiers are stored in siteSettings MongoDB document, this migration must be run manually:
+--
+-- 1. Connect to MongoDB
+-- 2. Run the following commands:
+--
+-- db.site_settings.updateOne(
+--   { _id: "main" },
+--   {
+--     $set: {
+--       "tiers.$[].price_monthly": { $divide: ["$tiers.$[].price_monthly", 100] },
+--       "tiers.$[].price_yearly": { $divide: ["$tiers.$[].price_yearly", 100] }
+--     }
+--   }
+-- )
+--
+-- 3. Manually add points_cost field to each tier (default 0)
+-- 4. Remove vote_rewards.redemption.points_per_dollar and redeemable_tier_id fields
+--
+-- OR use the provided Node.js migration script:
+-- node Database/migrations/scripts/024_convert_tier_prices.js
+
+-- This SQL file serves as documentation only
+-- The actual migration is performed via MongoDB operations

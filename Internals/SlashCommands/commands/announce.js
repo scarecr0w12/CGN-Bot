@@ -224,7 +224,7 @@ module.exports = {
 		});
 
 		// Schedule the announcement
-		setTimeout(async () => {
+		interaction.client.setTimeout(async () => {
 			try {
 				await channel.send({
 					embeds: [{
@@ -237,7 +237,7 @@ module.exports = {
 			} catch (err) {
 				logger.debug("Failed to send scheduled announcement", { channelId: channel.id }, err);
 			}
-		}, delay * 60000);
+		}, delay * 60000, `announce-${channel.id}-${Date.now()}`);
 	},
 
 	async crosspostMessage (interaction) {
