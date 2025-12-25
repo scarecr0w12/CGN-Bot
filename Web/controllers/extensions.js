@@ -785,7 +785,10 @@ controllers.gallery.modify = async (req, { res }) => {
 				} else {
 					try {
 						userDocument = await Users.new({ _id: req.user.id });
+						await userDocument.save();
+						userDocument = await Users.findOne(req.user.id);
 					} catch (err) {
+						logger.error("Failed to create user document for extension upvote", { usrid: req.user.id }, err);
 						res.sendStatus(500);
 						return null;
 					}

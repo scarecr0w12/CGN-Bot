@@ -20,6 +20,10 @@ class AFKHandler extends BaseEvent {
 	}
 
 	async handle (msg) {
+		if (!msg.guild) {
+			logger.debug("AFKHandler received message with null guild", { msgid: msg.id, chid: msg.channel.id, usrid: msg.author.id });
+			return;
+		}
 		const { serverDocument } = msg.guild;
 		if (serverDocument && msg.mentions.members?.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
 			msg.mentions.members.forEach(async member => {

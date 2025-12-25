@@ -32,6 +32,7 @@ const Sentry = require("@sentry/node");
 const crypto = require("crypto");
 const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
+const securityMiddleware = require("./middleware/security");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
 const metrics = require("../Modules/Metrics");
 const I18n = require("../Modules/I18n");
@@ -320,6 +321,10 @@ exports.open = async (client, auth, configJS, logger) => {
 		},
 	}));
 	app.use(cookieParser());
+
+	// Apply security middleware for input sanitization
+	app.use(securityMiddleware.sanitizeJsonResponse);
+	app.use(securityMiddleware.apiSecurityHeaders);
 
 	app.set("json spaces", 2);
 

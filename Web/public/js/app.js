@@ -478,25 +478,33 @@ SkynetUtil.populateWikiSections = () => {
 	$("table").addClass("table");
 
 	$(".heading-shortcut-link").click(function handler () {
+		const target = $(this);
 		$("html, body").animate({
-			scrollTop: $(`#${this.href.substring(this.href.lastIndexOf("#") + 1)}`).offset().top,
+			scrollTop: target.offset().top,
 		}, 172);
 	});
 };
 
 SkynetUtil.populateWikiBookmarks = () => {
-	if (SkynetData.wiki.bookmarks.length > 0) {
+	if (SkynetData.wiki && SkynetData.wiki.bookmarks && SkynetData.wiki.bookmarks.length > 0) {
 		$("#bookmarks-menu").removeClass("is-hidden");
 		$("#menu-spacer").removeClass("is-hidden");
 
 		SkynetData.wiki.bookmarks = SkynetData.wiki.bookmarks.sort();
-		let subMenu = "<ul>";
+		const subMenuContainer = $("#bookmarks-submenu");
+		subMenuContainer.empty();
+		const ul = $("<ul>");
 		for (let i = 0; i < SkynetData.wiki.bookmarks.length; i++) {
-			subMenu += `<li><a href='${SkynetData.wiki.bookmarks[i]}' data-turbolinks='false'>${decodeURI(SkynetData.wiki.bookmarks[i]).replace("#", " &raquo; ")}</a></li>`;
+			const bookmark = SkynetData.wiki.bookmarks[i];
+			const li = $("<li>");
+			const a = $("<a>")
+				.attr("href", bookmark)
+				.attr("data-turbolinks", "false")
+				.text(decodeURI(bookmark).replace("#", " » "));
+			li.append(a);
+			ul.append(li);
 		}
-		subMenu += "</ul>";
-
-		$("#bookmarks-submenu").html(subMenu);
+		subMenuContainer.append(ul);
 	} else {
 		$("#bookmarks-menu").addClass("is-hidden");
 		$("#menu-spacer").addClass("is-hidden");

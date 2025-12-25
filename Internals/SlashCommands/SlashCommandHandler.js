@@ -296,12 +296,12 @@ class SlashCommandHandler {
 				}
 				await serverDocument.save();
 				if (!result.success && !interaction.replied && !interaction.deferred) {
-					await interaction.reply({ content: "An error occurred while executing this command.", ephemeral: true });
+					await interaction.reply({ content: "An error occurred while executing this command. This error has been reported and will be fixed soon.", ephemeral: true });
 				}
 			} catch (err) {
 				logger.error("Error executing slash extension", { svrid: interaction.guild.id, extid: extConfig._id }, err);
 				if (!interaction.replied && !interaction.deferred) {
-					await interaction.reply({ content: "An error occurred while executing this command.", ephemeral: true });
+					await interaction.reply({ content: "An error occurred while executing this command. This error has been reported and will be fixed soon.", ephemeral: true });
 				}
 			} finally {
 				sandbox.dispose();
@@ -356,7 +356,7 @@ class SlashCommandHandler {
 			}, err);
 
 			const errorReply = {
-				content: "An error occurred while executing this command.",
+				content: "An error occurred while executing this command. This error has been reported and will be fixed soon.",
 				ephemeral: true,
 			};
 

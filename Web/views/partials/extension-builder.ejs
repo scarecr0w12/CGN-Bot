@@ -316,6 +316,30 @@
 		<label class="label">
 			<i class="fa fa-code"></i> Code Editor
 		</label>
+		
+		<!-- API Deprecation Notice -->
+		<div class="notification is-warning is-light mb-3" style="border-left: 4px solid #ffdd57;">
+			<p class="has-text-weight-semibold mb-2">
+				<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+				API Changes (v1.8.0)
+			</p>
+			<p class="is-size-7 mb-2">
+				<strong>Removed:</strong> <code>modules.rss</code> (security vulnerability)
+			</p>
+			<p class="is-size-7 mb-2">
+				<strong>Use instead:</strong> <code>modules.fetch</code> + <code>modules.xmlparser</code> for RSS feeds
+			</p>
+			<details class="is-size-7">
+				<summary style="cursor: pointer;" class="has-text-weight-semibold">View migration example</summary>
+				<pre class="mt-2" style="background: #fff; padding: 0.5rem; border-radius: 4px; overflow-x: auto;">const fetch = require('fetch');
+const xmlparser = require('xmlparser');
+
+const response = await fetch('https://example.com/feed.xml');
+const parsed = xmlparser(response);
+const items = parsed.rss?.channel?.item || [];</pre>
+			</details>
+		</div>
+		
 		<div class="level is-mobile mb-2">
 			<div class="level-left">
 				<div class="level-item">

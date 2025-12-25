@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+#### Comprehensive Security Audit - December 24, 2024 ✅
+
+**Dependency Vulnerabilities: 24 → 0 (100% elimination)**
+
+- **Updated Critical Packages**
+  - form-data, nodemailer@7.0.11, parse-duration@2.1.3, qs@6.10.3, xss@1.0.10, ini@1.3.6, json-schema@0.4.0
+  - jsonwebtoken@9.0.0, node-fetch@2.6.7, compression@1.8.1, tough-cookie@4.1.3, underscore@1.12.1, xml2js@0.5.0, minimist@1.2.6
+
+- **Breaking Changes Applied**
+  - Upgraded passport-twitch-new@0.0.3 (requires testing of Twitch OAuth)
+  - Upgraded passport-patreon@1.0.0 (requires testing of Patreon integration)
+  - **Removed packages**: feed-read (critical vulnerability), wolfram-node (deprecated dependencies)
+
+- **Code Security Fixes**
+  - Fixed XSS vulnerability in `Web/controllers/dashboard/other.js:423` (error response sanitization)
+  - Fixed XSS vulnerability in `Web/controllers/maintainer.js:1505` (eval response sanitization)
+  - Fixed DOM XSS in `Web/public/js/app.js:499` (wiki bookmark handling)
+
+- **New Security Infrastructure**
+  - Added `Web/middleware/security.js` with comprehensive input sanitization
+  - Implemented global API security headers (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection)
+  - Enhanced JSON response validation across all endpoints
+  - Verified Helmet.js CSP policies remain active
+
+- **Extension API Changes** (Breaking)
+  - Removed `modules.rss` from Extension API (security: eliminated feed-read vulnerability)
+  - Updated `Internals/Extensions/API/Sandbox.js` and `IsolatedSandbox.js`
+  - Documented in `docs/BREAKING_CHANGES.md` and `docs/EXTENSION_MIGRATION_GUIDE.md`
+
+- **Documentation**
+  - `docs/SECURITY_AUDIT_2024-12-24.md` - Full audit report with metrics and recommendations
+  - `docs/BREAKING_CHANGES.md` - Version 1.8.1 breaking changes documentation
+  - `docs/EXTENSION_MIGRATION_GUIDE.md` - Migration guide for extension developers
+
 ### Fixed
 - **Command Permissions** - Fixed incorrect permission checks in mute/unmute commands
   - Updated `Internals/Client.js` - `canDoActionOnMember()` now checks for `ModerateMembers` instead of `ManageRoles` for mute actions

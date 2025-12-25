@@ -8,6 +8,10 @@ controllers.home = async (req, { res }) => {
 	if (!req.isAuthenticated()) {
 		res.redirect("/login");
 	} else {
+		if (!req.user || !req.user.id) {
+			logger.error("Dashboard access attempted with invalid user session", { user: req.user });
+			return res.redirect("/logout");
+		}
 		const serverData = [];
 		const usr = await req.app.client.users.fetch(req.user.id, true);
 		const addServerData = async (i, callback) => {

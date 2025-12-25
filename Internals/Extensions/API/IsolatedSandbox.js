@@ -904,7 +904,6 @@ class IsolatedSandbox {
 		modules.event = { needsCallback: true };
 		if (interaction) modules.interaction = { needsCallback: true };
 		modules.moment = { needsCallback: true };
-		modules.rss = { needsCallback: true };
 		modules.fetch = { needsCallback: true };
 		modules.xmlparser = { needsCallback: true };
 		modules.http = { needsCallback: true };

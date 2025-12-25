@@ -287,7 +287,7 @@ class CommandExecutor {
 				guild: context.guild?.id,
 			}, error);
 
-			const errorMsg = "An error occurred while executing this command.";
+			const errorMsg = "An error occurred while executing this command. This error has been reported and will be fixed soon.";
 			await this.sendError(context, errorMsg, isSlash);
 			return { success: false, error: error.message };
 		} finally {

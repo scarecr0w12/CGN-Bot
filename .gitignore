@@ -52,3 +52,6 @@ locales/**/*.missing.json
 
 # Ad network files (contains sensitive publisher IDs)
 Web/public/ads.txt
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.windsurf/rules/snyk_rules.md

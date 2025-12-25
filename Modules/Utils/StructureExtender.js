@@ -171,7 +171,7 @@ function extendMessage () {
 				color: Colors.ERROR,
 				title: Text.ERROR_TITLE(),
 				description: !Gag(process.argv.slice(2)).owo ? Text.ERROR_BODY(cmd, stack) : Text.OWO_ERROR_BODY(),
-				footer: { text: `Contact your Skynet maintainer for more support.` },
+				footer: { text: `This error has been reported and will be fixed soon. Contact your Skynet maintainer for more support.` },
 			}],
 		});
 	};

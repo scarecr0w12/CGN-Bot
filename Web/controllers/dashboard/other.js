@@ -420,7 +420,7 @@ controllers.extensionBuilder = async (req, { res }) => {
 };
 controllers.extensionBuilder.post = async (req, res) => {
 	if (validateExtensionData(req.body)) {
-		const sendErrorResponse = err => res.status(500).send(err);
+		const sendErrorResponse = err => res.status(500).json({ error: typeof err === "string" ? err : "An error occurred" });
 
 		const saveExtensionCode = async (err, codeID) => {
 			if (err) {

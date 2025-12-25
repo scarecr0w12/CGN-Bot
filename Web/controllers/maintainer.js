@@ -1502,7 +1502,7 @@ controllers.management.eval = async (req, { res }) => {
 controllers.management.eval.post = async (req, res) => {
 	if (req.body.code && req.body.target) {
 		const result = await req.app.client.IPC.send("evaluate", { code: req.body.code, target: req.body.target });
-		res.send(JSON.stringify(result));
+		res.json(result);
 		logger.info(`Maintainer ${req.user.username} executed JavaScript from the Maintainer Console!`, { maintainer: req.user.id, code: req.body.code, target: req.body.target });
 	} else {
 		res.sendStatus(400);
