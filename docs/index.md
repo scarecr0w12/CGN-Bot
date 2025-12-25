@@ -77,6 +77,18 @@ Full server management from the browser with modern UI and real-time updates.
 | [Troubleshooting](guide/troubleshooting) | Common issues and solutions |
 | [API Reference](api/) | REST API documentation |
 
+## Technical Documentation
+
+| Document | Description |
+|:---------|:------------|
+| [Security Audit 2024-12-24](SECURITY_AUDIT_2024-12-24) | Comprehensive security audit and vulnerability remediation |
+| [Breaking Changes](BREAKING_CHANGES) | Version 1.8.1 breaking changes and migration notes |
+| [Extension Migration Guide](EXTENSION_MIGRATION_GUIDE) | Guide for migrating extensions after API changes |
+| [Architecture Review](ARCHITECTURAL_REVIEW) | System architecture and design patterns |
+| [Distributed Architecture](DISTRIBUTED_ARCHITECTURE) | Redis-based distributed systems documentation |
+| [Extension Development](EXTENSION_DEVELOPMENT) | Create custom extensions with the SDK |
+| [TypeScript Guide](TYPESCRIPT_GUIDE) | Using SkynetBot with TypeScript |
+
 ---
 
 ## System Requirements
