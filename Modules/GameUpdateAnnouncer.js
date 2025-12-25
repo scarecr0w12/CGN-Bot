@@ -111,8 +111,8 @@ const FETCH_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes between fetches per game
  */
 async function fetchMinecraftJavaUpdates () {
 	try {
-		const response = await fetch("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json", {
-			timeout: 10000,
+		const response = await fetchWithRetry("https://launchermeta.mojang.com/mc/game/version_manifest_v2.json", {
+			timeout: 30000,
 			headers: { "User-Agent": "SkynetBot/1.0 GameUpdateAnnouncer" },
 		});
 		if (!response.ok) return null;
@@ -126,8 +126,8 @@ async function fetchMinecraftJavaUpdates () {
 		// Fetch release details for changelog
 		let releaseDetails = null;
 		try {
-			const detailsResponse = await fetch(latestRelease.url, {
-				timeout: 10000,
+			const detailsResponse = await fetchWithRetry(latestRelease.url, {
+				timeout: 30000,
 				headers: { "User-Agent": "SkynetBot/1.0 GameUpdateAnnouncer" },
 			});
 			if (detailsResponse.ok) {
@@ -159,8 +159,8 @@ async function fetchMinecraftJavaUpdates () {
 async function fetchMinecraftBedrockUpdates () {
 	try {
 		// Bedrock versions are harder to track - we use a community API
-		const response = await fetch("https://raw.githubusercontent.com/nicholasgrose/mcbeinfo/master/versions/bedrock.json", {
-			timeout: 10000,
+		const response = await fetchWithRetry("https://raw.githubusercontent.com/nicholasgrose/mcbeinfo/master/versions/bedrock.json", {
+			timeout: 30000,
 			headers: { "User-Agent": "SkynetBot/1.0 GameUpdateAnnouncer" },
 		});
 		if (!response.ok) return null;
@@ -185,13 +185,29 @@ async function fetchMinecraftBedrockUpdates () {
 }
 
 /**
+ * Fetch with retry logic for transient failures
+ */
+async function fetchWithRetry (url, options = {}, retries = 2) {
+	for (let i = 0; i <= retries; i++) {
+		try {
+			const response = await fetch(url, options);
+			return response;
+		} catch (err) {
+			if (i === retries) throw err;
+			// Wait before retry: 2s, 4s
+			await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
+		}
+	}
+}
+
+/**
  * Fetch Rust updates from Facepunch's changelog
  */
 async function fetchRustUpdates () {
 	try {
 		// Use Steam API for Rust updates
-		const response = await fetch("https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=252490&count=5&maxlength=500&format=json", {
-			timeout: 10000,
+		const response = await fetchWithRetry("https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=252490&count=5&maxlength=500&format=json", {
+			timeout: 30000,
 			headers: { "User-Agent": "SkynetBot/1.0 GameUpdateAnnouncer" },
 		});
 		if (!response.ok) return null;
@@ -236,8 +252,8 @@ async function fetchSteamUpdates (gameConfig) {
 		const appId = gameConfig.steamAppId;
 		if (!appId) return null;
 
-		const response = await fetch(`https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=${appId}&count=10&maxlength=500&format=json`, {
-			timeout: 10000,
+		const response = await fetchWithRetry(`https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=${appId}&count=10&maxlength=500&format=json`, {
+			timeout: 30000,
 			headers: { "User-Agent": "SkynetBot/1.0 GameUpdateAnnouncer" },
 		});
 		if (!response.ok) return null;
