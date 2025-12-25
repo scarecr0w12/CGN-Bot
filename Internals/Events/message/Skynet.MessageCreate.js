@@ -1,6 +1,7 @@
 /* eslint-disable max-len, max-depth, no-console */
 const BaseEvent = require("../BaseEvent.js");
-const { MicrosoftTranslate: mstranslate, Utils } = require("../../../Modules/index");
+const { MicrosoftTranslate: mstranslate, Utils, TicketManager, BatchWriteManager } = require("../../../Modules/index");
+const ConfigManager = require("../../../Modules/ConfigManager");
 const metrics = require("../../../Modules/Metrics");
 const {
 	Gist,
@@ -13,12 +14,13 @@ const {
 	Constants,
 } = require("../../index");
 const { AIManager } = require("../../../Modules/AI");
+const TierManager = require("../../../Modules/TierManager");
 const { LoggingLevels, Colors, UserAgent } = Constants;
 const { MessageType, PermissionFlagsBits } = require("discord.js");
 const snekfetch = require("../../../Modules/Utils/SnekfetchShim");
 
 class MessageCreate extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.channel.postable) {
 			logger.verbose(`Ignoring message in unpostable channel.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
@@ -27,12 +29,13 @@ class MessageCreate extends BaseEvent {
 			logger.verbose(`Ignoring non-standard message.`, { msgid: msg.id, usrid: msg.author.id, chid: msg.channel.id });
 			return false;
 		}
-		if (msg.author.id === this.client.user.id || msg.author.bot || this.configJSON.userBlocklist.includes(msg.author.id)) {
+		const isUserBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (msg.author.id === this.client.user.id || msg.author.bot || isUserBlocked) {
 			if (msg.author.id === this.client.user.id) {
 				logger.silly(`Ignoring self-message.`, { msgid: msg.id });
 				return false;
 			} else {
-				logger.verbose(`Ignored ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: this.configJSON.userBlocklist.includes(msg.author.id) });
+				logger.verbose(`Ignored ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
@@ -56,8 +59,23 @@ class MessageCreate extends BaseEvent {
 				}
 				return;
 			}
+
+			// Handle ticket system - check if this is a ticket-related DM
+			const settings = await ConfigManager.get();
+			if (!settings.maintainers.includes(msg.author.id)) {
+				if (!this.client.ticketManager) {
+					this.client.ticketManager = new TicketManager(this.client);
+				}
+				try {
+					const handledAsTicket = await this.client.ticketManager.handleDM(msg);
+					if (handledAsTicket) return;
+				} catch (err) {
+					logger.warn("Failed to handle ticket DM", { usrid: msg.author.id }, err);
+				}
+			}
+
 			// Forward PM to maintainer(s) if enabled
-			if (!this.configJSON.maintainers.includes(msg.author.id) && this.configJSON.pmForward) {
+			if (!settings.maintainers.includes(msg.author.id) && settings.pmForward) {
 				let url = "";
 				if (msg.content.length >= 1950) {
 					const GistUpload = new Gist(this.client);
@@ -69,7 +87,7 @@ class MessageCreate extends BaseEvent {
 						({ url } = res);
 					}
 				}
-				for (const maintainerID of this.configJSON.maintainers) {
+				for (const maintainerID of settings.maintainers) {
 					let user = this.client.users.cache.get(maintainerID);
 					if (!user) {
 						user = await this.client.users.fetch(maintainerID, true);
@@ -109,15 +127,8 @@ class MessageCreate extends BaseEvent {
 					logger.verbose(`Failed to save user document...`, { usrid: msg.author.id }, err);
 				});
 			} else if (!this.client.getSharedCommand(msg.command)) {
-				// Process chatterbot prompt
-				logger.verbose(`Treating "${msg.cleanContent}" as a PM chatterbot prompt`, { usrid: msg.author.id });
-				await msg.send({
-					embeds: [{
-						title: "Sorry!",
-						description: "The chatterbot is currently unavailable. Please check back later!",
-						color: Colors.SOFT_ERR,
-					}],
-				});
+				// Ignore non-command DMs - chatterbot is not available
+				logger.verbose(`Ignoring non-command DM: "${msg.cleanContent}"`, { usrid: msg.author.id });
 			}
 		} else {
 			// Handle public messages
@@ -175,7 +186,7 @@ class MessageCreate extends BaseEvent {
 							}],
 						});
 						this.client.logMessage(serverDocument, LoggingLevels.INFO, `I was reactivated in ${inAllChannels ? "all channels!" : "a channel."}`, msg.channel.id, msg.author.id);
-						await serverDocument.save();
+						BatchWriteManager.queue(serverDocument);
 						return;
 					}
 				}
@@ -202,9 +213,8 @@ class MessageCreate extends BaseEvent {
 						}
 						this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You used a filtered word in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** used a filtered word (\`${msg.cleanContent}\`) in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Word filter violation ("${msg.cleanContent}") in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.custom_filter.action, violatorRoleID);
 					}
-					return userDocument.save().catch(err => {
-						logger.verbose(`Failed to save user document...`, { usrid: msg.author.id }, err);
-					});
+					BatchWriteManager.queue(userDocument);
+					return;
 				}
 
 				// Mention filter
@@ -235,9 +245,7 @@ class MessageCreate extends BaseEvent {
 							}
 							this.client.handleViolation(msg.guild, serverDocument, msg.channel, msg.member, userDocument, memberDocument, `You put ${totalMentions} mentions in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `**@${this.client.getName(serverDocument, msg.member, true)}** mentioned ${totalMentions} members / roles in a message in #${msg.channel.name} (${msg.channel}) on ${msg.guild}`, `Mention spam (${totalMentions} members / roles) in #${msg.channel.name} (${msg.channel})`, serverDocument.config.moderation.filters.mention_filter.action, violatorRoleID);
 						}
-						await userDocument.save().catch(err => {
-							logger.debug(`Failed to save user document...`, { usrid: msg.author.id }, err);
-						});
+						BatchWriteManager.queue(userDocument);
 					}
 				}
 
@@ -335,6 +343,8 @@ class MessageCreate extends BaseEvent {
 											}],
 										});
 									} else {
+										const start = process.hrtime.bigint();
+										let status = "success";
 										try {
 											const botObject = {
 												client: this.client,
@@ -360,9 +370,14 @@ class MessageCreate extends BaseEvent {
 											};
 											await commandFunction(botObject, documents, msg, commandData);
 										} catch (err) {
+											status = "error";
 											logger.warn(`Failed to process command "${cmd}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 											this.client.logMessage(serverDocument, LoggingLevels.ERROR, `Failed to process command "${cmd}" X.X`, msg.channel.id, msg.author.id);
 											msg.sendError(cmd, err.stack);
+										} finally {
+											// Record command execution metrics
+											const duration = Number(process.hrtime.bigint() - start) / 1e9;
+											metrics.recordCommandExecution(cmd, "prefix", status, duration);
 										}
 									}
 									await this.setCooldown(serverDocument, channelDocument, channelQueryDocument);
@@ -425,45 +440,78 @@ class MessageCreate extends BaseEvent {
 							};
 							const isBotMentioned = (msg.mentions.members && msg.mentions.members.has(this.client.user.id)) || msg.mentions.users.has(this.client.user.id);
 
+							// Check if the first word after mention could be a command
+							// This prevents AI from intercepting commands when prefix is @mention
+							const firstWord = prompt.split(/\s+/)[0]?.toLowerCase();
+							const couldBeCommand = firstWord && (
+								this.client.getPublicCommandName(firstWord) ||
+								this.client.getSharedCommandName(firstWord) ||
+								serverDocument.config.tags.list.id(firstWord)?.isCommand ||
+								serverDocument.extensions.some(ext => ext.key === firstWord)
+							);
+
 							// Run AI mention conversation when allowed
-							if (!extensionApplied && isBotMentioned && aiEnabledInChannel() && prompt.length > 0 && !this.client.getSharedCommand(msg.command)) {
-								try {
-									if (!this.client.aiManager) {
-										this.client.aiManager = new AIManager(this.client);
-										await this.client.aiManager.initialize();
+							// Requirements:
+							// 1. No extension was applied
+							// 2. Bot was mentioned
+							// 3. AI is explicitly enabled for this server
+							// 4. AI is enabled in this channel
+							// 5. There's a prompt
+							// 6. Not a shared command
+							// 7. First word is not a potential command (prevents overriding commands when prefix is @mention)
+							// 8. Server has the ai_chat tier feature
+							const shouldRunAI = !extensionApplied &&
+								isBotMentioned &&
+								aiConfig.isEnabled === true &&
+								aiEnabledInChannel() &&
+								prompt.length > 0 &&
+								!this.client.getSharedCommand(msg.command) &&
+								!couldBeCommand;
+
+							if (shouldRunAI) {
+								// Check tier access for ai_chat feature
+								const hasAIAccess = await TierManager.canAccess(msg.guild.id, "ai_chat");
+								if (!hasAIAccess) {
+									logger.verbose(`AI mention blocked - server lacks ai_chat feature`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+								} else {
+									try {
+										if (!this.client.aiManager) {
+											this.client.aiManager = new AIManager(this.client);
+											await this.client.aiManager.initialize();
+										}
+
+										const rateLimitError = await this.client.aiManager.checkAndRecordUsage(
+											serverDocument,
+											msg.channel,
+											msg.author,
+										);
+										if (rateLimitError) {
+											await msg.channel.send(rateLimitError);
+											return;
+										}
+
+										await msg.channel.sendTyping();
+
+										const response = await this.client.aiManager.chat({
+											serverDocument,
+											channel: msg.channel,
+											user: msg.author,
+											message: prompt,
+											stream: false,
+										});
+
+										const maxLength = 2000;
+										if (response.length > maxLength) {
+											await msg.channel.send(`${response.substring(0, maxLength - 3)}...`);
+										} else {
+											await msg.channel.send(response || "(No response)");
+										}
+									} catch (err) {
+										logger.warn(`AI mention error: ${err.message}`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+										await msg.channel.send(`AI error: ${err.message}`);
 									}
-
-									const rateLimitError = await this.client.aiManager.checkAndRecordUsage(
-										serverDocument,
-										msg.channel,
-										msg.author,
-									);
-									if (rateLimitError) {
-										await msg.channel.send(rateLimitError);
-										return;
-									}
-
-									await msg.channel.sendTyping();
-
-									const response = await this.client.aiManager.chat({
-										serverDocument,
-										channel: msg.channel,
-										user: msg.author,
-										message: prompt,
-										stream: false,
-									});
-
-									const maxLength = 2000;
-									if (response.length > maxLength) {
-										await msg.channel.send(`${response.substring(0, maxLength - 3)}...`);
-									} else {
-										await msg.channel.send(response || "(No response)");
-									}
-								} catch (err) {
-									logger.warn(`AI mention error: ${err.message}`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
-									await msg.channel.send(`AI error: ${err.message}`);
+									shouldRunChatterbot = false;
 								}
-								shouldRunChatterbot = false;
 							}
 
 							if ((msg.content.startsWith(`<@${this.client.user.id}>`) || msg.content.startsWith(`<@!${this.client.user.id}>`)) && msg.content.includes(" ") && msg.content.length > msg.content.indexOf(" ") && !this.client.getSharedCommand(msg.command) && prompt.toLowerCase().trim() === "help") {
@@ -507,8 +555,8 @@ class MessageCreate extends BaseEvent {
 					} else {
 						translateMessage();
 					}
+					BatchWriteManager.queue(serverDocument);
 				}
-				await serverDocument.save();
 			}
 		}
 

@@ -220,6 +220,22 @@
 	.blog-back-link:hover {
 		color: var(--color-primary);
 	}
+	.blog-controls {
+		background: var(--color-bg-primary);
+		padding: 1.5rem;
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-sm);
+		margin-bottom: 2rem;
+	}
+	.blog-search-form {
+		display: flex;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+	.blog-search-input {
+		flex: 1;
+		min-width: 200px;
+	}
 	</style>
 </head>
 <body>
@@ -228,7 +244,7 @@
 			<%- include('../partials/header') %>
 		</div>
 		<div class="hero-body">
-			<div class="container">
+			<div class="container-standard">
 				<div class="blog-hero-content has-text-centered fade-in">
 					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
 						<span class="icon is-medium" style="margin-right: 0.5rem;">
@@ -263,8 +279,8 @@
 	</header>
 
 	<main role="main">
-		<section class="section" style="background: var(--color-bg-secondary); min-height: 50vh;">
-			<div class="container">
+		<section class="section-spacing-lg" style="background: var(--surface-1); min-height: 50vh;">
+			<div class="container-standard">
 				<% if (pageData.mode === "article") { %>
 					<div class="blog-article-container">
 						<a href="/blog" class="blog-back-link">
@@ -275,61 +291,92 @@
 						<%- include('../partials/blog-article', { blogPost }) %>
 					</div>
 				<% } else if (pageData.mode === "list") { %>
-					<% if (pageData.data.length > 0) { %>
-						<div class="columns is-centered">
-							<div class="column is-8">
-								<% pageData.data.forEach(blogPost => { %>
-								<article class="blog-post-card fade-in">
-									<div class="blog-post-header">
-										<span class="blog-post-category"><%= blogPost.category %></span>
-										<h2 class="blog-post-title">
-											<a href="/blog/<%= blogPost.id %>"><%= blogPost.title %></a>
-										</h2>
-										<div class="blog-post-meta">
-											<a href="/profile/<%= blogPost.author.id %>" class="blog-post-author" style="text-decoration: none; color: inherit;">
-												<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>">
-												<span><%= blogPost.author.name %></span>
-											</a>
-											<span><i class="fa fa-calendar"></i> <%= blogPost.relativePublished %></span>
-										</div>
+					<% if (pageData.data.length > 0 || pageData.search || pageData.category) { %>
+						<!-- Search & Filter Bar -->
+						<div style="max-width: 900px; margin: 0 auto 3rem;">
+							<form action="/blog" method="GET" class="search-bar" style="margin-bottom: var(--space-md);">
+								<input type="text" name="search" class="search-input" placeholder="Search articles..." value="<%= pageData.search || '' %>">
+								<select name="category" class="search-input" style="flex: 0 0 180px;">
+									<option value="">All Categories</option>
+									<% pageData.categories.forEach(cat => { %>
+										<option value="<%= cat %>" <%= pageData.category === cat ? 'selected' : '' %>><%= cat %></option>
+									<% }); %>
+								</select>
+								<button type="submit" class="btn btn-primary" style="flex: 0 0 auto; background: var(--gradient-brand); color: white; border: none; padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+									<i class="fa fa-search"></i> Search
+								</button>
+							</form>
+							
+							<!-- Category Pills -->
+							<div class="filter-pills">
+								<a href="/blog" class="filter-pill <%= !pageData.category ? 'active' : '' %>">All Posts</a>
+								<% pageData.categories.forEach(cat => { %>
+									<a href="/blog?category=<%= cat %>" class="filter-pill <%= pageData.category === cat ? 'active' : '' %>"><%= cat %></a>
+								<% }); %>
+							</div>
+						</div>
+						
+						<!-- Blog Grid -->
+						<div class="grid-3">
+
+								<% if (pageData.data.length === 0) { %>
+									<div class="has-text-centered" style="padding: 3rem;">
+										<h3 class="title is-4">No posts found</h3>
+										<p class="subtitle is-6">Try adjusting your search or filters</p>
 									</div>
-									<div class="blog-post-body">
-										<p class="blog-post-excerpt">
-											<%- blogPost.content ? blogPost.content.replace(/<[^>]*>/g, '').substring(0, 200).trim() + '...' : '' %>
+								<% } %>
+
+							<% pageData.data.forEach(blogPost => { %>
+							<article class="blog-card fade-in">
+								<div class="blog-card-image">
+									<i class="fa fa-newspaper-o" style="font-size: 48px; color: var(--text-muted);"></i>
+								</div>
+								<div class="blog-card-content">
+									<div>
+										<span class="badge badge-primary" style="margin-bottom: var(--space-sm); display: inline-block;"><%= blogPost.category %></span>
+										<h2 style="font-size: 20px; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">
+											<a href="/blog/<%= blogPost.id %>" style="color: inherit; text-decoration: none;"><%= blogPost.title %></a>
+										</h2>
+										<p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: var(--space-md);">
+											<%- blogPost.content ? blogPost.content.replace(/<[^>]*>/g, '').substring(0, 150).trim() + '...' : '' %>
 										</p>
 									</div>
-									<div class="blog-post-footer">
-										<a href="/blog/<%= blogPost.id %>" class="blog-read-more">
-											Read more <i class="fa fa-arrow-right"></i>
+									<div class="blog-card-footer">
+										<div style="display: flex; align-items: center; gap: var(--space-xs);">
+											<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>" style="width: 24px; height: 24px; border-radius: 50%;">
+											<span style="font-size: 13px; color: var(--text-secondary);"><%= blogPost.author.name %></span>
+										</div>
+										<a href="/blog/<%= blogPost.id %>" style="color: var(--color-accent); font-weight: 600; font-size: 14px; text-decoration: none;">
+											Read More <i class="fa fa-arrow-right" style="font-size: 12px;"></i>
 										</a>
-										<% if (isMaintainer) { %>
-										<a href="/blog/<%= blogPost.id %>/edit" class="button is-small is-light">
-											<span class="icon"><i class="fa fa-edit"></i></span>
-											<span>Edit</span>
-										</a>
-										<% } %>
-									</div>
-								</article>
-								<% }); %>
-
-								<div class="blog-pagination">
-									<div>
-										<% if (pageData.currentPage < pageData.numPages) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %>">
-											<span class="icon"><i class="fa fa-chevron-left"></i></span>
-											<span>Older Posts</span>
-										</a>
-										<% } %>
-									</div>
-									<div>
-										<% if (pageData.currentPage > 1) { %>
-										<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %>">
-											<span>Newer Posts</span>
-											<span class="icon"><i class="fa fa-chevron-right"></i></span>
-										</a>
-										<% } %>
 									</div>
 								</div>
+							</article>
+							<% }); %>
+						</div>
+
+						<!-- Pagination -->
+						<div class="blog-pagination" style="max-width: 900px; margin: 3rem auto 0;">
+							<% 
+								let queryParams = '';
+								if (pageData.search) queryParams += `&search=${encodeURIComponent(pageData.search)}`;
+								if (pageData.category) queryParams += `&category=${encodeURIComponent(pageData.category)}`;
+							%>
+							<div>
+								<% if (pageData.currentPage < pageData.numPages) { %>
+								<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %><%= queryParams %>">
+									<span class="icon"><i class="fa fa-chevron-left"></i></span>
+									<span>Older Posts</span>
+								</a>
+								<% } %>
+							</div>
+							<div>
+								<% if (pageData.currentPage > 1) { %>
+								<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %><%= queryParams %>">
+									<span>Newer Posts</span>
+									<span class="icon"><i class="fa fa-chevron-right"></i></span>
+								</a>
+								<% } %>
 							</div>
 						</div>
 					<% } else { %>

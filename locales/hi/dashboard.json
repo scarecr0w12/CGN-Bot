@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[HI] Overview",
+		"commands": "[HI] Commands",
+		"commandList": "[HI] Command List",
+		"moderation": "[HI] Moderation",
+		"strikes": "[HI] Strikes",
+		"filters": "[HI] Filters",
+		"logs": "[HI] Logs",
+		"automod": "[HI] Auto-Moderation",
+		"members": "[HI] Members",
+		"roles": "[HI] Roles",
+		"channels": "[HI] Channels",
+		"extensions": "[HI] Extensions",
+		"points": "[HI] Points & Ranks",
+		"settings": "[HI] Settings",
+		"premium": "[HI] Premium",
+		"ai": "[HI] AI Settings"
+	},
+	"overview": {
+		"title": "[HI] Server Overview",
+		"quickStats": "[HI] Quick Stats",
+		"members": "[HI] Members",
+		"channels": "[HI] Channels",
+		"roles": "[HI] Roles",
+		"commands": "[HI] Commands Used",
+		"recentActivity": "[HI] Recent Activity",
+		"topMembers": "[HI] Top Members",
+		"serverHealth": "[HI] Server Health"
+	},
+	"commands": {
+		"title": "[HI] Command Settings",
+		"enableAll": "[HI] Enable All",
+		"disableAll": "[HI] Disable All",
+		"search": "[HI] Search commands...",
+		"category": "[HI] Category",
+		"status": "[HI] Status",
+		"adminLevel": "[HI] Admin Level",
+		"disabledChannels": "[HI] Disabled Channels",
+		"enabled": "[HI] Enabled",
+		"disabled": "[HI] Disabled",
+		"noCommands": "[HI] No commands found."
+	},
+	"moderation": {
+		"title": "[HI] Moderation Settings",
+		"strikes": {
+			"title": "[HI] Strike System",
+			"description": "[HI] Configure automatic actions based on strike count.",
+			"threshold": "[HI] Strike Threshold",
+			"action": "[HI] Action",
+			"duration": "[HI] Duration",
+			"actions": {
+				"warn": "[HI] Warn",
+				"mute": "[HI] Mute",
+				"kick": "[HI] Kick",
+				"ban": "[HI] Ban"
+			}
+		},
+		"filters": {
+			"title": "[HI] Message Filters",
+			"spam": "[HI] Spam Filter",
+			"invites": "[HI] Invite Links",
+			"links": "[HI] External Links",
+			"caps": "[HI] Excessive Caps",
+			"mentions": "[HI] Mass Mentions",
+			"words": "[HI] Word Blacklist"
+		},
+		"logs": {
+			"title": "[HI] Moderation Logs",
+			"channel": "[HI] Log Channel",
+			"events": "[HI] Logged Events",
+			"messageDelete": "[HI] Message Deletes",
+			"messageEdit": "[HI] Message Edits",
+			"memberJoin": "[HI] Member Joins",
+			"memberLeave": "[HI] Member Leaves",
+			"memberBan": "[HI] Member Bans",
+			"roleChanges": "[HI] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[HI] Member Management",
+		"search": "[HI] Search members...",
+		"filter": "[HI] Filter by role",
+		"sort": "[HI] Sort by",
+		"actions": "[HI] Actions",
+		"warn": "[HI] Warn",
+		"mute": "[HI] Mute",
+		"kick": "[HI] Kick",
+		"ban": "[HI] Ban",
+		"viewProfile": "[HI] View Profile",
+		"viewStrikes": "[HI] View Strikes"
+	},
+	"extensions": {
+		"title": "[HI] Server Extensions",
+		"installed": "[HI] Installed",
+		"available": "[HI] Available",
+		"browse": "[HI] Browse Gallery",
+		"install": "[HI] Install",
+		"uninstall": "[HI] Uninstall",
+		"configure": "[HI] Configure",
+		"enabled": "[HI] Enabled",
+		"disabled": "[HI] Disabled",
+		"version": "[HI] Version",
+		"author": "[HI] Author",
+		"noExtensions": "[HI] No extensions installed."
+	},
+	"points": {
+		"title": "[HI] Points & Ranks",
+		"pointsPerMessage": "[HI] Points per Message",
+		"cooldown": "[HI] Cooldown (seconds)",
+		"ranks": "[HI] Custom Ranks",
+		"addRank": "[HI] Add Rank",
+		"rankName": "[HI] Rank Name",
+		"requiredPoints": "[HI] Required Points",
+		"roleReward": "[HI] Role Reward",
+		"leaderboard": "[HI] Leaderboard",
+		"resetPoints": "[HI] Reset All Points"
+	},
+	"settings": {
+		"title": "[HI] Server Settings",
+		"general": {
+			"title": "[HI] General",
+			"prefix": "[HI] Command Prefix",
+			"language": "[HI] Language",
+			"timezone": "[HI] Timezone",
+			"nickname": "[HI] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[HI] Welcome Messages",
+			"enabled": "[HI] Enable Welcome Messages",
+			"channel": "[HI] Welcome Channel",
+			"message": "[HI] Welcome Message",
+			"dmEnabled": "[HI] Send DM",
+			"dmMessage": "[HI] DM Message"
+		},
+		"leave": {
+			"title": "[HI] Leave Messages",
+			"enabled": "[HI] Enable Leave Messages",
+			"channel": "[HI] Leave Channel",
+			"message": "[HI] Leave Message"
+		},
+		"admins": {
+			"title": "[HI] Bot Admins",
+			"description": "[HI] Users who can manage bot settings",
+			"addAdmin": "[HI] Add Admin",
+			"level": "[HI] Admin Level",
+			"levels": {
+				"1": "[HI] Moderator",
+				"2": "[HI] Administrator",
+				"3": "[HI] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[HI] Premium Features",
+		"currentTier": "[HI] Current Tier",
+		"upgrade": "[HI] Upgrade",
+		"features": "[HI] Available Features",
+		"usage": "[HI] Usage",
+		"expires": "[HI] Expires",
+		"neverExpires": "[HI] Never expires",
+		"redeemCode": "[HI] Redeem Code",
+		"useVotePoints": "[HI] Use Vote Points"
+	},
+	"ai": {
+		"title": "[HI] AI Settings",
+		"enabled": "[HI] Enable AI Chat",
+		"provider": "[HI] AI Provider",
+		"model": "[HI] Model",
+		"channels": "[HI] Enabled Channels",
+		"personality": "[HI] Bot Personality",
+		"maxTokens": "[HI] Max Tokens",
+		"temperature": "[HI] Temperature",
+		"usage": "[HI] Monthly Usage",
+		"limit": "[HI] Monthly Limit"
+	},
+	"common": {
+		"save": "[HI] Save Changes",
+		"saved": "[HI] Changes saved!",
+		"saving": "[HI] Saving...",
+		"reset": "[HI] Reset to Default",
+		"cancel": "[HI] Cancel",
+		"confirm": "[HI] Confirm",
+		"delete": "[HI] Delete",
+		"edit": "[HI] Edit",
+		"add": "[HI] Add",
+		"remove": "[HI] Remove",
+		"enable": "[HI] Enable",
+		"disable": "[HI] Disable",
+		"unsavedChanges": "[HI] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[HI] Loading...",
+		"error": "[HI] An error occurred",
+		"success": "[HI] Success!"
+	}
+}

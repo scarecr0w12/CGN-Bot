@@ -1,72 +1,30 @@
 <style>
-/* Extension Gallery Styles */
-.ext-gallery-filters {
-	background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-	border-radius: 12px;
-	padding: 1.25rem;
-	margin-bottom: 1.5rem;
-	box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-.ext-filter-row {
+/* Extension Gallery Styles - 2025 Mockup */
+.filter-bar-ext {
 	display: flex;
+	gap: var(--space-md);
+	margin-bottom: var(--space-lg);
 	flex-wrap: wrap;
-	gap: 1rem;
-	align-items: center;
-	justify-content: space-between;
 }
-.ext-category-pills {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5rem;
+.filter-bar-ext .search-input {
+	flex: 1;
+	min-width: 250px;
 }
-.ext-category-pill {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.4rem;
-	padding: 0.5rem 1rem;
-	border-radius: 50px;
-	font-size: 0.9rem;
+.filter-select-ext {
+	padding: 12px 16px;
+	border: 2px solid var(--surface-3);
+	border-radius: var(--radius-md);
+	background: var(--surface-0);
+	color: var(--text-primary);
+	font-size: 15px;
 	font-weight: 500;
-	text-decoration: none;
-	transition: all 0.2s ease;
-	border: 2px solid transparent;
-	background: rgba(255,255,255,0.08);
-	color: rgba(255,255,255,0.7);
+	cursor: pointer;
+	transition: all var(--transition-base);
 }
-.ext-category-pill:hover {
-	background: rgba(255,255,255,0.15);
-	color: #fff;
-	transform: translateY(-1px);
-}
-.ext-category-pill.is-active {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	color: #fff;
-	border-color: transparent;
-	box-shadow: 0 3px 10px rgba(102,126,234,0.4);
-}
-.ext-category-pill .pill-count {
-	background: rgba(0,0,0,0.2);
-	padding: 0.1rem 0.5rem;
-	border-radius: 50px;
-	font-size: 0.75rem;
-}
-.ext-sort-dropdown .select select {
-	background: rgba(255,255,255,0.1);
-	border: 1px solid rgba(255,255,255,0.2);
-	color: #fff;
-	border-radius: 8px;
-	padding-right: 2.5rem;
-}
-.ext-sort-dropdown .select::after {
-	border-color: #fff !important;
-}
-.ext-sort-dropdown .select select:hover {
-	border-color: rgba(255,255,255,0.4);
-}
-.ext-sort-dropdown label {
-	color: rgba(255,255,255,0.7);
-	font-size: 0.85rem;
-	margin-right: 0.5rem;
+.filter-select-ext:focus {
+	outline: none;
+	border-color: var(--color-accent);
+	box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
 .ext-badge-premium {
@@ -76,6 +34,37 @@
 .ext-badge-owned {
 	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
 	color: #fff;
+}
+.ext-creator-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	padding: 0.15rem 0.4rem;
+	border-radius: 4px;
+	font-size: 0.65rem;
+	font-weight: 600;
+	margin-left: 0.3rem;
+	vertical-align: middle;
+}
+.ext-creator-badge.featured {
+	background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+	color: #fff;
+}
+.ext-creator-badge.tier-diamond {
+	background: linear-gradient(135deg, #b9f2ff 0%, #67e8f9 100%);
+	color: #155e75;
+}
+.ext-creator-badge.tier-platinum {
+	background: linear-gradient(135deg, #e5e4e2 0%, #9ca3af 100%);
+	color: #1f2937;
+}
+.ext-creator-badge.tier-gold {
+	background: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
+	color: #78350f;
+}
+.ext-creator-badge.tier-silver {
+	background: linear-gradient(135deg, #c0c0c0 0%, #9ca3af 100%);
+	color: #374151;
 }
 
 /* Card Grid */
@@ -388,12 +377,16 @@
 	const categoryCounts = pageData.categoryCounts || { all: 0, command: 0, keyword: 0, timer: 0, event: 0 };
 	const premiumCounts = pageData.premiumCounts || { all: 0, free: 0, premium: 0 };
 	
-	const buildFilterUrl = (category, sort, premium) => {
+	const buildFilterUrl = (category, sort, premium, tag) => {
 		const params = new URLSearchParams();
 		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
 		if (category && category !== 'all') params.set('category', category);
 		if (premium && premium !== 'all') params.set('premium', premium);
 		if (sort && sort !== 'featured') params.set('sort', sort);
+		
+		const targetTag = tag !== undefined ? tag : (pageData.tagFilter || 'all');
+		if (targetTag && targetTag !== 'all') params.set('tag', targetTag);
+
 		const queryString = params.toString();
 		return `/extensions/${pageData.mode}${queryString ? '?' + queryString : ''}`;
 	};
@@ -402,64 +395,52 @@
 	const typeLabels = { command: 'Commands', keyword: 'Keywords', timer: 'Timers', event: 'Events' };
 	%>
 
-	<!-- Filters and Sorting -->
-	<div class="ext-gallery-filters">
-		<div class="ext-filter-row">
-			<div class="ext-category-pills">
-				<a href="<%= buildFilterUrl('all', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'all' ? 'is-active' : '' %>">
-					<i class="fa fa-th-large"></i>
-					All
-					<span class="pill-count"><%= categoryCounts.all %></span>
-				</a>
-				<a href="<%= buildFilterUrl('command', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'command' ? 'is-active' : '' %>">
-					<i class="fa fa-magic"></i>
-					Commands
-					<span class="pill-count"><%= categoryCounts.command %></span>
-				</a>
-				<a href="<%= buildFilterUrl('keyword', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'keyword' ? 'is-active' : '' %>">
-					<i class="fa fa-key"></i>
-					Keywords
-					<span class="pill-count"><%= categoryCounts.keyword %></span>
-				</a>
-				<a href="<%= buildFilterUrl('timer', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'timer' ? 'is-active' : '' %>">
-					<i class="fa fa-clock-o"></i>
-					Timers
-					<span class="pill-count"><%= categoryCounts.timer %></span>
-				</a>
-				<a href="<%= buildFilterUrl('event', sortOption, premiumFilter) %>" class="ext-category-pill <%= categoryFilter === 'event' ? 'is-active' : '' %>">
-					<i class="fa fa-code"></i>
-					Events
-					<span class="pill-count"><%= categoryCounts.event %></span>
-				</a>
-			</div>
-			<div class="ext-category-pills">
-				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'all') %>" class="ext-category-pill <%= premiumFilter === 'all' ? 'is-active' : '' %>">
-					All
-					<span class="pill-count"><%= premiumCounts.all %></span>
-				</a>
-				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'free') %>" class="ext-category-pill <%= premiumFilter === 'free' ? 'is-active' : '' %>">
-					Free
-					<span class="pill-count"><%= premiumCounts.free %></span>
-				</a>
-				<a href="<%= buildFilterUrl(categoryFilter, sortOption, 'premium') %>" class="ext-category-pill <%= premiumFilter === 'premium' ? 'is-active' : '' %>">
-					Premium
-					<span class="pill-count"><%= premiumCounts.premium %></span>
-				</a>
-			</div>
-			<div class="ext-sort-dropdown">
-				<label><i class="fa fa-sort"></i> Sort:</label>
-				<div class="select is-small">
-					<select onchange="window.location.href = this.value">
-						<option value="<%= buildFilterUrl(categoryFilter, 'featured', premiumFilter) %>" <%= sortOption === 'featured' ? 'selected' : '' %>>Featured</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'popular', premiumFilter) %>" <%= sortOption === 'popular' ? 'selected' : '' %>>Most Popular</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'newest', premiumFilter) %>" <%= sortOption === 'newest' ? 'selected' : '' %>>Newest</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'oldest', premiumFilter) %>" <%= sortOption === 'oldest' ? 'selected' : '' %>>Oldest</option>
-						<option value="<%= buildFilterUrl(categoryFilter, 'name', premiumFilter) %>" <%= sortOption === 'name' ? 'selected' : '' %>>Name (A-Z)</option>
-					</select>
-				</div>
-			</div>
-		</div>
+	<!-- Filter Bar (2025 Mockup Style) -->
+	<div class="filter-bar-ext" style="margin-bottom: var(--space-lg);">
+		<input type="text" class="search-input" placeholder="Search extensions..." value="<%= pageData.activeSearchQuery || '' %>" id="ext-search-input">
+		
+		<select class="filter-select-ext" onchange="window.location.href = this.value">
+			<option value="<%= buildFilterUrl(categoryFilter, sortOption, 'all') %>" <%= premiumFilter === 'all' ? 'selected' : '' %>>All Types</option>
+			<option value="<%= buildFilterUrl(categoryFilter, sortOption, 'free') %>" <%= premiumFilter === 'free' ? 'selected' : '' %>>Free</option>
+			<option value="<%= buildFilterUrl(categoryFilter, sortOption, 'premium') %>" <%= premiumFilter === 'premium' ? 'selected' : '' %>>Premium</option>
+		</select>
+		
+		<select class="filter-select-ext" onchange="window.location.href = this.value">
+			<option value="<%= buildFilterUrl(categoryFilter, 'popular', premiumFilter) %>" <%= sortOption === 'popular' ? 'selected' : '' %>>Most Popular</option>
+			<option value="<%= buildFilterUrl(categoryFilter, 'newest', premiumFilter) %>" <%= sortOption === 'newest' ? 'selected' : '' %>>Recently Added</option>
+			<option value="<%= buildFilterUrl(categoryFilter, 'featured', premiumFilter) %>" <%= sortOption === 'featured' ? 'selected' : '' %>>Featured</option>
+			<option value="<%= buildFilterUrl(categoryFilter, 'name', premiumFilter) %>" <%= sortOption === 'name' ? 'selected' : '' %>>Name (A-Z)</option>
+		</select>
 	</div>
+
+	<!-- Category & Tag Pills -->
+	<div class="filter-pills" style="margin-bottom: var(--space-xl);">
+		<a href="<%= buildFilterUrl('all', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'all' ? 'active' : '' %>">
+			<i class="fa fa-th-large"></i> All (<%= categoryCounts.all %>)
+		</a>
+		<a href="<%= buildFilterUrl('command', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'command' ? 'active' : '' %>">
+			<i class="fa fa-magic"></i> Commands (<%= categoryCounts.command %>)
+		</a>
+		<a href="<%= buildFilterUrl('event', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'event' ? 'active' : '' %>">
+			<i class="fa fa-code"></i> Events (<%= categoryCounts.event %>)
+		</a>
+		<a href="<%= buildFilterUrl('keyword', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'keyword' ? 'active' : '' %>">
+			<i class="fa fa-key"></i> Keywords (<%= categoryCounts.keyword %>)
+		</a>
+		<a href="<%= buildFilterUrl('timer', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'timer' ? 'active' : '' %>">
+			<i class="fa fa-clock-o"></i> Timers (<%= categoryCounts.timer %>)
+		</a>
+	</div>
+
+	<% if (pageData.extensionTags && pageData.extensionTags.length > 0) { %>
+	<div class="filter-pills" style="margin-bottom: var(--space-xl);">
+		<span style="color: var(--text-muted); font-weight: 600; margin-right: var(--space-sm);"><i class="fa fa-tags"></i> Tags:</span>
+		<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, 'all') %>" class="filter-pill <%= !pageData.tagFilter || pageData.tagFilter === 'all' ? 'active' : '' %>">All Tags</a>
+		<% pageData.extensionTags.forEach(tag => { %>
+		<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, tag) %>" class="filter-pill <%= pageData.tagFilter === tag ? 'active' : '' %>"><%= tag %></a>
+		<% }); %>
+	</div>
+	<% } %>
 	<% if (pageData.mode === "queue") { %>
 	<article class="message is-danger" title="Even Speedwagon is afraid!" style="margin-bottom: 1.5rem;">
 		<div class="message-body">
@@ -483,9 +464,9 @@
 
 	<% if (pageData.extensions.length > 0) { %>
 	<!-- Extension Card Grid -->
-	<div class="ext-card-grid">
+	<div class="grid-auto">
 		<% pageData.extensions.forEach((extension) => { %>
-		<div id="card-<%= extension._id %>" class="ext-card">
+		<div id="card-<%= extension._id %>" class="extension-card">
 			<div class="ext-card-header">
 				<div>
 					<h3 class="ext-card-title"><%= extension.name %></h3>
@@ -514,6 +495,21 @@
 						<% if (extension.level === "third") { %>
 						<span class="ext-badge" style="background:#ffebee;color:#c62828;">Local</span>
 						<% } %>
+						<% if (extension.network_capability && extension.network_capability !== 'none') { %>
+						<% const needsApproval = ['network', 'network_advanced'].includes(extension.network_capability); %>
+						<span class="ext-badge" style="background:<%= extension.network_approved ? '#e8f5e9' : (needsApproval ? '#ffebee' : '#fff3e0') %>;color:<%= extension.network_approved ? '#2e7d32' : (needsApproval ? '#c62828' : '#ef6c00') %>;" title="<%= extension.network_capability %><%= extension.network_approved && extension.network_approved_at ? ' - Approved ' + extension.network_approved_at : (needsApproval && !extension.network_approved ? ' - Pending Approval' : '') %>">
+							<i class="fa fa-globe"></i> 
+							<%= extension.network_capability === 'allowlist_only' ? 'Public APIs' : extension.network_capability === 'network' ? 'Network' : 'Advanced' %>
+							<% if (extension.network_approved) { %><i class="fa fa-check ml-1"></i><% } else if (needsApproval) { %><i class="fa fa-clock-o ml-1"></i><% } %>
+						</span>
+						<% } %>
+						<% if (extension.tags && extension.tags.length > 0) { %>
+							<% extension.tags.forEach(tag => { %>
+							<span class="ext-badge" style="background: #f5f5f5; color: #666; border: 1px solid #eee;">
+								<i class="fa fa-tag" style="font-size: 0.6rem;"></i> <%= tag %>
+							</span>
+							<% }); %>
+						<% } %>
 					</div>
 				</div>
 				<div class="ext-card-type-icon <%= extension.type %>" title="<%= extension.typeDescription %>">
@@ -527,7 +523,14 @@
 				<div class="ext-card-author">
 					<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.name %>">
 					<div class="ext-card-author-info">
-						<div class="ext-card-author-name"><%= extension.owner.name %></div>
+						<div class="ext-card-author-name">
+							<%= extension.owner.name %>
+							<% if (extension.owner.isFeaturedCreator) { %>
+							<span class="ext-creator-badge featured" title="Featured Creator"><i class="fa fa-award"></i></span>
+							<% } else if (extension.owner.creatorTier && extension.owner.creatorTier !== 'bronze') { %>
+							<span class="ext-creator-badge tier-<%= extension.owner.creatorTier %>" title="<%= extension.owner.creatorTier.charAt(0).toUpperCase() + extension.owner.creatorTier.slice(1) %> Creator"><i class="fa fa-medal"></i></span>
+							<% } %>
+						</div>
 						<div class="ext-card-updated" title="<%= extension.rawLastUpdated %>"><%= extension.relativeLastUpdated %></div>
 					</div>
 				</div>
@@ -542,9 +545,11 @@
 					<i class="fa fa-download"></i> Install
 				</a>
 				<% } %>
+				<% if (!extension.isPremium || (authUser && (authUser.id === extension.owner.id || isMaintainer))) { %>
 				<a class="ext-card-action" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
 					<i class="fa fa-code"></i> Source
 				</a>
+				<% } %>
 				<% if (authUser) { %>
 				<a id="vote-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
 					<i class="fa fa-thumbs-up"></i> <%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
@@ -555,18 +560,14 @@
 					<a id="feature-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
 						<i class="fa fa-star"></i> <%= extension.featured ? "Unfeature" : "Feature" %>
 					</a>
+					<% if (extension.network_capability && ['network', 'network_advanced'].includes(extension.network_capability) && !extension.network_approved) { %>
+					<a class="ext-card-action" style="color:#2e7d32;" onclick="SkynetUtil.approveNetworkCapability('<%= extension._id %>');">
+						<i class="fa fa-globe"></i> Approve Network
+					</a>
+					<% } %>
 					<% if (authUser.id !== extension.owner.id) { %>
 					<a class="ext-card-action danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
 						<i class="fa fa-trash"></i> Remove
-					</a>
-					<% } %>
-					<% } else if (pageData.mode === "queue") { %>
-					<a class="ext-card-action" onclick="SkynetUtil.acceptExtension('<%= extension._id %>');">
-						<i class="fa fa-check"></i> Accept
-					</a>
-					<% if (authUser.id !== extension.owner.id || extension.level === "third") { %>
-					<a class="ext-card-action danger" onclick="SkynetUtil.rejectExtension('<%= extension._id %>');">
-						<i class="fa fa-times"></i> Reject
 					</a>
 					<% } %>
 					<% } %>
@@ -640,6 +641,7 @@
 		if (pageData.activeSearchQuery) params.set('q', pageData.activeSearchQuery);
 		if (categoryFilter && categoryFilter !== 'all') params.set('category', categoryFilter);
 		if (sortOption && sortOption !== 'featured') params.set('sort', sortOption);
+		if (pageData.tagFilter && pageData.tagFilter !== 'all') params.set('tag', pageData.tagFilter);
 		if (pageData.itemsPerPage) params.set('count', pageData.itemsPerPage);
 		params.set('page', pageNum);
 		return `/extensions/${pageData.mode}?${params.toString()}`;

@@ -3,7 +3,7 @@ const { StatusMessages } = require("../../Constants");
 
 class MessageDelete extends BaseEvent {
 	requirements (msg) {
-		return msg && msg.guild && msg.author.id !== this.client.user.id && !msg.author.bot;
+		return msg && msg.guild && msg.author && msg.author.id !== this.client.user.id && !msg.author.bot;
 	}
 
 	async handle (msg) {

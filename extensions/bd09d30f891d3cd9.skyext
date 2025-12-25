@@ -1,0 +1,91 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const key = 'emojisimon_' + message.author.id;
+
+const EMOJIS = ['🔴','🔵','🟢','🟡','🟣','🟠'];
+
+const state = extension.storage.get(key) || { active: false, sequence: [], round: 0 };
+
+if (sub === 'start') {
+	const seq = [utils.random.pick(EMOJIS), utils.random.pick(EMOJIS), utils.random.pick(EMOJIS)];
+	const next = { active: true, sequence: seq, round: 1 };
+	extension.storage.write(key, next);
+	message.reply({
+		embeds: [embed.create({
+			title: '🧠 Emoji Simon - Round 1',
+			description: 'Memorize this sequence:\n\n' + utils.discord.bold(seq.join(' ')) + '\n\nRepeat it with: emojisimon repeat <sequence>\nExample: emojisimon repeat 🔴 🔵 🟢',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'end') {
+	extension.storage.write(key, { active: false, sequence: [], round: 0 });
+	message.reply({
+		embeds: [embed.create({
+			title: '🧠 Emoji Simon',
+			description: 'Game ended.',
+			color: embed.colors.DEFAULT,
+		})],
+	});
+	return;
+}
+
+if (sub === 'repeat') {
+	if (!state.active || !Array.isArray(state.sequence) || state.sequence.length === 0) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🧠 Emoji Simon',
+				description: 'No active game. Use: emojisimon start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const guess = args.slice(1);
+	const expected = state.sequence;
+	const guessStr = guess.join(' ');
+	const expectedStr = expected.join(' ');
+
+	if (guessStr !== expectedStr) {
+	extension.storage.write(key, { active: false, sequence: [], round: 0 });
+		message.reply({
+			embeds: [embed.create({
+				title: '❌ Wrong Sequence!',
+				description: 'Your answer: ' + utils.discord.bold(guessStr || '(empty)') + '\nCorrect: ' + utils.discord.bold(expectedStr) + '\n\nGame over.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const nextSeq = expected.concat([utils.random.pick(EMOJIS)]);
+	const nextRound = (state.round || 1) + 1;
+	extension.storage.write(key, { active: true, sequence: nextSeq, round: nextRound });
+
+	message.reply({
+		embeds: [embed.create({
+			title: '✅ Correct! Round ' + nextRound,
+			description: 'New sequence:\n\n' + utils.discord.bold(nextSeq.join(' ')) + '\n\nRepeat it with: emojisimon repeat <sequence>',
+			color: embed.colors.SUCCESS,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧠 Emoji Simon',
+		description: 'Usage: emojisimon start | emojisimon repeat <sequence> | emojisimon end',
+		color: embed.colors.DEFAULT,
+	})],
+});

@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Analytics Dashboard - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+	<style>
+		.analytics-card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.5rem;
+		}
+		.stat-card {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			border-radius: 12px;
+			padding: 1.25rem;
+			color: white;
+		}
+		.stat-card.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+		.stat-card.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+		.stat-card.blue { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+		.stat-card.pink { background: linear-gradient(135deg, #EB459E 0%, #f093fb 100%); }
+		.stat-card .stat-value {
+			font-size: 2rem;
+			font-weight: 700;
+			line-height: 1;
+		}
+		.stat-card .stat-label {
+			font-size: 0.85rem;
+			opacity: 0.9;
+			margin-top: 0.5rem;
+		}
+		.chart-container {
+			position: relative;
+			height: 280px;
+			width: 100%;
+		}
+		.heatmap-grid {
+			display: grid;
+			grid-template-columns: 60px repeat(24, 1fr);
+			gap: 2px;
+			font-size: 0.7rem;
+		}
+		.heatmap-cell {
+			aspect-ratio: 1;
+			border-radius: 3px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.heatmap-label {
+			display: flex;
+			align-items: center;
+			font-weight: 500;
+			padding-right: 0.5rem;
+		}
+		.heatmap-hour {
+			text-align: center;
+			font-size: 0.65rem;
+			color: #666;
+		}
+		.heat-0 { background: #f0f0f0; }
+		.heat-1 { background: #c6e48b; }
+		.heat-2 { background: #7bc96f; }
+		.heat-3 { background: #239a3b; }
+		.heat-4 { background: #196127; }
+		.leaderboard-item {
+			display: flex;
+			align-items: center;
+			padding: 0.6rem 0;
+			border-bottom: 1px solid #eee;
+		}
+		.leaderboard-item:last-child { border-bottom: none; }
+		.leaderboard-rank {
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			background: #3273dc;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 600;
+			font-size: 0.8rem;
+			margin-right: 0.75rem;
+		}
+		.leaderboard-rank.gold { background: linear-gradient(135deg, #f5af19, #f12711); }
+		.leaderboard-rank.silver { background: linear-gradient(135deg, #bdc3c7, #2c3e50); }
+		.leaderboard-rank.bronze { background: linear-gradient(135deg, #c9920f, #8B4513); }
+		.premium-overlay {
+			position: relative;
+		}
+		.premium-overlay.locked::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(255,255,255,0.85);
+			backdrop-filter: blur(4px);
+			border-radius: 6px;
+			z-index: 10;
+		}
+		.premium-badge {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 11;
+			text-align: center;
+		}
+		.export-btn {
+			position: absolute;
+			top: 1rem;
+			right: 1rem;
+		}
+		.tab-content { display: none; }
+		.tab-content.is-active { display: block; }
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fas fa-chart-bar"></i></span>
+						Analytics Dashboard
+						<% if (pageData.hasAnalytics) { %>
+						<span class="tag is-success">Premium</span>
+						<% } else { %>
+						<span class="tag is-warning">Premium Required</span>
+						<% } %>
+					</h1>
+
+					<% if (!pageData.hasAnalytics) { %>
+					<article class="message is-warning">
+						<div class="message-body">
+							<p><strong>Premium Feature</strong></p>
+							<p>The Analytics Dashboard provides comprehensive insights into your server's activity. <a href="/dashboard/<%= serverData.id %>/subscription">Upgrade to Tier 2</a> to unlock this feature.</p>
+						</div>
+					</article>
+					<% } %>
+
+					<div class="premium-overlay <%= !pageData.hasAnalytics ? 'locked' : '' %>">
+						<% if (!pageData.hasAnalytics) { %>
+						<div class="premium-badge">
+							<span class="icon is-large has-text-warning"><i class="fas fa-lock fa-3x"></i></span>
+							<p class="mt-3"><a href="/dashboard/<%= serverData.id %>/subscription" class="button is-warning">Unlock Premium</a></p>
+						</div>
+						<% } %>
+
+						<!-- Tab Navigation -->
+						<div class="tabs is-boxed mb-4">
+							<ul>
+								<li class="is-active" data-tab="overview"><a><span class="icon"><i class="fas fa-home"></i></span><span>Overview</span></a></li>
+								<li data-tab="members"><a><span class="icon"><i class="fas fa-users"></i></span><span>Members</span></a></li>
+								<li data-tab="channels"><a><span class="icon"><i class="fas fa-hashtag"></i></span><span>Channels</span></a></li>
+								<li data-tab="commands"><a><span class="icon"><i class="fas fa-terminal"></i></span><span>Commands</span></a></li>
+								<li data-tab="heatmap"><a><span class="icon"><i class="fas fa-fire"></i></span><span>Heatmap</span></a></li>
+							</ul>
+						</div>
+
+						<!-- Overview Tab -->
+						<div class="tab-content is-active" id="tab-overview">
+							<!-- Quick Stats -->
+							<div class="columns is-multiline">
+								<div class="column is-3">
+									<div class="stat-card">
+										<div class="stat-value"><%= (pageData.analytics.memberActivity.overview?.totalTracked || 0).toLocaleString() %></div>
+										<div class="stat-label">Members Tracked</div>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="stat-card green">
+										<div class="stat-value"><%= (pageData.analytics.memberActivity.overview?.activeCount || 0).toLocaleString() %></div>
+										<div class="stat-label">Active (7 days)</div>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="stat-card orange">
+										<div class="stat-value"><%= (pageData.analytics.commandStats.overview?.totalUsage || 0).toLocaleString() %></div>
+										<div class="stat-label">Commands Used</div>
+									</div>
+								</div>
+								<div class="column is-3">
+									<div class="stat-card pink">
+										<div class="stat-value"><%= (pageData.analytics.joinLeave.overview?.totalJoins || 0).toLocaleString() %></div>
+										<div class="stat-label">Joins (30 days)</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Charts Row -->
+							<div class="columns">
+								<div class="column is-6">
+									<div class="analytics-card">
+										<h4 class="title is-5">
+											<span class="icon"><i class="fas fa-chart-pie"></i></span>
+											Message Distribution
+										</h4>
+										<div class="chart-container">
+											<canvas id="messageDistChart"></canvas>
+										</div>
+									</div>
+								</div>
+								<div class="column is-6">
+									<div class="analytics-card">
+										<h4 class="title is-5">
+											<span class="icon"><i class="fas fa-chart-bar"></i></span>
+											Top Channels
+										</h4>
+										<div class="chart-container">
+											<canvas id="channelChart"></canvas>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Top Members & Commands -->
+							<div class="columns">
+								<div class="column is-6">
+									<div class="analytics-card">
+										<h4 class="title is-5">
+											<span class="icon"><i class="fas fa-trophy"></i></span>
+											Top Members by Messages
+										</h4>
+										<div class="leaderboard">
+											<% const topMembers = pageData.analytics.memberActivity.topByMessages || []; %>
+											<% if (topMembers.length === 0) { %>
+											<p class="has-text-grey has-text-centered py-4">No member data yet</p>
+											<% } else { %>
+											<% topMembers.slice(0, 8).forEach((m, i) => { %>
+											<div class="leaderboard-item">
+												<div class="leaderboard-rank <%= i === 0 ? 'gold' : (i === 1 ? 'silver' : (i === 2 ? 'bronze' : '')) %>">
+													<%= i + 1 %>
+												</div>
+												<div class="is-flex-grow-1">
+													<p class="has-text-weight-semibold is-size-7"><%= m.id %></p>
+													<p class="is-size-7 has-text-grey"><%= m.rank || 'No Rank' %></p>
+												</div>
+												<div class="has-text-right">
+													<p class="has-text-weight-bold has-text-primary"><%= (m.messages || 0).toLocaleString() %></p>
+												</div>
+											</div>
+											<% }); %>
+											<% } %>
+										</div>
+									</div>
+								</div>
+								<div class="column is-6">
+									<div class="analytics-card">
+										<h4 class="title is-5">
+											<span class="icon"><i class="fas fa-terminal"></i></span>
+											Top Commands
+										</h4>
+										<div class="leaderboard">
+											<% const topCmds = pageData.analytics.commandStats.topCommands || []; %>
+											<% if (topCmds.length === 0) { %>
+											<p class="has-text-grey has-text-centered py-4">No command usage data</p>
+											<% } else { %>
+											<% topCmds.slice(0, 8).forEach((c, i) => { %>
+											<div class="leaderboard-item">
+												<div class="leaderboard-rank">
+													<%= i + 1 %>
+												</div>
+												<div class="is-flex-grow-1">
+													<code><%= c.name %></code>
+												</div>
+												<div class="has-text-right">
+													<p class="has-text-weight-bold"><%= (c.count || 0).toLocaleString() %></p>
+													<p class="is-size-7 has-text-grey"><%= c.percentage %>%</p>
+												</div>
+											</div>
+											<% }); %>
+											<% } %>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Members Tab -->
+						<div class="tab-content" id="tab-members">
+							<div class="analytics-card" style="position: relative;">
+								<a href="/dashboard/<%= serverData.id %>/stats-points/analytics-export?type=members" class="button is-small is-info export-btn">
+									<span class="icon"><i class="fas fa-download"></i></span>
+									<span>Export CSV</span>
+								</a>
+								<h4 class="title is-5">Member Activity Analysis</h4>
+								
+								<div class="columns">
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Activity Rate</p>
+											<p class="title is-2 has-text-success"><%= pageData.analytics.memberActivity.overview?.activityRate || 0 %>%</p>
+											<p class="is-size-7">of tracked members active in last 7 days</p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Total Messages</p>
+											<p class="title is-2 has-text-info"><%= (pageData.analytics.memberActivity.totalMessages || 0).toLocaleString() %></p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Total Voice Time</p>
+											<p class="title is-2 has-text-warning"><%= Math.round((pageData.analytics.memberActivity.totalVoice || 0) / 60) %>h</p>
+										</div>
+									</div>
+								</div>
+
+								<h5 class="title is-6 mt-4">Message Distribution</h5>
+								<div class="columns is-mobile">
+									<% const dist = pageData.analytics.memberActivity.messageDistribution || {}; %>
+									<div class="column has-text-centered">
+										<p class="heading">None</p>
+										<p class="title is-4"><%= dist.none || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">1-50</p>
+										<p class="title is-4"><%= dist.low || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">51-200</p>
+										<p class="title is-4"><%= dist.medium || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">201-500</p>
+										<p class="title is-4"><%= dist.high || 0 %></p>
+									</div>
+									<div class="column has-text-centered">
+										<p class="heading">500+</p>
+										<p class="title is-4"><%= dist.veryHigh || 0 %></p>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Channels Tab -->
+						<div class="tab-content" id="tab-channels">
+							<div class="analytics-card" style="position: relative;">
+								<a href="/dashboard/<%= serverData.id %>/stats-points/analytics-export?type=channels" class="button is-small is-info export-btn">
+									<span class="icon"><i class="fas fa-download"></i></span>
+									<span>Export CSV</span>
+								</a>
+								<h4 class="title is-5">Channel Activity</h4>
+								
+								<div class="columns">
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Channels Tracked</p>
+											<p class="title is-2"><%= pageData.analytics.channelActivity.overview?.totalChannels || 0 %></p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Total Messages</p>
+											<p class="title is-2 has-text-info"><%= (pageData.analytics.channelActivity.overview?.totalMessages || 0).toLocaleString() %></p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light">
+											<p class="heading">Avg/Channel</p>
+											<p class="title is-2"><%= (pageData.analytics.channelActivity.overview?.averageMessagesPerChannel || 0).toLocaleString() %></p>
+										</div>
+									</div>
+								</div>
+
+								<h5 class="title is-6 mt-4">Top Channels</h5>
+								<table class="table is-fullwidth is-striped">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Channel</th>
+											<th>Messages</th>
+											<th>Share</th>
+										</tr>
+									</thead>
+									<tbody>
+										<% const topChannels = pageData.analytics.channelActivity.topChannels || []; %>
+										<% topChannels.forEach((c, i) => { %>
+										<tr>
+											<td><%= i + 1 %></td>
+											<td>#<%= c.name %></td>
+											<td><%= (c.messages || 0).toLocaleString() %></td>
+											<td>
+												<progress class="progress is-info is-small" value="<%= c.percentage %>" max="100" style="width: 100px;"><%= c.percentage %>%</progress>
+												<span class="is-size-7"><%= c.percentage %>%</span>
+											</td>
+										</tr>
+										<% }); %>
+									</tbody>
+								</table>
+							</div>
+						</div>
+
+						<!-- Commands Tab -->
+						<div class="tab-content" id="tab-commands">
+							<div class="analytics-card" style="position: relative;">
+								<a href="/dashboard/<%= serverData.id %>/stats-points/analytics-export?type=commands" class="button is-small is-info export-btn">
+									<span class="icon"><i class="fas fa-download"></i></span>
+									<span>Export CSV</span>
+								</a>
+								<h4 class="title is-5">Command Usage Statistics</h4>
+								
+								<div class="columns">
+									<div class="column is-6">
+										<div class="chart-container">
+											<canvas id="commandPieChart"></canvas>
+										</div>
+									</div>
+									<div class="column is-6">
+										<table class="table is-fullwidth is-striped">
+											<thead>
+												<tr>
+													<th>#</th>
+													<th>Command</th>
+													<th>Usage</th>
+													<th>%</th>
+												</tr>
+											</thead>
+											<tbody>
+												<% const allCmds = pageData.analytics.commandStats.topCommands || []; %>
+												<% allCmds.slice(0, 15).forEach((c, i) => { %>
+												<tr>
+													<td><%= i + 1 %></td>
+													<td><code><%= c.name %></code></td>
+													<td><%= (c.count || 0).toLocaleString() %></td>
+													<td><%= c.percentage %>%</td>
+												</tr>
+												<% }); %>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Heatmap Tab -->
+						<div class="tab-content" id="tab-heatmap">
+							<div class="analytics-card">
+								<h4 class="title is-5">
+									<span class="icon"><i class="fas fa-fire"></i></span>
+									Activity Heatmap
+								</h4>
+								<p class="subtitle is-6 has-text-grey">Activity patterns by day and hour</p>
+
+								<% const heatmapData = pageData.analytics.heatmap || {}; %>
+								<% const dayNames = heatmapData.dayNames || ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; %>
+								<% const heatmap = heatmapData.heatmap || []; %>
+								
+								<div class="heatmap-grid mb-4">
+									<div></div>
+									<% for (let h = 0; h < 24; h++) { %>
+									<div class="heatmap-hour"><%= h %></div>
+									<% } %>
+									
+									<% dayNames.forEach((day, dayIndex) => { %>
+									<div class="heatmap-label"><%= day.slice(0,3) %></div>
+									<% const dayData = heatmap[dayIndex] || new Array(24).fill(0); %>
+									<% const maxVal = Math.max(...dayData.flat(), 1); %>
+									<% dayData.forEach((val, hour) => { %>
+									<%
+									const intensity = val / maxVal;
+									let heatClass = 'heat-0';
+									if (intensity > 0.75) heatClass = 'heat-4';
+									else if (intensity > 0.5) heatClass = 'heat-3';
+									else if (intensity > 0.25) heatClass = 'heat-2';
+									else if (intensity > 0) heatClass = 'heat-1';
+									%>
+									<div class="heatmap-cell <%= heatClass %>" title="<%= day %> <%= hour %>:00 - <%= val %> activity"></div>
+									<% }); %>
+									<% }); %>
+								</div>
+
+								<div class="is-flex is-justify-content-center mb-4">
+									<span class="is-size-7 mr-2">Less</span>
+									<div class="heatmap-cell heat-0" style="width: 16px; height: 16px;"></div>
+									<div class="heatmap-cell heat-1" style="width: 16px; height: 16px;"></div>
+									<div class="heatmap-cell heat-2" style="width: 16px; height: 16px;"></div>
+									<div class="heatmap-cell heat-3" style="width: 16px; height: 16px;"></div>
+									<div class="heatmap-cell heat-4" style="width: 16px; height: 16px;"></div>
+									<span class="is-size-7 ml-2">More</span>
+								</div>
+
+								<% if (heatmapData.peak) { %>
+								<div class="columns">
+									<div class="column is-4">
+										<div class="box has-background-light has-text-centered">
+											<p class="heading">Peak Activity</p>
+											<p class="title is-5"><%= heatmapData.peak.day %> at <%= heatmapData.peak.hour %>:00</p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light has-text-centered">
+											<p class="heading">Busiest Day</p>
+											<% const busiestDay = (heatmapData.dailyTotals || []).sort((a,b) => b.total - a.total)[0]; %>
+											<p class="title is-5"><%= busiestDay ? busiestDay.day : 'N/A' %></p>
+										</div>
+									</div>
+									<div class="column is-4">
+										<div class="box has-background-light has-text-centered">
+											<p class="heading">Busiest Hour</p>
+											<% const busiestHour = (heatmapData.hourlyTotals || []).sort((a,b) => b.total - a.total)[0]; %>
+											<p class="title is-5"><%= busiestHour ? busiestHour.hour + ':00' : 'N/A' %></p>
+										</div>
+									</div>
+								</div>
+								<% } %>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+	document.addEventListener('turbolinks:load', function() {
+		// Tab switching
+		document.querySelectorAll('.tabs li').forEach(tab => {
+			tab.addEventListener('click', function() {
+				const tabId = this.dataset.tab;
+				
+				// Update active tab
+				document.querySelectorAll('.tabs li').forEach(t => t.classList.remove('is-active'));
+				this.classList.add('is-active');
+				
+				// Update content
+				document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('is-active'));
+				document.getElementById('tab-' + tabId).classList.add('is-active');
+			});
+		});
+
+		<% if (pageData.hasAnalytics) { %>
+		// Message Distribution Chart
+		const msgDistCtx = document.getElementById('messageDistChart');
+		if (msgDistCtx) {
+			new Chart(msgDistCtx.getContext('2d'), {
+				type: 'doughnut',
+				data: {
+					labels: ['No Messages', '1-50', '51-200', '201-500', '500+'],
+					datasets: [{
+						data: [
+							<%= pageData.analytics.memberActivity.messageDistribution?.none || 0 %>,
+							<%= pageData.analytics.memberActivity.messageDistribution?.low || 0 %>,
+							<%= pageData.analytics.memberActivity.messageDistribution?.medium || 0 %>,
+							<%= pageData.analytics.memberActivity.messageDistribution?.high || 0 %>,
+							<%= pageData.analytics.memberActivity.messageDistribution?.veryHigh || 0 %>
+						],
+						backgroundColor: ['#bdc3c7', '#3498db', '#2ecc71', '#f39c12', '#e74c3c'],
+						borderWidth: 0
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: { legend: { position: 'bottom' } }
+				}
+			});
+		}
+
+		// Channel Activity Chart
+		const channelCtx = document.getElementById('channelChart');
+		if (channelCtx) {
+			const channelData = <%- JSON.stringify(pageData.analytics.channelActivity.topChannels || []) %>;
+			new Chart(channelCtx.getContext('2d'), {
+				type: 'bar',
+				data: {
+					labels: channelData.slice(0, 8).map(c => '#' + c.name),
+					datasets: [{
+						label: 'Messages',
+						data: channelData.slice(0, 8).map(c => c.messages),
+						backgroundColor: 'rgba(50, 115, 220, 0.8)',
+						borderRadius: 6
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					indexAxis: 'y',
+					plugins: { legend: { display: false } }
+				}
+			});
+		}
+
+		// Command Usage Pie Chart
+		const cmdPieCtx = document.getElementById('commandPieChart');
+		if (cmdPieCtx) {
+			const cmdData = <%- JSON.stringify(pageData.analytics.commandStats.topCommands || []) %>;
+			new Chart(cmdPieCtx.getContext('2d'), {
+				type: 'pie',
+				data: {
+					labels: cmdData.slice(0, 10).map(c => c.name),
+					datasets: [{
+						data: cmdData.slice(0, 10).map(c => c.count),
+						backgroundColor: [
+							'#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+							'#1abc9c', '#e67e22', '#34495e', '#7f8c8d', '#d35400'
+						]
+					}]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: { legend: { position: 'right' } }
+				}
+			});
+		}
+		<% } %>
+	});
+	</script>
+</body>
+</html>

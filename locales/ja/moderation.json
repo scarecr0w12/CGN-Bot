@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "[JA] ⚠️ Warning Issued",
+			"description": "[JA] {{user}} has been warned.",
+			"reason": "[JA] Reason",
+			"moderator": "[JA] Moderator",
+			"dmMessage": "[JA] You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "[JA] 🔇 Member Muted",
+			"description": "[JA] {{user}} has been muted.",
+			"duration": "[JA] Duration",
+			"reason": "[JA] Reason",
+			"moderator": "[JA] Moderator",
+			"dmMessage": "[JA] You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "[JA] 🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "[JA] 👢 Member Kicked",
+			"description": "[JA] {{user}} has been kicked from the server.",
+			"reason": "[JA] Reason",
+			"moderator": "[JA] Moderator",
+			"dmMessage": "[JA] You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "[JA] 🔨 Member Banned",
+			"description": "[JA] {{user}} has been banned from the server.",
+			"duration": "[JA] Duration",
+			"reason": "[JA] Reason",
+			"moderator": "[JA] Moderator",
+			"permanent": "[JA] Permanent",
+			"dmMessage": "[JA] You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "[JA] {{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "[JA] 🔨 Member Softbanned",
+			"description": "[JA] {{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "[JA] Reason",
+			"moderator": "[JA] Moderator"
+		}
+	},
+	"strikes": {
+		"title": "[JA] ⚡ Strike System",
+		"added": "[JA] Strike added to {{user}}. Total: {{count}}",
+		"removed": "[JA] Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "[JA] All strikes cleared for {{user}}.",
+		"current": "[JA] {{user}} has {{count}} strike.",
+		"current_plural": "[JA] {{user}} has {{count}} strikes.",
+		"threshold": "[JA] Strike threshold reached! Automatic {{action}} applied.",
+		"history": "[JA] Strike History",
+		"noStrikes": "[JA] No strikes on record."
+	},
+	"automod": {
+		"title": "[JA] 🤖 Auto-Moderation",
+		"triggered": "[JA] Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "[JA] Spam Detected",
+			"description": "[JA] Message flagged as spam."
+		},
+		"invites": {
+			"title": "[JA] Invite Link Detected",
+			"description": "[JA] Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "[JA] External Link Detected",
+			"description": "[JA] External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "[JA] Excessive Caps",
+			"description": "[JA] Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "[JA] Mass Mentions",
+			"description": "[JA] Too many mentions in one message."
+		},
+		"words": {
+			"title": "[JA] Blacklisted Word",
+			"description": "[JA] Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "[JA] Negative Content Detected",
+			"description": "[JA] Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "[JA] 📋 Moderation Log",
+		"messageDeleted": "[JA] Message Deleted",
+		"messageEdited": "[JA] Message Edited",
+		"memberJoined": "[JA] Member Joined",
+		"memberLeft": "[JA] Member Left",
+		"memberBanned": "[JA] Member Banned",
+		"memberUnbanned": "[JA] Member Unbanned",
+		"memberMuted": "[JA] Member Muted",
+		"memberUnmuted": "[JA] Member Unmuted",
+		"memberKicked": "[JA] Member Kicked",
+		"roleAdded": "[JA] Role Added",
+		"roleRemoved": "[JA] Role Removed",
+		"channelCreated": "[JA] Channel Created",
+		"channelDeleted": "[JA] Channel Deleted",
+		"before": "[JA] Before",
+		"after": "[JA] After",
+		"content": "[JA] Content",
+		"attachments": "[JA] Attachments",
+		"channel": "[JA] Channel",
+		"executor": "[JA] Executor"
+	},
+	"lockdown": {
+		"enabled": "[JA] 🔒 Channel locked. Only staff can send messages.",
+		"disabled": "[JA] 🔓 Channel unlocked.",
+		"serverEnabled": "[JA] 🔒 Server lockdown enabled.",
+		"serverDisabled": "[JA] 🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "[JA] 🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "[JA] Slowmode disabled.",
+		"cooldown": "[JA] Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "[JA] 🗑️ Deleted {{count}} message.",
+		"success_plural": "[JA] 🗑️ Deleted {{count}} messages.",
+		"failed": "[JA] Failed to delete messages.",
+		"tooOld": "[JA] Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "[JA] Reason updated for case #{{case}}.",
+		"notFound": "[JA] Case #{{case}} not found.",
+		"noReason": "[JA] No reason provided"
+	}
+}

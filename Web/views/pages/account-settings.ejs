@@ -259,6 +259,32 @@
 			</article>
 			<% } %>
 
+			<!-- Language Preferences Section -->
+			<div class="box mb-5">
+				<h2 class="subtitle">
+					<span class="icon"><i class="fa fa-globe"></i></span>
+					<%= typeof t === 'function' ? t('common:language') : 'Language' %> Preferences
+				</h2>
+				<p class="mb-4 has-text-grey">Choose your preferred language for the website and bot interactions.</p>
+				
+				<div class="field">
+					<label class="label"><%= typeof t === 'function' ? t('common:selectLanguage') : 'Select Language' %></label>
+					<div class="control">
+						<div class="select is-fullwidth">
+							<select id="language-select" onchange="changeLanguage(this.value)">
+								<% const supportedLangs = typeof languages !== 'undefined' ? languages : { en: { name: 'English', nativeName: 'English', flag: '🇺🇸' } }; %>
+								<% Object.entries(supportedLangs).forEach(([code, info]) => { %>
+									<option value="<%= code %>" <%= (lng || 'en') === code ? 'selected' : '' %>>
+										<%= info.flag %> <%= info.nativeName %> (<%= info.name %>)
+									</option>
+								<% }); %>
+							</select>
+						</div>
+					</div>
+					<p class="help">This will change the language across all pages and bot responses.</p>
+				</div>
+			</div>
+
 			<div class="columns">
 			<!-- Vote Rewards Section -->
 			<div class="column is-half">
@@ -527,6 +553,32 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
+	// Change language preference
+	async function changeLanguage(lang) {
+		try {
+			// Set cookie immediately
+			document.cookie = 'lang=' + lang + ';path=/;max-age=' + (365 * 24 * 60 * 60);
+			
+			// Save to server
+			const response = await fetch('/api/user/language', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ language: lang })
+			});
+			
+			if (response.ok) {
+				showNotification('Language updated successfully!', 'success');
+				setTimeout(() => location.reload(), 500);
+			} else {
+				showNotification('Failed to save language preference', 'danger');
+			}
+		} catch (err) {
+			console.error('Error changing language:', err);
+			// Still reload since cookie was set
+			location.reload();
+		}
+	}
+
 	// Unlink OAuth account
 	async function unlinkAccount(provider) {
 		if (!confirm(`Are you sure you want to unlink your ${provider} account?`)) {

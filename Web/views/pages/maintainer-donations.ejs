@@ -53,7 +53,7 @@
 											<td><input class="input" type="text" name="country[]" value="<%= charity.country || '' %>"></td>
 											<td><input class="input" type="url" name="donate_url[]" value="<%= charity.donate_url %>" required></td>
 											<td><input class="input" type="url" name="icon_url[]" value="<%= charity.icon_url %>" required></td>
-											<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+											<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 										</tr>
 										<% }); %>
 									<% } %>
@@ -61,7 +61,7 @@
 							</table>
 						</div>
 						
-						<button type="button" class="button is-info" onclick="addCharity(); SkynetData.HUM = true;">
+						<button type="button" class="button is-info add-charity-btn">
 							<span class="icon"><i class="fa fa-plus"></i></span>
 							<span>Add Charity</span>
 						</button>
@@ -77,17 +77,23 @@
 	<%- include('../partials/scroll-top-button') %>
 	
 	<script>
-	function addCharity() {
+	$(document).on('click', '.remove-row-btn', function() {
+		$(this).closest('tr').remove();
+		SkynetData.HUM = true;
+	});
+
+	$(document).on('click', '.add-charity-btn', function() {
 		$('#charities-table tbody').append(`
 			<tr>
 				<td><input class="input" type="text" name="name[]" value="" required></td>
 				<td><input class="input" type="text" name="country[]" value=""></td>
 				<td><input class="input" type="url" name="donate_url[]" value="" required></td>
 				<td><input class="input" type="url" name="icon_url[]" value="" required></td>
-				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+				<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 			</tr>
 		`);
-	}
+		SkynetData.HUM = true;
+	});
 	</script>
 </body>
 </html>

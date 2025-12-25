@@ -51,6 +51,7 @@ module.exports = router => {
 	// Public endpoints (no api_access required)
 	setupResource(router, "/", [], controllers.api.status, "get", "public");
 	setupResource(router, "/status", [], controllers.status.api, "get", "public");
+	setupResource(router, "/status/shards", [], controllers.status.shards, "get", "public");
 	setupResource(router, "/servers", [], controllers.api.servers, "get", "public");
 	setupResource(router, "/extensions", [], controllers.api.extensions, "get", "public");
 	setupResource(router, "/extensions/:extid/purchase", [], controllers.api.extensions.purchase, "post", "authentication");
@@ -61,11 +62,19 @@ module.exports = router => {
 	const matomoProxy = require("../controllers/matomo-proxy");
 	setupResource(router, "/matomo", [], matomoProxy, "get", "public");
 
+	// Public list endpoints for autocomplete
+	setupResource(router, "/list/servers", [], controllers.api.servers.list, "get", "public");
+	setupResource(router, "/list/users", [], controllers.api.users.list, "get", "public");
+
 	// Protected endpoints (require api_access feature)
 	setupResource(router, "/servers/:svrid/channels", [middleware.requireFeature("api_access")], controllers.api.servers.channels, "get", "authorization");
-	setupResource(router, "/list/servers", [middleware.requireFeature("api_access")], controllers.api.servers.list, "get", "authentication");
-	setupResource(router, "/list/users", [], controllers.api.users.list, "get", "public");
 	setupResource(router, "/users", [middleware.requireFeature("api_access")], controllers.api.users, "get", "authentication");
+
+	// Server Profile API (Tier 1+) - must be before 404 handler
+	setupResource(router, "/server/:serverId/profile", [], controllers.server.updateProfile, "post", "authentication");
+
+	// User preferences API
+	setupResource(router, "/user/language", [], controllers.api.user.language, "post", "authentication");
 
 	// 404 handler
 	setupResource(router, "/*", [], (req, res) => res.sendStatus(404), "all", "public");

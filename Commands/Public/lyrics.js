@@ -1,6 +1,18 @@
 const fetch = require("node-fetch");
+const TierManager = require("../../Modules/TierManager");
 
 module.exports = async ({ configJS, Constants: { Colors } }, documents, msg, commandData) => {
+	const hasTier2 = await TierManager.hasMinimumTierLevel(msg.guild.id, 2);
+	if (!hasTier2) {
+		return msg.send({
+			embeds: [{
+				color: Colors.ERROR,
+				title: "🔒 Premium Feature",
+				description: "Music commands require **Tier 2 (Premium)** subscription.",
+			}],
+		});
+	}
+
 	if (!msg.suffix) {
 		return msg.sendInvalidUsage(commandData, "Please provide a song to search for!", "Example: `lyrics Never Gonna Give You Up`");
 	}

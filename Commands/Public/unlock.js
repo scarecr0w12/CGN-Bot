@@ -1,13 +1,15 @@
 const { PermissionFlagsBits } = require("discord.js");
 
 module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, msg, commandData) => {
-	// Check bot permissions
-	if (!msg.channel.permissionsFor(msg.guild.members.me).has(PermissionFlagsBits.ManageChannels)) {
+	// Check bot permissions - ManageRoles is required to edit permission overwrites
+	const botPerms = msg.channel.permissionsFor(msg.guild.members.me);
+	if (!botPerms.has(PermissionFlagsBits.ManageRoles)) {
 		return msg.send({
 			embeds: [{
 				color: Colors.SOFT_ERR,
 				title: "Missing Permissions",
-				description: "I need the **Manage Channels** permission to unlock this channel!",
+				description: "I need the **Manage Roles** permission to unlock this channel!",
+				footer: { text: "This permission is required to modify channel permission overwrites" },
 			}],
 		});
 	}

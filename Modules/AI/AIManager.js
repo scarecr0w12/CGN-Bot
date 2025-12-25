@@ -44,7 +44,7 @@ class AIManager {
 	 */
 	async resolveProviderAndModel (serverDocument) {
 		const aiConfig = serverDocument.config.ai || {};
-		const globalConfig = configJSON.ai || {};
+		const globalConfig = {}; // AI config is now per-server only
 
 		// Get model configuration (guild overrides global)
 		const model = aiConfig.model || globalConfig.defaultModel || {
@@ -568,6 +568,200 @@ class AIManager {
 • \`{{date}}\` - Current date
 • \`{{time}}\` - Current time
 • \`{{datetime}}\` - Current date and time`;
+	}
+
+	/**
+	 * Generate an image from a text prompt
+	 * @param {Object} options - Generation options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.user - The Discord user
+	 * @param {string} options.prompt - The text prompt
+	 * @param {string} options.model - Model to use (dall-e-2, dall-e-3, gpt-image-1)
+	 * @param {string} options.size - Image size
+	 * @param {string} options.quality - Image quality (standard, hd)
+	 * @param {string} options.style - Image style (vivid, natural)
+	 * @returns {Promise<Array>} Array of generated images
+	 */
+	async generateImage ({ serverDocument, user, prompt, model = "dall-e-3", size = "1024x1024", quality = "standard", style = "vivid" }) {
+		const { providerName, providerConfig } = await this.resolveProviderAndModel(serverDocument);
+
+		if (!providerConfig || !providerConfig.apiKey) {
+			throw new Error("AI provider not configured. Ask an admin to set up an API key.");
+		}
+
+		// Only OpenAI supports image generation currently
+		if (providerName !== "openai") {
+			throw new Error("Image generation is only available with OpenAI provider.");
+		}
+
+		const provider = this.buildProvider(providerName, providerConfig);
+
+		if (typeof provider.generateImage !== "function") {
+			throw new Error("Image generation not supported by this provider.");
+		}
+
+		const images = await provider.generateImage({ prompt, model, size, quality, style, n: 1 });
+
+		// Track usage (image generation has fixed costs)
+		const imageCosts = {
+			"dall-e-2": { "256x256": 0.016, "512x512": 0.018, "1024x1024": 0.020 },
+			"dall-e-3": { "1024x1024": 0.040, "1024x1792": 0.080, "1792x1024": 0.080 },
+			"gpt-image-1": { "1024x1024": 0.040, "1024x1792": 0.080, "1792x1024": 0.080 },
+		};
+		const cost = imageCosts[model]?.[size] || 0.04;
+		await this.usageTracker.recordImageUsage(serverDocument, user, model, cost);
+
+		return images;
+	}
+
+	/**
+	 * Create variations of an existing image
+	 * @param {Object} options - Variation options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.user - The Discord user
+	 * @param {Buffer|string} options.image - Image buffer or base64 string
+	 * @param {string} options.size - Image size
+	 * @returns {Promise<Array>} Array of variation images
+	 */
+	async createImageVariation ({ serverDocument, user, image, size = "1024x1024" }) {
+		const { providerName, providerConfig } = await this.resolveProviderAndModel(serverDocument);
+
+		if (!providerConfig || !providerConfig.apiKey) {
+			throw new Error("AI provider not configured. Ask an admin to set up an API key.");
+		}
+
+		if (providerName !== "openai") {
+			throw new Error("Image variations are only available with OpenAI provider.");
+		}
+
+		const provider = this.buildProvider(providerName, providerConfig);
+
+		if (typeof provider.createImageVariation !== "function") {
+			throw new Error("Image variation not supported by this provider.");
+		}
+
+		const images = await provider.createImageVariation({ image, model: "dall-e-2", size, n: 1 });
+
+		// Track usage
+		await this.usageTracker.recordImageUsage(serverDocument, user, "dall-e-2", 0.020);
+
+		return images;
+	}
+
+	/**
+	 * Summarize text or messages using AI
+	 * @param {Object} options - Summarize options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.channel - The Discord channel
+	 * @param {Object} options.user - The Discord user
+	 * @param {string} options.text - Text to summarize
+	 * @param {string} options.style - Summary style (brief, detailed, bullets)
+	 * @returns {Promise<string>} Summary text
+	 */
+	async summarize ({ serverDocument, channel, user, text, style = "brief" }) {
+		const stylePrompts = {
+			brief: "Provide a brief 1-2 sentence summary of the following text:",
+			detailed: "Provide a detailed summary of the following text, capturing all key points:",
+			bullets: "Summarize the following text as bullet points:",
+		};
+
+		const systemPrompt = stylePrompts[style] || stylePrompts.brief;
+		const message = `${systemPrompt}\n\n${text}`;
+
+		return this.chat({ serverDocument, channel, user, message, stream: false });
+	}
+
+	/**
+	 * Rewrite text in a different tone/style
+	 * @param {Object} options - Rewrite options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.channel - The Discord channel
+	 * @param {Object} options.user - The Discord user
+	 * @param {string} options.text - Text to rewrite
+	 * @param {string} options.tone - Target tone
+	 * @returns {Promise<string>} Rewritten text
+	 */
+	async rewrite ({ serverDocument, channel, user, text, tone = "professional" }) {
+		const tonePrompts = {
+			professional: "Rewrite the following text in a professional, formal tone:",
+			casual: "Rewrite the following text in a casual, friendly tone:",
+			formal: "Rewrite the following text in a very formal, business tone:",
+			simple: "Rewrite the following text in simple, easy-to-understand language:",
+			academic: "Rewrite the following text in an academic, scholarly tone:",
+			humorous: "Rewrite the following text with a humorous, witty tone:",
+			persuasive: "Rewrite the following text to be more persuasive and compelling:",
+			concise: "Rewrite the following text to be as concise as possible while keeping the meaning:",
+		};
+
+		const systemPrompt = tonePrompts[tone] || `Rewrite the following text in a ${tone} tone:`;
+		const message = `${systemPrompt}\n\n${text}`;
+
+		return this.chat({ serverDocument, channel, user, message, stream: false });
+	}
+
+	/**
+	 * Explain code or concepts
+	 * @param {Object} options - Explain options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.channel - The Discord channel
+	 * @param {Object} options.user - The Discord user
+	 * @param {string} options.content - Content to explain
+	 * @param {string} options.type - Type of content (code, concept, error)
+	 * @param {string} options.level - Explanation level (beginner, intermediate, advanced)
+	 * @returns {Promise<string>} Explanation
+	 */
+	async explain ({ serverDocument, channel, user, content, type = "code", level = "intermediate" }) {
+		const levelDescriptions = {
+			beginner: "for someone new to programming",
+			intermediate: "for someone with some programming experience",
+			advanced: "with technical depth for an experienced developer",
+		};
+
+		const typePrompts = {
+			code: `Explain what this code does ${levelDescriptions[level] || levelDescriptions.intermediate}:`,
+			concept: `Explain this concept ${levelDescriptions[level] || levelDescriptions.intermediate}:`,
+			error: `Explain this error message and how to fix it ${levelDescriptions[level] || levelDescriptions.intermediate}:`,
+		};
+
+		const systemPrompt = typePrompts[type] || typePrompts.code;
+		const message = `${systemPrompt}\n\n${content}`;
+
+		return this.chat({ serverDocument, channel, user, message, stream: false });
+	}
+
+	/**
+	 * Generate a stylized avatar from a prompt
+	 * @param {Object} options - Avatar options
+	 * @param {Object} options.serverDocument - The server document
+	 * @param {Object} options.user - The Discord user
+	 * @param {string} options.description - Description of the avatar
+	 * @param {string} options.style - Art style (anime, realistic, cartoon, pixel, fantasy)
+	 * @returns {Promise<Array>} Array of generated avatar images
+	 */
+	async generateAvatar ({ serverDocument, user, description, style = "anime" }) {
+		const stylePrompts = {
+			anime: "anime style portrait, vibrant colors, detailed eyes, soft shading",
+			realistic: "photorealistic portrait, professional photography, studio lighting",
+			cartoon: "cartoon style character portrait, bold outlines, bright colors",
+			pixel: "pixel art character portrait, 16-bit style, retro gaming aesthetic",
+			fantasy: "fantasy art portrait, magical atmosphere, ethereal lighting",
+			chibi: "chibi style portrait, cute oversized head, big expressive eyes",
+			cyberpunk: "cyberpunk style portrait, neon lights, futuristic tech elements",
+			watercolor: "watercolor painting style portrait, soft edges, artistic brushstrokes",
+		};
+
+		const styleModifier = stylePrompts[style] || stylePrompts.anime;
+		const prompt = `Portrait avatar of ${description}, ${styleModifier}, high quality, centered composition`;
+
+		return this.generateImage({
+			serverDocument,
+			user,
+			prompt,
+			model: "dall-e-3",
+			size: "1024x1024",
+			quality: "standard",
+			style: "vivid",
+		});
 	}
 }
 

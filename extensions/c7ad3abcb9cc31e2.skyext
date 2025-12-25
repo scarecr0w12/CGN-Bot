@@ -1,0 +1,49 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const utils = require('utils');
+const extension = require('extension');
+
+const key = 'numguess';
+let games = extension.storage.get(key) || {};
+const oderId = message.author.id;
+let game = games[oderId];
+const guess = parseInt(command.suffix.trim());
+
+if (!game || (Date.now() - game.startTime > 300000)) {
+	const secret = utils.random.int(1, 100);
+	games[oderId] = { secret: secret, attempts: 0, maxAttempts: 7, startTime: Date.now(), guesses: [] };
+	await extension.storage.write(key, games);
+	message.reply({ embeds: [embed.create({ title: '🔢 Number Guess', description: 'I am thinking of a number between **1** and **100**!\nYou have **7** attempts. Use **numguess <number>** to guess!', color: embed.colors.BLUE })] });
+	return;
+}
+
+if (isNaN(guess) || guess < 1 || guess > 100) {
+	message.reply({ embeds: [embed.create({ title: '❌ Invalid', description: 'Guess a number between 1 and 100.', color: embed.colors.ERROR })] });
+	return;
+}
+
+game.attempts++;
+game.guesses.push(guess);
+
+if (guess === game.secret) {
+	delete games[oderId];
+	await extension.storage.write(key, games);
+	message.reply({ embeds: [embed.create({ title: '🎉 Correct!', description: 'You guessed **' + guess + '** in **' + game.attempts + '** attempts!', color: embed.colors.SUCCESS })] });
+	return;
+}
+
+if (game.attempts >= game.maxAttempts) {
+	const secret = game.secret;
+	delete games[oderId];
+	await extension.storage.write(key, games);
+	message.reply({ embeds: [embed.create({ title: '😢 Game Over', description: 'The number was **' + secret + '**.', color: embed.colors.ERROR })] });
+	return;
+}
+
+await extension.storage.write(key, games);
+const hint = guess < game.secret ? '📈 Higher!' : '📉 Lower!';
+const remaining = game.maxAttempts - game.attempts;
+message.reply({ embeds: [embed.create({ title: '🔢 ' + hint, description: '**' + guess + '** is not correct.\nAttempts left: **' + remaining + '**\nGuesses: ' + game.guesses.join(', '), color: embed.colors.WARNING })] });
+})();

@@ -478,25 +478,33 @@ SkynetUtil.populateWikiSections = () => {
 	$("table").addClass("table");
 
 	$(".heading-shortcut-link").click(function handler () {
+		const target = $(this);
 		$("html, body").animate({
-			scrollTop: $(`#${this.href.substring(this.href.lastIndexOf("#") + 1)}`).offset().top,
+			scrollTop: target.offset().top,
 		}, 172);
 	});
 };
 
 SkynetUtil.populateWikiBookmarks = () => {
-	if (SkynetData.wiki.bookmarks.length > 0) {
+	if (SkynetData.wiki && SkynetData.wiki.bookmarks && SkynetData.wiki.bookmarks.length > 0) {
 		$("#bookmarks-menu").removeClass("is-hidden");
 		$("#menu-spacer").removeClass("is-hidden");
 
 		SkynetData.wiki.bookmarks = SkynetData.wiki.bookmarks.sort();
-		let subMenu = "<ul>";
+		const subMenuContainer = $("#bookmarks-submenu");
+		subMenuContainer.empty();
+		const ul = $("<ul>");
 		for (let i = 0; i < SkynetData.wiki.bookmarks.length; i++) {
-			subMenu += `<li><a href='${SkynetData.wiki.bookmarks[i]}' data-turbolinks='false'>${decodeURI(SkynetData.wiki.bookmarks[i]).replace("#", " &raquo; ")}</a></li>`;
+			const bookmark = SkynetData.wiki.bookmarks[i];
+			const li = $("<li>");
+			const a = $("<a>")
+				.attr("href", bookmark)
+				.attr("data-turbolinks", "false")
+				.text(decodeURI(bookmark).replace("#", " » "));
+			li.append(a);
+			ul.append(li);
 		}
-		subMenu += "</ul>";
-
-		$("#bookmarks-submenu").html(subMenu);
+		subMenuContainer.append(ul);
 	} else {
 		$("#bookmarks-menu").addClass("is-hidden");
 		$("#menu-spacer").addClass("is-hidden");
@@ -699,6 +707,19 @@ SkynetUtil.acceptExtension = extid => {
 	});
 };
 
+SkynetUtil.approveNetworkCapability = extid => {
+	NProgress.start();
+	$.post(`/extensions/${extid}/approve_network`).done(() => {
+		NProgress.done();
+		NProgress.remove();
+		Turbolinks.visit(window.location.href);
+	}).fail(() => {
+		NProgress.done();
+		NProgress.remove();
+		alert("Failed to approve network capability");
+	});
+};
+
 SkynetUtil.featureExtension = extid => {
 	const featureButton = $(`#feature-${extid}`);
 	const featured = featureButton.html().trim() !== "Feature";
@@ -710,6 +731,10 @@ SkynetUtil.featureExtension = extid => {
 
 SkynetUtil.openExtensionInstaller = (extid, v, svrid) => {
 	SkynetUtil.log("Launching extension installer in window");
+	// Track extension install attempt
+	if (typeof trackMatomoEvent === "function") {
+		trackMatomoEvent("Extensions", "Install Start", extid);
+	}
 	const width = window.screen.width - 600;
 	const height = window.screen.height - 800;
 	SkynetData.extensions.window = window.open(`/extensions/${extid}/install?v=${v}${svrid ? `&svrid=${svrid}&update=true` : ""}`, "Skynet Extension Installer",
@@ -767,10 +792,37 @@ SkynetUtil.updateExtension = (button) => {
 };
 
 SkynetUtil.uninstallExtension = extid => {
+	// Track extension uninstall
+	if (typeof trackMatomoEvent === "function") {
+		trackMatomoEvent("Extensions", "Uninstall", extid);
+	}
 	NProgress.start();
 	const element = $(`#extension-${extid}`);
 	const URL = `${window.location.pathname}/${extid}`;
 	SkynetUtil.removeElement(element, null, URL);
+};
+
+SkynetUtil.saveExtensionSettings = button => {
+	SkynetUtil.SFS();
+	NProgress.start();
+	button.addClass("is-loading");
+	const extid = button.data("extid");
+
+	const data = $(`#extension-settings-form-${extid}`).serialize();
+
+	$.ajax({
+		method: "POST",
+		url: `${window.location.pathname}/settings`,
+		data,
+	}).always(res => {
+		NProgress.done();
+		button.removeClass("is-loading");
+		if (res !== "OK" && res.status !== 200) {
+			swal("Failed to save settings.", "Check your input and try again.", "error");
+		} else {
+			swal("Settings saved!", "Extension settings have been updated.", "success");
+		}
+	});
 };
 
 // Extension Import Functions
@@ -854,6 +906,12 @@ SkynetUtil.handleExtensionFileSelect = input => {
 
 SkynetUtil.submitExtensionImport = () => {
 	if (!SkynetData.extensions.pendingImport) return;
+
+	// Track extension import
+	if (typeof trackMatomoEvent === "function") {
+		const extName = SkynetData.extensions.pendingImport.extension?.name || "Unknown";
+		trackMatomoEvent("Extensions", "Import", extName);
+	}
 
 	const submitBtn = document.getElementById("import-submit-btn");
 	submitBtn.classList.add("is-loading");

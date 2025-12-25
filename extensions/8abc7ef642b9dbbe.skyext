@@ -1,0 +1,30 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const input = command.suffix.trim();
+
+if (!input || !input.includes('|')) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎵 Drake Meme',
+			description: 'Usage: drake <no text> | <yes text>\n\nExample: drake Working hard | Using Discord bots',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const parts = input.split('|').map(p => p.trim());
+const noText = encodeURIComponent(parts[0].slice(0, 50) || 'No');
+const yesText = encodeURIComponent(parts[1].slice(0, 50) || 'Yes');
+
+const imageUrl = 'https://api.popcat.xyz/drake?text1=' + noText + '&text2=' + yesText;
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎵 Drake Meme',
+		image: { url: imageUrl },
+		color: embed.colors.GOLD,
+	})],
+});

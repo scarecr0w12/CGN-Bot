@@ -1,0 +1,130 @@
+{
+	"actions": {
+		"warn": {
+			"title": "[AR] ⚠️ Warning Issued",
+			"description": "[AR] {{user}} has been warned.",
+			"reason": "[AR] Reason",
+			"moderator": "[AR] Moderator",
+			"dmMessage": "[AR] You have been warned in **{{server}}**.\nReason: {{reason}}"
+		},
+		"mute": {
+			"title": "[AR] 🔇 Member Muted",
+			"description": "[AR] {{user}} has been muted.",
+			"duration": "[AR] Duration",
+			"reason": "[AR] Reason",
+			"moderator": "[AR] Moderator",
+			"dmMessage": "[AR] You have been muted in **{{server}}** for {{duration}}.\nReason: {{reason}}",
+			"unmuted": "[AR] 🔊 {{user}} has been unmuted."
+		},
+		"kick": {
+			"title": "[AR] 👢 Member Kicked",
+			"description": "[AR] {{user}} has been kicked from the server.",
+			"reason": "[AR] Reason",
+			"moderator": "[AR] Moderator",
+			"dmMessage": "[AR] You have been kicked from **{{server}}**.\nReason: {{reason}}"
+		},
+		"ban": {
+			"title": "[AR] 🔨 Member Banned",
+			"description": "[AR] {{user}} has been banned from the server.",
+			"duration": "[AR] Duration",
+			"reason": "[AR] Reason",
+			"moderator": "[AR] Moderator",
+			"permanent": "[AR] Permanent",
+			"dmMessage": "[AR] You have been banned from **{{server}}**.\nReason: {{reason}}",
+			"unbanned": "[AR] {{user}} has been unbanned."
+		},
+		"softban": {
+			"title": "[AR] 🔨 Member Softbanned",
+			"description": "[AR] {{user}} has been softbanned (banned and immediately unbanned to delete messages).",
+			"reason": "[AR] Reason",
+			"moderator": "[AR] Moderator"
+		}
+	},
+	"strikes": {
+		"title": "[AR] ⚡ Strike System",
+		"added": "[AR] Strike added to {{user}}. Total: {{count}}",
+		"removed": "[AR] Strike removed from {{user}}. Total: {{count}}",
+		"cleared": "[AR] All strikes cleared for {{user}}.",
+		"current": "[AR] {{user}} has {{count}} strike.",
+		"current_plural": "[AR] {{user}} has {{count}} strikes.",
+		"threshold": "[AR] Strike threshold reached! Automatic {{action}} applied.",
+		"history": "[AR] Strike History",
+		"noStrikes": "[AR] No strikes on record."
+	},
+	"automod": {
+		"title": "[AR] 🤖 Auto-Moderation",
+		"triggered": "[AR] Auto-mod triggered: {{rule}}",
+		"spam": {
+			"title": "[AR] Spam Detected",
+			"description": "[AR] Message flagged as spam."
+		},
+		"invites": {
+			"title": "[AR] Invite Link Detected",
+			"description": "[AR] Discord invite links are not allowed."
+		},
+		"links": {
+			"title": "[AR] External Link Detected",
+			"description": "[AR] External links are not allowed in this channel."
+		},
+		"caps": {
+			"title": "[AR] Excessive Caps",
+			"description": "[AR] Please avoid using excessive capital letters."
+		},
+		"mentions": {
+			"title": "[AR] Mass Mentions",
+			"description": "[AR] Too many mentions in one message."
+		},
+		"words": {
+			"title": "[AR] Blacklisted Word",
+			"description": "[AR] Your message contained a blacklisted word."
+		},
+		"sentiment": {
+			"title": "[AR] Negative Content Detected",
+			"description": "[AR] Your message was flagged for {{category}} content."
+		}
+	},
+	"logs": {
+		"title": "[AR] 📋 Moderation Log",
+		"messageDeleted": "[AR] Message Deleted",
+		"messageEdited": "[AR] Message Edited",
+		"memberJoined": "[AR] Member Joined",
+		"memberLeft": "[AR] Member Left",
+		"memberBanned": "[AR] Member Banned",
+		"memberUnbanned": "[AR] Member Unbanned",
+		"memberMuted": "[AR] Member Muted",
+		"memberUnmuted": "[AR] Member Unmuted",
+		"memberKicked": "[AR] Member Kicked",
+		"roleAdded": "[AR] Role Added",
+		"roleRemoved": "[AR] Role Removed",
+		"channelCreated": "[AR] Channel Created",
+		"channelDeleted": "[AR] Channel Deleted",
+		"before": "[AR] Before",
+		"after": "[AR] After",
+		"content": "[AR] Content",
+		"attachments": "[AR] Attachments",
+		"channel": "[AR] Channel",
+		"executor": "[AR] Executor"
+	},
+	"lockdown": {
+		"enabled": "[AR] 🔒 Channel locked. Only staff can send messages.",
+		"disabled": "[AR] 🔓 Channel unlocked.",
+		"serverEnabled": "[AR] 🔒 Server lockdown enabled.",
+		"serverDisabled": "[AR] 🔓 Server lockdown disabled."
+	},
+	"slowmode": {
+		"enabled": "[AR] 🐌 Slowmode enabled: {{duration}} between messages.",
+		"disabled": "[AR] Slowmode disabled.",
+		"cooldown": "[AR] Please wait {{time}} before sending another message."
+	},
+	"purge": {
+		"success": "[AR] 🗑️ Deleted {{count}} message.",
+		"success_plural": "[AR] 🗑️ Deleted {{count}} messages.",
+		"failed": "[AR] Failed to delete messages.",
+		"tooOld": "[AR] Cannot delete messages older than 14 days."
+	},
+	"reason": {
+		"updated": "[AR] Reason updated for case #{{case}}.",
+		"notFound": "[AR] Case #{{case}} not found.",
+		"noReason": "[AR] No reason provided"
+	}
+}

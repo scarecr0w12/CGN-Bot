@@ -6,12 +6,12 @@ const menuSections = {
 	commands: {
 		icon: 'fa fa-cogs',
 		label: 'Commands',
-		paths: ['commands/command-options', 'commands/command-list', 'commands/rss-feeds', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets', 'commands/api-keys', 'commands/tag-reaction']
+		paths: ['commands/command-options', 'commands/command-list', 'commands/rss-feeds', 'commands/game-updates', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets', 'commands/api-keys', 'commands/tag-reaction']
 	},
 	stats: {
 		icon: 'fa fa-star',
 		label: 'Stats & Points',
-		paths: ['stats-points/stats-collection', 'stats-points/ranks', 'stats-points/skynet-points', 'stats-points/economy', 'stats-points/economy-stats', 'stats-points/advanced-stats']
+		paths: ['stats-points/stats-collection', 'stats-points/ranks', 'stats-points/skynet-points', 'stats-points/economy', 'stats-points/economy-stats', 'stats-points/advanced-stats', 'stats-points/analytics']
 	},
 	admin: {
 		icon: 'fa fa-wrench',
@@ -28,10 +28,20 @@ const menuSections = {
 		label: 'Extensions',
 		paths: ['other/extensions', 'other/extension-builder']
 	},
+	serverProfile: {
+		icon: 'fas fa-id-card',
+		label: 'Server Profile',
+		paths: ['server-profile', 'widgets']
+	},
 	subscription: {
 		icon: 'fas fa-crown',
 		label: 'Subscription',
 		paths: ['subscription']
+	},
+	tickets: {
+		icon: 'fas fa-ticket-alt',
+		label: 'Tickets',
+		paths: ['tickets', 'tickets/settings']
 	}
 };
 
@@ -74,13 +84,14 @@ const menuItem = (path, label, icon = null) => {
 					<% } %>
 					<%- menuItem('commands/command-options', 'Command Options') %>
 
-					<% const cmdListPages = ['commands/command-list', 'commands/rss-feeds', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets'];
+					<% const cmdListPages = ['commands/command-list', 'commands/rss-feeds', 'commands/game-updates', 'commands/streamers', 'commands/tags', 'commands/auto-translation', 'commands/trivia-sets'];
 					   const onCmdListPage = cmdListPages.some(p => isActive(`${basePath}/${p}`)); %>
 					<% if (onCmdListPage) { %>
 					<%- include('../partials/admin-sudo.ejs') %>
 					<a class="<%= isActive(`${basePath}/commands/command-list`) ? 'is-active' : '' %>" href="<%= isActive(`${basePath}/commands/command-list`) ? '#' : `${basePath}/commands/command-list` %>">Command List</a>
 					<ul>
 						<li><%- menuItem('commands/rss-feeds', 'RSS Feeds') %></li>
+						<li><%- menuItem('commands/game-updates', 'Game Updates') %></li>
 						<li><%- menuItem('commands/streamers', 'Streamers') %></li>
 						<li><%- menuItem('commands/tags', 'Tags') %></li>
 						<li><%- menuItem('commands/auto-translation', 'Auto Translation') %></li>
@@ -130,6 +141,9 @@ const menuItem = (path, label, icon = null) => {
 
 					<% if(isActive(`${basePath}/stats-points/advanced-stats`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('stats-points/advanced-stats', 'Advanced Stats', 'fas fa-crown') %>
+
+					<% if(isActive(`${basePath}/stats-points/analytics`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('stats-points/analytics', 'Analytics Dashboard', 'fas fa-chart-bar') %>
 				</li>
 			</ul>
 		</div>
@@ -160,6 +174,7 @@ const menuItem = (path, label, icon = null) => {
 						<li><%- menuItem('administration/strikes', 'Strikes') %></li>
 						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/status-messages`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/status-messages`) ? '#' : `${basePath}/administration/status-messages` %>">Status Messages</a></li>
 						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/filters`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/filters`) ? '#' : `${basePath}/administration/filters` %>">Filters</a></li>
+						<li><a class="moderation-only-menu-item<%= isActive(`${basePath}/administration/filters`) ? ' is-active' : '' %><%= configData.moderation.isEnabled ? '' : ' is-hidden' %>" href="<%= isActive(`${basePath}/administration/filters`) ? '#' : `${basePath}/administration/filters#sentiment` %>"><span class="icon is-small"><i class="fas fa-brain"></i></span> Sentiment <span class="tag is-info is-small">Tier 1</span></a></li>
 					</ul>
 					<% } else { %>
 					<a href="<%= basePath %>/administration/moderation">Moderation &#9662;</a>
@@ -232,6 +247,27 @@ const menuItem = (path, label, icon = null) => {
 		</div>
 	</div>
 
+	<div class="menu-section<%= getSectionActive(menuSections.serverProfile) ? ' has-active' : '' %>" data-section="serverProfile">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.serverProfile.icon %>"></i></span>
+				<span><%= menuSections.serverProfile.label %></span>
+			</p>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/server-profile`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('server-profile', 'Edit Profile') %>
+
+					<% if(isActive(`${basePath}/widgets`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('widgets', 'Embeddable Widgets') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
 	<div class="menu-section<%= getSectionActive(menuSections.subscription) ? ' has-active' : '' %>" data-section="subscription">
 		<div class="menu-section-header">
 			<p class="menu-label">
@@ -245,6 +281,27 @@ const menuItem = (path, label, icon = null) => {
 				<li>
 					<% if(isActive(`${basePath}/subscription`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('subscription', 'Server Premium') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.tickets) ? ' has-active' : '' %>" data-section="tickets">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.tickets.icon %>"></i></span>
+				<span><%= menuSections.tickets.label %></span>
+			</p>
+			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/tickets/settings`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('tickets/settings', 'Ticket Settings') %>
+
+					<% if(isActive(`${basePath}/tickets`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('tickets', 'View Tickets') %>
 				</li>
 			</ul>
 		</div>

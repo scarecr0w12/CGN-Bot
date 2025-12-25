@@ -27,6 +27,10 @@ module.exports = new Schema({
 		max: 4,
 	},
 	store: Schema.Mixed,
+	// Server-admin configured settings (from dashboard_settings schema)
+	settings: Schema.Mixed,
+	// Encrypted secrets (API keys, passwords) - stored separately for security
+	secrets: Schema.Mixed,
 	status: new Schema({
 		code: {
 			type: Number,

@@ -1,0 +1,59 @@
+const message = require('message');
+const utils = require('utils');
+const embed = require('embed');
+
+const mentions = message.mentions || [];
+let user1, user2;
+
+if (mentions.length >= 2) {
+	user1 = mentions[0];
+	user2 = mentions[1];
+} else if (mentions.length === 1) {
+	user1 = message.author;
+	user2 = mentions[0];
+} else {
+	message.reply({
+		embeds: [embed.create({
+			title: '💕 Ship',
+			description: 'Mention one or two users to ship!\n\nExamples:\n- ship @user (ships with you)\n- ship @user1 @user2',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+// Generate consistent percentage based on user IDs
+const seed = parseInt(user1.id.slice(-4), 10) + parseInt(user2.id.slice(-4), 10);
+const percentage = ((seed * 7) % 101);
+
+let rating, barColor;
+if (percentage >= 80) { rating = '💖 Soulmates!'; barColor = embed.colors.SUCCESS; }
+else if (percentage >= 60) { rating = '❤️ Great match!'; barColor = embed.colors.GOLD; }
+else if (percentage >= 40) { rating = '💛 Could work!'; barColor = embed.colors.GOLD; }
+else if (percentage >= 20) { rating = '💔 Unlikely...'; barColor = embed.colors.ERROR; }
+else { rating = '🖤 Not meant to be'; barColor = embed.colors.DEFAULT; }
+
+const bar = utils.format.progressBar(percentage, 100, 10, '❤️', '🖤');
+
+// Ship name (first half of name1 + second half of name2)
+const name1 = user1.username || 'User1';
+const name2 = user2.username || 'User2';
+const shipName = name1.slice(0, Math.ceil(name1.length / 2)) + name2.slice(Math.floor(name2.length / 2));
+
+const avatar1 = user1.avatarURL ? user1.avatarURL({ size: 256 }) : '';
+const avatar2 = user2.avatarURL ? user2.avatarURL({ size: 256 }) : '';
+
+// Use external API for ship image
+const shipImageUrl = 'https://api.popcat.xyz/ship?user1=' + encodeURIComponent(avatar1) + '&user2=' + encodeURIComponent(avatar2);
+
+message.reply({
+	embeds: [embed.create({
+		title: '💕 ' + shipName,
+		description: user1.toString() + ' x ' + user2.toString() + '\n\n' +
+		bar + ' ' + utils.discord.bold(percentage + '%') + '\n\n' +
+		utils.discord.bold(rating),
+		image: { url: shipImageUrl },
+		color: barColor,
+		footer: { text: 'Ship name: ' + shipName },
+	})],
+});

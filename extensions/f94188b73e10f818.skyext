@@ -1,0 +1,16 @@
+const message = require('message');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+const imageUrl = 'https://some-random-api.com/canvas/filter/glitch?avatar=' + encodeURIComponent(avatar);
+
+message.reply({
+	embeds: [embed.create({
+		title: '📺 Glitched',
+		description: target.username + '\'s avatar has been corrupted!',
+		image: { url: imageUrl },
+		color: embed.colors.PURPLE,
+	})],
+});

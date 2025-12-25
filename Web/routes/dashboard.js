@@ -20,6 +20,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/commands/command-options", [], controllers.dashboard.commands.options);
 	setupDashboardPage(router, "/commands/command-list", [], controllers.dashboard.commands.list);
 	setupDashboardPage(router, "/commands/rss-feeds", [], controllers.dashboard.commands.rss, "rss_feeds");
+	setupDashboardPage(router, "/commands/game-updates", [], controllers.dashboard.commands.gameUpdates, "game_updates");
 	setupDashboardPage(router, "/commands/streamers", [], controllers.dashboard.commands.streamers, "streamers_data");
 	setupDashboardPage(router, "/commands/tags", [], controllers.dashboard.commands.tags, "tags");
 	setupDashboardPage(router, "/commands/auto-translation", [], controllers.dashboard.commands.translation, "translated_messages");
@@ -34,7 +35,10 @@ module.exports = router => {
 	setupDashboardPage(router, "/stats-points/economy", [], controllers.dashboard.stats.economy);
 	setupDashboardPage(router, "/stats-points/economy-stats", [], controllers.dashboard.stats.economyStats);
 	setupDashboardPage(router, "/stats-points/advanced-stats", [], controllers.dashboard.stats.advancedStats);
-	// Premium analytics endpoint
+	setupDashboardPage(router, "/stats-points/analytics", [], controllers.dashboard.stats.analyticsOverview);
+	// Premium analytics endpoints
+	router.get("/:svrid/stats-points/analytics-data", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analyticsData);
+	router.get("/:svrid/stats-points/analytics-export", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analyticsExport);
 	router.get("/:svrid/stats-points/analytics", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analytics);
 
 	// Administration
@@ -61,8 +65,13 @@ module.exports = router => {
 	setupDashboardPage(router, "/other/ongoing-activities", [], controllers.dashboard.other.activities);
 	setupDashboardPage(router, "/other/public-data", [], controllers.dashboard.other.public);
 	setupDashboardPage(router, "/other/extensions", [], controllers.dashboard.other.extensions, "extensions");
+	setupDashboardPage(router, "/other/extensions/settings", [], controllers.dashboard.other.extensionSettings);
 	setupDashboardPage(router, "/other/extension-builder", [], controllers.dashboard.other.extensionBuilder);
 	setupDashboardPage(router, "/other/export", [], controllers.dashboard.other.export);
+	// Widgets
+	setupPage(router, "/:svrid/widgets", [], controllers.widgets.widgetGenerator);
+	// Server Profile (Tier 1+)
+	setupPage(router, "/:svrid/server-profile", [], controllers.server.profileEditor);
 
 	// AI
 	setupDashboardPage(router, "/ai/settings", [], controllers.dashboard.ai.settings);
@@ -78,4 +87,13 @@ module.exports = router => {
 	setupDashboardPage(router, "/subscription", [], controllers.dashboard.subscription.manage);
 	router.post("/:svrid/subscription/redeem", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.redeemPoints);
 	router.post("/:svrid/subscription/cancel", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.subscription.cancel);
+
+	// Ticket System (Tier 2)
+	setupDashboardPage(router, "/tickets/settings", [], controllers.dashboard.tickets.settings);
+	setupDashboardPage(router, "/tickets", [], controllers.dashboard.tickets.list);
+	setupDashboardPage(router, "/tickets/:ticketId", [], controllers.dashboard.tickets.view);
+	router.post("/:svrid/tickets/update", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.update);
+	router.post("/:svrid/tickets/category/add", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.addCategory);
+	router.post("/:svrid/tickets/category/delete", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.deleteCategory);
+	router.post("/:svrid/tickets/ticket/update", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.updateTicket);
 };

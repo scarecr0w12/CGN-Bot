@@ -20,6 +20,7 @@ module.exports = {
 		configJS: true,
 		configJSON: true,
 		SiteSettings: true,
+		trackMatomoEvent: true,
 	},
 	plugins: [
 		"promise",

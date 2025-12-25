@@ -306,6 +306,176 @@
 							<hr>
 						</div>
 						<br>
+						<h4 id="sentiment" class="subtitle is-4">
+							Sentiment Analysis <span class="tag is-info">Tier 1</span>
+						</h4>
+						<% if (!pageData.hasSentimentAnalysis) { %>
+						<article class="message is-warning">
+							<div class="message-body">
+								<strong>Premium Feature</strong> - AI-powered sentiment analysis requires Tier 1 subscription. <a href="/membership">Upgrade now</a> to detect toxic, insulting, or threatening messages automatically.
+							</div>
+						</article>
+						<% } else { %>
+						<div class="field">
+							<p class="control">
+								<label class="checkbox">
+								<input name="sentiment_filter-isEnabled" type="checkbox" onclick="$('#sentiment_filter-options').toggleClass('is-hidden');"<%= configData.moderation.filters.sentiment_filter?.isEnabled ? " checked" : "" %>>
+									Analyze messages for negative sentiment, toxicity, and harmful content
+								</label>
+							</p>
+						</div>
+						<div id="sentiment_filter-options" class="<%= configData.moderation.filters.sentiment_filter?.isEnabled ? '' : 'is-hidden' %>">
+							<div class="field">
+								<label class="label">Analysis Provider</label>
+								<p class="control">
+									<span class="select is-primary">
+										<select name="sentiment_filter-provider">
+											<option value="google"<%= configData.moderation.filters.sentiment_filter?.provider === "google" ? " selected" : "" %>>Google Cloud NL (recommended)</option>
+											<option value="ai"<%= configData.moderation.filters.sentiment_filter?.provider === "ai" ? " selected" : "" %>>AI Provider (fallback)</option>
+										</select>
+									</span>
+									<span class="help">Google requires an API key. AI uses your configured AI provider.</span>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Google Cloud API Key</label>
+								<p class="control">
+									<input name="sentiment_filter-google_api_key" class="input is-primary" type="password" placeholder="Enter Google Cloud API key" value="<%= configData.moderation.filters.sentiment_filter?.google_api_key || '' %>">
+									<span class="help">Required if using Google provider. Get one from <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>.</span>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Enabled in these channel(s)</label>
+								<% pageData.channelData.forEach(channel => { %>
+									<label class="checkbox">
+									<input name="sentiment_filter-disabled_channel_ids-<%= channel.id %>" type="checkbox"<%= !(configData.moderation.filters.sentiment_filter?.disabled_channel_ids || []).includes(channel.id) ? " checked" : "" %>>
+										#<%= channel.name %>
+									</label>
+									<br>
+								<% }); %>
+							</div>
+							<div class="field">
+								<label class="label">Sensitivity</label>
+								<p class="control">
+									<span class="select is-primary">
+										<select name="sentiment_filter-sensitivity">
+											<option value="strict"<%= configData.moderation.filters.sentiment_filter?.sensitivity === "strict" ? " selected" : "" %>>Strict (flags more content)</option>
+											<option value="normal"<%= (configData.moderation.filters.sentiment_filter?.sensitivity || "normal") === "normal" ? " selected" : "" %>>Normal (balanced)</option>
+											<option value="lenient"<%= configData.moderation.filters.sentiment_filter?.sensitivity === "lenient" ? " selected" : "" %>>Lenient (only severe)</option>
+										</select>
+									</span>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">What happens to violators?</label>
+								<p class="control">
+									<span class="select is-primary">
+										<select name="sentiment_filter-action">
+											<option value="none"<%= configData.moderation.filters.sentiment_filter?.action === "none" ? " selected" : "" %>>Nothing (log only)</option>
+											<option value="warn"<%= configData.moderation.filters.sentiment_filter?.action === "warn" ? " selected" : "" %>>Warn</option>
+											<option value="block"<%= configData.moderation.filters.sentiment_filter?.action === "block" ? " selected" : "" %>>Block</option>
+											<option value="mute"<%= (configData.moderation.filters.sentiment_filter?.action || "mute") === "mute" ? " selected" : "" %>>Mute</option>
+											<option value="kick"<%= configData.moderation.filters.sentiment_filter?.action === "kick" ? " selected" : "" %>>Kick</option>
+											<option value="ban"<%= configData.moderation.filters.sentiment_filter?.action === "ban" ? " selected" : "" %>>Ban</option>
+										</select>
+									</span>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Categories to detect</label>
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-categories-toxic" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.categories?.toxic !== false ? " checked" : "" %>>
+										Toxic content
+									</label>
+								</p>
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-categories-insult" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.categories?.insult !== false ? " checked" : "" %>>
+										Insults
+									</label>
+								</p>
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-categories-threat" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.categories?.threat !== false ? " checked" : "" %>>
+										Threats
+									</label>
+								</p>
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-categories-profanity" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.categories?.profanity !== false ? " checked" : "" %>>
+										Profanity
+									</label>
+								</p>
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-categories-identity_attack" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.categories?.identity_attack !== false ? " checked" : "" %>>
+										Identity attacks
+									</label>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Minimum message length</label>
+								<p class="control">
+									<input name="sentiment_filter-min_message_length" class="input is-primary" type="number" min="1" max="100" value="<%= configData.moderation.filters.sentiment_filter?.min_message_length || 10 %>">
+									<span class="help">Messages shorter than this will not be analyzed (saves API costs).</span>
+								</p>
+							</div>
+							<div class="field">
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-delete_message" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.delete_message !== false ? " checked" : "" %>>
+										Delete messages that violate sentiment rules
+									</label>
+								</p>
+							</div>
+							<div class="field">
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-warn_user" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.warn_user !== false ? " checked" : "" %>>
+										Send DM warning to user
+									</label>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Log Channel</label>
+								<p class="control">
+									<span class="select is-primary">
+										<select name="sentiment_filter-log_channel_id">
+											<option value="">None</option>
+											<% pageData.channelData.forEach(channel => { %>
+												<option value="<%= channel.id %>"<%= configData.moderation.filters.sentiment_filter?.log_channel_id === channel.id ? " selected" : "" %>>#<%= channel.name %></option>
+											<% }); %>
+										</select>
+									</span>
+									<span class="help">Channel to log sentiment violations to.</span>
+								</p>
+							</div>
+							<div class="field">
+								<label class="label">Role assigned to violators</label>
+								<p class="control">
+									<span class="select is-primary">
+										<select name="sentiment_filter-violator_role_id">
+											<option value="">None</option>
+											<% pageData.roleData.forEach(role => { %>
+												<option value="<%= role.id %>"<%= configData.moderation.filters.sentiment_filter?.violator_role_id === role.id ? " selected" : "" %>><%= role.name %></option>
+											<% }); %>
+										</select>
+									</span>
+								</p>
+							</div>
+							<div class="field">
+								<p class="control">
+									<label class="checkbox">
+									<input name="sentiment_filter-escalate_on_repeat" type="checkbox"<%= configData.moderation.filters.sentiment_filter?.escalate_on_repeat !== false ? " checked" : "" %>>
+										Escalate action on repeat violations
+									</label>
+								</p>
+							</div>
+							<hr>
+						</div>
+						<% } %>
+						<br>
 						<% var formButtonsUnsaved = false; %>
 						<%- include('../partials/form-buttons') %>
 						<%- include('../partials/form-buttons-bar') %>

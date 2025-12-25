@@ -4,10 +4,12 @@ const ObjectId = require("../../Database/ObjectID");
 
 const parsers = require("../parsers");
 const { GetGuild } = require("../../Modules").getGuild;
-const { AllowedEvents, Colors, Scopes } = require("../../Internals/Constants");
+const { AllowedEvents, Colors, Scopes, NetworkCapabilities, ExtensionTags } = require("../../Internals/Constants");
 const { renderError, dashboardUpdate, generateCodeID, getChannelData, validateExtensionData, writeExtensionData } = require("../helpers");
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+const { generateUniqueSlug } = require("../../Modules/Utils/Slug");
+const CacheManager = require("../../Modules/CacheManager");
 
 const controllers = module.exports;
 
@@ -46,9 +48,14 @@ controllers.gallery = async (req, { res }) => {
 	const premiumFilter = req.query.premium;
 	const validPremiumFilters = ["all", "free", "premium"];
 
+	// Tag filter
+	const tagFilter = req.query.tag;
+
 	const renderPage = async (upvotedData, serverData) => {
 		const extensionState = req.path.substring(req.path.lastIndexOf("/") + 1);
-		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && configJSON.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
+		const ConfigManager = require("../../Modules/ConfigManager");
+		const extSettings = await ConfigManager.get();
+		const extensionLevel = extensionState === "gallery" ? ["gallery"] : req.isAuthenticated() && extSettings.maintainers.includes(req.user.id) ? ["gallery", "third"] : ["gallery"];
 		try {
 			// Base criteria for counting
 			const baseCriteria = {
@@ -70,6 +77,11 @@ controllers.gallery = async (req, { res }) => {
 					{ name: { $regex: req.query.q } },
 					{ description: { $regex: req.query.q } },
 				];
+			}
+
+			// Filter by tag if specified
+			if (tagFilter && ExtensionTags.includes(tagFilter)) {
+				matchCriteria.tags = tagFilter;
 			}
 
 			// Get all extensions first, then filter by category client-side since type is in versions subdocument
@@ -110,6 +122,16 @@ controllers.gallery = async (req, { res }) => {
 				else premiumCounts.free++;
 			});
 
+			const tagCounts = {};
+			ExtensionTags.forEach(tag => { tagCounts[tag] = 0; });
+			allExtData.forEach(ext => {
+				if (ext.tags && Array.isArray(ext.tags)) {
+					ext.tags.forEach(tag => {
+						if (tagCounts[tag] !== undefined) tagCounts[tag]++;
+					});
+				}
+			});
+
 			// Filter by category if specified
 			if (categoryFilter && validCategories.includes(categoryFilter)) {
 				extensionData = extensionData.filter(ext => ext.type === categoryFilter);
@@ -137,8 +159,11 @@ controllers.gallery = async (req, { res }) => {
 				sortOption,
 				categoryFilter: categoryFilter || "all",
 				premiumFilter: premiumFilterValue,
+				tagFilter: tagFilter || "all",
+				extensionTags: ExtensionTags,
 				categoryCounts,
 				premiumCounts,
+				tagCounts,
 			});
 
 			res.render();
@@ -158,7 +183,7 @@ controllers.gallery = async (req, { res }) => {
 				await svr.initialize(usr.id);
 				if (svr.success) {
 					try {
-						const serverDocument = await Servers.findOne(svr.id);
+						const serverDocument = await CacheManager.getServer(svr.id);
 						if (serverDocument) {
 							const member = svr.members[usr.id];
 							if (req.app.client.getUserBotAdmin(svr, serverDocument, member) >= 3) {
@@ -187,7 +212,7 @@ controllers.gallery = async (req, { res }) => {
 		};
 		addServerData(0, async () => {
 			serverData.sort((a, b) => a.name.localeCompare(b.name));
-			const userDocument = await Users.findOne(req.user.id);
+			const userDocument = await CacheManager.getUser(req.user.id);
 			if (userDocument) {
 				renderPage(userDocument.upvoted_gallery_extensions, serverData);
 			} else {
@@ -210,10 +235,38 @@ controllers.installer = async (req, { res }) => {
 	}
 	const galleryDocument = await Gallery.findOne(id);
 	if (!galleryDocument) return renderError(res, "That extension doesn't exist!", undefined, 404);
+
+	// Generate slug if missing (for existing extensions without slugs)
+	if (!galleryDocument.slug && galleryDocument.name) {
+		const checkSlugExists = async slug => {
+			const existing = await Gallery.findOne({ slug, _id: { $ne: id } });
+			return !!existing;
+		};
+		const newSlug = await generateUniqueSlug(galleryDocument.name, checkSlugExists);
+		if (newSlug) {
+			galleryDocument.query.set("slug", newSlug);
+			await galleryDocument.save().catch(() => null);
+		}
+	}
+
+	// Redirect legacy URL to canonical slug URL (301 for SEO)
+	if (galleryDocument.slug && !req.params.slug) {
+		const queryString = req.originalUrl.includes("?") ? req.originalUrl.substring(req.originalUrl.indexOf("?")) : "";
+		return res.redirect(301, `/extensions/${galleryDocument._id}/${galleryDocument.slug}/install${queryString}`);
+	}
+
 	const versionTag = parseInt(req.query.v) || galleryDocument.published_version;
 	if (!galleryDocument.versions.id(versionTag)) return renderError(res, "That extension version doesn't exist!", undefined, 404);
 	const extensionData = await parsers.extensionData(req, galleryDocument, versionTag);
-	if ((!extensionData.accepted && !configJSON.maintainers.includes(req.user.id)) || galleryDocument.level === "third") {
+
+	// Add canonical URL to extension data for SEO meta tags
+	extensionData.canonicalUrl = galleryDocument.slug ?
+		`/extensions/${galleryDocument._id}/${galleryDocument.slug}/install` :
+		`/extensions/${galleryDocument._id}/install`;
+	extensionData.slug = galleryDocument.slug;
+
+	const installSettings = await require("../../Modules/ConfigManager").get();
+	if ((!extensionData.accepted && !installSettings.maintainers.includes(req.user.id)) || galleryDocument.level === "third") {
 		return renderError(res, "You do not have sufficient permission to install this extension.", undefined, 403);
 	}
 
@@ -231,7 +284,7 @@ controllers.installer = async (req, { res }) => {
 				const svr = new GetGuild(req.app.client, req.user.guilds[i].id);
 				await svr.initialize(req.user.id);
 				if (svr.success) {
-					const serverDocument = await Servers.findOne(svr.id).catch(() => null);
+					const serverDocument = await CacheManager.getServer(svr.id);
 					if (serverDocument) {
 						const member = svr.members[req.user.id];
 						if (req.app.client.getUserBotAdmin(svr, serverDocument, member) >= 3) {
@@ -267,7 +320,7 @@ controllers.installer = async (req, { res }) => {
 				.render();
 		});
 	} else {
-		const serverDocument = await Servers.findOne(req.query.svrid);
+		const serverDocument = await CacheManager.getServer(req.query.svrid);
 		if (!serverDocument) return renderError(res, "That server doesn't exist!", undefined, 404);
 		const serverData = await parsers.serverData(req, serverDocument);
 		const svr = new GetGuild(req.app.client, serverDocument._id);
@@ -339,6 +392,8 @@ controllers.builder = async (req, { res }) => {
 				versionData: extensionData.versions ? extensionData.versions.id(extensionData.version) : {},
 				events: AllowedEvents,
 				scopes: Scopes,
+				networkCapabilities: NetworkCapabilities,
+				extensionTags: ExtensionTags,
 				premiumMarketplace,
 			});
 
@@ -400,10 +455,21 @@ controllers.builder.post = async (req, res) => {
 				const galleryQueryDocument = galleryDocument.query;
 
 				galleryQueryDocument.set("level", "gallery")
-					.set("description", req.body.description);
+					.set("description", req.body.description)
+					.set("tags", Array.isArray(req.body.tags) ? req.body.tags : req.body.tags ? [req.body.tags] : []);
 				const newVersion = writeExtensionData(galleryDocument, req.body);
 				if (newVersion && isUpdate) galleryQueryDocument.set("state", galleryDocument.state === "saved" ? "saved" : "version_queue");
 				else if (newVersion) galleryQueryDocument.set("state", "saved");
+
+				// Generate slug for new extensions or if name changed and no slug exists
+				if (!galleryDocument.slug && req.body.name) {
+					const checkSlugExists = async slug => {
+						const existing = await Gallery.findOne({ slug, _id: { $ne: galleryDocument._id } });
+						return !!existing;
+					};
+					const newSlug = await generateUniqueSlug(req.body.name, checkSlugExists);
+					if (newSlug) galleryQueryDocument.set("slug", newSlug);
+				}
 
 				if (!isUpdate) {
 					galleryQueryDocument.set("owner_id", req.user.id);
@@ -493,6 +559,17 @@ controllers.download = async (req, res) => {
 		return res.sendStatus(500);
 	}
 	if (extensionDocument && extensionDocument.state !== "saved") {
+		// Block source code access for premium extensions (only owner or maintainers can view)
+		if (extensionDocument.premium?.is_premium) {
+			const isOwner = req.isAuthenticated() && extensionDocument.owner_id === req.user.id;
+			const ConfigManager = require("../../Modules/ConfigManager");
+			const settings = await ConfigManager.get();
+			const isMaintainer = req.isAuthenticated() && settings.maintainers?.includes(req.user.id);
+			if (!isOwner && !isMaintainer) {
+				return res.status(403).send("Source code for premium extensions is protected");
+			}
+		}
+
 		const versionTag = parseInt(req.query.v) || extensionDocument.published_version;
 		const versionDocument = extensionDocument.versions.id(versionTag);
 		if (!versionDocument) return res.sendStatus(404);
@@ -527,6 +604,14 @@ controllers.export = async (req, res) => {
 	const isOwner = req.isAuthenticated() && extensionDocument.owner_id === req.user.id;
 	if (!isOwner && extensionDocument.state === "saved") {
 		return res.sendStatus(404);
+	}
+
+	// Block source code access for premium extensions (only owner or maintainers can export)
+	const ConfigManager = require("../../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
+	const isMaintainer = req.isAuthenticated() && settings.maintainers?.includes(req.user.id);
+	if (extensionDocument.premium?.is_premium && !isOwner && !isMaintainer) {
+		return res.status(403).json({ error: "Source code for premium extensions is protected" });
 	}
 
 	const versionTag = parseInt(req.query.v) || extensionDocument.published_version || extensionDocument.version;
@@ -633,6 +718,8 @@ controllers.import = async (req, res) => {
 			event: version.type === "event" ? version.event : null,
 			timeout: version.timeout || 5000,
 			scopes: version.scopes || [],
+			network_capability: version.network_capability || "none",
+			network_approved: false,
 			code_id: generateCodeID(extension.code),
 		};
 
@@ -668,10 +755,11 @@ controllers.import = async (req, res) => {
 	}
 };
 
-controllers.gallery.modify = async (req, res) => {
+controllers.gallery.modify = async (req, { res }) => {
 	if (req.isAuthenticated()) {
 		if (req.params.extid && req.params.action) {
-			if (["accept", "feature", "reject", "remove"].includes(req.params.action) && !configJSON.maintainers.includes(req.user.id)) {
+			const modifySettings = await require("../../Modules/ConfigManager").get();
+			if (["accept", "feature", "reject", "remove", "approve_network"].includes(req.params.action) && !modifySettings.maintainers.includes(req.user.id)) {
 				res.sendStatus(403);
 				return;
 			}
@@ -691,13 +779,16 @@ controllers.gallery.modify = async (req, res) => {
 				return doc;
 			};
 			const getUserDocument = async () => {
-				let userDocument = await Users.findOne(req.user.id);
+				let userDocument = await CacheManager.getUser(req.user.id);
 				if (userDocument) {
 					return userDocument;
 				} else {
 					try {
 						userDocument = await Users.new({ _id: req.user.id });
+						await userDocument.save();
+						userDocument = await Users.findOne(req.user.id);
 					} catch (err) {
+						logger.error("Failed to create user document for extension upvote", { usrid: req.user.id }, err);
 						res.sendStatus(500);
 						return null;
 					}
@@ -732,7 +823,7 @@ controllers.gallery.modify = async (req, res) => {
 					await galleryDocument.save();
 					await userDocument.save();
 
-					let ownerUserDocument = await Users.findOne(galleryDocument.owner_id);
+					let ownerUserDocument = await CacheManager.getUser(galleryDocument.owner_id);
 					if (!ownerUserDocument) ownerUserDocument = await Users.new({ _id: galleryDocument.owner_id });
 					ownerUserDocument.query.inc("points", vote * 10);
 					await ownerUserDocument.save();
@@ -741,13 +832,28 @@ controllers.gallery.modify = async (req, res) => {
 					break;
 				}
 				case "accept": {
+					const versionDoc = galleryDocument.versions.find(v => v._id === galleryDocument.version);
+					if (!versionDoc) {
+						logger.warn("Accept failed: version not found", { extid: req.params.extid, version: galleryDocument.version });
+						return res.sendStatus(404);
+					}
+					// Modify version in memory then set the whole versions array
+					// (nested JSON push doesn't work properly with MariaDB)
+					versionDoc.accepted = true;
+					if (!versionDoc.approval_history) versionDoc.approval_history = [];
+					versionDoc.approval_history.push({
+						action: "accepted",
+						by: req.user.id,
+						at: new Date(),
+					});
 					galleryQueryDocument.set("state", "gallery");
-					galleryQueryDocument.clone.id("versions", galleryDocument.version).set("accepted", true);
+					galleryQueryDocument.set("versions", galleryDocument.versions);
 					galleryQueryDocument.set("published_version", galleryDocument.version);
 
 					try {
 						await galleryDocument.save();
-					} catch (_) {
+					} catch (err) {
+						logger.error("Failed to save extension acceptance", { extid: req.params.extid }, err);
 						return res.sendStatus(500);
 					}
 					res.sendStatus(200);
@@ -783,13 +889,28 @@ controllers.gallery.modify = async (req, res) => {
 					break;
 				case "reject":
 				case "remove": {
-					const ownerUserDocument2 = await Users.findOne(galleryDocument.owner_id);
+					const ownerUserDocument2 = await CacheManager.getUser(galleryDocument.owner_id);
 					if (ownerUserDocument2) {
 						ownerUserDocument2.query.inc("points", -(galleryDocument.points * 10));
 						await ownerUserDocument2.save();
 					}
 
-					galleryQueryDocument.clone.id("versions", req.params.action === "remove" ? galleryDocument.published_version : galleryDocument.version).set("accepted", false);
+					const targetVersion = req.params.action === "remove" ?
+						galleryDocument.published_version : galleryDocument.version;
+					const versionDoc = galleryDocument.versions.find(v => v._id === targetVersion);
+					if (versionDoc) {
+						// Modify version in memory then set the whole versions array
+						// (nested JSON push doesn't work properly with MariaDB)
+						versionDoc.accepted = false;
+						if (!versionDoc.approval_history) versionDoc.approval_history = [];
+						versionDoc.approval_history.push({
+							action: "rejected",
+							by: req.user.id,
+							at: new Date(),
+							reason: req.body.reason || null,
+						});
+						galleryQueryDocument.set("versions", galleryDocument.versions);
+					}
 					galleryQueryDocument.set("state", "saved")
 						.set("featured", false)
 						.set("published_version", null);
@@ -851,6 +972,47 @@ controllers.gallery.modify = async (req, res) => {
 
 					res.sendStatus(200);
 					break;
+				case "approve_network": {
+					const versionDoc = galleryDocument.versions.find(v => v._id === galleryDocument.version);
+					if (!versionDoc) return res.sendStatus(404);
+
+					const netCap = versionDoc.network_capability;
+					if (!netCap || !["network", "network_advanced"].includes(netCap)) {
+						return res.sendStatus(400);
+					}
+
+					// Modify version in memory then set the whole versions array
+					// (nested JSON updates don't work properly with MariaDB)
+					const approvalTimestamp = new Date();
+					versionDoc.network_approved = true;
+					versionDoc.network_approved_by = req.user.id;
+					versionDoc.network_approved_at = approvalTimestamp;
+					if (!versionDoc.approval_history) versionDoc.approval_history = [];
+					versionDoc.approval_history.push({
+						action: "network_approved",
+						by: req.user.id,
+						at: approvalTimestamp,
+					});
+					galleryQueryDocument.set("versions", galleryDocument.versions);
+
+					try {
+						await galleryDocument.save();
+					} catch (err) {
+						logger.error("Failed to approve network capability", { extid: req.params.extid }, err);
+						return res.sendStatus(500);
+					}
+
+					messageOwner(galleryDocument.owner_id, {
+						embeds: [{
+							color: Colors.GREEN,
+							title: `Network capability approved for ${galleryDocument.name}! 🌐`,
+							description: `Your extension's ${netCap} capability has been approved by a maintainer.`,
+						}],
+					});
+
+					res.sendStatus(200);
+					break;
+				}
 				default:
 					res.sendStatus(400);
 					break;

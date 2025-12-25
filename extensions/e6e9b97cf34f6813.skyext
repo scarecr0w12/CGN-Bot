@@ -1,0 +1,16 @@
+const message = require('message');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+const imageUrl = 'https://api.popcat.xyz/uncover?image=' + encodeURIComponent(avatar);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎭 Uncovered',
+		description: 'Revealing ' + target.username + '...',
+		image: { url: imageUrl },
+		color: embed.colors.GOLD,
+	})],
+});

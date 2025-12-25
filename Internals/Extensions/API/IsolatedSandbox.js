@@ -1,5 +1,8 @@
 const ivm = require("isolated-vm");
 const sizeof = require("object-sizeof");
+const net = require("net");
+const { request: undiciRequest } = require("undici");
+const TierManager = require("../../../Modules/TierManager");
 const {
 	Errors: {
 		Error: SkynetError,
@@ -8,6 +11,127 @@ const {
 		Scopes,
 	},
 } = require("../../index");
+
+const EXT_HTTP_DEFAULT_MAX_BYTES = 1024 * 1024;
+const EXT_HTTP_DEFAULT_TIMEOUT_MS = 6000;
+const EXT_HTTP_MAX_BODY_BYTES = 100 * 1024;
+const EXT_HTTP_RATE_WINDOW_MS = 60 * 1000;
+const EXT_HTTP_RATE_MAX = 30;
+
+const extensionHttpRate = new Map();
+
+// Default allowlist used when database settings are not available
+const DEFAULT_HTTP_ALLOWLIST = [
+	"api.jikan.moe",
+	"api.mojang.com",
+	"sessionserver.mojang.com",
+	"api.steampowered.com",
+	"steamcommunity.com",
+	"mc-heads.net",
+	"api.mcsrvstat.us",
+	"api.henrikdev.xyz",
+	"fortnite-api.com",
+	"ddragon.leagueoflegends.com",
+	"raw.communitydragon.org",
+];
+
+/**
+ * Get allowed HTTP hosts for extension sandbox
+ * Priority: Environment variable > Database settings > Default list
+ * @returns {Promise<string[]>} Array of allowed hostnames
+ */
+const getAllowedExtensionHttpHosts = async () => {
+	// Environment variable takes highest priority (for quick overrides)
+	const envRaw = process.env.EXTENSION_HTTP_ALLOWLIST || "";
+	const envList = envRaw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+	if (envList.length) return envList;
+
+	// Try to get from database settings
+	try {
+		if (typeof SiteSettings !== "undefined" && SiteSettings?.findOne) {
+			const settings = await SiteSettings.findOne("main");
+			if (settings?.extension_sandbox?.http_allowlist?.length) {
+				return settings.extension_sandbox.http_allowlist.map(h => h.toLowerCase());
+			}
+		}
+	} catch (err) {
+		logger.warn("IsolatedSandbox: Failed to fetch allowlist from database, using defaults", {}, err);
+	}
+
+	return DEFAULT_HTTP_ALLOWLIST;
+};
+
+const isPrivateIp = (ip) => {
+	if (!ip) return true;
+	if (ip === "127.0.0.1" || ip === "::1") return true;
+	if (ip.startsWith("10.")) return true;
+	if (ip.startsWith("192.168.")) return true;
+	if (/^172\.(1[6-9]|2\d|3[0-1])\./.test(ip)) return true;
+	if (ip.startsWith("169.254.")) return true;
+	return false;
+};
+
+/**
+ * Check if URL is allowed based on network capability level
+ * @param {string} rawUrl - The URL to check
+ * @param {string} networkCapability - The capability level (none, allowlist_only, network, network_advanced)
+ * @param {boolean} networkApproved - Whether the capability has been approved
+ * @param {string[]} allowlist - The static allowlist for allowlist_only mode
+ * @returns {{ok: boolean, url?: URL, error?: string}}
+ */
+const isAllowedUrl = (rawUrl, networkCapability, networkApproved, allowlist) => {
+	let url;
+	try {
+		url = new URL(String(rawUrl));
+	} catch (_) {
+		return { ok: false, error: "INVALID_URL" };
+	}
+
+	// Check protocol based on capability
+	const isHttps = url.protocol === "https:";
+	const isHttp = url.protocol === "http:";
+
+	if (!isHttps && !isHttp) return { ok: false, error: "INVALID_PROTOCOL" };
+
+	// Only network_advanced allows HTTP
+	if (isHttp && networkCapability !== "network_advanced") {
+		return { ok: false, error: "ONLY_HTTPS" };
+	}
+
+	if (!url.hostname) return { ok: false, error: "INVALID_HOST" };
+
+	const host = url.hostname.toLowerCase();
+	if (host === "localhost") return { ok: false, error: "HOST_NOT_ALLOWED" };
+
+	// Block private IPs regardless of capability
+	const ipType = net.isIP(host);
+	if (ipType && isPrivateIp(host)) return { ok: false, error: "PRIVATE_IP_BLOCKED" };
+
+	// Handle based on capability level
+	switch (networkCapability) {
+		case "none":
+			return { ok: false, error: "NETWORK_NOT_ENABLED" };
+
+		case "allowlist_only": {
+			// Use static allowlist (auto-approved, no approval check needed)
+			const allowed = allowlist.some(a => host === a || host.endsWith(`.${a}`));
+			if (!allowed) return { ok: false, error: "HOST_NOT_ALLOWED" };
+			return { ok: true, url };
+		}
+
+		case "network":
+		case "network_advanced":
+			// Requires maintainer approval
+			if (!networkApproved) {
+				return { ok: false, error: "NETWORK_NOT_APPROVED" };
+			}
+			// Any HTTPS host allowed (or HTTP for network_advanced)
+			return { ok: true, url };
+
+		default:
+			return { ok: false, error: "INVALID_CAPABILITY" };
+	}
+};
 
 /**
  * Creates an isolated sandbox environment for running extensions using isolated-vm.
@@ -77,6 +201,11 @@ class IsolatedSandbox {
 		// Set up interaction callbacks (slash commands)
 		await this._setupInteractionCallbacks(jail);
 
+		await this._setupHttpCallbacks(jail);
+
+		// Set up RCON callbacks for game server control
+		await this._setupRconCallbacks(jail);
+
 		// Set up the require function in the isolate
 		await this.vmContext.eval(`
 			const require = (name) => {
@@ -127,7 +256,22 @@ class IsolatedSandbox {
 						};
 					}
 
-					// Wrap extension module to expose per-server storage
+					
+					if (name === 'http') {
+						const safeParse = (input) => {
+							if (!input) return { success: false, error: 'NO_RESPONSE' };
+							try { return JSON.parse(input); } catch (_) { return { success: false, error: 'BAD_RESPONSE' }; }
+						};
+						module = {
+							...module,
+							request: async (options) => {
+								const res = await __httpRequestCallback__(JSON.stringify(options || {}));
+								return safeParse(res);
+							},
+						};
+					}
+
+					// Wrap extension module to expose per-server storage and settings
 					if (name === 'extension') {
 						const safeParse = (input) => {
 							if (!input) return null;
@@ -163,6 +307,16 @@ class IsolatedSandbox {
 										return true;
 									}
 									throw new Error((res && res.error) ? res.error : 'Failed to clear extension storage');
+								},
+							},
+							// Server-admin configured settings (read-only)
+							settings: {
+								get: (key) => {
+									if (!module.settings) return undefined;
+									return module.settings[key];
+								},
+								getAll: () => {
+									return module.settings || {};
 								},
 							},
 						};
@@ -202,11 +356,286 @@ class IsolatedSandbox {
 							followUp: (payload) => call(__interactionFollowUpCallback__, (typeof payload === 'string') ? { content: payload } : payload),
 						};
 					}
+
+					// Wrap rcon module for game server RCON commands
+					if (name === 'rcon') {
+						const safeParse = (input) => {
+							if (!input) return { success: false, error: 'NO_RESPONSE' };
+							try { return JSON.parse(input); } catch (_) { return { success: false, error: 'BAD_RESPONSE' }; }
+						};
+						module = {
+							...module,
+							sendCommand: async (options) => {
+								const res = await __rconSendCommandCallback__(JSON.stringify(options || {}));
+								return safeParse(res);
+							},
+							testConnection: async (options) => {
+								const res = await __rconTestConnectionCallback__(JSON.stringify(options || {}));
+								return safeParse(res);
+							},
+						};
+					}
 					return module;
 				}
 				return moduleData.value;
 			};
 		`);
+	}
+
+	async _setupHttpCallbacks (jail) {
+		const { serverDocument, extensionConfigDocument, extensionDocument, versionDocument } = this.context;
+		const allowlist = getAllowedExtensionHttpHosts();
+
+		// Get network capability from version document
+		const networkCapability = versionDocument?.network_capability || "none";
+		const networkApproved = versionDocument?.network_approved || false;
+
+		const safeParse = (input) => {
+			if (!input) return {};
+			try {
+				return JSON.parse(input);
+			} catch (_) {
+				return {};
+			}
+		};
+
+		const rateKey = `${serverDocument?._id || "unknown"}:${extensionConfigDocument?._id || extensionDocument?._id || "unknown"}`;
+
+		const requestCallback = new ivm.Callback(async (payloadJSON) => {
+			try {
+				if (!this.scopes.includes(Scopes.http_request.scope)) {
+					return JSON.stringify({ success: false, error: "MISSING_SCOPES" });
+				}
+
+				// Check network capability first
+				if (networkCapability === "none") {
+					return JSON.stringify({ success: false, error: "NETWORK_NOT_ENABLED" });
+				}
+
+				// Tier 2 required for network and network_advanced capabilities
+				// allowlist_only can work on Tier 1
+				const svrid = serverDocument?._id;
+				if (svrid && (networkCapability === "network" || networkCapability === "network_advanced")) {
+					const hasTier2 = await TierManager.hasMinimumTierLevel(String(svrid), 2);
+					if (!hasTier2) {
+						return JSON.stringify({ success: false, error: "TIER_REQUIRED" });
+					}
+				}
+
+				const rate = extensionHttpRate.get(rateKey) || { ts: Date.now(), count: 0 };
+				const now = Date.now();
+				if (now - rate.ts > EXT_HTTP_RATE_WINDOW_MS) {
+					rate.ts = now;
+					rate.count = 0;
+				}
+				rate.count++;
+				extensionHttpRate.set(rateKey, rate);
+				if (rate.count > EXT_HTTP_RATE_MAX) {
+					return JSON.stringify({ success: false, error: "RATE_LIMIT" });
+				}
+
+				const payload = safeParse(payloadJSON);
+				const method = String(payload.method || "GET").toUpperCase();
+				const urlRaw = payload.url;
+				const headers = payload.headers && typeof payload.headers === "object" ? payload.headers : {};
+				const timeoutMs = Math.max(1000, Math.min(parseInt(payload.timeoutMs || EXT_HTTP_DEFAULT_TIMEOUT_MS), 15000));
+				const maxBytes = Math.max(1024, Math.min(parseInt(payload.maxBytes || EXT_HTTP_DEFAULT_MAX_BYTES), EXT_HTTP_DEFAULT_MAX_BYTES));
+				const responseType = ["json", "text"].includes(payload.responseType) ? payload.responseType : "json";
+
+				if (!urlRaw) return JSON.stringify({ success: false, error: "MISSING_URL" });
+				if (!["GET", "POST"].includes(method)) return JSON.stringify({ success: false, error: "METHOD_NOT_ALLOWED" });
+
+				// Inject secrets into headers if requested
+				if (payload.injectSecrets && typeof payload.injectSecrets === "object" && extensionConfigDocument?.secrets) {
+					for (const [headerName, secretId] of Object.entries(payload.injectSecrets)) {
+						const secretValue = extensionConfigDocument.secrets[secretId];
+						if (secretValue) {
+							headers[headerName] = secretValue;
+						}
+					}
+				}
+
+				const allowRes = isAllowedUrl(urlRaw, networkCapability, networkApproved, allowlist);
+				if (!allowRes.ok) return JSON.stringify({ success: false, error: allowRes.error });
+				const url = allowRes.url;
+
+				let body = payload.body;
+				if (typeof body === "object" && body !== null) {
+					body = JSON.stringify(body);
+					headers["content-type"] = headers["content-type"] || "application/json";
+				}
+				if (typeof body === "string" && Buffer.byteLength(body) > EXT_HTTP_MAX_BODY_BYTES) {
+					return JSON.stringify({ success: false, error: "BODY_TOO_LARGE" });
+				}
+
+				headers["user-agent"] = headers["user-agent"] || "SkynetExtensions/1.0";
+
+				const res = await undiciRequest(url.toString(), {
+					method,
+					headers,
+					body: method === "POST" ? body : undefined,
+					maxRedirections: 0,
+					headersTimeout: timeoutMs,
+					bodyTimeout: timeoutMs,
+				});
+
+				let bytes = 0;
+				let text = "";
+				for await (const chunk of res.body) {
+					bytes += chunk.length;
+					if (bytes > maxBytes) {
+						if (res.body && typeof res.body.destroy === "function") res.body.destroy();
+						return JSON.stringify({ success: false, error: "RESPONSE_TOO_LARGE" });
+					}
+					text += chunk.toString("utf8");
+				}
+
+				let json = null;
+				if (responseType === "json") {
+					try {
+						json = JSON.parse(text);
+					} catch (_) {
+						json = null;
+					}
+				}
+
+				return JSON.stringify({
+					success: true,
+					status: res.statusCode,
+					headers: res.headers || {},
+					body: text,
+					json,
+				});
+			} catch (err) {
+				logger.warn("Extension HTTP request failed", {
+					svrid: this.context?.guild?.id,
+					extid: extensionDocument?._id,
+					extv: versionDocument?._id,
+				}, err);
+				return JSON.stringify({ success: false, error: err.message || "HTTP_FAILED" });
+			}
+		}, { async: true });
+
+		await jail.set("__httpRequestCallback__", requestCallback);
+	}
+
+	/**
+	 * Set up callbacks for RCON operations (game server control)
+	 * @param {ivm.Reference} jail
+	 * @private
+	 */
+	async _setupRconCallbacks (jail) {
+		const { serverDocument, versionDocument, extensionConfigDocument } = this.context;
+		const RconManager = require("../../../Modules/RconManager");
+
+		// Get network capability - RCON requires network_advanced
+		const networkCapability = versionDocument?.network_capability || "none";
+		const networkApproved = versionDocument?.network_approved || false;
+
+		const safeParse = (input) => {
+			if (!input) return {};
+			try {
+				return JSON.parse(input);
+			} catch (_) {
+				return {};
+			}
+		};
+
+		const sendCommandCallback = new ivm.Callback(async (payloadJSON) => {
+			try {
+				// RCON requires network_advanced capability and approval
+				if (networkCapability !== "network_advanced") {
+					return JSON.stringify({ success: false, error: "RCON_REQUIRES_NETWORK_ADVANCED" });
+				}
+				if (!networkApproved) {
+					return JSON.stringify({ success: false, error: "NETWORK_NOT_APPROVED" });
+				}
+
+				// Tier 2 required for RCON
+				const svrid = serverDocument?._id;
+				if (svrid) {
+					const TierManager = require("../../../Modules/TierManager");
+					const hasTier2 = await TierManager.hasMinimumTierLevel(String(svrid), 2);
+					if (!hasTier2) {
+						return JSON.stringify({ success: false, error: "TIER_REQUIRED" });
+					}
+				}
+
+				const payload = safeParse(payloadJSON);
+
+				// Get credentials from extension settings (secrets)
+				let host = payload.host;
+				let port = payload.port;
+				let password = payload.password;
+
+				// Allow injecting from secrets
+				if (payload.injectSecrets && extensionConfigDocument?.secrets) {
+					if (payload.injectSecrets.host && extensionConfigDocument.secrets[payload.injectSecrets.host]) {
+						host = extensionConfigDocument.secrets[payload.injectSecrets.host];
+					}
+					if (payload.injectSecrets.port && extensionConfigDocument.secrets[payload.injectSecrets.port]) {
+						port = parseInt(extensionConfigDocument.secrets[payload.injectSecrets.port], 10);
+					}
+					if (payload.injectSecrets.password && extensionConfigDocument.secrets[payload.injectSecrets.password]) {
+						password = extensionConfigDocument.secrets[payload.injectSecrets.password];
+					}
+				}
+
+				const result = await RconManager.sendCommand({
+					type: payload.type || "webrcon",
+					host,
+					port: typeof port === "number" ? port : parseInt(port, 10),
+					password,
+					command: payload.command,
+					serverId: `${svrid || "unknown"}:${extensionConfigDocument?._id || "unknown"}`,
+				});
+
+				return JSON.stringify(result);
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message || "RCON_FAILED" });
+			}
+		}, { async: true });
+
+		const testConnectionCallback = new ivm.Callback(async (payloadJSON) => {
+			try {
+				if (networkCapability !== "network_advanced" || !networkApproved) {
+					return JSON.stringify({ success: false, error: "RCON_NOT_AVAILABLE" });
+				}
+
+				const payload = safeParse(payloadJSON);
+
+				// Get credentials from extension settings (secrets)
+				let host = payload.host;
+				let port = payload.port;
+				let password = payload.password;
+
+				if (payload.injectSecrets && extensionConfigDocument?.secrets) {
+					if (payload.injectSecrets.host && extensionConfigDocument.secrets[payload.injectSecrets.host]) {
+						host = extensionConfigDocument.secrets[payload.injectSecrets.host];
+					}
+					if (payload.injectSecrets.port && extensionConfigDocument.secrets[payload.injectSecrets.port]) {
+						port = parseInt(extensionConfigDocument.secrets[payload.injectSecrets.port], 10);
+					}
+					if (payload.injectSecrets.password && extensionConfigDocument.secrets[payload.injectSecrets.password]) {
+						password = extensionConfigDocument.secrets[payload.injectSecrets.password];
+					}
+				}
+
+				const result = await RconManager.testConnection({
+					type: payload.type || "webrcon",
+					host,
+					port: typeof port === "number" ? port : parseInt(port, 10),
+					password,
+				});
+
+				return JSON.stringify(result);
+			} catch (err) {
+				return JSON.stringify({ success: false, error: err.message || "TEST_FAILED" });
+			}
+		}, { async: true });
+
+		await jail.set("__rconSendCommandCallback__", sendCommandCallback);
+		await jail.set("__rconTestConnectionCallback__", testConnectionCallback);
 	}
 
 	/**
@@ -475,9 +904,9 @@ class IsolatedSandbox {
 		modules.event = { needsCallback: true };
 		if (interaction) modules.interaction = { needsCallback: true };
 		modules.moment = { needsCallback: true };
-		modules.rss = { needsCallback: true };
 		modules.fetch = { needsCallback: true };
 		modules.xmlparser = { needsCallback: true };
+		modules.http = { needsCallback: true };
 
 		// New modules
 		modules.utils = { needsCallback: true };
@@ -488,6 +917,7 @@ class IsolatedSandbox {
 		modules.embed = { needsCallback: true };
 		modules.points = { needsCallback: true };
 		modules.economy = { needsCallback: true }; // Alias for points
+		modules.rcon = { needsCallback: true }; // RCON for game server control
 
 		return modules;
 	}
@@ -505,10 +935,14 @@ class IsolatedSandbox {
 		const Utils = require("./Modules/Utils");
 
 		switch (name) {
-			case "extension":
-				return {
-					store: (extensionConfigDocument && extensionConfigDocument.store && typeof extensionConfigDocument.store === "object") ? JSON.parse(JSON.stringify(extensionConfigDocument.store)) : {},
-				};
+			case "extension": {
+				const extConfig = extensionConfigDocument || {};
+				const store = extConfig.store && typeof extConfig.store === "object" ?
+					JSON.parse(JSON.stringify(extConfig.store)) : {};
+				const settings = extConfig.settings && typeof extConfig.settings === "object" ?
+					JSON.parse(JSON.stringify(extConfig.settings)) : {};
+				return { store, settings };
+			}
 			case "message":
 				if (!msg) throw new SkynetError("UNKNOWN_MODULE", name);
 				return this._serializeMessage(msg);
@@ -531,10 +965,8 @@ class IsolatedSandbox {
 				if (!interaction) throw new SkynetError("UNKNOWN_MODULE", name);
 				return this._serializeInteraction(interaction);
 			case "moment":
-				// Return current timestamp - moment functions can't be passed
 				return { now: Date.now() };
 			case "utils":
-				// Return utility functions
 				return Utils.getSerializableFunctions();
 			case "member":
 				if (!msg || !msg.member) throw new SkynetError("UNKNOWN_MODULE", name);
@@ -548,19 +980,20 @@ class IsolatedSandbox {
 				if (!scopes.includes(Scopes.roles_read.scope)) throw new SkynetError("MISSING_SCOPES");
 				return this._serializeRoles(guild);
 			case "embed":
-				// Return embed builder helper
 				return this._getEmbedHelper();
 			case "points":
 			case "economy": {
-				// Return points/economy module
 				const createPointsModule = require("./Modules/Points");
 				const pointsModule = createPointsModule(this.context, scopes);
 				return this._serializePointsModule(pointsModule);
 			}
+			case "http":
+				return { available: true };
+			case "rcon":
+				return { available: true, types: ["webrcon", "source"] };
 			case "rss":
 			case "fetch":
 			case "xmlparser":
-				// These require async operations - return a marker
 				return { available: false, reason: "Async modules not available in isolated-vm" };
 			default:
 				throw new SkynetError("UNKNOWN_MODULE", name);
@@ -856,7 +1289,7 @@ class IsolatedSandbox {
 					return parseInt(color, 16);
 				}
 				if (Array.isArray(color)) {
-					return (color[0] << 16) + (color[1] << 8) + color[2];
+					return (color[0] * 65536) + (color[1] * 256) + color[2];
 				}
 				return color;
 			},

@@ -1,0 +1,27 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔄 Reverse',
+			description: 'Usage: reverse <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const reversed = utils.text.reverse(text.slice(0, 500));
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔄 Reversed',
+		description: reversed,
+		color: embed.colors.BLUE,
+	})],
+});

@@ -163,14 +163,28 @@ controllers.redeemPoints = async (req, res) => {
 		}
 
 		// Set server tier
-		await TierManager.setServerTier(
-			svr.id,
-			redeemTier._id,
-			"points_redemption",
-			expiresAt,
-			`Redeemed ${requestedDays} days with ${totalCost} points`,
-			userId,
-		);
+		try {
+			const result = await TierManager.setServerTier(
+				svr.id,
+				redeemTier._id,
+				"points_redemption",
+				expiresAt,
+				`Redeemed ${requestedDays} days with ${totalCost} points`,
+				userId,
+			);
+
+			if (!result) {
+				throw new Error("Failed to apply premium tier to server");
+			}
+		} catch (err) {
+			logger.error("Failed to apply tier after point deduction, refunding points", { svrid: svr.id, userId, points: totalCost }, err);
+
+			// Refund points
+			userDoc.query.inc("points", totalCost);
+			await userDoc.save();
+
+			throw new Error("Failed to apply premium tier. Points have been refunded.");
+		}
 
 		logger.info("Server premium redeemed with points", {
 			svrid: svr.id,

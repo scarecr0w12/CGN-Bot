@@ -256,16 +256,16 @@ module.exports = class ModelSQL {
 		let conn;
 		try {
 			conn = await this._getConnection();
-			
+
 			let sql = `SELECT COUNT(*) as count FROM \`${this._tableName}\``;
 			const params = [];
-			
+
 			const { whereClause, whereParams } = this._buildWhereClause(query);
 			if (whereClause) {
 				sql += ` WHERE ${whereClause}`;
 				params.push(...whereParams);
 			}
-			
+
 			const [result] = await conn.query(sql, params);
 			return Number(result.count);
 		} finally {
@@ -308,10 +308,10 @@ module.exports = class ModelSQL {
 		let conn;
 		try {
 			conn = await this._getConnection();
-			
+
 			const setClauses = [];
 			const params = [];
-			
+
 			// Handle $set operator
 			if (update.$set) {
 				for (const [key, value] of Object.entries(update.$set)) {
@@ -319,7 +319,7 @@ module.exports = class ModelSQL {
 					params.push(this._serializeValue(value));
 				}
 			}
-			
+
 			// Handle $inc operator
 			if (update.$inc) {
 				for (const [key, value] of Object.entries(update.$inc)) {
@@ -327,14 +327,14 @@ module.exports = class ModelSQL {
 					params.push(value);
 				}
 			}
-			
+
 			// Handle $unset operator
 			if (update.$unset) {
 				for (const key of Object.keys(update.$unset)) {
 					setClauses.push(`\`${key}\` = NULL`);
 				}
 			}
-			
+
 			// Handle direct field updates (without operators)
 			const operators = ["$set", "$inc", "$unset", "$push", "$pull", "$pullAll"];
 			for (const [key, value] of Object.entries(update)) {
@@ -343,23 +343,23 @@ module.exports = class ModelSQL {
 					params.push(this._serializeValue(value));
 				}
 			}
-			
+
 			if (setClauses.length === 0) {
 				return { modifiedCount: 0 };
 			}
-			
+
 			let sql = `UPDATE \`${this._tableName}\` SET ${setClauses.join(", ")}`;
-			
+
 			const { whereClause, whereParams } = this._buildWhereClause(query);
 			if (whereClause) {
 				sql += ` WHERE ${whereClause}`;
 				params.push(...whereParams);
 			}
-			
+
 			if (!options.multi) {
 				sql += " LIMIT 1";
 			}
-			
+
 			const result = await conn.query(sql, params);
 			return { modifiedCount: Number(result.affectedRows) };
 		} finally {
@@ -431,20 +431,20 @@ module.exports = class ModelSQL {
 		let conn;
 		try {
 			conn = await this._getConnection();
-			
+
 			let sql = `DELETE FROM \`${this._tableName}\``;
 			const params = [];
-			
+
 			const { whereClause, whereParams } = this._buildWhereClause(query);
 			if (whereClause) {
 				sql += ` WHERE ${whereClause}`;
 				params.push(...whereParams);
 			}
-			
+
 			if (!options.multi) {
 				sql += " LIMIT 1";
 			}
-			
+
 			const result = await conn.query(sql, params);
 			return { deletedCount: Number(result.affectedRows) };
 		} finally {
@@ -489,7 +489,7 @@ module.exports = class ModelSQL {
 		// Dot notation - convert to JSON_EXTRACT
 		const parts = field.split(".");
 		const column = parts[0];
-		const jsonPath = "$." + parts.slice(1).join(".");
+		const jsonPath = `$.${parts.slice(1).join(".")}`;
 		return `JSON_UNQUOTE(JSON_EXTRACT(\`${column}\`, '${jsonPath}'))`;
 	}
 
@@ -570,10 +570,12 @@ module.exports = class ModelSQL {
 									// For JSON paths, check if the value is not null
 									const parts = key.split(".");
 									const column = parts[0];
-									const jsonPath = "$." + parts.slice(1).join(".");
-									conditions.push(opValue
-										? `JSON_EXTRACT(\`${column}\`, '${jsonPath}') IS NOT NULL`
-										: `JSON_EXTRACT(\`${column}\`, '${jsonPath}') IS NULL`);
+									const jsonPath = `$.${parts.slice(1).join(".")}`;
+									conditions.push(
+										opValue ?
+											`JSON_EXTRACT(\`${column}\`, '${jsonPath}') IS NOT NULL` :
+											`JSON_EXTRACT(\`${column}\`, '${jsonPath}') IS NULL`,
+									);
 								} else {
 									conditions.push(opValue ? `\`${key}\` IS NOT NULL` : `\`${key}\` IS NULL`);
 								}

@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "Galería de Extensiones",
+		"subtitle": "Explora e instala extensiones creadas por la comunidad",
+		"search": "Buscar extensiones...",
+		"filters": "Filtros",
+		"category": "Categoría",
+		"tags": "Etiquetas",
+		"sort": "Ordenar por",
+		"sortOptions": {
+			"popular": "Más Populares",
+			"recent": "Actualizadas Recientemente",
+			"rating": "Mejor Valoradas",
+			"installs": "Más Instalaciones"
+		},
+		"noResults": "No se encontraron extensiones que coincidan con tus criterios.",
+		"featured": "Destacadas",
+		"trending": "Tendencias",
+		"new": "Nuevas"
+	},
+	"card": {
+		"by": "por {{author}}",
+		"installs": "{{count}} instalación",
+		"installs_plural": "{{count}} instalaciones",
+		"rating": "{{rating}} / 5",
+		"version": "v{{version}}",
+		"install": "Instalar",
+		"installed": "Instalada",
+		"update": "Actualización Disponible",
+		"premium": "Premium",
+		"free": "Gratis",
+		"viewDetails": "Ver Detalles"
+	},
+	"details": {
+		"title": "Detalles de la Extensión",
+		"description": "Descripción",
+		"usage": "Uso",
+		"permissions": "Permisos Requeridos",
+		"changelog": "Historial de Cambios",
+		"reviews": "Reseñas",
+		"author": "Autor",
+		"version": "Versión",
+		"lastUpdated": "Última Actualización",
+		"installs": "Instalaciones Totales",
+		"rating": "Valoración",
+		"category": "Categoría",
+		"tags": "Etiquetas",
+		"source": "Ver Código Fuente",
+		"report": "Reportar Extensión"
+	},
+	"install": {
+		"title": "Instalar Extensión",
+		"confirm": "¿Estás seguro de que quieres instalar **{{name}}**?",
+		"permissions": "Esta extensión requiere los siguientes permisos:",
+		"success": "✅ ¡**{{name}}** ha sido instalada exitosamente!",
+		"failed": "Error al instalar la extensión.",
+		"alreadyInstalled": "Esta extensión ya está instalada.",
+		"incompatible": "Esta extensión no es compatible con tu configuración actual.",
+		"premiumRequired": "Esta extensión requiere una suscripción premium."
+	},
+	"uninstall": {
+		"title": "Desinstalar Extensión",
+		"confirm": "¿Estás seguro de que quieres desinstalar **{{name}}**?",
+		"warning": "Esto eliminará toda la configuración de esta extensión.",
+		"success": "Extensión desinstalada.",
+		"failed": "Error al desinstalar la extensión."
+	},
+	"builder": {
+		"title": "Constructor de Extensiones",
+		"create": "Crear Extensión",
+		"edit": "Editar Extensión",
+		"name": "Nombre de la Extensión",
+		"description": "Descripción",
+		"version": "Versión",
+		"category": "Categoría",
+		"tags": "Etiquetas",
+		"type": "Tipo",
+		"types": {
+			"command": "Comando",
+			"event": "Evento",
+			"slash": "Comando Slash"
+		},
+		"commandKey": "Activador del Comando",
+		"slashDescription": "Descripción del Comando Slash",
+		"code": "Código",
+		"scopes": "Alcances",
+		"timeout": "Tiempo Límite (ms)",
+		"adminLevel": "Nivel de Admin Requerido",
+		"save": "Guardar Borrador",
+		"submit": "Enviar para Revisión",
+		"test": "Probar Extensión",
+		"export": "Exportar",
+		"import": "Importar"
+	},
+	"myExtensions": {
+		"title": "Mis Extensiones",
+		"created": "Creadas",
+		"installed": "Instaladas",
+		"noExtensions": "Aún no has creado ninguna extensión.",
+		"noInstalled": "No has instalado ninguna extensión.",
+		"status": {
+			"draft": "Borrador",
+			"pending": "Pendiente de Revisión",
+			"approved": "Aprobada",
+			"rejected": "Rechazada",
+			"published": "Publicada"
+		}
+	},
+	"review": {
+		"title": "Escribir una Reseña",
+		"rating": "Valoración",
+		"comment": "Comentario",
+		"submit": "Enviar Reseña",
+		"edit": "Editar Reseña",
+		"delete": "Eliminar Reseña",
+		"helpful": "Útil",
+		"report": "Reportar Reseña",
+		"noReviews": "Aún no hay reseñas. ¡Sé el primero en opinar!"
+	},
+	"errors": {
+		"notFound": "Extensión no encontrada.",
+		"loadFailed": "Error al cargar la extensión.",
+		"executionFailed": "Error en la ejecución de la extensión.",
+		"timeout": "La extensión excedió el tiempo límite.",
+		"permissionDenied": "Permiso denegado.",
+		"invalidCode": "Código de extensión inválido.",
+		"scopeNotAllowed": "Esta extensión requiere un alcance que no está permitido."
+	}
+}

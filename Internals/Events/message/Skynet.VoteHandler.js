@@ -1,21 +1,28 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const ConfigManager = require("../../../Modules/ConfigManager");
 const { Colors } = require("../../Constants");
 
 class VoteHandler extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.guild) return false;
 		if (msg.editedAt || msg.type !== "DEFAULT") return false;
-		if (msg.author.id === this.client.user.id || msg.author.bot || this.configJSON.userBlocklist.includes(msg.author.id)) {
+		const isUserBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (msg.author.id === this.client.user.id || msg.author.bot || isUserBlocked) {
 			if (msg.author.id === this.client.user.id) {
 				return false;
 			} else {
-				logger.silly(`Ignored ${msg.author.tag} for vote handler.`, { usrid: msg.author.id, globallyBlocked: this.configJSON.userBlocklist.includes(msg.author.id) });
+				logger.silly(`Ignored ${msg.author.tag} for vote handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
 		return true;
 	}
+
 	async prerequisite (msg) {
+		if (!msg.guild) {
+			this.serverDocument = null;
+			return;
+		}
 		this.serverDocument = await Servers.findOne(msg.guild.id);
 	}
 
@@ -40,7 +47,8 @@ class VoteHandler extends BaseEvent {
 					let voteAction = null;
 
 					// Check for +1 triggers
-					for (const voteTrigger of this.configJS.voteTriggers) {
+					const voteTriggers = this.configJS.voteTriggers || [];
+					for (const voteTrigger of voteTriggers) {
 						if (voteString.startsWith(voteTrigger)) {
 							voteAction = "upvoted";
 							// Increment points and exit loop
@@ -96,7 +104,8 @@ class VoteHandler extends BaseEvent {
 		}
 
 		// Vote based on previous message
-		for (const voteTrigger of this.configJS.voteTriggers) {
+		const voteTriggersPrev = this.configJS.voteTriggers || [];
+		for (const voteTrigger of voteTriggersPrev) {
 			if (msg.content.trim().startsWith(voteTrigger)) {
 				// Get previous message
 				let fetchedMessages = await msg.channel.messages.fetch({ limit: 1, before: msg.id }).catch(err => {

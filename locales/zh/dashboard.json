@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[ZH] Overview",
+		"commands": "[ZH] Commands",
+		"commandList": "[ZH] Command List",
+		"moderation": "[ZH] Moderation",
+		"strikes": "[ZH] Strikes",
+		"filters": "[ZH] Filters",
+		"logs": "[ZH] Logs",
+		"automod": "[ZH] Auto-Moderation",
+		"members": "[ZH] Members",
+		"roles": "[ZH] Roles",
+		"channels": "[ZH] Channels",
+		"extensions": "[ZH] Extensions",
+		"points": "[ZH] Points & Ranks",
+		"settings": "[ZH] Settings",
+		"premium": "[ZH] Premium",
+		"ai": "[ZH] AI Settings"
+	},
+	"overview": {
+		"title": "[ZH] Server Overview",
+		"quickStats": "[ZH] Quick Stats",
+		"members": "[ZH] Members",
+		"channels": "[ZH] Channels",
+		"roles": "[ZH] Roles",
+		"commands": "[ZH] Commands Used",
+		"recentActivity": "[ZH] Recent Activity",
+		"topMembers": "[ZH] Top Members",
+		"serverHealth": "[ZH] Server Health"
+	},
+	"commands": {
+		"title": "[ZH] Command Settings",
+		"enableAll": "[ZH] Enable All",
+		"disableAll": "[ZH] Disable All",
+		"search": "[ZH] Search commands...",
+		"category": "[ZH] Category",
+		"status": "[ZH] Status",
+		"adminLevel": "[ZH] Admin Level",
+		"disabledChannels": "[ZH] Disabled Channels",
+		"enabled": "[ZH] Enabled",
+		"disabled": "[ZH] Disabled",
+		"noCommands": "[ZH] No commands found."
+	},
+	"moderation": {
+		"title": "[ZH] Moderation Settings",
+		"strikes": {
+			"title": "[ZH] Strike System",
+			"description": "[ZH] Configure automatic actions based on strike count.",
+			"threshold": "[ZH] Strike Threshold",
+			"action": "[ZH] Action",
+			"duration": "[ZH] Duration",
+			"actions": {
+				"warn": "[ZH] Warn",
+				"mute": "[ZH] Mute",
+				"kick": "[ZH] Kick",
+				"ban": "[ZH] Ban"
+			}
+		},
+		"filters": {
+			"title": "[ZH] Message Filters",
+			"spam": "[ZH] Spam Filter",
+			"invites": "[ZH] Invite Links",
+			"links": "[ZH] External Links",
+			"caps": "[ZH] Excessive Caps",
+			"mentions": "[ZH] Mass Mentions",
+			"words": "[ZH] Word Blacklist"
+		},
+		"logs": {
+			"title": "[ZH] Moderation Logs",
+			"channel": "[ZH] Log Channel",
+			"events": "[ZH] Logged Events",
+			"messageDelete": "[ZH] Message Deletes",
+			"messageEdit": "[ZH] Message Edits",
+			"memberJoin": "[ZH] Member Joins",
+			"memberLeave": "[ZH] Member Leaves",
+			"memberBan": "[ZH] Member Bans",
+			"roleChanges": "[ZH] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[ZH] Member Management",
+		"search": "[ZH] Search members...",
+		"filter": "[ZH] Filter by role",
+		"sort": "[ZH] Sort by",
+		"actions": "[ZH] Actions",
+		"warn": "[ZH] Warn",
+		"mute": "[ZH] Mute",
+		"kick": "[ZH] Kick",
+		"ban": "[ZH] Ban",
+		"viewProfile": "[ZH] View Profile",
+		"viewStrikes": "[ZH] View Strikes"
+	},
+	"extensions": {
+		"title": "[ZH] Server Extensions",
+		"installed": "[ZH] Installed",
+		"available": "[ZH] Available",
+		"browse": "[ZH] Browse Gallery",
+		"install": "[ZH] Install",
+		"uninstall": "[ZH] Uninstall",
+		"configure": "[ZH] Configure",
+		"enabled": "[ZH] Enabled",
+		"disabled": "[ZH] Disabled",
+		"version": "[ZH] Version",
+		"author": "[ZH] Author",
+		"noExtensions": "[ZH] No extensions installed."
+	},
+	"points": {
+		"title": "[ZH] Points & Ranks",
+		"pointsPerMessage": "[ZH] Points per Message",
+		"cooldown": "[ZH] Cooldown (seconds)",
+		"ranks": "[ZH] Custom Ranks",
+		"addRank": "[ZH] Add Rank",
+		"rankName": "[ZH] Rank Name",
+		"requiredPoints": "[ZH] Required Points",
+		"roleReward": "[ZH] Role Reward",
+		"leaderboard": "[ZH] Leaderboard",
+		"resetPoints": "[ZH] Reset All Points"
+	},
+	"settings": {
+		"title": "[ZH] Server Settings",
+		"general": {
+			"title": "[ZH] General",
+			"prefix": "[ZH] Command Prefix",
+			"language": "[ZH] Language",
+			"timezone": "[ZH] Timezone",
+			"nickname": "[ZH] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[ZH] Welcome Messages",
+			"enabled": "[ZH] Enable Welcome Messages",
+			"channel": "[ZH] Welcome Channel",
+			"message": "[ZH] Welcome Message",
+			"dmEnabled": "[ZH] Send DM",
+			"dmMessage": "[ZH] DM Message"
+		},
+		"leave": {
+			"title": "[ZH] Leave Messages",
+			"enabled": "[ZH] Enable Leave Messages",
+			"channel": "[ZH] Leave Channel",
+			"message": "[ZH] Leave Message"
+		},
+		"admins": {
+			"title": "[ZH] Bot Admins",
+			"description": "[ZH] Users who can manage bot settings",
+			"addAdmin": "[ZH] Add Admin",
+			"level": "[ZH] Admin Level",
+			"levels": {
+				"1": "[ZH] Moderator",
+				"2": "[ZH] Administrator",
+				"3": "[ZH] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[ZH] Premium Features",
+		"currentTier": "[ZH] Current Tier",
+		"upgrade": "[ZH] Upgrade",
+		"features": "[ZH] Available Features",
+		"usage": "[ZH] Usage",
+		"expires": "[ZH] Expires",
+		"neverExpires": "[ZH] Never expires",
+		"redeemCode": "[ZH] Redeem Code",
+		"useVotePoints": "[ZH] Use Vote Points"
+	},
+	"ai": {
+		"title": "[ZH] AI Settings",
+		"enabled": "[ZH] Enable AI Chat",
+		"provider": "[ZH] AI Provider",
+		"model": "[ZH] Model",
+		"channels": "[ZH] Enabled Channels",
+		"personality": "[ZH] Bot Personality",
+		"maxTokens": "[ZH] Max Tokens",
+		"temperature": "[ZH] Temperature",
+		"usage": "[ZH] Monthly Usage",
+		"limit": "[ZH] Monthly Limit"
+	},
+	"common": {
+		"save": "[ZH] Save Changes",
+		"saved": "[ZH] Changes saved!",
+		"saving": "[ZH] Saving...",
+		"reset": "[ZH] Reset to Default",
+		"cancel": "[ZH] Cancel",
+		"confirm": "[ZH] Confirm",
+		"delete": "[ZH] Delete",
+		"edit": "[ZH] Edit",
+		"add": "[ZH] Add",
+		"remove": "[ZH] Remove",
+		"enable": "[ZH] Enable",
+		"disable": "[ZH] Disable",
+		"unsavedChanges": "[ZH] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[ZH] Loading...",
+		"error": "[ZH] An error occurred",
+		"success": "[ZH] Success!"
+	}
+}

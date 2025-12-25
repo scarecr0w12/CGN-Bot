@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[KO] Home",
+		"features": "[KO] Features",
+		"commands": "[KO] Commands",
+		"dashboard": "[KO] Dashboard",
+		"extensions": "[KO] Extensions",
+		"wiki": "[KO] Wiki",
+		"blog": "[KO] Blog",
+		"support": "[KO] Support",
+		"login": "[KO] Login",
+		"logout": "[KO] Logout",
+		"invite": "[KO] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[KO] The Ultimate Discord Bot",
+			"subtitle": "[KO] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[KO] Trusted by {{count}} servers",
+			"addToServer": "[KO] Add to Server",
+			"viewFeatures": "[KO] View Features"
+		},
+		"features": {
+			"title": "[KO] Features",
+			"subtitle": "[KO] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[KO] Moderation",
+				"description": "[KO] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[KO] Fun Commands",
+				"description": "[KO] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[KO] Leveling System",
+				"description": "[KO] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[KO] Custom Extensions",
+				"description": "[KO] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[KO] Music",
+				"description": "[KO] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[KO] AI Chat",
+				"description": "[KO] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[KO] Ready to get started?",
+			"subtitle": "[KO] Add {{botName}} to your server in seconds.",
+			"button": "[KO] Add to Server"
+		},
+		"faq": {
+			"title": "[KO] Frequently Asked Questions",
+			"q1": "[KO] Is {{botName}} free to use?",
+			"a1": "[KO] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[KO] How do I set up the bot?",
+			"a2": "[KO] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[KO] What are Extensions?",
+			"a3": "[KO] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[KO] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[KO] Privacy Policy",
+			"terms": "[KO] Terms of Service",
+			"contact": "[KO] Contact",
+			"status": "[KO] Status"
+		},
+		"social": {
+			"discord": "[KO] Discord",
+			"github": "[KO] GitHub",
+			"twitter": "[KO] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[KO] Login with {{provider}}",
+		"loggingIn": "[KO] Logging in...",
+		"loginSuccess": "[KO] Successfully logged in!",
+		"loginFailed": "[KO] Login failed. Please try again.",
+		"logoutSuccess": "[KO] Successfully logged out.",
+		"welcome": "[KO] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[KO] Profile",
+		"myServers": "[KO] My Servers",
+		"settings": "[KO] Account Settings",
+		"linkedAccounts": "[KO] Linked Accounts",
+		"subscription": "[KO] Subscription",
+		"votePoints": "[KO] Vote Points",
+		"extensions": "[KO] My Extensions"
+	},
+	"servers": {
+		"title": "[KO] Select a Server",
+		"noServers": "[KO] You don't have any servers to manage.",
+		"manage": "[KO] Manage",
+		"notInServer": "[KO] Bot not in server",
+		"invite": "[KO] Invite Bot"
+	},
+	"membership": {
+		"title": "[KO] Premium Membership",
+		"subtitle": "[KO] Unlock powerful features for your server",
+		"currentTier": "[KO] Current Tier",
+		"free": "[KO] Free",
+		"starter": "[KO] Starter",
+		"premium": "[KO] Premium",
+		"enterprise": "[KO] Enterprise",
+		"perMonth": "[KO] /month",
+		"perYear": "[KO] /year",
+		"subscribe": "[KO] Subscribe",
+		"manage": "[KO] Manage Subscription",
+		"features": "[KO] Features",
+		"compare": "[KO] Compare Plans",
+		"faq": "[KO] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[KO] Access Denied",
+			"message": "[KO] You don't have permission to access this page.",
+			"goHome": "[KO] Go to Homepage"
+		},
+		"404": {
+			"title": "[KO] Page Not Found",
+			"message": "[KO] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[KO] Go to Homepage"
+		},
+		"500": {
+			"title": "[KO] Server Error",
+			"message": "[KO] Something went wrong on our end. Please try again later.",
+			"goHome": "[KO] Go to Homepage"
+		}
+	}
+}

@@ -69,6 +69,7 @@ module.exports = class Logger {
 
 		this.sentry = null;
 		if (config.sentry && config.sentry.dsn) {
+			// configJSON now only contains version/branch from env vars
 			const sentryConfig = {
 				dsn: config.sentry.dsn,
 				release: `Skynet.${configJSON.branch}.${configJSON.version}`,

@@ -76,13 +76,15 @@ module.exports = async (req, { res }) => {
 		};
 		if (req.query.q) {
 			const query = req.query.q.toLowerCase();
-			const servers = (await GetGuild.getAll(req.app.client, { strict: true, resolve: "id", parse: "noKeys", findFilter: query })).filter(svrid => !configJSON.activityBlocklist.includes(svrid));
+			const actSettings = await require("../../Modules/ConfigManager").get();
+			const servers = (await GetGuild.getAll(req.app.client, { strict: true, resolve: "id", parse: "noKeys", findFilter: query })).filter(svrid => !actSettings.activityBlocklist.includes(svrid));
 			matchCriteria._id = {
 				$in: servers,
 			};
 		} else {
+			const actSettings2 = await require("../../Modules/ConfigManager").get();
 			matchCriteria._id = {
-				$in: (await Utils.GetValue(req.app.client, "guilds.cache.keys()", "arr", "Array.from")).filter(svrid => !configJSON.activityBlocklist.includes(svrid)),
+				$in: (await Utils.GetValue(req.app.client, "guilds.cache.keys()", "arr", "Array.from")).filter(svrid => !actSettings2.activityBlocklist.includes(svrid)),
 			};
 		}
 		if (req.query.category !== "All") {
@@ -163,6 +165,8 @@ module.exports = async (req, { res }) => {
 			serverData = serverDocuments.map(serverDocument => parsers.serverData(req, serverDocument, webp));
 		}
 		serverData = await Promise.all(serverData);
+		// Filter out null values from failed guild fetches
+		serverData = serverData.filter(server => server !== null);
 		let pageTitle = "Servers";
 		if (req.query.q) {
 			pageTitle = `Search for server "${req.query.q}"`;

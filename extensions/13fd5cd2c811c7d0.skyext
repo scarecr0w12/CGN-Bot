@@ -1,0 +1,70 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const query = command.suffix.trim();
+if (!query) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔍 Anime Search',
+			description: 'Usage: anime <query>\nExample: anime naruto',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/anime?q=' + encodeURIComponent(query) + '&limit=1&sfw=true',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Search',
+			description: 'Failed to fetch anime data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔍 Anime Search',
+			description: 'No results found for: **' + query + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const anime = data[0];
+const synopsis = anime.synopsis ? (anime.synopsis.length > 300 ? anime.synopsis.slice(0, 300) + '...' : anime.synopsis) : 'No synopsis available.';
+
+message.reply({
+	embeds: [embed.create({
+		title: anime.title,
+		url: anime.url,
+		description: synopsis,
+		thumbnail: { url: anime.images?.jpg?.image_url || '' },
+		fields: [
+			{ name: 'Score', value: String(anime.score || 'N/A'), inline: true },
+			{ name: 'Episodes', value: String(anime.episodes || 'N/A'), inline: true },
+			{ name: 'Status', value: anime.status || 'N/A', inline: true },
+			{ name: 'Type', value: anime.type || 'N/A', inline: true },
+			{ name: 'Aired', value: anime.aired?.string || 'N/A', inline: true },
+			{ name: 'Rating', value: anime.rating || 'N/A', inline: true },
+		],
+		color: embed.colors.BLUE,
+		footer: { text: 'Powered by Jikan/MyAnimeList' },
+	})],
+});
+})();

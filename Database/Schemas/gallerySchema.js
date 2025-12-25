@@ -11,6 +11,12 @@ module.exports = new Schema({
 		maxlength: 100,
 		required: true,
 	},
+	slug: {
+		type: String,
+		minlength: 2,
+		maxlength: 60,
+		index: true,
+	},
 	level: {
 		type: String,
 		enum: [
@@ -23,6 +29,7 @@ module.exports = new Schema({
 		type: String,
 		maxlength: 2000,
 	},
+	tags: [String],
 	points: {
 		type: Number,
 		default: 0,
@@ -152,6 +159,98 @@ module.exports = new Schema({
 					value: String,
 				}),
 			],
+			// Network capability level for external API access
+			network_capability: {
+				type: String,
+				enum: [
+					"none", // No external requests (default)
+					"allowlist_only", // Only pre-approved public APIs
+					"network", // Any external HTTPS endpoint (requires approval)
+					"network_advanced", // HTTP + custom ports + webhooks (requires approval)
+				],
+				default: "none",
+			},
+			// Whether network capability has been approved by maintainer
+			network_approved: {
+				type: Boolean,
+				default: false,
+			},
+			network_approved_by: String,
+			network_approved_at: Date,
+			// Approval history for audit trail
+			approval_history: [new Schema({
+				action: {
+					type: String,
+					enum: ["network_approved", "network_revoked", "accepted", "rejected"],
+					required: true,
+				},
+				by: String,
+				at: {
+					type: Date,
+					default: Date.now,
+				},
+				reason: String,
+			})],
+			// Dashboard settings schema (defines what server admins can configure)
+			dashboard_settings: new Schema({
+				enabled: {
+					type: Boolean,
+					default: false,
+				},
+				sections: [new Schema({
+					id: {
+						type: String,
+						required: true,
+					},
+					title: String,
+					fields: [new Schema({
+						id: {
+							type: String,
+							required: true,
+						},
+						type: {
+							type: String,
+							enum: [
+								"text",
+								"textarea",
+								"number",
+								"secret",
+								"toggle",
+								"select",
+								"multi_select",
+								"channel_select",
+								"role_select",
+								"color",
+							],
+							required: true,
+						},
+						label: String,
+						placeholder: String,
+						help: String,
+						required: Boolean,
+						default: Schema.Mixed,
+						min: Number,
+						max: Number,
+						options: [new Schema({
+							value: String,
+							label: String,
+						})],
+					})],
+				})],
+			}),
+			// Dashboard pages (custom pages in server dashboard)
+			dashboard_pages: [new Schema({
+				id: {
+					type: String,
+					required: true,
+				},
+				title: String,
+				icon: String,
+				approved: {
+					type: Boolean,
+					default: false,
+				},
+			})],
 		}),
 	],
 	version: Number,

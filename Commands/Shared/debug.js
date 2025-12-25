@@ -110,8 +110,10 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 				});
 			}
 			if (args.includes("--perms")) {
-				const isMaintainer = configJSON.maintainers.includes(msg.author.id);
-				const isSudoMaintainer = configJSON.sudoMaintainers.includes(msg.author.id);
+				const ConfigManager = require("../../Modules/ConfigManager");
+				const settings = await ConfigManager.get();
+				const isMaintainer = settings.maintainers.includes(msg.author.id);
+				const isSudoMaintainer = settings.sudoMaintainers.includes(msg.author.id);
 				const isHost = process.env.SKYNET_HOST === msg.author.id;
 				if (isHost) {
 					fields.push({
@@ -126,10 +128,10 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 					});
 				} else {
 					const perms = [];
-					Object.keys(configJSON.perms).forEach(perm => {
+					Object.keys(settings.perms).forEach(perm => {
 						if (!isMaintainer) return;
-						if (!isSudoMaintainer && configJSON.perms[perm] === 2) return;
-						if (!isHost && configJSON.perms[perm] === 0) return;
+						if (!isSudoMaintainer && settings.perms[perm] === 2) return;
+						if (!isHost && settings.perms[perm] === 0) return;
 						perms.push(Perms[perm]);
 					});
 					fields.push({

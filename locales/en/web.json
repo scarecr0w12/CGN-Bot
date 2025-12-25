@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "Home",
+		"features": "Features",
+		"commands": "Commands",
+		"dashboard": "Dashboard",
+		"extensions": "Extensions",
+		"wiki": "Wiki",
+		"blog": "Blog",
+		"support": "Support",
+		"login": "Login",
+		"logout": "Logout",
+		"invite": "Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "The Ultimate Discord Bot",
+			"subtitle": "Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "Trusted by {{count}} servers",
+			"addToServer": "Add to Server",
+			"viewFeatures": "View Features"
+		},
+		"features": {
+			"title": "Features",
+			"subtitle": "Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "Moderation",
+				"description": "Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "Fun Commands",
+				"description": "Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "Leveling System",
+				"description": "Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "Custom Extensions",
+				"description": "Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "Music",
+				"description": "High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "AI Chat",
+				"description": "Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "Ready to get started?",
+			"subtitle": "Add {{botName}} to your server in seconds.",
+			"button": "Add to Server"
+		},
+		"faq": {
+			"title": "Frequently Asked Questions",
+			"q1": "Is {{botName}} free to use?",
+			"a1": "Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "How do I set up the bot?",
+			"a2": "Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "What are Extensions?",
+			"a3": "Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "© {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "Privacy Policy",
+			"terms": "Terms of Service",
+			"contact": "Contact",
+			"status": "Status"
+		},
+		"social": {
+			"discord": "Discord",
+			"github": "GitHub",
+			"twitter": "Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "Login with {{provider}}",
+		"loggingIn": "Logging in...",
+		"loginSuccess": "Successfully logged in!",
+		"loginFailed": "Login failed. Please try again.",
+		"logoutSuccess": "Successfully logged out.",
+		"welcome": "Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "Profile",
+		"myServers": "My Servers",
+		"settings": "Account Settings",
+		"linkedAccounts": "Linked Accounts",
+		"subscription": "Subscription",
+		"votePoints": "Vote Points",
+		"extensions": "My Extensions"
+	},
+	"servers": {
+		"title": "Select a Server",
+		"noServers": "You don't have any servers to manage.",
+		"manage": "Manage",
+		"notInServer": "Bot not in server",
+		"invite": "Invite Bot"
+	},
+	"membership": {
+		"title": "Premium Membership",
+		"subtitle": "Unlock powerful features for your server",
+		"currentTier": "Current Tier",
+		"free": "Free",
+		"starter": "Starter",
+		"premium": "Premium",
+		"enterprise": "Enterprise",
+		"perMonth": "/month",
+		"perYear": "/year",
+		"subscribe": "Subscribe",
+		"manage": "Manage Subscription",
+		"features": "Features",
+		"compare": "Compare Plans",
+		"faq": "FAQ"
+	},
+	"error": {
+		"404": {
+			"title": "Page Not Found",
+			"message": "The page you're looking for doesn't exist or has been moved.",
+			"goHome": "Go to Homepage"
+		},
+		"500": {
+			"title": "Server Error",
+			"message": "Something went wrong on our end. Please try again later.",
+			"goHome": "Go to Homepage"
+		},
+		"403": {
+			"title": "Access Denied",
+			"message": "You don't have permission to access this page.",
+			"goHome": "Go to Homepage"
+		}
+	}
+}

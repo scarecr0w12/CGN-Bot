@@ -25,6 +25,7 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 	await svr.fetchProperty("createdAt");
 	if (svr.success) {
 		const owner = req.app.client.users.cache.get(svr.ownerId) || svr.members[svr.ownerId] ? svr.members[svr.ownerId].user : { username: "invalid-user", id: "invalid-user" };
+		const serverListing = serverDocument.config.public_data.server_listing;
 		data = {
 			name: svr.name,
 			id: svr.id,
@@ -40,9 +41,13 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 			rawCreated: moment(svr.createdAt).format(configJS.moment_date_format),
 			relativeCreated: Math.ceil((Date.now() - new Date(svr.createdAt)) / 86400000),
 			command_prefix: req.app.client.getCommandPrefix(svr, serverDocument),
-			category: serverDocument.config.public_data.server_listing.category,
-			description: serverDocument.config.public_data.server_listing.isEnabled ? md.makeHtml(xssFilters.inHTMLData(serverDocument.config.public_data.server_listing.description || "No description provided.")) : null,
-			invite_link: serverDocument.config.public_data.server_listing.isEnabled ? serverDocument.config.public_data.server_listing.invite_link || "javascript:alert('Invite link not available');" : null,
+			category: serverListing.category,
+			description: serverListing.isEnabled ? md.makeHtml(xssFilters.inHTMLData(serverListing.description || "No description provided.")) : null,
+			invite_link: serverListing.isEnabled ? serverListing.invite_link || "javascript:alert('Invite link not available');" : null,
+			// SEO-friendly slug for public server page
+			slug: serverListing.slug || null,
+			// All servers on the activity page have a public profile page
+			hasPublicPage: true,
 		};
 	}
 	return data;
@@ -50,6 +55,8 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 
 
 parsers.userData = async (req, usr, userDocument) => {
+	const ConfigManager = require("../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
 	const botServers = await GetGuild.getAll(req.app.client, { mutualOnlyTo: usr.id, fullResolveMembers: ["OWNER"], parse: "noKeys" });
 	const mutualServers = botServers.sort((a, b) => a.name.localeCompare(b.name));
 	const userProfile = {
@@ -67,9 +74,9 @@ parsers.userData = async (req, usr, userDocument) => {
 		rawLastSeen: userDocument.last_seen ? moment(userDocument.last_seen).format(configJS.moment_date_format) : null,
 		pastNameCount: (userDocument.past_names || {}).length || 0,
 		isAfk: userDocument.afk_message !== undefined && userDocument.afk_message !== "" && userDocument.afk_message !== null,
-		isMaintainer: configJSON.maintainers.includes(usr.id) || configJSON.sudoMaintainers.includes(usr.id),
-		isContributor: configJSON.wikiContributors.includes(usr.id) || configJSON.maintainers.includes(usr.id) || configJSON.sudoMaintainers.includes(usr.id),
-		isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+		isMaintainer: settings.maintainers.includes(usr.id) || settings.sudoMaintainers.includes(usr.id),
+		isContributor: settings.wikiContributors.includes(usr.id) || settings.maintainers.includes(usr.id) || settings.sudoMaintainers.includes(usr.id),
+		isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 		mutualServers: [],
 		mutualServerCount: mutualServers.length,
 	};
@@ -137,8 +144,19 @@ parsers.userData = async (req, usr, userDocument) => {
 parsers.extensionData = async (req, galleryDocument, versionTag) => {
 	// Handle system-owned extensions without Discord API call
 	let owner = {};
+	const creatorStatus = { isFeaturedCreator: false, creatorTier: "bronze" };
 	if (galleryDocument.owner_id && galleryDocument.owner_id !== "system") {
 		owner = await req.app.client.users.fetch(galleryDocument.owner_id, true).catch(() => ({})) || {};
+		// Fetch creator status for badge display
+		try {
+			const ownerDocument = await Users.findOne(galleryDocument.owner_id);
+			if (ownerDocument?.creator_status) {
+				creatorStatus.isFeaturedCreator = ownerDocument.creator_status.is_featured || false;
+				creatorStatus.creatorTier = ownerDocument.creator_status.tier || "bronze";
+			}
+		} catch (_) {
+			// Ignore errors fetching creator status
+		}
 	} else if (galleryDocument.owner_id === "system") {
 		owner = { username: "System", id: "system", displayAvatarURL: () => "/static/img/discord-icon.png" };
 	}
@@ -193,9 +211,18 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		}
 	}
 
+	// Build SEO-friendly URL
+	const extId = galleryDocument._id.toString();
+	const slug = galleryDocument.slug;
+	const installUrl = slug ?
+		`/extensions/${extId}/${slug}/install` :
+		`/extensions/${extId}/install`;
+
 	return {
-		_id: galleryDocument._id.toString(),
+		_id: extId,
 		name: galleryDocument.name,
+		slug: slug || null,
+		installUrl,
 		version: versionTag || galleryDocument.published_version,
 		type: versionDocument.type,
 		typeIcon,
@@ -208,11 +235,14 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 			id: owner.id || "invalid-user",
 			discriminator: owner.discriminator || "0000",
 			avatar: owner.displayAvatarURL() || "/static/img/discord-icon.png",
+			isFeaturedCreator: creatorStatus.isFeaturedCreator,
+			creatorTier: creatorStatus.creatorTier,
 		},
 		status: galleryDocument.state,
 		level: galleryDocument.level,
 		accepted: versionDocument.accepted,
 		points: galleryDocument.points,
+		tags: galleryDocument.tags || [],
 		relativeLastUpdated: moment(galleryDocument.last_updated).fromNow(),
 		rawLastUpdated: moment(galleryDocument.last_updated).format(configJS.moment_date_format),
 		scopes,
@@ -225,6 +255,12 @@ parsers.extensionData = async (req, galleryDocument, versionTag) => {
 		hasPurchased,
 		fields: versionDocument.fields,
 		timeout: versionDocument.timeout,
+		network_capability: versionDocument.network_capability || "none",
+		network_approved: versionDocument.network_approved || false,
+		network_approved_by: versionDocument.network_approved_by || null,
+		network_approved_at: versionDocument.network_approved_at ?
+			moment(versionDocument.network_approved_at).fromNow() : null,
+		dashboard_settings: versionDocument.dashboard_settings || null,
 	};
 };
 

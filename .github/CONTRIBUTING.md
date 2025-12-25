@@ -1,6 +1,6 @@
 # Contributing
 
-**This repository's issues section is only for bug tracking, code contribution, questions about the inner workings of CGN-Bot/design decisions or other code-related purposes. For help on how to use the bot, please visit [our Discord Server](https://discord.gg/GSZfe5sBp6) instead.**
+**This repository's issues section is only for bug tracking, code contribution, questions about the inner workings of CGN-Bot/design decisions or other code-related purposes. For help on how to use the bot, please visit [our Discord Server](https://discord.gg/SE6xHmvKrZ) instead.**
 
 CGN-Bot is open source, as such, anyone can clone, fork, and host their own instance. Before you do so, please make sure you're up-to-date on [our license](https://github.com/scarecr0w12/CGN-Bot/blob/main/LICENSE) and its terms. If you want to contribute to the bot's development, you can help us track down bugs and report them [via our issue tracker](https://github.com/scarecr0w12/CGN-Bot/issues). If you want to contribute to the codebase, make sure you follow [our ESLint rules](https://github.com/scarecr0w12/CGN-Bot/blob/main/.eslintrc.js), your Pull Request must not contain any ESLint errors, or it will not be merged.
 

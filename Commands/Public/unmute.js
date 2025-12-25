@@ -17,7 +17,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 					embeds: [{
 						color: Colors.SOFT_ERR,
 						title: `I'm sorry, but I can't do that... 😔`,
-						description: `I'm missing permissions to unmute that user!\nEither they are above me or I don't have the **Manage Roles** permission.`,
+						description: `I'm missing permissions to unmute that user!\nEither they are above me or I don't have the **Moderate Members** permission.`,
 					}],
 				});
 			}

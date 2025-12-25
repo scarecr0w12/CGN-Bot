@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Support Tickets - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+	<style>
+		.ticket-card {
+			background: white;
+			border-radius: 8px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+			margin-bottom: 1rem;
+			overflow: hidden;
+			transition: box-shadow 0.2s;
+		}
+		.ticket-card:hover {
+			box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+		}
+		.ticket-card-header {
+			padding: 1rem;
+			border-bottom: 1px solid #e5e7eb;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.ticket-card-body {
+			padding: 1rem;
+		}
+		.ticket-card-footer {
+			padding: 0.75rem 1rem;
+			background: #f9fafb;
+			border-top: 1px solid #e5e7eb;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+		.ticket-meta {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+		}
+		.ticket-avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+		}
+		.ticket-user {
+			font-weight: 600;
+			color: #374151;
+		}
+		.ticket-number {
+			font-size: 0.85rem;
+			color: #6b7280;
+			font-family: monospace;
+		}
+		.ticket-subject {
+			font-weight: 600;
+			color: #1f2937;
+			font-size: 1.1rem;
+			margin-bottom: 0.25rem;
+		}
+		.ticket-subject a {
+			color: inherit;
+			text-decoration: none;
+		}
+		.ticket-subject a:hover {
+			color: #3273dc;
+		}
+		.ticket-preview {
+			color: #6b7280;
+			font-size: 0.9rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 500px;
+		}
+		.ticket-time {
+			font-size: 0.8rem;
+			color: #9ca3af;
+		}
+		
+		.status-badge {
+			display: inline-block;
+			padding: 0.25rem 0.75rem;
+			border-radius: 999px;
+			font-size: 0.75rem;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+		.status-open { background: #dbeafe; color: #1d4ed8; }
+		.status-in_progress { background: #fef3c7; color: #d97706; }
+		.status-awaiting_response { background: #e0e7ff; color: #4f46e5; }
+		.status-on_hold { background: #f3f4f6; color: #6b7280; }
+		.status-resolved { background: #d1fae5; color: #059669; }
+		.status-closed { background: #e5e7eb; color: #6b7280; }
+		
+		.priority-badge {
+			display: inline-block;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			font-size: 0.7rem;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+		.priority-low { background: #f3f4f6; color: #6b7280; }
+		.priority-normal { background: #dbeafe; color: #1d4ed8; }
+		.priority-high { background: #fef3c7; color: #d97706; }
+		.priority-urgent { background: #fee2e2; color: #dc2626; }
+		
+		.category-badge {
+			display: inline-block;
+			padding: 0.25rem 0.5rem;
+			border-radius: 4px;
+			font-size: 0.7rem;
+			font-weight: 500;
+		}
+		.category-general { background: #f3f4f6; color: #6b7280; }
+		.category-bug { background: #fef2f2; color: #dc2626; }
+		.category-feature { background: #eff6ff; color: #2563eb; }
+		.category-billing { background: #f0fdf4; color: #16a34a; }
+		.category-account { background: #fefce8; color: #ca8a04; }
+		.category-other { background: #f5f3ff; color: #7c3aed; }
+		
+		.filter-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			margin-bottom: 1rem;
+		}
+		.filter-tag {
+			padding: 0.5rem 1rem;
+			border-radius: 999px;
+			font-size: 0.85rem;
+			border: 1px solid #e5e7eb;
+			background: white;
+			color: #374151;
+			cursor: pointer;
+			transition: all 0.2s;
+			text-decoration: none;
+		}
+		.filter-tag:hover {
+			border-color: #3273dc;
+			color: #3273dc;
+		}
+		.filter-tag.is-active {
+			background: #3273dc;
+			border-color: #3273dc;
+			color: white;
+		}
+		.filter-tag .count {
+			display: inline-block;
+			margin-left: 0.25rem;
+			padding: 0.1rem 0.5rem;
+			background: rgba(0,0,0,0.1);
+			border-radius: 999px;
+			font-size: 0.75rem;
+		}
+		.filter-tag.is-active .count {
+			background: rgba(255,255,255,0.3);
+		}
+		
+		.assigned-badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			font-size: 0.8rem;
+			color: #6b7280;
+		}
+		.assigned-badge.is-assigned {
+			color: #059669;
+		}
+		
+		.message-count {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.25rem;
+			font-size: 0.8rem;
+			color: #6b7280;
+		}
+		
+		.stats-row {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+			flex-wrap: wrap;
+		}
+		.stat-card {
+			background: white;
+			border-radius: 8px;
+			padding: 1rem 1.5rem;
+			box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+			flex: 1;
+			min-width: 150px;
+		}
+		.stat-card .stat-value {
+			font-size: 2rem;
+			font-weight: 700;
+			color: #1f2937;
+		}
+		.stat-card .stat-label {
+			font-size: 0.85rem;
+			color: #6b7280;
+		}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-ticket"></i></span>
+						Support Tickets
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<div class="content">
+								Manage support tickets submitted by users via DM. Assign, respond, and track ticket resolution.
+							</div>
+						</div>
+					</article>
+
+					<!-- Quick Stats -->
+					<div class="stats-row">
+						<div class="stat-card">
+							<div class="stat-value"><%= configData.statusCounts.open || 0 %></div>
+							<div class="stat-label">Open</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-value"><%= configData.statusCounts.in_progress || 0 %></div>
+							<div class="stat-label">In Progress</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-value"><%= configData.statusCounts.awaiting_response || 0 %></div>
+							<div class="stat-label">Awaiting Response</div>
+						</div>
+						<div class="stat-card">
+							<div class="stat-value"><%= (configData.statusCounts.resolved || 0) + (configData.statusCounts.closed || 0) %></div>
+							<div class="stat-label">Resolved</div>
+						</div>
+					</div>
+
+					<!-- Filters -->
+					<div class="box">
+						<div class="columns">
+							<div class="column">
+								<h4 class="subtitle is-6 mb-3">Filter by Status</h4>
+								<div class="filter-tags">
+									<a href="<%= currentPage %>" class="filter-tag <%= !pageData.activeStatus ? 'is-active' : '' %>">All</a>
+									<% configData.statuses.forEach(st => { %>
+									<a href="<%= currentPage %>?status=<%= st %>" class="filter-tag <%= pageData.activeStatus === st ? 'is-active' : '' %>">
+										<%= st.replace(/_/g, ' ') %>
+										<span class="count"><%= configData.statusCounts[st] || 0 %></span>
+									</a>
+									<% }); %>
+								</div>
+							</div>
+						</div>
+						<div class="columns">
+							<div class="column is-half">
+								<h4 class="subtitle is-6 mb-3">Filter by Priority</h4>
+								<div class="filter-tags">
+									<% configData.priorities.forEach(p => { %>
+									<a href="<%= currentPage %>?priority=<%= p %>" class="filter-tag <%= pageData.activePriority === p ? 'is-active' : '' %>">
+										<%= p %>
+										<span class="count"><%= configData.priorityCounts[p] || 0 %></span>
+									</a>
+									<% }); %>
+								</div>
+							</div>
+							<div class="column is-half">
+								<h4 class="subtitle is-6 mb-3">Assignment</h4>
+								<div class="filter-tags">
+									<a href="<%= currentPage %>?assigned=me" class="filter-tag <%= pageData.activeAssigned === 'me' ? 'is-active' : '' %>">
+										<i class="fa fa-user"></i> My Tickets
+									</a>
+									<a href="<%= currentPage %>?assigned=unassigned" class="filter-tag <%= pageData.activeAssigned === 'unassigned' ? 'is-active' : '' %>">
+										<i class="fa fa-user-times"></i> Unassigned
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Tickets List -->
+					<% if (configData.tickets && configData.tickets.length > 0) { %>
+						<% configData.tickets.forEach(ticket => { %>
+						<div class="ticket-card" data-id="<%= ticket._id %>">
+							<div class="ticket-card-header">
+								<div class="ticket-meta">
+									<img src="<%= ticket.user_avatar %>" alt="" class="ticket-avatar">
+									<div>
+										<div class="ticket-subject">
+											<a href="/dashboard/maintainer/tickets/<%= ticket._id %>">
+												<%= ticket.subject %>
+											</a>
+										</div>
+										<div>
+											<span class="ticket-number">#<%= ticket.ticket_number %></span>
+											<span class="ticket-user">&bull; <%= ticket.username %></span>
+										</div>
+									</div>
+								</div>
+								<div>
+									<span class="status-badge status-<%= ticket.status %>"><%= ticket.status.replace(/_/g, ' ') %></span>
+									<span class="priority-badge priority-<%= ticket.priority %>"><%= ticket.priority %></span>
+									<span class="category-badge category-<%= ticket.category %>"><%= ticket.category %></span>
+								</div>
+							</div>
+							<div class="ticket-card-body">
+								<p class="ticket-preview"><%= ticket.last_message_preview || 'No messages yet' %></p>
+							</div>
+							<div class="ticket-card-footer">
+								<div>
+									<span class="message-count">
+										<i class="fa fa-comments"></i> <%= ticket.message_count || 0 %> messages
+									</span>
+									<% if (ticket.assigned_to) { %>
+									<span class="assigned-badge is-assigned">
+										<i class="fa fa-user-check"></i> <%= ticket.assigned_to_username || 'Assigned' %>
+									</span>
+									<% } else { %>
+									<span class="assigned-badge">
+										<i class="fa fa-user-times"></i> Unassigned
+									</span>
+									<% } %>
+								</div>
+								<div>
+									<span class="ticket-time">
+										<i class="fa fa-clock"></i>
+										<%= new Date(ticket.last_activity_at || ticket.created_at).toLocaleDateString() %>
+										<%= new Date(ticket.last_activity_at || ticket.created_at).toLocaleTimeString() %>
+									</span>
+									<a href="/dashboard/maintainer/tickets/<%= ticket._id %>" class="button is-small is-primary ml-2">
+										<span class="icon"><i class="fa fa-eye"></i></span>
+										<span>View</span>
+									</a>
+								</div>
+							</div>
+						</div>
+						<% }); %>
+					<% } else { %>
+					<article class="message is-embedded-message">
+						<div class="message-header">
+							<p>
+								<span class="icon"><i class="fa fa-inbox"></i></span>
+								No Tickets Found
+							</p>
+						</div>
+						<div class="message-body">
+							<% if (pageData.activeStatus || pageData.activePriority || pageData.activeCategory || pageData.activeAssigned) { %>
+							No tickets match your current filters. <a href="<%= currentPage %>">Clear filters</a> to see all tickets.
+							<% } else { %>
+							No support tickets have been created yet. Users can create tickets by DMing the bot with "ticket" or using the /ticket command.
+							<% } %>
+						</div>
+					</article>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

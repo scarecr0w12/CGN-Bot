@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[PL] Overview",
+		"commands": "[PL] Commands",
+		"commandList": "[PL] Command List",
+		"moderation": "[PL] Moderation",
+		"strikes": "[PL] Strikes",
+		"filters": "[PL] Filters",
+		"logs": "[PL] Logs",
+		"automod": "[PL] Auto-Moderation",
+		"members": "[PL] Members",
+		"roles": "[PL] Roles",
+		"channels": "[PL] Channels",
+		"extensions": "[PL] Extensions",
+		"points": "[PL] Points & Ranks",
+		"settings": "[PL] Settings",
+		"premium": "[PL] Premium",
+		"ai": "[PL] AI Settings"
+	},
+	"overview": {
+		"title": "[PL] Server Overview",
+		"quickStats": "[PL] Quick Stats",
+		"members": "[PL] Members",
+		"channels": "[PL] Channels",
+		"roles": "[PL] Roles",
+		"commands": "[PL] Commands Used",
+		"recentActivity": "[PL] Recent Activity",
+		"topMembers": "[PL] Top Members",
+		"serverHealth": "[PL] Server Health"
+	},
+	"commands": {
+		"title": "[PL] Command Settings",
+		"enableAll": "[PL] Enable All",
+		"disableAll": "[PL] Disable All",
+		"search": "[PL] Search commands...",
+		"category": "[PL] Category",
+		"status": "[PL] Status",
+		"adminLevel": "[PL] Admin Level",
+		"disabledChannels": "[PL] Disabled Channels",
+		"enabled": "[PL] Enabled",
+		"disabled": "[PL] Disabled",
+		"noCommands": "[PL] No commands found."
+	},
+	"moderation": {
+		"title": "[PL] Moderation Settings",
+		"strikes": {
+			"title": "[PL] Strike System",
+			"description": "[PL] Configure automatic actions based on strike count.",
+			"threshold": "[PL] Strike Threshold",
+			"action": "[PL] Action",
+			"duration": "[PL] Duration",
+			"actions": {
+				"warn": "[PL] Warn",
+				"mute": "[PL] Mute",
+				"kick": "[PL] Kick",
+				"ban": "[PL] Ban"
+			}
+		},
+		"filters": {
+			"title": "[PL] Message Filters",
+			"spam": "[PL] Spam Filter",
+			"invites": "[PL] Invite Links",
+			"links": "[PL] External Links",
+			"caps": "[PL] Excessive Caps",
+			"mentions": "[PL] Mass Mentions",
+			"words": "[PL] Word Blacklist"
+		},
+		"logs": {
+			"title": "[PL] Moderation Logs",
+			"channel": "[PL] Log Channel",
+			"events": "[PL] Logged Events",
+			"messageDelete": "[PL] Message Deletes",
+			"messageEdit": "[PL] Message Edits",
+			"memberJoin": "[PL] Member Joins",
+			"memberLeave": "[PL] Member Leaves",
+			"memberBan": "[PL] Member Bans",
+			"roleChanges": "[PL] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[PL] Member Management",
+		"search": "[PL] Search members...",
+		"filter": "[PL] Filter by role",
+		"sort": "[PL] Sort by",
+		"actions": "[PL] Actions",
+		"warn": "[PL] Warn",
+		"mute": "[PL] Mute",
+		"kick": "[PL] Kick",
+		"ban": "[PL] Ban",
+		"viewProfile": "[PL] View Profile",
+		"viewStrikes": "[PL] View Strikes"
+	},
+	"extensions": {
+		"title": "[PL] Server Extensions",
+		"installed": "[PL] Installed",
+		"available": "[PL] Available",
+		"browse": "[PL] Browse Gallery",
+		"install": "[PL] Install",
+		"uninstall": "[PL] Uninstall",
+		"configure": "[PL] Configure",
+		"enabled": "[PL] Enabled",
+		"disabled": "[PL] Disabled",
+		"version": "[PL] Version",
+		"author": "[PL] Author",
+		"noExtensions": "[PL] No extensions installed."
+	},
+	"points": {
+		"title": "[PL] Points & Ranks",
+		"pointsPerMessage": "[PL] Points per Message",
+		"cooldown": "[PL] Cooldown (seconds)",
+		"ranks": "[PL] Custom Ranks",
+		"addRank": "[PL] Add Rank",
+		"rankName": "[PL] Rank Name",
+		"requiredPoints": "[PL] Required Points",
+		"roleReward": "[PL] Role Reward",
+		"leaderboard": "[PL] Leaderboard",
+		"resetPoints": "[PL] Reset All Points"
+	},
+	"settings": {
+		"title": "[PL] Server Settings",
+		"general": {
+			"title": "[PL] General",
+			"prefix": "[PL] Command Prefix",
+			"language": "[PL] Language",
+			"timezone": "[PL] Timezone",
+			"nickname": "[PL] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[PL] Welcome Messages",
+			"enabled": "[PL] Enable Welcome Messages",
+			"channel": "[PL] Welcome Channel",
+			"message": "[PL] Welcome Message",
+			"dmEnabled": "[PL] Send DM",
+			"dmMessage": "[PL] DM Message"
+		},
+		"leave": {
+			"title": "[PL] Leave Messages",
+			"enabled": "[PL] Enable Leave Messages",
+			"channel": "[PL] Leave Channel",
+			"message": "[PL] Leave Message"
+		},
+		"admins": {
+			"title": "[PL] Bot Admins",
+			"description": "[PL] Users who can manage bot settings",
+			"addAdmin": "[PL] Add Admin",
+			"level": "[PL] Admin Level",
+			"levels": {
+				"1": "[PL] Moderator",
+				"2": "[PL] Administrator",
+				"3": "[PL] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[PL] Premium Features",
+		"currentTier": "[PL] Current Tier",
+		"upgrade": "[PL] Upgrade",
+		"features": "[PL] Available Features",
+		"usage": "[PL] Usage",
+		"expires": "[PL] Expires",
+		"neverExpires": "[PL] Never expires",
+		"redeemCode": "[PL] Redeem Code",
+		"useVotePoints": "[PL] Use Vote Points"
+	},
+	"ai": {
+		"title": "[PL] AI Settings",
+		"enabled": "[PL] Enable AI Chat",
+		"provider": "[PL] AI Provider",
+		"model": "[PL] Model",
+		"channels": "[PL] Enabled Channels",
+		"personality": "[PL] Bot Personality",
+		"maxTokens": "[PL] Max Tokens",
+		"temperature": "[PL] Temperature",
+		"usage": "[PL] Monthly Usage",
+		"limit": "[PL] Monthly Limit"
+	},
+	"common": {
+		"save": "[PL] Save Changes",
+		"saved": "[PL] Changes saved!",
+		"saving": "[PL] Saving...",
+		"reset": "[PL] Reset to Default",
+		"cancel": "[PL] Cancel",
+		"confirm": "[PL] Confirm",
+		"delete": "[PL] Delete",
+		"edit": "[PL] Edit",
+		"add": "[PL] Add",
+		"remove": "[PL] Remove",
+		"enable": "[PL] Enable",
+		"disable": "[PL] Disable",
+		"unsavedChanges": "[PL] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[PL] Loading...",
+		"error": "[PL] An error occurred",
+		"success": "[PL] Success!"
+	}
+}

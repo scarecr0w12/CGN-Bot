@@ -1,0 +1,124 @@
+{
+	"tiers": {
+		"free": {
+			"name": "Gratis",
+			"description": "Funciones básicas para todos"
+		},
+		"starter": {
+			"name": "Inicial",
+			"description": "Funciones premium esenciales"
+		},
+		"premium": {
+			"name": "Premium",
+			"description": "Funciones avanzadas para servidores en crecimiento"
+		},
+		"enterprise": {
+			"name": "Empresarial",
+			"description": "Todo para grandes comunidades"
+		}
+	},
+	"features": {
+		"title": "Funciones Premium",
+		"music": {
+			"title": "Sistema de Música",
+			"description": "Reproducción de música de alta calidad con controles de DJ y filtros de audio"
+		},
+		"ai": {
+			"title": "Chat IA",
+			"description": "Conversaciones inteligentes impulsadas por múltiples proveedores de IA"
+		},
+		"tickets": {
+			"title": "Sistema de Tickets",
+			"description": "Gestión profesional de tickets de soporte"
+		},
+		"devTools": {
+			"title": "Herramientas de Desarrollo",
+			"description": "Ejecución de código, linting y herramientas de depuración"
+		},
+		"analytics": {
+			"title": "Analíticas Avanzadas",
+			"description": "Estadísticas detalladas del servidor e información"
+		},
+		"customBot": {
+			"title": "Bot Personalizado",
+			"description": "Tu propia instancia de bot con tu marca"
+		},
+		"prioritySupport": {
+			"title": "Soporte Prioritario",
+			"description": "Soporte rápido de nuestro equipo"
+		},
+		"unlimitedStorage": {
+			"title": "Almacenamiento Ilimitado",
+			"description": "Sin límites en registros de mensajes y datos"
+		}
+	},
+	"subscription": {
+		"title": "Suscripción",
+		"current": "Plan Actual",
+		"upgrade": "Mejorar",
+		"downgrade": "Reducir",
+		"cancel": "Cancelar Suscripción",
+		"renews": "Se renueva el {{date}}",
+		"expires": "Expira el {{date}}",
+		"cancelled": "Suscripción cancelada",
+		"active": "Activa",
+		"inactive": "Inactiva",
+		"lifetime": "De por vida"
+	},
+	"checkout": {
+		"title": "Pago",
+		"selectPlan": "Selecciona un Plan",
+		"billingCycle": "Ciclo de Facturación",
+		"monthly": "Mensual",
+		"yearly": "Anual",
+		"yearlyDiscount": "Ahorra {{percent}}% con anual",
+		"price": "{{price}}/{{period}}",
+		"total": "Total",
+		"payWith": "Pagar con",
+		"processing": "Procesando pago...",
+		"success": "¡Pago exitoso! Gracias por suscribirte.",
+		"failed": "Pago fallido. Por favor intenta de nuevo.",
+		"cancelled": "Pago cancelado."
+	},
+	"votePoints": {
+		"title": "Puntos de Voto",
+		"balance": "Tu Balance",
+		"earn": "Ganar Puntos",
+		"redeem": "Canjear Puntos",
+		"history": "Historial de Puntos",
+		"vote": "Vota por {{botName}}",
+		"voteReward": "+{{points}} puntos",
+		"weekendBonus": "¡Bonus de fin de semana: 2x puntos!",
+		"redeemTier": "Canjear por {{tier}} ({{duration}})",
+		"redeemSuccess": "¡Canjeaste exitosamente {{points}} puntos por {{tier}}!",
+		"insufficientPoints": "No tienes suficientes puntos.",
+		"voteAgain": "Puedes votar de nuevo en {{time}}",
+		"streak": "Racha de Votos: {{count}} días",
+		"streakBonus": "Bonus de Racha: +{{bonus}}%"
+	},
+	"trial": {
+		"title": "Prueba Gratuita",
+		"start": "Iniciar Prueba Gratuita",
+		"active": "Prueba Activa",
+		"daysLeft": "{{days}} días restantes",
+		"expired": "Prueba Expirada",
+		"upgrade": "Mejora para continuar usando las funciones premium"
+	},
+	"gift": {
+		"title": "Regalar Premium",
+		"send": "Enviar como Regalo",
+		"redeem": "Canjear Código de Regalo",
+		"code": "Código de Regalo",
+		"recipient": "Destinatario",
+		"message": "Mensaje (opcional)",
+		"success": "¡Regalo enviado exitosamente!",
+		"redeemed": "¡Código de regalo canjeado! Disfruta {{tier}} por {{duration}}.",
+		"invalid": "Código de regalo inválido o expirado."
+	},
+	"limits": {
+		"reached": "Has alcanzado el límite para esta función.",
+		"upgrade": "Mejora a {{tier}} para límites más altos.",
+		"current": "Actual: {{used}}/{{limit}}",
+		"unlimited": "Ilimitado"
+	}
+}

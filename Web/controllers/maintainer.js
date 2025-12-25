@@ -1,6 +1,7 @@
 const path = require("path");
 const showdown = require("showdown");
 const ObjectId = require("../../Database/ObjectID");
+const ConfigManager = require("../../Modules/ConfigManager");
 // Feedback model is available via global.Feedback (initialized in Driver.js)
 const md = new showdown.Converter({
 	tables: true,
@@ -57,6 +58,7 @@ controllers.maintainer = async (req, { res }) => {
 	}
 
 	const trafficData = await req.app.client.traffic.data();
+	// configJSON now only contains version/branch from env
 	const version = await req.app.client.central.API("versions").branch(configJSON.branch).get(configJSON.version)
 		.catch(() => null);
 	let checkData = version && await version.check();
@@ -113,7 +115,7 @@ controllers.servers.list = async (req, { res }) => {
 			renderPage();
 		} else if (req.query.block !== undefined) {
 			req.app.client.IPC.send("leaveGuild", data[parseInt(req.query.i)].id);
-			configJSON.guildBlocklist.push(data[parseInt(req.query.i)].id);
+			await ConfigManager.blockGuild(data[parseInt(req.query.i)].id);
 			save(req, res, true, true);
 			renderPage();
 		} else if (req.query.message) {
@@ -128,12 +130,13 @@ controllers.servers.list = async (req, { res }) => {
 };
 
 controllers.servers.list.post = async (req, res) => {
-	if (req.body.removeFromActivity && !configJSON.activityBlocklist.includes(req.body.removeFromActivity)) {
-		configJSON.activityBlocklist.push(req.body.removeFromActivity);
+	const settings = await ConfigManager.get();
+	if (req.body.removeFromActivity && !settings.activityBlocklist.includes(req.body.removeFromActivity)) {
+		await ConfigManager.update({ activityBlocklist: [...settings.activityBlocklist, req.body.removeFromActivity] });
 	}
 	if (req.body.unbanFromActivity) {
-		const index = configJSON.activityBlocklist.indexOf(req.body.unbanFromActivity);
-		if (index > -1) configJSON.activityBlocklist.splice(index, 1);
+		const updatedList = settings.activityBlocklist.filter(id => id !== req.body.unbanFromActivity);
+		await ConfigManager.update({ activityBlocklist: updatedList });
 	}
 	save(req, res, true);
 };
@@ -435,8 +438,9 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 };
 
 controllers.options.blocklist = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		global_blocklist: await Promise.all(configJSON.userBlocklist.map(async a => {
+		global_blocklist: await Promise.all(settings.userBlocklist.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {};
 			return {
 				name: usr.username,
@@ -447,72 +451,77 @@ controllers.options.blocklist = async (req, { res }) => {
 	}).setPageData("page", "maintainer-blocklist.ejs").render();
 };
 controllers.options.blocklist.post = async (req, res) => {
+	const settings = await ConfigManager.get();
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 
-		if (usr && !configJSON.userBlocklist.includes(usr.id ? usr.id : usr._id) && !configJSON.maintainers.includes(usr.id ? usr.id : usr._id)) {
-			configJSON.userBlocklist.push(usr.id ? usr.id : usr._id);
+		const userId = usr.id ? usr.id : usr._id;
+		if (usr && !settings.userBlocklist.includes(userId) && !settings.maintainers.includes(userId)) {
+			await ConfigManager.blockUser(userId);
 		}
 	} else {
-		configJSON.userBlocklist.forEach(usrid => {
-			if (req.body[`block-${usrid}-removed`] !== undefined) {
-				configJSON.userBlocklist.splice(configJSON.userBlocklist.indexOf(usrid), 1);
-			}
-		});
+		const toRemove = settings.userBlocklist.filter(usrid => req.body[`block-${usrid}-removed`] !== undefined);
+		for (const usrid of toRemove) {
+			await ConfigManager.unblockUser(usrid);
+		}
 	}
 
 	save(req, res);
 };
 
 controllers.options.bot = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		status: configJSON.status,
-		type: configJSON.activity.type,
-		game: configJSON.activity.name,
-		game_default: configJSON.activity.name === "default",
-		twitchURL: configJSON.activity.twitchURL,
+		status: settings.botStatus,
+		type: settings.botActivity.type,
+		game: settings.botActivity.name,
+		game_default: settings.botActivity.name === "default",
+		twitchURL: settings.botActivity.twitchURL,
 		avatar: req.app.client.user.avatarURL({ type: "png", size: 512 }),
 	}).setPageData("page", "maintainer-bot-user.ejs").render();
 };
 controllers.options.bot.post = async (req, res) => {
 	req.app.client.IPC.send("updateBotUser", {
-		avatar: req.body.avatar,
-		username: req.body.username,
 		game: req.body.game,
 		status: req.body.status,
 		type: req.body.type,
 		twitchURL: req.body.twitch,
 	});
-	configJSON.activity.name = req.body.game;
-	configJSON.activity.type = req.body.type;
-	configJSON.activity.twitchURL = req.body.twitch;
-	if (req.body.game === "skynetbot.com") {
-		configJSON.activity.name = "default";
-	}
-	if (req.body.status) configJSON.status = req.body.status;
+	const updates = {
+		botActivity: {
+			name: req.body.game === "skynetbot.com" ? "default" : req.body.game,
+			type: req.body.type,
+			twitchURL: req.body.twitch,
+		},
+	};
+	if (req.body.status) updates.botStatus = req.body.status;
+	await ConfigManager.update(updates);
 	save(req, res, true);
 };
 
 controllers.options.homepage = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		headerImage: configJSON.headerImage,
-		homepageMessageHTML: configJSON.homepageMessageHTML,
+		headerImage: settings.headerImage,
+		homepageMessageHTML: settings.homepageMessageHTML,
 	}).setPageData({
 		dirname: path.join(__dirname, "../public/img/"),
 		page: "maintainer-homepage.ejs",
 	}).render();
 };
 controllers.options.homepage.post = async (req, res) => {
-	configJSON.homepageMessageHTML = req.body.homepageMessageHTML;
-	configJSON.headerImage = req.body.header_image;
-
+	await ConfigManager.update({
+		homepageMessageHTML: req.body.homepageMessageHTML,
+		headerImage: req.body.header_image,
+	});
 	save(req, res, true);
 };
 
 controllers.options.contributors = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		wiki_contributors: await Promise.all(configJSON.maintainers.map(async a => {
+		wiki_contributors: await Promise.all(settings.maintainers.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -522,9 +531,9 @@ controllers.options.contributors = async (req, { res }) => {
 				id: usr.id,
 				avatar: usr.avatarURL ? usr.displayAvatarURL() || "/static/img/discord-icon.png" : "/static/img/discord-icon.png",
 				isMaintainer: true,
-				isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+				isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 			};
-		}).concat(configJSON.wikiContributors.map(async a => {
+		}).concat(settings.wikiContributors.map(async a => {
 			const usr = await req.app.client.users.fetch(a, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -536,21 +545,22 @@ controllers.options.contributors = async (req, { res }) => {
 			};
 		}))),
 	}).setPageData({
-		showRemove: configJSON.maintainers.includes(req.user.id),
+		showRemove: settings.maintainers.includes(req.user.id),
 		page: "maintainer-wiki-contributors.ejs",
 	}).render();
 };
 controllers.options.contributors.post = async (req, res) => {
+	const settings = await ConfigManager.get();
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 		if (!usr.id) usr.id = usr._id;
-		if (usr && !configJSON.wikiContributors.includes(usr.id)) {
-			configJSON.wikiContributors.push(usr.id);
+		if (usr && !settings.wikiContributors.includes(usr.id)) {
+			await ConfigManager.update({ wikiContributors: [...settings.wikiContributors, usr.id] });
 		}
 	} else {
-		const i = configJSON.wikiContributors.indexOf(req.body["contributor-removed"]);
-		configJSON.wikiContributors.splice(i, 1);
+		const updated = settings.wikiContributors.filter(id => id !== req.body["contributor-removed"]);
+		await ConfigManager.update({ wikiContributors: updated });
 	}
 
 	save(req, res);
@@ -686,36 +696,61 @@ controllers.options.botLists.post = async (req, res) => {
 	// WRITE operation - create if needed (will be saved below with actual data)
 	const siteSettings = await getSiteSettingsForWrite();
 
-	// Ensure nested objects exist for bot_lists
-	if (!siteSettings.bot_lists) siteSettings.bot_lists = {};
-	if (!siteSettings.bot_lists.topgg) siteSettings.bot_lists.topgg = {};
-	if (!siteSettings.bot_lists.discordbotlist) siteSettings.bot_lists.discordbotlist = {};
+	// Build complete bot_lists object to avoid nested query.set issues
+	const botLists = {
+		topgg: {
+			isEnabled: req.body.topgg_enabled === "on",
+			api_token: req.body.topgg_api_token || "",
+			webhook_secret: req.body.topgg_webhook_secret || "",
+			auto_post_stats: req.body.topgg_auto_post !== "off",
+		},
+		discordbotlist: {
+			isEnabled: req.body.dbl_enabled === "on",
+			api_token: req.body.dbl_api_token || "",
+			webhook_secret: req.body.dbl_webhook_secret || "",
+			auto_post_stats: req.body.dbl_auto_post !== "off",
+			sync_commands: req.body.dbl_sync_commands === "on",
+		},
+		discordbotsgg: {
+			isEnabled: req.body.discordbotsgg_enabled === "on",
+			api_token: req.body.discordbotsgg_api_token || "",
+			auto_post_stats: req.body.discordbotsgg_auto_post !== "off",
+		},
+		discordlistgg: {
+			isEnabled: req.body.discordlistgg_enabled === "on",
+			api_token: req.body.discordlistgg_api_token || "",
+			auto_post_stats: req.body.discordlistgg_auto_post !== "off",
+		},
+		botsondiscord: {
+			isEnabled: req.body.botsondiscord_enabled === "on",
+			api_token: req.body.botsondiscord_api_token || "",
+			auto_post_stats: req.body.botsondiscord_auto_post !== "off",
+		},
+		topbotlist: {
+			isEnabled: req.body.topbotlist_enabled === "on",
+			api_token: req.body.topbotlist_api_token || "",
+			webhook_secret: req.body.topbotlist_webhook_secret || "",
+			auto_post_stats: req.body.topbotlist_auto_post !== "off",
+			sync_commands: req.body.topbotlist_sync_commands === "on",
+		},
+	};
 
-	// Update top.gg settings
-	siteSettings.query.set("bot_lists.topgg.isEnabled", req.body.topgg_enabled === "on");
-	siteSettings.query.set("bot_lists.topgg.api_token", req.body.topgg_api_token || "");
-	siteSettings.query.set("bot_lists.topgg.webhook_secret", req.body.topgg_webhook_secret || "");
-	siteSettings.query.set("bot_lists.topgg.auto_post_stats", req.body.topgg_auto_post !== "off");
+	// Build complete vote_rewards object (simplified - per-tier points costs are now on tiers)
+	const voteRewards = {
+		isEnabled: req.body.rewards_enabled === "on",
+		points_per_vote: parseInt(req.body.points_per_vote) || 100,
+		weekend_multiplier: parseInt(req.body.weekend_multiplier) || 2,
+		notification_channel_id: req.body.notification_channel_id || "",
+		redemption: {
+			isEnabled: req.body.redemption_enabled === "on",
+			min_redemption_days: parseInt(req.body.min_redemption_days) || 7,
+			max_redemption_days: parseInt(req.body.max_redemption_days) || 365,
+		},
+	};
 
-	// Update discordbotlist settings
-	siteSettings.query.set("bot_lists.discordbotlist.isEnabled", req.body.dbl_enabled === "on");
-	siteSettings.query.set("bot_lists.discordbotlist.api_token", req.body.dbl_api_token || "");
-	siteSettings.query.set("bot_lists.discordbotlist.webhook_secret", req.body.dbl_webhook_secret || "");
-	siteSettings.query.set("bot_lists.discordbotlist.auto_post_stats", req.body.dbl_auto_post !== "off");
-	siteSettings.query.set("bot_lists.discordbotlist.sync_commands", Boolean(req.body.dbl_sync_commands === "on"));
-
-	// Update vote rewards settings
-	siteSettings.query.set("vote_rewards.isEnabled", req.body.rewards_enabled === "on");
-	siteSettings.query.set("vote_rewards.points_per_vote", parseInt(req.body.points_per_vote) || 100);
-	siteSettings.query.set("vote_rewards.weekend_multiplier", parseInt(req.body.weekend_multiplier) || 2);
-	siteSettings.query.set("vote_rewards.notification_channel_id", req.body.notification_channel_id || "");
-
-	// Update redemption settings
-	siteSettings.query.set("vote_rewards.redemption.isEnabled", req.body.redemption_enabled === "on");
-	siteSettings.query.set("vote_rewards.redemption.points_per_dollar", parseInt(req.body.points_per_dollar) || 1000);
-	siteSettings.query.set("vote_rewards.redemption.redeemable_tier_id", req.body.redeemable_tier_id || "");
-	siteSettings.query.set("vote_rewards.redemption.min_redemption_days", parseInt(req.body.min_redemption_days) || 7);
-	siteSettings.query.set("vote_rewards.redemption.max_redemption_days", parseInt(req.body.max_redemption_days) || 365);
+	// Set entire objects at once to avoid nested path issues
+	siteSettings.query.set("bot_lists", botLists);
+	siteSettings.query.set("vote_rewards", voteRewards);
 
 	try {
 		await siteSettings.save();
@@ -857,6 +892,7 @@ controllers.membership.tiers.post = async (req, res) => {
 	const badges = req.body.tier_badge ? Array.isArray(req.body.tier_badge) ? req.body.tier_badge : [req.body.tier_badge] : [];
 	const pricesMonthly = req.body.tier_price_monthly ? Array.isArray(req.body.tier_price_monthly) ? req.body.tier_price_monthly : [req.body.tier_price_monthly] : [];
 	const discountsYearly = req.body.tier_yearly_discount ? Array.isArray(req.body.tier_yearly_discount) ? req.body.tier_yearly_discount : [req.body.tier_yearly_discount] : [];
+	const pointsCosts = req.body.tier_points_cost ? Array.isArray(req.body.tier_points_cost) ? req.body.tier_points_cost : [req.body.tier_points_cost] : [];
 	const featuresList = req.body.tier_features ? Array.isArray(req.body.tier_features) ? req.body.tier_features : [req.body.tier_features] : [];
 	const purchasableList = req.body.tier_purchasable ? Array.isArray(req.body.tier_purchasable) ? req.body.tier_purchasable : [req.body.tier_purchasable] : [];
 	const defaultTier = req.body.tier_default || "";
@@ -872,8 +908,9 @@ controllers.membership.tiers.post = async (req, res) => {
 				description: descriptions[i] || "",
 				color: colors[i] || "#3273dc",
 				badge_icon: badges[i] || "",
-				price_monthly: parseInt(pricesMonthly[i]) || 0,
+				price_monthly: parseFloat(pricesMonthly[i]) || 0,
 				yearly_discount: parseInt(discountsYearly[i]) || 0,
+				points_cost: parseInt(pointsCosts[i]) || 0,
 				features: featuresList[i] ? featuresList[i].split(",").filter(f => f) : [],
 				is_purchasable: purchasableList.includes(ids[i]) || purchasableList.includes(`new_${i}`),
 				is_default: defaultTier === ids[i] || defaultTier === `new_${i}`,
@@ -1024,37 +1061,42 @@ controllers.membership.servers = async (req, { res }) => {
 	// READ operation - never create/save, use defaults if not found
 	const siteSettings = await getSiteSettingsForRead();
 
-	const searchResults = [];
-	const query = req.query.q;
+	const query = req.query.q || "";
+	const perPage = 20;
+	const currentPage = Math.max(1, parseInt(req.query.page) || 1);
 
+	// Get all guilds from cache
+	let allGuilds = Array.from(req.app.client.guilds.cache.values());
+
+	// Apply search filter
 	if (query) {
-		// Search by server ID first (exact match)
-		const directServer = await Servers.findOne(query);
-		if (directServer) {
-			const discordGuild = await req.app.client.guilds.fetch(query).catch(() => null);
-			searchResults.push({
-				...directServer,
-				name: discordGuild?.name || "Unknown Server",
-				icon: discordGuild?.iconURL() || null,
-				memberCount: discordGuild?.memberCount || 0,
-			});
-		} else {
-			// If not found by ID, search through bot's cached guilds by name
-			const matchingGuilds = req.app.client.guilds.cache
-				.filter(g => g.name.toLowerCase().includes(query.toLowerCase()))
-				.first(10);
+		const lowerQuery = query.toLowerCase();
+		allGuilds = allGuilds.filter(g =>
+			g.id === query || g.name.toLowerCase().includes(lowerQuery),
+		);
+	}
 
-			for (const guild of matchingGuilds) {
-				const serverDoc = await Servers.findOne(guild.id);
-				searchResults.push({
-					_id: guild.id,
-					subscription: serverDoc?.subscription || null,
-					name: guild.name,
-					icon: guild.iconURL() || null,
-					memberCount: guild.memberCount || 0,
-				});
-			}
-		}
+	// Sort by member count descending
+	allGuilds.sort((a, b) => b.memberCount - a.memberCount);
+
+	const totalServers = allGuilds.length;
+	const numPages = Math.ceil(totalServers / perPage);
+
+	// Paginate
+	const startIndex = (currentPage - 1) * perPage;
+	const paginatedGuilds = allGuilds.slice(startIndex, startIndex + perPage);
+
+	// Fetch subscription data for paginated servers
+	const servers = [];
+	for (const guild of paginatedGuilds) {
+		const serverDoc = await Servers.findOne(guild.id);
+		servers.push({
+			_id: guild.id,
+			subscription: serverDoc?.subscription || null,
+			name: guild.name,
+			icon: guild.iconURL() || null,
+			memberCount: guild.memberCount || 0,
+		});
 	}
 
 	// Get recent subscription changes - query servers that have subscription data
@@ -1069,7 +1111,7 @@ controllers.membership.servers = async (req, { res }) => {
 		recentSubscriptions = recentSubscriptions
 			.filter(s => s.subscription?.started_at)
 			.sort((a, b) => new Date(b.subscription.started_at) - new Date(a.subscription.started_at))
-			.slice(0, 20);
+			.slice(0, 10);
 	} catch {
 		// Fallback if query fails
 		recentSubscriptions = [];
@@ -1086,7 +1128,11 @@ controllers.membership.servers = async (req, { res }) => {
 		features: siteSettings?.features || [],
 	}).setPageData({
 		query,
-		searchResults,
+		servers,
+		totalServers,
+		currentPageNum: currentPage,
+		numPages,
+		perPage,
 		recentSubscriptions,
 		page: "maintainer-servers.ejs",
 	}).render();
@@ -1142,11 +1188,86 @@ controllers.membership.servers.cancel = async (req, res) => {
 	}
 };
 
+// Email Configuration
+controllers.membership.email = async (req, { res }) => {
+	if (req.level !== 2 && req.level !== 0) return res.redirect("/dashboard/maintainer");
+
+	const siteSettings = await getSiteSettingsForRead();
+
+	res.setConfigData({
+		email: siteSettings?.email || {},
+	}).setPageData({
+		page: "maintainer-email.ejs",
+	}).render();
+};
+
+controllers.membership.email.post = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
+	const siteSettings = await getSiteSettingsForWrite();
+
+	// Provider settings
+	siteSettings.query.set("email.isEnabled", req.body.email_enabled === "on");
+	siteSettings.query.set("email.provider", req.body.email_provider || "smtp");
+
+	// Sender settings
+	siteSettings.query.set("email.from_name", req.body.from_name || "");
+	siteSettings.query.set("email.from_email", req.body.from_email || "");
+	siteSettings.query.set("email.admin_email", req.body.admin_email || "");
+
+	// Branding
+	siteSettings.query.set("email.brand_color", req.body.brand_color || "#3273dc");
+	siteSettings.query.set("email.logo_url", req.body.logo_url || "");
+	siteSettings.query.set("email.footer_text", req.body.footer_text || "");
+
+	// Notification preferences
+	siteSettings.query.set("email.notifications.send_receipts", req.body.send_receipts === "on");
+	siteSettings.query.set("email.notifications.send_subscription_alerts", req.body.send_subscription_alerts === "on");
+	siteSettings.query.set("email.notifications.send_expiry_reminders", req.body.send_expiry_reminders === "on");
+	siteSettings.query.set("email.notifications.expiry_reminder_days", parseInt(req.body.expiry_reminder_days) || 7);
+	siteSettings.query.set("email.notifications.send_admin_alerts", req.body.send_admin_alerts === "on");
+
+	try {
+		await siteSettings.save();
+		const TierManager = require("../../Modules/TierManager");
+		await TierManager.invalidateCache();
+		res.redirect(req.originalUrl);
+	} catch (err) {
+		logger.error("Failed to save email settings", {}, err);
+		renderError(res, "Failed to save email settings.");
+	}
+};
+
+controllers.membership.email.test = async (req, res) => {
+	if (req.level !== 2 && req.level !== 0) return res.status(403).json({ error: "Forbidden" });
+
+	const { email } = req.body;
+	if (!email) {
+		return res.status(400).json({ error: "Email address required" });
+	}
+
+	try {
+		const EmailService = require("../../Modules/EmailService");
+		const emailService = new EmailService(req.app.client);
+		const result = await emailService.sendTestEmail(email);
+
+		if (result.success) {
+			res.json({ success: true, messageId: result.messageId });
+		} else {
+			res.status(400).json({ success: false, error: result.error });
+		}
+	} catch (err) {
+		logger.error("Failed to send test email", { email }, err);
+		res.status(500).json({ success: false, error: err.message });
+	}
+};
+
 controllers.management = {};
 
 controllers.management.maintainers = async (req, { res }) => {
+	const settings = await ConfigManager.get();
 	res.setConfigData({
-		maintainers: await Promise.all(configJSON.maintainers.map(async id => {
+		maintainers: await Promise.all(settings.maintainers.map(async id => {
 			const usr = await req.app.client.users.fetch(id, true) || {
 				id: "invalid-user",
 				username: "invalid-user",
@@ -1155,54 +1276,60 @@ controllers.management.maintainers = async (req, { res }) => {
 				name: usr.username,
 				id: usr.id,
 				avatar: usr.avatarURL ? usr.displayAvatarURL() || "/static/img/discord-icon.png" : "/static/img/discord-icon.png",
-				isSudoMaintainer: configJSON.sudoMaintainers.includes(usr.id),
+				isSudoMaintainer: settings.sudoMaintainers.includes(usr.id),
 			};
 		})),
-		perms: configJSON.perms,
+		perms: settings.perms,
 	}).setPageData("page", "maintainer-maintainers.ejs").render();
 };
 controllers.management.maintainers.post = async (req, res) => {
 	if (req.level !== 2 && req.level !== 0) return res.sendStatus(403);
+
 	if (req.body["new-user"]) {
 		let usr = await Users.findOne({ username: req.body["new-user"] });
 		if (!usr) usr = await req.app.client.users.fetch(req.body["new-user"], true);
 		if (!usr.id) usr.id = usr._id;
 
-		if (usr && !configJSON.maintainers.includes(usr.id)) {
-			configJSON.maintainers.push(usr.id);
-		}
-		if (usr && req.body.isSudo === "true" && !configJSON.sudoMaintainers.includes(usr.id)) {
-			configJSON.sudoMaintainers.push(usr.id);
+		if (usr) {
+			await ConfigManager.addMaintainer(usr.id, req.body.isSudo === "true");
 		}
 	} else {
 		if (req.body[`maintainer-removed`]) {
-			configJSON.maintainers[configJSON.maintainers.indexOf(req.body[`maintainer-removed`])] = null;
-			configJSON.sudoMaintainers[configJSON.sudoMaintainers.indexOf(req.body[`maintainer-removed`])] = null;
+			await ConfigManager.removeMaintainer(req.body[`maintainer-removed`]);
 		}
 		if (req.body[`maintainer-sudo`]) {
-			if (configJSON.sudoMaintainers.includes(req.body[`maintainer-sudo`])) configJSON.sudoMaintainers[configJSON.sudoMaintainers.indexOf(req.body[`maintainer-sudo`])] = null;
-			else configJSON.sudoMaintainers.push(req.body[`maintainer-sudo`]);
+			// Toggle sudo status
+			const updatedSettings = await ConfigManager.get();
+			if (updatedSettings.sudoMaintainers.includes(req.body[`maintainer-sudo`])) {
+				const newSudoList = updatedSettings.sudoMaintainers.filter(id => id !== req.body[`maintainer-sudo`]);
+				await ConfigManager.update({ sudoMaintainers: newSudoList });
+			} else {
+				await ConfigManager.update({ sudoMaintainers: [...updatedSettings.sudoMaintainers, req.body[`maintainer-sudo`]] });
+			}
 		}
 
-		configJSON.maintainers.spliceNullElements();
-		configJSON.sudoMaintainers.spliceNullElements();
-
+		// Handle permission updates
 		const perms = Object.keys(req.body).filter(param => param.startsWith("perm-"));
-		perms.forEach(perm => {
-			const value = req.body[perm];
-			[, perm] = perm.split("-");
-			if (configJSON.perms[perm] === 0 && process.env.SKYNET_HOST !== req.user.id) return;
-			switch (value) {
-				case "sudo":
-					configJSON.perms[perm] = 2;
-					break;
-				case "host":
-					configJSON.perms[perm] = 0;
-					break;
-				default:
-					configJSON.perms[perm] = 1;
-			}
-		});
+		if (perms.length > 0) {
+			const currentSettings = await ConfigManager.get();
+			const newPerms = { ...currentSettings.perms };
+			perms.forEach(permKey => {
+				const value = req.body[permKey];
+				const [, perm] = permKey.split("-");
+				if (currentSettings.perms[perm] === 0 && process.env.SKYNET_HOST !== req.user.id) return;
+				switch (value) {
+					case "sudo":
+						newPerms[perm] = 2;
+						break;
+					case "host":
+						newPerms[perm] = 0;
+						break;
+					default:
+						newPerms[perm] = 1;
+				}
+			});
+			await ConfigManager.update({ perms: newPerms });
+		}
 	}
 
 	if (req.body["additional-perms"]) return save(req, res, true);
@@ -1287,6 +1414,7 @@ controllers.management.version = async (req, { res }) => {
 			installedVersion: version,
 			utd: checkData.utd,
 			isDownloaded,
+			devMode: process.env.DEV_MODE === "true" || process.env.DEV_MODE === "1",
 			page: "maintainer-version.ejs",
 		}).setConfigData({
 			version: configJSON.version,
@@ -1349,8 +1477,10 @@ controllers.management.version.socket = async socket => {
 				socket.emit("installLog", log);
 			});
 			version.on("installFinish", async () => {
-				configJSON.version = version.tag;
-				configJSON.branch = version.branch;
+				// NOTE: Version/branch are now read-only from env vars (BOT_VERSION, BOT_BRANCH)
+				// After installing a new version, update your .env file and restart the bot
+				// The old configJSON.version/branch writes are no longer needed
+				logger.info(`Version ${version.tag} installed. Update BOT_VERSION and BOT_BRANCH env vars and restart.`);
 				socket.request.app = socket.route.router.app;
 				await save(socket.request, null, true, true);
 				socket.emit("installFinish");
@@ -1372,7 +1502,7 @@ controllers.management.eval = async (req, { res }) => {
 controllers.management.eval.post = async (req, res) => {
 	if (req.body.code && req.body.target) {
 		const result = await req.app.client.IPC.send("evaluate", { code: req.body.code, target: req.body.target });
-		res.send(JSON.stringify(result));
+		res.json(result);
 		logger.info(`Maintainer ${req.user.username} executed JavaScript from the Maintainer Console!`, { maintainer: req.user.id, code: req.body.code, target: req.body.target });
 	} else {
 		res.sendStatus(400);
@@ -1536,6 +1666,679 @@ controllers.feedback.submit = async (req, res) => {
 		res.status(500).json({ error: "Failed to submit feedback" });
 	}
 };
+
+// ============================================
+// TICKETS SYSTEM CONTROLLERS
+// ============================================
+
+controllers.tickets = {};
+
+/**
+ * Get next ticket number (auto-increment)
+ */
+const getNextTicketNumber = async () => {
+	// For MongoDB, we use a counter document
+	// For SQL, we use the ticket_counters table
+	try {
+		const result = await global.Tickets.aggregate([
+			{ $group: { _id: null, maxNumber: { $max: "$ticket_number" } } },
+		]);
+		return (result && result[0] && result[0].maxNumber ? result[0].maxNumber : 0) + 1;
+	} catch {
+		// Fallback: count existing tickets
+		const tickets = await global.Tickets.find({}).limit(1).sort({ ticket_number: -1 })
+			.exec();
+		return tickets && tickets.length > 0 ? (tickets[0].ticket_number || 0) + 1 : 1;
+	}
+};
+
+controllers.tickets.list = async (req, { res }) => {
+	const status = req.query.status || "";
+	const priority = req.query.priority || "";
+	const category = req.query.category || "";
+	const assignedTo = req.query.assigned || "";
+
+	// Build filter
+	const filter = {};
+	if (status) filter.status = status;
+	if (priority) filter.priority = priority;
+	if (category) filter.category = category;
+	if (assignedTo === "me") filter.assigned_to = req.user.id;
+	else if (assignedTo === "unassigned") filter.assigned_to = null;
+
+	// Get tickets sorted by last activity (newest first)
+	const tickets = await global.Tickets.find(filter)
+		.sort({ last_activity_at: -1 })
+		.limit(100)
+		.exec();
+
+	// Get counts per status and priority
+	const statusCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$status", count: { $sum: 1 } } },
+	]);
+	const priorityCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$priority", count: { $sum: 1 } } },
+	]);
+	const categoryCounts = await global.Tickets.aggregate([
+		{ $group: { _id: "$category", count: { $sum: 1 } } },
+	]);
+
+	// Enrich tickets with user avatars
+	for (const ticket of tickets) {
+		try {
+			const user = await req.app.client.users.fetch(ticket.user_id, true).catch(() => null);
+			ticket.user_avatar = user?.displayAvatarURL() || ticket.user_avatar || "/static/img/discord-icon.png";
+			ticket.username = ticket.username || user?.username || "Unknown";
+		} catch {
+			ticket.user_avatar = ticket.user_avatar || "/static/img/discord-icon.png";
+		}
+	}
+
+	// Get maintainers for assignment dropdown
+	const siteConfig = await ConfigManager.get();
+	const maintainers = await Promise.all(siteConfig.maintainers.map(async id => {
+		try {
+			const user = await req.app.client.users.fetch(id, true).catch(() => null);
+			return { id, username: user?.username || "Unknown" };
+		} catch {
+			return { id, username: "Unknown" };
+		}
+	}));
+
+	res.setConfigData({
+		tickets,
+		statusCounts: statusCounts.reduce((acc, s) => { acc[s._id] = s.count; return acc; }, {}),
+		priorityCounts: priorityCounts.reduce((acc, p) => { acc[p._id] = p.count; return acc; }, {}),
+		categoryCounts: categoryCounts.reduce((acc, c) => { acc[c._id] = c.count; return acc; }, {}),
+		statuses: ["open", "in_progress", "awaiting_response", "on_hold", "resolved", "closed"],
+		priorities: ["low", "normal", "high", "urgent"],
+		categories: ["general", "bug", "feature", "billing", "account", "other"],
+		maintainers,
+	}).setPageData({
+		activeStatus: status,
+		activePriority: priority,
+		activeCategory: category,
+		activeAssigned: assignedTo,
+		page: "maintainer-tickets.ejs",
+	}).render();
+};
+
+controllers.tickets.view = async (req, { res }) => {
+	const ticketId = req.params.ticketId;
+
+	const ticket = await global.Tickets.findOne(ticketId);
+	if (!ticket) {
+		return res.redirect("/dashboard/maintainer/tickets");
+	}
+
+	// Get messages for this ticket
+	const messages = await global.TicketMessages.find({ ticket_id: ticketId })
+		.sort({ created_at: 1 })
+		.exec();
+
+	// Enrich messages with avatars
+	for (const msg of messages) {
+		try {
+			const user = await req.app.client.users.fetch(msg.author_id, true).catch(() => null);
+			msg.author_avatar = user?.displayAvatarURL() || msg.author_avatar || "/static/img/discord-icon.png";
+			msg.author_username = msg.author_username || user?.username || "Unknown";
+		} catch {
+			msg.author_avatar = msg.author_avatar || "/static/img/discord-icon.png";
+		}
+	}
+
+	// Enrich ticket with user avatar
+	try {
+		const user = await req.app.client.users.fetch(ticket.user_id, true).catch(() => null);
+		ticket.user_avatar = user?.displayAvatarURL() || ticket.user_avatar || "/static/img/discord-icon.png";
+		ticket.username = ticket.username || user?.username || "Unknown";
+	} catch {
+		ticket.user_avatar = ticket.user_avatar || "/static/img/discord-icon.png";
+	}
+
+	// Get maintainers for assignment dropdown
+	const siteConfig = await ConfigManager.get();
+	const maintainers = await Promise.all(siteConfig.maintainers.map(async id => {
+		try {
+			const user = await req.app.client.users.fetch(id, true).catch(() => null);
+			return { id, username: user?.username || "Unknown" };
+		} catch {
+			return { id, username: "Unknown" };
+		}
+	}));
+
+	res.setConfigData({
+		ticket,
+		messages,
+		statuses: ["open", "in_progress", "awaiting_response", "on_hold", "resolved", "closed"],
+		priorities: ["low", "normal", "high", "urgent"],
+		categories: ["general", "bug", "feature", "billing", "account", "other"],
+		maintainers,
+	}).setPageData({
+		page: "maintainer-ticket-view.ejs",
+	}).render();
+};
+
+controllers.tickets.update = async (req, res) => {
+	const { id, status, priority, category, assigned_to: assignedTo, internal_notes: internalNotes, resolution_notes: resolutionNotes } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		const changes = [];
+
+		if (status && status !== ticket.status) {
+			ticket.query.set("status", status);
+			changes.push(`Status changed to ${status}`);
+			if (status === "closed" || status === "resolved") {
+				ticket.query.set("closed_at", new Date());
+			}
+		}
+		if (priority && priority !== ticket.priority) {
+			ticket.query.set("priority", priority);
+			changes.push(`Priority changed to ${priority}`);
+		}
+		if (category && category !== ticket.category) {
+			ticket.query.set("category", category);
+			changes.push(`Category changed to ${category}`);
+		}
+		if (assignedTo !== undefined) {
+			if (assignedTo === "" || assignedTo === "unassign") {
+				ticket.query.set("assigned_to", null);
+				ticket.query.set("assigned_to_username", "");
+				changes.push("Ticket unassigned");
+			} else if (assignedTo !== ticket.assigned_to) {
+				ticket.query.set("assigned_to", assignedTo);
+				// Fetch assignee username
+				try {
+					const user = await req.app.client.users.fetch(assignedTo, true).catch(() => null);
+					ticket.query.set("assigned_to_username", user?.username || "");
+					changes.push(`Assigned to ${user?.username || assignedTo}`);
+				} catch {
+					ticket.query.set("assigned_to_username", "");
+				}
+			}
+		}
+		if (internalNotes !== undefined) {
+			ticket.query.set("internal_notes", internalNotes);
+		}
+		if (resolutionNotes !== undefined) {
+			ticket.query.set("resolution_notes", resolutionNotes);
+		}
+
+		ticket.query.set("updated_at", new Date());
+		ticket.query.set("last_activity_at", new Date());
+
+		await ticket.save();
+
+		// Add system message for status changes if any
+		if (changes.length > 0) {
+			const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+			await global.TicketMessages.create({
+				_id: messageId,
+				ticket_id: id,
+				author_id: req.user.id,
+				author_username: req.user.username,
+				is_staff: true,
+				content: changes.join(". "),
+				is_system_message: true,
+				created_at: new Date(),
+			});
+		}
+
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to update ticket", { id }, err);
+		res.status(500).json({ error: "Failed to update ticket" });
+	}
+};
+
+controllers.tickets.reply = async (req, res) => {
+	const { id, content } = req.body;
+
+	if (!id || !content) {
+		return res.status(400).json({ error: "Ticket ID and content required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		// Create the message
+		const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		await global.TicketMessages.create({
+			_id: messageId,
+			ticket_id: id,
+			author_id: req.user.id,
+			author_username: req.user.username,
+			author_avatar: req.user.avatar ? `https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png` : "",
+			is_staff: true,
+			content: content.substring(0, 4000),
+			is_system_message: false,
+			created_at: new Date(),
+		});
+
+		// Update ticket
+		ticket.query.set("message_count", (ticket.message_count || 0) + 1);
+		ticket.query.set("last_message_preview", content.substring(0, 100));
+		ticket.query.set("last_activity_at", new Date());
+		ticket.query.set("updated_at", new Date());
+		if (ticket.status === "awaiting_response") {
+			ticket.query.set("status", "in_progress");
+		}
+		await ticket.save();
+
+		// Send DM to user if we have a channel
+		if (ticket.dm_channel_id) {
+			try {
+				const user = await req.app.client.users.fetch(ticket.user_id);
+				if (user) {
+					await user.send({
+						embeds: [{
+							color: 0x3273dc,
+							author: {
+								name: `Support Reply - Ticket #${ticket.ticket_number}`,
+								icon_url: req.app.client.user.displayAvatarURL(),
+							},
+							description: content.substring(0, 2000),
+							footer: { text: "Reply to this message to continue the conversation" },
+							timestamp: new Date().toISOString(),
+						}],
+					}).catch(() => null);
+				}
+			} catch (dmErr) {
+				logger.debug("Could not send DM to ticket user", { userId: ticket.user_id }, dmErr);
+			}
+		}
+
+		res.json({ success: true, messageId });
+	} catch (err) {
+		logger.error("Failed to reply to ticket", { id }, err);
+		res.status(500).json({ error: "Failed to reply to ticket" });
+	}
+};
+
+controllers.tickets.close = async (req, res) => {
+	const { id, resolution_notes: resolutionNotes } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		const ticket = await global.Tickets.findOne(id);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		ticket.query.set("status", "closed");
+		ticket.query.set("closed_at", new Date());
+		ticket.query.set("updated_at", new Date());
+		if (resolutionNotes) {
+			ticket.query.set("resolution_notes", resolutionNotes);
+		}
+		await ticket.save();
+
+		// Add system message
+		const messageId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		await global.TicketMessages.create({
+			_id: messageId,
+			ticket_id: id,
+			author_id: req.user.id,
+			author_username: req.user.username,
+			is_staff: true,
+			content: `Ticket closed${resolutionNotes ? `: ${resolutionNotes}` : ""}`,
+			is_system_message: true,
+			created_at: new Date(),
+		});
+
+		// Notify user
+		try {
+			const user = await req.app.client.users.fetch(ticket.user_id);
+			if (user) {
+				await user.send({
+					embeds: [{
+						color: 0x48c774,
+						title: `Ticket #${ticket.ticket_number} Closed`,
+						description: resolutionNotes || "Your support ticket has been resolved and closed.",
+						footer: { text: "Thank you for contacting support!" },
+						timestamp: new Date().toISOString(),
+					}],
+				}).catch(() => null);
+			}
+		} catch {
+			// Ignore DM errors
+		}
+
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to close ticket", { id }, err);
+		res.status(500).json({ error: "Failed to close ticket" });
+	}
+};
+
+controllers.tickets.delete = async (req, res) => {
+	const { id } = req.body;
+
+	if (!id) {
+		return res.status(400).json({ error: "Ticket ID required" });
+	}
+
+	try {
+		// Delete messages first
+		await global.TicketMessages.delete({ ticket_id: id });
+		// Delete ticket
+		await global.Tickets.delete({ _id: id });
+		res.json({ success: true });
+	} catch (err) {
+		logger.error("Failed to delete ticket", { id }, err);
+		res.status(500).json({ error: "Failed to delete ticket" });
+	}
+};
+
+controllers.tickets.transcript = async (req, res) => {
+	const ticketId = req.params.ticketId;
+
+	try {
+		const ticket = await global.Tickets.findOne(ticketId);
+		if (!ticket) {
+			return res.status(404).json({ error: "Ticket not found" });
+		}
+
+		const messages = await global.TicketMessages.find({ ticket_id: ticketId })
+			.sort({ created_at: 1 })
+			.exec();
+
+		// Generate text transcript
+		let transcript = `=== TICKET #${ticket.ticket_number} TRANSCRIPT ===\n`;
+		transcript += `Subject: ${ticket.subject}\n`;
+		transcript += `Category: ${ticket.category}\n`;
+		transcript += `Status: ${ticket.status}\n`;
+		transcript += `Priority: ${ticket.priority}\n`;
+		transcript += `User: ${ticket.username} (${ticket.user_id})\n`;
+		transcript += `Created: ${new Date(ticket.created_at).toISOString()}\n`;
+		if (ticket.assigned_to) transcript += `Assigned to: ${ticket.assigned_to_username}\n`;
+		if (ticket.closed_at) transcript += `Closed: ${new Date(ticket.closed_at).toISOString()}\n`;
+		transcript += `\n${"=".repeat(50)}\n\n`;
+
+		for (const msg of messages) {
+			const date = new Date(msg.created_at).toISOString();
+			const author = msg.is_staff ? `[STAFF] ${msg.author_username}` : msg.author_username;
+			const prefix = msg.is_system_message ? "[SYSTEM] " : "";
+			transcript += `[${date}] ${prefix}${author}:\n${msg.content}\n\n`;
+		}
+
+		transcript += `\n${"=".repeat(50)}\n`;
+		transcript += `End of transcript - Generated ${new Date().toISOString()}\n`;
+
+		res.setHeader("Content-Type", "text/plain");
+		res.setHeader("Content-Disposition", `attachment; filename="ticket-${ticket.ticket_number}-transcript.txt"`);
+		res.send(transcript);
+	} catch (err) {
+		logger.error("Failed to generate transcript", { ticketId }, err);
+		res.status(500).json({ error: "Failed to generate transcript" });
+	}
+};
+
+// Export getNextTicketNumber for use in DM handler
+controllers.tickets.getNextTicketNumber = getNextTicketNumber;
+
+// ============================================
+// EXTENSION QUEUE CONTROLLER
+// ============================================
+
+controllers.extensionQueue = async (req, { res }) => {
+	const parsers = require("../parsers");
+	const fs = require("fs");
+
+	try {
+		// Find extensions in queue state
+		const queueDocs = await Gallery.find({
+			state: { $in: ["queue", "version_queue"] },
+		}).sort({ last_updated: -1 }).exec();
+
+		const extensions = [];
+		let networkPendingCount = 0;
+
+		for (const doc of queueDocs) {
+			const versionTag = doc.version;
+			const versionDoc = doc.versions.id(versionTag);
+			if (!versionDoc) continue;
+
+			// Count network pending
+			const netCap = versionDoc.network_capability;
+			if (netCap && ["network", "network_advanced"].includes(netCap) && !versionDoc.network_approved) {
+				networkPendingCount++;
+			}
+
+			// Parse extension data
+			const extData = await parsers.extensionData(req, doc, versionTag);
+
+			// Try to read the code
+			let code = "";
+			try {
+				const codePath = path.join(__dirname, `../../extensions/${versionDoc.code_id}.skyext`);
+				code = fs.readFileSync(codePath, "utf8");
+			} catch (_) {
+				code = "// Code file not found";
+			}
+
+			extensions.push({
+				...extData,
+				code,
+				network_capability: netCap,
+				network_approved: versionDoc.network_approved,
+			});
+		}
+
+		res.setPageData({
+			page: "maintainer-extension-queue.ejs",
+			extensions,
+			queueCount: extensions.length,
+			networkPendingCount,
+		}).render();
+	} catch (err) {
+		logger.error("Failed to fetch extension queue", {}, err);
+		renderError(res, "Failed to load extension queue.");
+	}
+};
+
+// ============================================
+// NETWORK APPROVALS CONTROLLER
+// ============================================
+
+controllers.networkApprovals = async (req, { res }) => {
+	const moment = require("moment");
+
+	// Find extensions with network capabilities that need approval
+	const pendingApprovals = [];
+	const recentApprovals = [];
+
+	try {
+		const extensions = await Gallery.find({
+			state: { $in: ["queue", "gallery"] },
+		}).exec();
+
+		for (const ext of extensions) {
+			const versionDoc = ext.versions.id(ext.version);
+			if (!versionDoc) continue;
+
+			const netCap = versionDoc.network_capability;
+			if (!netCap || !["network", "network_advanced"].includes(netCap)) continue;
+
+			// Fetch owner info
+			let owner = null;
+			try {
+				owner = await req.app.client.users.fetch(ext.owner_id, true);
+			} catch (_) {
+				// Ignore
+			}
+
+			if (!versionDoc.network_approved) {
+				pendingApprovals.push({
+					_id: ext._id,
+					name: ext.name,
+					owner_id: ext.owner_id,
+					owner: owner ? { username: owner.username } : null,
+					network_capability: netCap,
+					version: ext.version,
+					state: ext.state,
+				});
+			} else {
+				// Recently approved (last 30 days)
+				const approvedAt = versionDoc.network_approved_at;
+				if (approvedAt && moment(approvedAt).isAfter(moment().subtract(30, "days"))) {
+					let approvedByName = versionDoc.network_approved_by;
+					try {
+						const approver = await req.app.client.users.fetch(versionDoc.network_approved_by, true);
+						approvedByName = approver.username;
+					} catch (_) {
+						// Ignore
+					}
+
+					recentApprovals.push({
+						_id: ext._id,
+						name: ext.name,
+						network_capability: netCap,
+						network_approved_by: versionDoc.network_approved_by,
+						approved_by_name: approvedByName,
+						approved_at_formatted: moment(approvedAt).fromNow(),
+					});
+				}
+			}
+		}
+
+		// Sort recent approvals by date (newest first)
+		recentApprovals.sort((a, b) => b.approved_at - a.approved_at);
+	} catch (err) {
+		logger.error("Failed to fetch network approvals", {}, err);
+	}
+
+	res.setPageData({
+		page: "maintainer-network-approvals.ejs",
+		pendingApprovals,
+		recentApprovals: recentApprovals.slice(0, 10),
+	}).render();
+};
+
+// ============================================
+// FEATURED CREATOR MANAGEMENT CONTROLLERS
+// ============================================
+
+const CreatorManager = require("../../Modules/CreatorManager");
+
+controllers.featuredCreators = async (req, { res }) => {
+	try {
+		const featuredCreators = await CreatorManager.getFeaturedCreators(50);
+
+		// Enrich with user data
+		for (const creator of featuredCreators) {
+			try {
+				const user = await req.app.client.users.fetch(creator.id, true);
+				creator.avatar = user.displayAvatarURL({ size: 64 });
+				creator.username = user.username;
+			} catch (_) {
+				creator.avatar = null;
+			}
+		}
+
+		// Get tier info for display
+		const tierThresholds = CreatorManager.getTierThresholds();
+		const badgeInfo = CreatorManager.getBadgeInfo();
+
+		res.setPageData({
+			page: "maintainer-featured-creators.ejs",
+			featuredCreators,
+			tierThresholds,
+			badgeInfo,
+		}).render();
+	} catch (err) {
+		logger.error("Failed to load featured creators", {}, err);
+		renderError(res, "Failed to load featured creators.");
+	}
+};
+
+controllers.featuredCreators.setFeatured = async (req, res) => {
+	const { userId, isFeatured, reason, bonusShare } = req.body;
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID is required" });
+	}
+
+	try {
+		const result = await CreatorManager.setFeaturedStatus(
+			userId,
+			isFeatured !== false,
+			req.user.id,
+			reason || "",
+			parseInt(bonusShare, 10) || 5,
+		);
+
+		res.json(result);
+	} catch (err) {
+		logger.error("Failed to update featured status", { userId }, err);
+		res.status(500).json({ error: "Failed to update featured status" });
+	}
+};
+
+controllers.featuredCreators.updateStats = async (req, res) => {
+	const { userId } = req.body;
+
+	if (!userId) {
+		return res.status(400).json({ error: "User ID is required" });
+	}
+
+	try {
+		const stats = await CreatorManager.updateCreatorStats(userId);
+		if (!stats) {
+			return res.status(404).json({ error: "User not found" });
+		}
+		res.json({ success: true, stats });
+	} catch (err) {
+		logger.error("Failed to update creator stats", { userId }, err);
+		res.status(500).json({ error: "Failed to update stats" });
+	}
+};
+
+controllers.featuredCreators.getCreatorStatus = async (req, res) => {
+	const { userId } = req.params;
+
+	try {
+		const status = await CreatorManager.getCreatorStatus(userId);
+
+		// Fetch user info
+		let user = null;
+		try {
+			user = await req.app.client.users.fetch(userId, true);
+		} catch (_) {
+			// Ignore
+		}
+
+		res.json({
+			...status,
+			username: user?.username,
+			avatar: user?.displayAvatarURL({ size: 128 }),
+		});
+	} catch (err) {
+		logger.error("Failed to get creator status", { userId }, err);
+		res.status(500).json({ error: "Failed to get creator status" });
+	}
+};
+
+// ============================================
+// INDEXNOW SEO INTEGRATION CONTROLLERS
+// ============================================
+
+controllers.indexnow = require("./indexnow");
 
 // ============================================
 // CLOUDFLARE INTEGRATION CONTROLLERS

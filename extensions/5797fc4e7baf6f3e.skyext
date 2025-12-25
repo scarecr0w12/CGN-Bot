@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: 'OwO',
+			description: 'Usage: owo <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const faces = [';;w;;', 'owo', 'UwU', '>w<', '^w^', ':3', 'OwO', 'uwu', '(^w^)', '(>w<)'];
+
+function owoify(str) {
+	return str
+		.replace(/r|l/gi, 'w')
+		.replace(/R|L/gi, 'W')
+		.replace(/n([aeiou])/gi, 'ny$1')
+		.replace(/N([aeiou])/gi, 'Ny$1')
+		.replace(/N([AEIOU])/gi, 'NY$1')
+		.replace(/ove/gi, 'uv')
+		.replace(/th/gi, 'd')
+		.replace(/TH/gi, 'D')
+		.replace(/!+/g, ' ' + faces[Math.floor(Math.random() * faces.length)] + ' ')
+		.replace(/\?+/g, ' owo ')
+		+ ' ' + faces[Math.floor(Math.random() * faces.length)];
+}
+
+const owoed = owoify(text.slice(0, 400));
+
+message.reply({
+	embeds: [embed.create({
+		description: owoed,
+		color: embed.colors.PINK,
+		footer: { text: 'OwO' },
+	})],
+});

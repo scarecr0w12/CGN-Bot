@@ -184,9 +184,15 @@ const getServerTier = async serverId => {
 };
 
 /**
- * @deprecated Use getServerTier instead - premium is per-server
+ * @deprecated Use getServerTier instead - premium is now per-server, not per-user.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ * Migration: Replace getUserTier(userId) with getServerTier(serverId)
+ * @param {string} userId - Discord user ID
+ * @returns {Promise<Object>} User's tier (defaults to free tier)
  */
 const getUserTier = async userId => {
+	logger.warn("TierManager.getUserTier is deprecated - use getServerTier instead", { usrid: userId });
+
 	const subscription = await getUserSubscription(userId);
 	const tierId = subscription?.tier_id || "free";
 
@@ -230,9 +236,15 @@ const getServerFeatures = async serverId => {
 };
 
 /**
- * @deprecated Use getServerFeatures instead - premium is per-server
+ * @deprecated Use getServerFeatures instead - premium is now per-server, not per-user.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ * Migration: Replace getUserFeatures(userId) with getServerFeatures(serverId)
+ * @param {string} userId - Discord user ID
+ * @returns {Promise<Set<string>>} User's available features
  */
 const getUserFeatures = async userId => {
+	logger.warn("TierManager.getUserFeatures is deprecated - use getServerFeatures instead", { usrid: userId });
+
 	const user = await Users.findOne(userId);
 	const subscription = user?.subscription || {};
 	const tier = await getUserTier(userId);
@@ -338,9 +350,19 @@ const setServerTier = async (serverId, tierId, source = "manual", expiresAt = nu
 };
 
 /**
- * @deprecated Use setServerTier instead - premium is per-server
+ * @deprecated Use setServerTier instead - premium is now per-server, not per-user.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ * Migration: Replace setUserTier(userId, ...) with setServerTier(serverId, ...)
+ * @param {string} userId - Discord user ID
+ * @param {string} tierId - Tier ID to assign
+ * @param {string} source - Source of the assignment
+ * @param {Date|null} expiresAt - Expiration date
+ * @param {string} reason - Reason for assignment
+ * @returns {Promise<Object>} Updated user document
  */
 const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, reason = "assigned") => {
+	logger.warn("TierManager.setUserTier is deprecated - use setServerTier instead", { usrid: userId, tierId });
+
 	let user = await Users.findOne(userId);
 	if (!user) {
 		user = Users.new({ _id: userId });
@@ -386,8 +408,8 @@ const grantFeature = async (serverId, featureKey) => {
 	}
 
 	const oldSubscription = server.subscription || {};
-	const granted = [...(oldSubscription.granted_features || [])];
-	const revoked = [...(oldSubscription.revoked_features || [])];
+	const granted = [...oldSubscription.granted_features || []];
+	const revoked = [...oldSubscription.revoked_features || []];
 
 	// Add to granted if not present
 	if (!granted.includes(featureKey)) {
@@ -424,8 +446,8 @@ const revokeFeature = async (serverId, featureKey) => {
 	}
 
 	const oldSubscription = server.subscription || {};
-	const granted = [...(oldSubscription.granted_features || [])];
-	const revoked = [...(oldSubscription.revoked_features || [])];
+	const granted = [...oldSubscription.granted_features || []];
+	const revoked = [...oldSubscription.revoked_features || []];
 
 	// Add to revoked if not present
 	if (!revoked.includes(featureKey)) {

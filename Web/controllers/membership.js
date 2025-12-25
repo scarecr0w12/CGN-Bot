@@ -7,6 +7,7 @@
 
 const { request } = require("undici");
 const TierManager = require("../../Modules/TierManager");
+const CacheManager = require("../../Modules/CacheManager");
 
 const controllers = module.exports;
 
@@ -37,6 +38,7 @@ controllers.pricing = async (req, { res }) => {
 			// Filter to servers where user is admin/owner and bot is present
 			for (const guild of userGuilds) {
 				// Check if user has admin or manage server permission (0x8 = ADMINISTRATOR, 0x20 = MANAGE_GUILD)
+				// eslint-disable-next-line no-bitwise
 				const hasAdminPerms = (guild.permissions & 0x8) === 0x8 || (guild.permissions & 0x20) === 0x20 || guild.owner;
 				const botInGuild = botGuilds.has(guild.id);
 
@@ -102,7 +104,7 @@ controllers.createCheckout = async (req, res) => {
 	}
 
 	// Verify user has admin access to this server
-	const serverDoc = await Servers.findOne(serverId);
+	const serverDoc = await CacheManager.getServer(serverId);
 	if (!serverDoc) {
 		return res.status(400).json({ error: "Server not found. The bot must be in the server first." });
 	}
@@ -127,13 +129,13 @@ controllers.createCheckout = async (req, res) => {
 			// If no price mapping, create a price dynamically (for testing)
 			if (!priceId) {
 				// Calculate price based on billing period and discount
-				let price = tier.price_monthly;
+				let priceInDollars = tier.price_monthly;
 				if (billingPeriod === "yearly") {
-					price = tier.price_monthly * 12 * (1 - (tier.yearly_discount || 0) / 100);
+					priceInDollars = tier.price_monthly * 12 * (1 - (tier.yearly_discount || 0) / 100);
 				}
-				price = Math.round(price);
+				const priceCents = Math.round(priceInDollars * 100);
 
-				if (!price || price <= 0) {
+				if (!priceCents || priceCents <= 0) {
 					return res.status(400).json({ error: "This tier is not available for purchase" });
 				}
 
@@ -145,7 +147,7 @@ controllers.createCheckout = async (req, res) => {
 
 				const stripePrice = await stripe.prices.create({
 					product: product.id,
-					unit_amount: price,
+					unit_amount: priceCents,
 					currency: "usd",
 					recurring: {
 						interval: billingPeriod === "yearly" ? "year" : "month",
@@ -195,13 +197,11 @@ controllers.createCheckout = async (req, res) => {
 		const btcpayStoreId = process.env.BTCPAY_STORE_ID;
 
 		if (btcpayConfig?.isEnabled && btcpayUrl && btcpayApiKey && btcpayStoreId) {
-			let priceCents = tier.price_monthly;
+			let priceInDollars = tier.price_monthly;
 			if (billingPeriod === "yearly") {
-				priceCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				priceInDollars = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
 			}
-			priceCents = Math.round(priceCents);
-
-			const amount = (priceCents / 100).toFixed(2);
+			const amount = priceInDollars.toFixed(2);
 
 			if (!amount || parseFloat(amount) <= 0) {
 				return res.status(400).json({ error: "This tier is not available for purchase" });
@@ -361,23 +361,37 @@ controllers.redeemPoints = async (req, res) => {
 			return res.status(400).json({ error: `Maximum redemption is ${maxDays} days` });
 		}
 
-		// Get the redeemable tier
-		const tierId = redemptionConfig.redeemable_tier_id;
+		// Get the server ID from request body
+		const serverId = req.body.server_id;
+		const tierId = req.body.tier_id;
+
+		if (!serverId) {
+			return res.status(400).json({ error: "Server ID is required - premium is per-server" });
+		}
+
+		if (!tierId) {
+			return res.status(400).json({ error: "Tier ID is required" });
+		}
+
+		// Get the tier
 		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
 
 		if (!tier) {
-			return res.status(400).json({ error: "No tier configured for redemption" });
+			return res.status(400).json({ error: "Invalid tier" });
+		}
+
+		// Check if tier is redeemable with points
+		if (!tier.points_cost || tier.points_cost <= 0) {
+			return res.status(400).json({ error: "This tier cannot be redeemed with points" });
 		}
 
 		// Calculate points required
-		const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
-		const pricePerMonth = tier.price_monthly || 5;
-		const pricePerDay = pricePerMonth / 30;
-		const dollarCost = pricePerDay * requestedDays;
-		const pointsRequired = Math.ceil(dollarCost * pointsPerDollar);
+		const pointsPerMonth = tier.points_cost;
+		const pointsPerDay = Math.ceil(pointsPerMonth / 30);
+		const pointsRequired = pointsPerDay * requestedDays;
 
 		// Get user's current points
-		const userDoc = await Users.findOne(req.user.id);
+		const userDoc = await CacheManager.getUser(req.user.id);
 		const currentPoints = userDoc?.points || 0;
 
 		if (currentPoints < pointsRequired) {
@@ -393,22 +407,39 @@ controllers.redeemPoints = async (req, res) => {
 		userDoc.query.inc("points", -pointsRequired);
 		await userDoc.save();
 
+		// Verify user has admin access to this server
+		const serverDoc = await CacheManager.getServer(serverId);
+		if (!serverDoc) {
+			return res.status(400).json({ error: "Server not found" });
+		}
+
 		// Calculate expiration
 		const expiresAt = new Date();
 
-		// If user already has this tier, extend from current expiration
-		const currentTier = await TierManager.getUserTier(req.user.id);
+		// If server already has this tier, extend from current expiration
+		const currentTier = await TierManager.getServerTier(serverId);
 		if (currentTier?.tier_id === tierId && currentTier?.expires_at && new Date(currentTier.expires_at) > expiresAt) {
 			expiresAt.setTime(new Date(currentTier.expires_at).getTime());
 		}
 
 		expiresAt.setDate(expiresAt.getDate() + requestedDays);
 
-		// Assign the tier
-		await TierManager.setUserTier(req.user.id, tierId, "vote_redemption", expiresAt, "point_redemption");
+		// Assign the tier to the server
+		try {
+			await TierManager.setServerTier(serverId, tierId, "vote_redemption", expiresAt, "point_redemption");
+		} catch (err) {
+			logger.error("Failed to set user tier after point deduction, refunding points", { userId: req.user.id, points: pointsRequired }, err);
 
-		logger.info("User redeemed points for tier", {
+			// Refund points
+			userDoc.query.inc("points", pointsRequired);
+			await userDoc.save();
+
+			throw new Error("Failed to redeem points. Points have been refunded.");
+		}
+
+		logger.info("User redeemed points for server tier", {
 			userId: req.user.id,
+			serverId,
 			tierId,
 			days: requestedDays,
 			pointsSpent: pointsRequired,
@@ -445,38 +476,39 @@ controllers.getRedemptionInfo = async (req, res) => {
 			return res.json({ enabled: false });
 		}
 
-		const tierId = redemptionConfig.redeemable_tier_id;
-		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
+		// Get all tiers that can be redeemed with points
+		const redeemableTiers = siteSettings?.tiers?.filter(t => t.points_cost && t.points_cost > 0) || [];
 
-		if (!tier) {
+		if (redeemableTiers.length === 0) {
 			return res.json({ enabled: false });
 		}
 
 		// Get user points
-		const userDoc = await Users.findOne(req.user.id);
+		const userDoc = await CacheManager.getUser(req.user.id);
 		const currentPoints = userDoc?.points || 0;
 
-		// Calculate costs
-		const pointsPerDollar = redemptionConfig.points_per_dollar || 1000;
-		const pricePerMonth = tier.price_monthly || 5;
-		const pointsPerMonth = Math.ceil(pricePerMonth * pointsPerDollar);
-		const pointsPerDay = Math.ceil((pricePerMonth / 30) * pointsPerDollar);
+		// Calculate costs for each tier
+		const tierInfo = redeemableTiers.map(tier => {
+			const pointsPerMonth = tier.points_cost;
+			const pointsPerDay = Math.ceil(pointsPerMonth / 30);
+			const affordableDays = Math.floor(currentPoints / pointsPerDay);
 
-		// How many days can user afford?
-		const affordableDays = Math.floor(currentPoints / pointsPerDay);
+			return {
+				tier_id: tier._id,
+				tier_name: tier.name,
+				tier_price_monthly: tier.price_monthly,
+				points_per_month: pointsPerMonth,
+				points_per_day: pointsPerDay,
+				affordable_days: affordableDays,
+			};
+		});
 
 		res.json({
 			enabled: true,
-			tier_id: tierId,
-			tier_name: tier.name,
-			tier_price_monthly: pricePerMonth,
-			points_per_dollar: pointsPerDollar,
-			points_per_month: pointsPerMonth,
-			points_per_day: pointsPerDay,
+			tiers: tierInfo,
 			min_days: redemptionConfig.min_redemption_days || 7,
 			max_days: redemptionConfig.max_redemption_days || 365,
 			user_points: currentPoints,
-			affordable_days: affordableDays,
 		});
 	} catch (err) {
 		logger.error("Error getting redemption info", { userId: req.user?.id }, err);

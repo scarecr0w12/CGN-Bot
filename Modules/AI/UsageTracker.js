@@ -166,6 +166,59 @@ class UsageTracker {
 	}
 
 	/**
+	 * Record image generation usage
+	 * @param {Object} serverDocument - The server document
+	 * @param {Object} user - The Discord user
+	 * @param {string} model - Model name (dall-e-2, dall-e-3, gpt-image-1)
+	 * @param {number} cost - Cost in USD
+	 */
+	async recordImageUsage (serverDocument, user, model, cost) {
+		const now = Date.now();
+		const { query } = serverDocument;
+		const aiConfig = serverDocument.config.ai || {};
+		const usageData = aiConfig.usage || {};
+
+		// Update image usage counters
+		query.inc("config.ai.usage.images.count", 1);
+		query.inc("config.ai.usage.images.cost", cost);
+
+		// Track per-model usage
+		query.inc(`config.ai.usage.images.perModel.${model}`, 1);
+
+		// Update per-user image usage
+		const perUser = usageData.perUser || {};
+		const existingUserUsage = perUser[user.id] || {};
+		const newUserUsage = {
+			...existingUserUsage,
+			lastUsed: now,
+			imagesCount: (existingUserUsage.imagesCount || 0) + 1,
+			imagesCost: (existingUserUsage.imagesCost || 0) + cost,
+		};
+		query.set(`config.ai.usage.perUser.${user.id}`, newUserUsage);
+
+		// Update total cost
+		query.inc("config.ai.usage.cost.usd", cost);
+
+		// Update daily budget tracking
+		const existingBudget = usageData.budget || {};
+		const budgetCostDayStart = existingBudget.costDayStart || 0;
+		const isNewCostDay = now - budgetCostDayStart >= 86400000;
+
+		if (isNewCostDay) {
+			query.set("config.ai.usage.budget.costDayStart", now);
+			query.set("config.ai.usage.budget.costDayUsd", cost);
+		} else {
+			query.inc("config.ai.usage.budget.costDayUsd", cost);
+		}
+
+		try {
+			await serverDocument.save();
+		} catch (error) {
+			logger.warn(`Failed to save AI image usage: ${error.message}`);
+		}
+	}
+
+	/**
 	 * Reset usage statistics for a guild
 	 * @param {Object} serverDocument - The server document
 	 */

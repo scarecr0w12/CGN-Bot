@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> - Tickets - Skynet</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+				<h2 class="subtitle">
+					<strong>Server Tickets</strong>
+				</h2>
+
+				<!-- Filter Tabs -->
+				<div class="tabs is-boxed mb-4">
+					<ul>
+						<li class="<%= !pageData.activeStatus ? 'is-active' : '' %>">
+							<a href="/dashboard/<%= serverData.id %>/tickets">
+								All (<%= (configData.statusCounts.open || 0) + (configData.statusCounts.in_progress || 0) + (configData.statusCounts.on_hold || 0) + (configData.statusCounts.closed || 0) %>)
+							</a>
+						</li>
+						<li class="<%= pageData.activeStatus === 'open' ? 'is-active' : '' %>">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=open">
+								<span class="icon has-text-success"><i class="fas fa-circle"></i></span>
+								<span>Open (<%= configData.statusCounts.open || 0 %>)</span>
+							</a>
+						</li>
+						<li class="<%= pageData.activeStatus === 'in_progress' ? 'is-active' : '' %>">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=in_progress">
+								<span class="icon has-text-info"><i class="fas fa-circle"></i></span>
+								<span>In Progress (<%= configData.statusCounts.in_progress || 0 %>)</span>
+							</a>
+						</li>
+						<li class="<%= pageData.activeStatus === 'on_hold' ? 'is-active' : '' %>">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=on_hold">
+								<span class="icon has-text-warning"><i class="fas fa-circle"></i></span>
+								<span>On Hold (<%= configData.statusCounts.on_hold || 0 %>)</span>
+							</a>
+						</li>
+						<li class="<%= pageData.activeStatus === 'closed' ? 'is-active' : '' %>">
+							<a href="/dashboard/<%= serverData.id %>/tickets?status=closed">
+								<span class="icon has-text-danger"><i class="fas fa-circle"></i></span>
+								<span>Closed (<%= configData.statusCounts.closed || 0 %>)</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+
+				<!-- Tickets Table -->
+				<div class="card">
+					<div class="card-content">
+						<% if (!configData.tickets || configData.tickets.length === 0) { %>
+							<div class="has-text-centered py-6">
+								<span class="icon is-large has-text-grey-light">
+									<i class="fas fa-ticket-alt fa-3x"></i>
+								</span>
+								<p class="has-text-grey mt-3">No tickets found</p>
+							</div>
+						<% } else { %>
+							<table class="table is-fullwidth is-hoverable">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Subject</th>
+										<th>User</th>
+										<th>Category</th>
+										<th>Status</th>
+										<th>Priority</th>
+										<th>Created</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% configData.tickets.forEach(ticket => { %>
+										<tr>
+											<td><strong>#<%= ticket.ticket_number %></strong></td>
+											<td>
+												<a href="/dashboard/<%= serverData.id %>/tickets/<%= ticket._id %>">
+													<%= ticket.subject ? ticket.subject.substring(0, 40) : 'No subject' %><%= ticket.subject && ticket.subject.length > 40 ? '...' : '' %>
+												</a>
+											</td>
+											<td>
+												<span class="tag">
+													<%= ticket.username || ticket.user_id %>
+												</span>
+											</td>
+											<td><%= ticket.category_name || 'General' %></td>
+											<td>
+												<% if (ticket.status === 'open') { %>
+													<span class="tag is-success">Open</span>
+												<% } else if (ticket.status === 'in_progress') { %>
+													<span class="tag is-info">In Progress</span>
+												<% } else if (ticket.status === 'on_hold') { %>
+													<span class="tag is-warning">On Hold</span>
+												<% } else { %>
+													<span class="tag is-danger">Closed</span>
+												<% } %>
+											</td>
+											<td>
+												<% if (ticket.priority === 'urgent') { %>
+													<span class="tag is-danger">Urgent</span>
+												<% } else if (ticket.priority === 'high') { %>
+													<span class="tag is-warning">High</span>
+												<% } else if (ticket.priority === 'low') { %>
+													<span class="tag is-light">Low</span>
+												<% } else { %>
+													<span class="tag">Normal</span>
+												<% } %>
+											</td>
+											<td>
+												<%= new Date(ticket.created_at).toLocaleDateString() %>
+											</td>
+											<td>
+												<a href="/dashboard/<%= serverData.id %>/tickets/<%= ticket._id %>" class="button is-small is-info">
+													<span class="icon"><i class="fas fa-eye"></i></span>
+												</a>
+											</td>
+										</tr>
+									<% }) %>
+								</tbody>
+							</table>
+						<% } %>
+					</div>
+				</div>
+
+				<!-- Quick Link to Settings -->
+				<div class="mt-4">
+					<a href="/dashboard/<%= serverData.id %>/tickets/settings" class="button is-light">
+						<span class="icon"><i class="fas fa-cog"></i></span>
+						<span>Ticket Settings</span>
+					</a>
+				</div>
+			</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>

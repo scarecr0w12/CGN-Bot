@@ -28,9 +28,14 @@ const seoRouting = router => {
 	}
 };
 
+const matomoTagProxy = require("../controllers/matomo-tag-proxy");
+
 const generalRouting = router => {
 	setupPage(router, "/", [], controllers.landing);
 	setupPage(router, "/donate", [], controllers.donate);
+
+	// Matomo Tag Manager proxy - handles index.php requests for container assets
+	router.routes.push(new Route(router, "/index.php", [], matomoTagProxy, "get", "static"));
 
 	// Special routes that should not be considered "pages"
 	router.routes.push(new Route(router, "/header-image", [middleware.checkUnavailableAPI], controllers.headerImage, "get", "static"));
@@ -48,11 +53,50 @@ const activityRouting = router => {
 	setupPage(router, "/activity/(|servers|users)", [], controllers.activity);
 };
 
+const serverRouting = router => {
+	// SEO-friendly public server pages with slugs
+	setupPage(router, "/server/:id/:slug", [], controllers.server.publicPage);
+	// Legacy URL (redirects to slug URL)
+	setupPage(router, "/server/:id", [], controllers.server.publicPage);
+	// Generate slug endpoint
+	router.routes.push(new Route(router, "/server/:id/generate-slug", [middleware.checkUnavailableAPI], controllers.server.generateSlug, "post", "general"));
+	// Note: Server profile API is registered in api.js before the 404 handler
+};
+
+const referralRouting = (router, apiRouter) => {
+	// Referral invite link handler
+	router.routes.push(new Route(router, "/invite/ref/:code", [middleware.checkUnavailable], controllers.referral.handleReferralInvite, "get", "general"));
+	// Referral dashboard page
+	setupPage(router, "/account/referrals", [], controllers.referral.referralDashboard, true);
+	// API endpoints
+	apiRouter.routes.push(new Route(apiRouter, "/referral/stats", [middleware.checkUnavailableAPI], controllers.referral.getReferralStats, "get", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/referral/generate-code", [middleware.checkUnavailableAPI], controllers.referral.generateReferralCode, "post", "api"));
+};
+
+const templatesRouting = (router, apiRouter) => {
+	// Template selection page
+	setupPage(router, "/setup/templates/:serverId", [], controllers.templates.templateSelectionPage, true);
+	// API endpoints
+	apiRouter.routes.push(new Route(apiRouter, "/templates", [middleware.checkUnavailableAPI], controllers.templates.getTemplates, "get", "api"));
+	apiRouter.routes.push(new Route(apiRouter, "/templates/apply", [middleware.checkUnavailableAPI], controllers.templates.applyTemplate, "post", "api"));
+};
+
+const widgetsRouting = router => {
+	// SVG widget endpoints (public, no auth required)
+	router.routes.push(new Route(router, "/widgets/server/:serverId/stats.svg", [], controllers.widgets.serverStatsSvg, "get", "general"));
+	router.routes.push(new Route(router, "/widgets/server/:serverId/leaderboard.svg", [], controllers.widgets.leaderboardSvg, "get", "general"));
+	// Iframe embed page
+	setupPage(router, "/widgets/server/:serverId/embed", [], controllers.widgets.embedPage, false);
+};
+
 const galleryRouting = router => {
 	setupRedirection(router, "/extensions", "/extensions/gallery");
 	setupPage(router, "/extensions/(|gallery|queue)", [], controllers.extensions.gallery);
 	setupPage(router, "/extensions/my", [], controllers.extensions.my, true);
 	setupPage(router, "/extensions/builder", [], controllers.extensions.builder, true);
+	// SEO-friendly slug URL (canonical) - must be before :extid/install to take priority
+	setupPage(router, "/extensions/:extid/:slug/install", [], controllers.extensions.installer);
+	// Legacy ID-only URL (redirects to slug URL if slug exists)
 	setupPage(router, "/extensions/:extid/install", [], controllers.extensions.installer);
 	router.routes.push(new Route(router, "/extensions/builder", [middleware.checkUnavailable], controllers.extensions.builder.post, "post", "general"));
 	// Extension import endpoint (must be before :extid to avoid conflict)
@@ -119,6 +163,12 @@ const membershipRouting = (router, apiRouter) => {
 	apiRouter.routes.push(new Route(apiRouter, "/membership/redemption-info", [middleware.checkUnavailableAPI], controllers.membership.getRedemptionInfo, "get", "api"));
 };
 
+const voteRouting = (router, apiRouter) => {
+	setupPage(router, "/vote", [], controllers.vote.index);
+	// API endpoint for dynamic vote status updates
+	apiRouter.routes.push(new Route(apiRouter, "/vote/status", [middleware.checkUnavailableAPI], controllers.vote.getStatus, "get", "api"));
+};
+
 module.exports = app => {
 	const routers = {
 		general: express.Router(),
@@ -142,11 +192,16 @@ module.exports = app => {
 	generalRouting(routers.general);
 	statusRouting(routers.general);
 	activityRouting(routers.general);
+	serverRouting(routers.general);
+	referralRouting(routers.general, routers.API);
+	templatesRouting(routers.general, routers.API);
+	widgetsRouting(routers.general);
 	galleryRouting(routers.general);
 	wikiRouting(routers.general);
 	blogRouting(routers.general);
 	officialRouting(routers.general);
 	membershipRouting(routers.general, routers.API);
+	voteRouting(routers.general, routers.API);
 	profileRouting(routers.general, routers.API);
 	accountRouting(routers.general);
 	webhookRouting(routers.general);

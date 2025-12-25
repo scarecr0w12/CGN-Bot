@@ -1,0 +1,60 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const storage = require('storage');
+
+const gameKey = 'animeguess_' + message.channel.id;
+const game = storage.get(gameKey);
+
+if (!game) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ No Active Game',
+			description: 'Start a new game with animeguess!',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const guess = command.suffix.trim().toLowerCase();
+
+if (!guess) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❓ Missing Guess',
+			description: 'Usage: guess <anime name>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+game.attempts++;
+
+if (guess === game.answer || game.answer.includes(guess) || guess.includes(game.answer)) {
+	const timeTaken = Math.round((Date.now() - game.startTime) / 1000);
+	storage.remove(gameKey);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '🎉 Correct!',
+			description: '**' + message.author.username + '** guessed it!\n\n' +
+				'🎌 **Answer:** ' + game.displayName + '\n' +
+				'⏱️ **Time:** ' + timeTaken + ' seconds\n' +
+				'🔢 **Attempts:** ' + game.attempts,
+			color: embed.colors.SUCCESS,
+		})],
+	});
+} else {
+	storage.set(gameKey, game);
+	
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Wrong!',
+			description: '"' + command.suffix.trim() + '" is not correct. Try again!',
+			color: embed.colors.ERROR,
+			footer: { text: 'Attempts: ' + game.attempts + ' - Use animehint for help' },
+		})],
+	});
+}

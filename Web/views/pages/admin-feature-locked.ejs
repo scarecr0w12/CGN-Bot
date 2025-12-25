@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> - Feature Locked | Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<style>
+	.feature-locked-container {
+		text-align: center;
+		padding: 3rem 1rem;
+	}
+	.feature-locked-icon {
+		font-size: 4rem;
+		color: var(--color-warning, #ffdd57);
+		margin-bottom: 1.5rem;
+	}
+	.feature-locked-title {
+		font-size: 1.75rem;
+		font-weight: 700;
+		margin-bottom: 1rem;
+		color: var(--color-text-primary);
+	}
+	.feature-locked-description {
+		font-size: 1.1rem;
+		color: var(--color-text-muted);
+		max-width: 500px;
+		margin: 0 auto 2rem;
+		line-height: 1.6;
+	}
+	.tier-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: white;
+		border-radius: 2rem;
+		font-weight: 600;
+		margin-bottom: 1.5rem;
+	}
+	.upgrade-benefits {
+		background: var(--color-bg-secondary, #f5f5f5);
+		border-radius: 1rem;
+		padding: 1.5rem;
+		max-width: 400px;
+		margin: 0 auto 2rem;
+		text-align: left;
+	}
+	.upgrade-benefits h4 {
+		font-weight: 600;
+		margin-bottom: 1rem;
+		color: var(--color-text-primary);
+	}
+	.upgrade-benefits ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	.upgrade-benefits li {
+		padding: 0.5rem 0;
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		color: var(--color-text-secondary);
+	}
+	.upgrade-benefits li i {
+		color: var(--color-success, #48c774);
+	}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<div class="feature-locked-container">
+						<div class="feature-locked-icon">
+							<i class="fas fa-lock"></i>
+						</div>
+						
+						<h1 class="feature-locked-title">
+							<%= typeof featureName !== 'undefined' ? featureName : 'Premium Feature' %> is Locked
+						</h1>
+						
+						<div class="tier-badge">
+							<i class="fas fa-crown"></i>
+							<span>Requires <%= typeof requiredTier !== 'undefined' ? requiredTier : 'Premium' %></span>
+						</div>
+						
+						<p class="feature-locked-description">
+							<%= typeof featureDescription !== 'undefined' ? featureDescription : 'This feature requires a premium subscription to unlock.' %>
+						</p>
+						
+						<div class="upgrade-benefits">
+							<h4><i class="fas fa-sparkles"></i> What you'll get:</h4>
+							<ul>
+								<li>
+									<i class="fas fa-check-circle"></i>
+									<span>Access to <%= typeof featureName !== 'undefined' ? featureName : 'this feature' %></span>
+								</li>
+								<li>
+									<i class="fas fa-check-circle"></i>
+									<span>Priority support</span>
+								</li>
+								<li>
+									<i class="fas fa-check-circle"></i>
+									<span>Advanced customization options</span>
+								</li>
+								<li>
+									<i class="fas fa-check-circle"></i>
+									<span>No feature limitations</span>
+								</li>
+							</ul>
+						</div>
+						
+						<div class="buttons is-centered">
+							<a href="/membership" class="button is-primary is-medium">
+								<span class="icon">
+									<i class="fas fa-arrow-up"></i>
+								</span>
+								<span>Upgrade Now</span>
+							</a>
+							<a href="/dashboard/<%= serverData.id %>" class="button is-light is-medium">
+								<span class="icon">
+									<i class="fas fa-arrow-left"></i>
+								</span>
+								<span>Back to Dashboard</span>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

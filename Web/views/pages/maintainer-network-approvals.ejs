@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Maintainer - Network Approvals</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h3 class="title is-3">
+						<span class="icon"><i class="fa fa-globe"></i></span>
+						Network Capability Approvals
+					</h3>
+					<p class="subtitle">Review and approve extensions requesting network access</p>
+					
+					<article class="message is-info">
+						<div class="message-body">
+							<p><strong>Network capabilities</strong> allow extensions to make HTTP requests to external APIs. Extensions with <code>network</code> or <code>network_advanced</code> capabilities require maintainer approval before they can make external requests.</p>
+						</div>
+					</article>
+
+					<% if (pageData.pendingApprovals && pageData.pendingApprovals.length > 0) { %>
+					<div class="box">
+						<h4 class="title is-4 mb-4">
+							<span class="tag is-warning is-medium mr-2"><%= pageData.pendingApprovals.length %></span>
+							Pending Approvals
+						</h4>
+						
+						<div class="table-container">
+							<table class="table is-fullwidth is-hoverable">
+								<thead>
+									<tr>
+										<th>Extension</th>
+										<th>Owner</th>
+										<th>Capability</th>
+										<th>Version</th>
+										<th>State</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% pageData.pendingApprovals.forEach(ext => { %>
+									<tr>
+										<td>
+											<strong><%= ext.name %></strong>
+											<br>
+											<small class="has-text-grey"><%= ext._id %></small>
+										</td>
+										<td>
+											<% if (ext.owner) { %>
+											<%= ext.owner.username || ext.owner_id %>
+											<% } else { %>
+											<%= ext.owner_id %>
+											<% } %>
+										</td>
+										<td>
+											<span class="tag <%= ext.network_capability === 'network_advanced' ? 'is-danger' : 'is-warning' %>">
+												<span class="icon is-small"><i class="fa fa-globe"></i></span>
+												<span><%= ext.network_capability %></span>
+											</span>
+										</td>
+										<td>v<%= ext.version %></td>
+										<td>
+											<span class="tag <%= ext.state === 'gallery' ? 'is-success' : 'is-info' %>">
+												<%= ext.state %>
+											</span>
+										</td>
+										<td>
+											<div class="buttons are-small">
+												<a class="button is-link is-outlined" href="/extensions/gallery?id=<%= ext._id %>" target="_blank">
+													<span class="icon"><i class="fa fa-external-link"></i></span>
+													<span>View</span>
+												</a>
+												<button class="button is-success" onclick="approveNetwork('<%= ext._id %>')">
+													<span class="icon"><i class="fa fa-check"></i></span>
+													<span>Approve</span>
+												</button>
+											</div>
+										</td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<% } else { %>
+					<div class="notification is-success is-light">
+						<span class="icon"><i class="fa fa-check-circle"></i></span>
+						<strong>No pending network approvals!</strong> All extensions with network capabilities have been reviewed.
+					</div>
+					<% } %>
+
+					<% if (pageData.recentApprovals && pageData.recentApprovals.length > 0) { %>
+					<div class="box mt-5">
+						<h4 class="title is-4 mb-4">
+							<span class="icon"><i class="fa fa-history"></i></span>
+							Recently Approved
+						</h4>
+						
+						<div class="table-container">
+							<table class="table is-fullwidth is-striped">
+								<thead>
+									<tr>
+										<th>Extension</th>
+										<th>Capability</th>
+										<th>Approved By</th>
+										<th>Approved At</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% pageData.recentApprovals.forEach(ext => { %>
+									<tr>
+										<td>
+											<a href="/extensions/gallery?id=<%= ext._id %>" target="_blank">
+												<strong><%= ext.name %></strong>
+											</a>
+										</td>
+										<td>
+											<span class="tag is-success">
+												<span class="icon is-small"><i class="fa fa-globe"></i></span>
+												<span><%= ext.network_capability %></span>
+											</span>
+										</td>
+										<td><%= ext.approved_by_name || ext.network_approved_by %></td>
+										<td><%= ext.approved_at_formatted %></td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+
+	<script>
+	async function approveNetwork(extId) {
+		if (!confirm('Are you sure you want to approve network capability for this extension?')) return;
+		
+		try {
+			const response = await fetch('/extensions/gallery/' + extId + '/approve_network', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			
+			if (response.ok) {
+				location.reload();
+			} else {
+				alert('Failed to approve network capability');
+			}
+		} catch (err) {
+			console.error(err);
+			alert('Error approving network capability');
+		}
+	}
+	</script>
+</body>
+</html>

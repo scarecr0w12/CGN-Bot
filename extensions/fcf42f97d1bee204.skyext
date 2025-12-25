@@ -1,0 +1,204 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const gameKey = 'ghost_game_' + message.author.id;
+
+const WORDS = [
+	'ghost','game','gamer','discord','disco','discuss','discussion','house','hover','honey','honest','honor',
+	'candle','candy','cancel','cannon','cat','cater','caterer','caterpillar','dog','dodge','doll','dollar',
+	'alpha','alphabet','alpine','beta','better','between','beyond','code','coder','coding','coffee','cool',
+	'movie','movies','music','mystery','quote','quoter','quick','quiz','puzzle','puzzled','puzzler',
+	'season','search','server','servers','skill','skynet','snake','snack','snap','space','spare','spark',
+	'track','trick','trigger','truth','dare','debate','debater','debating','reason','reasons',
+];
+
+const isWord = (s) => {
+	const t = (s || '').toLowerCase();
+	return WORDS.includes(t);
+};
+
+const possibleNextLetters = (prefix) => {
+	const p = (prefix || '').toLowerCase();
+	const set = new Set();
+	for (const w of WORDS) {
+		if (w.startsWith(p) && w.length > p.length) {
+			set.add(w[p.length]);
+		}
+	}
+	return [...set];
+};
+
+const current = extension.storage.get(gameKey) || { active: false, fragment: '', startedAt: 0, turns: 0 };
+
+if (sub === 'start') {
+	if (current.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 Ghost',
+				description: 'A game is already running for you.\n\nCurrent fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '\n\nUse: ghost add <letter> or ghost end',
+				color: embed.colors.WARNING,
+			})],
+		});
+		return;
+	}
+
+	const next = { active: true, fragment: '', startedAt: Date.now(), turns: 0 };
+	extension.storage.write(gameKey, next);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '👻 Ghost - Started',
+			description: 'Game started!\n\nRules:\n- You and the bot take turns adding 1 letter\n- If you complete a valid word (4+ letters), you lose\n- If you create a fragment that cannot lead to any word, you lose\n\nUse: ghost add <letter>',
+			color: embed.colors.SUCCESS,
+		})],
+	});
+	return;
+}
+
+if (sub === 'end') {
+	if (!current.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 Ghost',
+				description: 'No active game. Use: ghost start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+	extension.storage.write(gameKey, { active: false, fragment: '', startedAt: 0, turns: 0 });
+	message.reply({
+		embeds: [embed.create({
+			title: '👻 Ghost - Ended',
+			description: 'Your game has been ended.',
+			color: embed.colors.DEFAULT,
+		})],
+	});
+	return;
+}
+
+if (sub === 'status') {
+	message.reply({
+		embeds: [embed.create({
+			title: '👻 Ghost - Status',
+			description: current.active
+				? ('Active. Fragment: ' + utils.discord.bold(current.fragment || '(empty)') + '\nTurns: ' + utils.format.number(current.turns || 0))
+				: 'No active game. Use: ghost start',
+			color: embed.colors.BLUE,
+		})],
+	});
+	return;
+}
+
+if (sub === 'add') {
+	if (!current.active) {
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 Ghost',
+				description: 'No active game. Use: ghost start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const letter = (args[1] || '').toLowerCase();
+	if (!/^[a-z]$/.test(letter)) {
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 Ghost',
+				description: 'Please provide a single letter A-Z. Example: ghost add a',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	let fragment = (current.fragment || '') + letter;
+
+	// Player loses if completes a word (4+ letters)
+	if (fragment.length >= 4 && isWord(fragment)) {
+		extension.storage.write(gameKey, { active: false, fragment: '', startedAt: 0, turns: 0 });
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 You Lost!',
+				description: 'You completed the word: ' + utils.discord.bold(fragment) + '\n\nGame over.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	// If no words can continue, player loses
+	const nextLettersForPlayer = possibleNextLetters(fragment);
+	if (nextLettersForPlayer.length === 0) {
+		extension.storage.write(gameKey, { active: false, fragment: '', startedAt: 0, turns: 0 });
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 You Lost!',
+				description: 'Fragment ' + utils.discord.bold(fragment) + ' cannot form a word from the dictionary.\n\nGame over.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	// Bot move: pick a letter that keeps game alive and avoids completing a word immediately
+	let botLetter = null;
+	const candidates = possibleNextLetters(fragment);
+	const shuffled = utils.random.shuffle(candidates);
+	for (const c of shuffled) {
+		const frag2 = fragment + c;
+		if (frag2.length >= 4 && isWord(frag2)) {
+			continue;
+		}
+		if (possibleNextLetters(frag2).length === 0) {
+			continue;
+		}
+		botLetter = c;
+		break;
+	}
+	if (!botLetter) {
+		// If bot cannot find a safe move, it intentionally makes a move (and can lose)
+		botLetter = shuffled[0];
+	}
+	fragment += botLetter;
+
+	if (fragment.length >= 4 && isWord(fragment)) {
+		extension.storage.write(gameKey, { active: false, fragment: '', startedAt: 0, turns: 0 });
+		message.reply({
+			embeds: [embed.create({
+				title: '👻 You Win!',
+				description: 'Bot completed the word: ' + utils.discord.bold(fragment) + '\n\nYou win!',
+				color: embed.colors.SUCCESS,
+			})],
+		});
+		return;
+	}
+
+	const updated = { ...current, fragment, turns: (current.turns || 0) + 1, active: true };
+	extension.storage.write(gameKey, updated);
+
+	message.reply({
+		embeds: [embed.create({
+			title: '👻 Ghost',
+			description: 'You added: ' + utils.discord.bold(letter) + '\nBot added: ' + utils.discord.bold(botLetter) + '\n\nCurrent fragment: ' + utils.discord.bold(fragment) + '\n\nNext: ghost add <letter>',
+			color: embed.colors.PURPLE,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '👻 Ghost',
+		description: 'Usage:\n- ghost start\n- ghost add <letter>\n- ghost status\n- ghost end',
+		color: embed.colors.DEFAULT,
+	})],
+});

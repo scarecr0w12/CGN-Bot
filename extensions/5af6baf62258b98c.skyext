@@ -1,0 +1,64 @@
+(async () => {
+const message = require('message');
+const embed = require('embed');
+const http = require('http');
+
+const res = await http.request({
+	url: 'https://fortnite-api.com/v2/shop/br',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 10000,
+});
+
+if (!res.success || res.json?.status !== 200) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Fortnite Shop',
+			description: 'Failed to fetch shop data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const shop = res.json.data;
+const featured = shop.featured?.entries || [];
+const daily = shop.daily?.entries || [];
+
+if (!featured.length && !daily.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🛒 Fortnite Shop',
+			description: 'No items currently in shop.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const formatItem = (entry) => {
+	const item = entry.items?.[0];
+	if (!item) return null;
+	const price = entry.finalPrice || entry.regularPrice || 0;
+	return '• **' + item.name + '** - ' + price + ' V-Bucks';
+};
+
+const featuredList = featured.slice(0, 8).map(formatItem).filter(Boolean).join('\n') || 'None';
+const dailyList = daily.slice(0, 6).map(formatItem).filter(Boolean).join('\n') || 'None';
+
+const firstItem = featured[0]?.items?.[0] || daily[0]?.items?.[0];
+const thumbnail = firstItem?.images?.icon || firstItem?.images?.smallIcon || '';
+
+message.reply({
+	embeds: [embed.create({
+		title: '🛒 Fortnite Item Shop',
+		thumbnail: thumbnail ? { url: thumbnail } : undefined,
+		fields: [
+			{ name: '⭐ Featured', value: featuredList, inline: false },
+			{ name: '📅 Daily', value: dailyList, inline: false },
+		],
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Fortnite-API.com' },
+	})],
+});
+})();

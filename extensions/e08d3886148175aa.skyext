@@ -1,0 +1,20 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🙈 Spoiler',
+			description: 'Usage: spoiler <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const spoilered = text.slice(0, 100).split('').map(c => c === ' ' ? ' ' : '||' + c + '||').join('');
+
+message.reply(spoilered);

@@ -12,10 +12,10 @@ const menuItem = (path, label, icon = null) => {
 };
 
 const serversPaths = ['servers/server-list', 'servers/big-message'];
-const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists', 'global-options/premium-extensions'];
-const membershipPaths = ['membership/features', 'membership/tiers', 'membership/oauth', 'membership/payments', 'membership/servers'];
+const globalPaths = ['global-options/blocklist', 'global-options/bot-user', 'global-options/homepage', 'global-options/wiki-contributors', 'global-options/donations', 'global-options/vote-sites', 'global-options/bot-lists', 'global-options/premium-extensions', 'global-options/network-approvals', 'global-options/extension-queue', 'global-options/featured-creators'];
+const membershipPaths = ['membership/features', 'membership/tiers', 'membership/oauth', 'membership/payments', 'membership/email', 'membership/servers'];
 const managementPaths = ['management/maintainers', 'management/shards', 'management/injection', 'management/version', 'management/eval', 'management/logs'];
-const infraPaths = ['infrastructure/cloudflare'];
+const infraPaths = ['infrastructure/cloudflare', 'infrastructure/indexnow'];
 
 const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 %>
@@ -23,6 +23,7 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 	<ul class="menu-list">
 		<li>
 			<%- menuItem('maintainer', 'Overview') %>
+			<%- menuItem('tickets', 'Support Tickets', 'fa fa-ticket') %>
 			<%- menuItem('feedback', 'Feedback', 'fa fa-comments') %>
 		</li>
 	</ul>
@@ -66,6 +67,9 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 					<%- menuItem('global-options/vote-sites', 'Vote Sites') %>
 					<%- menuItem('global-options/bot-lists', 'Bot List APIs') %>
 					<%- menuItem('global-options/premium-extensions', 'Premium Extensions') %>
+					<%- menuItem('global-options/network-approvals', 'Network Approvals') %>
+					<%- menuItem('global-options/extension-queue', 'Extension Queue') %>
+					<%- menuItem('global-options/featured-creators', 'Featured Creators') %>
 					<% } %>
 				</li>
 			</ul>
@@ -89,6 +93,7 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 					<%- menuItem('membership/tiers', 'Tiers') %>
 					<%- menuItem('membership/oauth', 'OAuth Providers') %>
 					<%- menuItem('membership/payments', 'Payment Providers') %>
+					<%- menuItem('membership/email', 'Email Settings') %>
 					<%- menuItem('membership/servers', 'Server Management') %>
 				</li>
 			</ul>
@@ -133,6 +138,7 @@ const isInSection = (paths) => paths.some(p => isActive(`${basePath}/${p}`));
 			<ul class="menu-list">
 				<li>
 					<%- menuItem('infrastructure/cloudflare', 'Cloudflare') %>
+					<%- menuItem('infrastructure/indexnow', 'IndexNow SEO') %>
 				</li>
 			</ul>
 		</div>

@@ -24,9 +24,9 @@ module.exports = async ({ Constants: { Colors } }, documents, msg, commandData) 
 		query = parts.slice(0, -1).join(" ");
 	}
 
-	// Check for API key
-	const apiKey = configJSON.apis && configJSON.apis.google_api_key;
-	const cseId = configJSON.apis && configJSON.apis.google_cse_id;
+	// Check for API key (from environment via configJS)
+	const apiKey = process.env.GOOGLE_API_KEY;
+	const cseId = process.env.GOOGLE_CSE_ID;
 
 	if (!apiKey || !cseId) {
 		// Fallback: provide a lmgtfy link

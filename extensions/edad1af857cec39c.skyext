@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔀 Scramble',
+			description: 'Usage: scrambletext <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+function scrambleWord(word) {
+	if (word.length <= 3) return word;
+	const first = word[0];
+	const last = word[word.length - 1];
+	const middle = word.slice(1, -1).split('');
+	// Shuffle middle
+	for (let i = middle.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[middle[i], middle[j]] = [middle[j], middle[i]];
+	}
+	return first + middle.join('') + last;
+}
+
+const scrambled = text.slice(0, 300).split(/\b/).map(part => {
+	if (/^\w+$/.test(part)) return scrambleWord(part);
+	return part;
+}).join('');
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔀 Slcbamred',
+		description: scrambled,
+		color: embed.colors.BLUE,
+		footer: { text: 'Aoccdrnig to a rscheearch, you can sitll raed tihs!' },
+	})],
+});

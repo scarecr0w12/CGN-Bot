@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[HI] Extension Gallery",
+		"subtitle": "[HI] Browse and install community-created extensions",
+		"search": "[HI] Search extensions...",
+		"filters": "[HI] Filters",
+		"category": "[HI] Category",
+		"tags": "[HI] Tags",
+		"sort": "[HI] Sort by",
+		"sortOptions": {
+			"popular": "[HI] Most Popular",
+			"recent": "[HI] Recently Updated",
+			"rating": "[HI] Highest Rated",
+			"installs": "[HI] Most Installs"
+		},
+		"noResults": "[HI] No extensions found matching your criteria.",
+		"featured": "[HI] Featured",
+		"trending": "[HI] Trending",
+		"new": "[HI] New"
+	},
+	"card": {
+		"by": "[HI] by {{author}}",
+		"installs": "[HI] {{count}} install",
+		"installs_plural": "[HI] {{count}} installs",
+		"rating": "[HI] {{rating}} / 5",
+		"version": "[HI] v{{version}}",
+		"install": "[HI] Install",
+		"installed": "[HI] Installed",
+		"update": "[HI] Update Available",
+		"premium": "[HI] Premium",
+		"free": "[HI] Free",
+		"viewDetails": "[HI] View Details"
+	},
+	"details": {
+		"title": "[HI] Extension Details",
+		"description": "[HI] Description",
+		"usage": "[HI] Usage",
+		"permissions": "[HI] Required Permissions",
+		"changelog": "[HI] Changelog",
+		"reviews": "[HI] Reviews",
+		"author": "[HI] Author",
+		"version": "[HI] Version",
+		"lastUpdated": "[HI] Last Updated",
+		"installs": "[HI] Total Installs",
+		"rating": "[HI] Rating",
+		"category": "[HI] Category",
+		"tags": "[HI] Tags",
+		"source": "[HI] View Source",
+		"report": "[HI] Report Extension"
+	},
+	"install": {
+		"title": "[HI] Install Extension",
+		"confirm": "[HI] Are you sure you want to install **{{name}}**?",
+		"permissions": "[HI] This extension requires the following permissions:",
+		"success": "[HI] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[HI] Failed to install extension.",
+		"alreadyInstalled": "[HI] This extension is already installed.",
+		"incompatible": "[HI] This extension is not compatible with your current setup.",
+		"premiumRequired": "[HI] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[HI] Uninstall Extension",
+		"confirm": "[HI] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[HI] This will remove all settings for this extension.",
+		"success": "[HI] Extension uninstalled.",
+		"failed": "[HI] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[HI] Extension Builder",
+		"create": "[HI] Create Extension",
+		"edit": "[HI] Edit Extension",
+		"name": "[HI] Extension Name",
+		"description": "[HI] Description",
+		"version": "[HI] Version",
+		"category": "[HI] Category",
+		"tags": "[HI] Tags",
+		"type": "[HI] Type",
+		"types": {
+			"command": "[HI] Command",
+			"event": "[HI] Event",
+			"slash": "[HI] Slash Command"
+		},
+		"commandKey": "[HI] Command Trigger",
+		"slashDescription": "[HI] Slash Command Description",
+		"code": "[HI] Code",
+		"scopes": "[HI] Scopes",
+		"timeout": "[HI] Timeout (ms)",
+		"adminLevel": "[HI] Required Admin Level",
+		"save": "[HI] Save Draft",
+		"submit": "[HI] Submit for Review",
+		"test": "[HI] Test Extension",
+		"export": "[HI] Export",
+		"import": "[HI] Import"
+	},
+	"myExtensions": {
+		"title": "[HI] My Extensions",
+		"created": "[HI] Created",
+		"installed": "[HI] Installed",
+		"noExtensions": "[HI] You haven't created any extensions yet.",
+		"noInstalled": "[HI] You haven't installed any extensions.",
+		"status": {
+			"draft": "[HI] Draft",
+			"pending": "[HI] Pending Review",
+			"approved": "[HI] Approved",
+			"rejected": "[HI] Rejected",
+			"published": "[HI] Published"
+		}
+	},
+	"review": {
+		"title": "[HI] Write a Review",
+		"rating": "[HI] Rating",
+		"comment": "[HI] Comment",
+		"submit": "[HI] Submit Review",
+		"edit": "[HI] Edit Review",
+		"delete": "[HI] Delete Review",
+		"helpful": "[HI] Helpful",
+		"report": "[HI] Report Review",
+		"noReviews": "[HI] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[HI] Extension not found.",
+		"loadFailed": "[HI] Failed to load extension.",
+		"executionFailed": "[HI] Extension execution failed.",
+		"timeout": "[HI] Extension timed out.",
+		"permissionDenied": "[HI] Permission denied.",
+		"invalidCode": "[HI] Invalid extension code.",
+		"scopeNotAllowed": "[HI] This extension requires a scope that is not allowed."
+	}
+}

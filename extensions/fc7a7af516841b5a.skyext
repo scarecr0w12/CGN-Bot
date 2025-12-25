@@ -1,0 +1,87 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const args = command.suffix.trim().split(/\s+/);
+const nameTag = args[0];
+const region = (args[1] || 'eu').toLowerCase();
+
+if (!nameTag || !nameTag.includes('#')) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎯 Valorant Match',
+			description: 'Usage: valorantmatch <name#tag> [region]\nExample: valorantmatch TenZ#0505 na',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const [name, tag] = nameTag.split('#');
+
+const res = await http.request({
+	url: 'https://api.henrikdev.xyz/valorant/v3/matches/' + region + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(tag) + '?filter=competitive&size=1',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 10000,
+});
+
+if (!res.success || !res.json?.data?.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Match',
+			description: 'No recent matches found or player not found.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const match = res.json.data[0];
+const meta = match.metadata;
+const player = match.players?.all_players?.find(p => p.name.toLowerCase() === name.toLowerCase() && p.tag.toLowerCase() === tag.toLowerCase());
+
+if (!player) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Match',
+			description: 'Could not find player in match data.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const kda = player.stats.kills + '/' + player.stats.deaths + '/' + player.stats.assists;
+const hs = player.stats.headshots || 0;
+const bs = player.stats.bodyshots || 0;
+const ls = player.stats.legshots || 0;
+const totalShots = hs + bs + ls;
+const hsPercent = totalShots > 0 ? Math.round((hs / totalShots) * 100) : 0;
+
+const teamWon = (player.team === 'Red' && meta.red_rounds_won > meta.blue_rounds_won) || 
+                (player.team === 'Blue' && meta.blue_rounds_won > meta.red_rounds_won);
+
+const fields = [
+	{ name: 'Map', value: meta.map || 'Unknown', inline: true },
+	{ name: 'Score', value: meta.blue_rounds_won + ' - ' + meta.red_rounds_won, inline: true },
+	{ name: 'Result', value: teamWon ? '🟢 Victory' : '🔴 Defeat', inline: true },
+	{ name: 'Agent', value: player.character || 'Unknown', inline: true },
+	{ name: 'K/D/A', value: kda, inline: true },
+	{ name: 'HS%', value: hsPercent + '%', inline: true },
+	{ name: 'ACS', value: String(player.stats.score ? Math.round(player.stats.score / meta.rounds_played) : 0), inline: true },
+	{ name: 'Damage/Round', value: String(player.damage_made ? Math.round(player.damage_made / meta.rounds_played) : 0), inline: true },
+];
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 ' + name + '#' + tag + ' - Last Match',
+		thumbnail: { url: player.assets?.agent?.small || '' },
+		fields: fields,
+		color: teamWon ? embed.colors.GREEN : embed.colors.RED,
+		footer: { text: 'Played ' + (meta.game_start_patched || 'recently') + ' | Powered by Henrik API' },
+	})],
+});
+})();

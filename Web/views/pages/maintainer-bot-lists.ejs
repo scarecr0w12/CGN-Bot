@@ -21,7 +21,8 @@
 					<article class="message is-primary">
 						<div class="message-body">
 							<div class="content">
-								Connect to top.gg, Discord Bot List, and other bot listing services to automatically post stats and receive vote notifications.
+								Connect to bot listing services to automatically post stats and receive vote notifications. Supported services:
+								<strong>top.gg</strong>, <strong>Discord Bot List</strong>, <strong>Discord Bots GG</strong>, <strong>DiscordList.gg</strong>, <strong>Bots on Discord</strong>, and <strong>TopBotList</strong>.
 							</div>
 						</div>
 					</article>
@@ -50,6 +51,12 @@
                     <div class="notification is-warning is-light">
                         <p class="heading">Discord Bot List Votes</p>
                         <p class="title"><%= configData.voteStats?.discordbotlist || 0 %></p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="notification is-link is-light">
+                        <p class="heading">TopBotList Votes</p>
+                        <p class="title"><%= configData.voteStats?.topbotlist || 0 %></p>
                     </div>
                 </div>
             </div>
@@ -171,6 +178,175 @@
             </div>
         </div>
 
+        <!-- Discord Bots GG Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-list"></i></span>
+                Discord Bots GG Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordbotsgg_enabled" <%= configData.bot_lists?.discordbotsgg?.isEnabled ? 'checked' : '' %>>
+                        Enable Discord Bots GG integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="discordbotsgg_api_token" value="<%= configData.bot_lists?.discordbotsgg?.api_token || '' %>" placeholder="Your discord.bots.gg API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token in your bot's settings at <a href="https://discord.bots.gg/" target="_blank">discord.bots.gg</a></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordbotsgg_auto_post" <%= configData.bot_lists?.discordbotsgg?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- DiscordList.gg Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-th-list"></i></span>
+                DiscordList.gg Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordlistgg_enabled" <%= configData.bot_lists?.discordlistgg?.isEnabled ? 'checked' : '' %>>
+                        Enable DiscordList.gg integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="discordlistgg_api_token" value="<%= configData.bot_lists?.discordlistgg?.api_token || '' %>" placeholder="Your discordlist.gg API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Find your token at <a href="https://discordlist.gg/" target="_blank">discordlist.gg</a> in your bot's settings</p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="discordlistgg_auto_post" <%= configData.bot_lists?.discordlistgg?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bots on Discord Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-globe"></i></span>
+                Bots on Discord Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="botsondiscord_enabled" <%= configData.bot_lists?.botsondiscord?.isEnabled ? 'checked' : '' %>>
+                        Enable Bots on Discord integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="botsondiscord_api_token" value="<%= configData.bot_lists?.botsondiscord?.api_token || '' %>" placeholder="Your bots.ondiscord.xyz API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Get your API key from <a href="https://bots.ondiscord.xyz/me/keys" target="_blank">bots.ondiscord.xyz/me/keys</a></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="botsondiscord_auto_post" <%= configData.bot_lists?.botsondiscord?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- TopBotList Configuration -->
+        <div class="box">
+            <h5 class="title is-5">
+                <span class="icon"><i class="fa fa-trophy"></i></span>
+                TopBotList Integration
+            </h5>
+            
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topbotlist_enabled" <%= configData.bot_lists?.topbotlist?.isEnabled ? 'checked' : '' %>>
+                        Enable TopBotList integration
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">API Token</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="topbotlist_api_token" value="<%= configData.bot_lists?.topbotlist?.api_token || '' %>" placeholder="Your TopBotList API token">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-key"></i>
+                    </span>
+                </div>
+                <p class="help">Generate your token in your <a href="https://topbotlist.net/dashboard" target="_blank">TopBotList Dashboard</a></p>
+            </div>
+
+            <div class="field">
+                <label class="label">Webhook Secret</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="password" name="topbotlist_webhook_secret" value="<%= configData.bot_lists?.topbotlist?.webhook_secret || '' %>" placeholder="Webhook authorization secret">
+                    <span class="icon is-small is-left">
+                        <i class="fa fa-shield-alt"></i>
+                    </span>
+                </div>
+                <p class="help">Set this same value in TopBotList webhook settings. Webhook URL: <code><%= configData.hostingURL %>/webhooks/topbotlist</code></p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topbotlist_auto_post" <%= configData.bot_lists?.topbotlist?.auto_post_stats !== false ? 'checked' : '' %>>
+                        Auto-post server stats every 30 minutes
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topbotlist_sync_commands" <%= configData.bot_lists?.topbotlist?.sync_commands ? 'checked' : '' %>>
+                        Sync slash commands on startup
+                    </label>
+                </div>
+                <p class="help">Automatically post your bot's slash commands to topbotlist.net when the bot starts</p>
+            </div>
+        </div>
+
         <!-- Vote Rewards Configuration -->
         <div class="box">
             <h5 class="title is-5">
@@ -235,35 +411,11 @@
                 </div>
             </div>
 
-            <div class="columns">
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Points per Dollar</label>
-                        <div class="control">
-                            <input class="input" type="number" name="points_per_dollar" value="<%= configData.vote_rewards?.redemption?.points_per_dollar || 1000 %>" min="1">
-                        </div>
-                        <p class="help">How many points equal $1 of tier value</p>
-                    </div>
+            <article class="message is-info">
+                <div class="message-body">
+                    <strong>Note:</strong> Point redemption costs are now configured per-tier in the <a href="/dashboard/maintainer/membership/tiers">Membership Tiers</a> section. Set the "Points Cost" field for each tier you want to make redeemable with points (0 = not redeemable).
                 </div>
-                <div class="column">
-                    <div class="field">
-                        <label class="label">Redeemable Tier</label>
-                        <div class="control">
-                            <div class="select is-fullwidth">
-                                <select name="redeemable_tier_id">
-                                    <option value="">-- Select Tier --</option>
-                                    <% (configData.tiers || []).forEach(tier => { %>
-                                    <option value="<%= tier._id %>" <%= configData.vote_rewards?.redemption?.redeemable_tier_id === tier._id ? 'selected' : '' %>>
-                                        <%= tier.name %> ($<%= tier.price_monthly || 0 %>/month)
-                                    </option>
-                                    <% }); %>
-                                </select>
-                            </div>
-                        </div>
-                        <p class="help">Which tier users can redeem points for</p>
-                    </div>
-                </div>
-            </div>
+            </article>
 
             <div class="columns">
                 <div class="column">
@@ -287,25 +439,27 @@
             </div>
 
             <% 
-            const pointsPerDollar = configData.vote_rewards?.redemption?.points_per_dollar || 1000;
-            const selectedTier = (configData.tiers || []).find(t => t._id === configData.vote_rewards?.redemption?.redeemable_tier_id);
-            const tierPrice = selectedTier?.price_monthly || 5;
-            const pointsPerMonth = pointsPerDollar * tierPrice;
+            const redeemableTiers = (configData.tiers || []).filter(t => t.points_cost && t.points_cost > 0);
             const pointsPerVote = configData.vote_rewards?.points_per_vote || 100;
-            const votesPerMonth = Math.ceil(pointsPerMonth / pointsPerVote);
             %>
-            <article class="message is-info">
+            <% if (redeemableTiers.length > 0) { %>
+            <article class="message is-success">
                 <div class="message-body">
-                    <strong>Redemption Calculator:</strong><br>
-                    <% if (selectedTier) { %>
-                    • <strong><%= selectedTier.name %></strong> costs $<%= tierPrice %>/month<br>
-                    • At <%= pointsPerDollar.toLocaleString() %> points/$1, one month = <strong><%= pointsPerMonth.toLocaleString() %> points</strong><br>
-                    • At <%= pointsPerVote %> points/vote, that's approximately <strong><%= votesPerMonth %> votes</strong> per month
-                    <% } else { %>
-                    Select a tier above to see redemption calculations.
-                    <% } %>
+                    <strong>Redeemable Tiers:</strong><br>
+                    <% redeemableTiers.forEach(tier => { 
+                        const votesPerMonth = Math.ceil(tier.points_cost / pointsPerVote);
+                    %>
+                    • <strong><%= tier.name %></strong>: <%= tier.points_cost.toLocaleString() %> points/month (~<%= votesPerMonth %> votes)<br>
+                    <% }); %>
                 </div>
             </article>
+            <% } else { %>
+            <article class="message is-warning">
+                <div class="message-body">
+                    No tiers are currently redeemable with points. Go to <a href="/dashboard/maintainer/membership/tiers">Membership Tiers</a> to set point costs.
+                </div>
+            </article>
+            <% } %>
         </div>
 
         <!-- Recent Votes -->
@@ -330,8 +484,10 @@
                         <tr>
                             <td><%= vote.username || vote.user_id %></td>
                             <td>
-                                <span class="tag <%= vote.site === 'topgg' ? 'is-success' : 'is-warning' %>">
-                                    <%= vote.site === 'topgg' ? 'top.gg' : 'Discord Bot List' %>
+                                <% const siteLabels = { topgg: 'top.gg', discordbotlist: 'Discord Bot List', topbotlist: 'TopBotList' }; %>
+                                <% const siteColors = { topgg: 'is-success', discordbotlist: 'is-warning', topbotlist: 'is-link' }; %>
+                                <span class="tag <%= siteColors[vote.site] || 'is-light' %>">
+                                    <%= siteLabels[vote.site] || vote.site %>
                                 </span>
                                 <% if (vote.is_weekend) { %>
                                 <span class="tag is-info">Weekend</span>

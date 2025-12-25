@@ -1,0 +1,105 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const roundKey = 'liar_round_' + (message.guild ? message.guild.id : 'global');
+const roleKey = (uid) => 'liar_role_' + uid;
+
+const TOPICS = [
+	'Best pizza topping',
+	'Worst movie sequel',
+	'Best video game of all time',
+	'Funniest internet meme',
+	'Best fast food restaurant',
+	'Most overrated celebrity',
+];
+
+if (sub === 'start') {
+	const players = message.mentions || [];
+	if (!players || players.length < 3) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🕵️ Liar',
+				description: 'Mention at least 3 players.\nExample: liar start @user1 @user2 @user3',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const liar = utils.random.pick(players);
+	const topic = utils.random.pick(TOPICS);
+
+	// Assign roles (stored per user)
+	for (const p of players) {
+		extension.storage.write(roleKey(p.id), {
+			role: p.id === liar.id ? 'liar' : 'truth',
+			topic,
+			roundId: Date.now(),
+		});
+	}
+	extension.storage.write(roundKey, { active: true, topic, players: players.map(p => p.id), startedAt: Date.now() });
+
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Liar - Round Started',
+			description:
+			'Players: ' + players.map(p => p.toString()).join(' ') + '\n\n' +
+			'Everyone run: liar roles\n\nThen discuss the topic and try to find the liar!',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'roles') {
+	const role = extension.storage.get(roleKey(message.author.id));
+	if (!role) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🕵️ Liar',
+				description: 'No role found for you. Ask someone to start a round: liar start @players...',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Your Role',
+			description:
+			utils.discord.bold('Role:') + ' ' + (role.role === 'liar' ? 'LIAR' : 'TRUTH') + '\n' +
+			utils.discord.bold('Topic:') + ' ' + role.topic + '\n\n' +
+			(role.role === 'liar'
+				? 'Try to blend in without getting caught.'
+				: 'Speak honestly and identify the liar.'),
+			color: role.role === 'liar' ? embed.colors.ERROR : embed.colors.SUCCESS,
+		})],
+	});
+	return;
+}
+
+if (sub === 'end') {
+	extension.storage.write(roundKey, null);
+	message.reply({
+		embeds: [embed.create({
+			title: '🕵️ Liar',
+			description: 'Round ended.',
+			color: embed.colors.DEFAULT,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🕵️ Liar',
+		description: 'Usage:\n- liar start @p1 @p2 @p3...\n- liar roles\n- liar end',
+		color: embed.colors.DEFAULT,
+	})],
+});

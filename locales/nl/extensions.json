@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[NL] Extension Gallery",
+		"subtitle": "[NL] Browse and install community-created extensions",
+		"search": "[NL] Search extensions...",
+		"filters": "[NL] Filters",
+		"category": "[NL] Category",
+		"tags": "[NL] Tags",
+		"sort": "[NL] Sort by",
+		"sortOptions": {
+			"popular": "[NL] Most Popular",
+			"recent": "[NL] Recently Updated",
+			"rating": "[NL] Highest Rated",
+			"installs": "[NL] Most Installs"
+		},
+		"noResults": "[NL] No extensions found matching your criteria.",
+		"featured": "[NL] Featured",
+		"trending": "[NL] Trending",
+		"new": "[NL] New"
+	},
+	"card": {
+		"by": "[NL] by {{author}}",
+		"installs": "[NL] {{count}} install",
+		"installs_plural": "[NL] {{count}} installs",
+		"rating": "[NL] {{rating}} / 5",
+		"version": "[NL] v{{version}}",
+		"install": "[NL] Install",
+		"installed": "[NL] Installed",
+		"update": "[NL] Update Available",
+		"premium": "[NL] Premium",
+		"free": "[NL] Free",
+		"viewDetails": "[NL] View Details"
+	},
+	"details": {
+		"title": "[NL] Extension Details",
+		"description": "[NL] Description",
+		"usage": "[NL] Usage",
+		"permissions": "[NL] Required Permissions",
+		"changelog": "[NL] Changelog",
+		"reviews": "[NL] Reviews",
+		"author": "[NL] Author",
+		"version": "[NL] Version",
+		"lastUpdated": "[NL] Last Updated",
+		"installs": "[NL] Total Installs",
+		"rating": "[NL] Rating",
+		"category": "[NL] Category",
+		"tags": "[NL] Tags",
+		"source": "[NL] View Source",
+		"report": "[NL] Report Extension"
+	},
+	"install": {
+		"title": "[NL] Install Extension",
+		"confirm": "[NL] Are you sure you want to install **{{name}}**?",
+		"permissions": "[NL] This extension requires the following permissions:",
+		"success": "[NL] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[NL] Failed to install extension.",
+		"alreadyInstalled": "[NL] This extension is already installed.",
+		"incompatible": "[NL] This extension is not compatible with your current setup.",
+		"premiumRequired": "[NL] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[NL] Uninstall Extension",
+		"confirm": "[NL] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[NL] This will remove all settings for this extension.",
+		"success": "[NL] Extension uninstalled.",
+		"failed": "[NL] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[NL] Extension Builder",
+		"create": "[NL] Create Extension",
+		"edit": "[NL] Edit Extension",
+		"name": "[NL] Extension Name",
+		"description": "[NL] Description",
+		"version": "[NL] Version",
+		"category": "[NL] Category",
+		"tags": "[NL] Tags",
+		"type": "[NL] Type",
+		"types": {
+			"command": "[NL] Command",
+			"event": "[NL] Event",
+			"slash": "[NL] Slash Command"
+		},
+		"commandKey": "[NL] Command Trigger",
+		"slashDescription": "[NL] Slash Command Description",
+		"code": "[NL] Code",
+		"scopes": "[NL] Scopes",
+		"timeout": "[NL] Timeout (ms)",
+		"adminLevel": "[NL] Required Admin Level",
+		"save": "[NL] Save Draft",
+		"submit": "[NL] Submit for Review",
+		"test": "[NL] Test Extension",
+		"export": "[NL] Export",
+		"import": "[NL] Import"
+	},
+	"myExtensions": {
+		"title": "[NL] My Extensions",
+		"created": "[NL] Created",
+		"installed": "[NL] Installed",
+		"noExtensions": "[NL] You haven't created any extensions yet.",
+		"noInstalled": "[NL] You haven't installed any extensions.",
+		"status": {
+			"draft": "[NL] Draft",
+			"pending": "[NL] Pending Review",
+			"approved": "[NL] Approved",
+			"rejected": "[NL] Rejected",
+			"published": "[NL] Published"
+		}
+	},
+	"review": {
+		"title": "[NL] Write a Review",
+		"rating": "[NL] Rating",
+		"comment": "[NL] Comment",
+		"submit": "[NL] Submit Review",
+		"edit": "[NL] Edit Review",
+		"delete": "[NL] Delete Review",
+		"helpful": "[NL] Helpful",
+		"report": "[NL] Report Review",
+		"noReviews": "[NL] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[NL] Extension not found.",
+		"loadFailed": "[NL] Failed to load extension.",
+		"executionFailed": "[NL] Extension execution failed.",
+		"timeout": "[NL] Extension timed out.",
+		"permissionDenied": "[NL] Permission denied.",
+		"invalidCode": "[NL] Invalid extension code.",
+		"scopeNotAllowed": "[NL] This extension requires a scope that is not allowed."
+	}
+}

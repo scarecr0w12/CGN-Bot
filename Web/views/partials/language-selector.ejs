@@ -1,0 +1,86 @@
+<%# Language Selector Component %>
+<%# Usage: Include this partial where you want to show a language dropdown %>
+
+<div class="language-selector dropdown">
+	<button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<span class="flag"><%= language?.flag || '🌐' %></span>
+		<span class="lang-name d-none d-md-inline"><%= language?.nativeName || 'English' %></span>
+	</button>
+	<div class="dropdown-menu dropdown-menu-right">
+		<h6 class="dropdown-header"><%= typeof t === 'function' ? t('common:selectLanguage') : 'Select Language' %></h6>
+		<div class="dropdown-divider"></div>
+		<% const supportedLangs = typeof languages !== 'undefined' ? languages : {}; %>
+		<% Object.entries(supportedLangs).forEach(([code, info]) => { %>
+			<a class="dropdown-item <%= lng === code ? 'active' : '' %>" href="#" data-lang="<%= code %>">
+				<span class="flag"><%= info.flag %></span>
+				<span class="lang-native"><%= info.nativeName %></span>
+				<% if (info.nativeName !== info.name) { %>
+					<span class="lang-english text-muted">(<%= info.name %>)</span>
+				<% } %>
+			</a>
+		<% }); %>
+	</div>
+</div>
+
+<style>
+.language-selector .dropdown-toggle {
+	color: inherit;
+	text-decoration: none;
+	padding: 0.25rem 0.5rem;
+}
+.language-selector .dropdown-toggle:hover {
+	opacity: 0.8;
+}
+.language-selector .flag {
+	font-size: 1.2em;
+	margin-right: 0.25rem;
+}
+.language-selector .dropdown-menu {
+	max-height: 300px;
+	overflow-y: auto;
+}
+.language-selector .dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.language-selector .dropdown-item.active {
+	background-color: var(--primary, #5865F2);
+	color: white;
+}
+.language-selector .dropdown-item.active .text-muted {
+	color: rgba(255,255,255,0.7) !important;
+}
+.language-selector .lang-english {
+	font-size: 0.85em;
+}
+</style>
+
+<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
+(function() {
+	document.querySelectorAll('.language-selector .dropdown-item').forEach(function(item) {
+		item.addEventListener('click', function(e) {
+			e.preventDefault();
+			var lang = this.dataset.lang;
+			
+			// Set cookie for language preference
+			document.cookie = 'lang=' + lang + ';path=/;max-age=' + (365 * 24 * 60 * 60);
+			
+			// Optionally save to server if logged in
+			if (typeof SkynetUtil !== 'undefined' && SkynetUtil.isLoggedIn) {
+				fetch('/api/user/language', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ language: lang })
+				}).then(function() {
+					window.location.reload();
+				}).catch(function() {
+					window.location.reload();
+				});
+			} else {
+				window.location.reload();
+			}
+		});
+	});
+})();
+</script>

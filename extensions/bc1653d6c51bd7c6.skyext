@@ -1,0 +1,95 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const args = command.suffix.trim().split(/\s+/);
+const nameTag = args[0];
+const region = (args[1] || 'eu').toLowerCase();
+
+if (!nameTag || !nameTag.includes('#')) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎯 Valorant Stats',
+			description: 'Usage: valorantstats <name#tag> [region]\nRegions: eu, na, ap, kr\nExample: valorantstats TenZ#0505 na',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const [name, tag] = nameTag.split('#');
+if (!name || !tag) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Stats',
+			description: 'Invalid format. Use: name#tag',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const validRegions = ['eu', 'na', 'ap', 'kr', 'latam', 'br'];
+if (!validRegions.includes(region)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Stats',
+			description: 'Invalid region. Valid: ' + validRegions.join(', '),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.henrikdev.xyz/valorant/v1/account/' + encodeURIComponent(name) + '/' + encodeURIComponent(tag),
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 10000,
+});
+
+if (!res.success || res.json?.status !== 200) {
+	const errorMsg = res.json?.errors?.[0]?.message || res.error || 'Player not found';
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Stats',
+			description: errorMsg,
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const account = res.json.data;
+
+const mmrRes = await http.request({
+	url: 'https://api.henrikdev.xyz/valorant/v2/mmr/' + region + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(tag),
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 10000,
+});
+
+const fields = [
+	{ name: 'Account Level', value: String(account.account_level || 'N/A'), inline: true },
+	{ name: 'Region', value: account.region?.toUpperCase() || region.toUpperCase(), inline: true },
+];
+
+if (mmrRes.success && mmrRes.json?.data?.current_data) {
+	const mmr = mmrRes.json.data.current_data;
+	fields.push({ name: 'Rank', value: mmr.currenttierpatched || 'Unranked', inline: true });
+	fields.push({ name: 'RR', value: String(mmr.ranking_in_tier || 0), inline: true });
+	fields.push({ name: 'Elo', value: String(mmr.elo || 'N/A'), inline: true });
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 ' + account.name + '#' + account.tag,
+		thumbnail: { url: account.card?.small || '' },
+		fields: fields,
+		color: embed.colors.RED,
+		footer: { text: 'Powered by Henrik Valorant API' },
+	})],
+});
+})();

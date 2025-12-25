@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= pageData.pageTitle %> | Skynet Bot</title>
+	<%
+	if (typeof pageData !== "undefined") {
+		pageData.seo = {
+			title: pageData.pageTitle + " | Skynet Bot",
+			description: "Track your server referrals and earn Vote Points by inviting servers to use Skynet Discord Bot.",
+			keywords: "Discord bot referrals, Skynet referral program, earn Vote Points"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "Account", url: "/account" },
+			{ name: "Referrals", url: "/account/referrals" }
+		];
+	}
+	%>
+	<%- include('../partials/head') %>
+	
+	<style>
+	.referral-hero {
+		background: var(--gradient-primary);
+		padding: 3rem 0;
+		text-align: center;
+	}
+	.referral-code-box {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(12px);
+		border: 2px dashed rgba(255, 255, 255, 0.3);
+		border-radius: var(--radius-xl);
+		padding: 1.5rem 2rem;
+		display: inline-block;
+		margin: 1.5rem 0;
+	}
+	.referral-code {
+		font-size: 2rem;
+		font-weight: 700;
+		font-family: monospace;
+		color: white;
+		letter-spacing: 0.1em;
+	}
+	.referral-url-box {
+		background: rgba(0, 0, 0, 0.2);
+		border-radius: var(--radius-lg);
+		padding: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		max-width: 600px;
+		margin: 0 auto;
+	}
+	.referral-url-box input {
+		background: transparent;
+		border: none;
+		color: white;
+		flex: 1;
+		font-size: 0.9rem;
+		outline: none;
+	}
+	.stat-card {
+		background: var(--color-card);
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		text-align: center;
+		box-shadow: var(--shadow-card);
+	}
+	.stat-value {
+		font-size: 3rem;
+		font-weight: 700;
+		color: var(--color-accent);
+	}
+	.stat-label {
+		font-size: 0.875rem;
+		color: var(--color-text-muted);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	.reward-info-card {
+		background: var(--color-card);
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		box-shadow: var(--shadow-card);
+	}
+	.reward-item {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 0;
+		border-bottom: 1px solid var(--color-border-light);
+	}
+	.reward-item:last-child {
+		border-bottom: none;
+	}
+	.reward-icon {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		background: rgba(20, 184, 166, 0.1);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-accent);
+		font-size: 1.25rem;
+	}
+	.reward-points {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--color-accent);
+	}
+	.referred-server {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem;
+		background: var(--color-bg-secondary);
+		border-radius: var(--radius-lg);
+		margin-bottom: 0.75rem;
+	}
+	.referred-server-icon {
+		width: 40px;
+		height: 40px;
+		border-radius: var(--radius-md);
+		background: var(--color-primary);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-weight: 600;
+	}
+	.copy-success {
+		animation: pulse 0.3s ease;
+	}
+	@keyframes pulse {
+		0% { transform: scale(1); }
+		50% { transform: scale(1.1); }
+		100% { transform: scale(1); }
+	}
+	</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body referral-hero">
+			<div class="container">
+				<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
+					<i class="fas fa-gift" style="margin-right: 0.5rem;"></i>
+					Referral Program
+				</h1>
+				<p class="subtitle is-5" style="color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto 1.5rem;">
+					Invite servers to use Skynet and earn Vote Points! Share your unique referral link below.
+				</p>
+				
+				<div class="referral-code-box">
+					<div class="referral-code"><%= pageData.referralStats.referralCode %></div>
+					<div style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem;">Your Referral Code</div>
+				</div>
+				
+				<div class="referral-url-box">
+					<input type="text" id="referral-url" value="<%= pageData.referralStats.referralUrl %>" readonly>
+					<button class="button is-primary is-small" onclick="copyReferralUrl()" id="copy-btn">
+						<span class="icon"><i class="fas fa-copy"></i></span>
+						<span>Copy</span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</header>
+	
+	<main class="section" role="main">
+		<div class="container">
+			<!-- Stats Row -->
+			<div class="columns" style="margin-bottom: 2rem;">
+				<div class="column is-4">
+					<div class="stat-card">
+						<div class="stat-value"><%= pageData.referralStats.totalReferrals %></div>
+						<div class="stat-label">Servers Referred</div>
+					</div>
+				</div>
+				<div class="column is-4">
+					<div class="stat-card">
+						<div class="stat-value"><%= pageData.referralStats.totalPointsEarned %></div>
+						<div class="stat-label">Points Earned</div>
+					</div>
+				</div>
+				<div class="column is-4">
+					<div class="stat-card">
+						<div class="stat-value"><%= pageData.rewards.basePoints + pageData.rewards.retentionBonus %></div>
+						<div class="stat-label">Points Per Referral</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="columns">
+				<!-- How It Works -->
+				<div class="column is-6">
+					<div class="reward-info-card">
+						<h2 class="title is-4" style="margin-bottom: 1.5rem;">
+							<i class="fas fa-info-circle" style="color: var(--color-accent);"></i>
+							How It Works
+						</h2>
+						
+						<div class="reward-item">
+							<div class="reward-icon">
+								<i class="fas fa-link"></i>
+							</div>
+							<div style="flex: 1;">
+								<strong>1. Share Your Link</strong>
+								<p style="color: var(--color-text-muted); font-size: 0.9rem;">
+									Share your unique referral link with server owners
+								</p>
+							</div>
+						</div>
+						
+						<div class="reward-item">
+							<div class="reward-icon">
+								<i class="fas fa-server"></i>
+							</div>
+							<div style="flex: 1;">
+								<strong>2. Server Joins</strong>
+								<p style="color: var(--color-text-muted); font-size: 0.9rem;">
+									When a server with <%= pageData.rewards.minServerMembers %>+ members joins via your link
+								</p>
+							</div>
+							<div class="reward-points">+<%= pageData.rewards.basePoints %></div>
+						</div>
+						
+						<div class="reward-item">
+							<div class="reward-icon">
+								<i class="fas fa-trophy"></i>
+							</div>
+							<div style="flex: 1;">
+								<strong>3. Retention Bonus</strong>
+								<p style="color: var(--color-text-muted); font-size: 0.9rem;">
+									If the server stays active for 7 days
+								</p>
+							</div>
+							<div class="reward-points">+<%= pageData.rewards.retentionBonus %></div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Referred Servers -->
+				<div class="column is-6">
+					<div class="reward-info-card">
+						<h2 class="title is-4" style="margin-bottom: 1.5rem;">
+							<i class="fas fa-list" style="color: var(--color-accent);"></i>
+							Your Referrals
+						</h2>
+						
+						<% if (pageData.referralStats.referredServers.length > 0) { %>
+							<% pageData.referralStats.referredServers.forEach(server => { %>
+								<div class="referred-server">
+									<div class="referred-server-icon">
+										<%= server.name ? server.name.charAt(0).toUpperCase() : '?' %>
+									</div>
+									<div style="flex: 1;">
+										<strong><%= server.name || 'Unknown Server' %></strong>
+										<div style="font-size: 0.8rem; color: var(--color-text-muted);">
+											<%= new Date(server.referredAt).toLocaleDateString() %>
+										</div>
+									</div>
+									<div style="text-align: right;">
+										<div style="font-weight: 600; color: var(--color-accent);">
+											+<%= server.pointsAwarded %> pts
+										</div>
+										<% if (server.retentionBonusAwarded) { %>
+											<span class="tag is-success is-small">Bonus Earned</span>
+										<% } else { %>
+											<span class="tag is-warning is-small">Pending Bonus</span>
+										<% } %>
+									</div>
+								</div>
+							<% }); %>
+						<% } else { %>
+							<div class="has-text-centered" style="padding: 3rem; color: var(--color-text-muted);">
+								<i class="fas fa-inbox fa-3x" style="margin-bottom: 1rem; opacity: 0.5;"></i>
+								<p>No referrals yet. Share your link to get started!</p>
+							</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Share Buttons -->
+			<div class="has-text-centered" style="margin-top: 2rem;">
+				<p style="margin-bottom: 1rem; color: var(--color-text-muted);">Share your referral link:</p>
+				<div class="buttons is-centered">
+					<a class="button is-info" href="https://twitter.com/intent/tweet?text=Check%20out%20Skynet%20Discord%20Bot!&url=<%= encodeURIComponent(pageData.referralStats.referralUrl) %>" target="_blank" rel="noopener">
+						<span class="icon"><i class="fab fa-twitter"></i></span>
+						<span>Twitter</span>
+					</a>
+					<a class="button is-link" href="https://www.reddit.com/submit?url=<%= encodeURIComponent(pageData.referralStats.referralUrl) %>&title=Skynet%20Discord%20Bot" target="_blank" rel="noopener">
+						<span class="icon"><i class="fab fa-reddit"></i></span>
+						<span>Reddit</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scripts') %>
+	
+	<script>
+	function copyReferralUrl() {
+		const input = document.getElementById('referral-url');
+		const btn = document.getElementById('copy-btn');
+		
+		input.select();
+		input.setSelectionRange(0, 99999);
+		
+		navigator.clipboard.writeText(input.value).then(() => {
+			btn.classList.add('copy-success');
+			btn.innerHTML = '<span class="icon"><i class="fas fa-check"></i></span><span>Copied!</span>';
+			
+			setTimeout(() => {
+				btn.classList.remove('copy-success');
+				btn.innerHTML = '<span class="icon"><i class="fas fa-copy"></i></span><span>Copy</span>';
+			}, 2000);
+		});
+	}
+	</script>
+</body>
+</html>

@@ -215,7 +215,7 @@
 										<label class="checkbox"><input type="checkbox" name="custom_enabled[]" value="<%= feat._id %>" <%= feat.isEnabled ? 'checked' : '' %>></label>
 									</div>
 									<div class="column is-1">
-										<button type="button" class="button is-danger is-small" onclick="$(this).closest('.custom-feature-box').remove(); SkynetData.HUM=true;">
+										<button type="button" class="button is-danger is-small remove-feature-btn">
 											<span class="icon"><i class="fa fa-trash"></i></span>
 										</button>
 									</div>
@@ -223,7 +223,7 @@
 							</div>
 							<% }); %>
 						</div>
-						<button type="button" class="button is-info is-small" onclick="addCustomFeature()">
+						<button type="button" class="button is-info is-small" id="add-feature-btn">
 							<span class="icon"><i class="fa fa-plus"></i></span>
 							<span>Add Custom Feature</span>
 						</button>
@@ -276,7 +276,12 @@
 		SkynetData.HUM = true;
 	});
 
-	function addCustomFeature() {
+	$('#custom-features').on('click', '.remove-feature-btn', function() {
+		$(this).closest('.custom-feature-box').remove();
+		SkynetData.HUM = true;
+	});
+
+	$('#add-feature-btn').on('click', function() {
 		$('#custom-features').append(`
 			<div class="box custom-feature-box">
 				<div class="columns is-vcentered">
@@ -293,7 +298,7 @@
 						<label class="checkbox"><input type="checkbox" name="custom_enabled[]" value="new" checked></label>
 					</div>
 					<div class="column is-1">
-						<button type="button" class="button is-danger is-small" onclick="$(this).closest('.custom-feature-box').remove(); SkynetData.HUM=true;">
+						<button type="button" class="button is-danger is-small remove-feature-btn">
 							<span class="icon"><i class="fa fa-trash"></i></span>
 						</button>
 					</div>
@@ -301,7 +306,7 @@
 			</div>
 		`);
 		SkynetData.HUM = true;
-	}
+	});
 	</script>
 </body>
 </html>

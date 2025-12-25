@@ -70,6 +70,11 @@ module.exports = new Schema({
 		maxlength: 25,
 		minlength: 1,
 	},
+	language: {
+		type: String,
+		default: "en",
+		maxlength: 5,
+	},
 	commands: new Schema(getCommands()),
 	count_data: [new Schema({
 		_id: {
@@ -239,6 +244,157 @@ module.exports = new Schema({
 				violator_role_id: {
 					type: String,
 					default: "",
+				},
+			}),
+			antiraid: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				join_threshold: {
+					type: Number,
+					default: 10,
+					min: 3,
+					max: 50,
+				},
+				time_window: {
+					type: Number,
+					default: 10,
+					min: 5,
+					max: 60,
+				},
+				action: {
+					type: String,
+					default: "lockdown",
+					enum: ["lockdown", "kick", "ban", "notify"],
+				},
+				lockdown_duration: {
+					type: Number,
+					default: 300,
+					min: 60,
+					max: 3600,
+				},
+				whitelist_role_ids: [String],
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				auto_verify: {
+					type: Boolean,
+					default: false,
+				},
+				min_account_age: {
+					type: Number,
+					default: 7,
+					min: 0,
+					max: 365,
+				},
+			}),
+			altcheck: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				min_account_age_days: {
+					type: Number,
+					default: 7,
+					min: 1,
+					max: 365,
+				},
+				action: {
+					type: String,
+					default: "flag",
+					enum: ["flag", "kick", "ban", "quarantine"],
+				},
+				quarantine_role_id: {
+					type: String,
+					default: "",
+				},
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				whitelist_user_ids: [String],
+				require_verification: {
+					type: Boolean,
+					default: false,
+				},
+			}),
+			sentiment_filter: new Schema({
+				isEnabled: {
+					type: Boolean,
+					default: false,
+				},
+				disabled_channel_ids: [String],
+				provider: {
+					type: String,
+					default: "google",
+					enum: ["google", "ai"],
+				},
+				google_api_key: {
+					type: String,
+					default: "",
+				},
+				sensitivity: {
+					type: String,
+					default: "normal",
+					enum: ["strict", "normal", "lenient"],
+				},
+				negative_threshold: {
+					type: Number,
+					default: -0.5,
+					min: -1,
+					max: 0,
+				},
+				categories: new Schema({
+					toxic: { type: Boolean, default: true },
+					insult: { type: Boolean, default: true },
+					threat: { type: Boolean, default: true },
+					profanity: { type: Boolean, default: true },
+					identity_attack: { type: Boolean, default: true },
+				}),
+				min_message_length: {
+					type: Number,
+					default: 10,
+					min: 1,
+					max: 100,
+				},
+				action: {
+					type: String,
+					default: "mute",
+					enum: ["none", "warn", "block", "mute", "kick", "ban"],
+				},
+				delete_message: {
+					type: Boolean,
+					default: true,
+				},
+				violator_role_id: {
+					type: String,
+					default: "",
+				},
+				log_channel_id: {
+					type: String,
+					default: "",
+				},
+				warn_user: {
+					type: Boolean,
+					default: true,
+				},
+				escalate_on_repeat: {
+					type: Boolean,
+					default: true,
+				},
+				repeat_threshold: {
+					type: Number,
+					default: 3,
+					min: 2,
+					max: 10,
+				},
+				repeat_window_minutes: {
+					type: Number,
+					default: 60,
+					min: 5,
+					max: 1440,
 				},
 			}),
 		}),
@@ -435,6 +591,12 @@ module.exports = new Schema({
 				type: Boolean,
 				default: false,
 			},
+			// SEO-friendly URL slug for public server pages
+			slug: {
+				type: String,
+				minlength: 2,
+				maxlength: 60,
+			},
 			category: {
 				type: String,
 				default: "Other",
@@ -452,6 +614,65 @@ module.exports = new Schema({
 				maxlength: 3000,
 			},
 			invite_link: String,
+		}),
+		// Server Profile (Tier 1+)
+		server_profile: new Schema({
+			isEnabled: {
+				type: Boolean,
+				default: false,
+			},
+			// Custom banner image URL
+			banner_url: {
+				type: String,
+				maxlength: 500,
+			},
+			// Short tagline/motto
+			tagline: {
+				type: String,
+				maxlength: 150,
+			},
+			// Extended about section (markdown supported)
+			about: {
+				type: String,
+				maxlength: 5000,
+			},
+			// Social links
+			social_links: [new Schema({
+				platform: {
+					type: String,
+					enum: ["website", "twitter", "youtube", "twitch", "reddit", "github", "instagram", "tiktok"],
+				},
+				url: {
+					type: String,
+					maxlength: 300,
+				},
+			})],
+			// Featured channels to display
+			featured_channels: [String],
+			// Server rules/guidelines to display
+			rules: {
+				type: String,
+				maxlength: 2000,
+			},
+			// Custom theme color
+			theme_color: {
+				type: String,
+				maxlength: 7,
+				default: "#14b8a6",
+			},
+			// What sections to show
+			show_sections: new Schema({
+				stats: { type: Boolean, default: true },
+				leaderboard: { type: Boolean, default: true },
+				rules: { type: Boolean, default: false },
+				social: { type: Boolean, default: true },
+				channels: { type: Boolean, default: false },
+			}),
+			// Discord widget embed (Tier 2)
+			discord_widget: new Schema({
+				isEnabled: { type: Boolean, default: false },
+				channel_id: String,
+			}),
 		}),
 	}),
 	ranks_list: [new Schema({
@@ -471,6 +692,9 @@ module.exports = new Schema({
 		_id: {
 			type: String,
 			required: true,
+		},
+		owner_id: {
+			type: String,
 		},
 		created_timestamp: {
 			type: Date,
@@ -603,6 +827,42 @@ module.exports = new Schema({
 		type: String,
 		default: "https://i.imgur.com/3QPLumg.gif",
 	},
+	// Game Update Announcer configuration
+	game_updates: new Schema({
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+		subscriptions: [new Schema({
+			game_id: {
+				type: String,
+				required: true,
+				enum: [
+					"minecraft_java",
+					"minecraft_bedrock",
+					"rust",
+					"terraria",
+					"valheim",
+					"ark",
+					"sevendaystodie",
+					"cs2",
+					"palworld",
+				],
+			},
+			channel_id: {
+				type: String,
+				required: true,
+			},
+			isEnabled: {
+				type: Boolean,
+				default: true,
+			},
+			mention_role_id: {
+				type: String,
+				default: "",
+			},
+		})],
+	}),
 	// AI configuration
 	ai: serverAISchema,
 });

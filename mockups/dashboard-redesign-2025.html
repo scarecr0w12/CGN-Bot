@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Dashboard - Skynet Bot (2025 Redesign)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ===== 2025 Design System Variables ===== */
+        :root {
+            /* Simplified Color System */
+            --color-primary: #1e3a8a;
+            --color-accent: #14b8a6;
+            
+            /* Single Brand Gradient (used sparingly) */
+            --gradient-brand: linear-gradient(135deg, #1e3a8a 0%, #14b8a6 100%);
+            
+            /* Tone-Based Surfaces */
+            --surface-0: #ffffff;
+            --surface-1: #f8fafc;
+            --surface-2: #f1f5f9;
+            --surface-3: #e2e8f0;
+            
+            /* Text Colors */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            
+            /* Semantic Colors */
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-info: #3b82f6;
+            
+            /* Container Widths */
+            --container-narrow: 800px;
+            --container-standard: 1200px;
+            --container-wide: 1400px;
+            
+            /* Consistent Spacing Scale */
+            --space-micro: 4px;
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 32px;
+            --space-xl: 48px;
+            --space-2xl: 64px;
+            
+            /* Standard Component Sizes */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            /* Single Shadow Level */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.12);
+            
+            /* Sidebar */
+            --sidebar-width: 260px;
+            
+            /* Typography */
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-display: 'Montserrat', var(--font-sans);
+        }
+
+        /* ===== Global Styles ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            background: var(--surface-1);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== Layout Structure ===== */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--surface-0);
+            border-right: 1px solid var(--surface-3);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: var(--space-lg);
+            border-bottom: 1px solid var(--surface-3);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .sidebar-brand img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+        }
+
+        .server-select {
+            margin-top: var(--space-md);
+            padding: var(--space-sm) var(--space-md);
+            background: var(--surface-1);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--surface-3);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            cursor: pointer;
+            transition: all 200ms ease;
+        }
+
+        .server-select:hover {
+            background: var(--surface-2);
+            border-color: var(--color-accent);
+        }
+
+        .server-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--gradient-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .server-info {
+            flex: 1;
+        }
+
+        .server-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .server-members {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== Navigation ===== */
+        .sidebar-nav {
+            padding: var(--space-md);
+            flex: 1;
+        }
+
+        .nav-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            padding: 0 var(--space-sm);
+            margin-bottom: var(--space-sm);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 200ms ease;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: var(--surface-1);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-brand);
+            color: white;
+        }
+
+        .nav-item .icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--color-danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ===== Main Content ===== */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== Top Bar ===== */
+        .top-bar {
+            background: var(--surface-0);
+            border-bottom: 1px solid var(--surface-3);
+            padding: var(--space-md) var(--space-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .top-bar-left h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 200ms ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--gradient-brand);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-card);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text-primary);
+            border: 1px solid var(--surface-3);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-3);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-xs) var(--space-sm);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background 200ms ease;
+        }
+
+        .user-menu:hover {
+            background: var(--surface-1);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+        }
+
+        /* ===== Content Area ===== */
+        .content-area {
+            padding: var(--space-xl);
+            max-width: var(--container-wide);
+            width: 100%;
+        }
+
+        /* ===== Stats Grid ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--space-lg);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: var(--surface-0);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--surface-3);
+            transition: all 200ms ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-hover);
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--color-accent) 0%, #0d9488 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-xs);
+        }
+
+        .stat-change {
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .stat-change.positive {
+            color: var(--color-success);
+        }
+
+        .stat-change.negative {
+            color: var(--color-danger);
+        }
+
+        /* ===== Cards ===== */
+        .card {
+            background: var(--surface-0);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--surface-3);
+            padding: var(--space-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--surface-3);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-action {
+            font-size: 13px;
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .card-action:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== Quick Actions ===== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .action-card {
+            background: var(--surface-0);
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--surface-3);
+            text-align: center;
+            cursor: pointer;
+            transition: all 200ms ease;
+            text-decoration: none;
+        }
+
+        .action-card:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-card);
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto var(--space-md);
+            background: var(--gradient-brand);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ===== Activity Feed ===== */
+        .activity-item {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--surface-3);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .activity-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .activity-icon.danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-danger);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .activity-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===== Grid Layout ===== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        /* ===== Badge ===== */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-warning);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-info);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .content-area {
+                padding: var(--space-md);
+            }
+
+            .top-bar {
+                padding: var(--space-md);
+            }
+        }
+
+        /* ===== Design Note ===== */
+        .design-note {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #fbbf24;
+            color: #1e293b;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: var(--shadow-card);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Design Note -->
+    <div class="design-note">
+        🎨 Dashboard 2025 Mockup
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="https://via.placeholder.com/32" alt="Skynet">
+                    Skynet
+                </div>
+                
+                <!-- Server Selector -->
+                <div class="server-select">
+                    <div class="server-icon">CG</div>
+                    <div class="server-info">
+                        <div class="server-name">Community Gaming</div>
+                        <div class="server-members">2,547 members</div>
+                    </div>
+                    <i class="fa fa-chevron-down" style="color: var(--text-muted); font-size: 12px;"></i>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <!-- Overview Section -->
+                <div class="nav-section">
+                    <div class="nav-label">Overview</div>
+                    <a href="#" class="nav-item active">
+                        <i class="fa fa-chart-line icon"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-chart-bar icon"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-users icon"></i>
+                        Members
+                    </a>
+                </div>
+
+                <!-- Server Management -->
+                <div class="nav-section">
+                    <div class="nav-label">Server Management</div>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-gavel icon"></i>
+                        Moderation
+                        <span class="nav-badge">3</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-shield icon"></i>
+                        Auto-Mod
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-user-shield icon"></i>
+                        Roles
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-hashtag icon"></i>
+                        Channels
+                    </a>
+                </div>
+
+                <!-- Features -->
+                <div class="nav-section">
+                    <div class="nav-label">Features</div>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-trophy icon"></i>
+                        Leveling
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-bolt icon"></i>
+                        Extensions
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-ticket icon"></i>
+                        Tickets
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-music icon"></i>
+                        Music
+                    </a>
+                </div>
+
+                <!-- Settings -->
+                <div class="nav-section">
+                    <div class="nav-label">Settings</div>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-cog icon"></i>
+                        General
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa fa-crown icon"></i>
+                        Premium
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <h1>Dashboard</h1>
+                    <div class="breadcrumb">
+                        <i class="fa fa-home" style="font-size: 11px;"></i> Overview
+                    </div>
+                </div>
+                <div class="top-bar-right">
+                    <button class="btn btn-secondary">
+                        <i class="fa fa-cog"></i>
+                        Settings
+                    </button>
+                    <div class="user-menu">
+                        <img src="https://via.placeholder.com/32" alt="User" class="user-avatar">
+                        <span style="font-size: 14px; font-weight: 500;">Admin</span>
+                        <i class="fa fa-chevron-down" style="font-size: 11px; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="content-area">
+                
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Total Members</div>
+                            <div class="stat-icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">2,547</div>
+                        <div class="stat-change positive">
+                            <i class="fa fa-arrow-up"></i>
+                            +12% this month
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Active Today</div>
+                            <div class="stat-icon">
+                                <i class="fa fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">342</div>
+                        <div class="stat-change positive">
+                            <i class="fa fa-arrow-up"></i>
+                            +8% vs yesterday
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Messages Today</div>
+                            <div class="stat-icon">
+                                <i class="fa fa-comment"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-change positive">
+                            <i class="fa fa-arrow-up"></i>
+                            +15% vs average
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-label">Mod Actions</div>
+                            <div class="stat-icon">
+                                <i class="fa fa-gavel"></i>
+                            </div>
+                        </div>
+                        <div class="stat-value">8</div>
+                        <div class="stat-change negative">
+                            <i class="fa fa-arrow-down"></i>
+                            -20% this week
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card" style="margin-bottom: var(--space-xl);">
+                    <div class="card-header">
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fa fa-user-plus"></i>
+                            </div>
+                            <div class="action-title">Invite Members</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fa fa-cog"></i>
+                            </div>
+                            <div class="action-title">Configure Bot</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fa fa-bolt"></i>
+                            </div>
+                            <div class="action-title">Add Extension</div>
+                        </a>
+                        <a href="#" class="action-card">
+                            <div class="action-icon">
+                                <i class="fa fa-crown"></i>
+                            </div>
+                            <div class="action-title">Upgrade Premium</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Grid Layout -->
+                <div class="grid-2">
+                    <!-- Recent Activity -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Activity</h2>
+                            <a href="#" class="card-action">View All</a>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fa fa-user-plus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">15 new members joined</div>
+                                <div class="activity-description">Welcome wave from Discord invite link</div>
+                            </div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon warning">
+                                <i class="fa fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Auto-mod warning issued</div>
+                                <div class="activity-description">User @spammer warned for spam in #general</div>
+                            </div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fa fa-trophy"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Level milestone reached</div>
+                                <div class="activity-description">@cooluser reached level 50</div>
+                            </div>
+                            <div class="activity-time">5 hours ago</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon danger">
+                                <i class="fa fa-ban"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">User banned</div>
+                                <div class="activity-description">@badactor banned for repeated violations</div>
+                            </div>
+                            <div class="activity-time">6 hours ago</div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fa fa-puzzle-piece"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Extension installed</div>
+                                <div class="activity-description">Welcome Message extension activated</div>
+                            </div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+
+                    <!-- Server Status -->
+                    <div>
+                        <div class="card" style="margin-bottom: var(--space-lg);">
+                            <div class="card-header">
+                                <h2 class="card-title">Server Status</h2>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span style="font-size: 13px; color: var(--text-secondary);">Bot Status</span>
+                                    <span class="badge badge-success">Online</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-xs);">
+                                    <span style="font-size: 13px; color: var(--text-secondary);">Uptime</span>
+                                    <span style="font-size: 13px; font-weight: 600;">99.9%</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="font-size: 13px; color: var(--text-secondary);">Subscription</span>
+                                    <span class="badge badge-warning">Free Tier</span>
+                                </div>
+                            </div>
+
+                            <hr style="border: none; border-top: 1px solid var(--surface-3); margin: var(--space-md) 0;">
+
+                            <div style="margin-bottom: var(--space-md);">
+                                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: var(--space-xs);">
+                                    Active Features
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                    <span class="badge badge-info">Moderation</span>
+                                    <span class="badge badge-info">Leveling</span>
+                                    <span class="badge badge-info">Logging</span>
+                                    <span class="badge badge-info">Welcome</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fa fa-crown"></i>
+                                Upgrade to Premium
+                            </button>
+                        </div>
+
+                        <!-- Top Members -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Top Members</h2>
+                                <a href="#" class="card-action">Leaderboard</a>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f59e0b); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">1</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 14px; font-weight: 600;">SuperActive</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">Level 87</div>
+                                    </div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--color-accent);">15.2K pts</div>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #94a3b8, #64748b); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">2</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 14px; font-weight: 600;">CoolMember</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">Level 72</div>
+                                    </div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--color-accent);">12.8K pts</div>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #cbd5e1, #94a3b8); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">3</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-size: 14px; font-weight: 600;">ActiveChatter</div>
+                                        <div style="font-size: 12px; color: var(--text-secondary);">Level 65</div>
+                                    </div>
+                                    <div style="font-size: 14px; font-weight: 600; color: var(--color-accent);">10.1K pts</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

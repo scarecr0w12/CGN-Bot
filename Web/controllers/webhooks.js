@@ -8,8 +8,55 @@
 const crypto = require("crypto");
 const { TierManager } = require("../../Modules/TierManager");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+const EmailService = require("../../Modules/EmailService");
 
 const controllers = module.exports;
+
+// Helper to send receipt email after payment
+async function sendPaymentReceiptEmail (client, data) {
+	try {
+		const siteSettings = await TierManager.getSiteSettings();
+		const emailConfig = siteSettings?.email;
+
+		// Check if email is enabled and receipts should be sent
+		if (!emailConfig?.isEnabled || !emailConfig?.notifications?.send_receipts) {
+			return;
+		}
+
+		const emailService = new EmailService(client);
+		await emailService.sendReceipt(data);
+	} catch (err) {
+		logger.warn("Failed to send receipt email", { serverId: data.serverId }, err);
+	}
+}
+
+// Helper to send subscription notification email
+async function sendSubscriptionEmail (client, type, data) {
+	try {
+		const siteSettings = await TierManager.getSiteSettings();
+		const emailConfig = siteSettings?.email;
+
+		if (!emailConfig?.isEnabled || !emailConfig?.notifications?.send_subscription_alerts) {
+			return;
+		}
+
+		const emailService = new EmailService(client);
+
+		switch (type) {
+			case "activated":
+				await emailService.sendSubscriptionActivated(data);
+				break;
+			case "cancelled":
+				await emailService.sendSubscriptionCancelled(data);
+				break;
+			case "expiring":
+				await emailService.sendSubscriptionExpiring(data);
+				break;
+		}
+	} catch (err) {
+		logger.warn(`Failed to send ${type} email`, { serverId: data.serverId }, err);
+	}
+}
 
 // ============================================
 // STRIPE WEBHOOKS
@@ -39,18 +86,18 @@ controllers.stripe = async (req, res) => {
 		switch (event.type) {
 			case "checkout.session.completed": {
 				const session = event.data.object;
-				await handleStripeCheckoutCompleted(session);
+				await handleStripeCheckoutCompleted(req.app.client, session);
 				break;
 			}
 			case "customer.subscription.created":
 			case "customer.subscription.updated": {
 				const subscription = event.data.object;
-				await handleStripeSubscriptionUpdate(subscription);
+				await handleStripeSubscriptionUpdate(req.app.client, subscription);
 				break;
 			}
 			case "customer.subscription.deleted": {
 				const subscription = event.data.object;
-				await handleStripeSubscriptionCanceled(subscription);
+				await handleStripeSubscriptionCanceled(req.app.client, subscription);
 				break;
 			}
 			case "invoice.payment_failed": {
@@ -69,7 +116,7 @@ controllers.stripe = async (req, res) => {
 	}
 };
 
-async function handleStripeCheckoutCompleted (session) {
+async function handleStripeCheckoutCompleted (client, session) {
 	const customerId = session.customer;
 	const metadata = session.metadata || {};
 
@@ -99,8 +146,10 @@ async function handleStripeCheckoutCompleted (session) {
 	}
 
 	// Regular subscription checkout
-	const serverId = metadata.server_id;
-	const purchasedBy = metadata.discord_user_id;
+	const serverId = metadata.server_id || metadata.discord_server_id;
+	const purchasedBy = metadata.discord_user_id || metadata.purchased_by;
+	const tierId = metadata.tier_id;
+	const billingPeriod = metadata.billing_period;
 
 	if (!serverId) {
 		logger.warn("Stripe checkout missing server_id metadata", { sessionId: session.id });
@@ -110,9 +159,29 @@ async function handleStripeCheckoutCompleted (session) {
 	// Link Stripe customer to server
 	await TierManager.linkPaymentCustomer(serverId, "stripe", customerId);
 	logger.info(`Stripe customer linked: ${customerId} -> server ${serverId} (purchased by ${purchasedBy})`);
+
+	// Send receipt email
+	if (session.customer_email && tierId) {
+		const siteSettings = await TierManager.getSiteSettings();
+		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
+		const guild = client?.guilds?.cache?.get(serverId);
+
+		await sendPaymentReceiptEmail(client, {
+			email: session.customer_email,
+			serverName: guild?.name || serverId,
+			serverId,
+			tierName: tier?.name || tierId,
+			tierId,
+			amount: session.amount_total || 0,
+			currency: session.currency?.toUpperCase() || "USD",
+			billingPeriod: billingPeriod || "monthly",
+			transactionId: session.id,
+			purchaseDate: new Date(),
+		});
+	}
 }
 
-async function handleStripeSubscriptionUpdate (subscription) {
+async function handleStripeSubscriptionUpdate (client, subscription) {
 	const customerId = subscription.customer;
 	const { status } = subscription;
 	const priceId = subscription.items?.data?.[0]?.price?.id;
@@ -140,13 +209,34 @@ async function handleStripeSubscriptionUpdate (subscription) {
 				"subscription_active",
 			);
 			logger.info(`Server ${server._id} assigned tier ${tier._id} via Stripe`);
+
+			// Send subscription activated email
+			const guild = client?.guilds?.cache?.get(server._id);
+			const siteSettings = await TierManager.getSiteSettings();
+			const tierFeatures = siteSettings?.features?.filter(f =>
+				tier.features?.includes(f._id),
+			).map(f => f.name) || [];
+
+			// Try to get purchaser's email from server subscription
+			const purchaserEmail = server.subscription?.purchaser_email;
+			if (purchaserEmail) {
+				await sendSubscriptionEmail(client, "activated", {
+					email: purchaserEmail,
+					serverName: guild?.name || server._id,
+					serverId: server._id,
+					tierName: tier.name,
+					tierId: tier._id,
+					features: tierFeatures,
+					expiresAt,
+				});
+			}
 		}
 	} else if (status === "past_due" || status === "unpaid") {
 		logger.warn(`Stripe subscription ${status} for server ${server._id}`);
 	}
 }
 
-async function handleStripeSubscriptionCanceled (subscription) {
+async function handleStripeSubscriptionCanceled (client, subscription) {
 	const customerId = subscription.customer;
 
 	const server = await TierManager.findServerByPaymentCustomer("stripe", customerId);
@@ -155,8 +245,27 @@ async function handleStripeSubscriptionCanceled (subscription) {
 		return;
 	}
 
+	// Get tier info before canceling
+	const tierInfo = server.subscription?.tier_id;
+	const siteSettings = await TierManager.getSiteSettings();
+	const tier = siteSettings?.tiers?.find(t => t._id === tierInfo);
+
 	await TierManager.cancelSubscription(server._id, "stripe_canceled");
 	logger.info(`Stripe subscription canceled for server ${server._id}`);
+
+	// Send cancellation email
+	const guild = client?.guilds?.cache?.get(server._id);
+	const purchaserEmail = server.subscription?.purchaser_email;
+	if (purchaserEmail) {
+		await sendSubscriptionEmail(client, "cancelled", {
+			email: purchaserEmail,
+			serverName: guild?.name || server._id,
+			serverId: server._id,
+			tierName: tier?.name || "Premium",
+			endDate: subscription.current_period_end ?
+				new Date(subscription.current_period_end * 1000) : new Date(),
+		});
+	}
 }
 
 async function handleStripePaymentFailed (invoice) {
@@ -324,7 +433,7 @@ controllers.btcpay = async (req, res) => {
 		switch (event.type) {
 			case "InvoiceSettled":
 			case "InvoiceProcessing": {
-				await handleBTCPayInvoiceSettled(event);
+				await handleBTCPayInvoiceSettled(req.app.client, event);
 				break;
 			}
 			case "InvoiceExpired":
@@ -343,7 +452,7 @@ controllers.btcpay = async (req, res) => {
 	}
 };
 
-async function handleBTCPayInvoiceSettled (event) {
+async function handleBTCPayInvoiceSettled (client, event) {
 	const { invoiceId } = event;
 	const metadata = event.metadata || {};
 
@@ -373,10 +482,12 @@ async function handleBTCPayInvoiceSettled (event) {
 	}
 
 	// Regular subscription/tier purchase
-	const serverId = metadata.server_id;
+	const serverId = metadata.server_id || metadata.discord_server_id;
 	const tierId = metadata.tier_id;
 	const durationDays = parseInt(metadata.duration_days) || 30;
-	const purchasedBy = metadata.discord_user_id;
+	const purchasedBy = metadata.discord_user_id || metadata.purchased_by;
+	const billingPeriod = metadata.billing_period;
+	const purchaserEmail = metadata.email;
 
 	if (!serverId || !tierId) {
 		logger.warn("BTCPay invoice missing metadata (server_id or tier_id)", { invoiceId });
@@ -392,6 +503,26 @@ async function handleBTCPayInvoiceSettled (event) {
 
 	await TierManager.setServerTier(serverId, tierId, "btcpay", expiresAt, "crypto_payment", purchasedBy);
 	logger.info(`Server ${serverId} assigned tier ${tierId} via BTCPay for ${durationDays} days (purchased by ${purchasedBy})`);
+
+	// Send receipt email
+	if (purchaserEmail && tierId) {
+		const siteSettings = await TierManager.getSiteSettings();
+		const tier = siteSettings?.tiers?.find(t => t._id === tierId);
+		const guild = client?.guilds?.cache?.get(serverId);
+
+		await sendPaymentReceiptEmail(client, {
+			email: purchaserEmail,
+			serverName: guild?.name || serverId,
+			serverId,
+			tierName: tier?.name || tierId,
+			tierId,
+			amount: Math.round((parseFloat(event.amount) || 0) * 100),
+			currency: event.currency || "USD",
+			billingPeriod: billingPeriod || "monthly",
+			transactionId: invoiceId,
+			purchaseDate: new Date(),
+		});
+	}
 }
 
 async function handleBTCPayInvoiceFailed (event) {
@@ -578,6 +709,51 @@ controllers.discordbotlist = async (req, res) => {
 		res.status(200).json({ success: true });
 	} catch (err) {
 		logger.error("Error processing discordbotlist webhook", {}, err);
+		res.status(500).json({ error: "Internal error" });
+	}
+};
+
+/**
+ * TopBotList Vote Webhook
+ * Receives vote notifications when users vote for the bot on topbotlist.net
+ * Webhook payload: { bot, user, type, isWeekend, query }
+ */
+controllers.topbotlist = async (req, res) => {
+	try {
+		const siteSettings = await SiteSettings.findOne("main");
+		const config = siteSettings?.bot_lists?.topbotlist;
+
+		if (!config?.isEnabled) {
+			return res.status(404).json({ error: "Not configured" });
+		}
+
+		// Verify webhook secret (sent in Authorization header)
+		const authHeader = req.headers.authorization;
+		if (config.webhook_secret && authHeader !== config.webhook_secret) {
+			logger.warn("topbotlist webhook auth failed", { received: authHeader?.substring(0, 10) });
+			return res.status(401).json({ error: "Unauthorized" });
+		}
+
+		// TopBotList webhook payload format:
+		// { bot: "BOT_ID", user: "USER_ID", type: "vote", isWeekend: false, query: "?ref=..." }
+		const voteData = {
+			user: req.body.user,
+			type: req.body.type,
+			isWeekend: req.body.isWeekend || false,
+			query: req.body.query,
+		};
+
+		// Process the vote
+		const botLists = req.app.get("botLists");
+		if (botLists) {
+			await botLists.processVote("topbotlist", voteData);
+		} else {
+			logger.warn("BotLists module not initialized");
+		}
+
+		res.status(200).json({ success: true });
+	} catch (err) {
+		logger.error("Error processing topbotlist webhook", {}, err);
 		res.status(500).json({ error: "Internal error" });
 	}
 };

@@ -338,68 +338,28 @@ module.exports = class SkynetClient extends DJSClient {
 	}
 
 	async canRunSharedCommand (command, user) {
+		const ConfigManager = require("../Modules/ConfigManager");
 		command = this.getSharedCommandName(command);
-		if (!(configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id))) throw new SkynetError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
+		const isMaintainer = await ConfigManager.isMaintainer(user.id);
+		if (!isMaintainer) throw new SkynetError("UNAUTHORIZED_USER", {}, { usrid: user.id }, user);
 		const commandData = this.getSharedCommandMetadata(command);
 		switch (commandData.perm) {
 			case "eval": {
-				const value = configJSON.perms.eval;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("eval", user.id);
 			}
 			case "administration":
 			case "admin": {
-				const value = configJSON.perms.administration;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("administration", user.id);
 			}
 			case "shutdown": {
-				const value = configJSON.perms.shutdown;
-				switch (value) {
-					case 0: return process.env.SKYNET_HOST === user.id;
-					case 1: {
-						// Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id) || configJSON.maintainers.includes(user.id)) return true;
-						return false;
-					}
-					case 2: {
-						// Sudo Maintainers
-						if (configJSON.sudoMaintainers.includes(user.id)) return true;
-						return false;
-					}
-				}
-				break;
+				return ConfigManager.canDo("shutdown", user.id);
 			}
 			case "none":
 			case "any": {
 				return true;
 			}
 			default: {
-				throw new SkynetError("SHARED_INVALID_MODE", {}, commandData.configJSON, command);
+				throw new SkynetError("SHARED_INVALID_MODE", {}, commandData.perm, command);
 			}
 		}
 	}
@@ -587,7 +547,7 @@ module.exports = class SkynetClient extends DJSClient {
 						}
 					}
 					if (member.id === guild.ownerId) obj.memberAboveAffected = true;
-					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles);
+					obj.canClientMute = guild.members.me.permissions.has(PermissionFlagsBits.ModerateMembers);
 					return obj;
 				}
 			}
@@ -710,7 +670,6 @@ module.exports = class SkynetClient extends DJSClient {
 	 * @param {String} action What action should be taken.
 	 * @param {String} roleID The role ID that the user should get due to the violation
 	 */
-	// TODO: Rewrite this to hell
 	async handleViolation (server, serverDocument, channel, member, userDocument, memberDocument, userMessage, adminMessage, strikeMessage, action, roleID) {
 		const serverQueryDocument = serverDocument.query;
 		const memberQueryDocument = serverQueryDocument.clone.id("members", memberDocument._id);
@@ -771,7 +730,7 @@ module.exports = class SkynetClient extends DJSClient {
 					},
 				}],
 			});
-			ModLog.create(server, serverDocument, "Block", member, null, strikeMessage);
+			ModLog.create(server, "Block", member, this.user, strikeMessage);
 		};
 
 		switch (action) {
@@ -799,7 +758,7 @@ module.exports = class SkynetClient extends DJSClient {
 							description: `${adminMessage}, so I muted them in the channel.`,
 						}],
 					});
-					ModLog.create(server, serverDocument, "Mute", member, null, strikeMessage);
+					ModLog.create(server, "Mute", member, this.user, strikeMessage);
 				} catch (err) {
 					await blockMember("mute");
 				}
@@ -822,7 +781,7 @@ module.exports = class SkynetClient extends DJSClient {
 							description: `${adminMessage}, so I kicked them from the server.`,
 						}],
 					});
-					ModLog.create(server, serverDocument, "Kick", member, null, strikeMessage);
+					ModLog.create(server, "Kick", member, this.user, strikeMessage);
 				} catch (err) {
 					await blockMember("kick");
 				}
@@ -848,7 +807,7 @@ module.exports = class SkynetClient extends DJSClient {
 							description: `${adminMessage}, so I banned them from the server.`,
 						}],
 					});
-					ModLog.create(server, serverDocument, "Ban", member, null, strikeMessage);
+					ModLog.create(server, "Ban", member, this.user, strikeMessage);
 				} catch (err) {
 					await blockMember("ban");
 				}
@@ -871,7 +830,7 @@ module.exports = class SkynetClient extends DJSClient {
 							description: `${adminMessage}, but I didn't do anything about it.`,
 						}],
 					});
-					ModLog.create(server, serverDocument, "Warning", member, null, strikeMessage);
+					ModLog.create(server, "Warning", member, this.user, strikeMessage);
 				} catch (err) {
 					// Whatever
 				}
@@ -982,7 +941,10 @@ module.exports = class SkynetClient extends DJSClient {
 				}, { reason });
 			} catch (err) {
 				logger.verbose(`Probably missing permissions to mute member in "${channel.guild}".`, { svrid: channel.guild.id, chid: channel.id }, err);
-				// TODO: this.log to the server
+				const serverDocument = await Servers.findOne(channel.guild.id);
+				if (serverDocument) {
+					this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to mute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+				}
 			}
 		}
 	}
@@ -1008,14 +970,20 @@ module.exports = class SkynetClient extends DJSClient {
 						}, { reason });
 					} catch (err) {
 						logger.verbose(`Probably missing permissions to unmute member in "${channel.guild}".`, { chid: channel.id, svrid: channel.guild.id }, err);
-						// TODO: this.log to the server
+						const serverDocument = await Servers.findOne(channel.guild.id);
+						if (serverDocument) {
+							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+						}
 					}
 				} else {
 					try {
 						await overwrite.delete(reason);
 					} catch (err) {
 						logger.verbose(`Probably missing permissions to unmute member in "${channel.guild}".`, { chid: channel.id, svrid: channel.guild.id }, err);
-						// TODO: this.log to the server
+						const serverDocument = await Servers.findOne(channel.guild.id);
+						if (serverDocument) {
+							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+						}
 					}
 				}
 			}
@@ -1111,17 +1079,22 @@ module.exports = class SkynetClient extends DJSClient {
 	}
 
 	/**
-	 * Gets you a langauge translation for a server.
-	 * TODO: ?.?: Implement this
+	 * Gets a translator for a server using the i18n system.
+	 * @param {Document} serverDocument The server document to get translator for
+	 * @param {Document} [userDocument] Optional user document for user-specific language preference
+	 * @returns {Object} Translator object with t function and language helpers
+	 */
+	getTranslator (serverDocument, userDocument = null) {
+		const I18n = require("../Modules/I18n");
+		return I18n.createBotTranslator({ serverDocument, userDocument });
+	}
+
+	/**
+	 * @deprecated Use getTranslator instead - legacy method for backward compatibility
 	 * @param {Document} serverDocument The document to get the file for
 	 */
 	getTranslateFile (serverDocument) {
-		if (serverDocument.config.localization) {
-			switch (serverDocument.config.localization) {
-				case "fr": return require("./Languages/fr.js");
-				default: return require("./Languages/en_us.js");
-			}
-		}
+		return this.getTranslator(serverDocument);
 	}
 
 	/**

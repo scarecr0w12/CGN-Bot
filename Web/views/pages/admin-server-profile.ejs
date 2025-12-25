@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head') %>
+	<style>
+	.tier-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-full);
+		font-weight: 600;
+		font-size: 0.875rem;
+	}
+	.tier-badge.tier-0 { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+	.tier-badge.tier-1 { background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; }
+	.tier-badge.tier-2 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; }
+	.tier-locked {
+		opacity: 0.5;
+		pointer-events: none;
+		position: relative;
+	}
+	.tier-locked::after {
+		content: "Tier 2 Required";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: rgba(0,0,0,0.8);
+		color: white;
+		padding: 0.5rem 1rem;
+		border-radius: var(--radius-md);
+		font-size: 0.75rem;
+		white-space: nowrap;
+	}
+	.free-tier-locked {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+	.upsell-banner {
+		background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+		border: 2px solid #14b8a6;
+		border-radius: var(--radius-xl);
+		padding: 2rem;
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+	.upsell-banner h2 {
+		color: white;
+		margin-bottom: 1rem;
+	}
+	.upsell-banner p {
+		color: rgba(255,255,255,0.8);
+		margin-bottom: 1.5rem;
+	}
+	.upsell-features {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+		text-align: left;
+	}
+	.upsell-feature {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		color: white;
+	}
+	.upsell-feature i {
+		color: #14b8a6;
+	}
+	.color-preview {
+		width: 40px;
+		height: 40px;
+		border-radius: var(--radius-md);
+		border: 2px solid var(--color-border);
+		cursor: pointer;
+	}
+	.social-link-row {
+		display: flex;
+		gap: 0.5rem;
+		align-items: center;
+		margin-bottom: 0.5rem;
+	}
+	.social-link-row .select { flex: 0 0 150px; }
+	.social-link-row .input { flex: 1; }
+	.preview-banner {
+		width: 100%;
+		height: 150px;
+		background-size: cover;
+		background-position: center;
+		border-radius: var(--radius-lg);
+		display: flex;
+		align-items: flex-end;
+		padding: 1rem;
+	}
+	.preview-banner.no-banner {
+		background: var(--gradient-primary);
+	}
+	.section-toggle {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0.75rem 0;
+		border-bottom: 1px solid var(--color-border-light);
+	}
+	</style>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<nav class="breadcrumb" aria-label="breadcrumbs">
+						<ul>
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/dashboard/<%= serverData.id %>"><%= serverData.name %></a></li>
+					<li class="is-active"><a href="#">Server Profile</a></li>
+				</ul>
+			</nav>
+
+			<div class="level">
+				<div class="level-left">
+					<div class="level-item">
+						<h1 class="title is-3">
+							<i class="fas fa-id-card" style="color: var(--color-accent);"></i>
+							Server Profile
+						</h1>
+					</div>
+					<div class="level-item">
+						<span class="tier-badge tier-<%= pageData.tierInfo.tier %>">
+							<i class="fas fa-crown"></i>
+							Tier <%= pageData.tierInfo.tier %>
+						</span>
+					</div>
+				</div>
+				<div class="level-right">
+					<% if (pageData.slug) { %>
+						<a href="/server/<%= serverData.id %>/<%= pageData.slug %>" target="_blank" class="button is-info is-outlined">
+							<span class="icon"><i class="fas fa-external-link-alt"></i></span>
+							<span>View Public Profile</span>
+						</a>
+					<% } %>
+				</div>
+			</div>
+
+			<p class="subtitle is-5" style="color: var(--color-text-muted);">
+				Customize your server's public profile page with branding, description, and more.
+			</p>
+
+			<% if (!pageData.tierInfo.hasTier1) { %>
+			<!-- Upsell Banner for Free Servers -->
+			<div class="upsell-banner">
+				<h2 class="title is-4">
+					<i class="fas fa-crown" style="color: #14b8a6;"></i>
+					Unlock Custom Server Profiles
+				</h2>
+				<p>Upgrade to Tier 1 to fully customize your server's public profile with:</p>
+				<div class="upsell-features">
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Custom banner image</span>
+					</div>
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Personalized tagline & about section</span>
+					</div>
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Social media links</span>
+					</div>
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Custom theme color</span>
+					</div>
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Leaderboard display</span>
+					</div>
+					<div class="upsell-feature">
+						<i class="fas fa-check-circle"></i>
+						<span>Server rules showcase</span>
+					</div>
+				</div>
+				<a href="/dashboard/<%= serverData.id %>/subscription" class="button is-primary is-medium">
+					<span class="icon"><i class="fas fa-arrow-up"></i></span>
+					<span>Upgrade to Tier 1</span>
+				</a>
+			</div>
+
+			<div class="notification is-info is-light">
+				<p><strong>Default Profile Active:</strong> Your server has a basic public profile showing server stats and description. The preview below shows what visitors see. Upgrade to customize it!</p>
+			</div>
+			<% } %>
+
+			<form id="profile-form" class="<%= !pageData.tierInfo.hasTier1 ? 'free-tier-locked' : '' %>">
+				<div class="columns">
+					<!-- Main Settings -->
+					<div class="column is-8">
+						<div class="box">
+							<h3 class="title is-5">Profile Settings</h3>
+							
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="isEnabled" <%= pageData.profile.isEnabled ? 'checked' : '' %>>
+									<strong>Enable Server Profile</strong>
+								</label>
+								<p class="help">When enabled, your server's profile page will display additional customized content.</p>
+							</div>
+
+							<hr>
+
+							<div class="field">
+								<label class="label">Banner Image URL</label>
+								<div class="control">
+									<input class="input" type="url" name="bannerUrl" value="<%= pageData.profile.bannerUrl %>" placeholder="https://example.com/banner.jpg" maxlength="500">
+								</div>
+								<p class="help">Recommended size: 1200x300px. Leave empty to use default gradient.</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Tagline</label>
+								<div class="control">
+									<input class="input" type="text" name="tagline" value="<%= pageData.profile.tagline %>" placeholder="A short catchy description..." maxlength="150">
+								</div>
+								<p class="help"><span id="tagline-count"><%= pageData.profile.tagline.length %></span>/150 characters</p>
+							</div>
+
+							<div class="field">
+								<label class="label">About</label>
+								<div class="control">
+									<textarea class="textarea" name="about" rows="6" placeholder="Tell visitors about your server..." maxlength="5000"><%= pageData.profile.about %></textarea>
+								</div>
+								<p class="help">Supports basic formatting. <span id="about-count"><%= pageData.profile.about.length %></span>/5000 characters</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Server Rules</label>
+								<div class="control">
+									<textarea class="textarea" name="rules" rows="4" placeholder="List your server rules here..." maxlength="2000"><%= pageData.profile.rules %></textarea>
+								</div>
+								<p class="help"><span id="rules-count"><%= pageData.profile.rules.length %></span>/2000 characters</p>
+							</div>
+
+							<div class="field">
+								<label class="label">Theme Color</label>
+								<div class="control" style="display: flex; gap: 1rem; align-items: center;">
+									<input type="color" name="themeColor" value="<%= pageData.profile.themeColor %>" class="color-preview" id="theme-color-picker">
+									<input class="input" type="text" id="theme-color-text" value="<%= pageData.profile.themeColor %>" style="width: 120px;" pattern="^#[0-9A-Fa-f]{6}$">
+								</div>
+							</div>
+						</div>
+
+						<!-- Social Links -->
+						<div class="box">
+							<h3 class="title is-5">Social Links</h3>
+							<p style="color: var(--color-text-muted); margin-bottom: 1rem;">Add links to your website and social media profiles.</p>
+							
+							<div id="social-links-container">
+								<% pageData.profile.socialLinks.forEach((link, index) => { %>
+									<div class="social-link-row" data-index="<%= index %>">
+										<div class="select">
+											<select name="socialPlatform[]">
+												<% pageData.socialPlatforms.forEach(platform => { %>
+													<option value="<%= platform %>" <%= link.platform === platform ? 'selected' : '' %>><%= platform.charAt(0).toUpperCase() + platform.slice(1) %></option>
+												<% }); %>
+											</select>
+										</div>
+										<input class="input" type="url" name="socialUrl[]" value="<%= link.url %>" placeholder="https://...">
+										<button type="button" class="button is-danger is-small" onclick="removeSocialLink(this)">
+											<span class="icon"><i class="fas fa-times"></i></span>
+										</button>
+									</div>
+								<% }); %>
+							</div>
+							
+							<button type="button" class="button is-small is-outlined" onclick="addSocialLink()" id="add-social-btn">
+								<span class="icon"><i class="fas fa-plus"></i></span>
+								<span>Add Social Link</span>
+							</button>
+						</div>
+
+						<!-- Discord Widget (Tier 2) -->
+						<div class="box <%= !pageData.tierInfo.hasTier2 ? 'tier-locked' : '' %>">
+							<h3 class="title is-5">
+								<i class="fab fa-discord" style="color: #5865f2;"></i>
+								Discord Widget
+								<span class="tag is-purple is-light">Tier 2</span>
+							</h3>
+							<p style="color: var(--color-text-muted); margin-bottom: 1rem;">Embed a live Discord widget on your profile page.</p>
+							
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="discordWidgetEnabled" <%= pageData.profile.discordWidget.isEnabled ? 'checked' : '' %> <%= !pageData.tierInfo.hasTier2 ? 'disabled' : '' %>>
+									<strong>Enable Discord Widget</strong>
+								</label>
+							</div>
+							
+							<div class="notification is-info is-light">
+								<p><strong>Important:</strong> For the Discord widget to work, you must enable the "Server Widget" in your Discord server settings (Server Settings → Widget → Enable Server Widget).</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sidebar -->
+					<div class="column is-4">
+						<!-- Preview -->
+						<div class="box">
+							<h3 class="title is-5">Preview</h3>
+							<div class="preview-banner <%= pageData.profile.bannerUrl ? '' : 'no-banner' %>" id="preview-banner" style="<%= pageData.profile.bannerUrl ? 'background-image: url(' + pageData.profile.bannerUrl + ')' : '' %>">
+								<div style="background: rgba(0,0,0,0.5); padding: 0.5rem 1rem; border-radius: var(--radius-md);">
+									<strong style="color: white;"><%= serverData.name %></strong>
+								</div>
+							</div>
+						</div>
+
+						<!-- Display Sections -->
+						<div class="box">
+							<h3 class="title is-5">Display Sections</h3>
+							<p style="color: var(--color-text-muted); margin-bottom: 1rem;">Choose what to show on your profile.</p>
+							
+							<div class="section-toggle">
+								<span>Server Stats</span>
+								<input type="checkbox" class="switch" name="showStats" <%= pageData.profile.showSections.stats ? 'checked' : '' %>>
+							</div>
+							<div class="section-toggle">
+								<span>Leaderboard</span>
+								<input type="checkbox" class="switch" name="showLeaderboard" <%= pageData.profile.showSections.leaderboard ? 'checked' : '' %>>
+							</div>
+							<div class="section-toggle">
+								<span>Rules</span>
+								<input type="checkbox" class="switch" name="showRules" <%= pageData.profile.showSections.rules ? 'checked' : '' %>>
+							</div>
+							<div class="section-toggle">
+								<span>Social Links</span>
+								<input type="checkbox" class="switch" name="showSocial" <%= pageData.profile.showSections.social ? 'checked' : '' %>>
+							</div>
+							<div class="section-toggle <%= !pageData.tierInfo.hasTier2 ? 'tier-locked' : '' %>" style="position: relative;">
+								<span>Featured Channels <span class="tag is-purple is-small">Tier 2</span></span>
+								<input type="checkbox" class="switch" name="showChannels" <%= pageData.profile.showSections.channels ? 'checked' : '' %> <%= !pageData.tierInfo.hasTier2 ? 'disabled' : '' %>>
+							</div>
+						</div>
+
+						<!-- Featured Channels (Tier 2) -->
+						<% if (pageData.tierInfo.hasTier2) { %>
+						<div class="box">
+							<h3 class="title is-5">Featured Channels</h3>
+							<p style="color: var(--color-text-muted); margin-bottom: 1rem;">Select channels to highlight on your profile.</p>
+							
+							<div class="field">
+								<div class="control">
+									<div class="select is-multiple is-fullwidth">
+										<select name="featuredChannels" multiple size="5">
+											<% pageData.textChannels.forEach(ch => { %>
+												<option value="<%= ch.id %>" <%= pageData.profile.featuredChannels.includes(ch.id) ? 'selected' : '' %>>#<%= ch.name %></option>
+											<% }); %>
+										</select>
+									</div>
+								</div>
+								<p class="help">Hold Ctrl/Cmd to select multiple (max 5)</p>
+							</div>
+						</div>
+						<% } %>
+
+						<!-- Save Button -->
+						<button type="submit" class="button is-primary is-fullwidth is-medium">
+							<span class="icon"><i class="fas fa-save"></i></span>
+							<span>Save Profile</span>
+						</button>
+					</div>
+				</div>
+			</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	
+	<script>
+	const socialPlatforms = <%- JSON.stringify(pageData.socialPlatforms) %>;
+	const serverId = '<%= serverData.id %>';
+	
+	// Character counters
+	document.querySelector('[name="tagline"]').addEventListener('input', function() {
+		document.getElementById('tagline-count').textContent = this.value.length;
+	});
+	document.querySelector('[name="about"]').addEventListener('input', function() {
+		document.getElementById('about-count').textContent = this.value.length;
+	});
+	document.querySelector('[name="rules"]').addEventListener('input', function() {
+		document.getElementById('rules-count').textContent = this.value.length;
+	});
+	
+	// Theme color sync
+	document.getElementById('theme-color-picker').addEventListener('input', function() {
+		document.getElementById('theme-color-text').value = this.value;
+	});
+	document.getElementById('theme-color-text').addEventListener('input', function() {
+		if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) {
+			document.getElementById('theme-color-picker').value = this.value;
+		}
+	});
+	
+	// Banner preview
+	document.querySelector('[name="bannerUrl"]').addEventListener('input', function() {
+		const preview = document.getElementById('preview-banner');
+		if (this.value) {
+			preview.style.backgroundImage = `url(${this.value})`;
+			preview.classList.remove('no-banner');
+		} else {
+			preview.style.backgroundImage = '';
+			preview.classList.add('no-banner');
+		}
+	});
+	
+	// Social links management
+	function addSocialLink() {
+		const container = document.getElementById('social-links-container');
+		const rows = container.querySelectorAll('.social-link-row');
+		if (rows.length >= 8) {
+			SkynetUtil.showNotification('warning', 'Maximum 8 social links allowed');
+			return;
+		}
+		
+		const row = document.createElement('div');
+		row.className = 'social-link-row';
+		row.innerHTML = `
+			<div class="select">
+				<select name="socialPlatform[]">
+					${socialPlatforms.map(p => `<option value="${p}">${p.charAt(0).toUpperCase() + p.slice(1)}</option>`).join('')}
+				</select>
+			</div>
+			<input class="input" type="url" name="socialUrl[]" placeholder="https://...">
+			<button type="button" class="button is-danger is-small" onclick="removeSocialLink(this)">
+				<span class="icon"><i class="fas fa-times"></i></span>
+			</button>
+		`;
+		container.appendChild(row);
+	}
+	
+	function removeSocialLink(btn) {
+		btn.closest('.social-link-row').remove();
+	}
+	
+	// Form submission
+	document.getElementById('profile-form').addEventListener('submit', async function(e) {
+		e.preventDefault();
+		
+		const formData = new FormData(this);
+		
+		// Build social links array
+		const platforms = formData.getAll('socialPlatform[]');
+		const urls = formData.getAll('socialUrl[]');
+		const socialLinks = platforms.map((platform, i) => ({
+			platform,
+			url: urls[i]
+		})).filter(l => l.url);
+		
+		// Build featured channels array
+		const featuredChannels = formData.getAll('featuredChannels').slice(0, 5);
+		
+		const data = {
+			isEnabled: formData.get('isEnabled') === 'on',
+			bannerUrl: formData.get('bannerUrl'),
+			tagline: formData.get('tagline'),
+			about: formData.get('about'),
+			rules: formData.get('rules'),
+			themeColor: formData.get('themeColor'),
+			socialLinks,
+			featuredChannels,
+			showSections: {
+				stats: formData.get('showStats') === 'on',
+				leaderboard: formData.get('showLeaderboard') === 'on',
+				rules: formData.get('showRules') === 'on',
+				social: formData.get('showSocial') === 'on',
+				channels: formData.get('showChannels') === 'on',
+			},
+			discordWidget: {
+				isEnabled: formData.get('discordWidgetEnabled') === 'on',
+			}
+		};
+		
+		try {
+			const response = await fetch(`/api/server/${serverId}/profile`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data)
+			});
+			
+			const result = await response.json();
+			
+			if (result.success) {
+				SkynetUtil.showNotification('success', result.message);
+			} else {
+				SkynetUtil.showNotification('error', result.error || 'Failed to save profile');
+			}
+		} catch (err) {
+			SkynetUtil.showNotification('error', 'Failed to save profile');
+			console.error(err);
+		}
+	});
+	</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const page = parseInt(command.suffix.trim()) || 1;
+if (page < 1 || page > 10) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Top',
+			description: 'Page must be between 1 and 10.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.jikan.moe/v4/top/anime?page=' + page + '&limit=10',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Top',
+			description: 'Failed to fetch top anime: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const data = res.json?.data;
+if (!data || !data.length) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Anime Top',
+			description: 'No data available.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const list = data.map((anime, i) => {
+	const rank = ((page - 1) * 10) + i + 1;
+	const score = anime.score ? ' ⭐ ' + anime.score : '';
+	return '**' + rank + '.** [' + anime.title + '](' + anime.url + ')' + score;
+}).join('\n');
+
+message.reply({
+	embeds: [embed.create({
+		title: '🏆 Top Anime (Page ' + page + ')',
+		description: list,
+		color: embed.colors.GOLD,
+		footer: { text: 'Powered by Jikan/MyAnimeList | Use animetop <page> for more' },
+	})],
+});
+})();

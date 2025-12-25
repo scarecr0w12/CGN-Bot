@@ -1,15 +1,18 @@
-const BaseEvent = require("../BaseEvent");
+const BaseEvent = require("../BaseEvent.js");
+const BatchWriteManager = require("../../../Modules/BatchWriteManager");
+const ConfigManager = require("../../../Modules/ConfigManager");
 const { Colors } = require("../../Constants");
 
 class AFKHandler extends BaseEvent {
-	requirements (msg) {
+	async requirements (msg) {
 		if (!msg.guild) return false;
 		if (msg.editedAt || msg.type !== "DEFAULT") return false;
-		if (msg.author.id === this.client.user.id || msg.author.bot || this.configJSON.userBlocklist.includes(msg.author.id)) {
+		const isUserBlocked = await ConfigManager.isUserBlocked(msg.author.id);
+		if (msg.author.id === this.client.user.id || msg.author.bot || isUserBlocked) {
 			if (msg.author.id === this.client.user.id) {
 				return false;
 			} else {
-				logger.silly(`Ignored ${msg.author.tag} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: this.configJSON.userBlocklist.includes(msg.author.id) });
+				logger.silly(`Ignored ${msg.author.tag} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
@@ -17,8 +20,12 @@ class AFKHandler extends BaseEvent {
 	}
 
 	async handle (msg) {
+		if (!msg.guild) {
+			logger.debug("AFKHandler received message with null guild", { msgid: msg.id, chid: msg.channel.id, usrid: msg.author.id });
+			return;
+		}
 		const { serverDocument } = msg.guild;
-		if (serverDocument && msg.mentions.members.cache.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
+		if (serverDocument && msg.mentions.members?.size && serverDocument.config.commands.afk.isEnabled && !serverDocument.config.commands.afk.disabled_channel_ids.includes(msg.channel.id)) {
 			msg.mentions.members.forEach(async member => {
 				if (![this.client.user.id, msg.author.id].includes(member.id) && !serverDocument.config.blocked.includes(member.id) && !member.user.bot) {
 					// Check if they have a server AFK message
@@ -75,8 +82,8 @@ class AFKHandler extends BaseEvent {
 			changed = true;
 			serverDocument.query.id("members", msg.author.id).set("afk_message", null);
 		}
-		serverDocument.save();
-		if (userDocument) userDocument.save();
+		BatchWriteManager.queue(serverDocument);
+		if (userDocument) BatchWriteManager.queue(userDocument);
 		if (changed) {
 			msg.reply({
 				embeds: [{

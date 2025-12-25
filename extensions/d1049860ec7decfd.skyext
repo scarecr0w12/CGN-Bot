@@ -1,0 +1,83 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const args = command.suffix.trim().split(/\s+/);
+const username = args.slice(0, -1).join(' ') || args[0];
+const platform = args.length > 1 ? args[args.length - 1].toLowerCase() : null;
+
+if (!username) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 Fortnite Stats',
+			description: 'Usage: fortnitestats <username> [platform]\nPlatforms: epic, psn, xbl\nExample: fortnitestats Ninja',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+let url = 'https://fortnite-api.com/v2/stats/br/v2?name=' + encodeURIComponent(username);
+if (platform && ['epic', 'psn', 'xbl'].includes(platform)) {
+	url += '&accountType=' + platform;
+}
+
+const res = await http.request({
+	url: url,
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 10000,
+});
+
+if (!res.success || res.json?.status !== 200) {
+	const errorMsg = res.json?.error || 'Player not found or stats are private.';
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Fortnite Stats',
+			description: errorMsg,
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const data = res.json.data;
+const overall = data.stats?.all?.overall;
+
+if (!overall) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Fortnite Stats',
+			description: 'No stats available for this player.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const kd = overall.kd ? overall.kd.toFixed(2) : 'N/A';
+const winRate = overall.winRate ? overall.winRate.toFixed(1) + '%' : 'N/A';
+
+const fields = [
+	{ name: 'Level', value: String(data.battlePass?.level || 'N/A'), inline: true },
+	{ name: 'Wins', value: String(overall.wins || 0), inline: true },
+	{ name: 'Win Rate', value: winRate, inline: true },
+	{ name: 'Kills', value: String(overall.kills || 0), inline: true },
+	{ name: 'K/D', value: kd, inline: true },
+	{ name: 'Matches', value: String(overall.matches || 0), inline: true },
+	{ name: 'Top 10', value: String(overall.top10 || 0), inline: true },
+	{ name: 'Top 25', value: String(overall.top25 || 0), inline: true },
+	{ name: 'Minutes Played', value: String(overall.minutesPlayed || 0), inline: true },
+];
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + data.account.name,
+		fields: fields,
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Fortnite-API.com' },
+	})],
+});
+})();

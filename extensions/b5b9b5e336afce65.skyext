@@ -1,5 +1,5 @@
 const extension = require('extension');
-const server = require('server');
+const server = require('guild');
 
 const stats = {
 	members: server.memberCount || 0,

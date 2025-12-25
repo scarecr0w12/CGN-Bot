@@ -302,6 +302,12 @@ class Definition {
 			return null;
 		};
 
+		// Allow undefined/null for non-required array/map fields before type validation
+		if ((this.isArray || this.isMap) && (value === undefined || value === null)) {
+			if (this.required) return { type: "required", value, path: this.key, definition: this };
+			return null;
+		}
+
 		if (this.isArray && !Types.array.validator(value) && absolute) return { type: "array", value, path: this.key, definition: this };
 		else if (this.isMap && !Types.object.validator(value) && absolute) return { type: "map", value, path: this.key, definition: this };
 

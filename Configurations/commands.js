@@ -1392,13 +1392,117 @@ const commands = {
 		lyrics: {
 			usage: `<song name> or <artist> - <song>`,
 			aliases: ["songlyrics"],
-			description: `Look up song lyrics`,
+			description: `Look up song lyrics (Tier 2 Premium)`,
 			defaults: {
 				isEnabled: true,
 				isNSFWFiltered: false,
 				adminLevel: 0,
 			},
-			category: `Search & Media 🎬`,
+			category: `Music 🎵`,
+		},
+		play: {
+			usage: `<song name or URL>`,
+			aliases: ["p", "add"],
+			description: `Play music in voice channel (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		skip: {
+			usage: ``,
+			aliases: ["s", "next"],
+			description: `Skip the current song (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		queue: {
+			usage: `[<page>]`,
+			aliases: ["q", "list"],
+			description: `View the music queue (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		dj: {
+			usage: `<action> [<value>]`,
+			description: `DJ controls: pause, resume, stop, volume, loop, shuffle (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		filters: {
+			usage: `[<filter>]`,
+			aliases: ["filter", "fx"],
+			description: `Toggle audio filters: bassboost, nightcore, vaporwave, 8d (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Music 🎵`,
+		},
+		ticket: {
+			usage: `["create" [<category>] [<subject>]] or ["list"]`,
+			description: `Create or view support tickets (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketclose: {
+			usage: `[<reason>]`,
+			description: `Close the current ticket channel (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketadd: {
+			usage: `<@user>`,
+			description: `Add a user to the current ticket (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketremove: {
+			usage: `<@user>`,
+			description: `Remove a user from the current ticket (Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Support 🎫`,
+		},
+		ticketpanel: {
+			usage: `[<title>] [| <description>]`,
+			description: `Create a ticket panel with buttons (Admin, Tier 2 Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 3,
+			},
+			category: `Support 🎫`,
 		},
 		notes: {
 			usage: `["add" <content>] or ["view" or "delete" <id>] or ["search" <term>]`,
@@ -1412,7 +1516,7 @@ const commands = {
 			category: `Utility 🔦`,
 		},
 		snooze: {
-			usage: `["on" [<duration>]] or ["off"] or ["status"]`,
+			usage: `[<duration>]`,
 			aliases: ["dnd", "donotdisturb"],
 			description: `Temporarily mute pings and collect them for later`,
 			defaults: {
@@ -1421,6 +1525,355 @@ const commands = {
 				adminLevel: 0,
 			},
 			category: `Utility 🔦`,
+		},
+		base64: {
+			usage: `<encode|decode> <text>`,
+			aliases: ["b64"],
+			description: `Encode or decode Base64 text (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		hash: {
+			usage: `<algorithm|all> <text>`,
+			description: `Generate cryptographic hashes (md5, sha1, sha256, sha512) (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		timestamp: {
+			usage: `[<unix timestamp|date|discord>]`,
+			aliases: ["ts", "unix"],
+			description: `Convert between Unix timestamps and dates with Discord format output (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonpretty: {
+			usage: `<json>`,
+			aliases: ["prettyjson", "formatjson"],
+			description: `Pretty print and format JSON with syntax highlighting (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonminify: {
+			usage: `<json>`,
+			aliases: ["minifyjson", "compactjson"],
+			description: `Minify JSON by removing whitespace (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		jsonpath: {
+			usage: `<path> | <json>`,
+			aliases: ["jpath", "jq"],
+			description: `Query JSON data using JSONPath expressions (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		regextest: {
+			usage: `/<pattern>/[flags] | <test string>`,
+			aliases: ["regex", "re"],
+			description: `Test regular expressions against text (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		regexexplain: {
+			usage: `/<pattern>/[flags]`,
+			aliases: ["explainregex", "regexhelp"],
+			description: `Explain regex pattern tokens and syntax (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		codeformat: {
+			usage: `<language> [| <code>]`,
+			aliases: ["format", "highlight"],
+			description: `Format and syntax highlight code snippets (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		snippet: {
+			usage: `[save <name> | <code>] | [<name>] | [delete <name>] | [list]`,
+			aliases: ["snippets", "code"],
+			description: `Save, retrieve, and manage code snippets (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		http: {
+			usage: `[GET|POST|PUT|DELETE] <url> [| <body>]`,
+			aliases: ["fetch", "request", "curl"],
+			description: `Make HTTP requests to external APIs with rate limiting (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		coderun: {
+			usage: `<javascript code>`,
+			aliases: ["run", "exec", "js"],
+			description: `Execute JavaScript code in a sandboxed environment (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		lint: {
+			usage: `<javascript code>`,
+			aliases: ["jslint", "check"],
+			description: `Analyze JavaScript code for issues and style problems (Tier 2)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Developer 💻`,
+		},
+		// AI Commands (Premium)
+		aiavatar: {
+			usage: `[<style>] <description>`,
+			description: `Generate stylized avatar portraits using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aiexplain: {
+			usage: `[code|concept|error] [beginner|intermediate|advanced] <content>`,
+			description: `Get AI explanations for code, concepts, or error messages (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aiimage: {
+			usage: `<prompt> [--size=1024x1024] [--quality=standard] [--style=vivid]`,
+			description: `Generate images from text descriptions using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		airewrite: {
+			usage: `[<tone>] <text>`,
+			description: `Rewrite text in different tones using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aisummarize: {
+			usage: `[brief|detailed|bullets] <text> or "channel" [<count>]`,
+			description: `Summarize text or channel messages using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aithread: {
+			usage: `["start" [<topic>]] or ["end"] or ["list"] or ["context"]`,
+			description: `Create persistent AI conversation threads with memory (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		aivariations: {
+			usage: `[<size>] (attach image or reply to image)`,
+			description: `Generate variations of an existing image using AI (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		imagine: {
+			usage: `<prompt> [--size=1024x1024] [--style=vivid]`,
+			description: `Generate AI images from text prompts (Premium)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: true,
+				adminLevel: 0,
+			},
+			category: `AI & Assistant 🤖`,
+		},
+		// Utility Commands
+		boosters: {
+			usage: ``,
+			description: `View server boost status and list of boosters`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		channelinfo: {
+			usage: `[<channel>]`,
+			aliases: ["ci"],
+			description: `Get detailed information about a channel`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Utility 🔦`,
+		},
+		voicetime: {
+			usage: `[<user>]`,
+			aliases: ["vt", "vctime"],
+			description: `View voice channel activity statistics for a user`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Stats & Points ⭐️`,
+		},
+		fact: {
+			usage: `[general|animals|space|science]`,
+			aliases: ["facts", "randomfact"],
+			description: `Get a random interesting fact`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		// Social/Interaction Commands
+		compliment: {
+			usage: `[<user>]`,
+			description: `Give someone a nice compliment`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		cuddle: {
+			usage: `[<user>]`,
+			description: `Cuddle with someone!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		highfive: {
+			usage: `[<user>]`,
+			description: `Give someone a high-five!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		insult: {
+			usage: `[<user>]`,
+			description: `Playfully roast someone (nothing actually mean)`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		kiss: {
+			usage: `[<user>]`,
+			description: `Give someone a kiss!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		lovecalc: {
+			usage: `<user1> [<user2>]`,
+			aliases: ["love", "ship"],
+			description: `Calculate love compatibility between two users`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		poke: {
+			usage: `[<user>]`,
+			description: `Poke someone to get their attention!`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
+		},
+		rate: {
+			usage: `<thing>`,
+			description: `Rate anything on a scale of 0-10`,
+			defaults: {
+				isEnabled: true,
+				isNSFWFiltered: false,
+				adminLevel: 0,
+			},
+			category: `Fun 🎪`,
 		},
 	},
 	shared: {

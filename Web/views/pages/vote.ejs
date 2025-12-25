@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Vote for Skynet | Earn Rewards</title>
+	<%
+	if (typeof pageData === "undefined") { var pageData = {}; }
+	pageData.seo = {
+		title: "Vote for Skynet | Earn Rewards",
+		description: "Vote for Skynet on bot listing sites to earn Vote Points! Redeem points for premium features and extensions."
+	};
+	%>
+	<%- include('../partials/head') %>
+	<style>
+.vote-container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.vote-hero {
+	text-align: center;
+	margin-bottom: 2rem;
+}
+
+.vote-hero-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.vote-hero-subtitle {
+	color: var(--color-text-secondary);
+	font-size: 1.1rem;
+}
+
+.vote-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+	.vote-stats-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.vote-stat-card {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-lg);
+	padding: 1.5rem;
+	text-align: center;
+	box-shadow: var(--shadow-card);
+}
+
+.vote-stat-icon {
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+}
+
+.vote-stat-icon.points { color: #fbbf24; }
+.vote-stat-icon.votes { color: #10b981; }
+.vote-stat-icon.earned { color: #8b5cf6; }
+.vote-stat-icon.spent { color: #ef4444; }
+
+.vote-stat-value {
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var(--color-text-primary);
+}
+
+.vote-stat-label {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	margin-top: 0.25rem;
+}
+
+.vote-sites-section {
+	margin-bottom: 2rem;
+}
+
+.section-title {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.section-title i {
+	color: var(--color-accent);
+}
+
+.vote-sites-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1rem;
+}
+
+.vote-site-card {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-lg);
+	padding: 1.5rem;
+	box-shadow: var(--shadow-card);
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vote-site-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--shadow-lg);
+}
+
+.vote-site-icon {
+	width: 60px;
+	height: 60px;
+	border-radius: var(--radius-md);
+	background: var(--color-bg-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.vote-site-icon img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	padding: 8px;
+}
+
+.vote-site-icon i {
+	font-size: 1.75rem;
+	color: var(--color-accent);
+}
+
+.vote-site-info {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.vote-site-name {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: 0.25rem;
+}
+
+.vote-site-status {
+	font-size: 0.875rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.vote-site-status.available {
+	color: #10b981;
+}
+
+.vote-site-status.cooldown {
+	color: #f59e0b;
+}
+
+.vote-timer {
+	font-family: monospace;
+	font-weight: 600;
+}
+
+.vote-site-action {
+	flex-shrink: 0;
+}
+
+.vote-btn {
+	padding: 0.75rem 1.5rem;
+	border-radius: var(--radius-md);
+	font-weight: 600;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	transition: all 0.2s;
+}
+
+.vote-btn.available {
+	background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+	color: white;
+}
+
+.vote-btn.available:hover {
+	transform: scale(1.05);
+	box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.vote-btn.cooldown {
+	background: var(--color-bg-tertiary);
+	color: var(--color-text-muted);
+	cursor: not-allowed;
+}
+
+.vote-info-section {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-lg);
+	padding: 2rem;
+	margin-bottom: 2rem;
+	box-shadow: var(--shadow-card);
+}
+
+.vote-info-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
+}
+
+.vote-info-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+
+.vote-info-icon {
+	width: 48px;
+	height: 48px;
+	border-radius: var(--radius-md);
+	background: linear-gradient(135deg, var(--color-accent), #7289da);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-size: 1.25rem;
+	flex-shrink: 0;
+}
+
+.vote-info-content h4 {
+	font-weight: 600;
+	margin-bottom: 0.25rem;
+}
+
+.vote-info-content p {
+	color: var(--color-text-secondary);
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.leaderboard-section {
+	background: var(--color-bg-primary);
+	border-radius: var(--radius-lg);
+	padding: 1.5rem;
+	box-shadow: var(--shadow-card);
+}
+
+.leaderboard-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.leaderboard-item {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.75rem 1rem;
+	background: var(--color-bg-secondary);
+	border-radius: var(--radius-md);
+}
+
+.leaderboard-rank {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: 0.875rem;
+}
+
+.leaderboard-rank.gold {
+	background: linear-gradient(135deg, #fbbf24, #f59e0b);
+	color: #1a1a2e;
+}
+
+.leaderboard-rank.silver {
+	background: linear-gradient(135deg, #94a3b8, #64748b);
+	color: white;
+}
+
+.leaderboard-rank.bronze {
+	background: linear-gradient(135deg, #d97706, #b45309);
+	color: white;
+}
+
+.leaderboard-rank.default {
+	background: var(--color-bg-tertiary);
+	color: var(--color-text-secondary);
+}
+
+.leaderboard-user {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.leaderboard-username {
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.leaderboard-votes {
+	font-size: 0.8rem;
+	color: var(--color-text-muted);
+}
+
+.leaderboard-points {
+	font-weight: 700;
+	color: #fbbf24;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.login-prompt {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	border-radius: var(--radius-lg);
+	padding: 2rem;
+	text-align: center;
+	color: white;
+	margin-bottom: 2rem;
+}
+
+.login-prompt h3 {
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.login-prompt p {
+	opacity: 0.9;
+	margin-bottom: 1rem;
+}
+
+.login-prompt .button {
+	background: white;
+	color: #667eea;
+	font-weight: 600;
+}
+
+.weekend-bonus-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+	color: #1a1a2e;
+	border-radius: 20px;
+	font-weight: 600;
+	font-size: 0.875rem;
+	margin-top: 1rem;
+}
+
+.no-sites-message {
+	text-align: center;
+	padding: 2rem;
+	color: var(--color-text-secondary);
+}
+
+.no-sites-message i {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+	opacity: 0.5;
+}
+	</style>
+</head>
+<body>
+	<header id="header" class="hero is-primary is-bold is-modern" role="banner">
+		<div class="hero-head">
+			<%- include('../partials/header') %>
+		</div>
+		<div class="hero-body" style="padding: 2rem 1.5rem;">
+			<div class="container">
+				<div class="has-text-centered fade-in">
+					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
+						<i class="fa fa-arrow-up"></i> Vote for Skynet
+					</h1>
+					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
+						Earn rewards by voting on bot listing sites
+					</p>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section class="section" style="background: var(--color-bg-secondary); min-height: calc(100vh - 200px);">
+		<div class="vote-container">
+			<% if (!pageData.isEnabled) { %>
+				<div class="notification is-warning">
+					<i class="fa fa-exclamation-triangle"></i> Vote rewards are currently disabled.
+				</div>
+			<% } else { %>
+				<% const isWeekend = [0, 6].includes(new Date().getDay()); %>
+
+				<% if (!authUser) { %>
+					<div class="login-prompt fade-in">
+						<h3><i class="fa fa-sign-in-alt"></i> Login to Track Your Votes</h3>
+						<p>Sign in with Discord to see your vote stats and track cooldowns!</p>
+						<a href="/login" class="button is-medium">
+							<span class="icon"><i class="fab fa-discord"></i></span>
+							<span>Login with Discord</span>
+						</a>
+					</div>
+				<% } else { %>
+					<div class="vote-stats-grid fade-in">
+						<div class="vote-stat-card">
+							<div class="vote-stat-icon points"><i class="fa fa-coins"></i></div>
+							<div class="vote-stat-value" id="user-balance"><%= (pageData.userStats?.balance || 0).toLocaleString() %></div>
+							<div class="vote-stat-label">Current Balance</div>
+						</div>
+						<div class="vote-stat-card">
+							<div class="vote-stat-icon votes"><i class="fa fa-check-circle"></i></div>
+							<div class="vote-stat-value" id="user-total-votes"><%= (pageData.userStats?.totalVotes || 0).toLocaleString() %></div>
+							<div class="vote-stat-label">Total Votes</div>
+						</div>
+						<div class="vote-stat-card">
+							<div class="vote-stat-icon earned"><i class="fa fa-trophy"></i></div>
+							<div class="vote-stat-value" id="user-lifetime-earned"><%= (pageData.userStats?.lifetimeEarned || 0).toLocaleString() %></div>
+							<div class="vote-stat-label">Lifetime Earned</div>
+						</div>
+						<div class="vote-stat-card">
+							<div class="vote-stat-icon spent"><i class="fa fa-shopping-cart"></i></div>
+							<div class="vote-stat-value"><%= (pageData.userStats?.lifetimeSpent || 0).toLocaleString() %></div>
+							<div class="vote-stat-label">Points Spent</div>
+						</div>
+					</div>
+				<% } %>
+
+				<div class="vote-sites-section fade-in">
+					<h2 class="section-title">
+						<i class="fa fa-list"></i> Vote Sites
+						<% if (isWeekend) { %>
+							<span class="weekend-bonus-badge">
+								<i class="fa fa-star"></i> Weekend Bonus: <%= pageData.weekendMultiplier %>x Points!
+							</span>
+						<% } %>
+					</h2>
+
+					<% if (pageData.voteSites && pageData.voteSites.length > 0) { %>
+						<div class="vote-sites-grid">
+							<% const sitesToDisplay = authUser ? pageData.sitesWithStatus : pageData.voteSites; %>
+							<% sitesToDisplay.forEach(site => { %>
+								<div class="vote-site-card" data-site-id="<%= site.id %>">
+									<div class="vote-site-icon">
+										<% if (site.icon) { %>
+											<img src="<%= site.icon %>" alt="<%= site.name %>" onerror="this.parentElement.innerHTML='<i class=\'fa fa-vote-yea\'></i>';">
+										<% } else { %>
+											<i class="fa fa-vote-yea"></i>
+										<% } %>
+									</div>
+									<div class="vote-site-info">
+										<div class="vote-site-name"><%= site.name %></div>
+										<% if (authUser) { %>
+											<div class="vote-site-status <%= site.canVote ? 'available' : 'cooldown' %>">
+												<% if (site.canVote) { %>
+													<i class="fa fa-check-circle"></i> Ready to vote!
+												<% } else { %>
+													<i class="fa fa-clock"></i>
+													<span class="vote-timer" data-available-at="<%= site.availableAt ? new Date(site.availableAt).getTime() : '' %>">
+														Calculating...
+													</span>
+												<% } %>
+											</div>
+										<% } else { %>
+											<div class="vote-site-status available">
+												<i class="fa fa-coins"></i> Earn <%= isWeekend ? pageData.pointsPerVote * pageData.weekendMultiplier : pageData.pointsPerVote %> points
+											</div>
+										<% } %>
+									</div>
+									<div class="vote-site-action">
+										<% if (authUser && !site.canVote) { %>
+											<span class="vote-btn cooldown">
+												<i class="fa fa-hourglass-half"></i> Wait
+											</span>
+										<% } else { %>
+											<a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="vote-btn available">
+												<i class="fa fa-external-link-alt"></i> Vote
+											</a>
+										<% } %>
+									</div>
+								</div>
+							<% }); %>
+						</div>
+					<% } else { %>
+						<div class="no-sites-message">
+							<i class="fa fa-info-circle"></i>
+							<p>No vote sites are currently configured.</p>
+						</div>
+					<% } %>
+				</div>
+
+				<div class="vote-info-section fade-in">
+					<h2 class="section-title" style="margin-bottom: 1.5rem;">
+						<i class="fa fa-info-circle"></i> How It Works
+					</h2>
+					<div class="vote-info-grid">
+						<div class="vote-info-item">
+							<div class="vote-info-icon"><i class="fa fa-arrow-up"></i></div>
+							<div class="vote-info-content">
+								<h4>Vote on Bot Lists</h4>
+								<p>Click the vote buttons above to vote for Skynet on various bot listing sites. Each vote helps us grow!</p>
+							</div>
+						</div>
+						<div class="vote-info-item">
+							<div class="vote-info-icon"><i class="fa fa-coins"></i></div>
+							<div class="vote-info-content">
+								<h4>Earn Points</h4>
+								<p>Receive <%= pageData.pointsPerVote %> points per vote. Weekend votes earn <%= pageData.weekendMultiplier %>x points!</p>
+							</div>
+						</div>
+						<div class="vote-info-item">
+							<div class="vote-info-icon"><i class="fa fa-clock"></i></div>
+							<div class="vote-info-content">
+								<h4>Vote Every 12 Hours</h4>
+								<p>You can vote once every 12 hours on each site. Check back to vote again!</p>
+							</div>
+						</div>
+						<div class="vote-info-item">
+							<div class="vote-info-icon"><i class="fa fa-gift"></i></div>
+							<div class="vote-info-content">
+								<h4>Redeem Rewards</h4>
+								<p>Use your points to unlock premium features for your servers or purchase premium extensions!</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<% if (pageData.leaderboard && pageData.leaderboard.length > 0) { %>
+					<div class="leaderboard-section fade-in">
+						<h2 class="section-title" style="margin-bottom: 1rem;">
+							<i class="fa fa-trophy"></i> Top Voters
+						</h2>
+						<div class="leaderboard-list">
+							<% pageData.leaderboard.forEach((voter, index) => { %>
+								<div class="leaderboard-item">
+									<div class="leaderboard-rank <%= index === 0 ? 'gold' : (index === 1 ? 'silver' : (index === 2 ? 'bronze' : 'default')) %>">
+										<%= voter.rank %>
+									</div>
+									<div class="leaderboard-user">
+										<div class="leaderboard-username"><%= voter.username || `User ${voter.userId.slice(-4)}` %></div>
+										<div class="leaderboard-votes"><%= voter.totalVotes.toLocaleString() %> votes</div>
+									</div>
+									<div class="leaderboard-points">
+										<i class="fa fa-coins"></i> <%= voter.lifetimeEarned.toLocaleString() %>
+									</div>
+								</div>
+							<% }); %>
+						</div>
+					</div>
+				<% } %>
+			<% } %>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		// Update vote timers every second
+		function updateTimers() {
+			const timers = document.querySelectorAll('.vote-timer[data-available-at]');
+			timers.forEach(timer => {
+				const availableAt = parseInt(timer.dataset.availableAt);
+				if (!availableAt) return;
+
+				const now = Date.now();
+				const remaining = availableAt - now;
+
+				if (remaining <= 0) {
+					// Timer expired, refresh the page to update status
+					location.reload();
+					return;
+				}
+
+				const hours = Math.floor(remaining / (1000 * 60 * 60));
+				const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+				const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+				timer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+			});
+		}
+
+		// Initial update and set interval
+		updateTimers();
+		setInterval(updateTimers, 1000);
+
+		// Refresh user stats every 60 seconds if authenticated
+		<% if (authUser) { %>
+		setInterval(async function() {
+			try {
+				const response = await fetch('/api/vote/status');
+				if (response.ok) {
+					const data = await response.json();
+					document.getElementById('user-balance').textContent = data.balance.toLocaleString();
+					document.getElementById('user-total-votes').textContent = data.totalVotes.toLocaleString();
+					document.getElementById('user-lifetime-earned').textContent = data.lifetimeEarned.toLocaleString();
+				}
+			} catch (err) {
+				console.error('Failed to refresh vote stats:', err);
+			}
+		}, 60000);
+		<% } %>
+	});
+	</script>
+</body>
+</html>

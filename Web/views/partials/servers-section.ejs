@@ -351,14 +351,22 @@ SkynetUtil.showActivitySelections = () => {
 						<% } %>
 					</div>
 					
-					<% if (server.invite_link) { %>
-						<div class="server-card-footer">
-							<a class="button is-primary is-modern" href="<%= server.invite_link %>">
-								<span class="icon"><i class="fa fa-sign-in"></i></span>
-								<span>Join Server</span>
-							</a>
+					<div class="server-card-footer">
+						<div class="buttons is-centered">
+							<% if (server.hasPublicPage) { %>
+								<a class="button is-outlined is-small" href="/server/<%= server.id %><%= server.slug ? '/' + server.slug : '' %>">
+									<span class="icon"><i class="fa fa-info-circle"></i></span>
+									<span>Details</span>
+								</a>
+							<% } %>
+							<% if (server.invite_link) { %>
+								<a class="button is-primary is-modern is-small" href="<%= server.invite_link %>">
+									<span class="icon"><i class="fa fa-sign-in"></i></span>
+									<span>Join</span>
+								</a>
+							<% } %>
 						</div>
-					<% } %>
+					</div>
 					
 					<% if (isMaintainer) { %>
 						<button class="delete" style="position: absolute; top: 0.5rem; right: 0.5rem;" onclick="SkynetUtil.activityBanGuild('<%= server.id %>');" title='Remove "<%= server.name %>" from the activity page'></button>
@@ -453,6 +461,12 @@ SkynetUtil.showActivitySelections = () => {
 									<% } %>
 								</section>
 								<footer class="modal-card-foot" style="justify-content: center;">
+									<% if (server.hasPublicPage) { %>
+										<a class="button is-outlined" href="/server/<%= server.id %><%= server.slug ? '/' + server.slug : '' %>">
+											<span class="icon"><i class="fa fa-info-circle"></i></span>
+											<span>View Details</span>
+										</a>
+									<% } %>
 									<% if (server.invite_link) { %>
 										<a class="button is-primary is-modern" href="<%= server.invite_link %>">
 											<span class="icon"><i class="fa fa-sign-in"></i></span>

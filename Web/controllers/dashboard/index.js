@@ -1,5 +1,6 @@
 const { GetGuild } = require("../../../Modules").getGuild;
 const { canDo } = require("../../helpers");
+const CacheManager = require("../../../Modules/CacheManager");
 
 const controllers = module.exports;
 
@@ -7,6 +8,10 @@ controllers.home = async (req, { res }) => {
 	if (!req.isAuthenticated()) {
 		res.redirect("/login");
 	} else {
+		if (!req.user || !req.user.id) {
+			logger.error("Dashboard access attempted with invalid user session", { user: req.user });
+			return res.redirect("/logout");
+		}
 		const serverData = [];
 		const usr = await req.app.client.users.fetch(req.user.id, true);
 		const addServerData = async (i, callback) => {
@@ -14,6 +19,7 @@ controllers.home = async (req, { res }) => {
 				if (!usr) return addServerData(++i, callback);
 				const svr = new GetGuild(req.app.client, req.user.guilds[i].id);
 				await svr.initialize(usr.id);
+				// eslint-disable-next-line no-bitwise
 				if (!svr.success && !((parseInt(req.user.guilds[i].permissions) >> 5) & 1)) {
 					addServerData(++i, callback);
 					return;
@@ -26,7 +32,7 @@ controllers.home = async (req, { res }) => {
 					isAdmin: false,
 				};
 				if (svr.success) {
-					const serverDocument = await Servers.findOne(req.user.guilds[i].id);
+					const serverDocument = await CacheManager.getServer(req.user.guilds[i].id);
 					// SKYNET_HOST always gets admin access
 					if (process.env.SKYNET_HOST === usr.id) {
 						data.isAdmin = true;
@@ -48,7 +54,8 @@ controllers.home = async (req, { res }) => {
 		};
 		addServerData(0, () => {
 			serverData.sort((a, b) => a.name.localeCompare(b.name));
-			if (configJSON.maintainers.includes(req.user.id) || process.env.SKYNET_HOST === req.user.id) {
+			const dashSettings = require("../../../Modules/ConfigManager").getCached();
+			if (dashSettings.maintainers.includes(req.user.id) || process.env.SKYNET_HOST === req.user.id) {
 				serverData.push({
 					name: "Maintainer Console",
 					id: "maintainer",
@@ -143,3 +150,4 @@ controllers.administration = require("./administration");
 controllers.other = require("./other");
 controllers.ai = require("./ai");
 controllers.subscription = require("./subscription");
+controllers.tickets = require("./tickets");

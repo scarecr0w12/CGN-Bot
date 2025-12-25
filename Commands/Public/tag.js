@@ -15,7 +15,9 @@ class TagCommand {
 		// User/Server Data
 		this.serverDocument = serverDocument;
 		this.serverQueryDocument = serverQueryDocument;
-		this.isAdmin = this.client.getUserBotAdmin(msg.guild, serverDocument, msg.member) > 1 || configJSON.maintainers.includes(msg.author.id);
+		this._authorId = msg.author.id;
+		this._baseAdmin = this.client.getUserBotAdmin(msg.guild, serverDocument, msg.member) > 1;
+		this.isAdmin = this._baseAdmin; // Will be updated in init()
 
 		// New Tag Data
 		this.isCommand = false;
@@ -27,6 +29,15 @@ class TagCommand {
 		this.Colors = Colors;
 		this.Text = Text;
 		this.LogLevels = LoggingLevels;
+	}
+
+	// Initialize async properties
+	async init () {
+		if (!this._baseAdmin) {
+			const ConfigManager = require("../../Modules/ConfigManager");
+			this.isAdmin = await ConfigManager.isMaintainer(this._authorId);
+		}
+		return this;
 	}
 
 	// List all tags
@@ -327,7 +338,7 @@ class TagCommand {
 }
 
 module.exports = async (main, documents, msg, commandData) => {
-	const tagCommand = new TagCommand(main, documents, msg, commandData);
+	const tagCommand = await new TagCommand(main, documents, msg, commandData).init();
 	if (!msg.suffix) {
 		await tagCommand.list();
 	} else if (tagCommand.parse()) {

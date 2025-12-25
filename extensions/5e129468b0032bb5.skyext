@@ -1,0 +1,88 @@
+const message = require('message');
+const command = require('command');
+const extension = require('extension');
+const utils = require('utils');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(/\s+/).filter(Boolean);
+const sub = (args[0] || '').toLowerCase();
+
+const key = 'mathsnap_' + message.author.id;
+
+const makeQuestion = () => {
+	const a = utils.random.int(2, 15);
+	const b = utils.random.int(2, 15);
+	const op = utils.random.pick(['+','-','*']);
+	let real;
+	if (op === '+') real = a + b;
+	else if (op === '-') real = a - b;
+	else real = a * b;
+
+	const isTrue = utils.random.bool();
+	const shown = isTrue ? real : (real + utils.random.pick([-3,-2,-1,1,2,3]));
+	return { text: a + ' ' + op + ' ' + b + ' = ' + shown, isTrue, startedAt: Date.now() };
+};
+
+if (sub === 'start' || !sub) {
+	const q = makeQuestion();
+	extension.storage.write(key, q);
+	message.reply({
+		embeds: [embed.create({
+			title: '🧮 Math Snap',
+			description: utils.discord.bold(q.text) + '\n\nAnswer with: mathsnap answer true\nor: mathsnap answer false',
+			color: embed.colors.GOLD,
+		})],
+	});
+	return;
+}
+
+if (sub === 'answer') {
+	const q = extension.storage.get(key);
+	if (!q) {
+		message.reply({
+			embeds: [embed.create({
+				title: '🧮 Math Snap',
+				description: 'No active question. Use: mathsnap start',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const ans = (args[1] || '').toLowerCase();
+	if (ans !== 'true' && ans !== 'false' && ans !== 't' && ans !== 'f') {
+		message.reply({
+			embeds: [embed.create({
+				title: '🧮 Math Snap',
+				description: 'Answer must be true/false.',
+				color: embed.colors.ERROR,
+			})],
+		});
+		return;
+	}
+
+	const userTrue = ans === 'true' || ans === 't';
+	const correct = userTrue === Boolean(q.isTrue);
+	const ms = Date.now() - (q.startedAt || Date.now());
+	extension.storage.write(key, null);
+
+	message.reply({
+		embeds: [embed.create({
+			title: correct ? '✅ Correct!' : '❌ Wrong!',
+			description: utils.discord.bold(q.text) + '\n\n' +
+			utils.discord.bold('Your answer:') + ' ' + (userTrue ? 'True' : 'False') + '\n' +
+			utils.discord.bold('Correct:') + ' ' + (q.isTrue ? 'True' : 'False') + '\n' +
+			utils.discord.bold('Time:') + ' ' + utils.format.number(ms) + 'ms',
+			color: correct ? embed.colors.SUCCESS : embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🧮 Math Snap',
+		description: 'Usage: mathsnap start | mathsnap answer <true|false>',
+		color: embed.colors.DEFAULT,
+	})],
+});

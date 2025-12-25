@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Email Settings - <%= serverData.name %> Maintainer Console</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/maintainer-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-envelope"></i></span>
+						Email Settings
+					</h1>
+					<article class="message is-info">
+						<div class="message-body">
+							<div class="content">
+								<p><strong>Note:</strong> Email credentials must be stored in environment variables for security.</p>
+								<p>Configure provider settings here and notification preferences below.</p>
+							</div>
+						</div>
+					</article>
+
+					<form id="form" action="<%= currentPage %>" method="post">
+						<!-- Email Provider Configuration -->
+						<div class="box">
+							<div class="level">
+								<div class="level-left">
+									<div class="level-item">
+										<span class="icon is-large"><i class="fa fa-server fa-2x"></i></span>
+									</div>
+									<div class="level-item">
+										<div>
+											<p class="title is-5">Email Provider</p>
+											<p class="subtitle is-7">Configure your email sending service</p>
+										</div>
+									</div>
+								</div>
+								<div class="level-right">
+									<div class="level-item">
+										<label class="checkbox">
+											<input type="checkbox" name="email_enabled" <%= configData.email?.isEnabled ? 'checked' : '' %>>
+											Enabled
+										</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="field">
+								<label class="label">Provider</label>
+								<div class="select is-fullwidth">
+									<select name="email_provider" id="email_provider">
+										<option value="smtp" <%= configData.email?.provider === 'smtp' ? 'selected' : '' %>>Custom SMTP</option>
+										<option value="sendgrid" <%= configData.email?.provider === 'sendgrid' ? 'selected' : '' %>>SendGrid</option>
+										<option value="mailgun" <%= configData.email?.provider === 'mailgun' ? 'selected' : '' %>>Mailgun</option>
+										<option value="ses" <%= configData.email?.provider === 'ses' ? 'selected' : '' %>>Amazon SES</option>
+									</select>
+								</div>
+							</div>
+
+							<!-- SMTP Configuration -->
+							<div id="smtp-config" class="provider-config">
+								<hr>
+								<h4 class="title is-6">SMTP Configuration</h4>
+								<div class="field">
+									<label class="label">Environment Variables Required</label>
+									<pre>SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=your_username
+SMTP_PASS=your_password</pre>
+								</div>
+							</div>
+
+							<!-- SendGrid Configuration -->
+							<div id="sendgrid-config" class="provider-config" style="display: none;">
+								<hr>
+								<h4 class="title is-6">SendGrid Configuration</h4>
+								<div class="field">
+									<label class="label">Environment Variables Required</label>
+									<pre>SENDGRID_API_KEY=SG.xxxxxxxxxxxxx</pre>
+								</div>
+								<article class="message is-info is-small">
+									<div class="message-body">
+										<p><a href="https://sendgrid.com/" target="_blank">Get a SendGrid API key →</a></p>
+									</div>
+								</article>
+							</div>
+
+							<!-- Mailgun Configuration -->
+							<div id="mailgun-config" class="provider-config" style="display: none;">
+								<hr>
+								<h4 class="title is-6">Mailgun Configuration</h4>
+								<div class="field">
+									<label class="label">Environment Variables Required</label>
+									<pre>MAILGUN_SMTP_HOST=smtp.mailgun.org
+MAILGUN_SMTP_USER=postmaster@your-domain.mailgun.org
+MAILGUN_SMTP_PASS=your_smtp_password</pre>
+								</div>
+								<article class="message is-info is-small">
+									<div class="message-body">
+										<p><a href="https://www.mailgun.com/" target="_blank">Get Mailgun credentials →</a></p>
+									</div>
+								</article>
+							</div>
+
+							<!-- Amazon SES Configuration -->
+							<div id="ses-config" class="provider-config" style="display: none;">
+								<hr>
+								<h4 class="title is-6">Amazon SES Configuration</h4>
+								<div class="field">
+									<label class="label">Environment Variables Required</label>
+									<pre>AWS_SES_ACCESS_KEY=AKIAXXXXXXXXXXXXXXXX
+AWS_SES_SECRET_KEY=your_secret_key
+AWS_SES_REGION=us-east-1</pre>
+								</div>
+								<article class="message is-info is-small">
+									<div class="message-body">
+										<p><a href="https://aws.amazon.com/ses/" target="_blank">Configure Amazon SES →</a></p>
+									</div>
+								</article>
+							</div>
+						</div>
+
+						<!-- Sender Settings -->
+						<div class="box">
+							<h4 class="title is-5">
+								<span class="icon"><i class="fa fa-user"></i></span>
+								Sender Settings
+							</h4>
+							<div class="columns">
+								<div class="column">
+									<div class="field">
+										<label class="label">From Name</label>
+										<input class="input" type="text" name="from_name" 
+											value="<%= configData.email?.from_name || '' %>" 
+											placeholder="<%= serverData.name || 'Skynet' %>">
+										<p class="help">Name displayed in email "From" field</p>
+									</div>
+								</div>
+								<div class="column">
+									<div class="field">
+										<label class="label">From Email</label>
+										<input class="input" type="email" name="from_email" 
+											value="<%= configData.email?.from_email || '' %>" 
+											placeholder="noreply@example.com">
+										<p class="help">Must be verified with your email provider</p>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Admin Email</label>
+								<input class="input" type="email" name="admin_email" 
+									value="<%= configData.email?.admin_email || '' %>" 
+									placeholder="admin@example.com">
+								<p class="help">Receives admin alerts and notifications</p>
+							</div>
+						</div>
+
+						<!-- Branding -->
+						<div class="box">
+							<h4 class="title is-5">
+								<span class="icon"><i class="fa fa-palette"></i></span>
+								Email Branding
+							</h4>
+							<div class="columns">
+								<div class="column">
+									<div class="field">
+										<label class="label">Brand Color</label>
+										<input class="input" type="color" name="brand_color" 
+											value="<%= configData.email?.brand_color || '#3273dc' %>">
+										<p class="help">Used for buttons and headers in emails</p>
+									</div>
+								</div>
+								<div class="column">
+									<div class="field">
+										<label class="label">Logo URL</label>
+										<input class="input" type="url" name="logo_url" 
+											value="<%= configData.email?.logo_url || '' %>" 
+											placeholder="https://example.com/logo.png">
+										<p class="help">Logo displayed in email header</p>
+									</div>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Footer Text</label>
+								<input class="input" type="text" name="footer_text" 
+									value="<%= configData.email?.footer_text || '' %>" 
+									placeholder="© 2025 Your Bot Name. All rights reserved.">
+								<p class="help">Custom text displayed at the bottom of all emails</p>
+							</div>
+						</div>
+
+						<!-- Notification Preferences -->
+						<div class="box">
+							<h4 class="title is-5">
+								<span class="icon"><i class="fa fa-bell"></i></span>
+								Notification Preferences
+							</h4>
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="send_receipts" 
+										<%= configData.email?.notifications?.send_receipts !== false ? 'checked' : '' %>>
+									<strong>Send Payment Receipts</strong>
+								</label>
+								<p class="help">Email receipt to customers after successful payments</p>
+							</div>
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="send_subscription_alerts" 
+										<%= configData.email?.notifications?.send_subscription_alerts !== false ? 'checked' : '' %>>
+									<strong>Send Subscription Alerts</strong>
+								</label>
+								<p class="help">Notify when subscriptions are activated or cancelled</p>
+							</div>
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="send_expiry_reminders" 
+										<%= configData.email?.notifications?.send_expiry_reminders !== false ? 'checked' : '' %>>
+									<strong>Send Expiry Reminders</strong>
+								</label>
+								<p class="help">Remind users before their subscription expires</p>
+							</div>
+							<div class="field">
+								<label class="label">Expiry Reminder Days</label>
+								<input class="input" type="number" name="expiry_reminder_days" 
+									value="<%= configData.email?.notifications?.expiry_reminder_days || 7 %>" 
+									min="1" max="30" style="max-width: 150px;">
+								<p class="help">Days before expiry to send reminder</p>
+							</div>
+							<div class="field">
+								<label class="checkbox">
+									<input type="checkbox" name="send_admin_alerts" 
+										<%= configData.email?.notifications?.send_admin_alerts !== false ? 'checked' : '' %>>
+									<strong>Send Admin Alerts</strong>
+								</label>
+								<p class="help">Send important system alerts to admin email</p>
+							</div>
+						</div>
+
+						<!-- Test Email -->
+						<div class="box">
+							<h4 class="title is-5">
+								<span class="icon"><i class="fa fa-flask"></i></span>
+								Test Configuration
+							</h4>
+							<div class="field has-addons">
+								<div class="control is-expanded">
+									<input class="input" type="email" id="test_email" placeholder="Enter email to send test">
+								</div>
+								<div class="control">
+									<button type="button" class="button is-info" id="send-test-btn" onclick="sendTestEmail()">
+										<span class="icon"><i class="fa fa-paper-plane"></i></span>
+										<span>Send Test Email</span>
+									</button>
+								</div>
+							</div>
+							<p class="help">Send a test email to verify your configuration is working</p>
+							<div id="test-result" class="mt-3" style="display: none;"></div>
+						</div>
+
+						<br>
+						<%- include('../partials/form-buttons') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+	
+	<script>
+	// Show/hide provider-specific configuration
+	function updateProviderConfig() {
+		const provider = document.getElementById('email_provider').value;
+		document.querySelectorAll('.provider-config').forEach(el => el.style.display = 'none');
+		const configEl = document.getElementById(provider + '-config');
+		if (configEl) configEl.style.display = 'block';
+	}
+
+	document.getElementById('email_provider').addEventListener('change', updateProviderConfig);
+	updateProviderConfig(); // Initial call
+
+	// Send test email
+	async function sendTestEmail() {
+		const email = document.getElementById('test_email').value;
+		if (!email) {
+			alert('Please enter an email address');
+			return;
+		}
+
+		const btn = document.getElementById('send-test-btn');
+		const resultDiv = document.getElementById('test-result');
+		
+		btn.classList.add('is-loading');
+		btn.disabled = true;
+
+		try {
+			const response = await fetch('<%= currentPage %>/test', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email })
+			});
+			
+			const data = await response.json();
+			
+			resultDiv.style.display = 'block';
+			if (data.success) {
+				resultDiv.innerHTML = '<article class="message is-success"><div class="message-body">' +
+					'<strong>Success!</strong> Test email sent to ' + email + 
+					'</div></article>';
+			} else {
+				resultDiv.innerHTML = '<article class="message is-danger"><div class="message-body">' +
+					'<strong>Failed:</strong> ' + (data.error || 'Unknown error') + 
+					'</div></article>';
+			}
+		} catch (err) {
+			resultDiv.style.display = 'block';
+			resultDiv.innerHTML = '<article class="message is-danger"><div class="message-body">' +
+				'<strong>Error:</strong> ' + err.message + 
+				'</div></article>';
+		} finally {
+			btn.classList.remove('is-loading');
+			btn.disabled = false;
+		}
+	}
+	</script>
+</body>
+</html>

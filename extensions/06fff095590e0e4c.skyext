@@ -1,0 +1,56 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(' ');
+
+if (args.length < 2) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎯 Fortnite Tracker',
+			description: 'Usage: fortnitetrack <platform> <username>\n\n' +
+				'**Platforms:** pc, psn, xbl\n\n' +
+				'**Examples:**\n' +
+				'• fortnitetrack pc Ninja\n' +
+				'• fortnitetrack psn Player123',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const platform = args[0].toLowerCase();
+const username = args.slice(1).join(' ');
+
+const validPlatforms = ['pc', 'psn', 'xbl'];
+const platformNames = { pc: 'PC', psn: 'PlayStation', xbl: 'Xbox' };
+
+if (!validPlatforms.includes(platform)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Invalid Platform',
+			description: 'Valid platforms: pc, psn, xbl',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const encodedUsername = encodeURIComponent(username);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 Tracking: ' + username,
+		description: '**Platform:** ' + platformNames[platform] + '\n\n' +
+			'**📊 Stat Tracking Sites:**\n\n' +
+			'• **[Fortnite Tracker](https://fortnitetracker.com/profile/all/' + encodedUsername + ')**\n' +
+			'  Detailed stats, match history, progress tracking\n\n' +
+			'• **[FortniteDB](https://fortnitedb.com/profile/' + encodedUsername + ')**\n' +
+			'  Save the World and BR stats\n\n' +
+			'• **[Tracker.gg](https://tracker.gg/fortnite/profile/epic/' + encodedUsername + '/overview)**\n' +
+			'  Seasonal stats and leaderboards\n\n' +
+			'💡 **Tip:** Bookmark your profile to track progress over time!',
+		color: embed.colors.PURPLE,
+		footer: { text: 'Stats may take time to update after matches' },
+	})],
+});

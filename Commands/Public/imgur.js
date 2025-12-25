@@ -6,7 +6,7 @@ const { auth: { tokens: { imgurClientID } } } = loadConfigs();
 module.exports = async ({ Constants: { Colors, Text } }, { serverDocument }, msg, commandData) => {
 	const imgur = new Imgur(serverDocument.config.custom_api_keys.imgur_client_id || imgurClientID);
 
-	if (msg.suffix === "credits" && configJSON.maintainers.includes(msg.author.id)) {
+	if (msg.suffix === "credits" && await require("../../Modules/ConfigManager").isMaintainer(msg.author.id)) {
 		const c = await imgur.getCredits();
 		return msg.send({
 			embeds: [{

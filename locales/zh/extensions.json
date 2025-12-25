@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[ZH] Extension Gallery",
+		"subtitle": "[ZH] Browse and install community-created extensions",
+		"search": "[ZH] Search extensions...",
+		"filters": "[ZH] Filters",
+		"category": "[ZH] Category",
+		"tags": "[ZH] Tags",
+		"sort": "[ZH] Sort by",
+		"sortOptions": {
+			"popular": "[ZH] Most Popular",
+			"recent": "[ZH] Recently Updated",
+			"rating": "[ZH] Highest Rated",
+			"installs": "[ZH] Most Installs"
+		},
+		"noResults": "[ZH] No extensions found matching your criteria.",
+		"featured": "[ZH] Featured",
+		"trending": "[ZH] Trending",
+		"new": "[ZH] New"
+	},
+	"card": {
+		"by": "[ZH] by {{author}}",
+		"installs": "[ZH] {{count}} install",
+		"installs_plural": "[ZH] {{count}} installs",
+		"rating": "[ZH] {{rating}} / 5",
+		"version": "[ZH] v{{version}}",
+		"install": "[ZH] Install",
+		"installed": "[ZH] Installed",
+		"update": "[ZH] Update Available",
+		"premium": "[ZH] Premium",
+		"free": "[ZH] Free",
+		"viewDetails": "[ZH] View Details"
+	},
+	"details": {
+		"title": "[ZH] Extension Details",
+		"description": "[ZH] Description",
+		"usage": "[ZH] Usage",
+		"permissions": "[ZH] Required Permissions",
+		"changelog": "[ZH] Changelog",
+		"reviews": "[ZH] Reviews",
+		"author": "[ZH] Author",
+		"version": "[ZH] Version",
+		"lastUpdated": "[ZH] Last Updated",
+		"installs": "[ZH] Total Installs",
+		"rating": "[ZH] Rating",
+		"category": "[ZH] Category",
+		"tags": "[ZH] Tags",
+		"source": "[ZH] View Source",
+		"report": "[ZH] Report Extension"
+	},
+	"install": {
+		"title": "[ZH] Install Extension",
+		"confirm": "[ZH] Are you sure you want to install **{{name}}**?",
+		"permissions": "[ZH] This extension requires the following permissions:",
+		"success": "[ZH] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[ZH] Failed to install extension.",
+		"alreadyInstalled": "[ZH] This extension is already installed.",
+		"incompatible": "[ZH] This extension is not compatible with your current setup.",
+		"premiumRequired": "[ZH] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[ZH] Uninstall Extension",
+		"confirm": "[ZH] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[ZH] This will remove all settings for this extension.",
+		"success": "[ZH] Extension uninstalled.",
+		"failed": "[ZH] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[ZH] Extension Builder",
+		"create": "[ZH] Create Extension",
+		"edit": "[ZH] Edit Extension",
+		"name": "[ZH] Extension Name",
+		"description": "[ZH] Description",
+		"version": "[ZH] Version",
+		"category": "[ZH] Category",
+		"tags": "[ZH] Tags",
+		"type": "[ZH] Type",
+		"types": {
+			"command": "[ZH] Command",
+			"event": "[ZH] Event",
+			"slash": "[ZH] Slash Command"
+		},
+		"commandKey": "[ZH] Command Trigger",
+		"slashDescription": "[ZH] Slash Command Description",
+		"code": "[ZH] Code",
+		"scopes": "[ZH] Scopes",
+		"timeout": "[ZH] Timeout (ms)",
+		"adminLevel": "[ZH] Required Admin Level",
+		"save": "[ZH] Save Draft",
+		"submit": "[ZH] Submit for Review",
+		"test": "[ZH] Test Extension",
+		"export": "[ZH] Export",
+		"import": "[ZH] Import"
+	},
+	"myExtensions": {
+		"title": "[ZH] My Extensions",
+		"created": "[ZH] Created",
+		"installed": "[ZH] Installed",
+		"noExtensions": "[ZH] You haven't created any extensions yet.",
+		"noInstalled": "[ZH] You haven't installed any extensions.",
+		"status": {
+			"draft": "[ZH] Draft",
+			"pending": "[ZH] Pending Review",
+			"approved": "[ZH] Approved",
+			"rejected": "[ZH] Rejected",
+			"published": "[ZH] Published"
+		}
+	},
+	"review": {
+		"title": "[ZH] Write a Review",
+		"rating": "[ZH] Rating",
+		"comment": "[ZH] Comment",
+		"submit": "[ZH] Submit Review",
+		"edit": "[ZH] Edit Review",
+		"delete": "[ZH] Delete Review",
+		"helpful": "[ZH] Helpful",
+		"report": "[ZH] Report Review",
+		"noReviews": "[ZH] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[ZH] Extension not found.",
+		"loadFailed": "[ZH] Failed to load extension.",
+		"executionFailed": "[ZH] Extension execution failed.",
+		"timeout": "[ZH] Extension timed out.",
+		"permissionDenied": "[ZH] Permission denied.",
+		"invalidCode": "[ZH] Invalid extension code.",
+		"scopeNotAllowed": "[ZH] This extension requires a scope that is not allowed."
+	}
+}

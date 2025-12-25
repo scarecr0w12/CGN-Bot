@@ -38,6 +38,9 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 👑 [Server Owner Guide](Server-Owner-Guide) - Configure your server
 - 🛡️ [Admin Levels](Admin-Levels) - Understanding permissions
 - 🧩 [Extensions](Extensions) - Extend your bot's functionality
+- 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
+- 🎵 [Music System](Music-Guide) - High-quality music playback (Premium)
+- 💻 [Developer Tools](Developer-Tools) - Code execution and utilities (Premium)
 - ⭐ [Premium Features](Premium-Features) - Server subscriptions
 - ❓ [FAQ](FAQ) - Frequently Asked Questions
 
@@ -54,6 +57,12 @@ Engage your community with games, memes, jokes, trivia, and interactive commands
 
 ### ⚒️ Powerful Moderation
 Keep your server safe with comprehensive moderation tools including bans, kicks, mutes, strikes, and detailed moderation logs.
+
+### 🎵 Music & Audio
+Listen to high-quality music with DJ controls, audio filters (Nightcore, Bassboost), and lyrics support. See the [Music Guide](Music-Guide).
+
+### 💻 Developer Tools
+Execute code, test regex, format JSON, and make API requests directly from Discord with our secure developer suite. See [Developer Tools](Developer-Tools).
 
 ### 📊 Statistics & Points
 Track server activity with SkynetPoints, leaderboards, ranks, and detailed server statistics.
@@ -72,7 +81,7 @@ Unlock advanced features for your server with premium subscriptions. See [Premiu
 ## Getting Help
 
 - Use \`@SkynetBot help\` or \`!help\` in Discord for command help
-- Visit our [support server](https://discord.gg/skynet) for assistance
+- Visit our [support server](https://discord.gg/SE6xHmvKrZ) for assistance
 - Check the [FAQ](FAQ) for common questions
 
 ---
@@ -739,7 +748,7 @@ Premium tiers (configured by the bot operator) typically include:
 - **Increased Limits**: Higher rate limits and quotas
 - **Advanced AI**: Access to more powerful AI models
 - **Priority Support**: Faster response times
-- **Exclusive Commands**: Premium-only features
+- **Exclusive Commands**: Premium-only features (Music, Dev Tools)
 - **Extended Storage**: More extension storage
 - **Custom Branding**: Remove bot branding
 
@@ -819,6 +828,22 @@ Premium servers may get:
 - Higher daily token limits
 - Longer conversation memory
 - Priority response times
+
+### Music System (Tier 2)
+- High-quality playback
+- DJ controls and audio filters
+- Queue management and lyrics
+
+### Developer Tools (Tier 2)
+- Code execution sandbox (JavaScript)
+- API testing tools (HTTP)
+- Regex and JSON utilities
+- Code formatting and linting
+
+### Ticket System (Tier 2)
+- Custom support ticket panels
+- Transcript logging
+- Staff management tools
 
 ### Increased Rate Limits
 - More commands per minute
@@ -906,6 +931,251 @@ See also: [Getting Started](Getting-Started) | [Server Owner Guide](Server-Owner
 		}],
 	},
 	{
+		_id: "Ticket-System",
+		content: `# Ticket System
+
+Create a professional support ticket system for your Discord server with custom categories, panels, and transcript logging.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Overview
+
+The ticket system allows server owners to set up an internal support system where users can create tickets for help, reports, or other inquiries. Staff members can manage, claim, and close tickets with full transcript logging.
+
+### Key Features
+- **Custom Categories** - Organize tickets by type (support, reports, applications)
+- **Ticket Panels** - Embed messages with buttons for easy ticket creation
+- **Support Roles** - Configure which roles can manage tickets
+- **Transcripts** - Automatic logging when tickets are closed
+- **Staff Management** - Claim tickets, add/remove users, set priority
+- **Dashboard Integration** - Full management from the web dashboard
+
+---
+
+## Commands
+
+| Command | Usage | Description |
+|---------|-------|-------------|
+| \`ticket\` | \`ticket [category] [subject]\` | Create a new ticket or view your tickets |
+| \`ticketclose\` | \`ticketclose [reason]\` | Close the current ticket channel |
+| \`ticketadd\` | \`ticketadd @user\` | Add a user to the current ticket |
+| \`ticketremove\` | \`ticketremove @user\` | Remove a user from the current ticket |
+| \`ticketpanel\` | \`ticketpanel [title] \\| [description]\` | Create a ticket panel (Admin) |
+
+---
+
+## Setup Guide
+
+### Step 1: Enable the System
+1. Go to your server dashboard
+2. Navigate to **Tickets** → **Settings**
+3. Toggle **Enable Ticket System** on
+
+### Step 2: Configure Channels
+- **Ticket Category** - Discord category for ticket channels
+- **Transcript Channel** - Where transcripts are saved
+- **Log Channel** - For ticket event notifications
+
+### Step 3: Set Support Roles
+Select roles that can:
+- View all tickets
+- Claim and manage tickets
+- Add/remove users
+
+### Step 4: Create Categories
+Add categories to organize tickets:
+- Name and emoji
+- Description
+- Custom welcome message
+
+### Step 5: Create a Panel
+\`\`\`
+!ticketpanel Support Center | Click a button to create a ticket!
+\`\`\`
+
+---
+
+## Managing Tickets
+
+### From Discord
+- Use button interactions in ticket channels
+- **Close** - Close and save transcript
+- **Claim** - Assign yourself as handler
+
+### From Dashboard
+Access **Dashboard → Tickets** to:
+- View all tickets with filters
+- Change status and priority
+- Add internal notes
+- View message history
+
+---
+
+## Ticket Status Flow
+
+| Status | Description |
+|--------|-------------|
+| **Open** | New ticket, awaiting staff |
+| **In Progress** | Staff actively working |
+| **On Hold** | Waiting for user response |
+| **Closed** | Resolved, transcript saved |
+
+---
+
+## Tips & Best Practices
+
+1. **Clear Categories** - Create distinct types to route efficiently
+2. **Welcome Messages** - Include FAQ links and expectations
+3. **Transcript Channel** - Keep it staff-only for privacy
+4. **Max Tickets** - Limit per user to prevent abuse (default: 3)
+
+---
+
+## Troubleshooting
+
+### Tickets not creating
+- Check bot has \`Manage Channels\` permission
+- Verify category has room (limit: 50 channels)
+- Ensure system is enabled
+
+### Users can't see tickets
+- Bot needs \`Manage Roles\` permission
+- Check Discord role hierarchy
+
+### Transcripts not saving
+- Verify channel is configured
+- Bot needs \`Send Messages\` permission
+
+---
+
+See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Owner-Guide) | [Commands](Commands)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Music-Guide",
+		content: `# Music System Guide
+
+High-quality music playback for your server with DJ controls and audio filters.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Overview
+
+The music system allows you to play audio from YouTube and other supported sources directly in your voice channel. It features a robust queue system, DJ controls, and fun audio filters.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| \`!play <query/url>\` | Play a song or add to queue |
+| \`!skip\` | Skip the current track |
+| \`!queue\` | View the current music queue |
+| \`!dj\` | Access DJ controls (pause, stop, volume, loop) |
+| \`!filters\` | Apply audio filters (Bassboost, Nightcore, etc.) |
+| \`!lyrics\` | Get lyrics for the current song |
+
+## DJ Controls
+
+The \`!dj\` command opens a control panel with buttons for:
+- ⏯️ Pause/Resume
+- ⏹️ Stop & Clear
+- 🔊 Volume Control
+- 🔁 Loop Mode (Track/Queue/Off)
+- 🔀 Shuffle Queue
+
+## Audio Filters
+
+Enhance your listening experience with real-time audio filters:
+- **Bassboost** - Boost the low end
+- **Nightcore** - Speed up and raise pitch
+- **Vaporwave** - Slow down and lower pitch
+- **8D** - Simulate 8D audio surround sound
+
+Use \`!filters\` to toggle these effects.
+
+---
+
+See also: [Premium Features](Premium-Features) | [Commands](Commands)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Developer-Tools",
+		content: `# Developer Tools
+
+A suite of advanced utilities for developers, including a JavaScript sandbox, code formatting, and API testing tools.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Code Execution
+
+### \`!coderun\`
+Execute JavaScript code in a secure, sandboxed environment.
+- **Timeout:** 3 seconds
+- **Environment:** Node.js-like (no file/network access)
+- **Usage:** \`!coderun console.log("Hello World");\`
+
+### \`!lint\`
+Analyze your JavaScript code for syntax errors and potential issues.
+
+### \`!codeformat\`
+Automatically format and beautify your code snippets.
+
+---
+
+## Utilities
+
+### \`!http\`
+Make HTTP requests to external APIs directly from Discord.
+- Supports GET and POST
+- Rate limited (10/min)
+- Restricted from accessing private IP ranges
+
+### \`!regex\`
+Test and explain Regular Expressions.
+- \`!regextest\` - Test a pattern against a string
+- \`!regexexplain\` - Get a human-readable explanation of a pattern
+
+### \`!json\`
+Tools for working with JSON data.
+- \`!jsonpretty\` - Format minified JSON
+- \`!jsonminify\` - Minify formatted JSON
+- \`!jsonpath\` - Query JSON using JSONPath syntax
+
+### \`!snippet\`
+Save and manage your frequently used code snippets.
+- Store snippets per-server or per-user
+- Syntax highlighting support
+
+---
+
+See also: [Premium Features](Premium-Features) | [Commands](Commands)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
 		_id: "Server-Owner-Guide",
 		content: `# Server Owner Guide
 
@@ -929,6 +1199,7 @@ The web dashboard is your central hub for configuring SkynetBot. Access it by:
 | **Points & Ranks** | Set up the points system |
 | **Messages** | Automated welcome/leave messages |
 | **Logs** | View bot activity logs |
+| **Tickets** | Support ticket system management |
 
 ## Command Management
 
@@ -1039,6 +1310,17 @@ Get notified when configured streamers go live:
 1. Dashboard → Streamers
 2. Add Twitch/YouTube usernames
 3. Configure announcement channel
+
+## Data Management
+
+### Exporting Server Data
+You can export your server's configuration and data:
+1. Go to **Dashboard** → **Settings** → **Export Data**
+2. Choose data types (Config, Members, Moderation, etc.)
+3. Select format (JSON or CSV)
+4. Download the archive
+
+*Requires Tier 2 Premium.*
 
 ## Extensions
 
@@ -1367,6 +1649,23 @@ Extensions are JSON-based configurations that define:
 - Response templates
 - Permission requirements
 
+## Import & Export
+
+Share your custom extensions with other servers or back them up.
+
+### Exporting
+1. Go to **My Extensions** in the dashboard
+2. Click the **Export** button on any extension
+3. Download the \`.skypkg\` file
+
+### Importing
+1. Go to **My Extensions**
+2. Click **Import Extension**
+3. Upload a \`.skypkg\` file
+4. Review the code and install
+
+*Note: You can only export extensions you own or that are published.*
+
 ### Submission Process
 1. Create extension in the builder
 2. Test on your server
@@ -1487,6 +1786,36 @@ const message = require("message");
 message.reply(\`You said: \${command.suffix}\`);
 \`\`\`
 
+### Slash Command Extensions
+
+Triggered when a user runs a Discord slash command (\`/command\`).
+
+\`\`\`javascript
+const interaction = require("interaction");
+
+// interaction.options - Map of option names to values
+// interaction.user - The user who ran the command
+// interaction.commandName - The slash command name
+
+const name = interaction.options.name;
+await interaction.reply(\`Hello, \${name || "User"}!\`);
+\`\`\`
+
+**Builder Configuration:**
+- **Slash command name**: The command name (lowercase, no spaces)
+- **Slash command description**: Shown in Discord's command picker
+- **Slash options (JSON)**: Array of option objects defining parameters
+
+**Slash Options Format:**
+\`\`\`json
+[
+  {"name": "query", "description": "Search query", "type": "string", "required": true},
+  {"name": "count", "description": "Number of results", "type": "integer", "required": false}
+]
+\`\`\`
+
+**Supported option types:** \`string\`, \`integer\`, \`number\`, \`boolean\`, \`user\`, \`channel\`, \`role\`, \`mentionable\`, \`attachment\`
+
 ### Keyword Extensions
 
 Triggered when specific keywords appear in messages.
@@ -1545,9 +1874,12 @@ console.log(\`Timer executed for \${guild.name}\`);
 | \`command\` | Command data (command type) | None |
 | \`keyword\` | Keyword data (keyword type) | None |
 | \`event\` | Event data (event type) | None |
-| \`extension\` | Extension metadata | None |
+| \`interaction\` | Slash command interaction | None |
+| \`extension\` | Extension metadata & storage | \`storage\` |
 | \`utils\` | Utility functions | None |
 | \`embed\` | Embed builder helper | None |
+| \`points\` / \`economy\` | Server economy/points data | \`members_read\` |
+| \`http\` | HTTP requests (Tier 2) | \`http_request\` |
 
 ---
 
@@ -1872,6 +2204,120 @@ embed.resolveColor("RANDOM")
 embed.resolveColor([255, 85, 0])
 \`\`\`
 
+### Interaction Module (Slash Commands)
+
+\`\`\`javascript
+const interaction = require("interaction"); // Only for slash command extensions
+
+// Properties
+interaction.id              // Interaction ID
+interaction.commandName     // The slash command name
+interaction.guildId         // Guild ID
+interaction.channelId       // Channel ID
+
+// User who triggered the command
+interaction.user.id         // User ID
+interaction.user.username   // Username
+interaction.user.tag        // User tag
+interaction.user.bot        // Is bot?
+
+// Options (parameters passed to the command)
+interaction.options         // Object of option name -> value
+
+// For user/channel/role options, value is { id, type }
+// For attachment options: { id, type, url, name }
+\`\`\`
+
+#### Interaction Methods
+
+\`\`\`javascript
+// Reply to the interaction
+await interaction.reply("Hello!");
+await interaction.reply({ content: "Hello!", ephemeral: true });
+await interaction.reply({ embeds: [myEmbed] });
+
+// Defer reply (for long operations)
+await interaction.deferReply();
+await interaction.deferReply({ ephemeral: true });
+
+// Edit a deferred reply
+await interaction.editReply("Done processing!");
+
+// Send follow-up messages
+await interaction.followUp("Additional info!");
+\`\`\`
+
+### Points/Economy Module
+
+Access the server's points and ranking system.
+
+\`\`\`javascript
+const points = require("points"); // Requires members_read scope
+// OR
+const economy = require("economy"); // Alias
+
+// Check if points system is enabled
+points.isEnabled              // Boolean
+points.canWrite               // Boolean - true if economy_manage scope granted
+
+// Your points data
+points.self.userId            // Your user ID
+points.self.rankScore         // Your rank score
+points.self.messages          // Total messages sent
+points.self.voice             // Voice activity time
+points.self.rank              // Current rank name
+points.self.position          // Leaderboard position
+
+// Server leaderboard (top 25 by default)
+points.leaderboard            // Array of user entries
+
+// Server ranks configuration
+points.ranks                  // Array of rank objects
+
+// --- READ METHODS ---
+points.getSelf()              // Get your points data
+points.getUser(userId)        // Get another user's points
+points.getLeaderboard(limit)  // Get leaderboard (max 100)
+
+// --- WRITE METHODS (require economy_manage scope) ---
+points.addPoints(userId, amount, reason)     // Add points (max 10,000)
+points.removePoints(userId, amount, reason)  // Remove points
+points.transfer(from, to, amount, reason)    // Transfer between users
+points.setPoints(userId, amount, reason)     // Set to specific value
+\`\`\`
+
+### HTTP Module (Tier 2 Only)
+
+Make external API requests from your extension.
+
+\`\`\`javascript
+const http = require("http"); // Requires http_request scope + appropriate network capability
+
+const res = await http.request({
+    url: "https://api.jikan.moe/v4/anime?q=naruto&limit=1",
+    method: "GET",           // GET or POST
+    responseType: "json",    // "json" or "text"
+    timeoutMs: 8000,         // Max 15000ms
+    maxBytes: 1048576,       // Max response size
+});
+
+// Response object
+res.success     // Boolean
+res.error       // Error string if failed
+res.status      // HTTP status code
+res.headers     // Response headers
+res.body        // Raw response text
+res.json        // Parsed JSON (if responseType is "json")
+\`\`\`
+
+**Network Capability Levels:**
+| Level | Description | Approval |
+|-------|-------------|----------|
+| \`none\` | No network access | N/A |
+| \`allowlist_only\` | Pre-approved APIs only (Jikan, Steam, Mojang) | Auto |
+| \`network\` | Any HTTPS endpoint | Requires approval |
+| \`network_advanced\` | HTTP, custom ports, webhooks | Requires approval |
+
 ### Extension Module
 
 \`\`\`javascript
@@ -1880,8 +2326,100 @@ const extension = require("extension");
 // Extension metadata
 extension.name          // Extension name
 extension.version       // Version string
-extension.type          // "command", "keyword", "event", "timer"
+extension.type          // "command", "slash", "keyword", "event", "timer"
+
+// Persistent storage (requires storage scope)
+extension.storage.get(key)           // Get stored value
+await extension.storage.write(key, value)  // Store value (25KB limit)
+await extension.storage.delete(key)  // Delete key
+await extension.storage.clear()      // Clear all storage
+
+// Server-admin configured settings (read-only)
+extension.settings.get(key)          // Get setting value
+extension.settings.getAll()          // Get all settings
 \`\`\`
+
+---
+
+## Dashboard Settings (Server Admin UI)
+
+Extension developers can add custom configuration panels to the server owner dashboard. Server admins see these fields when managing the extension.
+
+### Defining Dashboard Settings
+
+Add a \`dashboard_settings\` object to your extension version:
+
+\`\`\`json
+{
+  "dashboard_settings": {
+    "enabled": true,
+    "sections": [
+      {
+        "id": "api_config",
+        "title": "API Configuration",
+        "fields": [
+          {
+            "id": "api_url",
+            "type": "text",
+            "label": "API Endpoint",
+            "placeholder": "https://api.example.com",
+            "required": true
+          },
+          {
+            "id": "api_key",
+            "type": "secret",
+            "label": "API Key"
+          },
+          {
+            "id": "max_results",
+            "type": "number",
+            "label": "Max Results",
+            "default": 10,
+            "min": 1,
+            "max": 100
+          }
+        ]
+      }
+    ]
+  }
+}
+\`\`\`
+
+### Supported Field Types
+
+| Type | Description | Extra Options |
+|------|-------------|---------------|
+| \`text\` | Single-line text input | \`placeholder\` |
+| \`textarea\` | Multi-line text input | \`placeholder\` |
+| \`number\` | Numeric input | \`min\`, \`max\`, \`default\` |
+| \`toggle\` | Checkbox/boolean | \`default\` |
+| \`select\` | Dropdown menu | \`options: [{value, label}]\` |
+| \`secret\` | Password (encrypted) | Never shown after saving |
+| \`channel_select\` | Server channel picker | - |
+
+### Accessing Settings in Code
+
+\`\`\`javascript
+const extension = require("extension");
+const http = require("http");
+
+// Read server-admin configured values
+const apiUrl = extension.settings.get("api_url");
+const maxResults = extension.settings.get("max_results") || 10;
+
+// For HTTP requests with secrets (auto-injected into headers)
+const res = await http.request({
+    url: apiUrl + "/search",
+    method: "GET",
+    injectSecrets: { "Authorization": "api_key" }
+});
+\`\`\`
+
+### Security Notes
+
+- **Secrets are encrypted** at rest and never exposed to extension code
+- Secrets are injected into HTTP request headers by the sandbox runtime
+- Server admins configure these values in Dashboard → Extensions
 
 ### Bot Module
 
@@ -1911,23 +2449,70 @@ config.name_display     // Name display setting
 
 Extensions must declare which scopes they need. Users installing the extension will see what permissions it requires.
 
-| Scope | Permission | Description |
-|-------|------------|-------------|
-| \`ban\` | Ban members | Can ban members from the guild |
-| \`kick\` | Kick members | Can kick members from the guild |
-| \`roles_read\` | Read roles | Can access guild role information |
-| \`roles_manage\` | Manage roles | Can assign/remove roles from members |
-| \`channels_read\` | Read channels | Can access channel information |
-| \`channels_manage\` | Manage channels | Can modify channels, pin messages |
-| \`guild_read\` | Read guild | Can access guild settings and info |
-| \`guild_manage\` | Manage guild | Can modify guild settings |
-| \`members_read\` | Read members | Can access member information |
-| \`members_manage\` | Manage members | Can manage members (nicknames, etc.) |
-| \`messages_read\` | Read messages | Can read message history |
-| \`messages_global\` | Global messages | Can read messages in all channels |
-| \`messages_write\` | Send messages | Can send messages in all channels |
-| \`messages_manage\` | Manage messages | Can delete messages |
-| \`config\` | Read config | Can read Skynet configuration |
+### Message Scopes
+| Scope | Description |
+|-------|-------------|
+| \`messages_read\` | Read message history in current channel |
+| \`messages_global\` | Read messages in all channels |
+| \`messages_write\` | Send messages in all channels |
+| \`messages_manage\` | Delete messages |
+| \`embed_links\` | Send rich embeds with links/images |
+| \`reactions\` | Add and manage reactions |
+
+### Member Scopes
+| Scope | Description |
+|-------|-------------|
+| \`members_read\` | Access member information |
+| \`members_manage\` | Manage nicknames, etc. |
+
+### Role Scopes
+| Scope | Description |
+|-------|-------------|
+| \`roles_read\` | Access guild role information |
+| \`roles_manage\` | Assign/remove roles |
+
+### Channel Scopes
+| Scope | Description |
+|-------|-------------|
+| \`channels_read\` | Access channel information |
+| \`channels_manage\` | Modify channels, pin messages |
+| \`threads\` | Create and manage threads |
+
+### Server Scopes
+| Scope | Description |
+|-------|-------------|
+| \`guild_read\` | Access guild settings and info |
+| \`guild_manage\` | Modify guild settings |
+
+### Moderation Scopes
+| Scope | Description |
+|-------|-------------|
+| \`ban\` | Ban members from the guild |
+| \`kick\` | Kick members from the guild |
+| \`timeout\` | Timeout members (communication disabled) |
+| \`modlog\` | Read and write to moderation log |
+
+### Economy Scopes
+| Scope | Description |
+|-------|-------------|
+| \`economy_read\` | Read points/leaderboard data |
+| \`economy_manage\` | Add/remove/transfer points |
+
+### Data & Config Scopes
+| Scope | Description |
+|-------|-------------|
+| \`config\` | Read Skynet configuration |
+| \`storage\` | Use persistent extension storage |
+
+### Network Scopes
+| Scope | Description |
+|-------|-------------|
+| \`http_request\` | Make external HTTP requests |
+
+### Advanced Scopes
+| Scope | Description |
+|-------|-------------|
+| \`webhooks\` | Create and use webhooks |
 
 ---
 
@@ -2135,16 +2720,86 @@ const lbEmbed = embed.create({
 message.reply({ embeds: [lbEmbed] });
 \`\`\`
 
+### Slash Command Example
+
+\`\`\`javascript
+// Type: slash
+// Name: greet
+// Description: Greet someone with a custom message
+// Options: [{"name":"user","description":"User to greet","type":"user","required":true},{"name":"message","description":"Custom message","type":"string","required":false}]
+
+const interaction = require("interaction");
+const embed = require("embed");
+
+const targetUser = interaction.options.user;
+const customMsg = interaction.options.message || "Hello!";
+
+if (!targetUser) {
+    await interaction.reply({ content: "Please mention a user!", ephemeral: true });
+} else {
+    const greetEmbed = embed.create({
+        title: "👋 Greeting!",
+        description: \`<@\${targetUser.id}>, \${customMsg}\`,
+        color: embed.colors.GREEN,
+        footer: { text: \`From \${interaction.user.username}\` }
+    });
+    await interaction.reply({ embeds: [greetEmbed] });
+}
+\`\`\`
+
+### HTTP API Request Example
+
+\`\`\`javascript
+// Requires: http_request scope + allowlist_only or higher network capability
+const http = require("http");
+const message = require("message");
+const command = require("command");
+const embed = require("embed");
+
+const query = command.suffix.trim();
+if (!query) {
+    message.reply("Usage: anime <search query>");
+} else {
+    const res = await http.request({
+        url: "https://api.jikan.moe/v4/anime?q=" + encodeURIComponent(query) + "&limit=1",
+        method: "GET",
+        responseType: "json",
+        timeoutMs: 8000,
+    });
+
+    if (!res.success || !res.json?.data?.length) {
+        message.reply("No results found for: **" + query + "**");
+    } else {
+        const anime = res.json.data[0];
+        message.reply({
+            embeds: [embed.create({
+                title: anime.title,
+                url: anime.url,
+                description: (anime.synopsis || "").slice(0, 300) + "...",
+                thumbnail: { url: anime.images?.jpg?.image_url },
+                fields: [
+                    { name: "Score", value: String(anime.score || "N/A"), inline: true },
+                    { name: "Episodes", value: String(anime.episodes || "N/A"), inline: true },
+                ],
+                color: embed.colors.BLUE,
+                footer: { text: "Powered by Jikan/MyAnimeList" },
+            })],
+        });
+    }
+}
+\`\`\`
+
 ---
 
 ## Limitations
 
-1. **Execution Timeout**: Extensions have a maximum execution time (default 5 seconds)
+1. **Execution Timeout**: Extensions have a maximum execution time (100-10000ms, configurable)
 2. **Memory Limit**: Isolated VM has 128MB memory limit
 3. **Storage Limit**: 25KB per extension per server
-4. **No External Requests**: \`fetch\`, \`rss\`, and \`xmlparser\` modules are not available in isolated-vm
-5. **No File System Access**: Extensions cannot read/write files
-6. **Rate Limits**: Discord's rate limits still apply
+4. **HTTP Requests**: Available via \`http\` module with network capability (Tier 2 for full access)
+5. **Legacy Modules**: \`fetch\`, \`rss\`, and \`xmlparser\` modules are not available
+6. **No File System Access**: Extensions cannot read/write files
+7. **Rate Limits**: Discord's rate limits apply; HTTP requests limited to 30/minute per extension
 
 ---
 
@@ -2173,7 +2828,19 @@ You're trying to require a module that doesn't exist or isn't available for your
 ---
 
 *Last Updated: December 2024*
-*Extension API Version: 2.0*
+*Extension API Version: 2.1*
+
+## Builder Features
+
+The Extension Builder at \`/extensions/builder\` provides:
+
+- **Code Editor**: Monaco-based editor with syntax highlighting
+- **Upload/Download**: Import/export \`.js\`, \`.skyext\`, or \`.txt\` files
+- **Format Code**: Auto-format with Ctrl+Shift+F
+- **Shortcuts**: Ctrl+S (Save), Ctrl+/ (Comment), Ctrl+D (Duplicate), Ctrl+F (Find)
+- **Tags**: Categorize extensions (Moderation, Utility, Fun, Economy, etc.)
+- **Premium Settings**: Set pricing for marketplace extensions
+- **Import/Export Packages**: Share extensions via \`.skypkg\` files
 
 [← Back to Extensions](Extensions) | [Home](Home)
 `,
@@ -2484,7 +3151,7 @@ No, server data is not shared with third parties.
 
 - Read the [Getting Started](Getting-Started) guide
 - Browse the full [Wiki](Home)
-- Join our [support server](https://discord.gg/skynet)
+- Join our [support server](https://discord.gg/SE6xHmvKrZ)
 `,
 		reactions: [],
 		updates: [{
@@ -2521,10 +3188,11 @@ Complete list of all SkynetBot commands organized by category.
 |----------|----------|
 `;
 	
-	// Add category links
+	// Add category links - slugify to match markdown anchor generation
+	const slugify = (text) => text.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "");
 	for (const category of Object.keys(categories).sort()) {
 		const count = categories[category].length;
-		const anchor = category.replace(/[^a-zA-Z]/g, "").toLowerCase();
+		const anchor = slugify(category);
 		content += `| [${category}](#${anchor}) | ${count} commands |\n`;
 	}
 	
@@ -2560,7 +3228,6 @@ For detailed information, visit the category-specific pages:
 
 	// Add each category section
 	for (const [category, cmdList] of Object.entries(categories).sort()) {
-		const anchor = category.replace(/[^a-zA-Z]/g, "").toLowerCase();
 		content += `## ${category}
 
 | Command | Description | Admin Level |
@@ -2677,25 +3344,21 @@ async function seedWiki() {
 		const existingCount = await Wiki.count({});
 		console.log(`📊 Existing wiki pages: ${existingCount}`);
 		
-		if (existingCount > 0) {
+		if (existingCount > 0 && !process.argv.includes("--force")) {
 			console.log("\n⚠️  Wiki already has content.");
 			console.log("   Run with --force to overwrite existing pages.");
-			
-			if (!process.argv.includes("--force")) {
-				console.log("\n❌ Aborting. Use --force to overwrite.");
-				process.exit(0);
-				return;
-			}
-			
-			console.log("\n🗑️  --force flag detected. Removing existing wiki pages...");
-			await Wiki.delete({});
-			console.log("✅ Existing pages removed\n");
+			console.log("\n❌ Aborting. Use --force to overwrite.");
+			process.exit(0);
+			return;
 		}
 		
-		// Insert wiki pages
-		console.log(`📝 Inserting ${wikiPages.length} wiki pages...\n`);
+		// Upsert wiki pages (delete then insert each one)
+		console.log(`📝 Upserting ${wikiPages.length} wiki pages...\n`);
 		
 		for (const page of wikiPages) {
+			// Delete existing page first
+			await Wiki.delete({ _id: page._id });
+			// Then insert new one
 			const doc = Wiki.new(page);
 			await doc.save();
 			console.log(`   ✅ Created: ${page._id}`);

@@ -18,14 +18,32 @@ controllers.api = require("./api");
 controllers.debug = require("./debug");
 controllers.membership = require("./membership");
 controllers.seo = require("./seo");
+controllers.server = require("./server");
+controllers.referral = require("./referral");
+controllers.templates = require("./templates");
+controllers.widgets = require("./widgets");
+controllers.vote = require("./vote");
 
-controllers.headerImage = (req, res) => {
-	let headerImage = configJSON.headerImage || "header.png";
+controllers.headerImage = async (req, res) => {
+	const ConfigManager = require("../../Modules/ConfigManager");
+	const settings = await ConfigManager.get();
+	let headerImage = settings.headerImage || "header.webp";
 	if (req.get("Accept") && req.get("Accept").indexOf("image/webp") > -1 && headerImage.includes(".")) {
 		headerImage = `${headerImage.substring(0, headerImage.lastIndexOf("."))}.webp`;
 	}
-	res.sendFile(require("path").resolve(`${__dirname}/../public/img/${headerImage}`), err => {
-		if (err) logger.debug("It looks like your headerImage value is invalid!", {}, err);
+	const fs = require("fs");
+	const filePath = require("path").resolve(`${__dirname}/../public/img/${headerImage}`);
+
+	// Check if file exists before sending
+	if (!fs.existsSync(filePath)) {
+		logger.debug("Header image not found, using fallback", { headerImage, filePath });
+		return res.sendFile(require("path").resolve(`${__dirname}/../public/img/header.webp`), err => {
+			if (err) logger.warn("Failed to send fallback header image", {}, err);
+		});
+	}
+
+	res.sendFile(filePath, err => {
+		if (err) logger.debug("Failed to send header image", { headerImage }, err);
 	});
 };
 

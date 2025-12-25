@@ -122,6 +122,9 @@ module.exports = new Schema({
 	}, { _id: false })],
 	modlog: require("./serverModlogSchema.js"),
 
+	// Server ticket system configuration (Tier 2)
+	tickets: require("./serverTicketConfigSchema.js"),
+
 	// MariaDB timestamp fields
 	created_at: Date,
 	updated_at: Date,

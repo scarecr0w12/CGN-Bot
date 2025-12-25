@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[KO] Extension Gallery",
+		"subtitle": "[KO] Browse and install community-created extensions",
+		"search": "[KO] Search extensions...",
+		"filters": "[KO] Filters",
+		"category": "[KO] Category",
+		"tags": "[KO] Tags",
+		"sort": "[KO] Sort by",
+		"sortOptions": {
+			"popular": "[KO] Most Popular",
+			"recent": "[KO] Recently Updated",
+			"rating": "[KO] Highest Rated",
+			"installs": "[KO] Most Installs"
+		},
+		"noResults": "[KO] No extensions found matching your criteria.",
+		"featured": "[KO] Featured",
+		"trending": "[KO] Trending",
+		"new": "[KO] New"
+	},
+	"card": {
+		"by": "[KO] by {{author}}",
+		"installs": "[KO] {{count}} install",
+		"installs_plural": "[KO] {{count}} installs",
+		"rating": "[KO] {{rating}} / 5",
+		"version": "[KO] v{{version}}",
+		"install": "[KO] Install",
+		"installed": "[KO] Installed",
+		"update": "[KO] Update Available",
+		"premium": "[KO] Premium",
+		"free": "[KO] Free",
+		"viewDetails": "[KO] View Details"
+	},
+	"details": {
+		"title": "[KO] Extension Details",
+		"description": "[KO] Description",
+		"usage": "[KO] Usage",
+		"permissions": "[KO] Required Permissions",
+		"changelog": "[KO] Changelog",
+		"reviews": "[KO] Reviews",
+		"author": "[KO] Author",
+		"version": "[KO] Version",
+		"lastUpdated": "[KO] Last Updated",
+		"installs": "[KO] Total Installs",
+		"rating": "[KO] Rating",
+		"category": "[KO] Category",
+		"tags": "[KO] Tags",
+		"source": "[KO] View Source",
+		"report": "[KO] Report Extension"
+	},
+	"install": {
+		"title": "[KO] Install Extension",
+		"confirm": "[KO] Are you sure you want to install **{{name}}**?",
+		"permissions": "[KO] This extension requires the following permissions:",
+		"success": "[KO] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[KO] Failed to install extension.",
+		"alreadyInstalled": "[KO] This extension is already installed.",
+		"incompatible": "[KO] This extension is not compatible with your current setup.",
+		"premiumRequired": "[KO] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[KO] Uninstall Extension",
+		"confirm": "[KO] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[KO] This will remove all settings for this extension.",
+		"success": "[KO] Extension uninstalled.",
+		"failed": "[KO] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[KO] Extension Builder",
+		"create": "[KO] Create Extension",
+		"edit": "[KO] Edit Extension",
+		"name": "[KO] Extension Name",
+		"description": "[KO] Description",
+		"version": "[KO] Version",
+		"category": "[KO] Category",
+		"tags": "[KO] Tags",
+		"type": "[KO] Type",
+		"types": {
+			"command": "[KO] Command",
+			"event": "[KO] Event",
+			"slash": "[KO] Slash Command"
+		},
+		"commandKey": "[KO] Command Trigger",
+		"slashDescription": "[KO] Slash Command Description",
+		"code": "[KO] Code",
+		"scopes": "[KO] Scopes",
+		"timeout": "[KO] Timeout (ms)",
+		"adminLevel": "[KO] Required Admin Level",
+		"save": "[KO] Save Draft",
+		"submit": "[KO] Submit for Review",
+		"test": "[KO] Test Extension",
+		"export": "[KO] Export",
+		"import": "[KO] Import"
+	},
+	"myExtensions": {
+		"title": "[KO] My Extensions",
+		"created": "[KO] Created",
+		"installed": "[KO] Installed",
+		"noExtensions": "[KO] You haven't created any extensions yet.",
+		"noInstalled": "[KO] You haven't installed any extensions.",
+		"status": {
+			"draft": "[KO] Draft",
+			"pending": "[KO] Pending Review",
+			"approved": "[KO] Approved",
+			"rejected": "[KO] Rejected",
+			"published": "[KO] Published"
+		}
+	},
+	"review": {
+		"title": "[KO] Write a Review",
+		"rating": "[KO] Rating",
+		"comment": "[KO] Comment",
+		"submit": "[KO] Submit Review",
+		"edit": "[KO] Edit Review",
+		"delete": "[KO] Delete Review",
+		"helpful": "[KO] Helpful",
+		"report": "[KO] Report Review",
+		"noReviews": "[KO] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[KO] Extension not found.",
+		"loadFailed": "[KO] Failed to load extension.",
+		"executionFailed": "[KO] Extension execution failed.",
+		"timeout": "[KO] Extension timed out.",
+		"permissionDenied": "[KO] Permission denied.",
+		"invalidCode": "[KO] Invalid extension code.",
+		"scopeNotAllowed": "[KO] This extension requires a scope that is not allowed."
+	}
+}

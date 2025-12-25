@@ -1,0 +1,93 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const itemName = command.suffix.trim().toLowerCase();
+if (!itemName) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🛡️ LoL Item',
+			description: 'Usage: lolitem <item name>\nExample: lolitem infinity edge',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const versionRes = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/api/versions.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 5000,
+});
+
+const version = versionRes.success && versionRes.json?.[0] ? versionRes.json[0] : '14.1.1';
+
+const res = await http.request({
+	url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/data/en_US/item.json',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Item',
+			description: 'Failed to fetch item data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const items = res.json?.data;
+if (!items) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Item',
+			description: 'No item data available.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const itemEntry = Object.entries(items).find(([id, item]) => item.name.toLowerCase().includes(itemName));
+if (!itemEntry) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ LoL Item',
+			description: 'Item not found: **' + itemName + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const [itemId, item] = itemEntry;
+const description = item.description?.replace(/<[^>]*>/g, '') || 'No description';
+const gold = item.gold || {};
+
+const fields = [
+	{ name: 'Cost', value: String(gold.total || 0) + ' gold', inline: true },
+	{ name: 'Sell', value: String(gold.sell || 0) + ' gold', inline: true },
+];
+
+if (item.tags?.length) {
+	fields.push({ name: 'Tags', value: item.tags.slice(0, 5).join(', '), inline: true });
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🛡️ ' + item.name,
+		description: description.length > 500 ? description.slice(0, 500) + '...' : description,
+		thumbnail: { url: 'https://ddragon.leagueoflegends.com/cdn/' + version + '/img/item/' + itemId + '.png' },
+		fields: fields,
+		color: embed.colors.BLUE,
+		footer: { text: 'Powered by Riot Data Dragon | Patch ' + version },
+	})],
+});
+})();

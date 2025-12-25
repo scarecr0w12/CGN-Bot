@@ -29,10 +29,13 @@ const toobusy = require("toobusy-js");
 const fsn = require("fs-nextra");
 const Sentry = require("@sentry/node");
 
+const crypto = require("crypto");
 const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
+const securityMiddleware = require("./middleware/security");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
 const metrics = require("../Modules/Metrics");
+const I18n = require("../Modules/I18n");
 const app = express();
 
 const listen = async configJS => {
@@ -146,9 +149,157 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Metrics endpoint for Prometheus scraping
 	app.get("/metrics", metrics.getMetrics);
 
-	// Security headers with helmet (configured for dashboard compatibility)
+	// Generate nonce for CSP inline scripts
+	app.use((req, res, next) => {
+		res.locals.nonce = crypto.randomBytes(16).toString("base64");
+		next();
+	});
+
+	// Security headers with helmet
+	// Note: 'unsafe-inline' and 'unsafe-eval' required for legacy scripts (morris.js, etc.)
+	// TODO: Migrate to modern charting library and add nonces to inline scripts
 	app.use(helmet({
-		contentSecurityPolicy: false, // Disable CSP for now due to inline scripts in dashboard
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				scriptSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					"'unsafe-eval'",
+					// CDN sources
+					"https://cdnjs.cloudflare.com",
+					"cdnjs.cloudflare.com",
+					"https://unpkg.com",
+					"unpkg.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					// Analytics (internal)
+					"https://analytics.thecorehosting.net",
+					"https://static.cloudflareinsights.com",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://googletagmanager.com",
+					"https://tagmanager.google.com",
+					// Google Analytics
+					"https://*.google-analytics.com",
+					"https://www.google-analytics.com",
+					"https://ssl.google-analytics.com",
+					// Google Ads & AdSense
+					"https://pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					"https://googleads.g.doubleclick.net",
+					"https://*.googleadservices.com",
+					"https://partner.googleadservices.com",
+					"https://www.googletagservices.com",
+					"https://tpc.googlesyndication.com",
+					// Google Static Resources
+					"https://*.gstatic.com",
+					"https://www.gstatic.com",
+					"https://ssl.gstatic.com",
+					// Google Core & SODAR
+					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// DoubleClick
+					"https://*.doubleclick.net",
+					"https://static.doubleclick.net",
+				],
+				scriptSrcAttr: ["'unsafe-hashes'", "'unsafe-inline'"],
+				styleSrc: [
+					"'self'",
+					"'unsafe-inline'",
+					"https://cdnjs.cloudflare.com",
+					"cdnjs.cloudflare.com",
+					"https://fonts.googleapis.com",
+					"fonts.googleapis.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					"https://analytics.thecorehosting.net",
+					"https://*.googleadservices.com",
+				],
+				fontSrc: [
+					"'self'",
+					"https://fonts.gstatic.com",
+					"fonts.gstatic.com",
+					"https://maxcdn.bootstrapcdn.com",
+					"maxcdn.bootstrapcdn.com",
+					"https://analytics.thecorehosting.net",
+					"data:",
+				],
+				imgSrc: [
+					"'self'",
+					"data:",
+					"https:",
+					"http:",
+					"blob:",
+					// Note: Already allowing all https/http for broad compatibility
+					// This covers Google Analytics pixels, AdSense, GTM, and other tracking images
+				],
+				connectSrc: [
+					"'self'",
+					"wss:",
+					"ws:",
+					"https://discord.com",
+					// Analytics (internal)
+					"https://analytics.thecorehosting.net",
+					"https://cdnjs.cloudflare.com",
+					"https://static.cloudflareinsights.com",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://www.googletagmanager.com",
+					"https://googletagmanager.com",
+					// Google Analytics
+					"https://*.google-analytics.com",
+					"https://www.google-analytics.com",
+					"https://ssl.google-analytics.com",
+					"https://analytics.google.com",
+					"https://*.g.doubleclick.net",
+					"https://stats.g.doubleclick.net",
+					// Google Ads & AdSense
+					"https://pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					"https://googleads.g.doubleclick.net",
+					"https://*.googleadservices.com",
+					"https://www.googleadservices.com",
+					// Google Core & SODAR
+					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// DoubleClick
+					"https://*.doubleclick.net",
+					"https://ad.doubleclick.net",
+					// Google Static Resources
+					"https://*.gstatic.com",
+				],
+				frameSrc: [
+					"'self'",
+					"https://discord.com",
+					// Google Ads & AdSense iframes
+					"https://googleads.g.doubleclick.net",
+					"https://tpc.googlesyndication.com",
+					"https://pagead2.googlesyndication.com",
+					"https://*.googlesyndication.com",
+					// DoubleClick Ad serving
+					"https://*.doubleclick.net",
+					"https://td.doubleclick.net",
+					"https://bid.g.doubleclick.net",
+					// Google Tag Manager
+					"https://*.googletagmanager.com",
+					"https://googletagmanager.com",
+					// Google Core & SODAR
+					"https://*.google.com",
+					"https://www.google.com",
+					"https://*.google",
+					// Google Services
+					"https://*.googleadservices.com",
+					"https://*.gstatic.com",
+				],
+				objectSrc: ["'none'"],
+				baseUri: ["'self'", "https://analytics.thecorehosting.net"],
+				formAction: ["'self'"],
+				frameAncestors: ["'self'"],
+			},
+		},
 		crossOriginEmbedderPolicy: false,
 	}));
 
@@ -170,6 +321,10 @@ exports.open = async (client, auth, configJS, logger) => {
 		},
 	}));
 	app.use(cookieParser());
+
+	// Apply security middleware for input sanitization
+	app.use(securityMiddleware.sanitizeJsonResponse);
+	app.use(securityMiddleware.apiSecurityHeaders);
 
 	app.set("json spaces", 2);
 
@@ -196,11 +351,12 @@ exports.open = async (client, auth, configJS, logger) => {
 	}));
 
 	passport.serializeUser((user, done) => {
-		delete user.email;
+		// Serialize the full user profile to preserve guilds array
 		done(null, user);
 	});
-	passport.deserializeUser((id, done) => {
-		done(null, id);
+	passport.deserializeUser((obj, done) => {
+		// Return the full user object from session
+		done(null, obj);
 	});
 
 	// Session store priority: Redis > MongoDB > MariaDB > Memory
@@ -289,18 +445,45 @@ exports.open = async (client, auth, configJS, logger) => {
 
 	app.use(middleware.logRequest);
 
+	// Initialize i18n for multilingual support
+	await I18n.initialize();
+	app.use(I18n.middleware());
+
 	// Load injection settings from database (cached)
 	app.use(middleware.loadInjection);
 
-	// (Horribly) serve public dir
-	const staticRouter = express.static(`${__dirname}/public/`, { maxAge: 86400000 });
+	// Serve specific root-level files (SEO, ad verification, etc.)
+	const rootLevelFiles = ["ads.txt", "robots.txt", "sitemap.xml"];
+	rootLevelFiles.forEach(file => {
+		app.get(`/${file}`, (req, res, next) => {
+			const filePath = `${__dirname}/public/${file}`;
+			res.sendFile(filePath, err => {
+				if (err) {
+					return next(); // File doesn't exist, continue to next handler
+				}
+			});
+		});
+	});
+
+	// Serve static files with WebP conversion for images
+	const staticOptions = {
+		maxAge: 86400000, // 1 day cache
+		etag: true,
+		lastModified: true,
+	};
+	const staticRouter = express.static(`${__dirname}/public/`, staticOptions);
+
 	app.use("/static", (req, res, next) => {
 		const fileExtension = req.path.substring(req.path.lastIndexOf("."));
-		if (req.get("Accept") && req.get("Accept").includes("image/webp") && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
-			res.redirect(`/static${req.path.substring(0, req.path.lastIndexOf("."))}.webp`);
-		} else {
-			return staticRouter(req, res, next);
+		const acceptsWebP = req.get("Accept")?.includes("image/webp");
+
+		// Convert to WebP if supported and not already WebP/GIF
+		if (acceptsWebP && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
+			const webpPath = `${req.path.substring(0, req.path.lastIndexOf("."))}.webp`;
+			return res.redirect(`/static${webpPath}`);
 		}
+
+		return staticRouter(req, res, next);
 	});
 
 	// Listen for incoming connections
@@ -323,9 +506,9 @@ exports.open = async (client, auth, configJS, logger) => {
 	io.use((socket, next) => {
 		if (socket.request.session?.passport?.user) {
 			socket.user = socket.request.session.passport.user;
-			next();
+			return next();
 		} else {
-			next(new Error("Unauthorized"));
+			return next(new Error("Unauthorized"));
 		}
 	});
 

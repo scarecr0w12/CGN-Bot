@@ -1,0 +1,29 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🚨 Alert',
+			description: 'Usage: alert <notification text>
+
+Example: alert You have a new message!',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const encodedText = encodeURIComponent(text.slice(0, 100));
+const imageUrl = 'https://api.popcat.xyz/alert?text=' + encodedText;
+
+message.reply({
+	embeds: [embed.create({
+		title: '🚨 Alert',
+		image: { url: imageUrl },
+		color: embed.colors.ERROR,
+	})],
+});

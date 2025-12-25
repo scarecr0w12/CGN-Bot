@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "[RU] Overview",
+		"commands": "[RU] Commands",
+		"commandList": "[RU] Command List",
+		"moderation": "[RU] Moderation",
+		"strikes": "[RU] Strikes",
+		"filters": "[RU] Filters",
+		"logs": "[RU] Logs",
+		"automod": "[RU] Auto-Moderation",
+		"members": "[RU] Members",
+		"roles": "[RU] Roles",
+		"channels": "[RU] Channels",
+		"extensions": "[RU] Extensions",
+		"points": "[RU] Points & Ranks",
+		"settings": "[RU] Settings",
+		"premium": "[RU] Premium",
+		"ai": "[RU] AI Settings"
+	},
+	"overview": {
+		"title": "[RU] Server Overview",
+		"quickStats": "[RU] Quick Stats",
+		"members": "[RU] Members",
+		"channels": "[RU] Channels",
+		"roles": "[RU] Roles",
+		"commands": "[RU] Commands Used",
+		"recentActivity": "[RU] Recent Activity",
+		"topMembers": "[RU] Top Members",
+		"serverHealth": "[RU] Server Health"
+	},
+	"commands": {
+		"title": "[RU] Command Settings",
+		"enableAll": "[RU] Enable All",
+		"disableAll": "[RU] Disable All",
+		"search": "[RU] Search commands...",
+		"category": "[RU] Category",
+		"status": "[RU] Status",
+		"adminLevel": "[RU] Admin Level",
+		"disabledChannels": "[RU] Disabled Channels",
+		"enabled": "[RU] Enabled",
+		"disabled": "[RU] Disabled",
+		"noCommands": "[RU] No commands found."
+	},
+	"moderation": {
+		"title": "[RU] Moderation Settings",
+		"strikes": {
+			"title": "[RU] Strike System",
+			"description": "[RU] Configure automatic actions based on strike count.",
+			"threshold": "[RU] Strike Threshold",
+			"action": "[RU] Action",
+			"duration": "[RU] Duration",
+			"actions": {
+				"warn": "[RU] Warn",
+				"mute": "[RU] Mute",
+				"kick": "[RU] Kick",
+				"ban": "[RU] Ban"
+			}
+		},
+		"filters": {
+			"title": "[RU] Message Filters",
+			"spam": "[RU] Spam Filter",
+			"invites": "[RU] Invite Links",
+			"links": "[RU] External Links",
+			"caps": "[RU] Excessive Caps",
+			"mentions": "[RU] Mass Mentions",
+			"words": "[RU] Word Blacklist"
+		},
+		"logs": {
+			"title": "[RU] Moderation Logs",
+			"channel": "[RU] Log Channel",
+			"events": "[RU] Logged Events",
+			"messageDelete": "[RU] Message Deletes",
+			"messageEdit": "[RU] Message Edits",
+			"memberJoin": "[RU] Member Joins",
+			"memberLeave": "[RU] Member Leaves",
+			"memberBan": "[RU] Member Bans",
+			"roleChanges": "[RU] Role Changes"
+		}
+	},
+	"members": {
+		"title": "[RU] Member Management",
+		"search": "[RU] Search members...",
+		"filter": "[RU] Filter by role",
+		"sort": "[RU] Sort by",
+		"actions": "[RU] Actions",
+		"warn": "[RU] Warn",
+		"mute": "[RU] Mute",
+		"kick": "[RU] Kick",
+		"ban": "[RU] Ban",
+		"viewProfile": "[RU] View Profile",
+		"viewStrikes": "[RU] View Strikes"
+	},
+	"extensions": {
+		"title": "[RU] Server Extensions",
+		"installed": "[RU] Installed",
+		"available": "[RU] Available",
+		"browse": "[RU] Browse Gallery",
+		"install": "[RU] Install",
+		"uninstall": "[RU] Uninstall",
+		"configure": "[RU] Configure",
+		"enabled": "[RU] Enabled",
+		"disabled": "[RU] Disabled",
+		"version": "[RU] Version",
+		"author": "[RU] Author",
+		"noExtensions": "[RU] No extensions installed."
+	},
+	"points": {
+		"title": "[RU] Points & Ranks",
+		"pointsPerMessage": "[RU] Points per Message",
+		"cooldown": "[RU] Cooldown (seconds)",
+		"ranks": "[RU] Custom Ranks",
+		"addRank": "[RU] Add Rank",
+		"rankName": "[RU] Rank Name",
+		"requiredPoints": "[RU] Required Points",
+		"roleReward": "[RU] Role Reward",
+		"leaderboard": "[RU] Leaderboard",
+		"resetPoints": "[RU] Reset All Points"
+	},
+	"settings": {
+		"title": "[RU] Server Settings",
+		"general": {
+			"title": "[RU] General",
+			"prefix": "[RU] Command Prefix",
+			"language": "[RU] Language",
+			"timezone": "[RU] Timezone",
+			"nickname": "[RU] Bot Nickname"
+		},
+		"welcome": {
+			"title": "[RU] Welcome Messages",
+			"enabled": "[RU] Enable Welcome Messages",
+			"channel": "[RU] Welcome Channel",
+			"message": "[RU] Welcome Message",
+			"dmEnabled": "[RU] Send DM",
+			"dmMessage": "[RU] DM Message"
+		},
+		"leave": {
+			"title": "[RU] Leave Messages",
+			"enabled": "[RU] Enable Leave Messages",
+			"channel": "[RU] Leave Channel",
+			"message": "[RU] Leave Message"
+		},
+		"admins": {
+			"title": "[RU] Bot Admins",
+			"description": "[RU] Users who can manage bot settings",
+			"addAdmin": "[RU] Add Admin",
+			"level": "[RU] Admin Level",
+			"levels": {
+				"1": "[RU] Moderator",
+				"2": "[RU] Administrator",
+				"3": "[RU] Owner"
+			}
+		}
+	},
+	"premium": {
+		"title": "[RU] Premium Features",
+		"currentTier": "[RU] Current Tier",
+		"upgrade": "[RU] Upgrade",
+		"features": "[RU] Available Features",
+		"usage": "[RU] Usage",
+		"expires": "[RU] Expires",
+		"neverExpires": "[RU] Never expires",
+		"redeemCode": "[RU] Redeem Code",
+		"useVotePoints": "[RU] Use Vote Points"
+	},
+	"ai": {
+		"title": "[RU] AI Settings",
+		"enabled": "[RU] Enable AI Chat",
+		"provider": "[RU] AI Provider",
+		"model": "[RU] Model",
+		"channels": "[RU] Enabled Channels",
+		"personality": "[RU] Bot Personality",
+		"maxTokens": "[RU] Max Tokens",
+		"temperature": "[RU] Temperature",
+		"usage": "[RU] Monthly Usage",
+		"limit": "[RU] Monthly Limit"
+	},
+	"common": {
+		"save": "[RU] Save Changes",
+		"saved": "[RU] Changes saved!",
+		"saving": "[RU] Saving...",
+		"reset": "[RU] Reset to Default",
+		"cancel": "[RU] Cancel",
+		"confirm": "[RU] Confirm",
+		"delete": "[RU] Delete",
+		"edit": "[RU] Edit",
+		"add": "[RU] Add",
+		"remove": "[RU] Remove",
+		"enable": "[RU] Enable",
+		"disable": "[RU] Disable",
+		"unsavedChanges": "[RU] You have unsaved changes. Are you sure you want to leave?",
+		"loading": "[RU] Loading...",
+		"error": "[RU] An error occurred",
+		"success": "[RU] Success!"
+	}
+}

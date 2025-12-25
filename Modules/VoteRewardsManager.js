@@ -231,6 +231,8 @@ const processVote = async (userId, site, isWeekend = false) => {
 		siteVotes.topgg_last = now;
 	} else if (site === "discordbotlist") {
 		siteVotes.discordbotlist_last = now;
+	} else if (site === "topbotlist") {
+		siteVotes.topbotlist_last = now;
 	}
 
 	// Award points
@@ -317,7 +319,25 @@ const redeemForTier = async (userId, serverId, tierId, durationDays) => {
 	const expiresAt = new Date();
 	expiresAt.setDate(expiresAt.getDate() + durationDays);
 
-	await TierManager.setServerTier(serverId, tierId, "vote_rewards", expiresAt, "vote_redemption", userId);
+	try {
+		const result = await TierManager.setServerTier(serverId, tierId, "vote_rewards", expiresAt, "vote_redemption", userId);
+
+		if (!result) {
+			throw new Error("Failed to apply premium tier to server");
+		}
+	} catch (err) {
+		logger.error(`Failed to apply tier ${tierId} to server ${serverId} after point deduction. Refunding ${pointsCost} points to user ${userId}.`, err);
+
+		// Refund points
+		await addPoints(userId, pointsCost, "refund_tier_redemption_failed", {
+			server_id: serverId,
+			tier_id: tierId,
+			original_transaction_id: transaction.transactionId,
+			error: err.message,
+		});
+
+		throw new Error("Failed to apply premium tier. Points have been refunded.");
+	}
 
 	logger.info(`User ${userId} redeemed ${pointsCost} vote points for tier ${tierId} on server ${serverId} (${durationDays} days)`);
 
@@ -430,11 +450,13 @@ const getVoteSites = async () => {
 	const botLists = siteSettings?.bot_lists || {};
 	const sites = [];
 
+	const clientId = process.env.DISCORD_CLIENT_ID || process.env.CLIENT_ID;
+
 	if (botLists.topgg?.isEnabled) {
 		sites.push({
 			id: "topgg",
 			name: "top.gg",
-			url: `https://top.gg/bot/${process.env.CLIENT_ID}/vote`,
+			url: `https://top.gg/bot/${clientId}/vote`,
 			icon: "https://top.gg/images/dblnew.png",
 			cooldown: 12 * 60 * 60 * 1000, // 12 hours
 		});
@@ -444,8 +466,18 @@ const getVoteSites = async () => {
 		sites.push({
 			id: "discordbotlist",
 			name: "Discord Bot List",
-			url: `https://discordbotlist.com/bots/${process.env.CLIENT_ID}/upvote`,
+			url: `https://discordbotlist.com/bots/${clientId}/upvote`,
 			icon: "https://discordbotlist.com/icon.png",
+			cooldown: 12 * 60 * 60 * 1000, // 12 hours
+		});
+	}
+
+	if (botLists.topbotlist?.isEnabled) {
+		sites.push({
+			id: "topbotlist",
+			name: "TopBotList",
+			url: `https://topbotlist.net/bot/${clientId}/vote`,
+			icon: "https://topbotlist.net/favicon.ico",
 			cooldown: 12 * 60 * 60 * 1000, // 12 hours
 		});
 	}
@@ -470,6 +502,8 @@ const canVote = async (userId, site) => {
 		lastVote = siteVotes.topgg_last;
 	} else if (site === "discordbotlist") {
 		lastVote = siteVotes.discordbotlist_last;
+	} else if (site === "topbotlist") {
+		lastVote = siteVotes.topbotlist_last;
 	}
 
 	if (!lastVote) {

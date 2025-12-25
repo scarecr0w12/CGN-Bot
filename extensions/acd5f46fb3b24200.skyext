@@ -1,0 +1,29 @@
+const message = require('message');
+const embed = require('embed');
+const storage = require('storage');
+
+const gameKey = 'animeguess_' + message.channel.id;
+const game = storage.get(gameKey);
+
+if (!game) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ No Active Game',
+			description: 'Start a new game with animeguess!',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+game.hintIndex = Math.min(game.hintIndex + 1, game.hints.length - 1);
+storage.set(gameKey, game);
+
+message.reply({
+	embeds: [embed.create({
+		title: '💡 Hint ' + (game.hintIndex + 1),
+		description: game.hints[game.hintIndex],
+		color: embed.colors.BLUE,
+		footer: { text: 'Hints used: ' + (game.hintIndex + 1) + '/' + game.hints.length },
+	})],
+});

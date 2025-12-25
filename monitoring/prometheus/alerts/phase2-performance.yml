@@ -1,0 +1,119 @@
+groups:
+  - name: phase2_performance
+    interval: 30s
+    rules:
+      # Cache Events Alerts
+      - alert: HighCacheInvalidationLatency
+        expr: histogram_quantile(0.95, rate(skynetbot_cache_invalidation_duration_seconds_bucket[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "High cache invalidation latency detected"
+          description: "P95 cache invalidation latency is {{ $value }}s (threshold: 0.1s)"
+
+      - alert: CacheInvalidationStorm
+        expr: rate(skynetbot_cache_invalidations_total[1m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+          component: cache
+        annotations:
+          summary: "Cache invalidation storm detected"
+          description: "{{ $value }} cache invalidations per second (threshold: 100/s)"
+
+      # Command Executor Alerts
+      - alert: HighCommandExecutionLatency
+        expr: histogram_quantile(0.95, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[5m]))) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: commands
+        annotations:
+          summary: "High command execution latency"
+          description: "P95 command execution time is {{ $value }}s (threshold: 2s)"
+
+      - alert: CommandExecutionFailureRate
+        expr: (sum(rate(skynetbot_command_execution_duration_seconds_count{status="error"}[5m])) / sum(rate(skynetbot_command_execution_duration_seconds_count[5m]))) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: commands
+        annotations:
+          summary: "High command failure rate"
+          description: "{{ $value | humanizePercentage }} of commands are failing (threshold: 5%)"
+
+      - alert: HighCommandValidationFailures
+        expr: rate(skynetbot_command_validation_failures_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: commands
+        annotations:
+          summary: "High command validation failure rate"
+          description: "{{ $value }} validation failures per second (threshold: 10/s)"
+
+      - alert: ExcessiveCooldowns
+        expr: skynetbot_command_cooldowns_active > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: commands
+        annotations:
+          summary: "Excessive active cooldowns"
+          description: "{{ $value }} active cooldowns (threshold: 1000)"
+
+      # Middleware Alerts
+      - alert: HighMiddlewareLatency
+        expr: rate(skynetbot_middleware_execution_duration_seconds_sum[5m]) / rate(skynetbot_middleware_execution_duration_seconds_count[5m]) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+          component: middleware
+        annotations:
+          summary: "High middleware execution latency"
+          description: "Average middleware latency is {{ $value }}s (threshold: 0.01s)"
+
+      - alert: HighMiddlewareBlockRate
+        expr: rate(skynetbot_middleware_blocked_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: middleware
+        annotations:
+          summary: "High middleware block rate"
+          description: "{{ $value }} requests blocked per second by middleware (threshold: 5/s)"
+
+      # Performance Regression Detection
+      - alert: CommandPerformanceRegression
+        expr: |
+          (
+            histogram_quantile(0.95, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[5m])))
+            /
+            histogram_quantile(0.95, sum by (le) (rate(skynetbot_command_execution_duration_seconds_bucket[1h] offset 24h)))
+          ) > 1.5
+        for: 10m
+        labels:
+          severity: warning
+          component: commands
+          type: regression
+        annotations:
+          summary: "Command performance regression detected"
+          description: "P95 latency is 50% slower than 24 hours ago"
+
+      - alert: CachePerformanceRegression
+        expr: |
+          (
+            histogram_quantile(0.95, rate(skynetbot_cache_invalidation_duration_seconds_bucket[5m]))
+            /
+            histogram_quantile(0.95, rate(skynetbot_cache_invalidation_duration_seconds_bucket[1h] offset 24h))
+          ) > 2
+        for: 10m
+        labels:
+          severity: warning
+          component: cache
+          type: regression
+        annotations:
+          summary: "Cache performance regression detected"
+          description: "Cache invalidation P95 latency doubled compared to 24 hours ago"

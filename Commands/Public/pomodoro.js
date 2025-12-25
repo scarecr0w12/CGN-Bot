@@ -149,7 +149,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 			const session = activeSessions.get(key);
 			if (session.timerId) clearTimeout(session.timerId);
 
-			const totalTime = session.totalWorkTime + (session.phase === "work" ? (Date.now() - session.startTime) : 0);
+			const totalTime = session.totalWorkTime + (session.phase === "work" ? Date.now() - session.startTime : 0);
 
 			activeSessions.delete(key);
 

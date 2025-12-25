@@ -1,0 +1,70 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const utils = require('utils');
+const extension = require('extension');
+
+const action = command.suffix.trim().toLowerCase() || 'status';
+const key = 'boss';
+let data = extension.storage.get(key) || null;
+
+const bosses = [
+	{ name: 'Shadow Dragon', emoji: '🐉', hp: 5000 },
+	{ name: 'Ancient Golem', emoji: '🗿', hp: 4000 },
+	{ name: 'Dark Wizard', emoji: '🧙', hp: 3500 },
+	{ name: 'Void Titan', emoji: '👹', hp: 6000 },
+];
+
+function spawnNewBoss() {
+	const boss = utils.random.pick(bosses);
+	return { name: boss.name, emoji: boss.emoji, maxHp: boss.hp, currentHp: boss.hp, participants: {}, startTime: Date.now(), defeated: false };
+}
+
+if (!data || data.defeated || (Date.now() - data.startTime > 3600000)) {
+	data = spawnNewBoss();
+	await extension.storage.write(key, data);
+}
+
+if (action === 'join') {
+	if (data.participants[message.author.id]) {
+		message.reply({ embeds: [embed.create({ title: '⚔️ Boss Raid', description: 'You are already in the raid! Use **bossraid attack** to deal damage.', color: embed.colors.WARNING })] });
+		return;
+	}
+	data.participants[message.author.id] = { damage: 0, attacks: 0 };
+	await extension.storage.write(key, data);
+	message.reply({ embeds: [embed.create({ title: '⚔️ Joined!', description: 'You joined the fight against **' + data.emoji + ' ' + data.name + '**! Use **bossraid attack** to deal damage.', color: embed.colors.SUCCESS })] });
+	return;
+}
+
+if (action === 'attack') {
+	if (!data.participants[message.author.id]) {
+		message.reply({ embeds: [embed.create({ title: '⚔️ Boss Raid', description: 'You need to join first! Use **bossraid join**.', color: embed.colors.ERROR })] });
+		return;
+	}
+	const participant = data.participants[message.author.id];
+	const cooldown = 30000;
+	const lastAttack = participant.lastAttack || 0;
+	if (Date.now() - lastAttack < cooldown) {
+		const remaining = Math.ceil((cooldown - (Date.now() - lastAttack)) / 1000);
+		message.reply({ embeds: [embed.create({ title: '⏳ Cooldown', description: 'Attack again in **' + remaining + '** seconds.', color: embed.colors.WARNING })] });
+		return;
+	}
+	const damage = utils.random.int(50, 200);
+	const critical = utils.random.bool(0.15);
+	const finalDamage = critical ? damage * 2 : damage;
+	participant.damage += finalDamage;
+	participant.attacks++;
+	participant.lastAttack = Date.now();
+	data.currentHp = Math.max(0, data.currentHp - finalDamage);
+	if (data.currentHp <= 0) {
+		data.defeated = true;
+		message.reply({ embeds: [embed.create({ title: '🎉 BOSS DEFEATED!', description: data.emoji + ' **' + data.name + '** has been slain! Your blow: **' + finalDamage + '** damage' + (critical ? ' (CRIT!)' : ''), color: embed.colors.GOLD })] });
+	} else {
+		message.reply({ embeds: [embed.create({ title: '⚔️ Attack!', description: 'You dealt **' + finalDamage + '** damage' + (critical ? ' **(CRIT!)**' : '') + '!\nBoss HP: **' + data.currentHp + '/' + data.maxHp + '**', color: embed.colors.BLUE })] });
+	}
+	await extension.storage.write(key, data);
+	return;
+}
+
+const pCount = Object.keys(data.participants).length;
+message.reply({ embeds: [embed.create({ title: data.emoji + ' ' + data.name, description: '**HP:** ' + data.currentHp + '/' + data.maxHp + '\n**Raiders:** ' + pCount + '\n\nUse **bossraid join** then **bossraid attack**!', color: embed.colors.PURPLE })] });

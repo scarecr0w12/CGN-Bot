@@ -1,0 +1,46 @@
+(async () => {
+const message = require('message');
+const embed = require('embed');
+const http = require('http');
+
+const res = await http.request({
+	url: 'https://fortnite-api.com/v1/map',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success || res.json?.status !== 200) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Fortnite Map',
+			description: 'Failed to fetch map: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const mapData = res.json.data;
+const mapUrl = mapData.images?.pois || mapData.images?.blank || '';
+
+if (!mapUrl) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Fortnite Map',
+			description: 'Map image not available.',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+message.reply({
+	embeds: [embed.create({
+		title: '🗺️ Fortnite Battle Royale Map',
+		image: { url: mapUrl },
+		color: embed.colors.PURPLE,
+		footer: { text: 'Powered by Fortnite-API.com' },
+	})],
+});
+})();

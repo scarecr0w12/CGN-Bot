@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const input = command.suffix.trim();
+
+if (!input) {
+	message.reply({
+		embeds: [embed.create({
+			title: '💬 Quote Image',
+			description: 'Usage: quoteimg <quote text> | <author>\n\nExample: quoteimg Be yourself | Oscar Wilde',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+let quoteText, author;
+if (input.includes('|')) {
+	const parts = input.split('|').map(p => p.trim());
+	quoteText = parts[0];
+	author = parts[1] || 'Unknown';
+} else {
+	quoteText = input;
+	author = message.author.username;
+}
+
+// Style it nicely with Discord formatting
+const styledQuote = '╔══════════════════════╗\n' +
+'║\n' +
+'║   ' + utils.discord.italic('"' + quoteText.slice(0, 100) + '"') + '\n' +
+'║\n' +
+'║         — ' + utils.discord.bold(author.slice(0, 30)) + '\n' +
+'║\n' +
+'╚══════════════════════╝';
+
+message.reply({
+	embeds: [embed.create({
+		description: styledQuote,
+		color: embed.colors.BLUE,
+		footer: { text: 'Quote by ' + author },
+	})],
+});

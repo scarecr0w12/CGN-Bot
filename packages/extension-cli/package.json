@@ -1,0 +1,48 @@
+{
+  "name": "@cgn-bot/extension-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for scaffolding CGN-Bot extensions",
+  "bin": {
+    "cgn-ext": "./dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cgn-bot",
+    "extension",
+    "cli",
+    "scaffold",
+    "generator"
+  ],
+  "author": "Scarecr0w12",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scarecr0w12/CGN-Bot.git",
+    "directory": "packages/extension-cli"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md"
+  ],
+  "dependencies": {
+    "@cgn-bot/extension-sdk": "^1.0.0",
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

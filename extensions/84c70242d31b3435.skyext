@@ -14,7 +14,7 @@ message.reply({
 	}]
 }).then(() => {
 	// In a real implementation, this would update after waitTime
-	message.channel.send({
+	message.reply({
 		embeds: [{
 			title: '⚡ Reaction Test',
 			description: '🟢 **GO GO GO!**\n\n' +

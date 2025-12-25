@@ -1,0 +1,43 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const args = command.suffix.trim().toLowerCase().split(' ');
+const champion = args[0];
+const role = args[1] || '';
+
+if (!champion) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🛡️ LoL Build',
+			description: 'Usage: lolbuild <champion> [role]\n\n' +
+				'**Roles:** top, jungle, mid, adc, support\n\n' +
+				'**Examples:**\n' +
+				'• lolbuild ahri\n' +
+				'• lolbuild yasuo mid\n' +
+				'• lolbuild jinx adc',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const champFormatted = champion.charAt(0).toUpperCase() + champion.slice(1);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🛡️ ' + champFormatted + ' Build' + (role ? ' (' + role.toUpperCase() + ')' : ''),
+		description: '**Find optimal builds for ' + champFormatted + ':**\n\n' +
+			'📊 **[U.GG](https://u.gg/lol/champions/' + champion + '/build' + (role ? '?role=' + role : '') + ')**\n' +
+			'Most popular and highest win rate builds\n\n' +
+			'📈 **[OP.GG](https://op.gg/champions/' + champion + '/build' + (role ? '/' + role : '') + ')**\n' +
+			'Korean server meta builds\n\n' +
+			'🎯 **[Mobalytics](https://mobalytics.gg/lol/champions/' + champion + '/build' + (role ? '?role=' + role : '') + ')**\n' +
+			'Pro builds and skill orders\n\n' +
+			'💡 **[Blitz.gg](https://blitz.gg/lol/champions/' + champFormatted + ')**\n' +
+			'Auto-imported builds for your game',
+		thumbnail: { url: 'https://ddragon.leagueoflegends.com/cdn/14.1.1/img/champion/' + champFormatted + '.png' },
+		color: embed.colors.BLUE,
+		footer: { text: 'Click a link to view full build details' },
+	})],
+});

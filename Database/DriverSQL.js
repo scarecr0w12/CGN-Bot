@@ -74,6 +74,15 @@ exports.initialize = async () => {
 		GlobalTrivia,
 		SiteSettings,
 		Feedback,
+		Tickets,
+		TicketMessages,
+		ServerTickets,
+		ServerTicketMessages,
+		ServerAnalytics,
+		RolePanels,
+		TempRoles,
+		InviteTracking,
+		Snippets,
 	] = [
 		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
 		new ModelSQL(getPool, "users", require("./Schemas/userSchema")),
@@ -92,6 +101,15 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "global_trivia", require("./Schemas/globalTriviaSchema")),
 		new ModelSQL(getPool, "site_settings", require("./Schemas/siteSettingsSchema")),
 		new ModelSQL(getPool, "feedback", require("./Schemas/feedbackSchema")),
+		new ModelSQL(getPool, "tickets", require("./Schemas/ticketSchema")),
+		new ModelSQL(getPool, "ticket_messages", require("./Schemas/ticketMessageSchema")),
+		new ModelSQL(getPool, "server_tickets", require("./Schemas/serverTicketSchema")),
+		new ModelSQL(getPool, "server_ticket_messages", require("./Schemas/serverTicketMessageSchema")),
+		new ModelSQL(getPool, "server_analytics", require("./Schemas/serverAnalyticsSchema")),
+		new ModelSQL(getPool, "role_panels", require("./Schemas/rolePanelSchema")),
+		new ModelSQL(getPool, "temp_roles", require("./Schemas/tempRoleSchema")),
+		new ModelSQL(getPool, "invite_tracking", require("./Schemas/inviteTrackingSchema")),
+		new ModelSQL(getPool, "snippets", require("./Schemas/snippetSchema")),
 	];
 
 	addToGlobal("Servers", Servers);
@@ -110,6 +128,15 @@ exports.initialize = async () => {
 	addToGlobal("GlobalTrivia", GlobalTrivia);
 	addToGlobal("SiteSettings", SiteSettings);
 	addToGlobal("Feedback", Feedback);
+	addToGlobal("Tickets", Tickets);
+	addToGlobal("TicketMessages", TicketMessages);
+	addToGlobal("ServerTickets", ServerTickets);
+	addToGlobal("ServerTicketMessages", ServerTicketMessages);
+	addToGlobal("ServerAnalytics", ServerAnalytics);
+	addToGlobal("RolePanels", RolePanels);
+	addToGlobal("TempRoles", TempRoles);
+	addToGlobal("InviteTracking", InviteTracking);
+	addToGlobal("Snippets", Snippets);
 	addToGlobal("Client", pool);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -129,6 +156,15 @@ exports.initialize = async () => {
 		GlobalTrivia, globalTrivia: GlobalTrivia,
 		SiteSettings, siteSettings: SiteSettings,
 		Feedback, feedback: Feedback,
+		Tickets, tickets: Tickets,
+		TicketMessages, ticketMessages: TicketMessages,
+		ServerTickets, serverTickets: ServerTickets,
+		ServerTicketMessages, serverTicketMessages: ServerTicketMessages,
+		ServerAnalytics, serverAnalytics: ServerAnalytics,
+		RolePanels, rolePanels: RolePanels,
+		TempRoles, tempRoles: TempRoles,
+		InviteTracking, inviteTracking: InviteTracking,
+		Snippets, snippets: Snippets,
 		client: pool,
 		pool,
 	});

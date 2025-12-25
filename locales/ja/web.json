@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[JA] Home",
+		"features": "[JA] Features",
+		"commands": "[JA] Commands",
+		"dashboard": "[JA] Dashboard",
+		"extensions": "[JA] Extensions",
+		"wiki": "[JA] Wiki",
+		"blog": "[JA] Blog",
+		"support": "[JA] Support",
+		"login": "[JA] Login",
+		"logout": "[JA] Logout",
+		"invite": "[JA] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[JA] The Ultimate Discord Bot",
+			"subtitle": "[JA] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[JA] Trusted by {{count}} servers",
+			"addToServer": "[JA] Add to Server",
+			"viewFeatures": "[JA] View Features"
+		},
+		"features": {
+			"title": "[JA] Features",
+			"subtitle": "[JA] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[JA] Moderation",
+				"description": "[JA] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[JA] Fun Commands",
+				"description": "[JA] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[JA] Leveling System",
+				"description": "[JA] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[JA] Custom Extensions",
+				"description": "[JA] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[JA] Music",
+				"description": "[JA] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[JA] AI Chat",
+				"description": "[JA] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[JA] Ready to get started?",
+			"subtitle": "[JA] Add {{botName}} to your server in seconds.",
+			"button": "[JA] Add to Server"
+		},
+		"faq": {
+			"title": "[JA] Frequently Asked Questions",
+			"q1": "[JA] Is {{botName}} free to use?",
+			"a1": "[JA] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[JA] How do I set up the bot?",
+			"a2": "[JA] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[JA] What are Extensions?",
+			"a3": "[JA] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[JA] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[JA] Privacy Policy",
+			"terms": "[JA] Terms of Service",
+			"contact": "[JA] Contact",
+			"status": "[JA] Status"
+		},
+		"social": {
+			"discord": "[JA] Discord",
+			"github": "[JA] GitHub",
+			"twitter": "[JA] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[JA] Login with {{provider}}",
+		"loggingIn": "[JA] Logging in...",
+		"loginSuccess": "[JA] Successfully logged in!",
+		"loginFailed": "[JA] Login failed. Please try again.",
+		"logoutSuccess": "[JA] Successfully logged out.",
+		"welcome": "[JA] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[JA] Profile",
+		"myServers": "[JA] My Servers",
+		"settings": "[JA] Account Settings",
+		"linkedAccounts": "[JA] Linked Accounts",
+		"subscription": "[JA] Subscription",
+		"votePoints": "[JA] Vote Points",
+		"extensions": "[JA] My Extensions"
+	},
+	"servers": {
+		"title": "[JA] Select a Server",
+		"noServers": "[JA] You don't have any servers to manage.",
+		"manage": "[JA] Manage",
+		"notInServer": "[JA] Bot not in server",
+		"invite": "[JA] Invite Bot"
+	},
+	"membership": {
+		"title": "[JA] Premium Membership",
+		"subtitle": "[JA] Unlock powerful features for your server",
+		"currentTier": "[JA] Current Tier",
+		"free": "[JA] Free",
+		"starter": "[JA] Starter",
+		"premium": "[JA] Premium",
+		"enterprise": "[JA] Enterprise",
+		"perMonth": "[JA] /month",
+		"perYear": "[JA] /year",
+		"subscribe": "[JA] Subscribe",
+		"manage": "[JA] Manage Subscription",
+		"features": "[JA] Features",
+		"compare": "[JA] Compare Plans",
+		"faq": "[JA] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[JA] Access Denied",
+			"message": "[JA] You don't have permission to access this page.",
+			"goHome": "[JA] Go to Homepage"
+		},
+		"404": {
+			"title": "[JA] Page Not Found",
+			"message": "[JA] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[JA] Go to Homepage"
+		},
+		"500": {
+			"title": "[JA] Server Error",
+			"message": "[JA] Something went wrong on our end. Please try again later.",
+			"goHome": "[JA] Go to Homepage"
+		}
+	}
+}

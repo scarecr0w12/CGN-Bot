@@ -1,0 +1,64 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const args = command.suffix.trim().split(' ');
+
+if (args.length < 2) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 LoL Summoner Lookup',
+			description: 'Usage: lolsummoner <region> <summoner#tag>\n\n' +
+				'**Regions:** na1, euw1, eun1, kr, br1, la1, la2, oc1, ru, tr1, jp1\n\n' +
+				'**Example:** lolsummoner na1 Faker#KR1',
+			color: embed.colors.BLUE,
+		})],
+	});
+	return;
+}
+
+const region = args[0].toLowerCase();
+const summonerInput = args.slice(1).join(' ');
+
+const validRegions = ['na1', 'euw1', 'eun1', 'kr', 'br1', 'la1', 'la2', 'oc1', 'ru', 'tr1', 'jp1'];
+
+if (!validRegions.includes(region)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Invalid Region',
+			description: 'Valid regions: ' + validRegions.join(', '),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const riotIdMatch = summonerInput.match(/^(.+)#(.+)$/);
+
+if (!riotIdMatch) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Invalid Format',
+			description: 'Please use the Riot ID format: name#tag\n\nExample: Faker#KR1',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const gameName = riotIdMatch[1];
+const tagLine = riotIdMatch[2];
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + gameName + '#' + tagLine,
+		description: '**Region:** ' + region.toUpperCase() + '\n\n' +
+			'**📊 Stat Sites:**\n' +
+			'• [OP.GG](https://op.gg/summoners/' + region + '/' + encodeURIComponent(gameName) + '-' + encodeURIComponent(tagLine) + ')\n' +
+			'• [U.GG](https://u.gg/lol/profile/' + region + '/' + encodeURIComponent(gameName) + '-' + encodeURIComponent(tagLine) + ')\n' +
+			'• [Mobalytics](https://mobalytics.gg/lol/profile/' + region + '/' + encodeURIComponent(gameName) + '-' + encodeURIComponent(tagLine) + ')',
+		color: embed.colors.GOLD,
+		thumbnail: { url: 'https://ddragon.leagueoflegends.com/cdn/14.1.1/img/profileicon/29.png' },
+		footer: { text: 'Click a link for detailed stats' },
+	})],
+});

@@ -1,0 +1,27 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const text = command.suffix.trim();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🧽 Mock',
+			description: 'Usage: mock <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const mocked = utils.text.mock(text.slice(0, 500));
+
+message.reply({
+	embeds: [embed.create({
+		description: mocked,
+		color: embed.colors.GOLD,
+		footer: { text: 'mOcKiNg SpOnGeBoB' },
+	})],
+});

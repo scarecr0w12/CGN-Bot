@@ -1,0 +1,74 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const username = command.suffix.trim();
+if (!username) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 MC UUID',
+			description: 'Usage: mcuuid <username>\nExample: mcuuid Notch',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+if (!/^[a-zA-Z0-9_]{1,16}$/.test(username)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ MC UUID',
+			description: 'Invalid Minecraft username format.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.mojang.com/users/profiles/minecraft/' + encodeURIComponent(username),
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ MC UUID',
+			description: 'Failed to fetch player data: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+if (res.status === 404 || !res.json || !res.json.id) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 MC UUID',
+			description: 'Player not found: **' + username + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const uuid = res.json.id;
+const formattedUuid = uuid.slice(0,8) + '-' + uuid.slice(8,12) + '-' + uuid.slice(12,16) + '-' + uuid.slice(16,20) + '-' + uuid.slice(20);
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + res.json.name,
+		thumbnail: { url: 'https://mc-heads.net/avatar/' + uuid + '/128' },
+		fields: [
+			{ name: 'UUID', value: '`' + formattedUuid + '`', inline: false },
+			{ name: 'Short UUID', value: '`' + uuid + '`', inline: false },
+		],
+		color: embed.colors.GREEN,
+		footer: { text: 'Powered by Mojang API' },
+	})],
+});
+})();

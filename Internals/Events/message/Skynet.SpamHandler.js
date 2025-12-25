@@ -1,6 +1,8 @@
-const BaseEvent = require("../BaseEvent");
-const levenshtein = require("fast-levenshtein");
+const BaseEvent = require("../BaseEvent.js");
+const BatchWriteManager = require("../../../Modules/BatchWriteManager");
 const { LoggingLevels, Colors } = require("../../Constants");
+const ModLog = require("../../../Modules/ModLog");
+const levenshtein = require("fast-levenshtein");
 
 class SpamHandler extends BaseEvent {
 	requirements (msg) {
@@ -89,9 +91,7 @@ class SpamHandler extends BaseEvent {
 						const userDocument = await Users.findOne(msg.author.id);
 						if (userDocument) {
 							userDocument.query.inc("points", -25);
-							await userDocument.save().catch(err => {
-								logger.debug(`Failed to save user document...`, { usrid: msg.author.id }, err);
-							});
+							BatchWriteManager.queue(userDocument);
 						}
 					}
 					// Add strike for user
@@ -100,7 +100,7 @@ class SpamHandler extends BaseEvent {
 						admin: this.client.user.id,
 						reason: `First-time spam violation in #${msg.channel.name} (${msg.channel})`,
 					});
-					// TODO: ModLog.create
+					ModLog.create(msg.guild, "Spam Warning", msg.member, this.client.user, `First-time spam violation in #${msg.channel.name}`);
 				} else if (spamDocument.val.message_count === serverDocument.config.moderation.filters.spam_filter.message_sensitivity * 2) {
 					// Second-time spam filter violation
 					// eslint-disable-next-line max-len
@@ -149,7 +149,7 @@ class SpamHandler extends BaseEvent {
 				}
 			}
 		}
-		await serverDocument.save();
+		BatchWriteManager.queue(serverDocument);
 	}
 }
 

@@ -1,0 +1,63 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const username = command.suffix.trim();
+if (!username) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 MC Skin',
+			description: 'Usage: mcskin <username>\nExample: mcskin Notch',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+if (!/^[a-zA-Z0-9_]{1,16}$/.test(username)) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ MC Skin',
+			description: 'Invalid Minecraft username format.',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.mojang.com/users/profiles/minecraft/' + encodeURIComponent(username),
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success || res.status === 404 || !res.json || !res.json.id) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎮 MC Skin',
+			description: 'Player not found: **' + username + '**',
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const uuid = res.json.id;
+const name = res.json.name;
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎮 ' + name + "'s Skin",
+		image: { url: 'https://mc-heads.net/body/' + uuid + '/256' },
+		fields: [
+			{ name: 'Download', value: '[Full Skin](https://mc-heads.net/download/' + uuid + ')', inline: true },
+			{ name: 'Head', value: '[Avatar](https://mc-heads.net/avatar/' + uuid + '/256)', inline: true },
+		],
+		color: embed.colors.GREEN,
+		footer: { text: 'Powered by Mojang API + mc-heads.net' },
+	})],
+});
+})();

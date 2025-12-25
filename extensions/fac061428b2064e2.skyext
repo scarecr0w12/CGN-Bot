@@ -1,0 +1,67 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const http = require('http');
+
+const agentName = command.suffix.trim().toLowerCase();
+if (!agentName) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🎯 Valorant Agent',
+			description: 'Usage: valorantagent <agent name>\nExample: valorantagent jett',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const res = await http.request({
+	url: 'https://api.henrikdev.xyz/valorant/v1/agents?countryCode=en-us',
+	method: 'GET',
+	responseType: 'json',
+	timeoutMs: 8000,
+});
+
+if (!res.success || res.json?.status !== 200) {
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Agent',
+			description: 'Failed to fetch agents: ' + (res.error || 'Unknown error'),
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const agents = res.json.data || [];
+const agent = agents.find(a => a.name?.toLowerCase() === agentName || a.displayName?.toLowerCase() === agentName);
+
+if (!agent) {
+	const available = agents.map(a => a.name || a.displayName).filter(Boolean).join(', ');
+	message.reply({
+		embeds: [embed.create({
+			title: '❌ Valorant Agent',
+			description: 'Agent not found: **' + agentName + '**\n\nAvailable: ' + available,
+			color: embed.colors.WARNING,
+		})],
+	});
+	return;
+}
+
+const abilities = agent.abilities?.slice(0, 4).map(a => '• **' + a.name + '**: ' + (a.description?.slice(0, 80) || 'No description') + '...').join('\n') || 'No abilities listed';
+
+message.reply({
+	embeds: [embed.create({
+		title: '🎯 ' + (agent.displayName || agent.name),
+		description: agent.description || 'No description available.',
+		thumbnail: { url: agent.displayIcon || agent.bustPortrait || '' },
+		fields: [
+			{ name: 'Role', value: agent.role?.displayName || 'Unknown', inline: true },
+			{ name: 'Abilities', value: abilities, inline: false },
+		],
+		color: embed.colors.RED,
+		footer: { text: 'Powered by Henrik Valorant API' },
+	})],
+});
+})();

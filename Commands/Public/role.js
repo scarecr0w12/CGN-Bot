@@ -63,6 +63,26 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
+	// Check bot permissions and role hierarchy
+	const { PermissionFlagsBits } = require("discord.js");
+	if (!msg.guild.members.me.permissions.has(PermissionFlagsBits.ManageRoles)) {
+		return msg.send({
+			embeds: [{
+				color: Colors.SOFT_ERR,
+				description: "I need the **Manage Roles** permission to manage roles.",
+			}],
+		});
+	}
+
+	if (msg.guild.members.me.roles.highest.position <= role.position) {
+		return msg.send({
+			embeds: [{
+				color: Colors.SOFT_ERR,
+				description: "I cannot manage this role. It's higher than or equal to my highest role.",
+			}],
+		});
+	}
+
 	try {
 		if (msg.member.roles.cache.has(role.id)) {
 			await msg.member.roles.remove(role);

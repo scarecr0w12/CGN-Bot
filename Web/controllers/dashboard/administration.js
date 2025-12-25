@@ -173,8 +173,9 @@ controllers.blocked = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
 
+	const adminSettings = await require("../../../Modules/ConfigManager").get();
 	const blockedMembers = svr.memberList.filter(member => serverDocument.config.blocked.includes(member))
-		.concat(configJSON.userBlocklist.filter(usrid => svr.memberList.includes(usrid)));
+		.concat(adminSettings.userBlocklist.filter(usrid => svr.memberList.includes(usrid)));
 	await svr.fetchMember(blockedMembers);
 
 	res.setConfigData({
@@ -184,7 +185,7 @@ controllers.blocked = async (req, { res }) => {
 				name: member.user.username,
 				id: member.user.id,
 				avatar: client.getAvatarURL(member.user.id, member.user.avatar) || "/static/img/discord-icon.png",
-				isGlobal: configJSON.userBlocklist.includes(member.user.id),
+				isGlobal: adminSettings.userBlocklist.includes(member.user.id),
 			};
 		}),
 		moderation: {
@@ -470,6 +471,7 @@ controllers.filters = async (req, { res }) => {
 
 	// Check if server has advanced_moderation feature (premium is per-server)
 	const hasAdvancedModeration = await TierManager.canAccess(req.svr.id, "advanced_moderation");
+	const hasSentimentAnalysis = await TierManager.canAccess(req.svr.id, "sentiment_analysis");
 
 	const filteredCommands = [];
 	for (const command in serverDocument.config.commands) {
@@ -484,6 +486,7 @@ controllers.filters = async (req, { res }) => {
 		channelData: getChannelData(svr),
 		roleData: getRoleData(svr),
 		hasAdvancedModeration,
+		hasSentimentAnalysis,
 	});
 	res.setConfigData({
 		moderation: {
@@ -527,7 +530,24 @@ controllers.filters.post = async (req, res) => {
 					break;
 				case "mention_sensitivity":
 				case "message_sensitivity":
+				case "min_message_length":
 					serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, parseInt(req.body[`${filter}-${key}`]));
+					break;
+				case "categories":
+					// Handle nested categories object for sentiment_filter
+					if (filter === "sentiment_filter") {
+						serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, {
+							toxic: req.body[`${filter}-${key}-toxic`] === "on",
+							insult: req.body[`${filter}-${key}-insult`] === "on",
+							threat: req.body[`${filter}-${key}-threat`] === "on",
+							profanity: req.body[`${filter}-${key}-profanity`] === "on",
+							identity_attack: req.body[`${filter}-${key}-identity_attack`] === "on",
+						});
+					}
+					break;
+				case "warn_user":
+				case "escalate_on_repeat":
+					serverQueryDocument.set(`config.moderation.filters.${filter}.${key}`, req.body[`${filter}-${key}`] === "on");
 					break;
 				default:
 					// eslint-disable-next-line max-len

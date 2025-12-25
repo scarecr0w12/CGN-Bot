@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> - Ticket #<%= configData.ticket.ticket_number %> - Skynet</title>
+	<%- include('../partials/head') %>
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+				<nav class="breadcrumb" aria-label="breadcrumbs">
+					<ul>
+						<li><a href="/dashboard/<%= serverData.id %>/tickets">Tickets</a></li>
+						<li class="is-active"><a href="#">#<%= configData.ticket.ticket_number %></a></li>
+					</ul>
+				</nav>
+
+				<div class="columns">
+					<!-- Main Content -->
+					<div class="column is-8">
+						<div class="card mb-4">
+							<header class="card-header">
+								<p class="card-header-title">
+									<span class="mr-2">
+										<% if (configData.ticket.status === 'open') { %>
+											<span class="tag is-success">Open</span>
+										<% } else if (configData.ticket.status === 'in_progress') { %>
+											<span class="tag is-info">In Progress</span>
+										<% } else if (configData.ticket.status === 'on_hold') { %>
+											<span class="tag is-warning">On Hold</span>
+										<% } else { %>
+											<span class="tag is-danger">Closed</span>
+										<% } %>
+									</span>
+									Ticket #<%= configData.ticket.ticket_number %>
+								</p>
+							</header>
+							<div class="card-content">
+								<h4 class="title is-5"><%= configData.ticket.subject || 'No Subject' %></h4>
+								
+								<!-- Messages -->
+								<div class="ticket-messages">
+									<% if (!configData.messages || configData.messages.length === 0) { %>
+										<p class="has-text-grey">No messages in this ticket.</p>
+									<% } else { %>
+										<% configData.messages.forEach(msg => { %>
+											<article class="media mb-4 <%= msg.is_system_message ? 'has-background-light p-3' : '' %>">
+												<figure class="media-left">
+													<p class="image is-48x48">
+														<% if (msg.is_system_message) { %>
+															<span class="icon is-large has-text-grey">
+																<i class="fas fa-robot fa-2x"></i>
+															</span>
+														<% } else { %>
+															<img class="is-rounded" src="<%= msg.author_avatar || '/static/img/discord-icon.png' %>" alt="Avatar">
+														<% } %>
+													</p>
+												</figure>
+												<div class="media-content">
+													<div class="content">
+														<p>
+															<strong>
+																<%= msg.author_username || 'Unknown' %>
+																<% if (msg.is_staff && !msg.is_system_message) { %>
+																	<span class="tag is-small is-info ml-1">Staff</span>
+																<% } %>
+															</strong>
+															<small class="has-text-grey ml-2">
+																<%= new Date(msg.created_at).toLocaleString() %>
+															</small>
+															<br>
+															<% if (msg.is_system_message) { %>
+																<em class="has-text-grey"><%= msg.content %></em>
+															<% } else { %>
+																<%= msg.content %>
+															<% } %>
+														</p>
+													</div>
+												</div>
+											</article>
+										<% }) %>
+									<% } %>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sidebar -->
+					<div class="column is-4">
+						<!-- Ticket Details -->
+						<div class="card mb-4">
+							<header class="card-header">
+								<p class="card-header-title">Ticket Details</p>
+							</header>
+							<div class="card-content">
+								<table class="table is-fullwidth is-narrow">
+									<tr>
+										<td><strong>Created By</strong></td>
+										<td><%= configData.ticket.username || configData.ticket.user_id %></td>
+									</tr>
+									<tr>
+										<td><strong>Category</strong></td>
+										<td><%= configData.ticket.category_name || 'General' %></td>
+									</tr>
+									<tr>
+										<td><strong>Created</strong></td>
+										<td><%= new Date(configData.ticket.created_at).toLocaleString() %></td>
+									</tr>
+									<tr>
+										<td><strong>Last Activity</strong></td>
+										<td><%= new Date(configData.ticket.last_activity_at || configData.ticket.updated_at).toLocaleString() %></td>
+									</tr>
+									<% if (configData.ticket.assigned_to) { %>
+									<tr>
+										<td><strong>Assigned To</strong></td>
+										<td><%= configData.ticket.assigned_username || configData.ticket.assigned_to %></td>
+									</tr>
+									<% } %>
+									<tr>
+										<td><strong>Messages</strong></td>
+										<td><%= configData.ticket.message_count || configData.messages.length %></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+
+						<!-- Actions -->
+						<div class="card mb-4">
+							<header class="card-header">
+								<p class="card-header-title">Actions</p>
+							</header>
+							<div class="card-content">
+								<div class="field">
+									<label class="label">Status</label>
+									<div class="control">
+										<div class="select is-fullwidth">
+											<select id="ticket-status">
+												<option value="open" <%= configData.ticket.status === 'open' ? 'selected' : '' %>>Open</option>
+												<option value="in_progress" <%= configData.ticket.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+												<option value="on_hold" <%= configData.ticket.status === 'on_hold' ? 'selected' : '' %>>On Hold</option>
+												<option value="closed" <%= configData.ticket.status === 'closed' ? 'selected' : '' %>>Closed</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label">Priority</label>
+									<div class="control">
+										<div class="select is-fullwidth">
+											<select id="ticket-priority">
+												<option value="low" <%= configData.ticket.priority === 'low' ? 'selected' : '' %>>Low</option>
+												<option value="normal" <%= configData.ticket.priority === 'normal' ? 'selected' : '' %>>Normal</option>
+												<option value="high" <%= configData.ticket.priority === 'high' ? 'selected' : '' %>>High</option>
+												<option value="urgent" <%= configData.ticket.priority === 'urgent' ? 'selected' : '' %>>Urgent</option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="field">
+									<label class="label">Internal Notes</label>
+									<div class="control">
+										<textarea class="textarea" id="internal-notes" rows="3" placeholder="Notes visible only to staff"><%= configData.ticket.internal_notes || '' %></textarea>
+									</div>
+								</div>
+
+								<div class="field">
+									<div class="control">
+										<button class="button is-primary is-fullwidth" onclick="updateTicket()">
+											<span class="icon"><i class="fas fa-save"></i></span>
+											<span>Save Changes</span>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Channel Info -->
+						<% if (configData.ticket.channel_id && configData.ticket.status !== 'closed') { %>
+						<div class="card">
+							<div class="card-content has-text-centered">
+								<p class="has-text-grey mb-2">Ticket Channel</p>
+								<code>#<%= configData.ticket.channel_id %></code>
+							</div>
+						</div>
+						<% } %>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+
+<script>
+async function updateTicket() {
+	const data = {
+		ticket_id: '<%= configData.ticket._id %>',
+		status: document.getElementById('ticket-status').value,
+		priority: document.getElementById('ticket-priority').value,
+		internal_notes: document.getElementById('internal-notes').value
+	};
+
+	try {
+		const response = await fetch('/dashboard/<%= svrid %>/tickets/ticket/update', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await response.json();
+		if (result.success) {
+			SkynetUtil.showNotification('Ticket updated successfully', 'success');
+		} else {
+			SkynetUtil.showNotification(result.error || 'Failed to update ticket', 'error');
+		}
+	} catch (err) {
+		SkynetUtil.showNotification('Failed to update ticket', 'error');
+	}
+}
+</script>
+
+<%- include('../partials/footer') %>
+
+</body>
+</html>

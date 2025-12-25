@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[AR] Home",
+		"features": "[AR] Features",
+		"commands": "[AR] Commands",
+		"dashboard": "[AR] Dashboard",
+		"extensions": "[AR] Extensions",
+		"wiki": "[AR] Wiki",
+		"blog": "[AR] Blog",
+		"support": "[AR] Support",
+		"login": "[AR] Login",
+		"logout": "[AR] Logout",
+		"invite": "[AR] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[AR] The Ultimate Discord Bot",
+			"subtitle": "[AR] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[AR] Trusted by {{count}} servers",
+			"addToServer": "[AR] Add to Server",
+			"viewFeatures": "[AR] View Features"
+		},
+		"features": {
+			"title": "[AR] Features",
+			"subtitle": "[AR] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[AR] Moderation",
+				"description": "[AR] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[AR] Fun Commands",
+				"description": "[AR] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[AR] Leveling System",
+				"description": "[AR] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[AR] Custom Extensions",
+				"description": "[AR] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[AR] Music",
+				"description": "[AR] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[AR] AI Chat",
+				"description": "[AR] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[AR] Ready to get started?",
+			"subtitle": "[AR] Add {{botName}} to your server in seconds.",
+			"button": "[AR] Add to Server"
+		},
+		"faq": {
+			"title": "[AR] Frequently Asked Questions",
+			"q1": "[AR] Is {{botName}} free to use?",
+			"a1": "[AR] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[AR] How do I set up the bot?",
+			"a2": "[AR] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[AR] What are Extensions?",
+			"a3": "[AR] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[AR] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[AR] Privacy Policy",
+			"terms": "[AR] Terms of Service",
+			"contact": "[AR] Contact",
+			"status": "[AR] Status"
+		},
+		"social": {
+			"discord": "[AR] Discord",
+			"github": "[AR] GitHub",
+			"twitter": "[AR] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[AR] Login with {{provider}}",
+		"loggingIn": "[AR] Logging in...",
+		"loginSuccess": "[AR] Successfully logged in!",
+		"loginFailed": "[AR] Login failed. Please try again.",
+		"logoutSuccess": "[AR] Successfully logged out.",
+		"welcome": "[AR] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[AR] Profile",
+		"myServers": "[AR] My Servers",
+		"settings": "[AR] Account Settings",
+		"linkedAccounts": "[AR] Linked Accounts",
+		"subscription": "[AR] Subscription",
+		"votePoints": "[AR] Vote Points",
+		"extensions": "[AR] My Extensions"
+	},
+	"servers": {
+		"title": "[AR] Select a Server",
+		"noServers": "[AR] You don't have any servers to manage.",
+		"manage": "[AR] Manage",
+		"notInServer": "[AR] Bot not in server",
+		"invite": "[AR] Invite Bot"
+	},
+	"membership": {
+		"title": "[AR] Premium Membership",
+		"subtitle": "[AR] Unlock powerful features for your server",
+		"currentTier": "[AR] Current Tier",
+		"free": "[AR] Free",
+		"starter": "[AR] Starter",
+		"premium": "[AR] Premium",
+		"enterprise": "[AR] Enterprise",
+		"perMonth": "[AR] /month",
+		"perYear": "[AR] /year",
+		"subscribe": "[AR] Subscribe",
+		"manage": "[AR] Manage Subscription",
+		"features": "[AR] Features",
+		"compare": "[AR] Compare Plans",
+		"faq": "[AR] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[AR] Access Denied",
+			"message": "[AR] You don't have permission to access this page.",
+			"goHome": "[AR] Go to Homepage"
+		},
+		"404": {
+			"title": "[AR] Page Not Found",
+			"message": "[AR] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[AR] Go to Homepage"
+		},
+		"500": {
+			"title": "[AR] Server Error",
+			"message": "[AR] Something went wrong on our end. Please try again later.",
+			"goHome": "[AR] Go to Homepage"
+		}
+	}
+}

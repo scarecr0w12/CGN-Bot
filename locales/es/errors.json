@@ -1,0 +1,69 @@
+{
+	"generic": {
+		"somethingWentWrong": "¡Algo salió mal!",
+		"internalError": "Ocurrió un error interno.",
+		"tryAgain": "Por favor intenta de nuevo más tarde.",
+		"contactSupport": "Si esto persiste, por favor contacta a soporte.",
+		"unexpectedError": "Ocurrió un error inesperado."
+	},
+	"permission": {
+		"noPermission": "No tienes permiso para hacer esto.",
+		"botNoPermission": "No tengo permiso para hacer esto.",
+		"missingPermissions": "Permisos faltantes: {{permissions}}",
+		"adminOnly": "Esta acción requiere permisos de administrador.",
+		"ownerOnly": "Esta acción solo puede ser realizada por el propietario del servidor.",
+		"moderatorOnly": "Esta acción requiere permisos de moderador."
+	},
+	"validation": {
+		"required": "Este campo es obligatorio.",
+		"invalidFormat": "Formato inválido.",
+		"tooShort": "Debe tener al menos {{min}} caracteres.",
+		"tooLong": "Debe tener no más de {{max}} caracteres.",
+		"invalidNumber": "Debe ser un número válido.",
+		"numberTooLow": "Debe ser al menos {{min}}.",
+		"numberTooHigh": "Debe ser no más de {{max}}.",
+		"invalidUrl": "Debe ser una URL válida.",
+		"invalidEmail": "Debe ser un correo electrónico válido.",
+		"invalidDate": "Debe ser una fecha válida.",
+		"invalidChoice": "Opción inválida. Por favor selecciona de las opciones disponibles."
+	},
+	"notFound": {
+		"user": "Usuario no encontrado.",
+		"member": "Miembro no encontrado.",
+		"channel": "Canal no encontrado.",
+		"role": "Rol no encontrado.",
+		"message": "Mensaje no encontrado.",
+		"server": "Servidor no encontrado.",
+		"command": "Comando no encontrado.",
+		"page": "Página no encontrada.",
+		"resource": "Recurso no encontrado."
+	},
+	"rateLimit": {
+		"tooManyRequests": "Demasiadas solicitudes. Por favor ve más despacio.",
+		"cooldown": "Por favor espera {{time}} antes de intentar de nuevo.",
+		"rateLimited": "Estás siendo limitado por tasa."
+	},
+	"auth": {
+		"notLoggedIn": "Debes iniciar sesión para hacer esto.",
+		"sessionExpired": "Tu sesión ha expirado. Por favor inicia sesión de nuevo.",
+		"invalidToken": "Token inválido o expirado.",
+		"unauthorized": "No estás autorizado para acceder a este recurso."
+	},
+	"server": {
+		"configNotLoaded": "Error al cargar la configuración del servidor.",
+		"notConfigured": "Esta función no está configurada.",
+		"featureDisabled": "Esta función está deshabilitada en este servidor."
+	},
+	"premium": {
+		"required": "Esta función requiere una suscripción premium.",
+		"tierRequired": "Esta función requiere el nivel {{tier}} o superior.",
+		"expired": "Tu suscripción premium ha expirado.",
+		"limitReached": "Has alcanzado el límite para tu nivel de suscripción."
+	},
+	"bot": {
+		"botCannotTarget": "No puedo realizar esta acción sobre mí mismo.",
+		"cannotTargetOwner": "No puedo realizar esta acción sobre el propietario del servidor.",
+		"cannotTargetHigherRole": "No puedo realizar esta acción sobre usuarios con un rol superior al mío.",
+		"cannotTargetSelf": "No puedes realizar esta acción sobre ti mismo."
+	}
+}

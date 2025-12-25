@@ -1,0 +1,69 @@
+{
+	"generic": {
+		"somethingWentWrong": "[ZH] Something went wrong!",
+		"internalError": "[ZH] An internal error occurred.",
+		"tryAgain": "[ZH] Please try again later.",
+		"contactSupport": "[ZH] If this persists, please contact support.",
+		"unexpectedError": "[ZH] An unexpected error occurred."
+	},
+	"permission": {
+		"noPermission": "[ZH] You don't have permission to do this.",
+		"botNoPermission": "[ZH] I don't have permission to do this.",
+		"missingPermissions": "[ZH] Missing permissions: {{permissions}}",
+		"adminOnly": "[ZH] This action requires administrator permissions.",
+		"ownerOnly": "[ZH] This action can only be performed by the server owner.",
+		"moderatorOnly": "[ZH] This action requires moderator permissions."
+	},
+	"validation": {
+		"required": "[ZH] This field is required.",
+		"invalidFormat": "[ZH] Invalid format.",
+		"tooShort": "[ZH] Must be at least {{min}} characters.",
+		"tooLong": "[ZH] Must be no more than {{max}} characters.",
+		"invalidNumber": "[ZH] Must be a valid number.",
+		"numberTooLow": "[ZH] Must be at least {{min}}.",
+		"numberTooHigh": "[ZH] Must be no more than {{max}}.",
+		"invalidUrl": "[ZH] Must be a valid URL.",
+		"invalidEmail": "[ZH] Must be a valid email address.",
+		"invalidDate": "[ZH] Must be a valid date.",
+		"invalidChoice": "[ZH] Invalid choice. Please select from the available options."
+	},
+	"notFound": {
+		"user": "[ZH] User not found.",
+		"member": "[ZH] Member not found.",
+		"channel": "[ZH] Channel not found.",
+		"role": "[ZH] Role not found.",
+		"message": "[ZH] Message not found.",
+		"server": "[ZH] Server not found.",
+		"command": "[ZH] Command not found.",
+		"page": "[ZH] Page not found.",
+		"resource": "[ZH] Resource not found."
+	},
+	"rateLimit": {
+		"tooManyRequests": "[ZH] Too many requests. Please slow down.",
+		"cooldown": "[ZH] Please wait {{time}} before trying again.",
+		"rateLimited": "[ZH] You are being rate limited."
+	},
+	"auth": {
+		"notLoggedIn": "[ZH] You must be logged in to do this.",
+		"sessionExpired": "[ZH] Your session has expired. Please log in again.",
+		"invalidToken": "[ZH] Invalid or expired token.",
+		"unauthorized": "[ZH] You are not authorized to access this resource."
+	},
+	"server": {
+		"configNotLoaded": "[ZH] Failed to load server configuration.",
+		"notConfigured": "[ZH] This feature is not configured.",
+		"featureDisabled": "[ZH] This feature is disabled on this server."
+	},
+	"premium": {
+		"required": "[ZH] This feature requires a premium subscription.",
+		"tierRequired": "[ZH] This feature requires {{tier}} tier or higher.",
+		"expired": "[ZH] Your premium subscription has expired.",
+		"limitReached": "[ZH] You have reached the limit for your subscription tier."
+	},
+	"bot": {
+		"botCannotTarget": "[ZH] I cannot perform this action on myself.",
+		"cannotTargetOwner": "[ZH] I cannot perform this action on the server owner.",
+		"cannotTargetHigherRole": "[ZH] I cannot perform this action on users with a higher role than me.",
+		"cannotTargetSelf": "[ZH] You cannot perform this action on yourself."
+	}
+}

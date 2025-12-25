@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Extension Queue - Maintainer Console</title>
+	<%- include('../partials/head') %>
+	<style>
+	.ext-queue-card {
+		background: #fff;
+		border-radius: 12px;
+		box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+		margin-bottom: 1.5rem;
+		border: 1px solid #eee;
+		overflow: hidden;
+	}
+	.ext-queue-card-header {
+		padding: 1.25rem;
+		border-bottom: 1px solid #eee;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+	.ext-queue-card-title {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: #1a1a2e;
+		margin: 0 0 0.5rem 0;
+	}
+	.ext-queue-card-meta {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+	.ext-queue-badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0.25rem 0.6rem;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+	.ext-queue-badge-type {
+		background: #e3f2fd;
+		color: #1565c0;
+	}
+	.ext-queue-badge-type.keyword { background: #fff3e0; color: #ef6c00; }
+	.ext-queue-badge-type.timer { background: #f3e5f5; color: #7b1fa2; }
+	.ext-queue-badge-type.event { background: #e8f5e9; color: #2e7d32; }
+	.ext-queue-badge-version {
+		background: #f5f5f5;
+		color: #666;
+	}
+	.ext-queue-badge-local {
+		background: #ffebee;
+		color: #c62828;
+	}
+	.ext-queue-badge-network {
+		background: #fff3e0;
+		color: #ef6c00;
+	}
+	.ext-queue-badge-network.approved {
+		background: #e8f5e9;
+		color: #2e7d32;
+	}
+	.ext-queue-card-body {
+		padding: 1.25rem;
+	}
+	.ext-queue-card-description {
+		color: #666;
+		font-size: 0.95rem;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+	.ext-queue-card-author {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem 1.25rem;
+		background: #fafafa;
+		border-top: 1px solid #eee;
+	}
+	.ext-queue-card-author img {
+		width: 36px;
+		height: 36px;
+		border-radius: 50%;
+	}
+	.ext-queue-card-author-info {
+		flex-grow: 1;
+	}
+	.ext-queue-card-author-name {
+		font-weight: 500;
+		color: #333;
+	}
+	.ext-queue-card-author-id {
+		font-size: 0.8rem;
+		color: #999;
+	}
+	.ext-queue-card-actions {
+		display: flex;
+		border-top: 1px solid #eee;
+	}
+	.ext-queue-card-actions .button {
+		flex: 1;
+		border-radius: 0;
+		border: none;
+		border-right: 1px solid #eee;
+	}
+	.ext-queue-card-actions .button:last-child {
+		border-right: none;
+	}
+	.ext-queue-code-preview {
+		background: #1a1a2e;
+		color: #e0e0e0;
+		padding: 1rem;
+		border-radius: 8px;
+		font-family: 'Fira Code', monospace;
+		font-size: 0.85rem;
+		max-height: 300px;
+		overflow: auto;
+		margin-top: 1rem;
+	}
+	.ext-queue-stats {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+	}
+	.ext-queue-stat {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		color: #fff;
+		padding: 1.25rem;
+		border-radius: 12px;
+		flex: 1;
+		text-align: center;
+	}
+	.ext-queue-stat-value {
+		font-size: 2rem;
+		font-weight: 700;
+	}
+	.ext-queue-stat-label {
+		font-size: 0.85rem;
+		opacity: 0.9;
+	}
+	.reject-reason-field {
+		display: none;
+		margin-top: 1rem;
+	}
+	.reject-reason-field.is-active {
+		display: block;
+	}
+	</style>
+</head>
+<body>
+<%- include('../partials/dashboard-header') %>
+
+<section class="section is-white">
+	<div class="container">
+		<div class="columns">
+			<div id="menu" class="column is-one-quarter">
+				<%- include('../partials/maintainer-menu') %>
+			</div>
+			<div class="column">
+				<h1 class="title">
+					<span class="icon"><i class="fa fa-puzzle-piece"></i></span>
+					Extension Queue
+				</h1>
+				<article class="message is-info">
+					<div class="message-body">
+						Review and approve extensions submitted to the gallery. Extensions in the queue have not been tested - review the code carefully before approving.
+					</div>
+				</article>
+
+				<!-- Stats -->
+				<div class="ext-queue-stats">
+					<div class="ext-queue-stat">
+						<div class="ext-queue-stat-value"><%= pageData.queueCount %></div>
+						<div class="ext-queue-stat-label">In Queue</div>
+					</div>
+					<div class="ext-queue-stat" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+						<div class="ext-queue-stat-value"><%= pageData.networkPendingCount %></div>
+						<div class="ext-queue-stat-label">Network Pending</div>
+					</div>
+				</div>
+
+				<% if (pageData.extensions && pageData.extensions.length > 0) { %>
+					<% pageData.extensions.forEach(ext => { %>
+					<div class="ext-queue-card" id="ext-card-<%= ext._id %>">
+						<div class="ext-queue-card-header">
+							<div>
+								<h3 class="ext-queue-card-title"><%= ext.name %></h3>
+								<div class="ext-queue-card-meta">
+									<span class="ext-queue-badge ext-queue-badge-type <%= ext.type %>">
+										<i class="fa fa-<%= ext.typeIcon %>"></i> <%= ext.type %>
+									</span>
+									<span class="ext-queue-badge ext-queue-badge-version">v<%= ext.version %></span>
+									<% if (ext.level === "third") { %>
+									<span class="ext-queue-badge ext-queue-badge-local">Local</span>
+									<% } %>
+									<% if (ext.network_capability && ext.network_capability !== 'none') { %>
+									<span class="ext-queue-badge ext-queue-badge-network <%= ext.network_approved ? 'approved' : '' %>">
+										<i class="fa fa-globe"></i> 
+										<%= ext.network_capability === 'allowlist_only' ? 'Public APIs' : ext.network_capability === 'network' ? 'Network' : 'Advanced' %>
+										<% if (ext.network_approved) { %><i class="fa fa-check ml-1"></i><% } %>
+									</span>
+									<% } %>
+									<% if (ext.tags && ext.tags.length > 0) { %>
+										<% ext.tags.forEach(tag => { %>
+										<span class="ext-queue-badge" style="background: #f5f5f5; color: #666;">
+											<i class="fa fa-tag"></i> <%= tag %>
+										</span>
+										<% }); %>
+									<% } %>
+								</div>
+							</div>
+							<div>
+								<span class="has-text-grey" title="Submitted <%= ext.rawLastUpdated %>">
+									<i class="fa fa-clock-o"></i> <%= ext.relativeLastUpdated %>
+								</span>
+							</div>
+						</div>
+						<div class="ext-queue-card-body">
+							<p class="ext-queue-card-description"><%- ext.description %></p>
+							<button class="button is-small is-outlined toggle-code-btn" data-ext-id="<%= ext._id %>">
+								<span class="icon"><i class="fa fa-code"></i></span>
+								<span>View Code</span>
+							</button>
+							<a class="button is-small is-outlined" href="/extensions/queue?id=<%= ext._id %>" target="_blank">
+								<span class="icon"><i class="fa fa-external-link"></i></span>
+								<span>View in Queue</span>
+							</a>
+							<div id="code-preview-<%= ext._id %>" class="ext-queue-code-preview" style="display: none;">
+								<pre><%= ext.code || 'Code not available' %></pre>
+							</div>
+						</div>
+						<div class="ext-queue-card-author">
+							<img src="<%= ext.owner.avatar %>" alt="<%= ext.owner.name %>">
+							<div class="ext-queue-card-author-info">
+								<div class="ext-queue-card-author-name"><%= ext.owner.name %></div>
+								<div class="ext-queue-card-author-id">ID: <%= ext.owner.id %></div>
+							</div>
+							<div class="ext-queue-card-points" title="<%= ext.points %> points">
+								<span class="tag is-warning"><i class="fa fa-star"></i> <%= ext.points %></span>
+							</div>
+						</div>
+						<div class="ext-queue-card-actions">
+							<button class="button is-success accept-ext-btn" data-ext-id="<%= ext._id %>">
+								<span class="icon"><i class="fa fa-check"></i></span>
+								<span>Accept</span>
+							</button>
+							<% if (ext.network_capability && ['network', 'network_advanced'].includes(ext.network_capability) && !ext.network_approved) { %>
+							<button class="button is-info approve-network-btn" data-ext-id="<%= ext._id %>">
+								<span class="icon"><i class="fa fa-globe"></i></span>
+								<span>Approve Network</span>
+							</button>
+							<% } %>
+							<button class="button is-danger show-reject-btn" data-ext-id="<%= ext._id %>">
+								<span class="icon"><i class="fa fa-times"></i></span>
+								<span>Reject</span>
+							</button>
+						</div>
+						<div id="reject-form-<%= ext._id %>" class="reject-reason-field" style="padding: 1rem;">
+							<div class="field">
+								<label class="label">Rejection Reason</label>
+								<div class="control">
+									<textarea id="reject-reason-<%= ext._id %>" class="textarea" placeholder="Explain why this extension is being rejected..."></textarea>
+								</div>
+							</div>
+							<div class="buttons">
+								<button class="button is-danger confirm-reject-btn" data-ext-id="<%= ext._id %>">
+									<span class="icon"><i class="fa fa-times"></i></span>
+									<span>Confirm Rejection</span>
+								</button>
+								<button class="button hide-reject-btn" data-ext-id="<%= ext._id %>">Cancel</button>
+							</div>
+						</div>
+					</div>
+					<% }); %>
+				<% } else { %>
+					<div class="notification is-light">
+						<div class="has-text-centered">
+							<span class="icon is-large has-text-grey-light">
+								<i class="fa fa-check-circle fa-3x"></i>
+							</span>
+							<h4 class="title is-4 has-text-grey mt-4">Queue is Empty</h4>
+							<p class="has-text-grey">No extensions are waiting for approval.</p>
+						</div>
+					</div>
+				<% } %>
+			</div>
+		</div>
+	</div>
+</section>
+
+<%- include('../partials/footer') %>
+<%- include('../partials/scroll-top-button') %>
+
+<script>
+(function() {
+	document.addEventListener('click', function(e) {
+		const target = e.target.closest('button');
+		if (!target) return;
+		
+		const extId = target.dataset.extId;
+		if (!extId) return;
+		
+		if (target.classList.contains('toggle-code-btn')) {
+			const preview = document.getElementById('code-preview-' + extId);
+			preview.style.display = preview.style.display === 'none' ? 'block' : 'none';
+		}
+		else if (target.classList.contains('show-reject-btn')) {
+			document.getElementById('reject-form-' + extId).classList.add('is-active');
+		}
+		else if (target.classList.contains('hide-reject-btn')) {
+			document.getElementById('reject-form-' + extId).classList.remove('is-active');
+		}
+		else if (target.classList.contains('accept-ext-btn')) {
+			acceptExtension(extId);
+		}
+		else if (target.classList.contains('approve-network-btn')) {
+			approveNetwork(extId);
+		}
+		else if (target.classList.contains('confirm-reject-btn')) {
+			rejectExtension(extId);
+		}
+	});
+	
+	async function acceptExtension(extId) {
+		if (!confirm('Are you sure you want to accept this extension?')) return;
+		
+		try {
+			const response = await fetch('/extensions/' + extId + '/accept', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			
+			if (response.ok) {
+				document.getElementById('ext-card-' + extId).remove();
+				swal('Extension Accepted', 'The extension has been published to the gallery.', 'success');
+			} else {
+				swal('Failed', 'Failed to accept extension. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
+		}
+	}
+	
+	async function approveNetwork(extId) {
+		if (!confirm('Are you sure you want to approve network access for this extension?')) return;
+		
+		try {
+			const response = await fetch('/extensions/' + extId + '/approve_network', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			
+			if (response.ok) {
+				location.reload();
+			} else {
+				swal('Failed', 'Failed to approve network access. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
+		}
+	}
+	
+	async function rejectExtension(extId) {
+		const reason = document.getElementById('reject-reason-' + extId).value;
+		if (!reason.trim()) {
+			swal('Missing Reason', 'Please provide a rejection reason', 'warning');
+			return;
+		}
+		
+		try {
+			const response = await fetch('/extensions/' + extId + '/reject', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ reason: reason })
+			});
+			
+			if (response.ok) {
+				document.getElementById('ext-card-' + extId).remove();
+				swal('Extension Rejected', 'The extension has been rejected and the owner notified.', 'success');
+			} else {
+				swal('Failed', 'Failed to reject extension. Status: ' + response.status, 'error');
+			}
+		} catch (err) {
+			swal('Error', err.message, 'error');
+		}
+	}
+})();
+</script>
+</body>
+</html>

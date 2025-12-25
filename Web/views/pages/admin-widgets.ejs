@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head') %>
+	<style>
+	.widget-preview-container {
+		background: var(--color-bg-secondary);
+		border-radius: var(--radius-lg);
+		padding: 2rem;
+		text-align: center;
+		min-height: 200px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.code-box {
+		background: #1a1a2e;
+		color: #e0e0e0;
+		border-radius: var(--radius-md);
+		padding: 1rem;
+		font-family: 'Fira Code', monospace;
+		font-size: 0.85rem;
+		overflow-x: auto;
+		position: relative;
+	}
+	.code-box code {
+		white-space: pre-wrap;
+		word-break: break-all;
+	}
+	.copy-code-btn {
+		position: absolute;
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+	.theme-selector {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+	.theme-option {
+		width: 60px;
+		height: 40px;
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		border: 3px solid transparent;
+		transition: all 0.2s ease;
+	}
+	.theme-option:hover {
+		transform: scale(1.05);
+	}
+	.theme-option.is-selected {
+		border-color: var(--color-accent);
+	}
+	.theme-dark { background: #1a1a2e; }
+	.theme-light { background: #ffffff; border: 1px solid #e0e0e0; }
+	.theme-discord { background: #36393f; }
+	</style>
+</head>
+<body>
+	<%- include('../partials/admin-menu', { sidebarMode: "dashboard", sidebarSection: "widgets" }) %>
+	
+	<section id="admin-content" class="section">
+		<div class="container">
+			<nav class="breadcrumb" aria-label="breadcrumbs">
+				<ul>
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/dashboard/<%= pageData.serverData.id %>"><%= pageData.serverData.name %></a></li>
+					<li class="is-active"><a href="#">Widgets</a></li>
+				</ul>
+			</nav>
+
+			<h1 class="title is-3">
+				<i class="fas fa-code" style="color: var(--color-accent);"></i>
+				Embeddable Widgets
+			</h1>
+			<p class="subtitle is-5" style="color: var(--color-text-muted);">
+				Generate embed codes to display your server stats on external websites.
+			</p>
+
+			<% if (!pageData.isPublic) { %>
+				<div class="notification is-warning">
+					<strong>Public visibility required:</strong> Your server must have public visibility enabled to use widgets.
+					<a href="/dashboard/<%= pageData.serverData.id %>/public-data">Enable it here</a>.
+				</div>
+			<% } else { %>
+				<div class="columns">
+					<!-- Configuration Panel -->
+					<div class="column is-4">
+						<div class="box">
+							<h3 class="title is-5">Configuration</h3>
+							
+							<div class="field">
+								<label class="label">Widget Type</label>
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select id="widget-type" onchange="updatePreview()">
+											<option value="stats">Server Stats</option>
+											<option value="leaderboard">Leaderboard</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+							<div class="field">
+								<label class="label">Theme</label>
+								<div class="theme-selector">
+									<div class="theme-option theme-dark is-selected" data-theme="dark" onclick="selectTheme('dark')" title="Dark"></div>
+									<div class="theme-option theme-light" data-theme="light" onclick="selectTheme('light')" title="Light"></div>
+									<div class="theme-option theme-discord" data-theme="discord" onclick="selectTheme('discord')" title="Discord"></div>
+								</div>
+							</div>
+							
+							<div class="field">
+								<label class="label">Width (px)</label>
+								<div class="control">
+									<input class="input" type="number" id="widget-width" value="400" min="200" max="800" onchange="updatePreview()">
+								</div>
+							</div>
+							
+							<div class="field" id="leaderboard-limit-field" style="display: none;">
+								<label class="label">Leaderboard Entries</label>
+								<div class="control">
+									<input class="input" type="number" id="leaderboard-limit" value="5" min="3" max="10" onchange="updatePreview()">
+								</div>
+							</div>
+							
+							<div class="field">
+								<label class="label">Embed Type</label>
+								<div class="control">
+									<div class="select is-fullwidth">
+										<select id="embed-type" onchange="updateEmbedCode()">
+											<option value="img">Image (SVG)</option>
+											<option value="iframe">iFrame</option>
+											<option value="markdown">Markdown</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Preview & Code Panel -->
+					<div class="column is-8">
+						<div class="box">
+							<h3 class="title is-5">Preview</h3>
+							<div class="widget-preview-container" id="preview-container">
+								<img id="widget-preview" src="" alt="Widget Preview" style="max-width: 100%;">
+							</div>
+						</div>
+						
+						<div class="box">
+							<h3 class="title is-5">Embed Code</h3>
+							<div class="code-box">
+								<button class="button is-small is-primary copy-code-btn" onclick="copyEmbedCode()">
+									<span class="icon"><i class="fas fa-copy"></i></span>
+									<span>Copy</span>
+								</button>
+								<code id="embed-code"></code>
+							</div>
+							<p class="help" style="margin-top: 1rem;">
+								Copy this code and paste it into your website's HTML.
+							</p>
+						</div>
+					</div>
+				</div>
+			<% } %>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scripts') %>
+	
+	<script>
+	const serverId = '<%= pageData.serverData.id %>';
+	const hostingURL = '<%= pageData.hostingURL %>';
+	let currentTheme = 'dark';
+	
+	function selectTheme(theme) {
+		currentTheme = theme;
+		document.querySelectorAll('.theme-option').forEach(el => {
+			el.classList.toggle('is-selected', el.dataset.theme === theme);
+		});
+		updatePreview();
+	}
+	
+	function updatePreview() {
+		const type = document.getElementById('widget-type').value;
+		const width = document.getElementById('widget-width').value;
+		const limit = document.getElementById('leaderboard-limit').value;
+		
+		// Show/hide leaderboard limit field
+		document.getElementById('leaderboard-limit-field').style.display = 
+			type === 'leaderboard' ? 'block' : 'none';
+		
+		// Build widget URL
+		let widgetUrl;
+		if (type === 'stats') {
+			widgetUrl = `${hostingURL}/widgets/server/${serverId}/stats.svg?theme=${currentTheme}&width=${width}`;
+		} else {
+			widgetUrl = `${hostingURL}/widgets/server/${serverId}/leaderboard.svg?theme=${currentTheme}&width=${width}&limit=${limit}`;
+		}
+		
+		// Update preview image
+		document.getElementById('widget-preview').src = widgetUrl;
+		
+		// Update embed code
+		updateEmbedCode();
+	}
+	
+	function updateEmbedCode() {
+		const type = document.getElementById('widget-type').value;
+		const embedType = document.getElementById('embed-type').value;
+		const width = document.getElementById('widget-width').value;
+		const limit = document.getElementById('leaderboard-limit').value;
+		
+		let widgetUrl;
+		if (type === 'stats') {
+			widgetUrl = `${hostingURL}/widgets/server/${serverId}/stats.svg?theme=${currentTheme}&width=${width}`;
+		} else {
+			widgetUrl = `${hostingURL}/widgets/server/${serverId}/leaderboard.svg?theme=${currentTheme}&width=${width}&limit=${limit}`;
+		}
+		
+		let code;
+		switch (embedType) {
+			case 'img':
+				code = `<img src="${widgetUrl}" alt="Server Stats" />`;
+				break;
+			case 'iframe':
+				const iframeUrl = `${hostingURL}/widgets/server/${serverId}/embed?type=${type}&theme=${currentTheme}`;
+				code = `<iframe src="${iframeUrl}" width="${width}" height="150" frameborder="0"></iframe>`;
+				break;
+			case 'markdown':
+				code = `![Server Stats](${widgetUrl})`;
+				break;
+		}
+		
+		document.getElementById('embed-code').textContent = code;
+	}
+	
+	function copyEmbedCode() {
+		const code = document.getElementById('embed-code').textContent;
+		navigator.clipboard.writeText(code).then(() => {
+			SkynetUtil.showNotification('success', 'Embed code copied to clipboard!');
+		});
+	}
+	
+	// Initialize on page load
+	document.addEventListener('DOMContentLoaded', updatePreview);
+	document.addEventListener('turbolinks:load', updatePreview);
+	</script>
+</body>
+</html>

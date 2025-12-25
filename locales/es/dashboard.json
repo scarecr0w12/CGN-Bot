@@ -1,0 +1,195 @@
+{
+	"sidebar": {
+		"overview": "Resumen",
+		"commands": "Comandos",
+		"commandList": "Lista de Comandos",
+		"moderation": "Moderación",
+		"strikes": "Strikes",
+		"filters": "Filtros",
+		"logs": "Registros",
+		"automod": "Auto-Moderación",
+		"members": "Miembros",
+		"roles": "Roles",
+		"channels": "Canales",
+		"extensions": "Extensiones",
+		"points": "Puntos y Rangos",
+		"settings": "Configuración",
+		"premium": "Premium",
+		"ai": "Configuración IA"
+	},
+	"overview": {
+		"title": "Resumen del Servidor",
+		"quickStats": "Estadísticas Rápidas",
+		"members": "Miembros",
+		"channels": "Canales",
+		"roles": "Roles",
+		"commands": "Comandos Usados",
+		"recentActivity": "Actividad Reciente",
+		"topMembers": "Mejores Miembros",
+		"serverHealth": "Salud del Servidor"
+	},
+	"commands": {
+		"title": "Configuración de Comandos",
+		"enableAll": "Habilitar Todos",
+		"disableAll": "Deshabilitar Todos",
+		"search": "Buscar comandos...",
+		"category": "Categoría",
+		"status": "Estado",
+		"adminLevel": "Nivel de Admin",
+		"disabledChannels": "Canales Deshabilitados",
+		"enabled": "Habilitado",
+		"disabled": "Deshabilitado",
+		"noCommands": "No se encontraron comandos."
+	},
+	"moderation": {
+		"title": "Configuración de Moderación",
+		"strikes": {
+			"title": "Sistema de Strikes",
+			"description": "Configura acciones automáticas basadas en el conteo de strikes.",
+			"threshold": "Umbral de Strikes",
+			"action": "Acción",
+			"duration": "Duración",
+			"actions": {
+				"warn": "Advertir",
+				"mute": "Silenciar",
+				"kick": "Expulsar",
+				"ban": "Banear"
+			}
+		},
+		"filters": {
+			"title": "Filtros de Mensajes",
+			"spam": "Filtro de Spam",
+			"invites": "Enlaces de Invitación",
+			"links": "Enlaces Externos",
+			"caps": "Mayúsculas Excesivas",
+			"mentions": "Menciones Masivas",
+			"words": "Lista Negra de Palabras"
+		},
+		"logs": {
+			"title": "Registros de Moderación",
+			"channel": "Canal de Registros",
+			"events": "Eventos Registrados",
+			"messageDelete": "Mensajes Eliminados",
+			"messageEdit": "Mensajes Editados",
+			"memberJoin": "Miembros que Entran",
+			"memberLeave": "Miembros que Salen",
+			"memberBan": "Miembros Baneados",
+			"roleChanges": "Cambios de Roles"
+		}
+	},
+	"members": {
+		"title": "Gestión de Miembros",
+		"search": "Buscar miembros...",
+		"filter": "Filtrar por rol",
+		"sort": "Ordenar por",
+		"actions": "Acciones",
+		"warn": "Advertir",
+		"mute": "Silenciar",
+		"kick": "Expulsar",
+		"ban": "Banear",
+		"viewProfile": "Ver Perfil",
+		"viewStrikes": "Ver Strikes"
+	},
+	"extensions": {
+		"title": "Extensiones del Servidor",
+		"installed": "Instaladas",
+		"available": "Disponibles",
+		"browse": "Explorar Galería",
+		"install": "Instalar",
+		"uninstall": "Desinstalar",
+		"configure": "Configurar",
+		"enabled": "Habilitado",
+		"disabled": "Deshabilitado",
+		"version": "Versión",
+		"author": "Autor",
+		"noExtensions": "No hay extensiones instaladas."
+	},
+	"points": {
+		"title": "Puntos y Rangos",
+		"pointsPerMessage": "Puntos por Mensaje",
+		"cooldown": "Tiempo de Espera (segundos)",
+		"ranks": "Rangos Personalizados",
+		"addRank": "Añadir Rango",
+		"rankName": "Nombre del Rango",
+		"requiredPoints": "Puntos Requeridos",
+		"roleReward": "Rol de Recompensa",
+		"leaderboard": "Tabla de Líderes",
+		"resetPoints": "Reiniciar Todos los Puntos"
+	},
+	"settings": {
+		"title": "Configuración del Servidor",
+		"general": {
+			"title": "General",
+			"prefix": "Prefijo de Comandos",
+			"language": "Idioma",
+			"timezone": "Zona Horaria",
+			"nickname": "Apodo del Bot"
+		},
+		"welcome": {
+			"title": "Mensajes de Bienvenida",
+			"enabled": "Habilitar Mensajes de Bienvenida",
+			"channel": "Canal de Bienvenida",
+			"message": "Mensaje de Bienvenida",
+			"dmEnabled": "Enviar MD",
+			"dmMessage": "Mensaje de MD"
+		},
+		"leave": {
+			"title": "Mensajes de Despedida",
+			"enabled": "Habilitar Mensajes de Despedida",
+			"channel": "Canal de Despedida",
+			"message": "Mensaje de Despedida"
+		},
+		"admins": {
+			"title": "Admins del Bot",
+			"description": "Usuarios que pueden gestionar la configuración del bot",
+			"addAdmin": "Añadir Admin",
+			"level": "Nivel de Admin",
+			"levels": {
+				"1": "Moderador",
+				"2": "Administrador",
+				"3": "Propietario"
+			}
+		}
+	},
+	"premium": {
+		"title": "Funciones Premium",
+		"currentTier": "Nivel Actual",
+		"upgrade": "Mejorar",
+		"features": "Funciones Disponibles",
+		"usage": "Uso",
+		"expires": "Expira",
+		"neverExpires": "Nunca expira",
+		"redeemCode": "Canjear Código",
+		"useVotePoints": "Usar Puntos de Voto"
+	},
+	"ai": {
+		"title": "Configuración de IA",
+		"enabled": "Habilitar Chat IA",
+		"provider": "Proveedor de IA",
+		"model": "Modelo",
+		"channels": "Canales Habilitados",
+		"personality": "Personalidad del Bot",
+		"maxTokens": "Tokens Máximos",
+		"temperature": "Temperatura",
+		"usage": "Uso Mensual",
+		"limit": "Límite Mensual"
+	},
+	"common": {
+		"save": "Guardar Cambios",
+		"saved": "¡Cambios guardados!",
+		"saving": "Guardando...",
+		"reset": "Restablecer a Por Defecto",
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"add": "Añadir",
+		"remove": "Eliminar",
+		"enable": "Habilitar",
+		"disable": "Deshabilitar",
+		"unsavedChanges": "Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?",
+		"loading": "Cargando...",
+		"error": "Ocurrió un error",
+		"success": "¡Éxito!"
+	}
+}

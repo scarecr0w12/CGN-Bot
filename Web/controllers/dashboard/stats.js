@@ -1,6 +1,7 @@
 const { saveAdminConsoleOptions: save, getChannelData, getRoleData } = require("../../helpers");
 const parsers = require("../../parsers");
 const TierManager = require("../../../Modules/TierManager");
+const { AnalyticsCollector, AnalyticsExporter } = require("../../../Modules/Analytics");
 
 const controllers = module.exports;
 
@@ -381,4 +382,183 @@ controllers.analytics = async (req, res) => {
 		},
 		leaderboard: topMembers,
 	});
+};
+
+// Premium Analytics Dashboard
+controllers.analyticsOverview = async (req, { res }) => {
+	const hasAnalytics = await TierManager.hasMinimumTierLevel(req.svr.id, 2);
+	const serverDocument = req.svr.document;
+	const guild = req.svr;
+
+	// Get analytics data - provide default structures for template safety
+	let memberActivity = {
+		overview: { totalTracked: 0, activeCount: 0, inactiveCount: 0, activityRate: 0 },
+		topByMessages: [],
+		topByVoice: [],
+		messageDistribution: { none: 0, low: 0, medium: 0, high: 0, veryHigh: 0 },
+		totalMessages: 0,
+		totalVoice: 0,
+	};
+	let channelActivity = {
+		overview: { totalChannels: 0, totalMessages: 0, averageMessagesPerChannel: 0 },
+		topChannels: [],
+	};
+	let commandStats = {
+		overview: { totalCommands: 0, totalUsage: 0 },
+		topCommands: [],
+	};
+	let roleEngagement = {
+		overview: { totalRoles: 0, totalMembers: 0 },
+		topBySize: [],
+	};
+	let joinLeave = {
+		overview: { periodDays: 30, totalJoins: 0, avgDailyJoins: 0, currentMembers: 0 },
+		recentJoins: [],
+	};
+	let heatmap = {
+		heatmap: [],
+		dayNames: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+		dailyTotals: [],
+		hourlyTotals: [],
+	};
+
+	if (hasAnalytics) {
+		try {
+			memberActivity = await AnalyticsCollector.getMemberActivity(serverDocument, guild, { days: 7, limit: 10 });
+			channelActivity = await AnalyticsCollector.getChannelActivity(serverDocument, guild, { limit: 10 });
+			commandStats = await AnalyticsCollector.getCommandStats(serverDocument, { limit: 15 });
+			roleEngagement = await AnalyticsCollector.getRoleEngagement(serverDocument, guild, { days: 7, limit: 10 });
+			joinLeave = await AnalyticsCollector.getJoinLeaveAnalytics(serverDocument, guild, { days: 30 });
+			heatmap = await AnalyticsCollector.getActivityHeatmap(serverDocument, []);
+		} catch (err) {
+			logger.error("Failed to fetch analytics data", { serverId: req.svr.id }, err);
+		}
+	}
+
+	res.setPageData({
+		page: "admin-analytics.ejs",
+		hasAnalytics,
+		analytics: {
+			memberActivity,
+			channelActivity,
+			commandStats,
+			roleEngagement,
+			joinLeave,
+			heatmap,
+		},
+	});
+	res.render();
+};
+
+// Analytics API endpoint for async data loading
+controllers.analyticsData = async (req, res) => {
+	const hasAnalytics = await TierManager.hasMinimumTierLevel(req.svr.id, 2);
+	if (!hasAnalytics) {
+		return res.status(403).json({ error: "Premium subscription required" });
+	}
+
+	const { type } = req.query;
+	const serverDocument = req.svr.document;
+	const guild = req.svr;
+
+	try {
+		let data;
+		switch (type) {
+			case "members":
+				data = await AnalyticsCollector.getMemberActivity(serverDocument, guild, {
+					days: parseInt(req.query.days) || 7,
+					limit: parseInt(req.query.limit) || 25,
+				});
+				break;
+			case "channels":
+				data = await AnalyticsCollector.getChannelActivity(serverDocument, guild, {
+					limit: parseInt(req.query.limit) || 20,
+				});
+				break;
+			case "commands":
+				data = await AnalyticsCollector.getCommandStats(serverDocument, {
+					limit: parseInt(req.query.limit) || 25,
+				});
+				break;
+			case "roles":
+				data = await AnalyticsCollector.getRoleEngagement(serverDocument, guild, {
+					days: parseInt(req.query.days) || 7,
+					limit: parseInt(req.query.limit) || 20,
+				});
+				break;
+			case "joins":
+				data = await AnalyticsCollector.getJoinLeaveAnalytics(serverDocument, guild, {
+					days: parseInt(req.query.days) || 30,
+				});
+				break;
+			case "heatmap":
+				data = await AnalyticsCollector.getActivityHeatmap(serverDocument, []);
+				break;
+			default:
+				return res.status(400).json({ error: "Invalid type" });
+		}
+		res.json(data);
+	} catch (err) {
+		logger.error("Analytics data fetch error", { type, serverId: req.svr.id }, err);
+		res.status(500).json({ error: "Failed to fetch analytics data" });
+	}
+};
+
+// Analytics export endpoint
+controllers.analyticsExport = async (req, res) => {
+	const hasAnalytics = await TierManager.hasMinimumTierLevel(req.svr.id, 2);
+	if (!hasAnalytics) {
+		return res.status(403).json({ error: "Premium subscription required" });
+	}
+
+	const { type } = req.query;
+	const serverDocument = req.svr.document;
+	const guild = req.svr;
+
+	try {
+		let csvData;
+		let filename;
+
+		switch (type) {
+			case "members": {
+				const data = await AnalyticsCollector.getMemberActivity(serverDocument, guild, { limit: 100 });
+				csvData = AnalyticsExporter.exportMemberActivity(data);
+				filename = `member-activity-${guild.id}.csv`;
+				break;
+			}
+			case "channels": {
+				const data = await AnalyticsCollector.getChannelActivity(serverDocument, guild, { limit: 100 });
+				csvData = AnalyticsExporter.exportChannelActivity(data);
+				filename = `channel-activity-${guild.id}.csv`;
+				break;
+			}
+			case "commands": {
+				const data = await AnalyticsCollector.getCommandStats(serverDocument, { limit: 100 });
+				csvData = AnalyticsExporter.exportCommandStats(data);
+				filename = `command-usage-${guild.id}.csv`;
+				break;
+			}
+			case "roles": {
+				const data = await AnalyticsCollector.getRoleEngagement(serverDocument, guild, { limit: 100 });
+				csvData = AnalyticsExporter.exportRoleEngagement(data);
+				filename = `role-engagement-${guild.id}.csv`;
+				break;
+			}
+			case "joins": {
+				const data = await AnalyticsCollector.getJoinLeaveAnalytics(serverDocument, guild, { days: 90 });
+				csvData = AnalyticsExporter.exportJoinLeave(data);
+				filename = `join-data-${guild.id}.csv`;
+				break;
+			}
+			default:
+				return res.status(400).json({ error: "Invalid export type" });
+		}
+
+		res.setHeader("Content-Type", "text/csv");
+		res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+		res.send(csvData);
+	} catch (err) {
+		logger.error("Analytics export error", { type, serverId: req.svr.id }, err);
+		res.status(500).json({ error: "Failed to export analytics" });
+	}
 };

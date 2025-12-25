@@ -58,12 +58,21 @@
 								</div>
 								<div class="heading">
 									<span class="icon is-small">
-										<i class="fa fa-file"></i>
+										<i class="fa fa-eye"></i>
 									</span>
-									Views the past hour
+									Current Session Views
 								</div>
 								<div class="title">
-                                    <%= pageData.trafficData.hour %>
+                                    <%= pageData.trafficData.current.pageViews %>
+								</div>
+								<div class="heading">
+									<span class="icon is-small">
+										<i class="fa fa-users"></i>
+									</span>
+									Unique Visitors (Session)
+								</div>
+								<div class="title">
+                                    <%= pageData.trafficData.current.uniqueUsers %>
 								</div>
 							</a>
 						</div>
@@ -172,18 +181,36 @@
 					</script>
 
 					<div class="traffic-chart-container">
-						<h4 class="title is-4">Web Interface Traffic</h4>
+						<h4 class="title is-4">
+							<span class="icon"><i class="fa fa-line-chart"></i></span>
+							Web Interface Traffic
+						</h4>
 						<div class="box">
-							<h4 class="subtitle">Today</h4>
-							<div id="traffic-chart-day" class="traffic-chart" style=""></div>
+							<h4 class="subtitle">Last 24 Hours (Hourly)</h4>
+							<% if (pageData.trafficData.day.length === 0) { %>
+								<p class="has-text-grey">No traffic data available for today yet.</p>
+							<% } else if (pageData.trafficData.day.length === 1) { %>
+								<p class="has-text-grey">Only 1 data point available. More data needed for chart.</p>
+								<p><strong>Page Views:</strong> <%= pageData.trafficData.day[0].pageViews %> | <strong>Authenticated:</strong> <%= pageData.trafficData.day[0].authViews %> | <strong>Unique:</strong> <%= pageData.trafficData.day[0].uniqueUsers %></p>
+							<% } else { %>
+								<div id="traffic-chart-day" class="traffic-chart" style="height: 250px;"></div>
+							<% } %>
 						</div>
 						<div class="box">
-							<h4 class="subtitle">Last Week</h4>
-							<div id="traffic-chart-week" class="traffic-chart" style="margin-top: 15px;"></div>
+							<h4 class="subtitle">Last 7 Days (Daily)</h4>
+							<% if (pageData.trafficData.week.length === 0) { %>
+								<p class="has-text-grey">No traffic data available for this week yet.</p>
+							<% } else { %>
+								<div id="traffic-chart-week" class="traffic-chart" style="height: 250px;"></div>
+							<% } %>
 						</div>
 						<div class="box">
-							<h4 class="subtitle">Last Month</h4>
-							<div id="traffic-chart-month" class="traffic-chart" style="margin-top: 15px;"></div>
+							<h4 class="subtitle">Last 30 Days (Daily)</h4>
+							<% if (pageData.trafficData.month.length === 0) { %>
+								<p class="has-text-grey">No traffic data available for this month yet.</p>
+							<% } else { %>
+								<div id="traffic-chart-month" class="traffic-chart" style="height: 250px;"></div>
+							<% } %>
 						</div>
 					</div>
 				</div>
@@ -194,38 +221,65 @@
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
 	<script>
-	  function parseDate(ts){
-		return new Date(ts).toDateString();
+	  function formatDate(ts) {
+		const d = new Date(ts);
+		return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	  }
+	  function formatHour(ts) {
+		const d = new Date(ts);
+		return d.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+	  }
+	  <% if (pageData.trafficData.month.length > 0) { %>
 	  new Morris.Line({
 		element: "traffic-chart-month",
 		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
-		data: <%- JSON.stringify(Object.values(pageData.trafficData.days)) %>,
+		data: <%- JSON.stringify(pageData.trafficData.month) %>,
 		xkey: "_id",
 		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Total Page Views", "Authenticated Views", "Unique Visitors"],
-		dateFormat: parseDate,
+		labels: ["Page Views", "Authenticated", "Unique Visitors"],
+		dateFormat: formatDate,
+		xLabelFormat: formatDate,
+		parseTime: true,
+		resize: true,
+		hideHover: 'auto',
+		smooth: true,
+		pointSize: 4
 	  });
+	  <% } %>
+	  <% if (pageData.trafficData.week.length > 0) { %>
 	  new Morris.Line({
 		element: "traffic-chart-week",
 		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
 		data: <%- JSON.stringify(pageData.trafficData.week) %>,
 		xkey: "_id",
 		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Total Page Views", "Authenticated Views", "Unique Visitors"],
-		dateFormat: parseDate,
+		labels: ["Page Views", "Authenticated", "Unique Visitors"],
+		dateFormat: formatDate,
+		xLabelFormat: formatDate,
+		parseTime: true,
+		resize: true,
+		hideHover: 'auto',
+		smooth: true,
+		pointSize: 4
 	  });
-	  <% if (pageData.trafficData.day.length === 0) pageData.trafficData.day[0] = {_id: Date.now(), pageViews: 0, authViews: 0, uniqueUsers: 0}; %>
+	  <% } %>
+	  <% if (pageData.trafficData.day.length > 1) { %>
 	  new Morris.Line({
 		element: "traffic-chart-day",
 		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
 		data: <%- JSON.stringify(pageData.trafficData.day) %>,
 		xkey: "_id",
 		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Total Page Views", "Authenticated Views", "Unique Visitors"],
-		xLabels: "hour",
+		labels: ["Page Views", "Authenticated", "Unique Visitors"],
+		dateFormat: formatHour,
+		xLabelFormat: formatHour,
+		parseTime: true,
+		resize: true,
+		hideHover: 'auto',
+		smooth: true,
+		pointSize: 4
 	  });
-	  $(".traffic-chart-container").toggle();
+	  <% } %>
 	</script>
 </body>
 </html>

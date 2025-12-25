@@ -61,7 +61,7 @@
 .feedback-widget {
 	position: fixed;
 	bottom: 24px;
-	right: 24px;
+	left: 24px;
 	z-index: 9999;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -93,7 +93,7 @@
 
 .feedback-hint {
 	position: absolute;
-	right: 64px;
+	left: 64px;
 	bottom: 12px;
 	background: rgba(55, 65, 81, 0.9);
 	color: #f3f4f6;
@@ -104,7 +104,7 @@
 	white-space: nowrap;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	opacity: 0;
-	transform: translateX(10px);
+	transform: translateX(-10px);
 	transition: opacity 0.3s ease, transform 0.3s ease;
 	pointer-events: none;
 }
@@ -122,7 +122,7 @@
 .feedback-form {
 	position: absolute;
 	bottom: 70px;
-	right: 0;
+	left: 0;
 	width: 320px;
 	background: white;
 	border-radius: 12px;
@@ -209,7 +209,7 @@
 @media (max-width: 768px) {
 	.feedback-widget {
 		bottom: 16px;
-		right: 16px;
+		left: 16px;
 	}
 	
 	.feedback-toggle {
@@ -224,7 +224,7 @@
 	
 	.feedback-form {
 		width: calc(100vw - 32px);
-		right: 0;
+		left: 0;
 		bottom: 60px;
 	}
 }

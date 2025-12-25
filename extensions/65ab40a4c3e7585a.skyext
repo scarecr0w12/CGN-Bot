@@ -1,0 +1,36 @@
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+
+const text = command.suffix.trim().toLowerCase();
+
+if (!text) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔤 Emojify',
+			description: 'Usage: emojify <text>',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const numEmoji = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣'];
+
+const emojified = text.slice(0, 50).split('').map(char => {
+	const code = char.charCodeAt(0);
+	// a-z to regional indicators
+	if (code >= 97 && code <= 122) {
+		return String.fromCodePoint(0x1F1E6 + (code - 97)) + ' ';
+	}
+	// numbers
+	if (code >= 48 && code <= 57) {
+		return numEmoji[code - 48] + ' ';
+	}
+	if (char === ' ') return '   ';
+	if (char === '!') return '❗ ';
+	if (char === '?') return '❓ ';
+	return char + ' ';
+}).join('');
+
+message.reply(emojified.trim());

@@ -44,6 +44,15 @@ if (databaseType === "mariadb") {
 			GlobalTrivia,
 			SiteSettings,
 			Feedback,
+			Tickets,
+			TicketMessages,
+			ServerTickets,
+			ServerTicketMessages,
+			ServerAnalytics,
+			RolePanels,
+			TempRoles,
+			InviteTracking,
+			Snippets,
 		] = [
 			new Model(db, "servers", require("./Schemas/serverSchema")),
 			new Model(db, "users", require("./Schemas/userSchema")),
@@ -62,6 +71,15 @@ if (databaseType === "mariadb") {
 			new Model(db, "global_trivia", require("./Schemas/globalTriviaSchema")),
 			new Model(db, "site_settings", require("./Schemas/siteSettingsSchema")),
 			new Model(db, "feedback", require("./Schemas/feedbackSchema")),
+			new Model(db, "tickets", require("./Schemas/ticketSchema")),
+			new Model(db, "ticket_messages", require("./Schemas/ticketMessageSchema")),
+			new Model(db, "server_tickets", require("./Schemas/serverTicketSchema")),
+			new Model(db, "server_ticket_messages", require("./Schemas/serverTicketMessageSchema")),
+			new Model(db, "server_analytics", require("./Schemas/serverAnalyticsSchema")),
+			new Model(db, "role_panels", require("./Schemas/rolePanelSchema")),
+			new Model(db, "temp_roles", require("./Schemas/tempRoleSchema")),
+			new Model(db, "invite_tracking", require("./Schemas/inviteTrackingSchema")),
+			new Model(db, "snippets", require("./Schemas/snippetSchema")),
 		];
 		addToGlobal("Servers", Servers);
 		addToGlobal("Users", Users);
@@ -79,6 +97,15 @@ if (databaseType === "mariadb") {
 		addToGlobal("GlobalTrivia", GlobalTrivia);
 		addToGlobal("SiteSettings", SiteSettings);
 		addToGlobal("Feedback", Feedback);
+		addToGlobal("Tickets", Tickets);
+		addToGlobal("TicketMessages", TicketMessages);
+		addToGlobal("ServerTickets", ServerTickets);
+		addToGlobal("ServerTicketMessages", ServerTicketMessages);
+		addToGlobal("ServerAnalytics", ServerAnalytics);
+		addToGlobal("RolePanels", RolePanels);
+		addToGlobal("TempRoles", TempRoles);
+		addToGlobal("InviteTracking", InviteTracking);
+		addToGlobal("Snippets", Snippets);
 		addToGlobal("Client", db);
 		addToGlobal("Database", {
 			Servers, servers: Servers,
@@ -98,6 +125,15 @@ if (databaseType === "mariadb") {
 			GlobalTrivia, globalTrivia: GlobalTrivia,
 			SiteSettings, siteSettings: SiteSettings,
 			Feedback, feedback: Feedback,
+			Tickets, tickets: Tickets,
+			TicketMessages, ticketMessages: TicketMessages,
+			ServerTickets, serverTickets: ServerTickets,
+			ServerTicketMessages, serverTicketMessages: ServerTicketMessages,
+			ServerAnalytics, serverAnalytics: ServerAnalytics,
+			RolePanels, rolePanels: RolePanels,
+			TempRoles, tempRoles: TempRoles,
+			InviteTracking, inviteTracking: InviteTracking,
+			Snippets, snippets: Snippets,
 			client: db,
 			mongoClient,
 		});

@@ -15,6 +15,7 @@ module.exports = {
 	RegExpMaker: require("./RegExpMaker.js"),
 	RemoveFormatting: require("./RemoveFormatting.js"),
 	RSS: require("./RSS.js"),
+	Slug: require("./Slug.js"),
 	SearchiTunes: require("./SearchiTunes.js"),
 	SetCountdown: require("./SetCountdown.js"),
 	SetReminder: require("./SetReminder.js"),

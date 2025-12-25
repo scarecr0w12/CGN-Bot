@@ -1,0 +1,129 @@
+{
+	"gallery": {
+		"title": "[DE] Extension Gallery",
+		"subtitle": "[DE] Browse and install community-created extensions",
+		"search": "[DE] Search extensions...",
+		"filters": "[DE] Filters",
+		"category": "[DE] Category",
+		"tags": "[DE] Tags",
+		"sort": "[DE] Sort by",
+		"sortOptions": {
+			"popular": "[DE] Most Popular",
+			"recent": "[DE] Recently Updated",
+			"rating": "[DE] Highest Rated",
+			"installs": "[DE] Most Installs"
+		},
+		"noResults": "[DE] No extensions found matching your criteria.",
+		"featured": "[DE] Featured",
+		"trending": "[DE] Trending",
+		"new": "[DE] New"
+	},
+	"card": {
+		"by": "[DE] by {{author}}",
+		"installs": "[DE] {{count}} install",
+		"installs_plural": "[DE] {{count}} installs",
+		"rating": "[DE] {{rating}} / 5",
+		"version": "[DE] v{{version}}",
+		"install": "[DE] Install",
+		"installed": "[DE] Installed",
+		"update": "[DE] Update Available",
+		"premium": "[DE] Premium",
+		"free": "[DE] Free",
+		"viewDetails": "[DE] View Details"
+	},
+	"details": {
+		"title": "[DE] Extension Details",
+		"description": "[DE] Description",
+		"usage": "[DE] Usage",
+		"permissions": "[DE] Required Permissions",
+		"changelog": "[DE] Changelog",
+		"reviews": "[DE] Reviews",
+		"author": "[DE] Author",
+		"version": "[DE] Version",
+		"lastUpdated": "[DE] Last Updated",
+		"installs": "[DE] Total Installs",
+		"rating": "[DE] Rating",
+		"category": "[DE] Category",
+		"tags": "[DE] Tags",
+		"source": "[DE] View Source",
+		"report": "[DE] Report Extension"
+	},
+	"install": {
+		"title": "[DE] Install Extension",
+		"confirm": "[DE] Are you sure you want to install **{{name}}**?",
+		"permissions": "[DE] This extension requires the following permissions:",
+		"success": "[DE] ✅ **{{name}}** has been installed successfully!",
+		"failed": "[DE] Failed to install extension.",
+		"alreadyInstalled": "[DE] This extension is already installed.",
+		"incompatible": "[DE] This extension is not compatible with your current setup.",
+		"premiumRequired": "[DE] This extension requires a premium subscription."
+	},
+	"uninstall": {
+		"title": "[DE] Uninstall Extension",
+		"confirm": "[DE] Are you sure you want to uninstall **{{name}}**?",
+		"warning": "[DE] This will remove all settings for this extension.",
+		"success": "[DE] Extension uninstalled.",
+		"failed": "[DE] Failed to uninstall extension."
+	},
+	"builder": {
+		"title": "[DE] Extension Builder",
+		"create": "[DE] Create Extension",
+		"edit": "[DE] Edit Extension",
+		"name": "[DE] Extension Name",
+		"description": "[DE] Description",
+		"version": "[DE] Version",
+		"category": "[DE] Category",
+		"tags": "[DE] Tags",
+		"type": "[DE] Type",
+		"types": {
+			"command": "[DE] Command",
+			"event": "[DE] Event",
+			"slash": "[DE] Slash Command"
+		},
+		"commandKey": "[DE] Command Trigger",
+		"slashDescription": "[DE] Slash Command Description",
+		"code": "[DE] Code",
+		"scopes": "[DE] Scopes",
+		"timeout": "[DE] Timeout (ms)",
+		"adminLevel": "[DE] Required Admin Level",
+		"save": "[DE] Save Draft",
+		"submit": "[DE] Submit for Review",
+		"test": "[DE] Test Extension",
+		"export": "[DE] Export",
+		"import": "[DE] Import"
+	},
+	"myExtensions": {
+		"title": "[DE] My Extensions",
+		"created": "[DE] Created",
+		"installed": "[DE] Installed",
+		"noExtensions": "[DE] You haven't created any extensions yet.",
+		"noInstalled": "[DE] You haven't installed any extensions.",
+		"status": {
+			"draft": "[DE] Draft",
+			"pending": "[DE] Pending Review",
+			"approved": "[DE] Approved",
+			"rejected": "[DE] Rejected",
+			"published": "[DE] Published"
+		}
+	},
+	"review": {
+		"title": "[DE] Write a Review",
+		"rating": "[DE] Rating",
+		"comment": "[DE] Comment",
+		"submit": "[DE] Submit Review",
+		"edit": "[DE] Edit Review",
+		"delete": "[DE] Delete Review",
+		"helpful": "[DE] Helpful",
+		"report": "[DE] Report Review",
+		"noReviews": "[DE] No reviews yet. Be the first to review!"
+	},
+	"errors": {
+		"notFound": "[DE] Extension not found.",
+		"loadFailed": "[DE] Failed to load extension.",
+		"executionFailed": "[DE] Extension execution failed.",
+		"timeout": "[DE] Extension timed out.",
+		"permissionDenied": "[DE] Permission denied.",
+		"invalidCode": "[DE] Invalid extension code.",
+		"scopeNotAllowed": "[DE] This extension requires a scope that is not allowed."
+	}
+}

@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[HI] Home",
+		"features": "[HI] Features",
+		"commands": "[HI] Commands",
+		"dashboard": "[HI] Dashboard",
+		"extensions": "[HI] Extensions",
+		"wiki": "[HI] Wiki",
+		"blog": "[HI] Blog",
+		"support": "[HI] Support",
+		"login": "[HI] Login",
+		"logout": "[HI] Logout",
+		"invite": "[HI] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[HI] The Ultimate Discord Bot",
+			"subtitle": "[HI] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[HI] Trusted by {{count}} servers",
+			"addToServer": "[HI] Add to Server",
+			"viewFeatures": "[HI] View Features"
+		},
+		"features": {
+			"title": "[HI] Features",
+			"subtitle": "[HI] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[HI] Moderation",
+				"description": "[HI] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[HI] Fun Commands",
+				"description": "[HI] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[HI] Leveling System",
+				"description": "[HI] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[HI] Custom Extensions",
+				"description": "[HI] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[HI] Music",
+				"description": "[HI] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[HI] AI Chat",
+				"description": "[HI] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[HI] Ready to get started?",
+			"subtitle": "[HI] Add {{botName}} to your server in seconds.",
+			"button": "[HI] Add to Server"
+		},
+		"faq": {
+			"title": "[HI] Frequently Asked Questions",
+			"q1": "[HI] Is {{botName}} free to use?",
+			"a1": "[HI] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[HI] How do I set up the bot?",
+			"a2": "[HI] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[HI] What are Extensions?",
+			"a3": "[HI] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[HI] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[HI] Privacy Policy",
+			"terms": "[HI] Terms of Service",
+			"contact": "[HI] Contact",
+			"status": "[HI] Status"
+		},
+		"social": {
+			"discord": "[HI] Discord",
+			"github": "[HI] GitHub",
+			"twitter": "[HI] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[HI] Login with {{provider}}",
+		"loggingIn": "[HI] Logging in...",
+		"loginSuccess": "[HI] Successfully logged in!",
+		"loginFailed": "[HI] Login failed. Please try again.",
+		"logoutSuccess": "[HI] Successfully logged out.",
+		"welcome": "[HI] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[HI] Profile",
+		"myServers": "[HI] My Servers",
+		"settings": "[HI] Account Settings",
+		"linkedAccounts": "[HI] Linked Accounts",
+		"subscription": "[HI] Subscription",
+		"votePoints": "[HI] Vote Points",
+		"extensions": "[HI] My Extensions"
+	},
+	"servers": {
+		"title": "[HI] Select a Server",
+		"noServers": "[HI] You don't have any servers to manage.",
+		"manage": "[HI] Manage",
+		"notInServer": "[HI] Bot not in server",
+		"invite": "[HI] Invite Bot"
+	},
+	"membership": {
+		"title": "[HI] Premium Membership",
+		"subtitle": "[HI] Unlock powerful features for your server",
+		"currentTier": "[HI] Current Tier",
+		"free": "[HI] Free",
+		"starter": "[HI] Starter",
+		"premium": "[HI] Premium",
+		"enterprise": "[HI] Enterprise",
+		"perMonth": "[HI] /month",
+		"perYear": "[HI] /year",
+		"subscribe": "[HI] Subscribe",
+		"manage": "[HI] Manage Subscription",
+		"features": "[HI] Features",
+		"compare": "[HI] Compare Plans",
+		"faq": "[HI] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[HI] Access Denied",
+			"message": "[HI] You don't have permission to access this page.",
+			"goHome": "[HI] Go to Homepage"
+		},
+		"404": {
+			"title": "[HI] Page Not Found",
+			"message": "[HI] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[HI] Go to Homepage"
+		},
+		"500": {
+			"title": "[HI] Server Error",
+			"message": "[HI] Something went wrong on our end. Please try again later.",
+			"goHome": "[HI] Go to Homepage"
+		}
+	}
+}

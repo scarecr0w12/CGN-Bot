@@ -39,6 +39,7 @@ controllers.settings = async (req, { res }) => {
 
 	res.setConfigData({
 		ai: {
+			isEnabled: aiConfig.isEnabled || false,
 			defaultProvider: aiConfig.defaultProvider || "openai",
 			model: aiConfig.model || { name: "gpt-4o-mini", provider: "openai" },
 			systemPrompt: aiConfig.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
@@ -150,6 +151,7 @@ controllers.settings.post = async (req, res) => {
 
 	// Build complete AI config object
 	const aiConfig = {
+		isEnabled: req.body.isEnabled === "on",
 		defaultProvider: req.body.defaultProvider || "openai",
 		model: {
 			name: req.body["model-name"] || "gpt-4o-mini",

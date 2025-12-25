@@ -1,0 +1,45 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const input = command.suffix.trim();
+
+if (!input) {
+	message.reply({
+		embeds: [embed.create({
+			title: '🔤 Acronym',
+			description: 'Usage: ' + command.prefix + command.key + ' <phrase>\n\nExample: ' + command.prefix + command.key + ' very important person',
+			color: embed.colors.ERROR,
+		})],
+	});
+	return;
+}
+
+const words = input
+	.split(/\s+/)
+	.map(w => w.trim())
+	.filter(Boolean);
+
+const acronym = words
+	.map(w => (w[0] || '').toUpperCase())
+	.join('');
+
+const funny = [
+	'Very Interesting!',
+	'Absolutely Legendary.',
+	'Nice.',
+	'Approved by the Council.',
+	'This is canon now.',
+	'Certified acronym moment.',
+];
+
+message.reply({
+	embeds: [embed.create({
+		title: '🔤 Acronym',
+		description: utils.discord.bold('Phrase:') + ' ' + input + '\n' +
+		utils.discord.bold('Acronym:') + ' ' + utils.discord.code(acronym) + '\n\n' +
+		utils.discord.italic(utils.random.pick(funny)),
+		color: embed.colors.BLUE,
+	})],
+});

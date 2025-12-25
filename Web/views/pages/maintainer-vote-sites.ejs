@@ -51,7 +51,7 @@
 												</figure>
 												<% } %>
 											</td>
-											<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+											<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 										</tr>
 										<% }); %>
 									<% } %>
@@ -59,7 +59,7 @@
 							</table>
 						</div>
 
-						<button type="button" class="button is-info" onclick="addVoteSite(); SkynetData.HUM = true;">
+						<button type="button" class="button is-info" id="add-vote-site-btn">
 							<span class="icon"><i class="fa fa-plus"></i></span>
 							<span>Add Vote Site</span>
 						</button>
@@ -75,16 +75,22 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	function addVoteSite() {
+	$(document).on('click', '.remove-row-btn', function() {
+		$(this).closest('tr').remove();
+		SkynetData.HUM = true;
+	});
+
+	$('#add-vote-site-btn').on('click', function() {
 		$('#vote-sites-table tbody').append(`
 			<tr>
 				<td><input class="input" type="text" name="name[]" value="" required></td>
 				<td><input class="input" type="url" name="url[]" value="" required></td>
 				<td><input class="input" type="url" name="icon_url[]" value=""></td>
-				<td><button type="button" class="button is-danger is-small" onclick="$(this).closest('tr').remove(); SkynetData.HUM = true;">Remove</button></td>
+				<td><button type="button" class="button is-danger is-small remove-row-btn">Remove</button></td>
 			</tr>
 		`);
-	}
+		SkynetData.HUM = true;
+	});
 	</script>
 </body>
 </html>

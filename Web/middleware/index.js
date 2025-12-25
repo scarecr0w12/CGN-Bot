@@ -1,4 +1,5 @@
-const { parseAuthUser, fetchMaintainerPrivileges } = require("../helpers");
+const { parseAuthUser } = require("../helpers");
+const { fetchMaintainerPrivilegesCached } = require("../../Modules/ConfigManager");
 
 // Cache for site settings injection (refreshed every 60 seconds)
 let cachedInjection = { headScript: "", footerHTML: "" };
@@ -50,6 +51,8 @@ class SkynetResponse {
 			// Matomo Analytics - direct integration
 			matomoUrl: process.env.MATOMO_URL || "",
 			matomoSiteId: process.env.MATOMO_SITE_ID || "",
+			// CSP nonce for inline scripts
+			nonce: res.locals.nonce || "",
 		};
 
 		this.serverData = {
@@ -66,14 +69,17 @@ class SkynetResponse {
 				isMaintainer: true,
 				isSudoMaintainer: req.level === 2 || req.level === 0,
 				isHost: req.level === 0,
-				accessPrivileges: fetchMaintainerPrivileges(req.user.id),
+				accessPrivileges: fetchMaintainerPrivilegesCached(req.user.id),
 			});
 			this.serverData.isMaintainer = true;
 		} else if (req.user) {
+			// Use cached settings synchronously - will be populated by middleware init
+			const ConfigManager = require("../../Modules/ConfigManager");
+			const mwSettings = ConfigManager.getCached();
 			Object.assign(this.template, {
-				isContributor: req.isAuthenticated() ? configJSON.wikiContributors.includes(req.user.id) || configJSON.maintainers.includes(req.user.id) : false,
-				isMaintainer: req.isAuthenticated() ? configJSON.maintainers.includes(parseAuthUser(req.user).id) : false,
-				isSudoMaintainer: req.isAuthenticated() ? configJSON.sudoMaintainers.includes(parseAuthUser(req.user).id) : false,
+				isContributor: req.isAuthenticated() ? mwSettings.wikiContributors.includes(req.user.id) || mwSettings.maintainers.includes(req.user.id) : false,
+				isMaintainer: req.isAuthenticated() ? mwSettings.maintainers.includes(parseAuthUser(req.user).id) : false,
+				isSudoMaintainer: req.isAuthenticated() ? mwSettings.sudoMaintainers.includes(parseAuthUser(req.user).id) : false,
 			});
 		} else {
 			Object.assign(this.template, {
@@ -173,11 +179,31 @@ middleware.populateRequest = route => (req, res, next) => {
 };
 
 middleware.registerTraffic = (req, res, next) => {
-	if (!req.cookies.trafficID || req.cookies.trafficID !== req.app.client.traffic.TID) {
-		const { TID } = req.app.client.traffic;
-		res.cookie("trafficID", TID, { httpOnly: true });
-	}
-	req.app.client.traffic.count(req.cookies.trafficID, req.isAuthenticated());
+	const startTime = Date.now();
+
+	// Use authenticated user ID, session ID, or IP for unique visitor tracking
+	const userIdentifier = req.isAuthenticated() && req.user?.id ?
+		`user:${req.user.id}` :
+		req.sessionID || req.clientIP || req.ip;
+	req.app.client.traffic.count(userIdentifier, req.isAuthenticated());
+
+	// Log detailed request data on response finish
+	res.on("finish", () => {
+		const responseTime = Date.now() - startTime;
+		req.app.client.traffic.logRequest({
+			path: req.originalUrl || req.url,
+			method: req.method,
+			statusCode: res.statusCode,
+			responseTime,
+			userAgent: req.get("user-agent"),
+			ip: req.clientIP || req.ip,
+			referrer: req.get("referrer") || req.get("referer"),
+			userId: req.isAuthenticated() && req.user?.id ? req.user.id : null,
+			sessionId: req.sessionID || null,
+			country: req.get("cf-ipcountry") || null,
+		});
+	});
+
 	next();
 };
 

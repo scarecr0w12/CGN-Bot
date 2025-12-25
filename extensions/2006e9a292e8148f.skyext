@@ -1,0 +1,38 @@
+(async () => {
+const message = require('message');
+const command = require('command');
+const embed = require('embed');
+const extension = require('extension');
+
+const key = 'wordassoc';
+let data = extension.storage.get(key) || { chain: [], lastUser: null };
+const word = command.suffix.trim().toLowerCase().replace(/[^a-z]/g, '');
+
+if (!word) {
+	const chainDisplay = data.chain.length > 0 ? data.chain.slice(-10).join(' → ') : 'No words yet!';
+	message.reply({ embeds: [embed.create({ title: '🔗 Word Association', description: 'Say a word related to the previous one!\n\n**Chain:** ' + chainDisplay + '\n\nUse **wordassoc <word>** to add!', color: embed.colors.BLUE })] });
+	return;
+}
+
+if (word.length < 2 || word.length > 20) {
+	message.reply({ embeds: [embed.create({ title: '❌ Invalid', description: 'Word must be 2-20 characters.', color: embed.colors.ERROR })] });
+	return;
+}
+
+if (data.chain.includes(word)) {
+	message.reply({ embeds: [embed.create({ title: '❌ Already Used', description: '**' + word + '** was already used!', color: embed.colors.ERROR })] });
+	return;
+}
+
+if (data.lastUser === message.author.id && data.chain.length > 0) {
+	message.reply({ embeds: [embed.create({ title: '⏳ Wait', description: 'Let someone else add a word first!', color: embed.colors.WARNING })] });
+	return;
+}
+
+data.chain.push(word);
+data.lastUser = message.author.id;
+if (data.chain.length > 50) data.chain = data.chain.slice(-25);
+await extension.storage.write(key, data);
+const chainDisplay = data.chain.slice(-8).join(' → ');
+message.reply({ embeds: [embed.create({ title: '🔗 Word Added!', description: '**' + message.author.username + '** added: **' + word + '**\n\nChain: ' + chainDisplay + '\nLength: **' + data.chain.length + '** words', color: embed.colors.SUCCESS })] });
+})();

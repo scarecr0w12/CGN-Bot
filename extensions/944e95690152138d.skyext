@@ -1,5 +1,5 @@
 const extension = require('extension');
-const server = require('server');
+const server = require('guild');
 
 const tips = [
 	'💡 **Daily Tip:** Remember to take breaks and stay hydrated!',

@@ -21,10 +21,13 @@ module.exports = router => {
 			const siteSettings = await TierManager.getSiteSettings();
 			const userDoc = await Users.findOne(req.user.id);
 
+			// Ensure linkedAccounts is always an array (MariaDB JSON fields may return non-array values)
+			const linkedAccounts = Array.isArray(userDoc?.linked_accounts) ? userDoc.linked_accounts : [];
+
 			res.render("pages/account-settings.ejs", {
 				authUser: req.user,
 				currentPage: "/account",
-				linkedAccounts: userDoc?.linked_accounts || [],
+				linkedAccounts,
 				oauthProviders: siteSettings?.oauth_providers || {},
 				success: req.query.success || null,
 				error: req.query.error || null,
@@ -122,7 +125,7 @@ module.exports = router => {
 				return res.status(404).json({ error: "User not found" });
 			}
 
-			const existingAccounts = user.linked_accounts?.filter(a => a._id !== provider) || [];
+			const existingAccounts = Array.isArray(user.linked_accounts) ? user.linked_accounts.filter(a => a._id !== provider) : [];
 			user.query.set("linked_accounts", existingAccounts);
 			await user.save();
 

@@ -1,0 +1,44 @@
+const message = require('message');
+const command = require('command');
+const utils = require('utils');
+const embed = require('embed');
+
+const target = message.mentions[0] || message.author;
+const avatar = target.avatarURL ? target.avatarURL({ size: 512 }) : '';
+
+// Get caption from suffix, removing the mention if present
+let caption = command.suffix.trim();
+if (message.mentions[0]) {
+	caption = caption.replace(/<@!?\d+>/g, '').trim();
+}
+caption = caption || target.username;
+
+// Create a polaroid-style embed
+const date = new Date().toLocaleDateString('en-US', { 
+	month: 'short', 
+	day: 'numeric', 
+	year: 'numeric' 
+});
+
+message.reply({
+	embeds: [embed.create({
+		author: { name: '📸 Polaroid' },
+		description: '┌────────────────────┐
+' +
+			'│                    │
+' +
+			'│                    │
+' +
+			'│                    │
+' +
+			'│                    │
+' +
+			'└────────────────────┘
+
+' +
+			utils.discord.italic('"' + caption.slice(0, 40) + '"'),
+		image: { url: avatar },
+		color: embed.colors.DEFAULT,
+		footer: { text: date },
+	})],
+});

@@ -1,0 +1,137 @@
+{
+	"nav": {
+		"home": "[NL] Home",
+		"features": "[NL] Features",
+		"commands": "[NL] Commands",
+		"dashboard": "[NL] Dashboard",
+		"extensions": "[NL] Extensions",
+		"wiki": "[NL] Wiki",
+		"blog": "[NL] Blog",
+		"support": "[NL] Support",
+		"login": "[NL] Login",
+		"logout": "[NL] Logout",
+		"invite": "[NL] Add to Server"
+	},
+	"landing": {
+		"hero": {
+			"title": "[NL] The Ultimate Discord Bot",
+			"subtitle": "[NL] Powerful moderation, fun commands, and endless customization for your server.",
+			"trustedBy": "[NL] Trusted by {{count}} servers",
+			"addToServer": "[NL] Add to Server",
+			"viewFeatures": "[NL] View Features"
+		},
+		"features": {
+			"title": "[NL] Features",
+			"subtitle": "[NL] Everything you need to manage and enhance your Discord server",
+			"moderation": {
+				"title": "[NL] Moderation",
+				"description": "[NL] Powerful tools to keep your server safe with auto-moderation, warnings, and more."
+			},
+			"fun": {
+				"title": "[NL] Fun Commands",
+				"description": "[NL] Games, jokes, memes, and interactive commands to keep your community engaged."
+			},
+			"leveling": {
+				"title": "[NL] Leveling System",
+				"description": "[NL] Reward active members with points, levels, and custom ranks."
+			},
+			"extensions": {
+				"title": "[NL] Custom Extensions",
+				"description": "[NL] Create or install custom commands and features from our marketplace."
+			},
+			"music": {
+				"title": "[NL] Music",
+				"description": "[NL] High-quality music playback with DJ controls and audio filters."
+			},
+			"ai": {
+				"title": "[NL] AI Chat",
+				"description": "[NL] Intelligent conversations powered by multiple AI providers."
+			}
+		},
+		"cta": {
+			"title": "[NL] Ready to get started?",
+			"subtitle": "[NL] Add {{botName}} to your server in seconds.",
+			"button": "[NL] Add to Server"
+		},
+		"faq": {
+			"title": "[NL] Frequently Asked Questions",
+			"q1": "[NL] Is {{botName}} free to use?",
+			"a1": "[NL] Yes! All core features are completely free. Premium tiers unlock extras like Music and AI chat.",
+			"q2": "[NL] How do I set up the bot?",
+			"a2": "[NL] Click 'Add to Server', select your server, and you're done! Use the dashboard to customize.",
+			"q3": "[NL] What are Extensions?",
+			"a3": "[NL] Extensions are custom commands you can create or install from the community gallery."
+		}
+	},
+	"footer": {
+		"copyright": "[NL] © {{year}} {{botName}}. All rights reserved.",
+		"links": {
+			"privacy": "[NL] Privacy Policy",
+			"terms": "[NL] Terms of Service",
+			"contact": "[NL] Contact",
+			"status": "[NL] Status"
+		},
+		"social": {
+			"discord": "[NL] Discord",
+			"github": "[NL] GitHub",
+			"twitter": "[NL] Twitter"
+		}
+	},
+	"auth": {
+		"loginWith": "[NL] Login with {{provider}}",
+		"loggingIn": "[NL] Logging in...",
+		"loginSuccess": "[NL] Successfully logged in!",
+		"loginFailed": "[NL] Login failed. Please try again.",
+		"logoutSuccess": "[NL] Successfully logged out.",
+		"welcome": "[NL] Welcome, {{username}}!"
+	},
+	"profile": {
+		"title": "[NL] Profile",
+		"myServers": "[NL] My Servers",
+		"settings": "[NL] Account Settings",
+		"linkedAccounts": "[NL] Linked Accounts",
+		"subscription": "[NL] Subscription",
+		"votePoints": "[NL] Vote Points",
+		"extensions": "[NL] My Extensions"
+	},
+	"servers": {
+		"title": "[NL] Select a Server",
+		"noServers": "[NL] You don't have any servers to manage.",
+		"manage": "[NL] Manage",
+		"notInServer": "[NL] Bot not in server",
+		"invite": "[NL] Invite Bot"
+	},
+	"membership": {
+		"title": "[NL] Premium Membership",
+		"subtitle": "[NL] Unlock powerful features for your server",
+		"currentTier": "[NL] Current Tier",
+		"free": "[NL] Free",
+		"starter": "[NL] Starter",
+		"premium": "[NL] Premium",
+		"enterprise": "[NL] Enterprise",
+		"perMonth": "[NL] /month",
+		"perYear": "[NL] /year",
+		"subscribe": "[NL] Subscribe",
+		"manage": "[NL] Manage Subscription",
+		"features": "[NL] Features",
+		"compare": "[NL] Compare Plans",
+		"faq": "[NL] FAQ"
+	},
+	"error": {
+		"403": {
+			"title": "[NL] Access Denied",
+			"message": "[NL] You don't have permission to access this page.",
+			"goHome": "[NL] Go to Homepage"
+		},
+		"404": {
+			"title": "[NL] Page Not Found",
+			"message": "[NL] The page you're looking for doesn't exist or has been moved.",
+			"goHome": "[NL] Go to Homepage"
+		},
+		"500": {
+			"title": "[NL] Server Error",
+			"message": "[NL] Something went wrong on our end. Please try again later.",
+			"goHome": "[NL] Go to Homepage"
+		}
+	}
+}

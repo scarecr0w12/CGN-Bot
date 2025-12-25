@@ -115,7 +115,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					} catch (_) {
 						// Meh
 					}
-					if (configJS.yesStrings.includes(message.content.toLowerCase().trim())) {
+					if (configJS && configJS.yesStrings && configJS.yesStrings.includes(message.content.toLowerCase().trim())) {
 						await dmBanned(member.id);
 						if (isGuildMember) {
 							await member.ban({ deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.tag}` });

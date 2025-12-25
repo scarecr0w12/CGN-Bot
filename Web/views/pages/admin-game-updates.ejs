@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Game Updates - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+
+	<script>
+	function addSubscription() {
+		var gameSelect = $("#new-game");
+		var channelSelect = $("#new-channel");
+		
+		if(!gameSelect.val()) {
+			gameSelect.addClass("is-danger");
+			return;
+		} else {
+			gameSelect.removeClass("is-danger");
+		}
+		
+		if(!channelSelect.val()) {
+			channelSelect.addClass("is-danger");
+			return;
+		} else {
+			channelSelect.removeClass("is-danger");
+		}
+
+		SkynetData.HUM = true;
+		$.ajax({
+			type: "POST",
+			url: "<%= currentPage %>",
+			data: {
+				"new-game": gameSelect.val(),
+				"new-channel": channelSelect.val(),
+				"new-mention": $("#new-mention").val() || ""
+			},
+			success: function() {
+				SkynetUtil.SFS();
+				SkynetData.HUM = true;
+				$("#form").submit();
+				Turbolinks.visit('');
+			}
+		});
+	}
+
+	function removeSubscription(gameId) {
+		if(!confirm("Remove this game update subscription?")) return;
+		
+		var input = document.createElement("input");
+		input.type = "hidden";
+		input.name = "game_updates-" + gameId + "-removed";
+		input.value = "true";
+		document.getElementById("form").appendChild(input);
+		
+		SkynetData.HUM = true;
+		$("#form").submit();
+	}
+	</script>
+</head>
+<body onload="SkynetUtil.SFS();">
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column">
+					<h1 class="title">
+						<span class="icon"><i class="fa fa-gamepad"></i></span>
+						Game Server Updates
+					</h1>
+					<article class="message is-primary">
+						<div class="message-body">
+							<strong>Game Server Update Announcer</strong> automatically posts notifications when your favorite games release new updates. Perfect for game server administrators who need to stay informed about patches and updates. Updates are checked <strong>hourly</strong>.
+						</div>
+					</article>
+					
+					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
+						<!-- Master Enable Toggle -->
+						<div class="field">
+							<label class="checkbox">
+								<input name="game_updates-isEnabled" type="checkbox" <%= configData.game_updates.isEnabled ? "checked" : "" %>>
+								<strong>Enable Game Update Announcements</strong>
+							</label>
+						</div>
+						
+						<hr>
+						
+						<!-- Current Subscriptions -->
+						<h2 class="subtitle is-4">
+							<span class="icon"><i class="fa fa-bell"></i></span>
+							Active Subscriptions
+						</h2>
+						
+						<%- include("../partials/no-results", { isHidden: pageData.subscriptions.length, isSearchQuery: false, description: "You haven't subscribed to any game updates yet. Add one below to get started!" }) %>
+						
+						<% if (pageData.subscriptions.length) { %>
+						<div class="field" style="overflow-x: auto;">
+							<table class="table is-fullwidth is-striped">
+								<thead>
+									<tr>
+										<th>Game</th>
+										<th>Channel</th>
+										<th>Mention Role</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<% pageData.subscriptions.forEach(sub => { %>
+									<tr>
+										<td>
+											<div class="is-flex is-align-items-center">
+												<figure class="image is-32x32 mr-2">
+													<img src="<%= sub.gameIcon %>" alt="<%= sub.gameName %>" style="border-radius: 4px;">
+												</figure>
+												<strong><%= sub.gameName %></strong>
+											</div>
+										</td>
+										<td>
+											<div class="select is-small">
+												<select name="game_updates-<%= sub.game_id %>-channel">
+													<% pageData.channelData.forEach(channel => { %>
+													<option value="<%= channel.id %>" <%= sub.channel_id === channel.id ? "selected" : "" %>>#<%= channel.name %></option>
+													<% }); %>
+												</select>
+											</div>
+										</td>
+										<td>
+											<div class="select is-small">
+												<select name="game_updates-<%= sub.game_id %>-mention">
+													<option value="">No mention</option>
+													<option value="everyone" <%= sub.mention_role_id === "everyone" ? "selected" : "" %>>@everyone</option>
+													<option value="here" <%= sub.mention_role_id === "here" ? "selected" : "" %>>@here</option>
+													<% pageData.roleData.forEach(role => { %>
+													<option value="<%= role.id %>" <%= sub.mention_role_id === role.id ? "selected" : "" %>>@<%= role.name %></option>
+													<% }); %>
+												</select>
+											</div>
+										</td>
+										<td>
+											<label class="checkbox">
+												<input name="game_updates-<%= sub.game_id %>-isEnabled" type="checkbox" <%= sub.isEnabled ? "checked" : "" %>>
+												<span class="tag <%= sub.isEnabled ? 'is-success' : 'is-warning' %>">
+													<%= sub.isEnabled ? "Active" : "Paused" %>
+												</span>
+											</label>
+										</td>
+										<td>
+											<button type="button" class="button is-small is-danger" onclick="removeSubscription('<%= sub.game_id %>');">
+												<span class="icon is-small"><i class="fa fa-trash"></i></span>
+												<span>Remove</span>
+											</button>
+										</td>
+									</tr>
+									<% }); %>
+								</tbody>
+							</table>
+						</div>
+						<% } %>
+						
+						<hr>
+						
+						<!-- Add New Subscription -->
+						<h2 class="subtitle is-4">
+							<span class="icon"><i class="fa fa-plus-circle"></i></span>
+							Add Game Subscription
+						</h2>
+						
+						<div class="columns">
+							<div class="column is-one-third">
+								<div class="field">
+									<label class="label">Game</label>
+									<div class="control">
+										<div class="select is-fullwidth" id="new-game-wrapper">
+											<select id="new-game">
+												<option value="">Select a game...</option>
+												<% pageData.availableGames.forEach(game => { %>
+												<% const alreadySubscribed = pageData.subscriptions.some(s => s.game_id === game.id); %>
+												<option value="<%= game.id %>" <%= alreadySubscribed ? "disabled" : "" %>>
+													<%= game.name %><%= alreadySubscribed ? " (subscribed)" : "" %>
+												</option>
+												<% }); %>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="column is-one-third">
+								<div class="field">
+									<label class="label">Channel</label>
+									<div class="control">
+										<div class="select is-fullwidth">
+											<select id="new-channel">
+												<option value="">Select a channel...</option>
+												<% pageData.channelData.forEach(channel => { %>
+												<option value="<%= channel.id %>">#<%= channel.name %></option>
+												<% }); %>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="column is-one-third">
+								<div class="field">
+									<label class="label">Mention Role (optional)</label>
+									<div class="control">
+										<div class="select is-fullwidth">
+											<select id="new-mention">
+												<option value="">No mention</option>
+												<option value="everyone">@everyone</option>
+												<option value="here">@here</option>
+												<% pageData.roleData.forEach(role => { %>
+												<option value="<%= role.id %>">@<%= role.name %></option>
+												<% }); %>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="field">
+							<div class="control">
+								<button type="button" class="button is-primary" onclick="addSubscription();">
+									<span class="icon"><i class="fa fa-plus"></i></span>
+									<span>Add Subscription</span>
+								</button>
+							</div>
+						</div>
+						
+						<hr>
+						
+						<!-- Available Games Info -->
+						<h2 class="subtitle is-4">
+							<span class="icon"><i class="fa fa-info-circle"></i></span>
+							Supported Games
+						</h2>
+						
+						<div class="columns is-multiline">
+							<% pageData.availableGames.forEach(game => { %>
+							<div class="column is-one-quarter">
+								<div class="card">
+									<div class="card-image">
+										<figure class="image is-16by9">
+											<img src="<%= game.icon %>" alt="<%= game.name %>" style="object-fit: cover;">
+										</figure>
+									</div>
+									<div class="card-content" style="padding: 0.75rem;">
+										<p class="title is-6"><%= game.name %></p>
+									</div>
+								</div>
+							</div>
+							<% }); %>
+						</div>
+						
+						<br>
+						<% var formButtonsUnsaved = false; %>
+						<%- include('../partials/form-buttons') %>
+						<%- include('../partials/form-buttons-bar') %>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<%- include('../partials/footer') %>
+	<%- include('../partials/scroll-top-button') %>
+</body>
+</html>

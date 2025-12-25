@@ -34,6 +34,8 @@ module.exports = router => {
 	setupConsolePage(router, "/global-options/bot-lists", "administration", [], controllers.console.options.botLists);
 	setupConsolePage(router, "/global-options/premium-extensions", "administration", [], controllers.console.options.premiumExtensions);
 	setupConsolePage(router, "/global-options/premium-extensions/sales", "administration", [], controllers.console.options.premiumExtensionsSales);
+	setupConsolePage(router, "/global-options/network-approvals", "administration", [], controllers.console.networkApprovals);
+	setupConsolePage(router, "/global-options/extension-queue", "administration", [], controllers.console.extensionQueue);
 	router.post("/global-options/bot-lists/sync-commands", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.options.botLists.syncCommands);
 
 	// Membership System (Sudo/Host only)
@@ -41,8 +43,10 @@ module.exports = router => {
 	setupConsolePage(router, "/membership/tiers", "administration", [], controllers.console.membership.tiers);
 	setupConsolePage(router, "/membership/oauth", "administration", [], controllers.console.membership.oauth);
 	setupConsolePage(router, "/membership/payments", "administration", [], controllers.console.membership.payments);
+	setupConsolePage(router, "/membership/email", "administration", [], controllers.console.membership.email);
+	router.post("/membership/email/test", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.membership.email.test);
 	setupConsolePage(router, "/membership/servers", "administration", [], controllers.console.membership.servers);
-	router.post("/membership/servers/cancel", controllers.console.membership.servers.cancel);
+	router.post("/membership/servers/cancel", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.membership.servers.cancel);
 
 	// Management Settings
 	setupConsolePage(router, "/management/maintainers", "management", [], controllers.console.management.maintainers);
@@ -56,6 +60,27 @@ module.exports = router => {
 	setupConsolePage(router, "/feedback", "maintainer", [], controllers.console.feedback.list);
 	router.post("/feedback/update", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.update);
 	router.post("/feedback/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.feedback.delete);
+
+	// Tickets System
+	setupConsolePage(router, "/tickets", "maintainer", [], controllers.console.tickets.list);
+	setupConsolePage(router, "/tickets/:ticketId", "maintainer", [], controllers.console.tickets.view);
+	router.post("/tickets/update", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.update);
+	router.post("/tickets/reply", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.reply);
+	router.post("/tickets/close", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.close);
+	router.post("/tickets/delete", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.delete);
+	router.get("/tickets/:ticketId/transcript", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.tickets.transcript);
+
+	// Featured Creators Management (Administration level)
+	setupConsolePage(router, "/global-options/featured-creators", "administration", [], controllers.console.featuredCreators);
+	router.post("/global-options/featured-creators/set", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.setFeatured);
+	router.post("/global-options/featured-creators/update-stats", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.updateStats);
+	router.get("/global-options/featured-creators/:userId", mw.checkUnavailableAPI, setAdministrationContext, mw.authorizeConsoleAccess, controllers.console.featuredCreators.getCreatorStatus);
+
+	// IndexNow SEO Integration (Management level)
+	setupConsolePage(router, "/infrastructure/indexnow", "management", [], controllers.console.indexnow.status);
+	router.post("/infrastructure/indexnow/test", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.test);
+	router.post("/infrastructure/indexnow/submit", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.submit);
+	router.post("/infrastructure/indexnow/reset", mw.checkUnavailableAPI, setMaintainerAPIContext, mw.authorizeConsoleAccess, controllers.console.indexnow.reset);
 
 	// Cloudflare Integration (Management level)
 	setupConsolePage(router, "/infrastructure/cloudflare", "management", [], controllers.console.cloudflare.getStatus);

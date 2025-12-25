@@ -244,8 +244,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	client.IPC.on("traffic", async (msg, callback) => {
-		logger.info("Getting traffic data");
-		callback(client.traffic.get);
+		logger.debug("Getting traffic data for shard");
+		callback(client.traffic.getAndReset());
 	});
 
 	client.IPC.on("shardData", async (msg, callback) => {
@@ -386,6 +386,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		global.isFrozen = true;
 		client.destroy();
 		callback();
+	});
+
+	// Heartbeat handler for health monitoring
+	client.IPC.on("heartbeat", async (msg, callback) => {
+		callback({ timestamp: msg.timestamp, shard: client.shardID, ok: true });
 	});
 
 	client.IPC.on("restart", async (msg, callback) => {
@@ -733,17 +738,29 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 * INTERACTION_CREATE (slash / context commands)
 	 */
 	client.on("interactionCreate", async interaction => {
-		if (!interaction.isChatInputCommand()) return;
 		if (!client.slashCommands) {
-			return interaction.reply({
-				content: "Slash commands are still loading. Please try again in a moment.",
-				ephemeral: true,
-			});
+			if (interaction.isRepliable()) {
+				return interaction.reply({
+					content: "Commands are still loading. Please try again in a moment.",
+					ephemeral: true,
+				});
+			}
+			return;
 		}
+
 		try {
-			await client.slashCommands.handleInteraction(interaction);
+			// Handle slash commands
+			if (interaction.isChatInputCommand()) {
+				await client.slashCommands.handleInteraction(interaction);
+			// Handle button interactions
+			} else if (interaction.isButton()) {
+				await client.slashCommands.handleButtonInteraction(interaction);
+			// Handle select menu interactions
+			} else if (interaction.isStringSelectMenu()) {
+				await client.slashCommands.handleSelectMenuInteraction(interaction);
+			}
 		} catch (err) {
-			logger.warn("Failed to handle interactionCreate.", { interaction: interaction.commandName }, err);
+			logger.warn("Failed to handle interactionCreate.", { type: interaction.type }, err);
 		}
 	});
 
@@ -758,7 +775,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 				await client.events.onEvent("messageDelete", msg);
 			} catch (err) {
 				logger.error(`An unexpected error occurred while handling a MESSAGE_DELETE event! x.x`,
-					{ svrid: msg.guild && msg.guild.id, usrid: msg.author.id, chid: msg.channel.id, msgid: msg.id }, err);
+					{ svrid: msg.guild && msg.guild.id, usrid: msg.author && msg.author.id, chid: msg.channel && msg.channel.id, msgid: msg.id }, err);
 			}
 		}
 	});

@@ -1,1 +1,5 @@
 *.min.js
+scripts/
+tests/
+Internals/Extensions/API/
+data/

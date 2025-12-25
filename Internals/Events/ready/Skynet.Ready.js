@@ -6,9 +6,14 @@ const {
 	PostShardedData,
 	Utils,
 	Giveaways,
+	TempRoleManager,
+	ConfigManager,
 } = require("../../../Modules/");
+const GameUpdateAnnouncer = require("../../../Modules/GameUpdateAnnouncer");
 const uptimeKuma = require("../../../Modules/UptimeKuma");
 const metrics = require("../../../Modules/Metrics");
+const { CommandMiddleware } = require("../../CommandMiddleware");
+const { cacheEvents } = require("../../../Modules/CacheEvents");
 const {
 	ClearServerStats: clearStats,
 	MessageOfTheDay: createMessageOfTheDay,
@@ -23,8 +28,9 @@ const {
 class Ready extends BaseEvent {
 	async handle () {
 		let leftGuilds = 0;
-		if (this.configJSON.guildBlocklist.length) {
-			this.configJSON.guildBlocklist.forEach(guildID => {
+		const settings = await ConfigManager.get();
+		if (settings.guildBlocklist.length) {
+			settings.guildBlocklist.forEach(guildID => {
 				const guild = this.client.guilds.cache.get(guildID);
 				if (guild) {
 					guild.leave();
@@ -102,12 +108,13 @@ class Ready extends BaseEvent {
 	// Set bot's "now playing" activity
 	async setBotActivity () {
 		logger.debug("Setting bots playing activity.");
+		const settings = await ConfigManager.get();
 		let activity = {
-			name: configJSON.activity.name.format({ shard: this.client.shardID, totalShards: this.client.shard.count }),
-			type: ActivityType[configJSON.activity.type] || ActivityType.Playing,
-			url: configJSON.activity.twitchURL || null,
+			name: settings.botActivity.name.format({ shard: this.client.shardID, totalShards: this.client.shard.count }),
+			type: ActivityType[settings.botActivity.type] || ActivityType.Playing,
+			url: settings.botActivity.twitchURL || null,
 		};
-		if (configJSON.activity.name === "default") {
+		if (settings.botActivity.name === "default") {
 			activity = {
 				name: "https://skynetbot.net | Shard {shard}".format({ shard: this.client.shardID }),
 				type: ActivityType.Playing,
@@ -116,7 +123,7 @@ class Ready extends BaseEvent {
 		}
 		await this.client.user.setPresence({
 			activities: [activity],
-			status: configJSON.status,
+			status: settings.botStatus,
 		});
 		await this.startMessageCount();
 	}
@@ -173,8 +180,51 @@ class Ready extends BaseEvent {
 		logger.debug("Started Prometheus metrics collection interval");
 	}
 
+	// Initialize Phase 2 systems
+	initializePhase2Systems () {
+		logger.debug("Initializing Phase 2 performance monitoring systems...");
+
+		// Initialize CommandMiddleware
+		if (!this.client.commandMiddleware) {
+			this.client.commandMiddleware = new CommandMiddleware();
+			logger.debug("CommandMiddleware initialized");
+
+			// Update middleware count metric to 0 initially
+			metrics.updateMiddlewareCount(0);
+		}
+
+		// Initialize CacheEvents handlers count
+		const cacheStats = cacheEvents.getStats();
+		metrics.updateCacheHandlerCount(cacheStats.totalHandlers);
+		logger.debug(`CacheEvents initialized with ${cacheStats.handlerCount} handler keys`);
+
+		logger.info("Phase 2 performance monitoring systems initialized successfully");
+	}
+
+	// Start temp role expiry checker
+	startTempRoleManager () {
+		if (this.client.shardID === "0") {
+			if (!this.client.tempRoleManager) {
+				this.client.tempRoleManager = new TempRoleManager(this.client);
+			}
+			this.client.tempRoleManager.start();
+		}
+	}
+
+	// Start Game Update Announcer
+	startGameUpdateAnnouncer () {
+		if (this.client.shardID === "0") {
+			if (!this.client.gameUpdateAnnouncer) {
+				this.client.gameUpdateAnnouncer = new GameUpdateAnnouncer(this.client);
+			}
+			this.client.gameUpdateAnnouncer.init();
+		}
+	}
+
 	// Report to master that we're ok to go
 	showStartupMessage () {
+		this.startTempRoleManager();
+		this.startGameUpdateAnnouncer();
 		const readyMsgs = [
 			"rock and roll!",
 			"PWN some n00bs.",
@@ -210,6 +260,9 @@ class Ready extends BaseEvent {
 
 		// Start Prometheus metrics collection
 		this.startMetricsCollection();
+
+		// Initialize Phase 2 performance monitoring systems
+		this.initializePhase2Systems();
 
 		this.client.IPC.send("finished", { id: this.client.shard.id });
 	}
