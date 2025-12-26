@@ -45,13 +45,17 @@ self.addEventListener('activate', event => {
 
 // Helper: Limit cache size
 const limitCacheSize = (cacheName, maxItems) => {
-	caches.open(cacheName).then(cache => {
-		cache.keys().then(keys => {
+	return caches.open(cacheName)
+		.then(cache => cache.keys())
+		.then(keys => {
 			if (keys.length > maxItems) {
-				cache.delete(keys[0]).then(() => limitCacheSize(cacheName, maxItems));
+				return caches.open(cacheName)
+					.then(cache => cache.delete(keys[0]))
+					.then(() => limitCacheSize(cacheName, maxItems));
 			}
-		});
-	});
+			return Promise.resolve();
+		})
+		.catch(err => console.error('Cache size limit error:', err));
 };
 
 // Helper: Check if request should be cached
@@ -105,20 +109,24 @@ self.addEventListener('fetch', event => {
 						// Clone response before caching
 						const responseClone = fetchRes.clone();
 
-						caches.open(IMAGE_CACHE).then(cache => {
-							cache.put(request, responseClone);
-							limitCacheSize(IMAGE_CACHE, MAX_IMAGE_ITEMS);
-						});
+						caches.open(IMAGE_CACHE)
+							.then(cache => cache.put(request, responseClone))
+							.then(() => limitCacheSize(IMAGE_CACHE, MAX_IMAGE_ITEMS))
+							.catch(err => console.error('Image cache error:', err));
 
 						return fetchRes;
 					});
 				})
-				.catch(() =>
+				.catch(() => {
 					// Return placeholder if offline
-					 new Response('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect fill="#e2e8f0" width="100" height="100"/><text x="50" y="50" text-anchor="middle" dy=".3em" fill="#64748b">Offline</text></svg>', {
+					const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">' +
+						'<rect fill="#e2e8f0" width="100" height="100"/>' +
+						'<text x="50" y="50" text-anchor="middle" dy=".3em" fill="#64748b">Offline</text>' +
+						'</svg>';
+					return new Response(svg, {
 						headers: { 'Content-Type': 'image/svg+xml' },
-					}),
-				),
+					});
+				}),
 		);
 	} else if (isStatic) {
 		// Static assets: Cache-first with network fallback
@@ -137,17 +145,17 @@ self.addEventListener('fetch', event => {
 
 					// Cache successful responses
 					if (fetchRes.ok) {
-						caches.open(DYNAMIC_CACHE).then(cache => {
-							cache.put(request, responseClone);
-							limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS);
-						});
+						caches.open(DYNAMIC_CACHE)
+							.then(cache => cache.put(request, responseClone))
+							.then(() => limitCacheSize(DYNAMIC_CACHE, MAX_DYNAMIC_ITEMS))
+							.catch(err => console.error('Dynamic cache error:', err));
 					}
 
 					return fetchRes;
 				})
-				.catch(() =>
+				.catch(() => {
 					// Serve from cache if network fails
-					 caches.match(request)
+					return caches.match(request)
 						.then(cacheRes => {
 							if (cacheRes) return cacheRes;
 
@@ -162,8 +170,8 @@ self.addEventListener('fetch', event => {
 									headers: { 'Content-Type': 'text/plain' },
 								});
 							});
-						}),
-				),
+						});
+				}),
 		);
 	}
 });

@@ -8,6 +8,22 @@
 		return;
 	}
 
+	// Handler for update found event
+	function handleUpdateFound(registration) {
+		return () => {
+			const newWorker = registration.installing;
+			newWorker.addEventListener("statechange", () => {
+				if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+					// New version available
+					if (confirm("A new version is available. Reload to update?")) {
+						newWorker.postMessage({ action: "skipWaiting" });
+						window.location.reload();
+					}
+				}
+			});
+		};
+	}
+
 	// Register service worker on page load
 	window.addEventListener("load", () => {
 		navigator.serviceWorker.register("/service-worker.js", {
@@ -22,19 +38,7 @@
 				}, 60000); // Check every minute
 
 				// Handle updates
-				registration.addEventListener("updatefound", () => {
-					const newWorker = registration.installing;
-
-					newWorker.addEventListener("statechange", () => {
-						if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-						// New version available
-							if (confirm("A new version is available. Reload to update?")) {
-								newWorker.postMessage({ action: "skipWaiting" });
-								window.location.reload();
-							}
-						}
-					});
-				});
+				registration.addEventListener("updatefound", handleUpdateFound(registration));
 			})
 			.catch(err => {
 				console.error("Service Worker registration failed:", err);
