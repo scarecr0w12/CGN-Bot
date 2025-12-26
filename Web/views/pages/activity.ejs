@@ -23,6 +23,58 @@
 	%>
 	<%- include('../partials/head') %>
 	
+	<% if (pageData.mode === "servers" && pageData.serverData && pageData.serverData.length > 0) { %>
+	<!-- CollectionPage Schema for Server Directory -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "CollectionPage",
+		"name": "<%= pageData.pageTitle %>",
+		"description": "<%= pageData.seo.description %>",
+		"mainEntity": {
+			"@type": "ItemList",
+			"itemListElement": [
+				<%- pageData.serverData.map((server, index) => JSON.stringify({
+					"@type": "ListItem",
+					"position": index + 1,
+					"item": {
+						"@type": "Organization",
+						"name": server.name.replace(/"/g, '\\"'),
+						"image": server.icon,
+						"description": `Discord server with ${server.memberCount} members`,
+						"url": `${typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : ''}/server/${server.id}`
+					}
+				})).join(",\n\t\t\t\t") %>
+			]
+		}
+	}
+	</script>
+	<% } else if (pageData.mode === "users" && pageData.searchResults && pageData.searchResults.length > 0) { %>
+	<!-- CollectionPage Schema for User Directory -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "CollectionPage",
+		"name": "<%= pageData.pageTitle %>",
+		"description": "<%= pageData.seo.description %>",
+		"mainEntity": {
+			"@type": "ItemList",
+			"itemListElement": [
+				<%- pageData.searchResults.map((user, index) => JSON.stringify({
+					"@type": "ListItem",
+					"position": index + 1,
+					"item": {
+						"@type": "Person",
+						"name": user.username.replace(/"/g, '\\"'),
+						"image": user.avatar
+					}
+				})).join(",\n\t\t\t\t") %>
+			]
+		}
+	}
+	</script>
+	<% } %>
+	
 	<style>
 	/* Activity Page Specific Styles */
 	.activity-stat-card {

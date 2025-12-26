@@ -224,14 +224,26 @@ middleware.markAsAPI = (req, res, next) => {
 
 middleware.enforceProtocol = (req, res, next) => {
 	if (!req.secure) {
-		return res.redirect(`https://${req.hostname}:${global.configJS.httpsPort}${req.url}`);
+		// Validate URL to prevent open redirect attacks
+		const safeUrl = req.url && req.url.startsWith("/") && !req.url.startsWith("//") ? req.url : "/";
+		return res.redirect(`https://${req.hostname}:${global.configJS.httpsPort}${safeUrl}`);
 	}
 	next();
 };
 
 middleware.setHeaders = (req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
-	res.header("Access-Control-Allow-Credentials", true);
+	// Only allow CORS from trusted origins or same-origin
+	const origin = req.headers.origin;
+	const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(",") : [];
+
+	if (origin && allowedOrigins.includes(origin)) {
+		res.header("Access-Control-Allow-Origin", origin);
+		res.header("Access-Control-Allow-Credentials", true);
+	} else if (!origin) {
+		// Same-origin request (no CORS needed)
+		res.header("Access-Control-Allow-Credentials", true);
+	}
+
 	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 	next();
 };

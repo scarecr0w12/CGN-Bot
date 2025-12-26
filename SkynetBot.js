@@ -542,11 +542,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 */
 	client.on("guildBanAdd", async (guild, user) => {
 		if (client.isReady) {
-			logger.silly(`Received GUILD_BAN_ADD event from Discord!`, { svrid: guild.id, usrid: user.id });
+			logger.silly(`Received GUILD_BAN_ADD event from Discord!`, { svrid: guild?.id, usrid: user?.id });
 			try {
 				await client.events.onEvent("guildBanAdd", guild, user);
 			} catch (err) {
-				logger.error(`An unexpected error occurred while handling a GUILD_BAN_ADD event! x.x`, { svrid: guild.id, usrid: user.id }, err);
+				logger.error(`An unexpected error occurred while handling a GUILD_BAN_ADD event! x.x`, { svrid: guild?.id, usrid: user?.id }, err);
 			}
 		}
 	});
@@ -556,11 +556,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 */
 	client.on("guildBanRemove", async (guild, user) => {
 		if (client.isReady) {
-			logger.silly(`Received GUILD_BAN_REMOVE event from Discord!`, { svrid: guild.id, usrid: user.id });
+			logger.silly(`Received GUILD_BAN_REMOVE event from Discord!`, { svrid: guild?.id, usrid: user?.id });
 			try {
 				await client.events.onEvent("guildBanRemove", guild, user);
 			} catch (err) {
-				logger.error(`An unexpected error occurred while handling a GUILD_BAN_REMOVE event! x.x`, { svrid: guild.id, usrid: user.id }, err);
+				logger.error(`An unexpected error occurred while handling a GUILD_BAN_REMOVE event! x.x`, { svrid: guild?.id, usrid: user?.id }, err);
 			}
 		}
 	});

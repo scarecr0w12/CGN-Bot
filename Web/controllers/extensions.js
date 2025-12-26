@@ -409,7 +409,12 @@ controllers.builder = async (req, { res }) => {
 				if (galleryDocument) {
 					try {
 						const versionDoc = galleryDocument.versions.id(galleryDocument.version);
-						const codePath = `${__dirname}/../../extensions/${versionDoc.code_id}.skyext`;
+						// Sanitize code_id to prevent path traversal
+						const safeCodeId = path.basename(versionDoc.code_id).replace(/[^a-zA-Z0-9_-]/g, "");
+						if (!safeCodeId || safeCodeId !== versionDoc.code_id) {
+							throw new Error("Invalid code_id");
+						}
+						const codePath = path.join(__dirname, "../../extensions", `${safeCodeId}.skyext`);
 						galleryDocument.code = require("fs").readFileSync(codePath, "utf8");
 					} catch (err) {
 						galleryDocument.code = "";
@@ -574,11 +579,16 @@ controllers.download = async (req, res) => {
 		const versionDocument = extensionDocument.versions.id(versionTag);
 		if (!versionDocument) return res.sendStatus(404);
 		try {
+			// Sanitize code_id to prevent path traversal
+			const safeCodeId = path.basename(versionDocument.code_id).replace(/[^a-zA-Z0-9_-]/g, "");
+			if (!safeCodeId || safeCodeId !== versionDocument.code_id) {
+				return res.status(400).send("Invalid extension code identifier");
+			}
 			res.set({
 				"Content-Disposition": `${"attachment; filename="}${extensionDocument.name}.skyext`,
 				"Content-Type": "text/javascript",
 			});
-			res.sendFile(path.join(__dirname, `../../extensions/${versionDocument.code_id}.skyext`));
+			res.sendFile(path.join(__dirname, `../../extensions/${safeCodeId}.skyext`));
 		} catch (err) {
 			res.sendStatus(500);
 		}
@@ -1022,5 +1032,95 @@ controllers.gallery.modify = async (req, { res }) => {
 		}
 	} else {
 		res.sendStatus(403);
+	}
+};
+
+/**
+ * Extension detail page - SEO-friendly landing page with comprehensive info
+ * Route: /extensions/view/:id/:slug
+ */
+controllers.detailPage = async (req, { res }) => {
+	const extId = req.params.id;
+
+	try {
+		const galleryDoc = await Gallery.findOne({ _id: new ObjectId(extId) });
+
+		if (!galleryDoc || galleryDoc.state !== "gallery") {
+			return renderError(res, "Extension not found", undefined, 404);
+		}
+
+		// Parse extension data
+		const extensionData = await parsers.extensionData(req, galleryDoc, galleryDoc.published_version);
+
+		if (!extensionData) {
+			return renderError(res, "Failed to load extension data", undefined, 500);
+		}
+
+		// Generate slug if missing
+		if (!galleryDoc.slug && extensionData.name) {
+			const checkSlugExists = async slug => {
+				const existing = await Gallery.findOne({
+					slug: slug,
+					_id: { $ne: extId },
+				});
+				return !!existing;
+			};
+			const newSlug = await generateUniqueSlug(extensionData.name, checkSlugExists);
+			if (newSlug) {
+				galleryDoc.query.set("slug", newSlug);
+				await galleryDoc.save().catch(() => null);
+				extensionData.slug = newSlug;
+			}
+		} else {
+			extensionData.slug = galleryDoc.slug;
+		}
+
+		// Redirect to canonical slug URL
+		if (extensionData.slug && req.params.slug !== extensionData.slug) {
+			return res.redirect(301, `/extensions/view/${extId}/${extensionData.slug}`);
+		}
+
+		// Check if user has upvoted
+		let hasUpvoted = false;
+		if (req.isAuthenticated()) {
+			const userDoc = await Users.findOne({ _id: req.user.id });
+			if (userDoc && userDoc.upvoted_gallery_extensions) {
+				hasUpvoted = userDoc.upvoted_gallery_extensions.includes(extId);
+			}
+		}
+
+		// Get related extensions by tag/type
+		const relatedExtensions = await Gallery.find({
+			state: "gallery",
+			_id: { $ne: extId },
+			$or: [
+				{ tags: { $in: extensionData.tags || [] } },
+			],
+		}).limit(6).exec();
+
+		const relatedData = await Promise.all(
+			relatedExtensions.map(doc => parsers.extensionData(req, doc, doc.published_version)),
+		);
+
+		const canonicalUrl = `/extensions/view/${extId}/${extensionData.slug || ""}`;
+		const pageTitle = `${extensionData.name} - Skynet Extension`;
+		const pageDescription = extensionData.description ?
+			`${extensionData.description.substring(0, 155)}...` :
+			`${extensionData.name} extension for Skynet Discord Bot`;
+
+		res.setPageData({
+			page: "extension-detail.ejs",
+			pageTitle,
+			pageDescription,
+			canonicalUrl,
+			extensionData,
+			hasUpvoted,
+			relatedExtensions: relatedData.filter(Boolean),
+		});
+
+		res.render();
+	} catch (err) {
+		logger.error("Error rendering extension detail page", { extId }, err);
+		renderError(res, "Failed to load extension");
 	}
 };

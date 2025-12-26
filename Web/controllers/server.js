@@ -199,6 +199,19 @@ controllers.publicPage = async (req, { res }) => {
 			description: serverListing.description || `Discord community server`,
 			url: `${configJS.hostingURL}server/${serverId}/${serverListing.slug || ""}`,
 			logo: serverData.icon,
+			foundingDate: serverDocument.added_at ? new Date(serverDocument.added_at).toISOString().split("T")[0] : undefined,
+			numberOfEmployees: memberCount > 0 ? {
+				"@type": "QuantitativeValue",
+				value: memberCount,
+				description: "Discord server members",
+			} : undefined,
+			interactionStatistic: messagesCount > 0 ? {
+				"@type": "InteractionCounter",
+				interactionType: "https://schema.org/CommentAction",
+				userInteractionCount: messagesCount,
+				description: "Messages today",
+			} : undefined,
+			category: serverListing.category || "Discord Server",
 			memberOf: {
 				"@type": "WebSite",
 				name: "Skynet Discord Bot",

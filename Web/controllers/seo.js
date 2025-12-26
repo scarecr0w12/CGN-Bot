@@ -75,7 +75,7 @@ const sitemapXml = async (req, res) => {
 		const wikiDocs = await Wiki.find({}).exec();
 		wikiPages = wikiDocs.map(doc => ({
 			url: `/wiki/${encodeURIComponent(doc._id)}`,
-			priority: "0.6",
+			priority: "0.8",
 			changefreq: "weekly",
 			lastmod: doc.updatedAt ? new Date(doc.updatedAt).toISOString().split("T")[0] : now,
 		}));
@@ -88,7 +88,7 @@ const sitemapXml = async (req, res) => {
 		const blogDocs = await Blog.find({}).exec();
 		blogPosts = blogDocs.map(doc => ({
 			url: `/blog/${doc._id}`,
-			priority: "0.7",
+			priority: "0.8",
 			changefreq: "monthly",
 			lastmod: doc.published_timestamp ? new Date(doc.published_timestamp).toISOString().split("T")[0] : now,
 		}));
@@ -100,13 +100,13 @@ const sitemapXml = async (req, res) => {
 		// Get published extensions using global Gallery model
 		const extDocs = await Gallery.find({ state: "gallery" }).exec();
 		extensions = extDocs.map(doc => {
-			// Use SEO-friendly slug URL if available
+			// Use SEO-friendly detail page URL instead of installer
 			const extUrl = doc.slug ?
-				`/extensions/${doc._id}/${doc.slug}/install` :
-				`/extensions/${doc._id}/install`;
+				`/extensions/view/${doc._id}/${doc.slug}` :
+				`/extensions/view/${doc._id}`;
 			return {
 				url: extUrl,
-				priority: "0.5",
+				priority: "0.7",
 				changefreq: "weekly",
 				lastmod: doc.accepted_at ? new Date(doc.accepted_at).toISOString().split("T")[0] : now,
 			};

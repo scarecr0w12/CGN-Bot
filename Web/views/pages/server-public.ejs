@@ -22,8 +22,27 @@
 	<%- include('../partials/head') %>
 	
 	<% if (pageData.jsonLd) { %>
+	<!-- Organization Schema -->
 	<script type="application/ld+json">
 		<%- JSON.stringify(pageData.jsonLd) %>
+	</script>
+	<% } %>
+	
+	<% if (pageData.breadcrumbs && pageData.breadcrumbs.length > 0) { %>
+	<!-- BreadcrumbList Schema -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "BreadcrumbList",
+		"itemListElement": [
+			<%- pageData.breadcrumbs.map((crumb, index) => JSON.stringify({
+				"@type": "ListItem",
+				"position": index + 1,
+				"name": crumb.name,
+				"item": typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') + crumb.url : crumb.url
+			})).join(",\n\t\t\t") %>
+		]
+	}
 	</script>
 	<% } %>
 	

@@ -3,3 +3,6 @@ scripts/
 tests/
 Internals/Extensions/API/
 data/
+Web/public/service-worker.js
+Web/public/js/sw-register.js
+Web/public/js/lazy-load.js

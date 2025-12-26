@@ -15,7 +15,7 @@ const md = new showdown.Converter({
 md.setFlavor("github");
 const { Tail } = require("tail");
 
-const { getRoundedUptime, saveMaintainerConsoleOptions: save, getChannelData, canDo, renderError } = require("../helpers");
+const { getRoundedUptime, saveMaintainerConsoleOptions: save, getChannelData, canDo, renderError, validateRedirectUrl } = require("../helpers");
 const { GetGuild } = require("../../Modules").getGuild;
 const Constants = require("../../Internals/Constants");
 const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager");
@@ -363,10 +363,10 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 		try {
 			extId = new ObjectId(req.body.pe_extid);
 		} catch (err) {
-			return res.redirect(req.originalUrl);
+			return res.redirect(validateRedirectUrl(req.originalUrl));
 		}
 		const galleryDoc = await Gallery.findOne(extId);
-		if (!galleryDoc) return res.redirect(req.originalUrl);
+		if (!galleryDoc) return res.redirect(validateRedirectUrl(req.originalUrl));
 
 		if (req.body.pe_action === "approve") {
 			const premiumSettings2 = siteSettings?.premium_extensions || {};
@@ -388,13 +388,13 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 			galleryDoc.query.set("premium.is_premium", true);
 			galleryDoc.query.set("premium.approved", true);
 			await galleryDoc.save().catch(() => null);
-			return res.redirect(req.originalUrl);
+			return res.redirect(validateRedirectUrl(req.originalUrl));
 		}
 		if (req.body.pe_action === "reject") {
 			galleryDoc.query.set("premium.is_premium", true);
 			galleryDoc.query.set("premium.approved", false);
 			await galleryDoc.save().catch(() => null);
-			return res.redirect(req.originalUrl);
+			return res.redirect(validateRedirectUrl(req.originalUrl));
 		}
 		if (req.body.pe_action === "adjust") {
 			const pricePoints = parseInt(req.body.pe_price_points, 10) || 0;
@@ -417,7 +417,7 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 			galleryDoc.query.set("premium.price_points", pricePoints);
 			galleryDoc.query.set("premium.approved", true);
 			await galleryDoc.save().catch(() => null);
-			return res.redirect(req.originalUrl);
+			return res.redirect(validateRedirectUrl(req.originalUrl));
 		}
 		return res.redirect(req.originalUrl);
 	}
@@ -430,7 +430,7 @@ controllers.options.premiumExtensions.post = async (req, res) => {
 
 	try {
 		await siteSettings.save();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save premium extensions settings", {}, err);
 		renderError(res, "Failed to save premium extensions settings.");
@@ -593,6 +593,10 @@ controllers.options.donations.post = async (req, res) => {
 	const iconUrls = req.body.icon_url ? Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url] : [];
 
 	const charities = [];
+	// Validate array length to prevent DoS attacks
+	if (names.length > 100) {
+		return res.status(400).json({ error: "Too many charities (max 100)" });
+	}
 	for (let i = 0; i < names.length; i++) {
 		if (names[i] && donateUrls[i] && iconUrls[i]) {
 			charities.push({
@@ -607,7 +611,7 @@ controllers.options.donations.post = async (req, res) => {
 
 	try {
 		await siteSettings.save();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save donation settings", {}, err);
 		renderError(res, "Failed to save donation settings.");
@@ -645,6 +649,10 @@ controllers.options.voteSites.post = async (req, res) => {
 	const iconUrls = req.body.icon_url ? Array.isArray(req.body.icon_url) ? req.body.icon_url : [req.body.icon_url] : [];
 
 	const voteSites = [];
+	// Validate array length to prevent DoS attacks
+	if (names.length > 50) {
+		return res.status(400).json({ error: "Too many vote sites (max 50)" });
+	}
 	for (let i = 0; i < names.length; i++) {
 		if (names[i] && urls[i]) {
 			voteSites.push({
@@ -659,7 +667,7 @@ controllers.options.voteSites.post = async (req, res) => {
 
 	try {
 		await siteSettings.save();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save vote site settings", {}, err);
 		renderError(res, "Failed to save vote site settings.");
@@ -754,7 +762,7 @@ controllers.options.botLists.post = async (req, res) => {
 
 	try {
 		await siteSettings.save();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save bot list settings", {}, err);
 		renderError(res, "Failed to save bot list settings.");
@@ -856,7 +864,7 @@ controllers.membership.features.post = async (req, res) => {
 		await siteSettings.save();
 		const TierManager = require("../../Modules/TierManager");
 		TierManager.invalidateCache();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save features", {}, err);
 		renderError(res, "Failed to save features.");
@@ -898,6 +906,10 @@ controllers.membership.tiers.post = async (req, res) => {
 	const defaultTier = req.body.tier_default || "";
 
 	const tiers = [];
+	// Validate array length to prevent DoS attacks
+	if (ids.length > 20) {
+		return res.status(400).json({ error: "Too many tiers (max 20)" });
+	}
 	for (let i = 0; i < ids.length; i++) {
 		if (ids[i] && names[i]) {
 			const tierId = ids[i].toLowerCase().replace(/[^a-z0-9_]/g, "_");
@@ -923,7 +935,7 @@ controllers.membership.tiers.post = async (req, res) => {
 		await siteSettings.save();
 		const TierManager = require("../../Modules/TierManager");
 		TierManager.invalidateCache();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save tiers", {}, err);
 		renderError(res, "Failed to save tiers.");
@@ -963,6 +975,10 @@ controllers.membership.oauth.post = async (req, res) => {
 	const patreonLocalTiers = req.body.patreon_local_tier ? Array.isArray(req.body.patreon_local_tier) ? req.body.patreon_local_tier : [req.body.patreon_local_tier] : [];
 
 	const patreonMapping = [];
+	// Validate array length to prevent DoS attacks
+	if (patreonTierIds.length > 50) {
+		return res.status(400).json({ error: "Too many Patreon tiers (max 50)" });
+	}
 	for (let i = 0; i < patreonTierIds.length; i++) {
 		if (patreonTierIds[i] && patreonLocalTiers[i]) {
 			patreonMapping.push({
@@ -977,7 +993,7 @@ controllers.membership.oauth.post = async (req, res) => {
 		await siteSettings.save();
 		const TierManager = require("../../Modules/TierManager");
 		TierManager.invalidateCache();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save OAuth settings", {}, err);
 		renderError(res, "Failed to save OAuth settings.");
@@ -1017,6 +1033,10 @@ controllers.membership.payments.post = async (req, res) => {
 	const stripeTierIds = req.body.stripe_tier_id ? Array.isArray(req.body.stripe_tier_id) ? req.body.stripe_tier_id : [req.body.stripe_tier_id] : [];
 
 	const stripeMapping = [];
+	// Validate array length to prevent DoS attacks
+	if (stripeProductIds.length > 50) {
+		return res.status(400).json({ error: "Too many Stripe products (max 50)" });
+	}
 	for (let i = 0; i < stripeProductIds.length; i++) {
 		if (stripeProductIds[i] && stripePriceIds[i] && stripeTierIds[i]) {
 			stripeMapping.push({
@@ -1033,6 +1053,10 @@ controllers.membership.payments.post = async (req, res) => {
 	const paypalTierIds = req.body.paypal_tier_id ? Array.isArray(req.body.paypal_tier_id) ? req.body.paypal_tier_id : [req.body.paypal_tier_id] : [];
 
 	const paypalMapping = [];
+	// Validate array length to prevent DoS attacks
+	if (paypalPlanIds.length > 50) {
+		return res.status(400).json({ error: "Too many PayPal plans (max 50)" });
+	}
 	for (let i = 0; i < paypalPlanIds.length; i++) {
 		if (paypalPlanIds[i] && paypalTierIds[i]) {
 			paypalMapping.push({
@@ -1047,7 +1071,7 @@ controllers.membership.payments.post = async (req, res) => {
 		await siteSettings.save();
 		const TierManager = require("../../Modules/TierManager");
 		TierManager.invalidateCache();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save payment settings", {}, err);
 		renderError(res, "Failed to save payment settings.");
@@ -1163,7 +1187,7 @@ controllers.membership.servers.post = async (req, res) => {
 			await TierManager.grantFeature(serverId, feature);
 		}
 
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to update server tier", { serverId }, err);
 		renderError(res, "Failed to update server tier.");
@@ -1231,7 +1255,7 @@ controllers.membership.email.post = async (req, res) => {
 		await siteSettings.save();
 		const TierManager = require("../../Modules/TierManager");
 		await TierManager.invalidateCache();
-		res.redirect(req.originalUrl);
+		res.redirect(validateRedirectUrl(req.originalUrl));
 	} catch (err) {
 		logger.error("Failed to save email settings", {}, err);
 		renderError(res, "Failed to save email settings.");

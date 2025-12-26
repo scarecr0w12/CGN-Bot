@@ -583,7 +583,8 @@ async function getMetrics (req, res) {
 		res.set("Content-Type", register.contentType);
 		res.end(await register.metrics());
 	} catch (err) {
-		res.status(500).end(err.message);
+		// Don't expose internal error details to prevent XSS
+		res.status(500).end("Internal Server Error");
 	}
 }
 

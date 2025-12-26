@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2025-12-25
+
 ### Security
 
 #### Comprehensive Security Audit - December 24, 2024 ✅
@@ -757,6 +759,9 @@ Reduced slash command count from 98 to 64 (34 slots saved) to stay well under Di
 - **Wiki System** - Version control, reactions, contributor management
 - **Activity Tracking** - Cross-server analytics, server categorization
 
+[1.8.1]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.8.1
+[1.8.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.8.0
+[1.7.1]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.7.1
 [1.7.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.7.0
 [1.6.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.6.0
 [1.5.0]: https://github.com/scarecr0w12/CGN-Bot/releases/tag/v1.5.0

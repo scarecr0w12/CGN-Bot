@@ -17,6 +17,95 @@
 	];
 	%>
 	<%- include('../partials/head') %>
+	
+	<% if (pageData.tiers && pageData.tiers.length > 0) { %>
+	<!-- Product Schema for Premium Membership -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "Product",
+		"name": "Skynet Discord Bot Premium Membership",
+		"description": "<%= pageData.seo.description %>",
+		"brand": {
+			"@type": "Brand",
+			"name": "Skynet Bot"
+		},
+		"offers": [
+			<%- pageData.tiers.filter(t => t.is_purchasable).map(tier => {
+				const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				return JSON.stringify({
+					"@type": "Offer",
+					"name": tier.name + " - Monthly",
+					"price": (tier.price_monthly / 100).toFixed(2),
+					"priceCurrency": "USD",
+					"priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+					"availability": "https://schema.org/InStock",
+					"url": typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') + '/membership' : '/membership',
+					"description": tier.description,
+					"billingDuration": "P1M"
+				});
+			}).join(",\n\t\t\t") %>,
+			<%- pageData.tiers.filter(t => t.is_purchasable && t.yearly_discount > 0).map(tier => {
+				const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				return JSON.stringify({
+					"@type": "Offer",
+					"name": tier.name + " - Yearly",
+					"price": (yearlyTotalCents / 100).toFixed(2),
+					"priceCurrency": "USD",
+					"priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+					"availability": "https://schema.org/InStock",
+					"url": typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') + '/membership' : '/membership',
+					"description": tier.description + " (Yearly - Save " + tier.yearly_discount + "%)",
+					"billingDuration": "P1Y"
+				});
+			}).join(",\n\t\t\t") %>
+		]
+	}
+	</script>
+	
+	<!-- FAQ Schema -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{
+				"@type": "Question",
+				"name": "How do payments work?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "We accept payments via Stripe (credit/debit cards), PayPal, and cryptocurrency via BTCPay. Your subscription will automatically renew unless cancelled."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I cancel anytime?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes! You can cancel your subscription at any time from your dashboard. You'll keep your benefits until the end of your billing period."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I link my Patreon?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "If you're already a Patreon supporter, you can link your Patreon account in Account Settings to automatically receive your membership benefits."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What payment methods do you accept?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "We accept Visa, Mastercard, American Express, PayPal, and cryptocurrency via BTCPay."
+				}
+			}
+		]
+	}
+	</script>
+	<% } %>
+	
 	<style>
 	/* Membership Page Styles */
 	.pricing-grid {

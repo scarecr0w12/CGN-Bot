@@ -2,9 +2,37 @@
 const mw = require("./middleware");
 const { LoggingLevels } = require("../Internals/Constants");
 const ConfigManager = require("../Modules/ConfigManager");
+const logger = require("../Internals/Logger");
+
+/**
+ * Validates redirect URLs to prevent open redirect attacks
+ * @param {string} url - URL to validate
+ * @returns {string} - Safe URL or fallback to root
+ */
+const validateRedirectUrl = (url) => {
+	if (!url || typeof url !== "string") return "/";
+
+	// Remove any leading/trailing whitespace
+	url = url.trim();
+
+	// Only allow relative URLs that start with /
+	if (!url.startsWith("/")) return "/";
+
+	// Block protocol-relative URLs (//example.com)
+	if (url.startsWith("//")) return "/";
+
+	// Block URLs with encoded newlines or other control characters
+	if (/[\r\n\t]/.test(url)) return "/";
+
+	// Block javascript: and data: protocols
+	if (/^(javascript|data|vbscript):/i.test(url)) return "/";
+
+	return url;
+};
 
 module.exports = {
-	denyRequest: (res, isAPI) => isAPI ? res.sendStatus(403) : res.status(403).redirect("/dashboard"),
+	validateRedirectUrl,
+	denyRequest: (res, isAPI) => isAPI ? res.sendStatus(403) : res.status(403).redirect(validateRedirectUrl("/dashboard")),
 
 	renderUnavailable: (req, res) => res.status(503).render("pages/503.ejs", {}),
 
@@ -80,7 +108,7 @@ module.exports = {
 			if (isAPI) {
 				res.sendStatus(200);
 			} else {
-				res.redirect(`${req.originalUrl}`);
+				res.redirect(validateRedirectUrl(req.originalUrl));
 			}
 		} catch (err) {
 			logger.warn(`Failed to update admin console settings at ${req.path} '-'`, { svrid: req.svr.id, usrid: req.consolemember.user.id }, err);
@@ -98,7 +126,7 @@ module.exports = {
 			if (isAPI && !silent) {
 				res.sendStatus(200);
 			} else if (!silent) {
-				res.redirect(req.originalUrl);
+				res.redirect(validateRedirectUrl(req.originalUrl));
 			}
 		} catch (err) {
 			logger.error(`Failed to update maintainer settings at ${req.path} '-'`, { usrid: req.consolemember && req.consolemember.user.id }, err);

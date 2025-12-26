@@ -10,6 +10,71 @@
 	};
 	%>
 	<%- include('../partials/head') %>
+	
+	<% if (pageData.voteSites && pageData.voteSites.length > 0) { %>
+	<!-- HowTo Schema for Voting Process -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "HowTo",
+		"name": "How to Vote for Skynet Bot and Earn Rewards",
+		"description": "Vote for Skynet on Discord bot listing sites to earn <%= pageData.pointsPerVote %> Vote Points per vote. Redeem points for premium features.",
+		"totalTime": "PT2M",
+		"step": [
+			{
+				"@type": "HowToStep",
+				"position": 1,
+				"name": "Click on a voting site",
+				"text": "Choose any of the available bot listing sites below to vote for Skynet.",
+				"url": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/vote"
+			},
+			{
+				"@type": "HowToStep",
+				"position": 2,
+				"name": "Complete the vote",
+				"text": "Follow the voting instructions on the bot listing site. You may need to log in with Discord."
+			},
+			{
+				"@type": "HowToStep",
+				"position": 3,
+				"name": "Receive Vote Points",
+				"text": "You'll automatically receive <%= pageData.pointsPerVote %> Vote Points credited to your account."
+			},
+			{
+				"@type": "HowToStep",
+				"position": 4,
+				"name": "Redeem rewards",
+				"text": "Use your Vote Points to unlock premium features or extensions in the dashboard.",
+				"url": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/membership"
+			}
+		]
+	}
+	</script>
+	
+	<!-- ItemList Schema for Vote Sites -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "ItemList",
+		"name": "Discord Bot Voting Sites",
+		"description": "Vote for Skynet on these bot listing sites",
+		"numberOfItems": <%= pageData.voteSites.length %>,
+		"itemListElement": [
+			<%- pageData.voteSites.map((site, index) => JSON.stringify({
+				"@type": "ListItem",
+				"position": index + 1,
+				"item": {
+					"@type": "Thing",
+					"name": site.name,
+					"url": site.url,
+					"description": "Vote on " + site.name + " to earn " + pageData.pointsPerVote + " Vote Points"
+				}
+			})).join(",\n\t\t\t") %>
+		]
+	}
+	</script>
+	<% } %>
+	
 	<style>
 .vote-container {
 	max-width: 1000px;

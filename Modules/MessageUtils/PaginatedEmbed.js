@@ -97,7 +97,9 @@ class PaginatedEmbed {
 			await this.msg.reactions.removeAll();
 		} catch (err) {
 			logger.verbose(`Failed to clear all reactions for paginated menu, will remove only the bots reaction!`, { chid: this.msg.channel.id, msgid: this.msg.id }, err);
-			this.msg.reactions.forEach(r => r.users.remove());
+			if (this.msg.reactions && this.msg.reactions.cache) {
+				this.msg.reactions.cache.forEach(r => r.users.remove());
+			}
 		}
 		this.collector = null;
 	}

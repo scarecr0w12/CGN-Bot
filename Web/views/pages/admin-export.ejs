@@ -20,7 +20,9 @@
 					return response.json().then(err => { throw new Error(err.error); });
 				}
 				const contentDisposition = response.headers.get('Content-Disposition');
-				const filename = contentDisposition?.match(/filename="(.+)"/)?.[1] || `export.${format}`;
+				let filename = contentDisposition?.match(/filename="(.+)"/)?.[1] || `export.${format}`;
+				// Sanitize filename to prevent XSS
+				filename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
 				return response.blob().then(blob => ({ blob, filename }));
 			})
 			.then(({ blob, filename }) => {

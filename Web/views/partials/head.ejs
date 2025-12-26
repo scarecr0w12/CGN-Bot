@@ -11,7 +11,7 @@ const _injection = typeof injection !== "undefined" ? injection : { headScript: 
 const defaultSeo = {
 	title: "Skynet - Free Discord Bot for Moderation, Fun & Server Management",
 	description: "Skynet is a powerful, free Discord bot with advanced moderation tools, fun commands, AI chat, custom extensions, giveaways, leveling system, and an easy-to-use web dashboard. Add to your server today!",
-	keywords: "Discord bot, Discord moderation bot, free Discord bot, Discord server management, Discord giveaway bot, Discord leveling bot, Discord AI bot, Discord fun commands, Discord auto moderation, Discord custom commands, Discord extensions, best Discord bot",
+	keywords: "Discord bot, Discord moderation bot, free Discord bot, Discord server management, Discord giveaway bot, Discord leveling bot, Discord AI bot, Discord music bot, Discord ticket system, Discord developer tools, Discord fun commands, Discord auto moderation, Discord custom commands, Discord extensions, best Discord bot, Skynet bot",
 	type: "website",
 	image: "/static/img/logo.png",
 	siteName: "Skynet Discord Bot"
@@ -36,6 +36,21 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 
 <!-- Canonical URL -->
 <% if (currentUrl) { %><link rel="canonical" href="<%= currentUrl %>"><% } %>
+
+<!-- DNS Prefetch & Preconnect for External Resources -->
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.gstatic.com">
+<link rel="dns-prefetch" href="https://maxcdn.bootstrapcdn.com">
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+<!-- Preload Critical Assets -->
+<link rel="preload" href="/static/css/modern-ui.css" as="style">
+<link rel="preload" href="/static/js/app.js" as="script">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style">
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="<%= seo.type %>">
@@ -114,43 +129,55 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 </script>
 <% } %>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.0.3/turbolinks.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/turbolinks/5.0.3/turbolinks.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js" defer></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
 
-<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-<link href="/static/fonts/icon-discord.css" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/bulma-7.css">
+<!-- Critical CSS (loaded immediately) -->
 <link rel="stylesheet" href="/static/css/modern-ui.css">
+<link rel="stylesheet" href="/static/css/bulma-7.css">
+
+<!-- Non-Critical CSS (deferred) -->
+<link rel="preload" href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+<link rel="preload" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"></noscript>
+<link href="/static/fonts/icon-discord.css" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/extensions.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="/static/css/simplemde.min.css">
-<script src="/static/js/simplemde.min.js"></script>
-<script src="/static/js/showdown.min.js"></script>
-<script async src="/static/js/FileSaver.min.js"></script>
-<link rel="stylesheet" href="/static/css/auto-complete.css">
-<script src="/static/js/AutoComplete.min.js"></script>
+<!-- Editor & Utility Scripts (defer until needed) -->
+<link rel="preload" href="/static/css/simplemde.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/static/css/simplemde.min.css"></noscript>
+<script src="/static/js/simplemde.min.js" defer></script>
+<script src="/static/js/showdown.min.js" defer></script>
+<script src="/static/js/FileSaver.min.js" defer></script>
+<link rel="preload" href="/static/css/auto-complete.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/static/css/auto-complete.css"></noscript>
+<script src="/static/js/AutoComplete.min.js" defer></script>
 
+<!-- Core Scripts (keep synchronous for compatibility) -->
 <script src="/static/js/jquery-2.2.0.min.js"></script>
 <script src="/static/js/bulma.js"></script>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
-<script src="/static/js/terminal.min.js"></script>
+<!-- Chart/Terminal Scripts (defer) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js" defer></script>
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css"></noscript>
+<script src="/static/js/terminal.min.js" defer></script>
 
-<link rel="stylesheet" href="/static/css/codemirror.css">
-<link rel="stylesheet" href="/static/css/codemirror-monokai.css">
+<!-- CodeMirror (defer) -->
+<link rel="preload" href="/static/css/codemirror.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/static/css/codemirror.css"></noscript>
+<link rel="preload" href="/static/css/codemirror-monokai.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/static/css/codemirror-monokai.css"></noscript>
+<script src="/static/js/codemirror.min.js" defer></script>
 
-<script src="/static/js/codemirror.min.js"></script>
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js"></script>
+<!-- Utility Scripts -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js" defer></script>
 <script src="/socket.io/socket.io.js"></script>
 
 <!-- Matomo Analytics -->
@@ -253,5 +280,13 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 	    }
     </script>
 <% } %>
+
+<!-- Service Worker for PWA & Caching -->
+<% if (_isProduction && !_disableExternalScripts) { %>
+<script src="/static/js/sw-register.js" defer></script>
+<% } %>
+
+<!-- Lazy Loading for Images -->
+<script src="/static/js/lazy-load.js" defer></script>
 
 <%- include("./head-build.ejs") %>

@@ -21,6 +21,35 @@
     }
     %>
     <%- include('../partials/head') %>
+    
+    <% if (pageData.extensionData) { %>
+    <!-- SoftwareApplication Schema for Extension -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "<%= pageData.extensionData.name.replace(/"/g, '\\"') %>",
+        "operatingSystem": "Discord, Skynet Bot",
+        "applicationCategory": "BotExtension",
+        "description": "<%= pageData.extensionData.description ? pageData.extensionData.description.replace(/"/g, '\\"').replace(/\n/g, ' ') : '' %>",
+        "offers": {
+            "@type": "Offer",
+            "price": "<%= pageData.extensionData.isPremium && pageData.extensionData.premium ? pageData.extensionData.premium.price_points : '0' %>",
+            "priceCurrency": "VotePoints"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "ratingCount": "<%= pageData.extensionData.points > 0 ? pageData.extensionData.points : 1 %>"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "<%= pageData.extensionData.owner ? pageData.extensionData.owner.name.replace(/"/g, '\\"') : 'Unknown' %>"
+        },
+        "downloadUrl": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/extensions/<%= pageData.extensionData._id %>/install"
+    }
+    </script>
+    <% } %>
 </head>
 <body class="has-no-scrollbar">
 <div class="scroller-wrapper">

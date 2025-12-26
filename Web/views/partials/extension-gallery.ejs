@@ -158,11 +158,28 @@
 	font-size: 0.9rem;
 	line-height: 1.5;
 	margin: 0;
+	position: relative;
+}
+.ext-card-description.is-collapsed {
 	display: -webkit-box;
 	-webkit-line-clamp: 3;
 	line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
+}
+.ext-card-description-toggle {
+	color: var(--color-primary, #14b8a6);
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	margin-top: 0.5rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	transition: opacity 0.2s;
+}
+.ext-card-description-toggle:hover {
+	opacity: 0.7;
 }
 .ext-card-meta {
 	display: flex;
@@ -517,11 +534,17 @@
 				</div>
 			</div>
 			<div class="ext-card-body">
-				<p class="ext-card-description"><%- extension.description %></p>
+				<div class="ext-card-description is-collapsed" id="desc-<%= extension._id %>"><%- extension.description %></div>
+				<% if (extension.description && extension.description.length > 150) { %>
+				<a class="ext-card-description-toggle" onclick="toggleDescription('<%= extension._id %>')">
+					<span id="toggle-text-<%= extension._id %>">View more</span>
+					<i class="fa fa-chevron-down" id="toggle-icon-<%= extension._id %>"></i>
+				</a>
+				<% } %>
 			</div>
 			<div class="ext-card-meta">
 				<div class="ext-card-author">
-					<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.name %>">
+					<img src="<%= extension.owner.avatar %>" alt="<%= extension.owner.name %>" loading="lazy">
 					<div class="ext-card-author-info">
 						<div class="ext-card-author-name">
 							<%= extension.owner.name %>
@@ -540,6 +563,9 @@
 				</div>
 			</div>
 			<div class="ext-card-footer">
+				<a href="/extensions/view/<%= extension._id %>/<%= extension.slug || '' %>" class="ext-card-action">
+					<i class="fa fa-info-circle"></i> View Details
+				</a>
 				<% if (authUser && pageData.serverData && pageData.serverData.length > 0) { %>
 				<a class="ext-card-action" data-extid="<%= extension._id %>" data-version="<%= extension.version %>" onclick="SkynetUtil.openExtensionInstaller(this.dataset.extid, parseInt(this.dataset.version, 10));">
 					<i class="fa fa-download"></i> Install
@@ -691,3 +717,21 @@
 	</nav>
 <% } %>
 </div>
+
+<script>
+function toggleDescription(extId) {
+	const desc = document.getElementById('desc-' + extId);
+	const text = document.getElementById('toggle-text-' + extId);
+	const icon = document.getElementById('toggle-icon-' + extId);
+	
+	if (desc.classList.contains('is-collapsed')) {
+		desc.classList.remove('is-collapsed');
+		text.textContent = 'View less';
+		icon.className = 'fa fa-chevron-up';
+	} else {
+		desc.classList.add('is-collapsed');
+		text.textContent = 'View more';
+		icon.className = 'fa fa-chevron-down';
+	}
+}
+</script>

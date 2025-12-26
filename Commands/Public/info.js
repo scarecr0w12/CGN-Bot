@@ -87,10 +87,10 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 
 	msg.send({
 		embeds: [{
-			author: {
+			author: guild.owner?.user ? {
 				name: `Owned by ${guild.owner.user.tag}`,
 				iconURL: guild.owner.user.displayAvatarURL(),
-			},
+			} : undefined,
 			color: Colors.INFO,
 			title: `Information for ${guild.name} :: ${guild.id}`,
 			url: `${configJS.hostingURL}activity/servers?q=${encodeURIComponent(guild.name)}`,

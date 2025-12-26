@@ -465,14 +465,7 @@ exports.open = async (client, auth, configJS, logger) => {
 		});
 	});
 
-	// Serve static files with WebP conversion for images
-	const staticOptions = {
-		maxAge: 86400000, // 1 day cache
-		etag: true,
-		lastModified: true,
-	};
-	const staticRouter = express.static(`${__dirname}/public/`, staticOptions);
-
+	// Serve static files with optimized caching and WebP conversion
 	app.use("/static", (req, res, next) => {
 		const fileExtension = req.path.substring(req.path.lastIndexOf("."));
 		const acceptsWebP = req.get("Accept")?.includes("image/webp");
@@ -480,11 +473,43 @@ exports.open = async (client, auth, configJS, logger) => {
 		// Convert to WebP if supported and not already WebP/GIF
 		if (acceptsWebP && req.path.startsWith("/img") && ![".gif", ".webp"].includes(fileExtension)) {
 			const webpPath = `${req.path.substring(0, req.path.lastIndexOf("."))}.webp`;
-			return res.redirect(`/static${webpPath}`);
+			return res.redirect(301, `/static${webpPath}`);
 		}
 
-		return staticRouter(req, res, next);
+		// Set optimized cache headers based on file type
+		const isImmutable = /\.(js|css|woff2?|ttf|eot|otf)$/.test(fileExtension);
+		const isImage = /\.(jpg|jpeg|png|gif|webp|svg|ico)$/.test(fileExtension);
+		const isFont = /\.(woff2?|ttf|eot|otf)$/.test(fileExtension);
+
+		if (isFont) {
+			// Fonts: cache for 1 year (immutable)
+			res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+		} else if (isImage) {
+			// Images: cache for 7 days
+			res.setHeader("Cache-Control", "public, max-age=604800");
+		} else if (isImmutable) {
+			// JS/CSS: cache for 30 days with revalidation
+			res.setHeader("Cache-Control", "public, max-age=2592000, must-revalidate");
+		} else {
+			// Other files: cache for 1 day
+			res.setHeader("Cache-Control", "public, max-age=86400");
+		}
+
+		next();
 	});
+
+	const staticOptions = {
+		etag: true,
+		lastModified: true,
+		index: false,
+		setHeaders: (res, path) => {
+			// Add Vary header for WebP negotiation
+			if (path.includes("/img/")) {
+				res.setHeader("Vary", "Accept");
+			}
+		},
+	};
+	app.use("/static", express.static(`${__dirname}/public/`, staticOptions));
 
 	// Listen for incoming connections
 	const { server, httpsServer } = await listen(configJS);

@@ -18,10 +18,15 @@ function getEncryptionKey () {
 	const envKey = process.env.TOKEN_ENCRYPTION_KEY;
 
 	if (!envKey) {
-		logger.warn("TOKEN_ENCRYPTION_KEY not set - using derived key from session secret");
 		// Fall back to deriving from session secret (less secure but functional)
 		const configJS = require("../Configurations/config.js");
-		return crypto.scryptSync(configJS.secret || "default-secret", "token-salt", 32);
+		if (!configJS.secret) {
+			throw new Error("TOKEN_ENCRYPTION_KEY or session secret must be configured for token encryption");
+		}
+		logger.warn("TOKEN_ENCRYPTION_KEY not set - using derived key from session secret. Set TOKEN_ENCRYPTION_KEY for better security.");
+		// Use session secret as input with a unique salt derived from hostname
+		const uniqueSalt = crypto.createHash("sha256").update(`token-salt-${require("os").hostname()}`).digest();
+		return crypto.scryptSync(configJS.secret, uniqueSalt, 32);
 	}
 
 	// If the key is hex-encoded (64 chars), decode it
@@ -29,8 +34,9 @@ function getEncryptionKey () {
 		return Buffer.from(envKey, "hex");
 	}
 
-	// Otherwise derive a key from the provided string
-	return crypto.scryptSync(envKey, "token-encryption-salt", 32);
+	// Otherwise derive a key from the provided string with a unique salt
+	const uniqueSalt = crypto.createHash("sha256").update(`token-encryption-${require("os").hostname()}`).digest();
+	return crypto.scryptSync(envKey, uniqueSalt, 32);
 }
 
 /**

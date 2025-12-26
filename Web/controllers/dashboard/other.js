@@ -7,6 +7,7 @@ const { saveAdminConsoleOptions: save, renderError, getChannelData, generateCode
 const parsers = require("../../parsers");
 const TierManager = require("../../../Modules/TierManager");
 const PremiumExtensionsManager = require("../../../Modules/PremiumExtensionsManager");
+const path = require("path");
 
 const controllers = module.exports;
 
@@ -400,7 +401,13 @@ controllers.extensionBuilder = async (req, { res }) => {
 				if (galleryDocument) {
 					try {
 						const versionDoc = galleryDocument.versions.id(galleryDocument.version);
-						galleryDocument.code = require("fs").readFileSync(`${__dirname}/../../../extensions/${versionDoc.code_id}.skyext`, "utf8");
+						// Sanitize code_id to prevent path traversal
+						const safeCodeId = path.basename(versionDoc.code_id).replace(/[^a-zA-Z0-9_-]/g, "");
+						if (!safeCodeId || safeCodeId !== versionDoc.code_id) {
+							throw new Error("Invalid code_id");
+						}
+						const codePath = path.join(__dirname, "../../../extensions", `${safeCodeId}.skyext`);
+						galleryDocument.code = require("fs").readFileSync(codePath, "utf8");
 					} catch (err) {
 						galleryDocument.code = "";
 					}

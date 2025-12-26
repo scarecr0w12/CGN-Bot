@@ -77,7 +77,8 @@ controllers.stripe = async (req, res) => {
 		event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
 	} catch (err) {
 		logger.warn("Stripe webhook signature verification failed", {}, err);
-		return res.status(400).send(`Webhook Error: ${err.message}`);
+		// Don't expose error details to prevent XSS - Stripe will retry
+		return res.status(400).send("Webhook signature verification failed");
 	}
 
 	logger.verbose(`Stripe webhook received: ${event.type}`, { eventId: event.id });

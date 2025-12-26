@@ -343,7 +343,7 @@
 									</div>
 									<div class="blog-card-footer">
 										<div style="display: flex; align-items: center; gap: var(--space-xs);">
-											<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>" style="width: 24px; height: 24px; border-radius: 50%;">
+											<img src="<%= blogPost.author.avatar %>" alt="<%= blogPost.author.name %>" style="width: 24px; height: 24px; border-radius: 50%;" loading="lazy">
 											<span style="font-size: 13px; color: var(--text-secondary);"><%= blogPost.author.name %></span>
 										</div>
 										<a href="/blog/<%= blogPost.id %>" style="color: var(--color-accent); font-weight: 600; font-size: 14px; text-decoration: none;">

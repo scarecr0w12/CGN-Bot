@@ -6,11 +6,21 @@
 	// SEO for wiki pages
 	if (typeof pageData !== "undefined") {
 		const isArticle = pageData.mode === "page" && pageData.content;
+		let description = "Skynet Discord bot documentation - comprehensive guides, command references, and tutorials for server setup and configuration.";
+		
+		if (isArticle) {
+			// Strip HTML tags to get plain text for description
+			const textContent = pageData.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+			if (textContent.length > 20) {
+				description = textContent.substring(0, 155) + "...";
+			} else {
+				description = `Learn about ${pageData.title.replace(/-/g, ' ')} - Skynet Discord bot documentation and guides.`;
+			}
+		}
+
 		pageData.seo = {
 			title: `${pageData.pageTitle} | Skynet Discord Bot Documentation`,
-			description: isArticle 
-				? `Learn about ${pageData.title.replace(/-/g, ' ')} - Skynet Discord bot documentation and guides.`
-				: "Skynet Discord bot documentation - comprehensive guides, command references, and tutorials for server setup and configuration.",
+			description: description,
 			keywords: `Discord bot documentation, ${pageData.title ? pageData.title.replace(/-/g, ' ') + ', ' : ''}Discord bot guide, Discord bot tutorial, Skynet wiki, Discord server setup`,
 			type: isArticle ? "article" : "website"
 		};
@@ -24,6 +34,37 @@
 	}
 	%>
 	<%- include('../partials/head') %>
+	
+	<% if (pageData.mode === "page" && pageData.content) { %>
+	<!-- TechArticle Schema for Wiki Page -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "TechArticle",
+		"headline": "<%= pageData.title.replace(/-/g, ' ').replace(/"/g, '\\"') %>",
+		"description": "Documentation and guide for <%= pageData.title.replace(/-/g, ' ').replace(/"/g, '\\"') %> in Skynet Discord Bot.",
+		"image": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/static/img/logo.png",
+		"author": {
+			"@type": "Organization",
+			"name": "Skynet Team"
+		},
+		"publisher": {
+			"@type": "Organization",
+			"name": "Skynet Discord Bot",
+			"logo": {
+				"@type": "ImageObject",
+				"url": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/static/img/logo.png"
+			}
+		},
+		"datePublished": "<%= pageData.createdAt ? new Date(pageData.createdAt).toISOString() : new Date().toISOString() %>",
+		"dateModified": "<%= pageData.updatedAt ? new Date(pageData.updatedAt).toISOString() : new Date().toISOString() %>",
+		"mainEntityOfPage": {
+			"@type": "WebPage",
+			"@id": "<%= typeof hostingURL !== 'undefined' ? hostingURL.replace(/\/$/, '') : '' %>/wiki/<%= pageData.title %>"
+		}
+	}
+	</script>
+	<% } %>
 	
 	<style>
 	/* Wiki Page Styles */

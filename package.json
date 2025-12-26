@@ -1,6 +1,6 @@
 {
   "name": "skynetbot",
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "Still the best Discord Bot!",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Scarecr0w12",
@@ -124,7 +124,7 @@
     "ws": "^8.18.0",
     "xml-parser": "^1.2.1",
     "xml2js": "^0.5.0",
-    "xss": "^1.0.10",
+    "xss": "^1.0.15",
     "xss-filters": "^1.2.7"
   },
   "devDependencies": {
@@ -137,5 +137,10 @@
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "showdown-xss-filter": {
+      "xss": "^1.0.15"
+    }
   }
 }
