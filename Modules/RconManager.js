@@ -7,7 +7,8 @@
 
 const WebSocket = require("ws");
 const net = require("net");
-const logger = require("../Internals/Logger").moduleLogger("RconManager");
+const Logger = require("../Internals/Logger");
+const logger = new Logger("RconManager");
 
 // Connection pool to reuse connections
 const connectionPool = new Map();

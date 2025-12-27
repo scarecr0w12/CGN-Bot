@@ -7,7 +7,8 @@
  */
 
 const Redis = require("ioredis");
-const logger = require("../Internals/Logger");
+const Logger = require("../Internals/Logger");
+const logger = new Logger("RedisClient");
 
 /**
  * Redis connection states

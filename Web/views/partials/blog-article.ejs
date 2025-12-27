@@ -68,7 +68,7 @@
     <div class="level-left">
         <div class="level-item">
             <% if(blogPost.isPreview) { %>
-                <a class="button is-dark is-outlined" href="/blog/<%= blogPost.id %>">
+                <a class="button is-dark is-outlined" href="/blog/<%= blogPost.id %>/<%= blogPost.slug %>">
                     <span class="icon is-small">
                         <i class="fa fa-eye"></i>
                     </span>

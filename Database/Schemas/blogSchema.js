@@ -10,6 +10,11 @@ module.exports = new Schema({
 		maxlength: 100,
 		required: true,
 	},
+	slug: {
+		type: String,
+		required: true,
+		// unique: true - handled by app logic
+	},
 	author_id: {
 		type: String,
 		required: true,

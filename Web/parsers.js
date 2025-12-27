@@ -300,6 +300,7 @@ parsers.blogData = async (req, blogDocument) => {
 	const avatarURL = author.displayAvatarURL();
 	return {
 		id: blogDocument._id.toString(),
+		slug: blogDocument.slug,
 		title: blogDocument.title,
 		author: {
 			name: author.username,

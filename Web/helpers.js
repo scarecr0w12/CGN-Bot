@@ -2,7 +2,8 @@
 const mw = require("./middleware");
 const { LoggingLevels } = require("../Internals/Constants");
 const ConfigManager = require("../Modules/ConfigManager");
-const logger = require("../Internals/Logger");
+const Logger = require("../Internals/Logger");
+const logger = new Logger("WebHelpers");
 
 /**
  * Validates redirect URLs to prevent open redirect attacks

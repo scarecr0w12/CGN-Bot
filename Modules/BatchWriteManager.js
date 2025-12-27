@@ -11,7 +11,8 @@
  * - Reduces DB server CPU by ~40%
  */
 
-const logger = require("../Internals/Logger");
+const Logger = require("../Internals/Logger");
+const logger = new Logger("BatchWriteManager");
 const metrics = require("./Metrics");
 
 class BatchWriteManager {

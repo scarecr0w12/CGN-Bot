@@ -711,6 +711,7 @@ controllers.options.botLists.post = async (req, res) => {
 			api_token: req.body.topgg_api_token || "",
 			webhook_secret: req.body.topgg_webhook_secret || "",
 			auto_post_stats: req.body.topgg_auto_post !== "off",
+			sync_commands: req.body.topgg_sync_commands === "on",
 		},
 		discordbotlist: {
 			isEnabled: req.body.dbl_enabled === "on",
@@ -778,14 +779,24 @@ controllers.options.botLists.syncCommands = async (req, res) => {
 			return res.status(500).json({ error: "BotLists module not initialized" });
 		}
 
-		const result = await botLists.postCommandsToDiscordBotList();
+		const service = req.body.service || "discordbotlist";
+		let result;
+
+		if (service === "topgg") {
+			result = await botLists.postCommandsToTopgg();
+		} else if (service === "topbotlist") {
+			result = await botLists.postCommandsToTopBotList();
+		} else {
+			result = await botLists.postCommandsToDiscordBotList();
+		}
+
 		if (result.success) {
-			res.json({ success: true, count: result.count, message: `Synced ${result.count} commands to discordbotlist.com` });
+			res.json({ success: true, count: result.count, message: `Synced ${result.count} commands to ${service}` });
 		} else {
 			res.status(400).json({ success: false, error: result.error });
 		}
 	} catch (err) {
-		logger.error("Failed to sync commands to discordbotlist.com", {}, err);
+		logger.error("Failed to sync commands", { service: req.body.service }, err);
 		res.status(500).json({ error: "Failed to sync commands" });
 	}
 };

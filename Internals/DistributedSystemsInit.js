@@ -8,7 +8,8 @@
 const redisClient = require("../Modules/RedisClient");
 const distributedCache = require("../Modules/DistributedCache");
 const distributedSession = require("../Modules/DistributedSession");
-const logger = require("./Logger");
+const Logger = require("./Logger");
+const logger = new Logger("DistributedSystemsInit");
 
 // Metrics (optional)
 let metrics = null;

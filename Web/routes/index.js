@@ -128,6 +128,8 @@ const wikiRouting = router => {
 const blogRouting = router => {
 	setupPage(router, "/blog", [], controllers.blog.index);
 	setupRedirection(router, "/blog/new", "/blog/new/compose");
+	// SEO-friendly slug URL
+	setupPage(router, "/blog/:id/:slug", [], controllers.blog.article);
 	setupPage(router, "/blog/:id", [], controllers.blog.article);
 	setupPage(router, "/blog/new/compose", [middleware.authorizeBlogAccess], controllers.blog.article.compose);
 	setupPage(router, "/blog/:id/compose", [middleware.authorizeBlogAccess], controllers.blog.article.compose);

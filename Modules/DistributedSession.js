@@ -7,7 +7,8 @@
  */
 
 const redisClient = require("./RedisClient");
-const logger = require("../Internals/Logger");
+const Logger = require("../Internals/Logger");
+const logger = new Logger("DistributedSession");
 
 /**
  * Session configuration

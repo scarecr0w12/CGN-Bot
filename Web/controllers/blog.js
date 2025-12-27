@@ -14,6 +14,16 @@ md.setFlavor("github");
 const { renderError } = require("../helpers");
 const parsers = require("../parsers");
 
+// Helper to slugify text
+function slugify (text) {
+	return text.toString().toLowerCase()
+		.replace(/\s+/g, "-") // Replace spaces with -
+		.replace(/[^\w-]+/g, "") // Remove all non-word chars
+		.replace(/--+/g, "-") // Replace multiple - with single -
+		.replace(/^-+/, "") // Trim - from start
+		.replace(/-+$/, ""); // Trim - from end
+}
+
 const controllers = module.exports;
 
 controllers.index = async (req, { res }) => {
@@ -96,6 +106,11 @@ controllers.article = async (req, { res }) => {
 	if (!blogDocument) {
 		renderError(res, "Sorry, that blog doesn't exist!");
 	} else {
+		// Redirect to canonical URL if slug is missing or incorrect
+		if (blogDocument.slug && req.params.slug !== blogDocument.slug) {
+			return res.redirect(`/blog/${blogDocument._id}/${blogDocument.slug}`);
+		}
+
 		const data = await parsers.blogData(req, blogDocument);
 		const getReactionCount = value => blogDocument.reactions.reduce((count, reactionDocument) => count + (reactionDocument.value === value), 0);
 		data.reactions = {};
@@ -155,26 +170,29 @@ controllers.article.compose.post = async (req, res) => {
 			renderError(res, "Sorry, that blog post was not found.");
 		} else {
 			blogDocument.query.set("title", req.body.title)
+				.set("slug", slugify(req.body.title))
 				.set("category", req.body.category)
 				.set("content", req.body.content);
 
 			blogDocument.save().then(() => {
 				// Notify search engines of updated content
-				indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}`);
-				res.redirect(`/blog/${blogDocument._id.toString()}`);
+				indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}/${blogDocument.slug}`);
+				res.redirect(`/blog/${blogDocument._id.toString()}/${blogDocument.slug}`);
 			}).catch(() => res.sendStatus(500));
 		}
 	} else {
+		const slug = slugify(req.body.title);
 		const blogDocument = Blog.new({
 			title: req.body.title,
+			slug: slug,
 			author_id: req.user.id,
 			category: req.body.category,
 			content: req.body.content,
 		});
 		blogDocument.save().then(() => {
 			// Notify search engines of new content
-			indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}`);
-			res.redirect(`/blog/${blogDocument._id.toString()}`);
+			indexNow?.submitUrl(`/blog/${blogDocument._id.toString()}/${slug}`);
+			res.redirect(`/blog/${blogDocument._id.toString()}/${slug}`);
 		}).catch(() => res.sendStatus(500));
 	}
 };

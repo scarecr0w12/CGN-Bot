@@ -108,6 +108,26 @@
                     </label>
                 </div>
             </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="topgg_sync_commands" <%= configData.bot_lists?.topgg?.sync_commands ? 'checked' : '' %>>
+                        Sync slash commands on startup
+                    </label>
+                </div>
+                <p class="help">Automatically post your bot's slash commands to top.gg when the bot starts</p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button type="button" class="button is-info is-small sync-cmd-btn" data-service="topgg" <%= !configData.bot_lists?.topgg?.isEnabled || !configData.bot_lists?.topgg?.api_token ? 'disabled' : '' %>>
+                        <span class="icon"><i class="fa fa-sync"></i></span>
+                        <span>Sync Commands Now</span>
+                    </button>
+                </div>
+                <p class="help">Manually sync slash commands to top.gg</p>
+            </div>
         </div>
 
         <!-- Discord Bot List Configuration -->
@@ -169,7 +189,7 @@
 
             <div class="field">
                 <div class="control">
-                    <button type="button" class="button is-info is-small" id="sync-commands-btn" <%= !configData.bot_lists?.discordbotlist?.isEnabled || !configData.bot_lists?.discordbotlist?.api_token ? 'disabled' : '' %>>
+                    <button type="button" class="button is-info is-small sync-cmd-btn" data-service="discordbotlist" <%= !configData.bot_lists?.discordbotlist?.isEnabled || !configData.bot_lists?.discordbotlist?.api_token ? 'disabled' : '' %>>
                         <span class="icon"><i class="fa fa-sync"></i></span>
                         <span>Sync Commands Now</span>
                     </button>
@@ -344,6 +364,16 @@
                     </label>
                 </div>
                 <p class="help">Automatically post your bot's slash commands to topbotlist.net when the bot starts</p>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button type="button" class="button is-info is-small sync-cmd-btn" data-service="topbotlist" <%= !configData.bot_lists?.topbotlist?.isEnabled || !configData.bot_lists?.topbotlist?.api_token ? 'disabled' : '' %>>
+                        <span class="icon"><i class="fa fa-sync"></i></span>
+                        <span>Sync Commands Now</span>
+                    </button>
+                </div>
+                <p class="help">Manually sync slash commands to topbotlist.net</p>
             </div>
         </div>
 
@@ -521,13 +551,13 @@
 
 	<script>
 	document.addEventListener('turbolinks:load', function() {
-		const syncBtn = document.getElementById('sync-commands-btn');
-		if (syncBtn) {
-			syncBtn.addEventListener('click', async function() {
-				const btn = this;
-				const originalHTML = btn.innerHTML;
-				btn.disabled = true;
-				btn.innerHTML = '<span class="icon"><i class="fa fa-spinner fa-spin"></i></span><span>Syncing...</span>';
+		const syncBtns = document.querySelectorAll('.sync-cmd-btn');
+		syncBtns.forEach(btn => {
+			btn.addEventListener('click', async function() {
+				const service = this.dataset.service;
+				const originalHTML = this.innerHTML;
+				this.disabled = true;
+				this.innerHTML = '<span class="icon"><i class="fa fa-spinner fa-spin"></i></span><span>Syncing...</span>';
 
 				try {
 					const response = await fetch('/dashboard/maintainer/global-options/bot-lists/sync-commands', {
@@ -535,44 +565,45 @@
 						headers: {
 							'Content-Type': 'application/json',
 						},
+						body: JSON.stringify({ service }),
 					});
 
 					const data = await response.json();
 
 					if (data.success) {
-						btn.classList.remove('is-info');
-						btn.classList.add('is-success');
-						btn.innerHTML = '<span class="icon"><i class="fa fa-check"></i></span><span>' + data.message + '</span>';
+						this.classList.remove('is-info');
+						this.classList.add('is-success');
+						this.innerHTML = '<span class="icon"><i class="fa fa-check"></i></span><span>' + data.message + '</span>';
 						setTimeout(() => {
-							btn.classList.remove('is-success');
-							btn.classList.add('is-info');
-							btn.innerHTML = originalHTML;
-							btn.disabled = false;
+							this.classList.remove('is-success');
+							this.classList.add('is-info');
+							this.innerHTML = originalHTML;
+							this.disabled = false;
 						}, 3000);
 					} else {
-						btn.classList.remove('is-info');
-						btn.classList.add('is-danger');
-						btn.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Error: ' + (data.error || 'Unknown error') + '</span>';
+						this.classList.remove('is-info');
+						this.classList.add('is-danger');
+						this.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Error: ' + (data.error || 'Unknown error') + '</span>';
 						setTimeout(() => {
-							btn.classList.remove('is-danger');
-							btn.classList.add('is-info');
-							btn.innerHTML = originalHTML;
-							btn.disabled = false;
+							this.classList.remove('is-danger');
+							this.classList.add('is-info');
+							this.innerHTML = originalHTML;
+							this.disabled = false;
 						}, 5000);
 					}
 				} catch (err) {
-					btn.classList.remove('is-info');
-					btn.classList.add('is-danger');
-					btn.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Network error</span>';
+					this.classList.remove('is-info');
+					this.classList.add('is-danger');
+					this.innerHTML = '<span class="icon"><i class="fa fa-times"></i></span><span>Network error</span>';
 					setTimeout(() => {
-						btn.classList.remove('is-danger');
-						btn.classList.add('is-info');
-						btn.innerHTML = originalHTML;
-						btn.disabled = false;
+						this.classList.remove('is-danger');
+						this.classList.add('is-info');
+						this.innerHTML = originalHTML;
+						this.disabled = false;
 					}, 3000);
 				}
 			});
-		}
+		});
 	});
 	</script>
 </body>

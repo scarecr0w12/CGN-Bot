@@ -5,11 +5,15 @@
  * metrics for performance analysis.
  *
  * Usage:
- *   const QueryLogger = require('./Modules/QueryLogger');
+ *   const Logger = require('../Internals/Logger');
+ *   const logger = new Logger("QueryLogger");
  *   QueryLogger.startQuery('findOne', 'servers', { _id: serverId });
  *   // ... execute query ...
  *   QueryLogger.endQuery(queryId, rowCount);
  */
+
+const Logger = require("../Internals/Logger");
+const logger = new Logger("QueryLogger");
 
 // Configuration
 const SLOW_QUERY_THRESHOLD_MS = parseInt(process.env.SLOW_QUERY_THRESHOLD_MS, 10) || 100;

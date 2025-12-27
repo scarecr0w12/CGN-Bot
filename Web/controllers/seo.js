@@ -87,7 +87,7 @@ const sitemapXml = async (req, res) => {
 		// Get blog posts using global Blog model
 		const blogDocs = await Blog.find({}).exec();
 		blogPosts = blogDocs.map(doc => ({
-			url: `/blog/${doc._id}`,
+			url: doc.slug ? `/blog/${doc._id}/${doc.slug}` : `/blog/${doc._id}`,
 			priority: "0.8",
 			changefreq: "monthly",
 			lastmod: doc.published_timestamp ? new Date(doc.published_timestamp).toISOString().split("T")[0] : now,

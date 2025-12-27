@@ -55,6 +55,7 @@ module.exports = async (req, { res }) => {
 					excerpt = `${excerpt.substring(0, 150)}...`;
 				}
 				data.excerpt = excerpt;
+				data.slug = blogDocument.slug;
 				return data;
 			}));
 		}
@@ -64,9 +65,16 @@ module.exports = async (req, { res }) => {
 
 	const ConfigManager = require("../../Modules/ConfigManager");
 	const settings = await ConfigManager.get();
+
+	// Check for active promotion
+	const now = new Date();
+	const promoEnd = new Date("2026-01-10T23:59:59.999Z");
+	const isPromoActive = now < promoEnd;
+
 	res.setPageData({
 		page: req.debugMode ? "newLanding.ejs" : "landing.ejs",
 		bannerMessage: settings.homepageMessageHTML,
+		isPromoActive,
 		rawServerCount: guildSize,
 		roundedServerCount: Math.floor(guildSize / 100) * 100,
 		rawUserCount: `${Math.floor(userSize / 1000)}K`,

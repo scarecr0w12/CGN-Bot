@@ -32,11 +32,11 @@
 		},
 		"offers": [
 			<%- pageData.tiers.filter(t => t.is_purchasable).map(tier => {
-				const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				const yearlyTotal = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
 				return JSON.stringify({
 					"@type": "Offer",
 					"name": tier.name + " - Monthly",
-					"price": (tier.price_monthly / 100).toFixed(2),
+					"price": (tier.price_monthly).toFixed(2),
 					"priceCurrency": "USD",
 					"priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 					"availability": "https://schema.org/InStock",
@@ -46,11 +46,11 @@
 				});
 			}).join(",\n\t\t\t") %>,
 			<%- pageData.tiers.filter(t => t.is_purchasable && t.yearly_discount > 0).map(tier => {
-				const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+				const yearlyTotal = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
 				return JSON.stringify({
 					"@type": "Offer",
 					"name": tier.name + " - Yearly",
-					"price": (yearlyTotalCents / 100).toFixed(2),
+					"price": (yearlyTotal).toFixed(2),
 					"priceCurrency": "USD",
 					"priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 					"availability": "https://schema.org/InStock",
@@ -418,7 +418,7 @@
 				<% if (purchasableTiers.length > 0) { %>
 				<div class="pricing-grid">
 					<% purchasableTiers.forEach((tier, index) => { 
-						const yearlyTotalCents = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
+						const yearlyTotal = tier.price_monthly * 12 * (1 - ((tier.yearly_discount || 0) / 100));
 					%>
 					<div class="pricing-card <%= tier.level >= 2 ? 'is-featured' : '' %>">
 						<div class="pricing-header">
@@ -435,13 +435,13 @@
 							<div class="pricing-price">
 								<span class="pricing-price-value" style="color: <%= tier.color || 'var(--color-primary)' %>;">
 									<span class="pricing-price-currency">$</span>
-									<span class="monthly-price"><%= (tier.price_monthly / 100).toFixed(0) %></span>
-									<span class="yearly-price" style="display: none;"><%= (yearlyTotalCents / 100 / 12).toFixed(0) %></span>
+									<span class="monthly-price"><%= (tier.price_monthly).toFixed(0) %></span>
+									<span class="yearly-price" style="display: none;"><%= (yearlyTotal / 12).toFixed(0) %></span>
 								</span>
 								<span class="pricing-price-period">/mo</span>
 							</div>
 							<p class="pricing-yearly-note yearly-total" style="display: none;">
-								Billed $<%= (yearlyTotalCents / 100).toFixed(2) %>/year
+								Billed $<%= (yearlyTotal).toFixed(2) %>/year
 								<% if (tier.yearly_discount > 0) { %>
 								<span style="color: var(--color-success);">(Save <%= tier.yearly_discount %>%)</span>
 								<% } %>

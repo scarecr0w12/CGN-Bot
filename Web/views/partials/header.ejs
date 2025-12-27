@@ -14,12 +14,6 @@
 
             <div id="navbar-menu" class="navbar-menu">
                 <div class="navbar-end">
-                <a id="nav-home" class="navbar-item" href="/">
-                    <span class="icon is-small">
-                        <i class="fa fa-home"></i>
-                    </span>
-                    <span>Home</span>
-                </a>
                 <a id="nav-activity" class="navbar-item" href="/activity">
                     <span class="icon is-small">
                         <i class="fa fa-comments"></i>
@@ -32,30 +26,55 @@
                     </span>
                     <span>Extensions</span>
                 </a>
-                <a id="nav-wiki" class="navbar-item" href="/wiki">
+                <a id="nav-vote" class="navbar-item" href="/vote">
                     <span class="icon is-small">
-                        <i class="fa fa-book"></i>
+                        <i class="fa fa-thumbs-up"></i>
                     </span>
-                    <span>Wiki</span>
+                    <span>Vote</span>
                 </a>
-                <a id="nav-blog" class="navbar-item" href="/blog">
+                <a id="nav-premium" class="navbar-item" href="/membership" style="color: var(--color-premium); font-weight: 600;">
                     <span class="icon is-small">
-                        <i class="fa fa-rss"></i>
+                        <i class="fa fa-gem"></i>
                     </span>
-                    <span>Blog</span>
+                    <span>Premium</span>
                 </a>
-                <a id="nav-status" class="navbar-item" href="/status" title="Status">
-                    <span class="icon is-small">
-                        <i class="fa fa-heartbeat"></i>
-                    </span>
-                    <span>Status</span>
-                </a>
-                <a id="nav-donate" class="navbar-item" href="/donate">
-                    <span class="icon is-small">
-                        <i class="fa fa-gift"></i>
-                    </span>
-                    <span>Donate</span>
-                </a>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon is-small">
+                            <i class="fa fa-book-open"></i>
+                        </span>
+                        <span>Resources</span>
+                    </a>
+                    <div class="navbar-dropdown is-right" style="background: #fff;">
+                        <a id="nav-wiki" class="navbar-item" href="/wiki" style="color: #363636;">
+                            <span class="icon is-small">
+                                <i class="fa fa-book"></i>
+                            </span>
+                            <span>Wiki</span>
+                        </a>
+                        <a id="nav-blog" class="navbar-item" href="/blog" style="color: #363636;">
+                            <span class="icon is-small">
+                                <i class="fa fa-rss"></i>
+                            </span>
+                            <span>Blog</span>
+                        </a>
+                        <hr class="navbar-divider">
+                        <a id="nav-status" class="navbar-item" href="/status" title="Status" style="color: #363636;">
+                            <span class="icon is-small">
+                                <i class="fa fa-heartbeat"></i>
+                            </span>
+                            <span>Status</span>
+                        </a>
+                        <a id="nav-donate" class="navbar-item" href="/donate" style="color: #363636;">
+                            <span class="icon is-small">
+                                <i class="fa fa-gift"></i>
+                            </span>
+                            <span>Donate</span>
+                        </a>
+                    </div>
+                </div>
+
                 <script>
                     if(localStorage.getItem("donate") === "hide") {
                         $("#nav-donate").toggle();
