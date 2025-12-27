@@ -150,7 +150,7 @@ services:
     security_opt:
       - apparmor:unconfined
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - ./data/redis:/data
       - ./monitoring/redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
