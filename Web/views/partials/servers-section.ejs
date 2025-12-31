@@ -281,14 +281,14 @@ SkynetUtil.showActivitySelections = () => {
 					<div class="control">
 						<a id="grid-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('grid');" title="Grid View">
 							<span class="icon is-small">
-								<i class="fa fa-th-large"></i>
+								<i class="fas fa-th-large"></i>
 							</span>
 						</a>
 					</div>
 					<div class="control">
 						<a id="list-layout-button" class="button" onclick="SkynetUtil.switchActivityLayout('list');" title="List View">
 							<span class="icon is-small">
-								<i class="fa fa-list"></i>
+								<i class="fas fa-list"></i>
 							</span>
 						</a>
 					</div>
@@ -355,13 +355,13 @@ SkynetUtil.showActivitySelections = () => {
 						<div class="buttons is-centered">
 							<% if (server.hasPublicPage) { %>
 								<a class="button is-outlined is-small" href="/server/<%= server.id %><%= server.slug ? '/' + server.slug : '' %>">
-									<span class="icon"><i class="fa fa-info-circle"></i></span>
+									<span class="icon"><i class="fas fa-info-circle"></i></span>
 									<span>Details</span>
 								</a>
 							<% } %>
 							<% if (server.invite_link) { %>
 								<a class="button is-primary is-modern is-small" href="<%= server.invite_link %>">
-									<span class="icon"><i class="fa fa-sign-in"></i></span>
+									<span class="icon"><i class="fas fa-sign-in"></i></span>
 									<span>Join</span>
 								</a>
 							<% } %>
@@ -450,7 +450,7 @@ SkynetUtil.showActivitySelections = () => {
 										</div>
 									</div>
 									<p class="has-text-grey" style="margin-bottom: 1rem;">
-										<span class="icon"><i class="fa fa-user"></i></span>
+										<span class="icon"><i class="fas fa-user"></i></span>
 										Owned by <a href="/profile/<%= server.owner.id %>" style="color: inherit;"><strong>@<%= server.owner.username %></strong></a>
 									</p>
 									<% if (server.description) { %>
@@ -463,13 +463,13 @@ SkynetUtil.showActivitySelections = () => {
 								<footer class="modal-card-foot" style="justify-content: center;">
 									<% if (server.hasPublicPage) { %>
 										<a class="button is-outlined" href="/server/<%= server.id %><%= server.slug ? '/' + server.slug : '' %>">
-											<span class="icon"><i class="fa fa-info-circle"></i></span>
+											<span class="icon"><i class="fas fa-info-circle"></i></span>
 											<span>View Details</span>
 										</a>
 									<% } %>
 									<% if (server.invite_link) { %>
 										<a class="button is-primary is-modern" href="<%= server.invite_link %>">
-											<span class="icon"><i class="fa fa-sign-in"></i></span>
+											<span class="icon"><i class="fas fa-sign-in"></i></span>
 											<span>Join Server</span>
 										</a>
 									<% } %>

@@ -52,14 +52,14 @@
 				</div>
 				<div class="column">
 					<h1 class="title">
-						<span class="icon"><i class="fa fa-star"></i></span>
+						<span class="icon"><i class="fas fa-star"></i></span>
 						Membership Tiers
 					</h1>
 					<article class="message is-primary">
 						<div class="message-body">
 							<div class="content">
 								<p>Configure membership tiers and assign features to each tier. Users are assigned to tiers based on their subscription status.</p>
-								<p><strong>Tip:</strong> Create a "free" tier as the default for all users. Higher level numbers indicate premium tiers.</p>
+								<p><strong>Tip:</strong> Select one tier as the "Default Tier". This tier will be automatically assigned to all servers/users without an active subscription.</p>
 							</div>
 						</div>
 					</article>
@@ -70,7 +70,7 @@
 								<% configData.tiers.forEach((tier, index) => { %>
 								<div class="tier-card <%= tier.is_default ? 'is-default' : '' %>" data-index="<%= index %>">
 									<button type="button" class="button is-danger is-small tier-remove" onclick="removeTier(this)">
-										<span class="icon"><i class="fa fa-trash"></i></span>
+										<span class="icon"><i class="fas fa-trash-alt"></i></span>
 									</button>
 									
 									<div class="columns">
@@ -177,7 +177,7 @@
 						</div>
 
 						<button type="button" class="button is-info" id="add-tier-btn">
-							<span class="icon"><i class="fa fa-plus"></i></span>
+							<span class="icon"><i class="fas fa-plus"></i></span>
 							<span>Add Tier</span>
 						</button>
 						<br><br>
@@ -210,7 +210,7 @@
 		$('#tiers-container').append(`
 			<div class="tier-card" data-index="${tierIndex}">
 				<button type="button" class="button is-danger is-small tier-remove">
-					<span class="icon"><i class="fa fa-trash"></i></span>
+					<span class="icon"><i class="fas fa-trash-alt"></i></span>
 				</button>
 				
 				<div class="columns">

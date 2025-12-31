@@ -248,7 +248,7 @@
 				<div class="blog-hero-content has-text-centered fade-in">
 					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
 						<span class="icon is-medium" style="margin-right: 0.5rem;">
-							<i class="fa fa-rss"></i>
+							<i class="fas fa-rss"></i>
 						</span>
 						<% if (pageData.mode === "article" && pageData.blogPost) { %>
 							<%= pageData.blogPost.title %>
@@ -269,7 +269,7 @@
 					
 					<% if (isMaintainer && pageData.mode !== "compose") { %>
 					<a class="button is-modern is-light" href="/blog/new" style="margin-top: 1rem;">
-						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span class="icon"><i class="fas fa-plus"></i></span>
 						<span>New Post</span>
 					</a>
 					<% } %>
@@ -284,7 +284,7 @@
 				<% if (pageData.mode === "article") { %>
 					<div class="blog-article-container">
 						<a href="/blog" class="blog-back-link">
-							<i class="fa fa-arrow-left"></i>
+							<i class="fas fa-arrow-left"></i>
 							Back to all posts
 						</a>
 						<% const { blogPost } = pageData; %>
@@ -303,7 +303,7 @@
 									<% }); %>
 								</select>
 								<button type="submit" class="btn btn-primary" style="flex: 0 0 auto; background: var(--gradient-brand); color: white; border: none; padding: 12px 24px; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
-									<i class="fa fa-search"></i> Search
+									<i class="fas fa-search"></i> Search
 								</button>
 							</form>
 							
@@ -329,7 +329,7 @@
 							<% pageData.data.forEach(blogPost => { %>
 							<article class="blog-card fade-in">
 								<div class="blog-card-image">
-									<i class="fa fa-newspaper-o" style="font-size: 48px; color: var(--text-muted);"></i>
+									<i class="fas fa-newspaper-o" style="font-size: 48px; color: var(--text-muted);"></i>
 								</div>
 								<div class="blog-card-content">
 									<div>
@@ -347,7 +347,7 @@
 											<span style="font-size: 13px; color: var(--text-secondary);"><%= blogPost.author.name %></span>
 										</div>
 										<a href="/blog/<%= blogPost.id %>/<%= blogPost.slug %>" style="color: var(--color-accent); font-weight: 600; font-size: 14px; text-decoration: none;">
-											Read More <i class="fa fa-arrow-right" style="font-size: 12px;"></i>
+											Read More <i class="fas fa-arrow-right" style="font-size: 12px;"></i>
 										</a>
 									</div>
 								</div>
@@ -365,7 +365,7 @@
 							<div>
 								<% if (pageData.currentPage < pageData.numPages) { %>
 								<a class="button is-light" href="/blog?page=<%= pageData.currentPage + 1 %><%= queryParams %>">
-									<span class="icon"><i class="fa fa-chevron-left"></i></span>
+									<span class="icon"><i class="fas fa-chevron-left"></i></span>
 									<span>Older Posts</span>
 								</a>
 								<% } %>
@@ -374,7 +374,7 @@
 								<% if (pageData.currentPage > 1) { %>
 								<a class="button is-light" href="/blog?page=<%= pageData.currentPage - 1 %><%= queryParams %>">
 									<span>Newer Posts</span>
-									<span class="icon"><i class="fa fa-chevron-right"></i></span>
+									<span class="icon"><i class="fas fa-chevron-right"></i></span>
 								</a>
 								<% } %>
 							</div>

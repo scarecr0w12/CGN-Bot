@@ -15,7 +15,7 @@
 				</div>
 				<div class="column">
 					<h3 class="title is-3">
-						<span class="icon"><i class="fa fa-globe"></i></span>
+						<span class="icon"><i class="fas fa-globe"></i></span>
 						Network Capability Approvals
 					</h3>
 					<p class="subtitle">Review and approve extensions requesting network access</p>
@@ -62,7 +62,7 @@
 										</td>
 										<td>
 											<span class="tag <%= ext.network_capability === 'network_advanced' ? 'is-danger' : 'is-warning' %>">
-												<span class="icon is-small"><i class="fa fa-globe"></i></span>
+												<span class="icon is-small"><i class="fas fa-globe"></i></span>
 												<span><%= ext.network_capability %></span>
 											</span>
 										</td>
@@ -75,11 +75,11 @@
 										<td>
 											<div class="buttons are-small">
 												<a class="button is-link is-outlined" href="/extensions/gallery?id=<%= ext._id %>" target="_blank">
-													<span class="icon"><i class="fa fa-external-link"></i></span>
+													<span class="icon"><i class="fas fa-external-link"></i></span>
 													<span>View</span>
 												</a>
 												<button class="button is-success" onclick="approveNetwork('<%= ext._id %>')">
-													<span class="icon"><i class="fa fa-check"></i></span>
+													<span class="icon"><i class="fas fa-check"></i></span>
 													<span>Approve</span>
 												</button>
 											</div>
@@ -92,7 +92,7 @@
 					</div>
 					<% } else { %>
 					<div class="notification is-success is-light">
-						<span class="icon"><i class="fa fa-check-circle"></i></span>
+						<span class="icon"><i class="fas fa-check-circle"></i></span>
 						<strong>No pending network approvals!</strong> All extensions with network capabilities have been reviewed.
 					</div>
 					<% } %>
@@ -100,7 +100,7 @@
 					<% if (pageData.recentApprovals && pageData.recentApprovals.length > 0) { %>
 					<div class="box mt-5">
 						<h4 class="title is-4 mb-4">
-							<span class="icon"><i class="fa fa-history"></i></span>
+							<span class="icon"><i class="fas fa-history"></i></span>
 							Recently Approved
 						</h4>
 						
@@ -124,7 +124,7 @@
 										</td>
 										<td>
 											<span class="tag is-success">
-												<span class="icon is-small"><i class="fa fa-globe"></i></span>
+												<span class="icon is-small"><i class="fas fa-globe"></i></span>
 												<span><%= ext.network_capability %></span>
 											</span>
 										</td>

@@ -1,5 +1,5 @@
 const { ChannelType } = require("discord.js");
-const { getChannelData, saveAdminConsoleOptions: save, renderError, findQueryUser } = require("../../helpers");
+const { getChannelData, getRoleData, saveAdminConsoleOptions: save, renderError, findQueryUser } = require("../../helpers");
 const parsers = require("../../parsers");
 const TierManager = require("../../../Modules/TierManager");
 
@@ -469,6 +469,7 @@ const GameUpdateAnnouncer = require("../../../Modules/GameUpdateAnnouncer");
 controllers.gameUpdates = async (req, { res }) => {
 	const { svr } = req;
 	const serverDocument = req.svr.document;
+	await svr.fetchCollection("roles");
 
 	// Get available games
 	const availableGames = GameUpdateAnnouncer.getAvailableGames();
@@ -482,7 +483,7 @@ controllers.gameUpdates = async (req, { res }) => {
 	res.setPageData({
 		page: "admin-game-updates.ejs",
 		channelData: getChannelData(svr),
-		roleData: svr.roles ? Array.isArray(svr.roles) ? svr.roles : Object.values(svr.roles) : [],
+		roleData: getRoleData(svr),
 		availableGames,
 		subscriptions: subscriptions.map(sub => {
 			const gameInfo = availableGames.find(g => g.id === sub.game_id);

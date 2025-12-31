@@ -171,13 +171,12 @@ exports.open = async (client, auth, configJS, logger) => {
 					"cdnjs.cloudflare.com",
 					"https://unpkg.com",
 					"unpkg.com",
-					"https://maxcdn.bootstrapcdn.com",
-					"maxcdn.bootstrapcdn.com",
 					// Analytics (internal)
 					"https://analytics.thecorehosting.net",
 					"https://static.cloudflareinsights.com",
 					// Google Tag Manager
 					"https://*.googletagmanager.com",
+					"https://www.googletagmanager.com",
 					"https://googletagmanager.com",
 					"https://tagmanager.google.com",
 					// Google Analytics
@@ -212,8 +211,6 @@ exports.open = async (client, auth, configJS, logger) => {
 					"cdnjs.cloudflare.com",
 					"https://fonts.googleapis.com",
 					"fonts.googleapis.com",
-					"https://maxcdn.bootstrapcdn.com",
-					"maxcdn.bootstrapcdn.com",
 					"https://analytics.thecorehosting.net",
 					"https://*.googleadservices.com",
 				],
@@ -221,8 +218,6 @@ exports.open = async (client, auth, configJS, logger) => {
 					"'self'",
 					"https://fonts.gstatic.com",
 					"fonts.gstatic.com",
-					"https://maxcdn.bootstrapcdn.com",
-					"maxcdn.bootstrapcdn.com",
 					"https://analytics.thecorehosting.net",
 					"data:",
 				],
@@ -240,9 +235,17 @@ exports.open = async (client, auth, configJS, logger) => {
 					"wss:",
 					"ws:",
 					"https://discord.com",
+					// CDN sources for service worker
+					"https://cdnjs.cloudflare.com",
+					"https://unpkg.com",
+					// Google Fonts
+					"https://fonts.googleapis.com",
+					"https://fonts.gstatic.com",
+					// Discord CDN (avatars, etc.)
+					"https://cdn.discordapp.com",
+					"https://cdn.discord.com",
 					// Analytics (internal)
 					"https://analytics.thecorehosting.net",
-					"https://cdnjs.cloudflare.com",
 					"https://static.cloudflareinsights.com",
 					// Google Tag Manager
 					"https://*.googletagmanager.com",
@@ -453,10 +456,19 @@ exports.open = async (client, auth, configJS, logger) => {
 	app.use(middleware.loadInjection);
 
 	// Serve specific root-level files (SEO, ad verification, etc.)
-	const rootLevelFiles = ["ads.txt", "robots.txt", "sitemap.xml"];
-	rootLevelFiles.forEach(file => {
+	const rootLevelFiles = [
+		{ file: "ads.txt", contentType: "text/plain" },
+		{ file: "robots.txt", contentType: "text/plain" },
+		{ file: "sitemap.xml", contentType: "application/xml" },
+		{ file: "service-worker.js", contentType: "application/javascript" },
+	];
+	rootLevelFiles.forEach(({ file, contentType }) => {
 		app.get(`/${file}`, (req, res, next) => {
 			const filePath = `${__dirname}/public/${file}`;
+			// Set Content-Type before sending file
+			if (contentType) {
+				res.type(contentType);
+			}
 			res.sendFile(filePath, err => {
 				if (err) {
 					return next(); // File doesn't exist, continue to next handler

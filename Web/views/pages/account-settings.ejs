@@ -262,7 +262,7 @@
 			<!-- Language Preferences Section -->
 			<div class="box mb-5">
 				<h2 class="subtitle">
-					<span class="icon"><i class="fa fa-globe"></i></span>
+					<span class="icon"><i class="fas fa-globe"></i></span>
 					<%= typeof t === 'function' ? t('common:language') : 'Language' %> Preferences
 				</h2>
 				<p class="mb-4 has-text-grey">Choose your preferred language for the website and bot interactions.</p>
@@ -290,7 +290,7 @@
 			<div class="column is-half">
 				<div class="box" id="vote-rewards-section">
 					<h2 class="subtitle">
-						<span class="icon"><i class="fa fa-vote-yea"></i></span>
+						<span class="icon"><i class="fas fa-vote-yea"></i></span>
 						Vote Rewards
 					</h2>
 					<div id="vote-rewards-content">
@@ -306,7 +306,7 @@
 			<div class="column is-half">
 					<div class="box">
 						<h2 class="subtitle">
-							<span class="icon"><i class="fa fa-link"></i></span>
+							<span class="icon"><i class="fas fa-link"></i></span>
 							Linked Accounts
 						</h2>
 						<p class="mb-4 has-text-grey">Link additional accounts for extra features and integrations.</p>
@@ -437,7 +437,7 @@
 			<!-- Server Profiles Section -->
 			<div class="box mt-5">
 				<h2 class="subtitle">
-					<span class="icon"><i class="fa fa-server"></i></span>
+					<span class="icon"><i class="fas fa-server"></i></span>
 					Server Profiles
 				</h2>
 				<p class="mb-4 has-text-grey">Create and manage custom profiles for each server you're in. These profiles are visible to other members on that server.</p>
@@ -458,7 +458,7 @@
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title">
-					<span class="icon"><i class="fa fa-user-edit"></i></span>
+					<span class="icon"><i class="fas fa-user-edit"></i></span>
 					<span id="modal-server-name">Edit Profile</span>
 				</p>
 				<button class="delete" aria-label="close" onclick="closeProfileModal()"></button>
@@ -467,7 +467,7 @@
 				<input type="hidden" id="modal-server-id">
 				
 				<div class="notification is-info is-light">
-					<span class="icon"><i class="fa fa-info-circle"></i></span>
+					<span class="icon"><i class="fas fa-info-circle"></i></span>
 					Add custom fields to your profile for this server. Other members can view these fields.
 				</div>
 
@@ -476,7 +476,7 @@
 				</div>
 
 				<button type="button" class="button is-small is-info is-outlined mt-3" onclick="addProfileField()">
-					<span class="icon"><i class="fa fa-plus"></i></span>
+					<span class="icon"><i class="fas fa-plus"></i></span>
 					<span>Add Field</span>
 				</button>
 
@@ -484,11 +484,11 @@
 			</section>
 			<footer class="modal-card-foot">
 				<button class="button is-success" onclick="saveProfile()" id="save-profile-btn">
-					<span class="icon"><i class="fa fa-save"></i></span>
+					<span class="icon"><i class="fas fa-save"></i></span>
 					<span>Save Profile</span>
 				</button>
 				<button class="button is-danger is-outlined" onclick="deleteProfile()" id="delete-profile-btn">
-					<span class="icon"><i class="fa fa-trash"></i></span>
+					<span class="icon"><i class="fas fa-trash-alt"></i></span>
 					<span>Delete Profile</span>
 				</button>
 				<button class="button" onclick="closeProfileModal()">Cancel</button>
@@ -502,14 +502,14 @@
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title">
-					<span class="icon"><i class="fa fa-gift"></i></span>
+					<span class="icon"><i class="fas fa-gift"></i></span>
 					<span>Redeem Vote Rewards</span>
 				</p>
 				<button class="delete" aria-label="close" onclick="closeRedeemModal()"></button>
 			</header>
 			<section class="modal-card-body">
 				<div class="notification is-info is-light mb-4">
-					<span class="icon"><i class="fa fa-info-circle"></i></span>
+					<span class="icon"><i class="fas fa-info-circle"></i></span>
 					<span>Use your vote reward points to purchase premium tier access for your servers.</span>
 				</div>
 				
@@ -518,7 +518,7 @@
 			</section>
 			<footer class="modal-card-foot">
 				<button class="button is-success" onclick="confirmRedeem()" id="confirm-redeem-btn">
-					<span class="icon"><i class="fa fa-check"></i></span>
+					<span class="icon"><i class="fas fa-check"></i></span>
 					<span>Confirm Redemption</span>
 				</button>
 				<button class="button" onclick="closeRedeemModal()">Cancel</button>
@@ -532,7 +532,7 @@
 		<div class="modal-card">
 			<header class="modal-card-head">
 				<p class="modal-card-title">
-					<span class="icon"><i class="fa fa-history"></i></span>
+					<span class="icon"><i class="fas fa-history"></i></span>
 					<span>Transaction History</span>
 				</p>
 				<button class="delete" aria-label="close" onclick="closeHistoryModal()"></button>
@@ -620,7 +620,7 @@
 			if (serversData.length === 0) {
 				container.innerHTML = `
 					<div class="notification is-warning is-light">
-						<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+						<span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
 						<span>You're not in any servers where the bot is present.</span>
 					</div>
 				`;
@@ -632,7 +632,7 @@
 			console.error('Error loading servers:', err);
 			container.innerHTML = `
 				<div class="notification is-danger is-light">
-					<span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+					<span class="icon"><i class="fas fa-exclamation-circle"></i></span>
 					<span>Failed to load servers. Please refresh the page.</span>
 				</div>
 			`;
@@ -648,16 +648,16 @@
 				<div class="server-info">
 					<h4>${escapeHtml(server.name)}</h4>
 					<p>
-						<span class="icon is-small"><i class="fa fa-users"></i></span>
+						<span class="icon is-small"><i class="fas fa-users"></i></span>
 						${server.memberCount} members
-						<span class="ml-3 icon is-small"><i class="fa fa-crown"></i></span>
+						<span class="ml-3 icon is-small"><i class="fas fa-crown"></i></span>
 						${escapeHtml(server.owner)}
 					</p>
 				</div>
 				<div>
 					${server.hasProfile 
-						? '<span class="tag is-success"><span class="icon is-small"><i class="fa fa-check"></i></span><span>Profile Set</span></span>' 
-						: '<span class="tag is-light"><span class="icon is-small"><i class="fa fa-plus"></i></span><span>Add Profile</span></span>'
+						? '<span class="tag is-success"><span class="icon is-small"><i class="fas fa-check"></i></span><span>Profile Set</span></span>' 
+						: '<span class="tag is-light"><span class="icon is-small"><i class="fas fa-plus"></i></span><span>Add Profile</span></span>'
 					}
 				</div>
 			</div>
@@ -711,7 +711,7 @@
 			<input type="text" class="input field-name" placeholder="Field Name (e.g., Bio, Location)" maxlength="100" value="${escapeHtml(name)}">
 			<input type="text" class="input field-value" placeholder="Value" maxlength="500" value="${escapeHtml(value)}">
 			<button type="button" class="button is-small is-danger is-outlined" onclick="this.parentElement.remove()">
-				<span class="icon"><i class="fa fa-times"></i></span>
+				<span class="icon"><i class="fas fa-times"></i></span>
 			</button>
 		`;
 		
@@ -860,7 +860,7 @@
 			if (!voteRewardsData.isEnabled) {
 				container.innerHTML = `
 					<div class="notification is-info is-light">
-						<span class="icon"><i class="fa fa-info-circle"></i></span>
+						<span class="icon"><i class="fas fa-info-circle"></i></span>
 						<span>Vote rewards are not currently enabled.</span>
 					</div>
 				`;
@@ -872,7 +872,7 @@
 			console.error('Error loading vote rewards:', err);
 			container.innerHTML = `
 				<div class="notification is-danger is-light">
-					<span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+					<span class="icon"><i class="fas fa-exclamation-circle"></i></span>
 					<span>Failed to load vote rewards. Please refresh the page.</span>
 				</div>
 			`;
@@ -899,7 +899,7 @@
 						</div>
 					</div>
 					<a href="${site.url}" target="_blank" class="button is-small ${canVoteNow ? 'is-success' : 'is-light'}" ${!canVoteNow ? 'disabled' : ''}>
-						<span class="icon"><i class="fa fa-external-link-alt"></i></span>
+						<span class="icon"><i class="fas fa-external-link-alt"></i></span>
 						<span>${canVoteNow ? 'Vote Now' : 'Cooldown'}</span>
 					</a>
 				</div>
@@ -927,7 +927,7 @@
 			</div>
 			
 			<h4 class="title is-6 mb-3">
-				<span class="icon"><i class="fa fa-star"></i></span>
+				<span class="icon"><i class="fas fa-star"></i></span>
 				Vote to Earn Points
 			</h4>
 			<p class="is-size-7 has-text-grey mb-3">
@@ -939,11 +939,11 @@
 			
 			<div class="buttons">
 				<button class="button is-primary" onclick="openRedeemModal()">
-					<span class="icon"><i class="fa fa-gift"></i></span>
+					<span class="icon"><i class="fas fa-gift"></i></span>
 					<span>Redeem Points</span>
 				</button>
 				<button class="button is-info is-outlined" onclick="viewTransactionHistory()">
-					<span class="icon"><i class="fa fa-history"></i></span>
+					<span class="icon"><i class="fas fa-history"></i></span>
 					<span>History</span>
 				</button>
 			</div>
@@ -988,7 +988,7 @@
 			if (ownedServers.length === 0) {
 				serversContainer.innerHTML = `
 					<div class="notification is-warning is-light">
-						<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+						<span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
 						<span>You don't own any servers where the bot is present.</span>
 					</div>
 				`;

@@ -27,7 +27,7 @@ controllers.home = async (req, { res }) => {
 				const data = {
 					name: req.user.guilds[i].name,
 					id: req.user.guilds[i].id,
-					icon: req.user.guilds[i].icon ? `https://cdn.discordapp.com/icons/${req.user.guilds[i].id}/${req.user.guilds[i].icon}.jpg` : "/static/img/discord-icon.png",
+					icon: req.app.client.getAvatarURL(req.user.guilds[i].id, req.user.guilds[i].icon, "icons"),
 					botJoined: svr.success,
 					isAdmin: false,
 				};
@@ -151,3 +151,4 @@ controllers.other = require("./other");
 controllers.ai = require("./ai");
 controllers.subscription = require("./subscription");
 controllers.tickets = require("./tickets");
+controllers.serverManagement = require("./server-management");

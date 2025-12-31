@@ -166,12 +166,12 @@
                         </div>
                         <div class="content">
                             <span class="icon">
-                                <i class="fa fa-server"></i>
+                                <i class="fas fa-server"></i>
                             </span>
                             Using <strong><%= configData.data.master.rss %>MB</strong> of RAM
                             <br>
                             <span class="icon">
-                                <i class="fa fa-clock-o"></i>
+                                <i class="fas fa-clock"></i>
                             </span>
                             Process has been alive for <strong><%= configData.data.master.uptime %> hours</strong>
                             <br>
@@ -183,7 +183,7 @@
                             <br>
                             <div id="warning-list">
                                 <span class="icon">
-                                    <i class="fa fa-exclamation-triangle"></i>
+                                    <i class="fas fa-exclamation-triangle"></i>
                                 </span>
                                 Found <strong id="warning-count"><%= configData.data.master.warns.length %></strong> configuration warnings:
                                 <% configData.data.master.warns.forEach(warn => { %>
@@ -191,7 +191,7 @@
                                         <% if (accessPrivileges.includes("shutdown")) { %>
                                             <button class="button is-small is-white" onclick="dismissWarning(`<%= warn %>`, <%= configData.data.master.warns.indexOf(warn) %>); return false;" title="Dismiss warning">
                                                 <span class="icon is-small">
-                                                    <i class="fa fa-times"></i>
+                                                    <i class="fas fa-times"></i>
                                                 </span>
                                             </button>
                                         <% } %>
@@ -206,13 +206,13 @@
                         <% if (accessPrivileges.includes("shutdown")) { %>
                         <a id="shutdown" class="card-footer-item card-footer-item-danger" href="javascript:shutdown()">
                             <span class="icon">
-                                <i class="fa fa-power-off"></i>
+                                <i class="fas fa-power-off"></i>
                             </span>
                             Shutdown
                         </a>
                         <a id="restart" class="card-footer-item card-footer-item-danger" href="javascript:restart()">
                             <span class="icon">
-                                <i class="fa fa-refresh"></i>
+                                <i class="fas fa-refresh"></i>
                             </span>
                             Restart
                         </a>
@@ -258,17 +258,17 @@
                                 <% } %>
                                 <div class="content">
                                     <span class="icon">
-                                        <i class="fa fa-server"></i>
+                                        <i class="fas fa-server"></i>
                                     </span>
                                     Using <strong><%= configData.data.shards[i].rss %>MB</strong> of RAM
                                     <br>
                                     <span class="icon">
-                                        <i class="fa fa-clock-o"></i>
+                                        <i class="fas fa-clock"></i>
                                     </span>
                                     Shard has been alive for <strong><%= configData.data.shards[i].uptime %> hours</strong>
                                     <br>
                                     <span class="icon">
-                                        <i class="fa fa-terminal"></i>
+                                        <i class="fas fa-terminal"></i>
                                     </span>
                                     Shard is running with PID <strong><%= configData.data.shards[i].PID %></strong>
                                 </div>
@@ -277,7 +277,7 @@
                                 <div class="card-footer-item">
                                     <span class="has-text-<%= configData.data.shards[i].worker.status ? "success" : "danger" %>">
                                         <span class="icon">
-                                            <i class="fa fa-circle-o"></i>
+                                            <i class="fas fa-circle"></i>
                                         </span>
                                         <% if (configData.data.shards[i].worker.status) { %>
                                         Extension Worker Online with PID <%= configData.data.shards[i].worker.PID %>

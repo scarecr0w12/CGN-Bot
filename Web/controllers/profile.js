@@ -21,6 +21,17 @@ const getUserData = async (client, userId) => {
 
 		const userDocument = await CacheManager.getUser(userId);
 
+		// Determine if user has premium (non-default) tier
+		let isPremium = false;
+		if (userDocument?.subscription?.tier_id) {
+			const TierManager = require("../../Modules/TierManager");
+			const tier = await TierManager.getTier(userDocument.subscription.tier_id);
+			// It is premium if it's not the default tier
+			if (tier && !tier.is_default) {
+				isPremium = true;
+			}
+		}
+
 		return {
 			id: user.id,
 			username: user.username,
@@ -32,6 +43,7 @@ const getUserData = async (client, userId) => {
 			createdAt: user.createdAt,
 			bot: user.bot,
 			document: userDocument,
+			isPremium,
 		};
 	} catch (err) {
 		logger.debug("Error fetching user data", { userId }, err);

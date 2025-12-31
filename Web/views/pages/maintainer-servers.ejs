@@ -41,7 +41,7 @@
 				</div>
 				<div class="column">
 					<h1 class="title">
-						<span class="icon"><i class="fa fa-server"></i></span>
+						<span class="icon"><i class="fas fa-server"></i></span>
 						Server Management
 					</h1>
 					<article class="message is-primary">
@@ -61,7 +61,7 @@
 								</div>
 								<div class="control">
 									<button class="button is-info" type="submit">
-										<span class="icon"><i class="fa fa-search"></i></span>
+										<span class="icon"><i class="fas fa-search"></i></span>
 										<span>Search</span>
 									</button>
 								</div>
@@ -98,19 +98,27 @@
 							<p class="is-size-7 has-text-grey">ID: <%= server._id %> • <%= server.memberCount.toLocaleString() || 0 %> members</p>
 						</div>
 						<div>
-							<% if (server.subscription && server.subscription.tier_id && server.subscription.tier_id !== 'free') { %>
-							<span class="tier-badge" style="background-color: <%= (configData.tiers.find(t => t._id === server.subscription.tier_id) || {}).color || '#3273dc' %>20; color: <%= (configData.tiers.find(t => t._id === server.subscription.tier_id) || {}).color || '#3273dc' %>;">
-								<%= (configData.tiers.find(t => t._id === server.subscription.tier_id) || {}).name || server.subscription.tier_id %>
+							<% 
+								const defaultTier = configData.tiers.find(t => t.is_default) || { name: 'Free', _id: 'free', color: '#3273dc' };
+								const tierId = server.subscription?.tier_id;
+								// If tierId exists, find it. If not, use default tier.
+								const tier = tierId ? configData.tiers.find(t => t._id === tierId) : defaultTier;
+								const currentTier = tier || defaultTier;
+								const isDefault = currentTier.is_default || currentTier._id === 'free';
+							%>
+							<% if (server.subscription && server.subscription.tier_id && !isDefault) { %>
+							<span class="tier-badge" style="background-color: <%= (currentTier || {}).color || '#3273dc' %>20; color: <%= (currentTier || {}).color || '#3273dc' %>;">
+								<%= (currentTier || {}).name || server.subscription.tier_id %>
 							</span>
 							<% } else { %>
-							<span class="tag">Free</span>
+							<span class="tag"><%= (currentTier || {}).name || 'Free' %></span>
 							<% } %>
 						</div>
 						<button class="button is-small is-info edit-server-btn" 
 						data-server-id="<%= server._id %>" 
 						data-server-name="<%= server.name %>" 
 						data-tier-id="<%= server.subscription?.tier_id || '' %>">
-						<span class="icon"><i class="fa fa-edit"></i></span>
+						<span class="icon"><i class="fas fa-edit"></i></span>
 						<span>Edit</span>
 					</button>
 					</div>

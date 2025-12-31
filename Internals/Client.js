@@ -1016,7 +1016,7 @@ module.exports = class SkynetClient extends DJSClient {
 	getAvatarURL (id, hash, type = "avatars", webp = false) {
 		if (!hash) return "/static/img/discord-icon.png";
 		// Discord.js v14 uses rest.cdn, fallback to hardcoded CDN URL
-		const cdnBase = "https://cdn.discordapp.com";
+		const cdnBase = "https://cdn.discord.com";
 		const extension = hash.startsWith("a_") ? "gif" : webp ? "webp" : "png";
 		return `${cdnBase}/${type}/${id}/${hash}.${extension}?size=2048`;
 	}

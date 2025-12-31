@@ -16,11 +16,13 @@ module.exports = class SubscriptionCheck extends Base {
 	async _handle () {
 		try {
 			const TierManager = require("../TierManager");
+			const defaultTier = await TierManager.getDefaultTier();
+			const defaultTierId = defaultTier ? defaultTier._id : "free";
 
 			// Get all servers with active subscriptions that might have expired
 			const now = new Date();
 			const expiredServers = await Servers.find({
-				"subscription.tier_id": { $exists: true, $nin: [null, "free"] },
+				"subscription.tier_id": { $exists: true, $nin: [null, "free", defaultTierId] },
 				"subscription.expires_at": { $exists: true, $lte: now },
 				"subscription.is_active": { $ne: false },
 			}).exec();
@@ -64,7 +66,7 @@ module.exports = class SubscriptionCheck extends Base {
 			// 3 days from now
 			const soonExpiringDate = new Date(now.getTime() + (3 * 24 * 60 * 60 * 1000));
 			const soonExpiring = await Servers.find({
-				"subscription.tier_id": { $exists: true, $nin: [null, "free"] },
+				"subscription.tier_id": { $exists: true, $nin: [null, defaultTierId] },
 				"subscription.expires_at": { $exists: true, $gte: now, $lte: soonExpiringDate },
 				"subscription.is_active": true,
 				"subscription.expiration_warned": { $ne: true },

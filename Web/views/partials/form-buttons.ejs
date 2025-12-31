@@ -2,7 +2,7 @@
 <div class="control is-horizontal is-grouped">
 	<button id="form-submit" type="submit" class="button is-primary<%= formButtonsUnsaved ? ' is-small' : '' %>" value="Submit" onclick="SkynetUtil.SFS();">
 		<span class="icon<%= formButtonsUnsaved ? ' is-small' : '' %>">
-	        <i class="fa fa-check"></i>
+	        <i class="fas fa-check"></i>
 	    </span>
 	    <span><%= formButtonsUnsaved ? "Save changes" : "Save" %></span>
 	</button>
@@ -10,7 +10,7 @@
 	<a id="form-reset" class="button is-danger is-outlined<%= formButtonsUnsaved ? ' is-small' : '' %>" onclick="SkynetUtil.SFS();Turbolinks.visit('');">
 	    <span><%= formButtonsUnsaved ? "Discard" : "Reset" %></span>
 		<span class="icon<%= formButtonsUnsaved ? ' is-small' : '' %>">
-	        <i class="fa fa-times"></i>
+	        <i class="fas fa-times"></i>
 	    </span>
 	</a>
 </div>

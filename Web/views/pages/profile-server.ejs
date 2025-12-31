@@ -380,7 +380,7 @@
 			<div class="container">
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
-						<i class="fa fa-server"></i> Server Profile
+						<i class="fas fa-server"></i> Server Profile
 					</h1>
 					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
 						<%= profile.user.displayName %> in <%= profile.server.name %>
@@ -407,7 +407,7 @@
 				</div>
 				<div class="view-primary-btn">
 					<a href="/profile/<%= profile.user.id %>" class="button is-light is-small">
-						<span class="icon"><i class="fa fa-user"></i></span>
+						<span class="icon"><i class="fas fa-user"></i></span>
 						<span>Primary Profile</span>
 					</a>
 				</div>
@@ -420,14 +420,14 @@
 						<h2><%= profile.user.displayName %></h2>
 						<% if (profile.memberData.joinedAt) { %>
 							<div class="member-joined">
-								<i class="fa fa-calendar-plus"></i>
+								<i class="fas fa-calendar-plus"></i>
 								Joined <strong><%= new Date(profile.memberData.joinedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></strong>
 							</div>
 						<% } %>
 					</div>
 					<% if (profile.isOwnProfile) { %>
 						<a href="/profile/me/<%= profile.server.id %>/edit" class="button is-primary is-modern">
-							<span class="icon"><i class="fa fa-edit"></i></span>
+							<span class="icon"><i class="fas fa-edit"></i></span>
 							<span>Edit</span>
 						</a>
 					<% } %>
@@ -443,7 +443,7 @@
 				<div class="server-stats-grid">
 					<div class="server-stat-card">
 						<div class="server-stat-icon messages">
-							<i class="fa fa-comment"></i>
+							<i class="fas fa-comment"></i>
 						</div>
 						<div class="server-stat-info">
 							<div class="server-stat-value"><%= profile.memberData.messages.toLocaleString() %></div>
@@ -452,7 +452,7 @@
 					</div>
 					<div class="server-stat-card">
 						<div class="server-stat-icon voice">
-							<i class="fa fa-microphone"></i>
+							<i class="fas fa-microphone"></i>
 						</div>
 						<div class="server-stat-info">
 							<div class="server-stat-value"><%= profile.memberData.voiceHours %>h</div>
@@ -461,7 +461,7 @@
 					</div>
 					<div class="server-stat-card">
 						<div class="server-stat-icon rank">
-							<i class="fa fa-trophy"></i>
+							<i class="fas fa-trophy"></i>
 						</div>
 						<div class="server-stat-info">
 							<div class="server-stat-value"><%= profile.memberData.rank %></div>
@@ -470,7 +470,7 @@
 					</div>
 					<div class="server-stat-card">
 						<div class="server-stat-icon score">
-							<i class="fa fa-chart-line"></i>
+							<i class="fas fa-chart-line"></i>
 						</div>
 						<div class="server-stat-info">
 							<div class="server-stat-value"><%= profile.memberData.rankScore.toLocaleString() %></div>
@@ -483,7 +483,7 @@
 				<% if (profileFields && Object.keys(profileFields).length > 0) { %>
 					<div class="profile-fields-section">
 						<div class="profile-fields-title">
-							<i class="fa fa-id-card"></i> Custom Profile Fields
+							<i class="fas fa-id-card"></i> Custom Profile Fields
 						</div>
 						<% for (const key in profileFields) { %>
 							<div class="profile-field">
@@ -500,12 +500,12 @@
 			<% if (profile.rankProgress || profile.leaderboardPosition) { %>
 				<div class="sidebar-card fade-in">
 					<div class="sidebar-title">
-						<i class="fa fa-crown"></i> Rank Progress
+						<i class="fas fa-crown"></i> Rank Progress
 					</div>
 					<div class="rank-display">
 						<div class="rank-badge">
 							<% if (profile.memberData.rank === 'No Rank') { %>
-								<i class="fa fa-star" style="color: #1a1a2e;"></i>
+								<i class="fas fa-star" style="color: #1a1a2e;"></i>
 							<% } else { %>
 								👑
 							<% } %>
@@ -531,7 +531,7 @@
 			<% if (profile.leaderboardData.length > 0) { %>
 				<div class="sidebar-card fade-in">
 					<div class="sidebar-title">
-						<i class="fa fa-list-ol"></i> Leaderboard
+						<i class="fas fa-list-ol"></i> Leaderboard
 					</div>
 					<ul class="leaderboard-preview">
 						<% profile.leaderboardData.forEach(member => { %>
@@ -550,7 +550,7 @@
 
 			<div class="sidebar-card fade-in">
 				<div class="sidebar-title">
-					<i class="fa fa-info-circle"></i> Quick Stats
+					<i class="fas fa-info-circle"></i> Quick Stats
 				</div>
 				<div style="display: flex; flex-direction: column; gap: 0.75rem;">
 					<div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border);">

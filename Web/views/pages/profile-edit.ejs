@@ -337,7 +337,7 @@
 			<div class="container">
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
-						<i class="fa fa-edit"></i> Edit Profile
+						<i class="fas fa-edit"></i> Edit Profile
 					</h1>
 					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
 						Customize your profile
@@ -365,7 +365,7 @@
 					</div>
 				<% } else { %>
 					<div class="edit-header-icon">
-						<i class="fa fa-user"></i>
+						<i class="fas fa-user"></i>
 					</div>
 					<div>
 						<h2>Edit Primary Profile</h2>
@@ -379,7 +379,7 @@
 					<!-- PRIMARY PROFILE EDIT -->
 					<div class="form-section">
 						<div class="form-section-title">
-							<i class="fa fa-user"></i> About You
+							<i class="fas fa-user"></i> About You
 						</div>
 
 						<div class="form-group">
@@ -392,11 +392,11 @@
 							<label class="form-label">Profile Visibility</label>
 							<div class="visibility-options">
 								<div class="visibility-option <%= profile.isProfilePublic !== false ? 'selected' : '' %>" data-value="true" onclick="selectVisibility(this)">
-									<div class="visibility-icon"><i class="fa fa-globe"></i></div>
+									<div class="visibility-icon"><i class="fas fa-globe"></i></div>
 									<div class="visibility-label">Public</div>
 								</div>
 								<div class="visibility-option <%= profile.isProfilePublic === false ? 'selected' : '' %>" data-value="false" onclick="selectVisibility(this)">
-									<div class="visibility-icon"><i class="fa fa-lock"></i></div>
+									<div class="visibility-icon"><i class="fas fa-lock"></i></div>
 									<div class="visibility-label">Private</div>
 								</div>
 							</div>
@@ -415,7 +415,7 @@
 
 					<div class="form-section">
 						<div class="form-section-title">
-							<i class="fa fa-link"></i> Social Links
+							<i class="fas fa-link"></i> Social Links
 						</div>
 						<div class="social-links-grid">
 							<div class="social-input-group">
@@ -439,7 +439,7 @@
 								<input type="text" class="form-input" name="social_steam" placeholder="username" value="<%= profile.primaryProfile.social_links?.steam || '' %>">
 							</div>
 							<div class="social-input-group">
-								<div class="icon"><i class="fa fa-globe"></i></div>
+								<div class="icon"><i class="fas fa-globe"></i></div>
 								<input type="url" class="form-input" name="social_website" placeholder="https://..." value="<%= profile.primaryProfile.social_links?.website || '' %>">
 							</div>
 						</div>
@@ -447,7 +447,7 @@
 
 					<div class="form-section">
 						<div class="form-section-title">
-							<i class="fa fa-star"></i> Featured Servers (Max 3)
+							<i class="fas fa-star"></i> Featured Servers (Max 3)
 						</div>
 						<div class="featured-servers-selector" id="featured-servers">
 							<% const featuredIds = profile.primaryProfile.featured_servers || []; %>
@@ -470,7 +470,7 @@
 
 					<div class="form-section">
 						<div class="form-section-title">
-							<i class="fa fa-gamepad"></i> Game Tracking
+							<i class="fas fa-gamepad"></i> Game Tracking
 						</div>
 						<div class="game-tracking-toggle">
 							<div class="toggle-info">
@@ -508,7 +508,7 @@
 					<!-- SERVER PROFILE EDIT -->
 					<div class="form-section">
 						<div class="form-section-title">
-							<i class="fa fa-user"></i> Server Profile
+							<i class="fas fa-user"></i> Server Profile
 						</div>
 
 						<div class="form-group">
@@ -521,15 +521,15 @@
 							<label class="form-label">Profile Visibility</label>
 							<div class="visibility-options">
 								<div class="visibility-option <%= (profile.serverProfile.visibility || 'public') === 'public' ? 'selected' : '' %>" data-value="public" onclick="selectVisibility(this)">
-									<div class="visibility-icon"><i class="fa fa-globe"></i></div>
+									<div class="visibility-icon"><i class="fas fa-globe"></i></div>
 									<div class="visibility-label">Public</div>
 								</div>
 								<div class="visibility-option <%= profile.serverProfile.visibility === 'members_only' ? 'selected' : '' %>" data-value="members_only" onclick="selectVisibility(this)">
-									<div class="visibility-icon"><i class="fa fa-users"></i></div>
+									<div class="visibility-icon"><i class="fas fa-users"></i></div>
 									<div class="visibility-label">Members Only</div>
 								</div>
 								<div class="visibility-option <%= profile.serverProfile.visibility === 'private' ? 'selected' : '' %>" data-value="private" onclick="selectVisibility(this)">
-									<div class="visibility-icon"><i class="fa fa-lock"></i></div>
+									<div class="visibility-icon"><i class="fas fa-lock"></i></div>
 									<div class="visibility-label">Private</div>
 								</div>
 							</div>
@@ -548,7 +548,7 @@
 
 				<div class="form-section">
 					<div class="form-section-title">
-						<i class="fa fa-id-card"></i> Custom Profile Fields
+						<i class="fas fa-id-card"></i> Custom Profile Fields
 					</div>
 					<div class="profile-fields-editor" id="profile-fields-editor">
 						<% const fields = profile.profileFields || {}; %>
@@ -557,13 +557,13 @@
 								<input type="text" class="form-input field-name" placeholder="Field name" value="<%= key %>" maxlength="100">
 								<input type="text" class="form-input field-value" placeholder="Value" value="<%= value %>" maxlength="500">
 								<button type="button" class="button is-danger is-small" onclick="removeField(this)">
-									<span class="icon"><i class="fa fa-times"></i></span>
+									<span class="icon"><i class="fas fa-times"></i></span>
 								</button>
 							</div>
 						<% }); %>
 					</div>
 					<button type="button" class="button is-light add-field-btn" onclick="addField()">
-						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span class="icon"><i class="fas fa-plus"></i></span>
 						<span>Add Field</span>
 					</button>
 					<div class="form-hint">Up to 10 custom fields. 100 char name limit, 500 char value limit.</div>
@@ -571,11 +571,11 @@
 
 				<div class="form-actions">
 					<button type="submit" class="button is-primary is-modern">
-						<span class="icon"><i class="fa fa-save"></i></span>
+						<span class="icon"><i class="fas fa-save"></i></span>
 						<span>Save Changes</span>
 					</button>
 					<a href="/profile/me<%= editType === 'server' && server ? '/' + server.id : '' %>" class="button is-light">
-						<span class="icon"><i class="fa fa-times"></i></span>
+						<span class="icon"><i class="fas fa-times"></i></span>
 						<span>Cancel</span>
 					</a>
 				</div>
@@ -645,7 +645,7 @@ function addField() {
 		<input type="text" class="form-input field-name" placeholder="Field name" maxlength="100">
 		<input type="text" class="form-input field-value" placeholder="Value" maxlength="500">
 		<button type="button" class="button is-danger is-small" onclick="removeField(this)">
-			<span class="icon"><i class="fa fa-times"></i></span>
+			<span class="icon"><i class="fas fa-times"></i></span>
 		</button>
 	`;
 	editor.appendChild(row);

@@ -17,7 +17,7 @@
 					<article class="message is-primary modern-card">
 						<div class="message-header">
 							<p style="display: flex; align-items: center; gap: 0.5rem;">
-								<span class="icon"><i class="fa fa-dashboard"></i></span>
+								<span class="icon"><i class="fas fa-dashboard"></i></span>
 								Welcome to <strong><%= serverData.name %></strong>
 							</p>
 						</div>
@@ -80,7 +80,7 @@
 								<div style="position: relative;">
 									<img src="<%= pageData.topMember.avatar %>" alt="<%= pageData.topMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid var(--color-accent);">
 									<span style="position: absolute; bottom: -2px; right: -2px; background: var(--color-accent); color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
-										<i class="fa fa-star"></i>
+										<i class="fas fa-star"></i>
 									</span>
 								</div>
 								<div>
@@ -100,7 +100,7 @@
 								<div style="position: relative;">
 									<img src="<%= pageData.richestMember.avatar %>" alt="<%= pageData.richestMember.id %>" style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #f59e0b;">
 									<span style="position: absolute; bottom: -2px; right: -2px; background: #f59e0b; color: white; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white;">
-										<i class="fa fa-diamond"></i>
+										<i class="fas fa-gem"></i>
 									</span>
 								</div>
 								<div>
@@ -116,7 +116,7 @@
 					<article class="message is-primary modern-card" style="margin-top: 1.5rem;">
 						<div class="message-header">
 							<p style="display: flex; align-items: center; gap: 0.5rem;">
-								<span class="icon"><i class="fa fa-search"></i></span>
+								<span class="icon"><i class="fas fa-search"></i></span>
 								Search Members
 							</p>
 						</div>
@@ -130,7 +130,7 @@
 								</div>
 								<div class="control">
 									<button class="button is-primary" onclick="SkynetUtil.searchServerMembers()">
-										<span class="icon"><i class="fa fa-search"></i></span>
+										<span class="icon"><i class="fas fa-search"></i></span>
 										<span>Search</span>
 									</button>
 								</div>
@@ -173,7 +173,7 @@
 									'<p style="font-weight: 600;">@' + member.username + '</p>' +
 									'<p class="is-size-7 has-text-grey">' + (member.rank || 'No Rank') + ' • ' + (member.messages || 0) + ' messages</p>' +
 									'</div>' +
-									'<span class="icon has-text-grey"><i class="fa fa-chevron-right"></i></span>' +
+									'<span class="icon has-text-grey"><i class="fas fa-chevron-right"></i></span>' +
 									'</a>';
 							});
 							html += '</div>';
@@ -193,7 +193,7 @@
 					<article class="message is-info modern-card" style="margin-top: 1.5rem;">
 						<div class="message-header">
 							<p style="display: flex; align-items: center; gap: 0.5rem;">
-								<span class="icon"><i class="fa fa-cogs"></i></span>
+								<span class="icon"><i class="fas fa-cogs"></i></span>
 								Server Actions
 							</p>
 						</div>
@@ -202,7 +202,7 @@
 								<strong>Scan Members</strong> - Index all server members into the database so they appear in user search on the Activity page.
 							</p>
 							<button id="scan-members-btn" class="button is-primary" onclick="SkynetUtil.scanServerMembers()">
-								<span class="icon"><i class="fa fa-refresh"></i></span>
+								<span class="icon"><i class="fas fa-refresh"></i></span>
 								<span>Scan Server Members</span>
 							</button>
 							<div id="scan-result" style="margin-top: 1rem; display: none;"></div>

@@ -424,7 +424,7 @@
 			<div class="container">
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
-						<i class="fa fa-user"></i> User Profile
+						<i class="fas fa-user"></i> User Profile
 					</h1>
 					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
 						<%= profile.user.displayName %>
@@ -449,19 +449,19 @@
 					<div class="profile-username">
 						<%= profile.user.displayName %>
 						<div class="profile-badges">
-							<% if (profile.user.document?.subscription?.tier_id && profile.user.document.subscription.tier_id !== 'free') { %>
-								<span class="badge badge-premium"><i class="fa fa-crown"></i> Premium</span>
+							<% if (profile.user.isPremium) { %>
+								<span class="badge badge-premium"><i class="fas fa-crown"></i> Premium</span>
 							<% } %>
 						</div>
 					</div>
 					<div class="profile-meta">
-						<i class="fa fa-calendar"></i>
+						<i class="fas fa-calendar"></i>
 						Joined Discord <strong title="<%= profile.accountAge.raw %>"><%= profile.accountAge.text %> ago</strong>
 					</div>
 				</div>
 				<% if (profile.isOwnProfile) { %>
 					<a href="/profile/me/edit" class="button is-primary is-modern">
-						<span class="icon"><i class="fa fa-edit"></i></span>
+						<span class="icon"><i class="fas fa-edit"></i></span>
 						<span>Edit Profile</span>
 					</a>
 				<% } %>
@@ -470,29 +470,29 @@
 			<div class="profile-body">
 				<% if (profile.primaryProfile.bio) { %>
 					<div class="profile-bio">
-						<strong><i class="fa fa-quote-left"></i> About Me</strong>
+						<strong><i class="fas fa-quote-left"></i> About Me</strong>
 						<%= profile.primaryProfile.bio %>
 					</div>
 				<% } %>
 
 				<div class="profile-stats-grid">
 					<div class="stat-card">
-						<div class="stat-icon"><i class="fa fa-star"></i></div>
+						<div class="stat-icon"><i class="fas fa-star"></i></div>
 						<div class="stat-value"><%= profile.points.toLocaleString() %></div>
 						<div class="stat-label">Total Points</div>
 					</div>
 					<div class="stat-card">
-						<div class="stat-icon"><i class="fa fa-server"></i></div>
+						<div class="stat-icon"><i class="fas fa-server"></i></div>
 						<div class="stat-value"><%= profile.stats.totalServers %></div>
 						<div class="stat-label">Servers</div>
 					</div>
 					<div class="stat-card">
-						<div class="stat-icon"><i class="fa fa-comment"></i></div>
+						<div class="stat-icon"><i class="fas fa-comment"></i></div>
 						<div class="stat-value"><%= profile.stats.totalMessages.toLocaleString() %></div>
 						<div class="stat-label">Messages</div>
 					</div>
 					<div class="stat-card">
-						<div class="stat-icon"><i class="fa fa-microphone"></i></div>
+						<div class="stat-icon"><i class="fas fa-microphone"></i></div>
 						<div class="stat-value"><%= profile.stats.totalVoiceHours %>h</div>
 						<div class="stat-label">Voice Time</div>
 					</div>
@@ -528,7 +528,7 @@
 						<% } %>
 						<% if (socialLinks.website) { %>
 							<a href="<%= socialLinks.website %>" target="_blank" class="social-link" title="Website">
-								<i class="fa fa-globe"></i>
+								<i class="fas fa-globe"></i>
 							</a>
 						<% } %>
 					</div>
@@ -536,19 +536,19 @@
 
 				<% if (profile.gameActivity.length > 0 && profile.gameTrackingEnabled) { %>
 					<div class="section-title">
-						<i class="fa fa-gamepad"></i> Game Activity
+						<i class="fas fa-gamepad"></i> Game Activity
 					</div>
 					<div class="game-list">
 						<% profile.gameActivity.forEach(game => { %>
 							<div class="game-item">
 								<div class="game-icon">
-									<i class="fa fa-gamepad"></i>
+									<i class="fas fa-gamepad"></i>
 								</div>
 								<div class="game-info">
 									<div class="game-name"><%= game.name %></div>
 									<div class="game-stats">
-										<span><i class="fa fa-clock"></i> <%= game.formattedTime %></span>
-										<span><i class="fa fa-calendar"></i> <%= game.lastPlayedText %></span>
+										<span><i class="fas fa-clock"></i> <%= game.formattedTime %></span>
+										<span><i class="fas fa-calendar"></i> <%= game.lastPlayedText %></span>
 									</div>
 								</div>
 								<div class="game-playtime-bar">
@@ -561,7 +561,7 @@
 
 				<% if (profile.featuredServers.length > 0) { %>
 					<div class="section-title">
-						<i class="fa fa-star"></i> Featured Servers
+						<i class="fas fa-star"></i> Featured Servers
 					</div>
 					<div class="server-cards">
 						<% profile.featuredServers.forEach(svr => { %>
@@ -576,7 +576,7 @@
 								<div class="server-mini-info">
 									<div class="server-mini-name"><%= svr.name %></div>
 									<% if (svr.memberData?.rank && svr.memberData.rank !== 'No Rank') { %>
-										<div class="server-mini-rank"><i class="fa fa-trophy"></i> <%= svr.memberData.rank %></div>
+										<div class="server-mini-rank"><i class="fas fa-trophy"></i> <%= svr.memberData.rank %></div>
 									<% } %>
 								</div>
 							</a>
@@ -587,7 +587,7 @@
 				<% const profileFields = profile.profileFields; %>
 				<% if (profileFields && Object.keys(profileFields).length > 0) { %>
 					<div class="section-title">
-						<i class="fa fa-id-card"></i> Profile Information
+						<i class="fas fa-id-card"></i> Profile Information
 					</div>
 					<div class="profile-fields">
 						<% for (const key in profileFields) { %>
@@ -601,7 +601,7 @@
 
 				<% if (profile.mutualServers.length > 0) { %>
 					<div class="section-title">
-						<i class="fa fa-server"></i> Servers (<%= profile.allMutualServers.length %>)
+						<i class="fas fa-server"></i> Servers (<%= profile.allMutualServers.length %>)
 					</div>
 					<div class="server-cards">
 						<% profile.mutualServers.forEach(svr => { %>
@@ -616,7 +616,7 @@
 								<div class="server-mini-info">
 									<div class="server-mini-name"><%= svr.name %></div>
 									<% if (svr.memberData?.rank && svr.memberData.rank !== 'No Rank') { %>
-										<div class="server-mini-rank"><i class="fa fa-trophy"></i> <%= svr.memberData.rank %></div>
+										<div class="server-mini-rank"><i class="fas fa-trophy"></i> <%= svr.memberData.rank %></div>
 									<% } else { %>
 										<div class="server-mini-rank" style="color: var(--color-text-muted);"><%= svr.memberCount.toLocaleString() %> members</div>
 									<% } %>
@@ -626,7 +626,7 @@
 					</div>
 					<% if (profile.allMutualServers.length > 6) { %>
 						<button class="button is-light is-fullwidth modal-button" data-target="#all-servers-modal">
-							<span class="icon"><i class="fa fa-server"></i></span>
+							<span class="icon"><i class="fas fa-server"></i></span>
 							<span>View All <%= profile.allMutualServers.length %> Servers</span>
 						</button>
 					<% } %>
@@ -642,7 +642,7 @@
 	<div class="modal-card" style="max-width: 600px;">
 		<header class="modal-card-head">
 			<p class="modal-card-title" style="color: white;">
-				<span class="icon"><i class="fa fa-server"></i></span>
+				<span class="icon"><i class="fas fa-server"></i></span>
 				All Servers (<%= profile.allMutualServers.length %>)
 			</p>
 			<button class="delete" aria-label="close"></button>

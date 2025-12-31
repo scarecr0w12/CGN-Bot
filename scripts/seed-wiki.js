@@ -41,6 +41,7 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
 - 🎵 [Music System](Music-Guide) - High-quality music playback (Premium)
 - 💻 [Developer Tools](Developer-Tools) - Code execution and utilities (Premium)
+- 🔧 [Server Management](Server-Management) - Manage channels and roles from dashboard (Premium)
 - ⭐ [Premium Features](Premium-Features) - Server subscriptions
 - ❓ [FAQ](FAQ) - Frequently Asked Questions
 
@@ -845,6 +846,13 @@ Premium servers may get:
 - Transcript logging
 - Staff management tools
 
+### Server Management (Tier 2)
+- Manage channels and categories from dashboard
+- Create, edit, delete, and reorder channels
+- Full role management with permissions editor
+- Visual permission configuration
+- Bulk operations and drag-drop reordering
+
 ### Increased Rate Limits
 - More commands per minute
 - Reduced cooldowns
@@ -1176,6 +1184,281 @@ See also: [Premium Features](Premium-Features) | [Commands](Commands)
 		}],
 	},
 	{
+		_id: "Server-Management",
+		content: `# Server Management System
+
+Manage your Discord server's channels, categories, and roles directly from the web dashboard with an intuitive visual interface.
+
+**Requires:** Tier 2 Premium
+
+---
+
+## Overview
+
+The Server Management system provides a comprehensive web-based interface for managing your Discord server's structure and permissions without leaving your browser. Perfect for server administrators who want a centralized control panel for server organization.
+
+### Key Features
+- **Channel Management** - Create, edit, delete, and reorder all channel types
+- **Category Organization** - Manage channel categories and hierarchy
+- **Role Management** - Full role creation, editing, and permission configuration
+- **Visual Permissions** - User-friendly permission editor with descriptions
+- **Bulk Operations** - Reorder multiple channels or roles at once
+- **Real-Time Sync** - Changes apply instantly to your Discord server
+
+---
+
+## Channel Management
+
+### Supported Channel Types
+- **Text Channels** - Standard text communication
+- **Voice Channels** - Voice communication with bitrate and user limit controls
+- **Announcement Channels** - Server announcements with follower support
+- **Stage Channels** - Speaker-based audio events
+- **Forum Channels** - Topic-based threaded discussions
+- **Categories** - Organize channels into groups
+
+### Accessing Channel Manager
+1. Go to **Dashboard** → **Server Management** → **Channels**
+2. View all channels organized by type and category
+3. See channel settings, positions, and permission overrides
+
+### Creating Channels
+
+**To create a new channel:**
+1. Click **Create Channel** button
+2. Select channel type (Text, Voice, Announcement, etc.)
+3. Enter channel name
+4. (Optional) Select parent category
+5. Configure type-specific settings:
+   - **Text**: Topic, slowmode, NSFW flag
+   - **Voice**: Bitrate, user limit
+   - **Stage**: Similar to voice channels
+6. Click **Create**
+
+### Editing Channels
+
+**To modify a channel:**
+1. Click the **Edit** button next to the channel
+2. Update any settings:
+   - Name
+   - Topic/Description
+   - Parent category
+   - Position
+   - NSFW flag
+   - Rate limits (text channels)
+   - Bitrate/User limit (voice channels)
+3. Click **Save Changes**
+
+### Deleting Channels
+
+**To delete a channel:**
+1. Click the **Delete** button next to the channel
+2. Confirm the deletion
+3. Channel and all messages are permanently removed
+
+⚠️ **Warning:** Channel deletion is permanent and cannot be undone!
+
+### Reordering Channels
+
+**To change channel positions:**
+1. Use the **Reorder** mode
+2. Drag and drop channels to new positions
+3. Changes apply within their category or channel list
+4. Click **Save Order** to apply
+
+---
+
+## Role Management
+
+### Accessing Role Manager
+1. Go to **Dashboard** → **Server Management** → **Roles**
+2. View all server roles sorted by position (hierarchy)
+3. See role members, colors, and permissions
+
+### Creating Roles
+
+**To create a new role:**
+1. Click **Create Role** button
+2. Enter role name
+3. (Optional) Select role color
+4. Configure settings:
+   - **Hoist** - Display separately in member list
+   - **Mentionable** - Allow @mentions
+5. Set permissions (see Permission Editor below)
+6. Click **Create**
+
+### Editing Roles
+
+**To modify a role:**
+1. Click the **Edit** button next to the role
+2. Update settings:
+   - Name
+   - Color
+   - Hoist status
+   - Mentionable status
+   - Icon/Emoji (if available)
+   - Permissions
+3. Click **Save Changes**
+
+### Permission Editor
+
+The visual permission editor provides an easy-to-use interface for configuring role permissions:
+
+**Permission Categories:**
+- **General** - Administrator, Manage Server, View Audit Log
+- **Membership** - Kick/Ban Members, Manage Nicknames
+- **Text Channels** - Send Messages, Manage Messages, Embed Links
+- **Voice Channels** - Connect, Speak, Video, Mute/Deafen Members
+- **Events** - Create and manage server events
+- **Advanced** - Manage Webhooks, Roles, Channels
+
+**Using the Editor:**
+1. Each permission shows a clear description
+2. Toggle permissions on/off with checkboxes
+3. Grouped by category for easy navigation
+4. Dangerous permissions (Ban, Administrator) are highlighted
+
+### Deleting Roles
+
+**To delete a role:**
+1. Click the **Delete** button next to the role
+2. Confirm the deletion
+3. Members with this role will lose it
+
+⚠️ **Note:** You cannot delete managed roles (bot roles, integration roles)
+
+### Reordering Roles
+
+**To change role hierarchy:**
+1. Use the **Reorder** mode
+2. Drag and drop roles to new positions
+3. Higher positions = more authority
+4. Click **Save Order** to apply
+
+**Role Hierarchy Rules:**
+- You can only reorder roles below your highest role
+- Bot's role must be above roles it manages
+- Server owner bypasses hierarchy
+
+---
+
+## Best Practices
+
+### Channel Organization
+1. **Use Categories** - Group related channels together
+2. **Clear Naming** - Use descriptive, consistent names
+3. **Archive Unused** - Delete or hide inactive channels
+4. **Permission Overrides** - Set category permissions, inherit to channels
+
+### Role Management
+1. **Least Privilege** - Grant only necessary permissions
+2. **Role Hierarchy** - Place bot role high enough to moderate
+3. **Color Coding** - Use colors to identify role types
+4. **Descriptive Names** - Make role purposes clear
+
+### Security
+1. **Administrator Permission** - Grant sparingly (bypasses all permissions)
+2. **Audit Changes** - Review role/channel changes in Discord audit log
+3. **Backup Configuration** - Use Data Export feature before major changes
+4. **Test Changes** - Verify permissions work as intended
+
+---
+
+## Limitations
+
+### What You Can Do
+- Create, edit, delete channels (all types)
+- Create, edit, delete roles
+- Reorder channels and roles
+- Configure all standard permissions
+- Set channel topics, slowmode, bitrate, etc.
+
+### What You Cannot Do
+- Edit managed roles (bot integration roles)
+- Modify the @everyone role (use Discord client)
+- Set advanced permission overrides per-user/role on channels (coming soon)
+- Create threads or forum posts
+- Modify server verification level or content filter
+
+---
+
+## Troubleshooting
+
+### "Permission Denied" errors
+**Cause:** Bot lacks necessary permissions in Discord
+
+**Solution:**
+1. Check bot has \`Manage Channels\` permission
+2. Check bot has \`Manage Roles\` permission
+3. Verify bot's role is high enough in hierarchy
+
+### Changes not appearing in Discord
+**Cause:** Sync delay or cache issue
+
+**Solution:**
+1. Refresh Discord client
+2. Wait 10-30 seconds for sync
+3. Check dashboard for error messages
+
+### Cannot delete channel
+**Cause:** System channels or insufficient permissions
+
+**Solution:**
+1. Cannot delete rules/community channels while enabled
+2. Check bot permissions
+3. Verify you have Manage Server permission
+
+### Role reordering fails
+**Cause:** Hierarchy restrictions
+
+**Solution:**
+1. Ensure bot's role is higher than target roles
+2. You cannot move roles above your highest role
+3. Managed roles cannot be reordered
+
+---
+
+## Advanced Tips
+
+### Bulk Channel Creation
+Create multiple channels quickly:
+1. Plan your channel structure
+2. Create category first
+3. Create channels in category
+4. Channels automatically inherit category permissions
+
+### Role Templates
+Set up role "templates" for common permission sets:
+1. Create base roles (Moderator, VIP, etc.)
+2. Copy permission configurations
+3. Adjust per-role as needed
+
+### Permission Inheritance
+Channels inherit permissions from categories:
+1. Set permissions on category
+2. Channels use category permissions by default
+3. Override only when necessary
+
+---
+
+## Related Features
+
+- **Data Export** - Backup your server configuration before major changes
+- **Dashboard Analytics** - Track server activity across channels
+- **Extension System** - Automate channel/role management with custom code
+
+---
+
+See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Owner-Guide) | [Admin Levels](Admin-Levels)
+`,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
 		_id: "Server-Owner-Guide",
 		content: `# Server Owner Guide
 
@@ -1200,6 +1483,7 @@ The web dashboard is your central hub for configuring SkynetBot. Access it by:
 | **Messages** | Automated welcome/leave messages |
 | **Logs** | View bot activity logs |
 | **Tickets** | Support ticket system management |
+| **Server Management** | Manage channels, categories, and roles (Premium Tier 2) |
 
 ## Command Management
 

@@ -236,7 +236,7 @@
 					</span>
 					<% } else { %>
 					<span class="overall-status-badge is-dark">
-						<i class="fa fa-question-circle"></i>
+						<i class="fas fa-question-circle"></i>
 						Status Unavailable
 					</span>
 					<% } %>
@@ -280,7 +280,7 @@
 					<div class="column is-8">
 						<% if (pageData.uptimeKuma.statusPage && pageData.uptimeKuma.statusPage.incident) { %>
 						<div class="incident-banner">
-							<h4><i class="fa fa-exclamation-triangle"></i> Active Incident</h4>
+							<h4><i class="fas fa-exclamation-triangle"></i> Active Incident</h4>
 							<p><strong><%= pageData.uptimeKuma.statusPage.incident.title %></strong></p>
 							<% if (pageData.uptimeKuma.statusPage.incident.content) { %>
 							<p><%= pageData.uptimeKuma.statusPage.incident.content %></p>
@@ -318,7 +318,7 @@
 
 						<% Object.keys(groups).forEach(groupName => { %>
 						<h2 class="group-title">
-							<i class="fa fa-folder-o"></i>
+							<i class="fas fa-folder"></i>
 							<%= groupName %>
 						</h2>
 						<div class="monitor-grid">
@@ -355,7 +355,7 @@
 						<% } %>
 
 						<p class="last-updated">
-							<i class="fa fa-clock-o"></i>
+							<i class="fas fa-clock"></i>
 							Last updated: <%= new Date(pageData.lastUpdated).toLocaleString() %>
 							<br>
 							<small>Auto-refreshes every 60 seconds</small>

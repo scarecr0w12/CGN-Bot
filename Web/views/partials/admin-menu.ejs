@@ -42,6 +42,11 @@ const menuSections = {
 		icon: 'fas fa-ticket-alt',
 		label: 'Tickets',
 		paths: ['tickets', 'tickets/settings']
+	},
+	serverManagement: {
+		icon: 'fas fa-server',
+		label: 'Server Management',
+		paths: ['server-management/channels', 'server-management/roles']
 	}
 };
 
@@ -74,7 +79,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.commands.icon %>"></i></span>
 				<span><%= menuSections.commands.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -119,7 +124,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.stats.icon %>"></i></span>
 				<span><%= menuSections.stats.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -155,7 +160,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.admin.icon %>"></i></span>
 				<span><%= menuSections.admin.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -202,7 +207,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.ai.icon %>"></i></span>
 				<span><%= menuSections.ai.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -232,7 +237,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.extensions.icon %>"></i></span>
 				<span><%= menuSections.extensions.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -253,7 +258,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.serverProfile.icon %>"></i></span>
 				<span><%= menuSections.serverProfile.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -274,7 +279,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.subscription.icon %>"></i></span>
 				<span><%= menuSections.subscription.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -292,7 +297,7 @@ const menuItem = (path, label, icon = null) => {
 				<span class="icon is-small"><i class="<%= menuSections.tickets.icon %>"></i></span>
 				<span><%= menuSections.tickets.label %></span>
 			</p>
-			<span class="collapse-icon"><i class="fa fa-chevron-down"></i></span>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
 		<div class="menu-section-content">
 			<ul class="menu-list">
@@ -302,6 +307,28 @@ const menuItem = (path, label, icon = null) => {
 
 					<% if(isActive(`${basePath}/tickets`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('tickets', 'View Tickets') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.serverManagement) ? ' has-active' : '' %>" data-section="serverManagement">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.serverManagement.icon %>"></i></span>
+				<span><%= menuSections.serverManagement.label %></span>
+				<span class="tag is-warning is-small ml-2">Tier 2</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/server-management/channels`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('server-management/channels', 'Manage Channels', 'fas fa-hashtag') %>
+
+					<% if(isActive(`${basePath}/server-management/roles`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('server-management/roles', 'Manage Roles', 'fas fa-users-cog') %>
 				</li>
 			</ul>
 		</div>

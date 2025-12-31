@@ -200,7 +200,7 @@ SkynetUtil.searchUsers = (query) => {
 				<div class="users-overview-card fade-in">
 					<div class="has-text-centered" style="margin-bottom: 1.5rem;">
 						<h2 class="title is-4">
-							<span class="icon"><i class="fa fa-search"></i></span>
+							<span class="icon"><i class="fas fa-search"></i></span>
 							Search Results
 						</h2>
 						<p class="subtitle is-6 has-text-grey">Found <%= pageData.searchResults.length %> user<%= pageData.searchResults.length === 1 ? '' : 's' %> matching "<%= pageData.activeSearchQuery %>"</p>
@@ -212,11 +212,11 @@ SkynetUtil.searchUsers = (query) => {
 								<div style="flex-grow: 1;">
 									<div style="font-weight: 600; color: var(--color-text-primary);"><%= user.username %></div>
 									<div style="font-size: 0.8rem; color: var(--color-text-muted);">
-										<span class="icon is-small"><i class="fa fa-star"></i></span>
+										<span class="icon is-small"><i class="fas fa-star"></i></span>
 										<%= user.points %> points
 									</div>
 								</div>
-								<span class="icon has-text-grey"><i class="fa fa-chevron-right"></i></span>
+								<span class="icon has-text-grey"><i class="fas fa-chevron-right"></i></span>
 							</a>
 						<% }); %>
 					</div>
@@ -235,7 +235,7 @@ SkynetUtil.searchUsers = (query) => {
 						<h3 class="title is-5" style="margin-top: 1rem;">No Users Found</h3>
 						<p class="has-text-grey">No users match "<%= pageData.activeSearchQuery %>"</p>
 						<a href="/activity/users" class="button is-primary is-modern" style="margin-top: 1.5rem;">
-							<span class="icon"><i class="fa fa-arrow-left"></i></span>
+							<span class="icon"><i class="fas fa-arrow-left"></i></span>
 							<span>Back to Users</span>
 						</a>
 					</div>
@@ -254,22 +254,22 @@ SkynetUtil.searchUsers = (query) => {
 						
 						<div class="user-profile-badges">
 							<span class="tag is-medium <%= pageData.userProfile.statusColor %>">
-								<span class="icon is-small"><i class="fa fa-circle"></i></span>
+								<span class="icon is-small"><i class="fas fa-circle"></i></span>
 								&nbsp;<%= pageData.userProfile.status.charAt(0).toUpperCase() + pageData.userProfile.status.slice(1) %>
 							</span>
 							<% if (["108892284119977984", "139836912335716352"].includes(pageData.userProfile.id)) { %>
 								<span class="tag is-medium is-danger">
-									<span class="icon is-small"><i class="fa fa-wrench"></i></span>
+									<span class="icon is-small"><i class="fas fa-wrench"></i></span>
 									&nbsp;Developer
 								</span>
 							<% } else if (pageData.userProfile.isSudoMaintainer) { %>
 								<span class="tag is-medium is-primary">
-									<span class="icon is-small"><i class="fa fa-wrench"></i></span>
+									<span class="icon is-small"><i class="fas fa-wrench"></i></span>
 									&nbsp;Sudo Maintainer
 								</span>
 							<% } else if (pageData.userProfile.isMaintainer) { %>
 								<span class="tag is-medium is-link">
-									<span class="icon is-small"><i class="fa fa-wrench"></i></span>
+									<span class="icon is-small"><i class="fas fa-wrench"></i></span>
 									&nbsp;Maintainer
 								</span>
 							<% } else if (pageData.userProfile.isContributor) { %>
@@ -277,36 +277,36 @@ SkynetUtil.searchUsers = (query) => {
 							<% } %>
 							<% if (pageData.userProfile.isAfk) { %>
 								<span class="tag is-medium is-warning">
-									<span class="icon is-small"><i class="fa fa-keyboard-o"></i></span>
+									<span class="icon is-small"><i class="fas fa-keyboard-o"></i></span>
 									&nbsp;AFK
 								</span>
 							<% } %>
 						</div>
 
 						<p class="user-profile-meta">
-							<span class="icon is-small"><i class="fa fa-calendar"></i></span>
+							<span class="icon is-small"><i class="fas fa-calendar"></i></span>
 							Joined Discord <span title="<%= pageData.userProfile.rawAccountAge %>"><strong><%= pageData.userProfile.roundedAccountAge %></strong></span>
 						</p>
 
 						<div class="user-profile-stats">
 							<div class="user-stat-item">
-								<div class="user-stat-icon"><i class="fa fa-star"></i></div>
+								<div class="user-stat-icon"><i class="fas fa-star"></i></div>
 								<div class="user-stat-value"><%= pageData.userProfile.points %></div>
 								<div class="user-stat-label">Points</div>
 							</div>
 							<div class="user-stat-item">
-								<div class="user-stat-icon"><i class="fa fa-server"></i></div>
+								<div class="user-stat-icon"><i class="fas fa-server"></i></div>
 								<div class="user-stat-value"><%= pageData.userProfile.mutualServerCount %></div>
 								<div class="user-stat-label">Servers</div>
 							</div>
 							<div class="user-stat-item">
-								<div class="user-stat-icon"><i class="fa fa-font"></i></div>
+								<div class="user-stat-icon"><i class="fas fa-font"></i></div>
 								<div class="user-stat-value"><%= pageData.userProfile.pastNameCount %></div>
 								<div class="user-stat-label">Past Names</div>
 							</div>
 							<% if (pageData.userProfile.game) { %>
 							<div class="user-stat-item">
-								<div class="user-stat-icon"><i class="fa fa-gamepad"></i></div>
+								<div class="user-stat-icon"><i class="fas fa-gamepad"></i></div>
 								<div class="user-stat-value" style="font-size: 0.9rem;"><%= pageData.userProfile.game %></div>
 								<div class="user-stat-label">Playing</div>
 							</div>
@@ -315,20 +315,20 @@ SkynetUtil.searchUsers = (query) => {
 
 						<% if (pageData.userProfile.status !== "online" && pageData.userProfile.rawLastSeen && pageData.userProfile.lastSeen) { %>
 							<p class="has-text-grey" style="margin-bottom: 1rem;">
-								<span class="icon is-small"><i class="fa fa-clock-o"></i></span>
+								<span class="icon is-small"><i class="fas fa-clock"></i></span>
 								Last seen <strong title="<%= pageData.userProfile.rawLastSeen %>"><%= pageData.userProfile.lastSeen %></strong>
 							</p>
 						<% } %>
 
 						<p class="has-text-grey is-size-7" style="margin-bottom: 1.5rem;">
-							<span class="icon is-small"><i class="fa fa-id-badge"></i></span>
+							<span class="icon is-small"><i class="fas fa-id-badge"></i></span>
 							ID: <code><%= pageData.userProfile.id %></code>
 						</p>
 
 						<% if (pageData.userProfile.profileFields && Object.keys(pageData.userProfile.profileFields).length > 0) { %>
 							<div class="user-profile-fields">
 								<h4 class="is-size-6 has-text-weight-semibold" style="margin-bottom: 0.75rem;">
-									<span class="icon is-small"><i class="fa fa-id-card"></i></span>
+									<span class="icon is-small"><i class="fas fa-id-card"></i></span>
 									Profile Information
 								</h4>
 								<% for(var key in pageData.userProfile.profileFields) { %>
@@ -342,14 +342,14 @@ SkynetUtil.searchUsers = (query) => {
 
 						<% if (pageData.userProfile.mutualServers && pageData.userProfile.mutualServers.length > 0) { %>
 							<button class="button is-primary is-modern modal-button" data-target="#mutual-servers-modal" style="margin-top: 1.5rem;">
-								<span class="icon"><i class="fa fa-server"></i></span>
+								<span class="icon"><i class="fas fa-server"></i></span>
 								<span>View Mutual Servers</span>
 							</button>
 						<% } %>
 
 						<% if (pageData.userProfile.pastNames && pageData.userProfile.pastNames.length > 0) { %>
 							<button class="button is-light modal-button" data-target="#past-names-modal" style="margin-top: 1rem;">
-								<span class="icon"><i class="fa fa-history"></i></span>
+								<span class="icon"><i class="fas fa-history"></i></span>
 								<span>View Past Names</span>
 							</button>
 						<% } %>
@@ -368,7 +368,7 @@ SkynetUtil.searchUsers = (query) => {
 						<div class="modal-card" style="max-width: 500px;">
 							<header class="modal-card-head">
 								<p class="modal-card-title" style="color: white;">
-									<span class="icon"><i class="fa fa-server"></i></span>
+									<span class="icon"><i class="fas fa-server"></i></span>
 									&nbsp;Mutual Servers
 								</p>
 								<button class="delete" aria-label="close"></button>
@@ -389,7 +389,7 @@ SkynetUtil.searchUsers = (query) => {
 											<% } %>
 										</div>
 										<a href="/activity/servers?q=<%= encodeURIComponent(mutualServer.name) %>" class="button is-small is-light">
-											<span class="icon"><i class="fa fa-external-link"></i></span>
+											<span class="icon"><i class="fas fa-external-link"></i></span>
 										</a>
 									</div>
 								<% }); %>
@@ -405,7 +405,7 @@ SkynetUtil.searchUsers = (query) => {
 						<div class="modal-card" style="max-width: 400px;">
 							<header class="modal-card-head">
 								<p class="modal-card-title" style="color: white;">
-									<span class="icon"><i class="fa fa-history"></i></span>
+									<span class="icon"><i class="fas fa-history"></i></span>
 									&nbsp;Past Names
 								</p>
 								<button class="delete" aria-label="close"></button>
@@ -455,21 +455,21 @@ SkynetUtil.searchUsers = (query) => {
 					<div class="users-overview-grid">
 						<div class="users-overview-stat">
 							<div class="users-overview-icon">
-								<i class="fa fa-star"></i>
+								<i class="fas fa-star"></i>
 							</div>
 							<div class="users-overview-value"><%= pageData.totalPoints %></div>
 							<div class="users-overview-label">Total Points Earned</div>
 						</div>
 						<div class="users-overview-stat">
 							<div class="users-overview-icon">
-								<i class="fa fa-user"></i>
+								<i class="fas fa-user"></i>
 							</div>
 							<div class="users-overview-value"><%= pageData.publicProfilesCount %></div>
 							<div class="users-overview-label">Public Profiles</div>
 						</div>
 						<div class="users-overview-stat">
 							<div class="users-overview-icon">
-								<i class="fa fa-bell"></i>
+								<i class="fas fa-bell"></i>
 							</div>
 							<div class="users-overview-value"><%= pageData.reminderCount %></div>
 							<div class="users-overview-label">Active Reminders</div>
@@ -481,7 +481,7 @@ SkynetUtil.searchUsers = (query) => {
 							Search for a user by username or ID to view their profile
 						</p>
 						<p class="is-size-7 has-text-grey">
-							<span class="icon is-small"><i class="fa fa-lightbulb-o"></i></span>
+							<span class="icon is-small"><i class="fas fa-lightbulb-o"></i></span>
 							Tip: Users can customize their profile by PMing Skynet <code>profile setup</code>
 						</p>
 					</div>

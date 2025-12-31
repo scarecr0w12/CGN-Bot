@@ -25,14 +25,14 @@ class ServerTicketManager {
 	/**
 	 * Check if a server has the ticket system enabled and is Tier 2+
 	 * @param {Document} serverDocument
-	 * @returns {boolean}
+	 * @returns {Promise<boolean>}
 	 */
-	isEnabled (serverDocument) {
+	async isEnabled (serverDocument) {
 		if (!serverDocument.tickets?.enabled) return false;
 
 		// Check Tier 2 requirement
-		const tier = serverDocument.subscription?.tier_id || "free";
-		return tier !== "free";
+		const TierManager = require("./TierManager");
+		return TierManager.hasMinimumTierLevel(serverDocument._id, 2);
 	}
 
 	/**

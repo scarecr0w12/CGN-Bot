@@ -101,7 +101,7 @@
 											<button class="button is-small is-danger" name="<%= rankDocument._id %>" onclick="SkynetUtil.dashboard.removeTableElement(this); return false;">
 												<span>Remove</span>
 												<span class="icon is-small">
-													<i class="fa fa-times"></i>
+													<i class="fas fa-times"></i>
 												</span>
 											</button>
 										</td>
@@ -112,7 +112,7 @@
 							<button class="button is-danger" name="ranks_list-reset" onclick="SkynetUtil.isLoading(this); SkynetUtil.dashboard.post({ 'ranks_list-reset': true }).then(() => { SkynetUtil.isFinished(this); $('.ranks-member-count').html(0); }); return false;">
 								<span>Reset Everyone's Rank</span>
 								<span class="icon is-small">
-									<i class="fa fa-times"></i>
+									<i class="fas fa-times"></i>
 								</span>
 							</button>
 							<br><br>
@@ -141,7 +141,7 @@
 									<div class="control">
 										<a class="button is-primary" onclick="newRank();">
 											<span class="icon">
-										        <i class="fa fa-plus"></i>
+										        <i class="fas fa-plus"></i>
 										    </span>
 										    <span>Add</span>
 										</a>

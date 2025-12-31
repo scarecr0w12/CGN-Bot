@@ -1,6 +1,15 @@
 const { ChannelType, PermissionFlagsBits } = require("discord.js");
 const { Giveaways } = require("../../Modules/");
-const parseDuration = require("parse-duration");
+
+// Lazy-load ESM module
+let parseDuration;
+const loadParseDuration = async () => {
+	if (!parseDuration) {
+		const module = await import("parse-duration");
+		parseDuration = module.default;
+	}
+	return parseDuration;
+};
 
 module.exports = {
 	find: async (main, filter) => {

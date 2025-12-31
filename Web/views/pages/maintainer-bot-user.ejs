@@ -33,7 +33,7 @@
 									<div class="control has-icons-left">
 										<input name="avatar" class="input is-primary" type="text" placeholder="New avatar URL">
 										<span class="icon">
-											<i class="fa fa-file-image-o"></i>
+											<i class="fas fa-file-image"></i>
 										</span>
 										<span class="help">HTTP(S) URL to use as the source for <%= serverData.name %>'s new avatar.</span>
 									</div>
@@ -45,7 +45,7 @@
 									<div class="control has-icons-left">
 										<input name="username" class="input is-primary" type="text" value="<%= serverData.name %>" minlength="1">
 										<span class="icon">
-											<i class="fa fa-user"></i>
+											<i class="fas fa-user"></i>
 										</span>
 										<span class="help">The bot's name on all servers and in PM.</span>
 									</div>
@@ -85,7 +85,7 @@
 											<div class="field is-embedded-message<%= !configData.game_default ? " has-addons" : ""%>">
 												<div class="control has-icons-left is-expanded">
 													<input name="game" id="user-game" class="input is-primary" type="text" value="<%= configData.game === "default" ? "skynetbot.com" : configData.game %>" style="width: 100%;">
-													<span class="icon"><i class="fa fa-gamepad"></i></span>
+													<span class="icon"><i class="fas fa-gamepad"></i></span>
 												</div>
 												<div class="control">
         		                                	<% if(!configData.game_default) { %>
@@ -104,7 +104,7 @@
 									<div class="field is-embedded-message">
 										<div class="control has-icons-left is-expanded">
 											<input name="twitch" id="user-twitch" class="input is-primary" type="text" value="<%= configData.twitchURL %>" style="width: 100%;">
-											<span class="icon"><i class="fa fa-twitch"></i></span>
+											<span class="icon"><i class="fas fa-twitch"></i></span>
 										</div>
 									</div>
 									<span class="help">The URL to a twitch channel that will be linked on the bot's profile. Required to set the bot's status to "Streaming".</span>

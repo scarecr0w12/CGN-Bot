@@ -104,6 +104,48 @@ class BatchWriteManager {
 	}
 
 	/**
+	 * Merge atomic operations from source document into target document
+	 * @param {Document} source Source document (older)
+	 * @param {Document} target Target document (newer)
+	 * @private
+	 */
+	_mergeAtomics (source, target) {
+		if (source === target) return;
+		if (!source._atomics || !target._atomics) return;
+
+		for (const op of Object.keys(source._atomics)) {
+			if (!target._atomics[op]) target._atomics[op] = {};
+
+			for (const path of Object.keys(source._atomics[op])) {
+				if (op === "$inc") {
+					if (target._atomics[op][path]) {
+						target._atomics[op][path] += source._atomics[op][path];
+					} else {
+						target._atomics[op][path] = source._atomics[op][path];
+					}
+				} else if (op === "$set") {
+					// Target wins if it exists (newer value), otherwise take source
+					if (target._atomics[op][path] === undefined) {
+						target._atomics[op][path] = source._atomics[op][path];
+					}
+				} else if (op === "$push") {
+					if (target._atomics[op][path]) {
+						if (source._atomics[op][path].$each && target._atomics[op][path].$each) {
+							// Prepend source items to target items (maintain order)
+							target._atomics[op][path].$each.unshift(...source._atomics[op][path].$each);
+						}
+					} else {
+						target._atomics[op][path] = source._atomics[op][path];
+					}
+				} else if (target._atomics[op][path] === undefined) {
+					// For other ops, default to source if target doesn't have it
+					target._atomics[op][path] = source._atomics[op][path];
+				}
+			}
+		}
+	}
+
+	/**
 	 * Flush all queued writes to database
 	 */
 	async flush () {

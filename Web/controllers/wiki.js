@@ -1,5 +1,13 @@
 const removeMd = require("remove-markdown");
 const showdown = require("showdown");
+
+// Extension to fix wiki internal links
+showdown.extension("wikiLinks", () => [{
+	type: "output",
+	regex: /<a href="(?!http|\/|#)([^"]+)">([^<]+)<\/a>/g,
+	replace: (match, url, text) => `<a href="/wiki/${url}">${text}</a>`,
+}]);
+
 const md = new showdown.Converter({
 	tables: true,
 	simplifiedAutoLink: true,
@@ -7,6 +15,7 @@ const md = new showdown.Converter({
 	tasklists: true,
 	smoothLivePreview: true,
 	smartIndentationFix: true,
+	extensions: ["wikiLinks"],
 });
 md.setFlavor("github");
 const textDiff = require("text-diff");

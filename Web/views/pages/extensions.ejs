@@ -140,7 +140,7 @@
 				<div class="has-text-centered" style="margin-bottom: 1.5rem;">
 					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
 						<span class="icon is-medium" style="margin-right: 0.5rem;">
-							<i class="fa fa-bolt"></i>
+							<i class="fas fa-bolt"></i>
 						</span>
 						<% if (pageData.mode === 'gallery') { %>
 							Extension Marketplace
@@ -184,7 +184,7 @@
 							<div class="control">
 								<button id="search-button" onclick="Turbolinks.visit(`?q=${$('#search-input').val()}`); return false;" class="button is-primary is-modern is-large">
 									<span class="icon">
-										<i class="fa fa-search"></i>
+										<i class="fas fa-search"></i>
 									</span>
 									<span>Search</span>
 								</button>
@@ -203,7 +203,7 @@
 					<ul>
 						<li class="<%= pageData.mode === 'gallery' ? 'is-active' : '' %>">
 							<a href="/extensions/gallery">
-								<span class="icon"><i class="fa fa-th-large"></i></span>
+								<span class="icon"><i class="fas fa-th-large"></i></span>
 								<span>Gallery</span>
 								<% if (pageData.mode === 'gallery') { %>
 								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
@@ -214,7 +214,7 @@
 						</li>
 						<li class="<%= pageData.mode === 'queue' ? 'is-active' : '' %>">
 							<a href="/extensions/queue">
-								<span class="icon"><i class="fa fa-clock-o"></i></span>
+								<span class="icon"><i class="fas fa-clock"></i></span>
 								<span>Queue</span>
 								<% if (pageData.mode === 'queue') { %>
 								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
@@ -226,7 +226,7 @@
 						<% if (authUser) { %>
 						<li class="<%= ['my', 'builder', 'sales'].includes(pageData.mode) ? 'is-active' : '' %>">
 							<a href="/extensions/my">
-								<span class="icon"><i class="fa fa-folder"></i></span>
+								<span class="icon"><i class="fas fa-folder"></i></span>
 								<span>My Extensions</span>
 								<% if (pageData.mode === 'my') { %>
 								<span class="tag is-rounded" style="background: var(--color-accent); color: white; margin-left: 0.5rem;">
@@ -263,7 +263,7 @@
 		<section class="ext-cta-section">
 			<div class="container has-text-centered">
 				<h2 class="title is-4" style="color: white; margin-bottom: 1rem;">
-					<span class="icon"><i class="fa fa-code"></i></span>
+					<span class="icon"><i class="fas fa-code"></i></span>
 					Build Your Own Extensions
 				</h2>
 				<p class="subtitle is-6" style="color: rgba(255,255,255,0.7); margin-bottom: 1.5rem;">
@@ -271,12 +271,12 @@
 				</p>
 				<div class="buttons is-centered">
 					<a class="button is-modern is-primary" href="/wiki/Extensions">
-						<span class="icon"><i class="fa fa-book"></i></span>
+						<span class="icon"><i class="fas fa-book"></i></span>
 						<span>Read the Docs</span>
 					</a>
 					<% if (authUser) { %>
 					<a class="button is-modern is-light" href="/extensions/builder">
-						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span class="icon"><i class="fas fa-plus"></i></span>
 						<span>Create Extension</span>
 					</a>
 					<% } %>

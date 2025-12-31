@@ -96,4 +96,8 @@ module.exports = router => {
 	router.post("/:svrid/tickets/category/add", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.addCategory);
 	router.post("/:svrid/tickets/category/delete", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.deleteCategory);
 	router.post("/:svrid/tickets/ticket/update", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.tickets.updateTicket);
+
+	// Server Management (Tier 2)
+	setupDashboardPage(router, "/server-management/channels", [], controllers.dashboard.serverManagement.channels);
+	setupDashboardPage(router, "/server-management/roles", [], controllers.dashboard.serverManagement.roles);
 };

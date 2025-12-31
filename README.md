@@ -18,6 +18,7 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 - **🛡️ Moderation** - Progressive strike system, auto-mod filters, audit logging
 - **🛠️ Developer Tools** - Code execution, linting, regex testing, and JSON utilities
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
+- **⚙️ Server Management** - Dashboard-based channel and role management with drag-and-drop
 - **🧩 Extensions** - Create, share, and install custom server extensions with slash command support
 - **🎫 Ticket System** - Per-server support tickets with categories, panels, and transcripts
 - **🎮 Game Updates** - Monitor and announce updates for Minecraft, Rust, Terraria, and more

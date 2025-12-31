@@ -3,6 +3,7 @@ const { get: getDatabase } = require("../Database/Driver");
 // const Utils = require("./Utils/"); // Disabled: no longer needed after removing startup message
 const { PermissionFlagsBits } = require("discord.js");
 const ServerTemplates = require("./ServerTemplates");
+const TierManager = require("./TierManager");
 
 // Set defaults for new server document
 // @param {string} templateId - Optional template ID to apply preset configuration
@@ -76,6 +77,16 @@ module.exports = async (client, server, serverDocument, templateId = null) => {
 	// Default tag reactions (only set if values exist)
 	if (defTagReactions && defTagReactions.length > 0) {
 		serverConfigQueryDocument.set("tag_reaction.messages", defTagReactions);
+	}
+
+	// Set default tier from site settings (overriding schema default "free" if needed)
+	try {
+		const defaultTier = await TierManager.getDefaultTier();
+		if (defaultTier && defaultTier._id) {
+			serverDocument.query.set("subscription.tier_id", defaultTier._id);
+		}
+	} catch (err) {
+		logger.warn("Failed to set default tier for new server", { svrid: server.id }, err);
 	}
 
 	// Apply server template if specified

@@ -7,6 +7,107 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.9.0] - 2025-12-31
+
+### Added
+
+#### Server Management Dashboard (Tier 2 Premium)
+
+- **Channel Management Page** (`/dashboard/:svrid/server-management/channels`)
+  - View all server channels organized by type (Text, Voice, Forum, Announcement, Stage)
+  - Real-time channel information with icons and metadata
+  - Drag-and-drop channel reordering within categories
+  - Create, edit, and delete channels directly from dashboard
+  - Configure channel permissions, topics, rate limits, and settings
+  - NSFW marking, bitrate/user limit configuration for voice channels
+  - Permission overwrites management with granular control
+
+- **Role Management Page** (`/dashboard/:svrid/server-management/roles`)
+  - Complete role hierarchy visualization
+  - Create, edit, delete, and reorder roles
+  - Permission management with checkboxes for all Discord permissions
+  - Role color picker with live preview
+  - Hoisted/mentionable role settings
+  - Bulk role assignment and removal
+  - Role position management with drag-and-drop
+
+- **Server Management Controller** (`Web/controllers/dashboard/server-management.js`)
+  - Tier 2 feature gating with automatic redirect to subscription page
+  - Channel CRUD operations with Discord API integration
+  - Role CRUD operations with permission validation
+  - Real-time synchronization with Discord guild state
+
+#### UI/UX Improvements
+
+- **FontAwesome 5 Migration** - Updated all icon references from `fa` to `fas` for consistency
+  - Landing page hero section icons
+  - Feature cards and stat displays
+  - Dashboard navigation and admin menu icons
+  - Extension gallery and builder interface
+  - All 113 EJS templates modernized
+
+- **Admin Menu Enhancement** (`Web/views/partials/admin-menu.ejs`)
+  - Added "Server Management" section with Channels and Roles links
+  - Improved menu structure and organization
+  - Better visual hierarchy with updated icons
+
+- **Dashboard Navigation** - Enhanced server management access points
+  - Quick links to channel and role management
+  - Tier-based feature visibility
+
+#### Service Worker Improvements
+
+- **Enhanced Error Handling** - Improved code quality and reliability
+  - Better cache management and cleanup
+  - Graceful fallback for network failures
+  - Optimized asset caching strategies
+
+### Changed
+
+- **Wiki Content Updates** (`scripts/seed-wiki.js`)
+  - Updated server management documentation
+  - Added guides for channel and role configuration
+  - Enhanced premium feature descriptions
+  - Improved navigation and cross-references
+
+- **Tier Features** (`scripts/seed-tiers.js`)
+  - Added `server_management` feature to Tier 2 (Premium)
+  - Updated feature descriptions and benefits
+
+### Security
+
+- **Redis Security** - Bind Redis container to localhost (127.0.0.1) to prevent public exposure
+  - Updated `docker-compose.yml` port binding
+  - Maintains internal Docker network access
+  - Prevents unauthorized external access
+
+### Fixed
+
+- **Template Rendering** - Fixed icon inconsistencies across dashboard pages
+- **Permission Checks** - Enhanced tier-based access control for server management
+- **Dashboard Layout** - Improved responsive design for server management pages
+
+### Technical Details
+
+**Server Management Benefits:**
+- Direct Discord API integration for real-time updates
+- Tier 2 premium feature with subscription gating
+- Full CRUD operations without leaving dashboard
+- Permission validation and hierarchy enforcement
+- Drag-and-drop interfaces for intuitive management
+
+**Performance:**
+- Zero additional database queries for channel/role data (uses Discord cache)
+- Client-side drag-and-drop for instant UI feedback
+- Optimized permission calculation and validation
+
+**UI Consistency:**
+- 113 EJS templates updated with FontAwesome 5
+- Unified icon system across entire application
+- Modern, consistent visual language
+
+---
+
 ## [1.8.1] - 2025-12-25
 
 ### Security

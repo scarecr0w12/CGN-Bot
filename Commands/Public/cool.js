@@ -1,5 +1,14 @@
 const moment = require("moment");
-const parseDuration = require("parse-duration");
+
+// Lazy-load ESM module
+let parseDuration;
+const loadParseDuration = async () => {
+	if (!parseDuration) {
+		const module = await import("parse-duration");
+		parseDuration = module.default;
+	}
+	return parseDuration;
+};
 
 module.exports = async ({ Constants: { Colors, Text }, client }, { channelDocument, channelQueryDocument }, msg, commandData) => {
 	if (msg.suffix) {
@@ -16,7 +25,8 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { channelDocume
 				}],
 			});
 		} else {
-			const cooldown = parseDuration(msg.suffix.trim());
+			const parse = await loadParseDuration();
+			const cooldown = parse(msg.suffix.trim());
 			if (cooldown && cooldown > 0 && cooldown <= 300000) {
 				channelQueryDocument.set("command_cooldown", cooldown);
 				msg.send({

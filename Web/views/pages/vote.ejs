@@ -453,7 +453,7 @@
 			<div class="container">
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-3" style="color: white; margin-bottom: 0.25rem;">
-						<i class="fa fa-arrow-up"></i> Vote for Skynet
+						<i class="fas fa-arrow-up"></i> Vote for Skynet
 					</h1>
 					<p class="subtitle is-6" style="color: rgba(255,255,255,0.7);">
 						Earn rewards by voting on bot listing sites
@@ -467,14 +467,14 @@
 		<div class="vote-container">
 			<% if (!pageData.isEnabled) { %>
 				<div class="notification is-warning">
-					<i class="fa fa-exclamation-triangle"></i> Vote rewards are currently disabled.
+					<i class="fas fa-exclamation-triangle"></i> Vote rewards are currently disabled.
 				</div>
 			<% } else { %>
 				<% const isWeekend = [0, 6].includes(new Date().getDay()); %>
 
 				<% if (!authUser) { %>
 					<div class="login-prompt fade-in">
-						<h3><i class="fa fa-sign-in-alt"></i> Login to Track Your Votes</h3>
+						<h3><i class="fas fa-sign-in-alt"></i> Login to Track Your Votes</h3>
 						<p>Sign in with Discord to see your vote stats and track cooldowns!</p>
 						<a href="/login" class="button is-medium">
 							<span class="icon"><i class="fab fa-discord"></i></span>
@@ -484,22 +484,22 @@
 				<% } else { %>
 					<div class="vote-stats-grid fade-in">
 						<div class="vote-stat-card">
-							<div class="vote-stat-icon points"><i class="fa fa-coins"></i></div>
+							<div class="vote-stat-icon points"><i class="fas fa-coins"></i></div>
 							<div class="vote-stat-value" id="user-balance"><%= (pageData.userStats?.balance || 0).toLocaleString() %></div>
 							<div class="vote-stat-label">Current Balance</div>
 						</div>
 						<div class="vote-stat-card">
-							<div class="vote-stat-icon votes"><i class="fa fa-check-circle"></i></div>
+							<div class="vote-stat-icon votes"><i class="fas fa-check-circle"></i></div>
 							<div class="vote-stat-value" id="user-total-votes"><%= (pageData.userStats?.totalVotes || 0).toLocaleString() %></div>
 							<div class="vote-stat-label">Total Votes</div>
 						</div>
 						<div class="vote-stat-card">
-							<div class="vote-stat-icon earned"><i class="fa fa-trophy"></i></div>
+							<div class="vote-stat-icon earned"><i class="fas fa-trophy"></i></div>
 							<div class="vote-stat-value" id="user-lifetime-earned"><%= (pageData.userStats?.lifetimeEarned || 0).toLocaleString() %></div>
 							<div class="vote-stat-label">Lifetime Earned</div>
 						</div>
 						<div class="vote-stat-card">
-							<div class="vote-stat-icon spent"><i class="fa fa-shopping-cart"></i></div>
+							<div class="vote-stat-icon spent"><i class="fas fa-shopping-cart"></i></div>
 							<div class="vote-stat-value"><%= (pageData.userStats?.lifetimeSpent || 0).toLocaleString() %></div>
 							<div class="vote-stat-label">Points Spent</div>
 						</div>
@@ -508,10 +508,10 @@
 
 				<div class="vote-sites-section fade-in">
 					<h2 class="section-title">
-						<i class="fa fa-list"></i> Vote Sites
+						<i class="fas fa-list"></i> Vote Sites
 						<% if (isWeekend) { %>
 							<span class="weekend-bonus-badge">
-								<i class="fa fa-star"></i> Weekend Bonus: <%= pageData.weekendMultiplier %>x Points!
+								<i class="fas fa-star"></i> Weekend Bonus: <%= pageData.weekendMultiplier %>x Points!
 							</span>
 						<% } %>
 					</h2>
@@ -525,7 +525,7 @@
 										<% if (site.icon) { %>
 											<img src="<%= site.icon %>" alt="<%= site.name %>" onerror="this.parentElement.innerHTML='<i class=\'fa fa-vote-yea\'></i>';">
 										<% } else { %>
-											<i class="fa fa-vote-yea"></i>
+											<i class="fas fa-vote-yea"></i>
 										<% } %>
 									</div>
 									<div class="vote-site-info">
@@ -533,9 +533,9 @@
 										<% if (authUser) { %>
 											<div class="vote-site-status <%= site.canVote ? 'available' : 'cooldown' %>">
 												<% if (site.canVote) { %>
-													<i class="fa fa-check-circle"></i> Ready to vote!
+													<i class="fas fa-check-circle"></i> Ready to vote!
 												<% } else { %>
-													<i class="fa fa-clock"></i>
+													<i class="fas fa-clock"></i>
 													<span class="vote-timer" data-available-at="<%= site.availableAt ? new Date(site.availableAt).getTime() : '' %>">
 														Calculating...
 													</span>
@@ -543,18 +543,18 @@
 											</div>
 										<% } else { %>
 											<div class="vote-site-status available">
-												<i class="fa fa-coins"></i> Earn <%= isWeekend ? pageData.pointsPerVote * pageData.weekendMultiplier : pageData.pointsPerVote %> points
+												<i class="fas fa-coins"></i> Earn <%= isWeekend ? pageData.pointsPerVote * pageData.weekendMultiplier : pageData.pointsPerVote %> points
 											</div>
 										<% } %>
 									</div>
 									<div class="vote-site-action">
 										<% if (authUser && !site.canVote) { %>
 											<span class="vote-btn cooldown">
-												<i class="fa fa-hourglass-half"></i> Wait
+												<i class="fas fa-hourglass-half"></i> Wait
 											</span>
 										<% } else { %>
 											<a href="<%= site.url %>" target="_blank" rel="noopener noreferrer" class="vote-btn available">
-												<i class="fa fa-external-link-alt"></i> Vote
+												<i class="fas fa-external-link-alt"></i> Vote
 											</a>
 										<% } %>
 									</div>
@@ -563,7 +563,7 @@
 						</div>
 					<% } else { %>
 						<div class="no-sites-message">
-							<i class="fa fa-info-circle"></i>
+							<i class="fas fa-info-circle"></i>
 							<p>No vote sites are currently configured.</p>
 						</div>
 					<% } %>
@@ -571,32 +571,32 @@
 
 				<div class="vote-info-section fade-in">
 					<h2 class="section-title" style="margin-bottom: 1.5rem;">
-						<i class="fa fa-info-circle"></i> How It Works
+						<i class="fas fa-info-circle"></i> How It Works
 					</h2>
 					<div class="vote-info-grid">
 						<div class="vote-info-item">
-							<div class="vote-info-icon"><i class="fa fa-arrow-up"></i></div>
+							<div class="vote-info-icon"><i class="fas fa-arrow-up"></i></div>
 							<div class="vote-info-content">
 								<h4>Vote on Bot Lists</h4>
 								<p>Click the vote buttons above to vote for Skynet on various bot listing sites. Each vote helps us grow!</p>
 							</div>
 						</div>
 						<div class="vote-info-item">
-							<div class="vote-info-icon"><i class="fa fa-coins"></i></div>
+							<div class="vote-info-icon"><i class="fas fa-coins"></i></div>
 							<div class="vote-info-content">
 								<h4>Earn Points</h4>
 								<p>Receive <%= pageData.pointsPerVote %> points per vote. Weekend votes earn <%= pageData.weekendMultiplier %>x points!</p>
 							</div>
 						</div>
 						<div class="vote-info-item">
-							<div class="vote-info-icon"><i class="fa fa-clock"></i></div>
+							<div class="vote-info-icon"><i class="fas fa-clock"></i></div>
 							<div class="vote-info-content">
 								<h4>Vote Every 12 Hours</h4>
 								<p>You can vote once every 12 hours on each site. Check back to vote again!</p>
 							</div>
 						</div>
 						<div class="vote-info-item">
-							<div class="vote-info-icon"><i class="fa fa-gift"></i></div>
+							<div class="vote-info-icon"><i class="fas fa-gift"></i></div>
 							<div class="vote-info-content">
 								<h4>Redeem Rewards</h4>
 								<p>Use your points to unlock premium features for your servers or purchase premium extensions!</p>
@@ -608,7 +608,7 @@
 				<% if (pageData.leaderboard && pageData.leaderboard.length > 0) { %>
 					<div class="leaderboard-section fade-in">
 						<h2 class="section-title" style="margin-bottom: 1rem;">
-							<i class="fa fa-trophy"></i> Top Voters
+							<i class="fas fa-trophy"></i> Top Voters
 						</h2>
 						<div class="leaderboard-list">
 							<% pageData.leaderboard.forEach((voter, index) => { %>
@@ -621,7 +621,7 @@
 										<div class="leaderboard-votes"><%= voter.totalVotes.toLocaleString() %> votes</div>
 									</div>
 									<div class="leaderboard-points">
-										<i class="fa fa-coins"></i> <%= voter.lifetimeEarned.toLocaleString() %>
+										<i class="fas fa-coins"></i> <%= voter.lifetimeEarned.toLocaleString() %>
 									</div>
 								</div>
 							<% }); %>

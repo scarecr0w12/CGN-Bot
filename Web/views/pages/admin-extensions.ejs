@@ -87,7 +87,7 @@
 									<% if (extensionData.status !== "saved" && extensionData.level === "gallery") { %>
 									<a class="button is-outlined" href="/extensions/<%= extensionData.status === "version_queue" ? "queue" : extensionData.status %>?id=<%= extensionConfigDocument._id %>">
 										<span class="icon">
-											<i class="fa fa-eye"></i>
+											<i class="fas fa-eye"></i>
 										</span>
 										<span>View</span>
 									</a>
@@ -95,7 +95,7 @@
 									<% if (extensionData.level === "gallery" && extensionData.published_version && extensionData.published_version !== extensionConfigDocument.version) { %>
 									<button class="button is-primary is-outlined" onclick="SkynetUtil.openExtensionInstaller('<%= extensionData._id %>', <%= extensionData.published_version %>, '<%= serverData.id %>')">
 										<span class="icon">
-											<i class="fa fa-arrow-circle-up"></i>
+											<i class="fas fa-arrow-circle-up"></i>
 										</span>
 										<span>Update</span>
 									</button>
@@ -103,14 +103,14 @@
 									<% if (extensionData.level === "gallery" && ["command", "keyword", "timer"].includes(extensionData.type)) { %>
 									<button class="button is-info is-outlined" data-toggle-gfa="extension-<%= extensionData._id %>-options">
 										<span class="icon">
-											<i class="fa fa-pencil"></i>
+											<i class="fas fa-pen"></i>
 										</span>
 										<span>Edit</span>
 									</button>
 									<% } else if (extensionData.level === "third") { %>
 									<a class="button is-info is-outlined" href="extension-builder?extid=<%= extensionData._id %>">
 										<span class="icon">
-											<i class="fa fa-code"></i>
+											<i class="fas fa-code"></i>
 										</span>
 										<span>Edit</span>
 									</a>
@@ -118,14 +118,14 @@
 									<% if (extensionData.level === "gallery") { %>
 									<button class="button is-danger is-outlined" onclick="SkynetUtil.uninstallExtension('<%= extensionData._id%>')">
 										<span class="icon">
-											<i class="fa fa-times"></i>
+											<i class="fas fa-times"></i>
 										</span>
 										<span>Uninstall</span>
 									</button>
 									<% } else { %>
 									<button class="button is-danger is-outlined" onclick="SkynetUtil.deleteExtension('<%= extensionData._id %>', 'extension-<%= extensionData._id %>')">
 										<span class="icon">
-											<i class="fa fa-trash"></i>
+											<i class="fas fa-trash-alt"></i>
 										</span>
 										<span>Delete</span>
 									</button>
@@ -227,7 +227,7 @@
 								<input class="is-hidden" name="v" value="<%= extensionConfigDocument.version %>">
 								<button id="form-submit" type="submit" class="button is-primary" value="Submit" onclick="SkynetUtil.updateExtension($(this));" data-extid="<%= extensionData._id %>">
 									<span class="icon">
-										<i class="fa fa-check"></i>
+										<i class="fas fa-check"></i>
 									</span>
 									<span>Save</span>
 								</button>
@@ -236,7 +236,7 @@
 							<hr>
 							<form id="extension-settings-form-<%= extensionData._id %>" onsubmit="return false;">
 								<h4 class="title is-4">
-									<i class="fa fa-cog"></i> Extension Configuration
+									<i class="fas fa-cog"></i> Extension Configuration
 									<span class="tag is-info">Server Settings</span>
 								</h4>
 								<p class="help mb-4">These settings are configured by the extension developer and stored per-server.</p>
@@ -270,7 +270,7 @@
 											<input name="secret_<%= field.id %>" class="input" type="password" 
 												placeholder="<%= extensionConfigDocument.secrets && extensionConfigDocument.secrets[field.id] ? '••••••••' : (field.placeholder || 'Enter secret...') %>"
 												autocomplete="new-password">
-											<span class="help has-text-warning"><i class="fa fa-lock"></i> Secrets are encrypted and never shown again</span>
+											<span class="help has-text-warning"><i class="fas fa-lock"></i> Secrets are encrypted and never shown again</span>
 											<% } else if (field.type === 'toggle') { %>
 											<label class="checkbox">
 												<input name="setting_<%= field.id %>" type="checkbox" <%= currentValue || field.default ? 'checked' : '' %>>
@@ -313,7 +313,7 @@
 								<% }); %>
 								<input class="is-hidden" name="id" value="<%= extensionData._id %>">
 								<button type="submit" class="button is-info" onclick="SkynetUtil.saveExtensionSettings($(this));" data-extid="<%= extensionData._id %>">
-									<span class="icon"><i class="fa fa-save"></i></span>
+									<span class="icon"><i class="fas fa-save"></i></span>
 									<span>Save Settings</span>
 								</button>
 							</form>
@@ -328,7 +328,7 @@
 					<div class="column is-half">
 						<a class="button is-warning is-outlined is-fullwidth" href="extension-builder">
 							<span class="icon">
-								<i class="fa fa-code"></i>
+								<i class="fas fa-code"></i>
 							</span>
 							<span>Build New Local Extension</span>
 						</a>
@@ -336,7 +336,7 @@
 					<div class="column is-half">
 						<a class="button is-info is-outlined is-fullwidth" href="/extensions/builder">
 							<span class="icon">
-								<i class="fa fa-code"></i>
+								<i class="fas fa-code"></i>
 							</span>
 							<span>Build New Public Extension</span>
 						</a>

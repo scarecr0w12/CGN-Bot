@@ -63,7 +63,7 @@
                                         <input type="checkbox" id="tag_reaction-<%= i %>-removed" name="tag_reaction-<%= i %>-removed" style="display: none;">
                                         <button class="button is-small is-white" name="tag_reaction-<%= i %>-removed" onclick="$('#tag_reaction-<%= i %>-removed').attr('checked', true); SkynetUtil.SFS(); Turbolinks.visit('');">
 											<span class="icon is-small" style="margin-left: -2px;">
-												<i class="fa fa-times"></i>
+												<i class="fas fa-times"></i>
 											</span>
 										</button>
 										<%- message.replace("@user", "<strong>@user</strong>").replace("@mention", "<strong>@mention</strong>") %>
@@ -81,7 +81,7 @@
 									<div class="control">
 										<a class="button is-primary" onclick="newReaction();">
 											<span class="icon">
-										        <i class="fa fa-plus"></i>
+										        <i class="fas fa-plus"></i>
 										    </span>
 										    <span>Add</span>
 										</a>

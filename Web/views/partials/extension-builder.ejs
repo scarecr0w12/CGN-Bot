@@ -187,7 +187,7 @@
 	<hr>
 	<div class="field">
 		<label class="label">
-			<i class="fa fa-shield-alt"></i> Scopes
+			<i class="fas fa-shield-alt"></i> Scopes
 			<span class="tag is-info is-light ml-2">Permissions your extension needs</span>
 		</label>
 		<span class="help mb-3">Select the capabilities your extension requires. Only request what you need - fewer scopes means easier approval.</span>
@@ -260,7 +260,7 @@
 	
 	<div class="field">
 		<label class="label">
-			<i class="fa fa-globe"></i> Network Capability
+			<i class="fas fa-globe"></i> Network Capability
 			<span class="tag is-warning is-light ml-2">External API Access</span>
 		</label>
 		<span class="help mb-3">Choose what level of external network access your extension needs. Higher levels require maintainer approval.</span>
@@ -314,13 +314,13 @@
 	
 	<div class="field">
 		<label class="label">
-			<i class="fa fa-code"></i> Code Editor
+			<i class="fas fa-code"></i> Code Editor
 		</label>
 		
 		<!-- API Deprecation Notice -->
 		<div class="notification is-warning is-light mb-3" style="border-left: 4px solid #ffdd57;">
 			<p class="has-text-weight-semibold mb-2">
-				<span class="icon"><i class="fa fa-exclamation-triangle"></i></span>
+				<span class="icon"><i class="fas fa-exclamation-triangle"></i></span>
 				API Changes (v1.8.0)
 			</p>
 			<p class="is-size-7 mb-2">
@@ -345,16 +345,16 @@ const items = parsed.rss?.channel?.item || [];</pre>
 				<div class="level-item">
 					<div class="buttons are-small">
 						<label class="button is-primary is-outlined">
-							<span class="icon is-small"><i class="fa fa-upload"></i></span>
+							<span class="icon is-small"><i class="fas fa-upload"></i></span>
 							<span>Upload</span>
 							<input id="builder-code-upload" type="file" accept=".js,.skyext,.txt" onchange="SkynetUtil.uploadCode(this.files);" style="display: none;">
 						</label>
 						<a class="button is-primary is-outlined" onclick="SkynetUtil.downloadCode();">
-							<span class="icon is-small"><i class="fa fa-download"></i></span>
+							<span class="icon is-small"><i class="fas fa-download"></i></span>
 							<span>Download</span>
 						</a>
 						<a class="button is-info is-outlined" onclick="SkynetUtil.formatCode();" title="Format code (Ctrl+Shift+F)">
-							<span class="icon is-small"><i class="fa fa-align-left"></i></span>
+							<span class="icon is-small"><i class="fas fa-align-left"></i></span>
 							<span>Format</span>
 						</a>
 					</div>
@@ -363,7 +363,7 @@ const items = parsed.rss?.channel?.item || [];</pre>
 			<div class="level-right">
 				<div class="level-item">
 					<a class="button is-small is-link is-outlined" href="/wiki/Extensions#javascriptapi" target="_blank">
-						<span class="icon is-small"><i class="fa fa-book"></i></span>
+						<span class="icon is-small"><i class="fas fa-book"></i></span>
 						<span>API Docs</span>
 					</a>
 				</div>
@@ -418,7 +418,7 @@ const items = parsed.rss?.channel?.item || [];</pre>
 	<% if (isGallery) { %>
 	<div class="field">
 		<label class="label">
-			<i class="fa fa-tags"></i> Tags
+			<i class="fas fa-tags"></i> Tags
 			<span class="tag is-info is-light ml-2">Categorize your extension</span>
 		</label>
 		<span class="help mb-3">Select up to 3 tags that best describe your extension.</span>
@@ -446,7 +446,7 @@ const items = parsed.rss?.channel?.item || [];</pre>
 	<% if (isGallery && pageData.extensionData._id && pageData.extensionData.state === "saved") { %>
 		<a id="publish-<%= pageData.extensionData._id %>" class="button" onclick="SkynetUtil.publishExtension('<%= pageData.extensionData._id %>');">
 			<span class="icon is-small">
-				<i class="fa fa-share-alt"></i>
+				<i class="fas fa-share-alt"></i>
 			</span>
 			<span>Publish</span>
 		</a>
@@ -454,7 +454,7 @@ const items = parsed.rss?.channel?.item || [];</pre>
     <% } else if (isGallery && pageData.extensionData._id && pageData.extensionData.state !== "saved") { %>
     	<a class="button is-info" href="/extensions/<%= pageData.extensionData.state === "version_queue" ? "queue" : pageData.extensionData.state %>?id=<%= pageData.extensionData._id %>" target="_blank">
 			<span class="icon is-small">
-				<i class="fa fa-info"></i>
+				<i class="fas fa-info"></i>
 			</span>
 			<span>View Listing</span>
 		</a>

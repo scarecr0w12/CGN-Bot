@@ -315,7 +315,7 @@
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
 						<span class="icon is-medium" style="margin-right: 0.5rem;">
-							<i class="fa fa-crown"></i>
+							<i class="fas fa-crown"></i>
 						</span>
 						Premium Membership
 					</h1>
@@ -336,7 +336,7 @@
 					<div class="columns is-vcentered">
 						<div class="column">
 							<h3 class="title is-5" style="margin-bottom: 0.25rem;">
-								<span class="icon"><i class="fa fa-server"></i></span>
+								<span class="icon"><i class="fas fa-server"></i></span>
 								Select a Server
 							</h3>
 							<p class="has-text-grey is-size-7">Premium subscriptions are per-server</p>
@@ -360,7 +360,7 @@
 					<p><strong>No eligible servers found.</strong></p>
 					<p class="is-size-7">You need to be an admin of a server where Skynet is installed.</p>
 					<a href="/add" class="button is-warning is-light mt-3">
-						<span class="icon"><i class="fa fa-plus"></i></span>
+						<span class="icon"><i class="fas fa-plus"></i></span>
 						<span>Add Bot to Server</span>
 					</a>
 				</div>
@@ -385,7 +385,7 @@
 							</p>
 							<% if (pageData.serverSubscription && pageData.serverSubscription.expires_at) { %>
 							<p class="is-size-7" style="opacity: 0.8;">
-								<span class="icon is-small"><i class="fa fa-clock"></i></span>
+								<span class="icon is-small"><i class="fas fa-clock"></i></span>
 								<% if (new Date(pageData.serverSubscription.expires_at) > new Date()) { %>
 								Active until <%= new Date(pageData.serverSubscription.expires_at).toLocaleDateString() %>
 								<% } else { %>
@@ -396,7 +396,7 @@
 						</div>
 						<div class="column is-narrow">
 							<a href="/dashboard/<%= pageData.selectedServer.id %>/subscription" class="button is-light">
-								<span class="icon"><i class="fa fa-cog"></i></span>
+								<span class="icon"><i class="fas fa-cog"></i></span>
 								<span>Manage</span>
 							</a>
 						</div>
@@ -426,7 +426,7 @@
 								<% if (tier.badge_icon) { %>
 								<i class="fa <%= tier.badge_icon %>"></i>
 								<% } else { %>
-								<i class="fa fa-star"></i>
+								<i class="fas fa-star"></i>
 								<% } %>
 							</div>
 							<h2 class="pricing-tier-name" style="color: <%= tier.color || 'var(--color-primary)' %>;"><%= tier.name %></h2>
@@ -454,7 +454,7 @@
 								<% const feature = (pageData.features || []).find(f => f._id === featureId); %>
 								<% if (feature) { %>
 								<li>
-									<span class="icon"><i class="fa fa-check"></i></span>
+									<span class="icon"><i class="fas fa-check"></i></span>
 									<span><%= feature.name %></span>
 								</li>
 								<% } %>
@@ -469,12 +469,12 @@
 							<% if (authUser) { %>
 								<% if (!pageData.selectedServer) { %>
 								<button class="button is-light" disabled>
-									<span class="icon"><i class="fa fa-server"></i></span>
+									<span class="icon"><i class="fas fa-server"></i></span>
 									<span>Select a Server First</span>
 								</button>
 								<% } else if (pageData.serverTier && pageData.serverTier._id === tier._id) { %>
 								<button class="button" disabled>
-									<span class="icon"><i class="fa fa-check"></i></span>
+									<span class="icon"><i class="fas fa-check"></i></span>
 									<span>Current Plan</span>
 								</button>
 								<% } else if (pageData.serverTier && pageData.serverTier.level >= tier.level) { %>
@@ -483,13 +483,13 @@
 								</button>
 								<% } else { %>
 								<button class="button is-primary is-modern" onclick="subscribe('<%= tier._id %>'); if(typeof trackMatomoEvent==='function')trackMatomoEvent('Premium','Subscribe Click','<%= tier.name %>',<%= tier.price_monthly %>);" style="background: <%= tier.color || 'var(--color-primary)' %>;">
-									<span class="icon"><i class="fa fa-arrow-up"></i></span>
+									<span class="icon"><i class="fas fa-arrow-up"></i></span>
 									<span><%= pageData.serverTier && pageData.serverTier.level > 0 ? 'Upgrade' : 'Subscribe' %></span>
 								</button>
 								<% } %>
 							<% } else { %>
 							<a href="/login?redirect=/membership" class="button is-primary is-modern" style="background: <%= tier.color || 'var(--color-primary)' %>;">
-								<span class="icon"><i class="fa fa-sign-in"></i></span>
+								<span class="icon"><i class="fas fa-sign-in"></i></span>
 								<span>Login to Subscribe</span>
 							</a>
 							<% } %>
@@ -511,7 +511,7 @@
 				<% if (pageData.selectedServer) { %>
 				<div class="has-text-centered mt-5">
 					<p class="is-size-7 has-text-grey">
-						<span class="icon"><i class="fa fa-coins"></i></span>
+						<span class="icon"><i class="fas fa-coins"></i></span>
 						Have vote points? <a href="/dashboard/<%= pageData.selectedServer.id %>/subscription">Redeem them in the dashboard</a>
 					</p>
 				</div>

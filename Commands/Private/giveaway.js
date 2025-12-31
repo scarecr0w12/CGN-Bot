@@ -1,6 +1,15 @@
 const { ChannelType } = require("discord.js");
 const { Giveaways } = require("../../Modules/");
-const parseDuration = require("parse-duration");
+
+// Lazy-load ESM module
+let parseDuration;
+const loadParseDuration = async () => {
+	if (!parseDuration) {
+		const module = await import("parse-duration");
+		parseDuration = module.default;
+	}
+	return parseDuration;
+};
 
 module.exports = {
 	find: async (main, filter) => {
@@ -222,7 +231,8 @@ module.exports = {
 						return;
 					}
 					if (duration.content) duration = duration.content;
-					duration = duration.trim() === "." ? 3600000 : parseDuration(duration.trim());
+					const parse = await loadParseDuration();
+					duration = duration.trim() === "." ? 3600000 : parse(duration.trim());
 
 					if (isNaN(duration) || duration <= 0) {
 						await usrch.send({

@@ -33,7 +33,7 @@
                 <div class="level-item">
                     <a class="button is-small <%= (authUser && blogPost.userReaction.value === -1) ? 'is-dark' : 'is-light' %>" onclick="addReaction(-1);" title="Reaction: thumbs down"<%= !authUser ? ' disabled' : '' %>>
                         <span class="icon is-small">
-                            <i class="fa fa-thumbs-o-down"></i>
+                            <i class="fas fa-thumbs-down"></i>
                         </span>
                         <span><%= blogPost.reactions[-1] %></span>
                     </a>
@@ -42,7 +42,7 @@
                 <div class="level-item">
                     <a class="button is-small <%= (authUser && blogPost.userReaction.value === 0) ? 'is-dark' : 'is-light' %>" onclick="addReaction(0);" title="Reaction: meh"<%= !authUser ? ' disabled' : '' %>>
                         <span class="icon is-small">
-                            <i class="fa fa-meh-o"></i>
+                            <i class="fas fa-meh-o"></i>
                         </span>
                         <span><%= blogPost.reactions[0] %></span>
                     </a>
@@ -51,7 +51,7 @@
                 <div class="level-item">
                     <a class="button is-small <%= (authUser && blogPost.userReaction.value === 1) ? 'is-dark' : 'is-light' %>" onclick="addReaction(1);" title="Reaction: thumbs up"<%= !authUser ? ' disabled' : '' %>>
                         <span class="icon is-small">
-                            <i class="fa fa-thumbs-o-up"></i>
+                            <i class="fas fa-thumbs-up"></i>
                         </span>
                         <span><%= blogPost.reactions[1] %></span>
                     </a>
@@ -70,14 +70,14 @@
             <% if(blogPost.isPreview) { %>
                 <a class="button is-dark is-outlined" href="/blog/<%= blogPost.id %>/<%= blogPost.slug %>">
                     <span class="icon is-small">
-                        <i class="fa fa-eye"></i>
+                        <i class="fas fa-eye"></i>
                     </span>
                     <span>Read more</span>
                 </a>
             <% } else { %>
                 <a class="button is-dark is-outlined" href="/blog">
                     <span class="icon is-small">
-                        <i class="fa fa-chevron-left"></i>
+                        <i class="fas fa-chevron-left"></i>
                     </span>
                     <span>Back to all posts</span>
                 </a>
@@ -89,7 +89,7 @@
             <div class="level-item">
                 <a class="button is-info is-outlined" href="/blog/<%= blogPost.id %>/compose">
                     <span class="icon is-small">
-                        <i class="fa fa-pencil"></i>
+                        <i class="fas fa-pen"></i>
                     </span>
                     <span>Edit</span>
                 </a>
@@ -111,7 +111,7 @@
             <div class="level-item">
                 <a class="button is-danger is-outlined" onclick="deletePost('<%= blogPost.id %>');">
                     <span class="icon is-small">
-                        <i class="fa fa-times"></i>
+                        <i class="fas fa-times"></i>
                     </span>
                     <span>Delete</span>
                 </a>

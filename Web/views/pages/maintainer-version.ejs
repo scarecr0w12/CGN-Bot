@@ -87,7 +87,7 @@
 									<h4 class="subtitle is-4">
 										<% if (pageData.utd) { %>
 										<span class="icon" title="Your Skynet is up-to-date.">
-											<i class="fa fa-check-circle"></i>
+											<i class="fas fa-check-circle"></i>
 										</span>
 										<% } %>
 										<%= pageData.installedVersion.metadata.name %>
@@ -106,7 +106,7 @@
 									<h4 class="subtitle is-4">
 										<% if (!pageData.isDownloaded) { %>
 										<span class="icon" id="version-cloud-icon" title="This version has not been downloaded.">
-											<i class="fa fa-cloud-download"></i>
+											<i class="fas fa-cloud-download"></i>
 										</span>
 										<% } %>
 										<%= pageData.latestVersion.metadata.name %>
@@ -142,7 +142,7 @@
 							<div class="generic-feature-box-description">
 								<h4 class="subtitle is-4">
 									<span class="icon" title="This version is unknown.">
-										<i class="fa fa-times-circle"></i>
+										<i class="fas fa-times-circle"></i>
 									</span>
 									<%= configData.version %>
 								</h4>

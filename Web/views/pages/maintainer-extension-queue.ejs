@@ -163,7 +163,7 @@
 			</div>
 			<div class="column">
 				<h1 class="title">
-					<span class="icon"><i class="fa fa-puzzle-piece"></i></span>
+					<span class="icon"><i class="fas fa-puzzle-piece"></i></span>
 					Extension Queue
 				</h1>
 				<article class="message is-info">
@@ -200,7 +200,7 @@
 									<% } %>
 									<% if (ext.network_capability && ext.network_capability !== 'none') { %>
 									<span class="ext-queue-badge ext-queue-badge-network <%= ext.network_approved ? 'approved' : '' %>">
-										<i class="fa fa-globe"></i> 
+										<i class="fas fa-globe"></i> 
 										<%= ext.network_capability === 'allowlist_only' ? 'Public APIs' : ext.network_capability === 'network' ? 'Network' : 'Advanced' %>
 										<% if (ext.network_approved) { %><i class="fa fa-check ml-1"></i><% } %>
 									</span>
@@ -208,7 +208,7 @@
 									<% if (ext.tags && ext.tags.length > 0) { %>
 										<% ext.tags.forEach(tag => { %>
 										<span class="ext-queue-badge" style="background: #f5f5f5; color: #666;">
-											<i class="fa fa-tag"></i> <%= tag %>
+											<i class="fas fa-tag"></i> <%= tag %>
 										</span>
 										<% }); %>
 									<% } %>
@@ -216,18 +216,18 @@
 							</div>
 							<div>
 								<span class="has-text-grey" title="Submitted <%= ext.rawLastUpdated %>">
-									<i class="fa fa-clock-o"></i> <%= ext.relativeLastUpdated %>
+									<i class="fas fa-clock"></i> <%= ext.relativeLastUpdated %>
 								</span>
 							</div>
 						</div>
 						<div class="ext-queue-card-body">
 							<p class="ext-queue-card-description"><%- ext.description %></p>
 							<button class="button is-small is-outlined toggle-code-btn" data-ext-id="<%= ext._id %>">
-								<span class="icon"><i class="fa fa-code"></i></span>
+								<span class="icon"><i class="fas fa-code"></i></span>
 								<span>View Code</span>
 							</button>
 							<a class="button is-small is-outlined" href="/extensions/queue?id=<%= ext._id %>" target="_blank">
-								<span class="icon"><i class="fa fa-external-link"></i></span>
+								<span class="icon"><i class="fas fa-external-link"></i></span>
 								<span>View in Queue</span>
 							</a>
 							<div id="code-preview-<%= ext._id %>" class="ext-queue-code-preview" style="display: none;">
@@ -241,22 +241,22 @@
 								<div class="ext-queue-card-author-id">ID: <%= ext.owner.id %></div>
 							</div>
 							<div class="ext-queue-card-points" title="<%= ext.points %> points">
-								<span class="tag is-warning"><i class="fa fa-star"></i> <%= ext.points %></span>
+								<span class="tag is-warning"><i class="fas fa-star"></i> <%= ext.points %></span>
 							</div>
 						</div>
 						<div class="ext-queue-card-actions">
 							<button class="button is-success accept-ext-btn" data-ext-id="<%= ext._id %>">
-								<span class="icon"><i class="fa fa-check"></i></span>
+								<span class="icon"><i class="fas fa-check"></i></span>
 								<span>Accept</span>
 							</button>
 							<% if (ext.network_capability && ['network', 'network_advanced'].includes(ext.network_capability) && !ext.network_approved) { %>
 							<button class="button is-info approve-network-btn" data-ext-id="<%= ext._id %>">
-								<span class="icon"><i class="fa fa-globe"></i></span>
+								<span class="icon"><i class="fas fa-globe"></i></span>
 								<span>Approve Network</span>
 							</button>
 							<% } %>
 							<button class="button is-danger show-reject-btn" data-ext-id="<%= ext._id %>">
-								<span class="icon"><i class="fa fa-times"></i></span>
+								<span class="icon"><i class="fas fa-times"></i></span>
 								<span>Reject</span>
 							</button>
 						</div>
@@ -269,7 +269,7 @@
 							</div>
 							<div class="buttons">
 								<button class="button is-danger confirm-reject-btn" data-ext-id="<%= ext._id %>">
-									<span class="icon"><i class="fa fa-times"></i></span>
+									<span class="icon"><i class="fas fa-times"></i></span>
 									<span>Confirm Rejection</span>
 								</button>
 								<button class="button hide-reject-btn" data-ext-id="<%= ext._id %>">Cancel</button>

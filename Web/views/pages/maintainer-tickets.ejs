@@ -218,7 +218,7 @@
 				</div>
 				<div class="column">
 					<h1 class="title">
-						<span class="icon"><i class="fa fa-ticket"></i></span>
+						<span class="icon"><i class="fas fa-ticket-alt"></i></span>
 						Support Tickets
 					</h1>
 					<article class="message is-primary">
@@ -281,10 +281,10 @@
 								<h4 class="subtitle is-6 mb-3">Assignment</h4>
 								<div class="filter-tags">
 									<a href="<%= currentPage %>?assigned=me" class="filter-tag <%= pageData.activeAssigned === 'me' ? 'is-active' : '' %>">
-										<i class="fa fa-user"></i> My Tickets
+										<i class="fas fa-user"></i> My Tickets
 									</a>
 									<a href="<%= currentPage %>?assigned=unassigned" class="filter-tag <%= pageData.activeAssigned === 'unassigned' ? 'is-active' : '' %>">
-										<i class="fa fa-user-times"></i> Unassigned
+										<i class="fas fa-user-times"></i> Unassigned
 									</a>
 								</div>
 							</div>
@@ -322,26 +322,26 @@
 							<div class="ticket-card-footer">
 								<div>
 									<span class="message-count">
-										<i class="fa fa-comments"></i> <%= ticket.message_count || 0 %> messages
+										<i class="fas fa-comments"></i> <%= ticket.message_count || 0 %> messages
 									</span>
 									<% if (ticket.assigned_to) { %>
 									<span class="assigned-badge is-assigned">
-										<i class="fa fa-user-check"></i> <%= ticket.assigned_to_username || 'Assigned' %>
+										<i class="fas fa-user-check"></i> <%= ticket.assigned_to_username || 'Assigned' %>
 									</span>
 									<% } else { %>
 									<span class="assigned-badge">
-										<i class="fa fa-user-times"></i> Unassigned
+										<i class="fas fa-user-times"></i> Unassigned
 									</span>
 									<% } %>
 								</div>
 								<div>
 									<span class="ticket-time">
-										<i class="fa fa-clock"></i>
+										<i class="fas fa-clock"></i>
 										<%= new Date(ticket.last_activity_at || ticket.created_at).toLocaleDateString() %>
 										<%= new Date(ticket.last_activity_at || ticket.created_at).toLocaleTimeString() %>
 									</span>
 									<a href="/dashboard/maintainer/tickets/<%= ticket._id %>" class="button is-small is-primary ml-2">
-										<span class="icon"><i class="fa fa-eye"></i></span>
+										<span class="icon"><i class="fas fa-eye"></i></span>
 										<span>View</span>
 									</a>
 								</div>
@@ -352,7 +352,7 @@
 					<article class="message is-embedded-message">
 						<div class="message-header">
 							<p>
-								<span class="icon"><i class="fa fa-inbox"></i></span>
+								<span class="icon"><i class="fas fa-inbox"></i></span>
 								No Tickets Found
 							</p>
 						</div>

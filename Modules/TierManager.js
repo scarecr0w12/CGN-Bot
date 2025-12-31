@@ -166,15 +166,21 @@ const getUserSubscription = async userId => {
  */
 const getServerTier = async serverId => {
 	const subscription = await getServerSubscription(serverId);
-	const tierId = subscription?.tier_id || "free";
+
+	// If no subscription exists, return default tier
+	if (!subscription || !subscription.tier_id) {
+		return getDefaultTier();
+	}
+
+	const tierId = subscription.tier_id;
 
 	// Check if subscription is expired
-	if (subscription?.expires_at && new Date(subscription.expires_at) < new Date()) {
+	if (subscription.expires_at && new Date(subscription.expires_at) < new Date()) {
 		return getDefaultTier();
 	}
 
 	// Check if subscription is active
-	if (subscription && !subscription.is_active) {
+	if (!subscription.is_active) {
 		return getDefaultTier();
 	}
 
@@ -194,13 +200,19 @@ const getUserTier = async userId => {
 	logger.warn("TierManager.getUserTier is deprecated - use getServerTier instead", { usrid: userId });
 
 	const subscription = await getUserSubscription(userId);
-	const tierId = subscription?.tier_id || "free";
 
-	if (subscription?.expires_at && new Date(subscription.expires_at) < new Date()) {
+	// If no subscription exists, return default tier
+	if (!subscription || !subscription.tier_id) {
 		return getDefaultTier();
 	}
 
-	if (subscription && !subscription.is_active) {
+	const tierId = subscription.tier_id;
+
+	if (subscription.expires_at && new Date(subscription.expires_at) < new Date()) {
+		return getDefaultTier();
+	}
+
+	if (!subscription.is_active) {
 		return getDefaultTier();
 	}
 

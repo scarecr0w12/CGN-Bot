@@ -216,7 +216,7 @@
 				<div class="has-text-centered fade-in">
 					<h1 class="title is-2" style="color: white; margin-bottom: 0.5rem;">
 						<span class="icon is-medium" style="margin-right: 0.5rem;">
-							<i class="fa fa-book"></i>
+							<i class="fas fa-book"></i>
 						</span>
 						<% if (pageData.mode === "page" && pageData.content) { %>
 							<%= pageData.title.replace(/-/g, ' ') %>
@@ -254,7 +254,7 @@
 								<div class="control">
 									<a id="search-button" class="button is-primary" href="javascript:SkynetUtil.searchWiki(document.getElementById('search-input').value);">
 										<span class="icon is-small">
-											<i class="fa fa-search"></i>
+											<i class="fas fa-search"></i>
 										</span>
 									</a>
 								</div>
@@ -262,7 +262,7 @@
 							
 							<% if (isContributor) { %>
 							<a class="button is-primary is-modern wiki-new-page-btn" href="/wiki/new">
-								<span class="icon"><i class="fa fa-plus"></i></span>
+								<span class="icon"><i class="fas fa-plus"></i></span>
 								<span>New Page</span>
 							</a>
 							<% } %>
@@ -278,7 +278,7 @@
 										const categories = {
 											"General": ["Home", "Getting-Started", "FAQ", "Premium-Features"],
 											"Commands": ["Commands", "Commands-Moderation", "Commands-Fun", "Commands-Utility", "Commands-Search", "Commands-Stats", "Commands-AI", "Commands-Economy"],
-											"Guides": ["Server-Owner-Guide", "Admin-Levels", "AI-Guide", "Economy-Guide", "Music-Guide", "Ticket-System", "Developer-Tools"],
+											"Guides": ["Server-Owner-Guide", "Admin-Levels", "AI-Guide", "Economy-Guide", "Music-Guide", "Ticket-System", "Developer-Tools", "Server-Management"],
 											"Extensions": ["Extensions", "Extension-Development"],
 											"Other": []
 										};
@@ -341,24 +341,24 @@
 									<div class="wiki-reactions field has-addons">
 										<p class="control">
 											<a class="button <%= (authUser && pageData.userReaction.value === -1) ? 'is-dark' : 'is-light' %>" onclick="addReaction(-1);" title="Not helpful"<%= !authUser ? ' disabled' : '' %>>
-												<span class="icon is-small"><i class="fa fa-thumbs-down"></i></span>
+												<span class="icon is-small"><i class="fas fa-thumbs-down"></i></span>
 												<span><%= pageData.reactions[-1] %></span>
 											</a>
 										</p>
 										<p class="control">
 											<a class="button <%= (authUser && pageData.userReaction.value === 1) ? 'is-dark' : 'is-light' %>" onclick="addReaction(1);" title="Helpful"<%= !authUser ? ' disabled' : '' %>>
-												<span class="icon is-small"><i class="fa fa-thumbs-up"></i></span>
+												<span class="icon is-small"><i class="fas fa-thumbs-up"></i></span>
 												<span><%= pageData.reactions[1] %></span>
 											</a>
 										</p>
 									</div>
 									<a class="button is-light" href="/wiki/<%= pageData.title %>/history">
-										<span class="icon is-small"><i class="fa fa-history"></i></span>
+										<span class="icon is-small"><i class="fas fa-history"></i></span>
 										<span>History</span>
 									</a>
 									<% if (isContributor) { %>
 									<a class="button is-info" href="/wiki/<%= pageData.title %>/edit">
-										<span class="icon is-small"><i class="fa fa-pencil"></i></span>
+										<span class="icon is-small"><i class="fas fa-pen"></i></span>
 										<span>Edit</span>
 									</a>
 									<script>
@@ -376,7 +376,7 @@
 									}
 									</script>
 									<a class="button is-danger is-outlined" onclick="deletePage('<%= pageData.title %>');">
-										<span class="icon is-small"><i class="fa fa-trash"></i></span>
+										<span class="icon is-small"><i class="fas fa-trash-alt"></i></span>
 									</a>
 									<% } %>
 								</div>
@@ -399,7 +399,7 @@
 											<p class="has-text-grey">This wiki page doesn't exist yet.</p>
 											<% if (isContributor) { %>
 											<a href="/wiki/new" class="button is-primary is-modern" style="margin-top: 1rem;">
-												<span class="icon"><i class="fa fa-plus"></i></span>
+												<span class="icon"><i class="fas fa-plus"></i></span>
 												<span>Create This Page</span>
 											</a>
 											<% } %>

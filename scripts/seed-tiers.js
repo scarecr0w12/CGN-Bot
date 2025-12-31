@@ -128,6 +128,12 @@ const defaultFeatures = [
 		description: "Beta access to new features before public release",
 		isEnabled: true,
 	},
+	{
+		_id: "server_management",
+		name: "Server Management",
+		description: "Manage channels, categories, roles, and permissions from the dashboard",
+		isEnabled: true,
+	},
 ];
 
 const defaultTiers = [
@@ -188,6 +194,7 @@ const defaultTiers = [
 			"developer_tools",
 			"music_system",
 			"ticket_system",
+			"server_management",
 			"premium_dashboard",
 			"api_access",
 			"api_unlimited",

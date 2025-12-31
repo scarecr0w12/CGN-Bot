@@ -15,7 +15,7 @@ module.exports = new Schema({
 	subscription: new Schema({
 		tier_id: {
 			type: String,
-			default: "free",
+			// default: "free", // Removed to allow dynamic default tier from TierManager
 		},
 		source: {
 			type: String,

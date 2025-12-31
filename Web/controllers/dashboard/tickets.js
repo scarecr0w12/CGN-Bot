@@ -4,14 +4,12 @@
 
 const controllers = module.exports;
 const logger = global.logger;
+const TierManager = require("../../../Modules/TierManager");
 
 /**
  * Check if server has Tier 2 access for tickets
  */
-const checkTier2Access = serverDocument => {
-	const tier = serverDocument.subscription?.tier_id || "free";
-	return tier !== "free";
-};
+const checkTier2Access = async serverDocument => TierManager.hasMinimumTierLevel(serverDocument._id, 2);
 
 /**
  * Ticket settings page
@@ -20,7 +18,7 @@ controllers.settings = async (req, { res }) => {
 	const { document: serverDocument } = req.svr;
 
 	// Check tier access
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.setPageData({
 			page: "admin-feature-locked.ejs",
 			featureName: "Ticket System",
@@ -78,7 +76,7 @@ controllers.settings = async (req, { res }) => {
 controllers.update = async (req, res) => {
 	const { document: serverDocument } = req.svr;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.status(403).json({ error: "Premium subscription required" });
 	}
 
@@ -148,7 +146,7 @@ controllers.update = async (req, res) => {
 controllers.addCategory = async (req, res) => {
 	const { document: serverDocument } = req.svr;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.status(403).json({ error: "Premium subscription required" });
 	}
 
@@ -192,7 +190,7 @@ controllers.addCategory = async (req, res) => {
 controllers.deleteCategory = async (req, res) => {
 	const { document: serverDocument } = req.svr;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.status(403).json({ error: "Premium subscription required" });
 	}
 
@@ -220,7 +218,7 @@ controllers.deleteCategory = async (req, res) => {
 controllers.list = async (req, { res }) => {
 	const { document: serverDocument } = req.svr;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.setPageData({
 			page: "admin-feature-locked.ejs",
 			featureName: "Ticket System",
@@ -270,7 +268,7 @@ controllers.view = async (req, { res }) => {
 	const { document: serverDocument } = req.svr;
 	const ticketId = req.params.ticketId;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.redirect(`/dashboard/${req.svr.id}/tickets`);
 	}
 
@@ -298,7 +296,7 @@ controllers.view = async (req, { res }) => {
 controllers.updateTicket = async (req, res) => {
 	const { document: serverDocument } = req.svr;
 
-	if (!checkTier2Access(serverDocument)) {
+	if (!await checkTier2Access(serverDocument)) {
 		return res.status(403).json({ error: "Premium subscription required" });
 	}
 

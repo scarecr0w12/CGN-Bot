@@ -102,14 +102,14 @@
 												<td>
 													<a class="button modal-button is-small is-primary" data-target="#rss-<%= feed._id.replace(/\s/g, "") %>-updates-modal">
 														<span class="icon is-small">
-															<i class="fa fa-refresh"></i>
+															<i class="fas fa-refresh"></i>
 														</span>
 														<span>Updates</span>
 													</a>
 													<button class="button is-small is-danger" name="<%= feed._id %>" onclick="SkynetUtil.dashboard.removeTableElement(this); return false;">
 														<span>Remove</span>
 														<span class="icon is-small">
-															<i class="fa fa-times"></i>
+															<i class="fas fa-times"></i>
 														</span>
 													</button>
 													<div id="rss-<%= feed._id.replace(/\s/g, "") %>-updates-modal" class="modal">
@@ -155,7 +155,7 @@
 									<div class="control">
 										<a class="button" href="javascript:newRssUrl('github');">
 											<span class="icon is-small">
-												<i class="fa fa-github"></i>
+												<i class="fas fa-github"></i>
 											</span>
 											<span>GitHub</span>
 										</a>
@@ -163,7 +163,7 @@
 									<div class="control">
 										<a class="button" href="javascript:newRssUrl('reddit');">
 											<span class="icon is-small">
-												<i class="fa fa-reddit-alien"></i>
+												<i class="fas fa-reddit-alien"></i>
 											</span>
 											<span>Reddit</span>
 										</a>
@@ -171,7 +171,7 @@
 									<div class="control">
 										<a class="button" href="javascript:newRssUrl('twitter');">
 											<span class="icon is-small">
-												<i class="fa fa-twitter"></i>
+												<i class="fas fa-twitter"></i>
 											</span>
 											<span>Twitter</span>
 										</a>
@@ -187,7 +187,7 @@
 										<div class="control">
 											<a class="button is-primary" onclick="newRss();">
 												<span class="icon">
-										        	<i class="fa fa-plus"></i>
+										        	<i class="fas fa-plus"></i>
 										    	</span>
 										    	<span>Add</span>
 											</a>

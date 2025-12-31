@@ -258,7 +258,7 @@
 												<span><%= configData.ticket.username %></span>
 											</div>
 											<span class="has-text-grey-light">
-												<i class="fa fa-clock"></i>
+												<i class="fas fa-clock"></i>
 												<%= new Date(configData.ticket.created_at).toLocaleDateString() %>
 											</span>
 										</div>
@@ -274,7 +274,7 @@
 							<!-- Messages -->
 							<div class="messages-container">
 								<div class="messages-header">
-									<i class="fa fa-comments"></i>
+									<i class="fas fa-comments"></i>
 									Conversation (<%= configData.messages.length %> messages)
 								</div>
 								<div class="messages-list" id="messages-list">
@@ -308,13 +308,13 @@
 									<div class="field is-grouped">
 										<div class="control">
 											<button class="button is-primary" id="send-reply-btn">
-												<span class="icon"><i class="fa fa-paper-plane"></i></span>
+												<span class="icon"><i class="fas fa-paper-plane"></i></span>
 												<span>Send Reply</span>
 											</button>
 										</div>
 										<div class="control">
 											<button class="button is-success" id="close-ticket-btn">
-												<span class="icon"><i class="fa fa-check"></i></span>
+												<span class="icon"><i class="fas fa-check"></i></span>
 												<span>Close Ticket</span>
 											</button>
 										</div>
@@ -324,7 +324,7 @@
 								<div class="reply-form has-text-centered">
 									<p class="has-text-grey">This ticket is closed.</p>
 									<button class="button is-warning is-small mt-2" id="reopen-ticket-btn">
-										<span class="icon"><i class="fa fa-undo"></i></span>
+										<span class="icon"><i class="fas fa-undo"></i></span>
 										<span>Reopen Ticket</span>
 									</button>
 								</div>
@@ -336,14 +336,14 @@
 						<div class="column is-one-third">
 							<!-- Actions -->
 							<div class="sidebar-card">
-								<h4><i class="fa fa-cog"></i> Actions</h4>
+								<h4><i class="fas fa-cog"></i> Actions</h4>
 								<div class="buttons">
 									<a href="/dashboard/maintainer/tickets/<%= configData.ticket._id %>/transcript" class="button is-small is-fullwidth" target="_blank">
-										<span class="icon"><i class="fa fa-download"></i></span>
+										<span class="icon"><i class="fas fa-download"></i></span>
 										<span>Download Transcript</span>
 									</a>
 									<button class="button is-small is-danger is-fullwidth" id="delete-ticket-btn">
-										<span class="icon"><i class="fa fa-trash"></i></span>
+										<span class="icon"><i class="fas fa-trash-alt"></i></span>
 										<span>Delete Ticket</span>
 									</button>
 								</div>
@@ -351,7 +351,7 @@
 							
 							<!-- Details -->
 							<div class="sidebar-card">
-								<h4><i class="fa fa-info-circle"></i> Details</h4>
+								<h4><i class="fas fa-info-circle"></i> Details</h4>
 								<div class="sidebar-item">
 									<span class="sidebar-label">Status</span>
 									<div class="select is-small">
@@ -394,25 +394,25 @@
 									</div>
 								</div>
 								<button class="button is-small is-primary is-fullwidth mt-3" id="save-details-btn">
-									<span class="icon"><i class="fa fa-save"></i></span>
+									<span class="icon"><i class="fas fa-save"></i></span>
 									<span>Save Changes</span>
 								</button>
 							</div>
 							
 							<!-- Internal Notes -->
 							<div class="internal-notes">
-								<h4><i class="fa fa-sticky-note"></i> Internal Notes</h4>
+								<h4><i class="fas fa-sticky-note"></i> Internal Notes</h4>
 								<p class="is-size-7 has-text-grey mb-2">Only visible to staff</p>
 								<textarea id="internal-notes" placeholder="Add internal notes..."><%= configData.ticket.internal_notes || '' %></textarea>
 								<button class="button is-small is-warning is-fullwidth mt-2" id="save-notes-btn">
-									<span class="icon"><i class="fa fa-save"></i></span>
+									<span class="icon"><i class="fas fa-save"></i></span>
 									<span>Save Notes</span>
 								</button>
 							</div>
 							
 							<!-- Timeline -->
 							<div class="sidebar-card">
-								<h4><i class="fa fa-history"></i> Timeline</h4>
+								<h4><i class="fas fa-history"></i> Timeline</h4>
 								<div class="sidebar-item">
 									<span class="sidebar-label">Created</span>
 									<span class="sidebar-value"><%= new Date(configData.ticket.created_at).toLocaleDateString() %></span>

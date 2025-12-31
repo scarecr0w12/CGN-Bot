@@ -53,7 +53,7 @@
 				"name": "What premium features are available?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Premium tiers include: Music System with DJ controls and audio filters, AI-powered chat with multiple providers, Developer Tools for code execution, and a Ticket System for support management. All premium features are server-based."
+					"text": "Premium tiers include: Music System with DJ controls and audio filters, AI-powered chat with multiple providers, Developer Tools for code execution, Ticket System for support management, and Server Management for managing channels and roles from the dashboard. All premium features are server-based."
 				}
 			},
 			{
@@ -303,7 +303,7 @@
 				<div class="fade-in" style="margin-bottom: 2rem;">
 					<span class="tag is-rounded is-medium" style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; backdrop-filter: blur(5px);">
 						<span class="icon" style="color: #14b8a6; margin-right: 0.5rem;">
-							<i class="fa fa-shield"></i>
+							<i class="fas fa-shield-alt"></i>
 						</span>
 						Trusted by <%= pageData.rawServerCount %>+ Servers
 					</span>
@@ -323,14 +323,14 @@
 				<p class="hero-buttons" style="margin-top: 2.5rem;">
 					<a class="button is-modern is-primary is-large is-pulse" href="/add">
 						<span class="icon">
-							<i class="fa fa-plus"></i>
+							<i class="fas fa-plus"></i>
 						</span>
 						<span>Add to Server</span>
 					</a>
 					<a class="button is-outline-modern is-large" href="#features" style="margin-left: 1rem;">
 						<span>Explore Features</span>
 						<span class="icon">
-							<i class="fa fa-chevron-down"></i>
+							<i class="fas fa-chevron-down"></i>
 						</span>
 					</a>
 				</p>
@@ -423,21 +423,21 @@
 			<div class="grid-3">
 				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);">
 					<span class="stat-icon">
-						<i class="fa fa-server"></i>
+						<i class="fas fa-server"></i>
 					</span>
 					<div class="stat-value" style="color: white;"><%= pageData.rawServerCount %></div>
 					<div class="stat-label" style="color: rgba(255,255,255,0.7);">Server<%= pageData.rawServerCount === 1 ? "" : "s" %></div>
 				</div>
 				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);">
 					<span class="stat-icon">
-						<i class="fa fa-users"></i>
+						<i class="fas fa-users"></i>
 					</span>
 					<div class="stat-value" style="color: white;"><%= pageData.rawUserCount %></div>
 					<div class="stat-label" style="color: rgba(255,255,255,0.7);">User<%= pageData.rawUserCount === 1 ? "" : "s" %></div>
 				</div>
 				<div class="stat-card fade-in" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);" title="<%= pageData.rawUptime %>">
 					<span class="stat-icon">
-						<i class="fa fa-clock-o"></i>
+						<i class="fas fa-clock"></i>
 					</span>
 					<div class="stat-value" style="color: white;"><%= pageData.roundedUptime %></div>
 					<div class="stat-label" style="color: rgba(255,255,255,0.7);">Uptime</div>
@@ -457,7 +457,7 @@
 				<!-- Moderation -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-gavel"></i>
+						<i class="fas fa-gavel"></i>
 					</div>
 					<h3 class="feature-title">Advanced Moderation</h3>
 					<p class="feature-description">Keep your server safe with auto-moderation, spam detection, warnings, and customizable punishment escalation.</p>
@@ -465,7 +465,7 @@
 				<!-- Engagement -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-trophy"></i>
+						<i class="fas fa-trophy"></i>
 					</div>
 					<h3 class="feature-title">Engagement System</h3>
 					<p class="feature-description">Reward activity with SkynetPoints, leveling, custom ranks, and leaderboards to keep members active.</p>
@@ -473,7 +473,7 @@
 				<!-- Fun -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-gamepad"></i>
+						<i class="fas fa-gamepad"></i>
 					</div>
 					<h3 class="feature-title">Fun & Games</h3>
 					<p class="feature-description">Entertain your community with Trivia, Polls, 8Ball, Memes, and Image manipulation commands.</p>
@@ -481,7 +481,7 @@
 				<!-- Utilities -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-cogs"></i>
+						<i class="fas fa-cogs"></i>
 					</div>
 					<h3 class="feature-title">Server Utilities</h3>
 					<p class="feature-description">Essential tools like weather info, unit conversion, urban dictionary, and extensive server logging.</p>
@@ -489,7 +489,7 @@
 				<!-- Extensions -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-bolt"></i>
+						<i class="fas fa-bolt"></i>
 					</div>
 					<h3 class="feature-title">Custom Extensions</h3>
 					<p class="feature-description">Build your own commands or install community extensions using our powerful JavaScript sandbox.</p>
@@ -497,10 +497,18 @@
 				<!-- Web Dashboard -->
 				<div class="feature-card fade-in">
 					<div class="feature-icon">
-						<i class="fa fa-tachometer"></i>
+						<i class="fas fa-tachometer-alt"></i>
 					</div>
 					<h3 class="feature-title">Web Dashboard</h3>
 					<p class="feature-description">Easily configure every aspect of the bot through our intuitive and modern web interface.</p>
+				</div>
+				<!-- Server Management (Premium) -->
+				<div class="feature-card fade-in">
+					<div class="feature-icon">
+						<i class="fas fa-cog"></i>
+					</div>
+					<h3 class="feature-title">Server Management <span class="tag is-warning is-small">Premium</span></h3>
+					<p class="feature-description">Manage channels, categories, and roles directly from the dashboard with visual permission editing.</p>
 				</div>
 			</div>
 		</div>
@@ -517,7 +525,7 @@
 				<div class="column is-6 fade-in-left">
 					<span class="tag is-rounded is-medium" style="background: rgba(255,255,255,0.2); color: white; margin-bottom: 1rem;">
 						<span class="icon" style="margin-right: 0.5rem;">
-							<i class="fa fa-gift"></i>
+							<i class="fas fa-gift"></i>
 						</span>
 						Free Rewards
 					</span>
@@ -531,7 +539,7 @@
 					<div class="content" style="color: white;">
 						<div style="display: flex; align-items: flex-start; margin-bottom: 1.25rem;">
 							<span class="icon is-medium" style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; flex-shrink: 0;">
-								<i class="fa fa-thumbs-up"></i>
+								<i class="fas fa-thumbs-up"></i>
 							</span>
 							<div>
 								<strong style="font-size: 1.1rem;">Vote on Top.gg & Earn</strong>
@@ -540,7 +548,7 @@
 						</div>
 						<div style="display: flex; align-items: flex-start; margin-bottom: 1.25rem;">
 							<span class="icon is-medium" style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; flex-shrink: 0;">
-								<i class="fa fa-star"></i>
+								<i class="fas fa-star"></i>
 							</span>
 							<div>
 								<strong style="font-size: 1.1rem;">Unlock Server Premium</strong>
@@ -549,7 +557,7 @@
 						</div>
 						<div style="display: flex; align-items: flex-start;">
 							<span class="icon is-medium" style="background: rgba(255,255,255,0.2); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 1rem; flex-shrink: 0;">
-								<i class="fa fa-puzzle-piece"></i>
+								<i class="fas fa-puzzle-piece"></i>
 							</span>
 							<div>
 								<strong style="font-size: 1.1rem;">Get Premium Extensions</strong>
@@ -561,17 +569,17 @@
 				<div class="column is-5 is-offset-1 fade-in-right has-text-centered">
 					<div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); border-radius: 20px; padding: 2.5rem; border: 1px solid rgba(255,255,255,0.2);">
 						<div style="font-size: 4rem; margin-bottom: 1rem;">
-							<i class="fa fa-ticket" style="color: #fbbf24;"></i>
+							<i class="fas fa-ticket-alt" style="color: #fbbf24;"></i>
 						</div>
 						<p style="color: rgba(255,255,255,0.9); font-size: 1rem; margin-bottom: 1.5rem;">Your votes help Skynet grow while you earn rewards!</p>
 						<a class="button is-medium is-rounded" href="/vote" style="background: white; color: #0d9488; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
 							<span class="icon">
-								<i class="fa fa-arrow-up"></i>
+								<i class="fas fa-arrow-up"></i>
 							</span>
 							<span>Vote Now</span>
 						</a>
 						<p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 1rem;">
-							<i class="fa fa-info-circle" style="margin-right: 0.25rem;"></i>
+							<i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
 							Check your Vote Points in the dashboard
 						</p>
 					</div>
@@ -591,7 +599,7 @@
 			
 			<div class="extension-carousel-wrapper">
 				<button class="carousel-btn carousel-prev" onclick="moveCarousel(-1)" aria-label="Previous">
-					<i class="fa fa-chevron-left"></i>
+					<i class="fas fa-chevron-left"></i>
 				</button>
 				
 				<div class="extension-carousel" id="extensionCarousel">
@@ -600,12 +608,12 @@
 						<div class="carousel-slide">
 							<div class="extension-card-carousel">
 								<% if (ext.featured) { %>
-								<span class="ext-featured-badge"><i class="fa fa-star"></i> Featured</span>
+								<span class="ext-featured-badge"><i class="fas fa-star"></i> Featured</span>
 								<% } %>
 								<h4 class="ext-card-title"><%= ext.name %></h4>
 								<p class="ext-card-desc"><%= ext.description || "No description available" %></p>
 								<div class="ext-card-meta">
-									<span class="ext-points"><i class="fa fa-thumbs-up"></i> <%= ext.points %></span>
+									<span class="ext-points"><i class="fas fa-thumbs-up"></i> <%= ext.points %></span>
 									<% if (ext.tags && ext.tags.length > 0) { %>
 									<span class="ext-tag"><%= ext.tags[0] %></span>
 									<% } %>
@@ -620,14 +628,14 @@
 				</div>
 				
 				<button class="carousel-btn carousel-next" onclick="moveCarousel(1)" aria-label="Next">
-					<i class="fa fa-chevron-right"></i>
+					<i class="fas fa-chevron-right"></i>
 				</button>
 			</div>
 			
 			<div class="has-text-centered" style="margin-top: 2rem;">
 				<a href="/extensions/gallery" class="button is-primary is-modern">
 					<span>Browse All Extensions</span>
-					<span class="icon"><i class="fa fa-arrow-right"></i></span>
+					<span class="icon"><i class="fas fa-arrow-right"></i></span>
 				</a>
 			</div>
 		</div>
@@ -646,19 +654,19 @@
 						<div class="content">
 							<ul style="list-style: none; margin-left: 0;">
 								<li style="margin-bottom: 1rem;">
-									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fas fa-check"></i></span>
 									Configure moderation rules
 								</li>
 								<li style="margin-bottom: 1rem;">
-									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fas fa-check"></i></span>
 									Manage roles and permissions
 								</li>
 								<li style="margin-bottom: 1rem;">
-									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fas fa-check"></i></span>
 									View server analytics
 								</li>
 								<li style="margin-bottom: 1rem;">
-									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fa fa-check"></i></span>
+									<span class="icon has-text-success" style="margin-right: 0.5rem;"><i class="fas fa-check"></i></span>
 									Edit custom commands
 								</li>
 							</ul>
@@ -666,7 +674,7 @@
 						<a href="/login" class="button is-primary is-modern is-medium">
 							<span>Go to Dashboard</span>
 							<span class="icon">
-								<i class="fa fa-arrow-right"></i>
+								<i class="fas fa-arrow-right"></i>
 							</span>
 						</a>
 					</div>
@@ -693,7 +701,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							Is Skynet Discord bot free to use?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Yes! Skynet is completely free with all core features including moderation, leveling, fun commands, giveaways, and a full web dashboard. Premium tiers unlock extras like Music, AI chat, Developer Tools, and Tickets.</p>
@@ -703,7 +711,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							How do I set up Skynet on my server?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Click <strong>Add to Server</strong>, select your Discord server, and authorize. Skynet is ready instantly! Use the web dashboard to customize settings, or type <code>/help</code> in Discord to get started with commands.</p>
@@ -713,7 +721,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							What are Extensions and how do they work?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Extensions are custom commands built with JavaScript that run in a secure sandbox. Create your own using our <strong>Extension Builder</strong>, or browse the community gallery to install ready-made extensions. Share your creations with other servers!</p>
@@ -723,7 +731,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							What premium features are available?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Premium tiers include: <strong>Music System</strong> with DJ controls and audio filters, <strong>AI-powered chat</strong> with multiple providers, <strong>Developer Tools</strong> for code execution, and a <strong>Ticket System</strong> for support management. All premium features are server-based.</p>
@@ -733,7 +741,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							How does the leveling and points system work?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Members earn <strong>SkynetPoints</strong> for chatting and participating. Points contribute to levels and can unlock custom ranks you define. View leaderboards, set role rewards for reaching levels, and track activity through the dashboard analytics.</p>
@@ -743,7 +751,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							Can I migrate from another bot?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Skynet makes it easy to transition! Most features work out of the box. Use the dashboard to quickly configure moderation rules, set up leveling, and import your server's preferences. Join our <a href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener">Discord</a> for migration help.</p>
@@ -753,7 +761,7 @@
 					<div class="faq-item fade-in">
 						<div class="faq-question">
 							How do Vote Points work?
-							<span class="icon faq-icon"><i class="fa fa-chevron-down"></i></span>
+							<span class="icon faq-icon"><i class="fas fa-chevron-down"></i></span>
 						</div>
 						<div class="faq-answer">
 							<p>Vote for Skynet on bot listing sites like <strong>Top.gg</strong> to earn Vote Points (bonus points on weekends!). You can redeem these points for <strong>server premium subscriptions</strong> or purchase <strong>premium extensions</strong> from the gallery — completely free, no payment required. Check your Vote Points balance in your dashboard.</p>
@@ -778,7 +786,7 @@
 				</p>
 				<a class="button is-modern is-primary is-medium" href="/activity/servers" style="background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);">
 					<span class="icon">
-						<i class="fa fa-compass"></i>
+						<i class="fas fa-compass"></i>
 					</span>
 					<span>Explore Communities</span>
 				</a>
@@ -807,7 +815,7 @@
 							<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; background: radial-gradient(circle, rgba(20, 184, 166, 0.3) 0%, transparent 70%); border-radius: 50%;"></div>
 							<img src="/static/img/logo.png" alt="Scarecr0w12" style="position: relative; width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 10px 40px rgba(20, 184, 166, 0.3), 0 4px 12px rgba(0,0,0,0.1); border: 4px solid white;" loading="lazy">
 							<span style="position: absolute; bottom: 5px; right: 5px; background: linear-gradient(135deg, #14b8a6, #0d9488); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 3px solid white; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);">
-								<i class="fa fa-code"></i>
+								<i class="fas fa-code"></i>
 							</span>
 						</div>
 						
@@ -833,15 +841,15 @@
 						
 						<div class="buttons is-centered" style="margin-bottom: 0;">
 							<a class="button is-rounded" href="https://github.com/Scarecr0w12" target="_blank" rel="noopener" style="background: #24292e; color: white; font-weight: 600;">
-								<span class="icon"><i class="fa fa-github"></i></span>
+								<span class="icon"><i class="fas fa-github"></i></span>
 								<span>GitHub</span>
 							</a>
 							<!--<a class="button is-rounded" href="https://twitter.com/GG142_" target="_blank" rel="noopener" style="background: #1da1f2; color: white; font-weight: 600;">
-								<span class="icon"><i class="fa fa-twitter"></i></span>
+								<span class="icon"><i class="fas fa-twitter"></i></span>
 								<span>Twitter</span>
 							</a>-->
 							<a class="button is-rounded" href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener" style="background: #5865F2; color: white; font-weight: 600;">
-								<span class="icon"><i class="fa fa-comments"></i></span>
+								<span class="icon"><i class="fas fa-comments"></i></span>
 								<span>Discord</span>
 							</a>
 						</div>
@@ -853,7 +861,7 @@
 			<div class="has-text-centered fade-in" style="margin-top: 2rem;">
 				<p style="color: #64748b; font-size: 0.95rem;">Want to contribute? Skynet is open source!</p>
 				<a href="https://github.com/Scarecr0w12/CGN-Bot" target="_blank" rel="noopener" style="color: #14b8a6; font-weight: 600; text-decoration: none;">
-					<i class="fa fa-code-fork" style="margin-right: 0.5rem;"></i>View on GitHub
+					<i class="fas fa-code-fork" style="margin-right: 0.5rem;"></i>View on GitHub
 				</a>
 			</div>
 		</div>
@@ -889,7 +897,7 @@
 								</figure>
 								<span style="font-size: 0.9rem; font-weight: 500; color: #475569;"><%= post.author.name %></span>
 								<a href="/blog/<%= post.id %>/<%= post.slug %>" style="margin-left: auto; color: #14b8a6; font-weight: 600; font-size: 0.9rem;">
-									Read More <i class="fa fa-arrow-right" style="font-size: 0.8rem;"></i>
+									Read More <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
 								</a>
 							</div>
 						</div>
@@ -901,7 +909,7 @@
 			<div class="has-text-centered" style="margin-top: 3rem;">
 				<a href="/blog" class="button is-primary is-outlined is-rounded is-medium">
 					<span>View All Posts</span>
-					<span class="icon"><i class="fa fa-arrow-right"></i></span>
+					<span class="icon"><i class="fas fa-arrow-right"></i></span>
 				</a>
 			</div>
 		</div>
@@ -916,7 +924,7 @@
 					<p class="hero-buttons" style="margin-bottom: 3rem;">
 						<a class="button is-modern is-primary is-large is-pulse" href="/add">
 							<span class="icon">
-								<i class="fa fa-rocket"></i>
+								<i class="fas fa-rocket"></i>
 							</span>
 							<span>Get Started Now</span>
 						</a>
@@ -925,15 +933,15 @@
 						<p style="color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">Connect With Us</p>
 						<div class="buttons is-centered">
 							<a class="button is-medium is-rounded" href="https://discord.gg/SE6xHmvKrZ" target="_blank" rel="noopener" style="background: #5865F2; color: white; border: none;">
-								<span class="icon"><i class="fa fa-comments"></i></span>
+								<span class="icon"><i class="fas fa-comments"></i></span>
 								<span>Discord</span>
 							</a>
 							<a class="button is-medium is-rounded" href="https://github.com/Scarecr0w12/CGN-Bot" target="_blank" rel="noopener" style="background: #24292e; color: white; border: none;">
-								<span class="icon"><i class="fa fa-github"></i></span>
+								<span class="icon"><i class="fas fa-github"></i></span>
 								<span>GitHub</span>
 							</a>
 							<a class="button is-medium is-rounded" href="https://twitter.com/Skynet" target="_blank" rel="noopener" style="background: #1da1f2; color: white; border: none;">
-								<span class="icon"><i class="fa fa-twitter"></i></span>
+								<span class="icon"><i class="fas fa-twitter"></i></span>
 								<span>Twitter</span>
 							</a>
 						</div>

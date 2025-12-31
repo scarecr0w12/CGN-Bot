@@ -79,14 +79,14 @@
 											<td>
 												<a class="button is-small is-primary modal-button" data-target="#muted-<%= muteDocument.id %>-channels-modal">
 													<span class="icon is-small">
-														<i class="fa fa-hashtag"></i>
+														<i class="fas fa-hashtag"></i>
 													</span>
 													<span>Channels</span>
 												</a>
 												<button class="button is-small is-danger" name="<%= muteDocument.id %>" onclick="SkynetUtil.dashboard.removeTableElement(this); return false;">
 													<span>Remove</span>
 													<span class="icon is-small">
-														<i class="fa fa-times"></i>
+														<i class="fas fa-times"></i>
 													</span>
 												</button>
 												<div id="muted-<%= muteDocument.id %>-channels-modal" class="modal">
@@ -133,7 +133,7 @@
 									<div class="control">
 										<a class="button is-primary" onclick="newMute(); return false;">
 											<span class="icon">
-										        <i class="fa fa-volume-off"></i>
+										        <i class="fas fa-volume-off"></i>
 										    </span>
 										    <span>Mute</span>
 										</a>

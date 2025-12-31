@@ -433,25 +433,25 @@
 	<!-- Category & Tag Pills -->
 	<div class="filter-pills" style="margin-bottom: var(--space-xl);">
 		<a href="<%= buildFilterUrl('all', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'all' ? 'active' : '' %>">
-			<i class="fa fa-th-large"></i> All (<%= categoryCounts.all %>)
+			<i class="fas fa-th-large"></i> All (<%= categoryCounts.all %>)
 		</a>
 		<a href="<%= buildFilterUrl('command', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'command' ? 'active' : '' %>">
-			<i class="fa fa-magic"></i> Commands (<%= categoryCounts.command %>)
+			<i class="fas fa-magic"></i> Commands (<%= categoryCounts.command %>)
 		</a>
 		<a href="<%= buildFilterUrl('event', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'event' ? 'active' : '' %>">
-			<i class="fa fa-code"></i> Events (<%= categoryCounts.event %>)
+			<i class="fas fa-code"></i> Events (<%= categoryCounts.event %>)
 		</a>
 		<a href="<%= buildFilterUrl('keyword', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'keyword' ? 'active' : '' %>">
-			<i class="fa fa-key"></i> Keywords (<%= categoryCounts.keyword %>)
+			<i class="fas fa-key"></i> Keywords (<%= categoryCounts.keyword %>)
 		</a>
 		<a href="<%= buildFilterUrl('timer', sortOption, premiumFilter) %>" class="filter-pill <%= categoryFilter === 'timer' ? 'active' : '' %>">
-			<i class="fa fa-clock-o"></i> Timers (<%= categoryCounts.timer %>)
+			<i class="fas fa-clock"></i> Timers (<%= categoryCounts.timer %>)
 		</a>
 	</div>
 
 	<% if (pageData.extensionTags && pageData.extensionTags.length > 0) { %>
 	<div class="filter-pills" style="margin-bottom: var(--space-xl);">
-		<span style="color: var(--text-muted); font-weight: 600; margin-right: var(--space-sm);"><i class="fa fa-tags"></i> Tags:</span>
+		<span style="color: var(--text-muted); font-weight: 600; margin-right: var(--space-sm);"><i class="fas fa-tags"></i> Tags:</span>
 		<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, 'all') %>" class="filter-pill <%= !pageData.tagFilter || pageData.tagFilter === 'all' ? 'active' : '' %>">All Tags</a>
 		<% pageData.extensionTags.forEach(tag => { %>
 		<a href="<%= buildFilterUrl(categoryFilter, sortOption, premiumFilter, tag) %>" class="filter-pill <%= pageData.tagFilter === tag ? 'active' : '' %>"><%= tag %></a>
@@ -464,11 +464,11 @@
 			<div class="has-text-centered">
 				<h5 class="title is-5 is-danger-colored">
 					<span class="icon">
-						<i class="fa fa-exclamation-triangle"></i>
+						<i class="fas fa-exclamation-triangle"></i>
 					</span>
 					Stay safe!
 					<span class="icon">
-						<i class="fa fa-exclamation-triangle"></i>
+						<i class="fas fa-exclamation-triangle"></i>
 					</span>
 				</h5>
 			</div>
@@ -490,17 +490,17 @@
 					<div class="ext-card-badges">
 						<% if (extension.featured) { %>
 						<span id="featured-<%= extension._id %>" class="ext-badge ext-badge-featured">
-							<i class="fa fa-star"></i> Featured
+							<i class="fas fa-star"></i> Featured
 						</span>
 						<% } %>
 						<% if (extension.isPremium) { %>
 						<span class="ext-badge ext-badge-premium">
-							<i class="fa fa-lock"></i> Premium <%= extension.premium && extension.premium.price_points ? (extension.premium.price_points + 'pts') : '' %>
+							<i class="fas fa-lock"></i> Premium <%= extension.premium && extension.premium.price_points ? (extension.premium.price_points + 'pts') : '' %>
 						</span>
 						<% } %>
 						<% if (extension.hasPurchased) { %>
 						<span class="ext-badge ext-badge-owned">
-							<i class="fa fa-check"></i> Purchased
+							<i class="fas fa-check"></i> Purchased
 						</span>
 						<% } %>
 						<span class="ext-badge ext-badge-type <%= extension.type %>" title="<%= extension.typeDescription %>">
@@ -515,7 +515,7 @@
 						<% if (extension.network_capability && extension.network_capability !== 'none') { %>
 						<% const needsApproval = ['network', 'network_advanced'].includes(extension.network_capability); %>
 						<span class="ext-badge" style="background:<%= extension.network_approved ? '#e8f5e9' : (needsApproval ? '#ffebee' : '#fff3e0') %>;color:<%= extension.network_approved ? '#2e7d32' : (needsApproval ? '#c62828' : '#ef6c00') %>;" title="<%= extension.network_capability %><%= extension.network_approved && extension.network_approved_at ? ' - Approved ' + extension.network_approved_at : (needsApproval && !extension.network_approved ? ' - Pending Approval' : '') %>">
-							<i class="fa fa-globe"></i> 
+							<i class="fas fa-globe"></i> 
 							<%= extension.network_capability === 'allowlist_only' ? 'Public APIs' : extension.network_capability === 'network' ? 'Network' : 'Advanced' %>
 							<% if (extension.network_approved) { %><i class="fa fa-check ml-1"></i><% } else if (needsApproval) { %><i class="fa fa-clock-o ml-1"></i><% } %>
 						</span>
@@ -523,7 +523,7 @@
 						<% if (extension.tags && extension.tags.length > 0) { %>
 							<% extension.tags.forEach(tag => { %>
 							<span class="ext-badge" style="background: #f5f5f5; color: #666; border: 1px solid #eee;">
-								<i class="fa fa-tag" style="font-size: 0.6rem;"></i> <%= tag %>
+								<i class="fas fa-tag" style="font-size: 0.6rem;"></i> <%= tag %>
 							</span>
 							<% }); %>
 						<% } %>
@@ -538,7 +538,7 @@
 				<% if (extension.description && extension.description.length > 150) { %>
 				<a class="ext-card-description-toggle" onclick="toggleDescription('<%= extension._id %>')">
 					<span id="toggle-text-<%= extension._id %>">View more</span>
-					<i class="fa fa-chevron-down" id="toggle-icon-<%= extension._id %>"></i>
+					<i class="fas fa-chevron-down" id="toggle-icon-<%= extension._id %>"></i>
 				</a>
 				<% } %>
 			</div>
@@ -549,9 +549,9 @@
 						<div class="ext-card-author-name">
 							<%= extension.owner.name %>
 							<% if (extension.owner.isFeaturedCreator) { %>
-							<span class="ext-creator-badge featured" title="Featured Creator"><i class="fa fa-award"></i></span>
+							<span class="ext-creator-badge featured" title="Featured Creator"><i class="fas fa-award"></i></span>
 							<% } else if (extension.owner.creatorTier && extension.owner.creatorTier !== 'bronze') { %>
-							<span class="ext-creator-badge tier-<%= extension.owner.creatorTier %>" title="<%= extension.owner.creatorTier.charAt(0).toUpperCase() + extension.owner.creatorTier.slice(1) %> Creator"><i class="fa fa-medal"></i></span>
+							<span class="ext-creator-badge tier-<%= extension.owner.creatorTier %>" title="<%= extension.owner.creatorTier.charAt(0).toUpperCase() + extension.owner.creatorTier.slice(1) %> Creator"><i class="fas fa-medal"></i></span>
 							<% } %>
 						</div>
 						<div class="ext-card-updated" title="<%= extension.rawLastUpdated %>"><%= extension.relativeLastUpdated %></div>
@@ -559,48 +559,48 @@
 				</div>
 				<div class="ext-card-points" title="<%= extension.points %> points">
 					<span id="points-<%= extension._id %>"><%= extension.points %></span>
-					<i class="fa fa-star"></i>
+					<i class="fas fa-star"></i>
 				</div>
 			</div>
 			<div class="ext-card-footer">
 				<a href="/extensions/view/<%= extension._id %>/<%= extension.slug || '' %>" class="ext-card-action">
-					<i class="fa fa-info-circle"></i> View Details
+					<i class="fas fa-info-circle"></i> View Details
 				</a>
 				<% if (authUser && pageData.serverData && pageData.serverData.length > 0) { %>
 				<a class="ext-card-action" data-extid="<%= extension._id %>" data-version="<%= extension.version %>" onclick="SkynetUtil.openExtensionInstaller(this.dataset.extid, parseInt(this.dataset.version, 10));">
-					<i class="fa fa-download"></i> Install
+					<i class="fas fa-download"></i> Install
 				</a>
 				<% } %>
 				<% if (!extension.isPremium || (authUser && (authUser.id === extension.owner.id || isMaintainer))) { %>
 				<a class="ext-card-action" onclick="SkynetUtil.loadSource('<%= extension._id %>', '<%= extension.version %>', '<%= extension.name %>')">
-					<i class="fa fa-code"></i> Source
+					<i class="fas fa-code"></i> Source
 				</a>
 				<% } %>
 				<% if (authUser) { %>
 				<a id="vote-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.voteExtension('<%= extension._id %>');">
-					<i class="fa fa-thumbs-up"></i> <%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
+					<i class="fas fa-thumbs-up"></i> <%= !pageData.upvotedData.includes(String(extension._id)) ? "+1" : "-1" %>
 				</a>
 				<% } %>
 				<% if (authUser && isMaintainer) { %>
 					<% if (pageData.mode === "gallery") { %>
 					<a id="feature-<%= extension._id %>" class="ext-card-action" onclick="SkynetUtil.featureExtension('<%= extension._id %>');">
-						<i class="fa fa-star"></i> <%= extension.featured ? "Unfeature" : "Feature" %>
+						<i class="fas fa-star"></i> <%= extension.featured ? "Unfeature" : "Feature" %>
 					</a>
 					<% if (extension.network_capability && ['network', 'network_advanced'].includes(extension.network_capability) && !extension.network_approved) { %>
 					<a class="ext-card-action" style="color:#2e7d32;" onclick="SkynetUtil.approveNetworkCapability('<%= extension._id %>');">
-						<i class="fa fa-globe"></i> Approve Network
+						<i class="fas fa-globe"></i> Approve Network
 					</a>
 					<% } %>
 					<% if (authUser.id !== extension.owner.id) { %>
 					<a class="ext-card-action danger" onclick="SkynetUtil.removeExtension('<%= extension._id %>');">
-						<i class="fa fa-trash"></i> Remove
+						<i class="fas fa-trash-alt"></i> Remove
 					</a>
 					<% } %>
 					<% } %>
 				<% } %>
 				<% if (authUser && authUser.id === extension.owner.id && extension.level === "gallery") { %>
 				<a class="ext-card-action danger" onclick="SkynetUtil.unpublishExtension('<%= extension._id %>');">
-					<i class="fa fa-eye-slash"></i> Unpublish
+					<i class="fas fa-eye-slash"></i> Unpublish
 				</a>
 				<% } %>
 			</div>
@@ -617,13 +617,13 @@
 				<br>
                 <a id="extension-source-download" class="button is-small">
 			        <span class="icon is-small">
-				        <i class="fa fa-download"></i>
+				        <i class="fas fa-download"></i>
 			        </span>
                     <span>Download Code</span>
                 </a>
 				<a id="extension-source-export" class="button is-small is-info">
 			        <span class="icon is-small">
-				        <i class="fa fa-share-square-o"></i>
+				        <i class="fas fa-share-square-o"></i>
 			        </span>
                     <span>Export Package</span>
                 </a>
@@ -635,7 +635,7 @@
 	<!-- Empty State -->
 	<div class="ext-empty-state">
 		<div class="ext-empty-icon">
-			<i class="fa fa-puzzle-piece"></i>
+			<i class="fas fa-puzzle-piece"></i>
 		</div>
 		<h3 class="ext-empty-title">No extensions found</h3>
 		<p class="ext-empty-text">
@@ -649,12 +649,12 @@
 		</p>
 		<% if (pageData.activeSearchQuery || categoryFilter !== 'all') { %>
 		<a href="/extensions/<%= pageData.mode %>" class="button is-primary">
-			<span class="icon"><i class="fa fa-refresh"></i></span>
+			<span class="icon"><i class="fas fa-refresh"></i></span>
 			<span>Clear Filters</span>
 		</a>
 		<% } else if (authUser) { %>
 		<a href="/extensions/builder" class="button is-primary">
-			<span class="icon"><i class="fa fa-plus"></i></span>
+			<span class="icon"><i class="fas fa-plus"></i></span>
 			<span>Create Extension</span>
 		</a>
 		<% } %>
