@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head', {bot_page: "admin-server-channels"}) %>
+	<title>Channel Management - <%= botName %></title>
+</head>
+<body>
+	<%- include('../partials/header') %>
+	
+	<div class="dashboard-container">
+		<%- include('../partials/admin-menu') %>
+		
+		<main class="dashboard-content">
+			<div class="content-header">
+				<h1><i class="fas fa-hashtag"></i> Channel Management</h1>
+				<p>Manage server channels, categories, and permissions</p>
+			</div>
+
+			<div class="section">
+				<h2>Categories</h2>
+				<div class="channel-list">
+					<% if (categories && categories.length > 0) { %>
+						<% categories.forEach(category => { %>
+							<div class="channel-item" data-channel-id="<%= category.id %>">
+								<div class="channel-info">
+									<span class="channel-icon"><i class="fas fa-folder"></i></span>
+									<span class="channel-name"><%= category.name %></span>
+								</div>
+								<div class="channel-actions">
+									<button class="button is-small" onclick="editChannel('<%= category.id %>')">
+										<i class="fas fa-edit"></i> Edit
+									</button>
+								</div>
+							</div>
+						<% }) %>
+					<% } else { %>
+						<p class="text-muted">No categories found</p>
+					<% } %>
+				</div>
+			</div>
+
+			<div class="section">
+				<h2>Text Channels</h2>
+				<div class="channel-list">
+					<% if (textChannels && textChannels.length > 0) { %>
+						<% textChannels.forEach(channel => { %>
+							<div class="channel-item" data-channel-id="<%= channel.id %>">
+								<div class="channel-info">
+									<span class="channel-icon"><i class="fas fa-hashtag"></i></span>
+									<span class="channel-name"><%= channel.name %></span>
+									<% if (channel.topic) { %>
+										<span class="channel-topic"><%= channel.topic %></span>
+									<% } %>
+								</div>
+								<div class="channel-actions">
+									<button class="button is-small" onclick="editChannel('<%= channel.id %>')">
+										<i class="fas fa-edit"></i> Edit
+									</button>
+								</div>
+							</div>
+						<% }) %>
+					<% } else { %>
+						<p class="text-muted">No text channels found</p>
+					<% } %>
+				</div>
+			</div>
+
+			<div class="section">
+				<h2>Voice Channels</h2>
+				<div class="channel-list">
+					<% if (voiceChannels && voiceChannels.length > 0) { %>
+						<% voiceChannels.forEach(channel => { %>
+							<div class="channel-item" data-channel-id="<%= channel.id %>">
+								<div class="channel-info">
+									<span class="channel-icon"><i class="fas fa-volume-up"></i></span>
+									<span class="channel-name"><%= channel.name %></span>
+								</div>
+								<div class="channel-actions">
+									<button class="button is-small" onclick="editChannel('<%= channel.id %>')">
+										<i class="fas fa-edit"></i> Edit
+									</button>
+								</div>
+							</div>
+						<% }) %>
+					<% } else { %>
+						<p class="text-muted">No voice channels found</p>
+					<% } %>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<%- include('../partials/head', {bot_page: "admin-server-roles"}) %>
+	<title>Role Management - <%= botName %></title>
+</head>
+<body>
+	<%- include('../partials/header') %>
+	
+	<div class="dashboard-container">
+		<%- include('../partials/admin-menu') %>
+		
+		<main class="dashboard-content">
+			<div class="content-header">
+				<h1><i class="fas fa-user-tag"></i> Role Management</h1>
+				<p>Manage server roles, permissions, and hierarchy</p>
+			</div>
+
+			<div class="section">
+				<h2>Server Roles</h2>
+				<div class="role-list">
+					<% if (roles && roles.length > 0) { %>
+						<% roles.forEach(role => { %>
+							<div class="role-item" data-role-id="<%= role.id %>">
+								<div class="role-info">
+									<span class="role-color" style="background-color: <%= role.hexColor %>;"></span>
+									<span class="role-name"><%= role.name %></span>
+									<% if (role.managed) { %>
+										<span class="badge">Managed</span>
+									<% } %>
+									<% if (role.hoist) { %>
+										<span class="badge">Hoisted</span>
+									<% } %>
+								</div>
+								<div class="role-actions">
+									<% if (!role.managed) { %>
+										<button class="button is-small" onclick="editRole('<%= role.id %>')">
+											<i class="fas fa-edit"></i> Edit
+										</button>
+									<% } %>
+								</div>
+							</div>
+						<% }) %>
+					<% } else { %>
+						<p class="text-muted">No roles found</p>
+					<% } %>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<%- include('../partials/footer') %>
+</body>
+</html>
