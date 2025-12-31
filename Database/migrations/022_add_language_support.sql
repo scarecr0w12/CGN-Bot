@@ -3,8 +3,8 @@
 -- Date: 2024-12-18
 -- Description: Adds language preference fields to server_configs and users tables
 
--- Add language column to server_configs table
-ALTER TABLE server_configs 
+-- Add language column to servers table (not server_configs)
+ALTER TABLE servers 
 ADD COLUMN IF NOT EXISTS language VARCHAR(5) DEFAULT 'en';
 
 -- Add preferences JSON column to users table (if not exists)
@@ -18,6 +18,6 @@ SET preferences = JSON_OBJECT('language', 'en', 'notifications', JSON_OBJECT('re
 WHERE preferences IS NULL;
 
 -- Create index for faster language lookups
-CREATE INDEX IF NOT EXISTS idx_server_configs_language ON server_configs(language);
+CREATE INDEX IF NOT EXISTS idx_servers_language ON servers(language);
 
 -- Note: For MongoDB deployments, these changes are handled automatically by the schema defaults

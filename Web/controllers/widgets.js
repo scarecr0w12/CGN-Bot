@@ -5,8 +5,13 @@
 
 const { GetGuild } = require("../../Modules").getGuild;
 const { renderError } = require("../helpers");
+const Logger = require("../../Internals/Logger");
 
 const controllers = module.exports;
+const logger = new Logger("Widgets");
+
+// Database models
+const Servers = global.Database.servers;
 
 // Widget themes
 const THEMES = {

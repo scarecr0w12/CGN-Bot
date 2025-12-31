@@ -10,7 +10,7 @@
 ### 1. Site Architecture & Infrastructure
 
 - **Framework:** Express.js with EJS templating.
-- **Database:** Custom ODM supporting dual-backend (MongoDB/MariaDB).
+- **Database:** Custom ODM for MariaDB backend.
 - **Routing:** Custom `Route`/`Controller` pattern with middleware-based auth and feature gating.
 - **Monitoring:** Sentry for error tracking, custom Logger, and Redis for caching/rate-limiting.
 - **Status:** Robust and scalable. The custom ODM provides flexibility but requires careful query construction (e.g., explicit `.exec()`).

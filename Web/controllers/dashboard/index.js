@@ -152,3 +152,6 @@ controllers.ai = require("./ai");
 controllers.subscription = require("./subscription");
 controllers.tickets = require("./tickets");
 controllers.serverManagement = require("./server-management");
+controllers.embedBuilder = require("./embed-builder");
+controllers.socialalerts = require("./socialalerts");
+controllers.forms = require("./forms");

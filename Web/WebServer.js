@@ -11,7 +11,6 @@ const { Server: SocketIOServer } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const ejs = require("ejs");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const MySQLStore = require("express-mysql-session")(session);
 // Lazy-load Redis session store to prevent crash if dependencies are missing
 let RedisStore = null;
@@ -364,8 +363,7 @@ exports.open = async (client, auth, configJS, logger) => {
 		done(null, obj);
 	});
 
-	// Session store priority: Redis > MongoDB > MariaDB > Memory
-	const databaseType = process.env.DATABASE_TYPE || "mongodb";
+	// Session store priority: Redis > MariaDB > Memory
 	let sessionStore;
 
 	if (Redis && RedisStore && Redis.isEnabled() && Redis.isReady()) {
@@ -376,15 +374,7 @@ exports.open = async (client, auth, configJS, logger) => {
 			ttl: 604800, // 1 week in seconds
 		});
 		logger.info("Using Redis session store");
-	} else if (databaseType === "mongodb" && Database.mongoClient) {
-		// Fallback to MongoDB
-		sessionStore = MongoStore.create({
-			client: Database.mongoClient,
-			dbName: Database.mongoClient.options?.dbName || "skynet",
-			stringify: false,
-		});
-		logger.info("Using MongoDB session store");
-	} else if (databaseType === "mariadb") {
+	} else {
 		// Fallback to MariaDB
 		const mysqlOptions = {
 			host: process.env.MARIADB_HOST || "127.0.0.1",
@@ -407,10 +397,6 @@ exports.open = async (client, auth, configJS, logger) => {
 		};
 		sessionStore = new MySQLStore(mysqlOptions);
 		logger.info("Using MariaDB session store");
-	} else {
-		// Fallback to memory store
-		logger.warn("Using memory session store - sessions will not persist across restarts");
-		sessionStore = new session.MemoryStore();
 	}
 
 	const sessionMiddleware = session({

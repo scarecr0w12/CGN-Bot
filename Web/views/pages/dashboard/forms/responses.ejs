@@ -1,0 +1,218 @@
+<%- include('../../../partials/header', { title: title }) %>
+<%- include('../../../partials/dashboard/sidebar') %>
+
+<div class="dashboard-content">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-inbox"></i> <%= form.name %> - Responses</h1>
+        <a href="/dashboard/<%= serverDocument._id %>/forms" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Forms
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Form Submissions</h2>
+            <span class="badge"><%= responses.length %> Total</span>
+        </div>
+        <div class="card-body">
+            <% if (responses.length === 0) { %>
+                <div class="empty-state">
+                    <i class="fas fa-inbox fa-3x"></i>
+                    <p>No submissions yet</p>
+                </div>
+            <% } else { %>
+                <div class="responses-list">
+                    <% responses.forEach(response => { %>
+                        <div class="response-card status-<%= response.status %>">
+                            <div class="response-header">
+                                <div class="response-user">
+                                    <strong>User ID:</strong> <%= response.user_id %>
+                                </div>
+                                <div class="response-status">
+                                    <span class="status-badge status-<%= response.status %>">
+                                        <%= response.status.charAt(0).toUpperCase() + response.status.slice(1) %>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="response-meta">
+                                <span><i class="fas fa-calendar"></i> <%= new Date(response.submitted_at).toLocaleString() %></span>
+                                <% if (response.reviewed_at) { %>
+                                    <span><i class="fas fa-check"></i> Reviewed <%= new Date(response.reviewed_at).toLocaleString() %></span>
+                                <% } %>
+                            </div>
+                            <div class="response-body">
+                                <% for (const [key, value] of Object.entries(response.responses)) { %>
+                                    <div class="response-field">
+                                        <strong><%= key %>:</strong>
+                                        <p><%= value %></p>
+                                    </div>
+                                <% } %>
+                            </div>
+                            <% if (response.review_notes) { %>
+                                <div class="response-notes">
+                                    <strong>Review Notes:</strong>
+                                    <p><%= response.review_notes %></p>
+                                </div>
+                            <% } %>
+                            <% if (response.status === 'pending') { %>
+                                <div class="response-actions">
+                                    <button class="btn btn-sm btn-success" onclick="reviewResponse('<%= response._id %>', 'approved')">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="reviewResponse('<%= response._id %>', 'rejected')">
+                                        <i class="fas fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<style>
+.responses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.response-card {
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid var(--border-color);
+}
+
+.response-card.status-approved {
+    border-left-color: #4caf50;
+}
+
+.response-card.status-rejected {
+    border-left-color: #f44336;
+}
+
+.response-card.status-pending {
+    border-left-color: #ff9800;
+}
+
+.response-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.response-user {
+    font-size: 16px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-badge.status-approved {
+    background: #4caf50;
+    color: white;
+}
+
+.status-badge.status-rejected {
+    background: #f44336;
+    color: white;
+}
+
+.status-badge.status-pending {
+    background: #ff9800;
+    color: white;
+}
+
+.response-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.response-body {
+    margin: 15px 0;
+}
+
+.response-field {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.response-field:last-child {
+    border-bottom: none;
+}
+
+.response-field strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-primary);
+}
+
+.response-field p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.response-notes {
+    background: var(--bg-secondary);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+
+.response-notes strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.response-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.badge {
+    background: var(--color-primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+</style>
+
+<script>
+async function reviewResponse(responseId, action) {
+    const notes = action === 'rejected' ? prompt('Rejection reason (optional):') : null;
+    
+    try {
+        const response = await fetch(`/dashboard/<%= serverDocument._id %>/forms/<%= form._id %>/responses/${responseId}/review`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action, notes }),
+        });
+        
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Failed to review response');
+        }
+    } catch (error) {
+        alert('Failed to review response: ' + error.message);
+    }
+}
+</script>
+
+<%- include('../../../partials/footer') %>

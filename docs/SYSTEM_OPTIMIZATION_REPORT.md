@@ -35,7 +35,7 @@ This report provides a comprehensive analysis of the CGN-Bot system, identifying
 1. **Batch database updates**: Use bulk write operations for stat tracking
 2. **Implement write coalescing**: Buffer updates for 5-10 seconds before flushing
 3. **Add `.exec()` validation**: Ensure all `.find()` calls include `.exec()` or proper iteration
-4. **Connection pooling**: Increase MongoDB/MariaDB pool size in production
+4. **Connection pooling**: Increase MariaDB pool size in production
 
 **Example Fix** (`Internals/Events/messageCreate/Skynet.MessageCreate.js:555`):
 ```javascript
@@ -294,7 +294,7 @@ const extensionMarketplaceDownloads = new client.Counter({
 - No metrics on connection usage
 
 **Recommendations**:
-1. **Verify pool sizes**: MongoDB ~50 connections, MariaDB ~20
+1. **Verify pool sizes**: MariaDB ~20 connections
 2. **Implement connection health checks**: Ping every 30s
 3. **Add connection metrics**: Pool size, wait time, active queries
 4. **Configure retry strategy**: Exponential backoff

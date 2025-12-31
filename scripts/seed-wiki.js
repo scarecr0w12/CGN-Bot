@@ -38,6 +38,8 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 👑 [Server Owner Guide](Server-Owner-Guide) - Configure your server
 - 🛡️ [Admin Levels](Admin-Levels) - Understanding permissions
 - 🧩 [Extensions](Extensions) - Extend your bot's functionality
+- 🔔 [Social Media Alerts](Social-Media-Alerts) - Twitch & YouTube notifications
+- 📝 [Form Builder](Form-Builder) - Custom application forms
 - 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
 - 🎵 [Music System](Music-Guide) - High-quality music playback (Premium)
 - 💻 [Developer Tools](Developer-Tools) - Code execution and utilities (Premium)
@@ -3437,6 +3439,26 @@ No, server data is not shared with third parties.
 - Browse the full [Wiki](Home)
 - Join our [support server](https://discord.gg/SE6xHmvKrZ)
 `,
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Social-Media-Alerts",
+		content: require('fs').readFileSync(require('path').join(__dirname, '../docs/wiki/Social-Media-Alerts.md'), 'utf8'),
+		reactions: [],
+		updates: [{
+			_id: "218536118591684613",
+			timestamp: new Date(),
+			diff: null,
+		}],
+	},
+	{
+		_id: "Form-Builder",
+		content: require('fs').readFileSync(require('path').join(__dirname, '../docs/wiki/Form-Builder.md'), 'utf8'),
 		reactions: [],
 		updates: [{
 			_id: "218536118591684613",

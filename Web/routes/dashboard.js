@@ -41,6 +41,22 @@ module.exports = router => {
 	router.get("/:svrid/stats-points/analytics-export", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analyticsExport);
 	router.get("/:svrid/stats-points/analytics", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.stats.analytics);
 
+	// Embed Builder
+	setupDashboardPage(router, "/embed-builder", [], controllers.dashboard.embedBuilder.builder);
+	router.post("/:svrid/embed-builder/preview", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.embedBuilder.preview);
+	router.post("/:svrid/embed-builder/send",
+		[middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess],
+		controllers.dashboard.embedBuilder.send);
+	router.post("/:svrid/embed-builder/template/save",
+		[middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess],
+		controllers.dashboard.embedBuilder.saveTemplate);
+	router.get("/:svrid/embed-builder/template/:templateId",
+		[middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess],
+		controllers.dashboard.embedBuilder.loadTemplate);
+	router.delete("/:svrid/embed-builder/template/:templateId",
+		[middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess],
+		controllers.dashboard.embedBuilder.deleteTemplate);
+
 	// Administration
 	setupDashboardPage(router, "/administration/admins", [], controllers.dashboard.administration.admins, "admins");
 	setupDashboardPage(router, "/administration/moderation", [], controllers.dashboard.administration.moderation);
@@ -100,4 +116,32 @@ module.exports = router => {
 	// Server Management (Tier 2)
 	setupDashboardPage(router, "/server-management/channels", [], controllers.dashboard.serverManagement.channels);
 	setupDashboardPage(router, "/server-management/roles", [], controllers.dashboard.serverManagement.roles);
+
+	// Social Media Alerts
+	setupDashboardPage(router, "/socialalerts", [], controllers.dashboard.socialalerts.index);
+	router.post("/:svrid/socialalerts/add", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.socialalerts.add);
+	router.post("/:svrid/socialalerts/:alertId/toggle", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.socialalerts.toggle);
+	router.delete("/:svrid/socialalerts/:alertId", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.socialalerts.delete);
+
+	// Form Builder
+	setupDashboardPage(router, "/forms", [], controllers.dashboard.forms.index);
+	setupDashboardPage(router, "/forms/create", [], controllers.dashboard.forms.create);
+	setupDashboardPage(router, "/forms/:formId/edit", [], controllers.dashboard.forms.edit);
+	setupDashboardPage(router, "/forms/:formId/responses", [], controllers.dashboard.forms.responses);
+	router.post("/:svrid/forms", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.store);
+	router.put("/:svrid/forms/:formId", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.update);
+	router.post("/:svrid/forms/:formId/toggle", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.toggle);
+	router.delete("/:svrid/forms/:formId", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.delete);
+
+	// Helper endpoint for getting channels
+	router.get("/:svrid/channels", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], (req, res) => {
+		const guild = req.app.get("client").guilds.cache.get(req.params.svrid);
+		if (!guild) return res.status(404).json({ error: "Guild not found" });
+		const channels = Array.from(guild.channels.cache.values()).map(c => ({
+			id: c.id,
+			name: c.name,
+			type: c.type,
+		}));
+		res.json(channels);
+	});
 };

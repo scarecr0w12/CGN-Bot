@@ -907,6 +907,12 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			}
 			logger.info("Slash commands initialized!");
 
+			// Initialize Social Alerts Manager
+			const SocialAlertsManager = require("./Modules/SocialAlerts/SocialAlertsManager");
+			client.socialAlerts = new SocialAlertsManager(client);
+			await client.socialAlerts.initialize();
+			logger.info("Social Alerts Manager initialized!");
+
 			client.isReady = true;
 			console.log("[DEBUG] WebServer started, client is ready!");
 		} catch (err) {

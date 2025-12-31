@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title><%= serverData.name %> Embed Builder - Skynet Admin Console</title>
+	<%- include('../partials/head') %>
+	<link rel="stylesheet" href="/css/embed-builder.css">
+</head>
+<body>
+	<%- include('../partials/dashboard-header') %>
+	<%- include('../partials/dashboard-socket-updates') %>
+	
+	<section class="section is-white">
+		<div class="container">
+			<div class="columns">
+				<div id="menu" class="column is-one-quarter">
+					<%- include('../partials/admin-menu') %>
+				</div>
+				<div class="column is-three-quarters">
+					<h2 class="title"><i class="fas fa-comment-dots"></i> Embed Builder</h2>
+					<p class="subtitle">Create beautiful custom embeds for your server</p>
+
+			<div class="embed-builder-wrapper">
+				<div class="builder-controls">
+					<div class="card">
+						<div class="card-header">
+							<h3><i class="fas fa-edit"></i> Embed Configuration</h3>
+							<div class="template-actions">
+								<button id="loadTemplateBtn" class="btn btn-secondary">
+									<i class="fas fa-folder-open"></i> Load Template
+								</button>
+								<button id="saveTemplateBtn" class="btn btn-primary">
+									<i class="fas fa-save"></i> Save Template
+								</button>
+							</div>
+						</div>
+						<div class="card-body">
+							<form id="embedBuilderForm">
+								<!-- Basic Settings -->
+								<div class="form-section">
+									<h4>Basic Information</h4>
+									
+									<div class="form-group">
+										<label for="embedTitle">Title</label>
+										<input type="text" id="embedTitle" name="title" class="form-control" maxlength="256" placeholder="Embed title (optional)">
+										<small class="form-text">Maximum 256 characters</small>
+									</div>
+
+									<div class="form-group">
+										<label for="embedDescription">Description</label>
+										<textarea id="embedDescription" name="description" class="form-control" rows="4" maxlength="4096" placeholder="Embed description (optional)"></textarea>
+										<small class="form-text">Maximum 4096 characters</small>
+									</div>
+
+									<div class="form-group">
+										<label for="embedUrl">Title URL (optional)</label>
+										<input type="url" id="embedUrl" name="url" class="form-control" placeholder="https://example.com">
+									</div>
+
+									<div class="form-group">
+										<label for="embedColor">Color</label>
+										<div class="color-picker-group">
+											<input type="color" id="embedColorPicker" value="#5865F2">
+											<input type="text" id="embedColor" name="color" class="form-control" value="#5865F2" placeholder="#5865F2">
+										</div>
+										<small class="form-text">Hex color code (e.g., #5865F2)</small>
+									</div>
+								</div>
+
+								<!-- Author -->
+								<div class="form-section">
+									<h4>Author</h4>
+									<div class="form-group">
+										<label for="authorName">Author Name</label>
+										<input type="text" id="authorName" name="author.name" class="form-control" maxlength="256" placeholder="Author name (optional)">
+									</div>
+									<div class="form-group">
+										<label for="authorIcon">Author Icon URL</label>
+										<input type="url" id="authorIcon" name="author.icon_url" class="form-control" placeholder="https://example.com/icon.png">
+									</div>
+									<div class="form-group">
+										<label for="authorUrl">Author URL</label>
+										<input type="url" id="authorUrl" name="author.url" class="form-control" placeholder="https://example.com">
+									</div>
+								</div>
+
+								<!-- Footer -->
+								<div class="form-section">
+									<h4>Footer</h4>
+									<div class="form-group">
+										<label for="footerText">Footer Text</label>
+										<input type="text" id="footerText" name="footer.text" class="form-control" maxlength="2048" placeholder="Footer text (optional)">
+									</div>
+									<div class="form-group">
+										<label for="footerIcon">Footer Icon URL</label>
+										<input type="url" id="footerIcon" name="footer.icon_url" class="form-control" placeholder="https://example.com/icon.png">
+									</div>
+									<div class="form-group">
+										<label>
+											<input type="checkbox" id="embedTimestamp" name="timestamp">
+											Add timestamp
+										</label>
+									</div>
+								</div>
+
+								<!-- Images -->
+								<div class="form-section">
+									<h4>Images</h4>
+									<div class="form-group">
+										<label for="thumbnailUrl">Thumbnail URL</label>
+										<input type="url" id="thumbnailUrl" name="thumbnail" class="form-control" placeholder="https://example.com/thumb.png">
+									</div>
+									<div class="form-group">
+										<label for="imageUrl">Image URL</label>
+										<input type="url" id="imageUrl" name="image" class="form-control" placeholder="https://example.com/image.png">
+									</div>
+								</div>
+
+								<!-- Fields -->
+								<div class="form-section">
+									<h4>Fields <button type="button" id="addFieldBtn" class="btn btn-sm btn-secondary"><i class="fas fa-plus"></i> Add Field</button></h4>
+									<div id="fieldsContainer"></div>
+								</div>
+
+								<!-- Character Count -->
+								<div class="character-counter">
+									<small>Total characters: <span id="charCount">0</span> / 6000</small>
+								</div>
+
+								<!-- Actions -->
+								<div class="form-actions">
+									<button type="button" id="previewBtn" class="btn btn-secondary">
+										<i class="fas fa-eye"></i> Preview
+									</button>
+									<button type="button" id="sendEmbedBtn" class="btn btn-success">
+										<i class="fas fa-paper-plane"></i> Send to Channel
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div class="builder-preview">
+					<div class="card">
+						<div class="card-header">
+							<h3><i class="fas fa-eye"></i> Live Preview</h3>
+						</div>
+						<div class="card-body">
+							<div id="embedPreview" class="embed-preview-container">
+								<p class="text-muted">Your embed preview will appear here</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Templates List -->
+					<div class="card mt-3">
+						<div class="card-header">
+							<h3><i class="fas fa-folder"></i> Saved Templates</h3>
+						</div>
+						<div class="card-body">
+							<div id="templatesList">
+								<% if (pageData.templates && pageData.templates.length > 0) { %>
+									<% pageData.templates.forEach(template => { %>
+										<div class="template-item" data-template-id="<%= template._id %>">
+											<div class="template-info">
+												<strong><%= template.name %></strong>
+												<small class="text-muted"><%= template.description || 'No description' %></small>
+												<small class="text-muted">Used <%= template.use_count %> times</small>
+											</div>
+											<div class="template-actions">
+												<button class="btn btn-sm btn-primary load-template" data-id="<%= template._id %>">
+													<i class="fas fa-folder-open"></i>
+												</button>
+												<button class="btn btn-sm btn-danger delete-template" data-id="<%= template._id %>">
+													<i class="fas fa-trash"></i>
+												</button>
+											</div>
+										</div>
+									<% }); %>
+								<% } else { %>
+									<p class="text-muted">No saved templates yet</p>
+								<% } %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- Send Modal -->
+	<div id="sendModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Send Embed to Channel</h3>
+				<span class="close">&times;</span>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="targetChannel">Select Channel</label>
+					<select id="targetChannel" class="form-control">
+						<option value="">Select a channel...</option>
+					</select>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="confirmSendBtn" class="btn btn-success">Send</button>
+				<button class="btn btn-secondary close">Cancel</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Save Template Modal -->
+	<div id="saveTemplateModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Save Embed Template</h3>
+				<span class="close">&times;</span>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="templateName">Template Name</label>
+					<input type="text" id="templateName" class="form-control" maxlength="100" required>
+				</div>
+				<div class="form-group">
+					<label for="templateDescription">Description (optional)</label>
+					<textarea id="templateDescription" class="form-control" rows="2" maxlength="200"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button id="confirmSaveTemplateBtn" class="btn btn-primary">Save Template</button>
+				<button class="btn btn-secondary close">Cancel</button>
+			</div>
+		</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="/js/embed-builder.js"></script>
+	<%- include('../partials/footer') %>
+</body>
+</html>

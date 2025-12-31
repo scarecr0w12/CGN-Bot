@@ -83,6 +83,10 @@ exports.initialize = async () => {
 		TempRoles,
 		InviteTracking,
 		Snippets,
+		EmbedTemplates,
+		SocialAlerts,
+		Forms,
+		FormResponses,
 	] = [
 		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
 		new ModelSQL(getPool, "users", require("./Schemas/userSchema")),
@@ -110,6 +114,10 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "temp_roles", require("./Schemas/tempRoleSchema")),
 		new ModelSQL(getPool, "invite_tracking", require("./Schemas/inviteTrackingSchema")),
 		new ModelSQL(getPool, "snippets", require("./Schemas/snippetSchema")),
+		new ModelSQL(getPool, "embed_templates", require("./Schemas/embedTemplateSchema")),
+		new ModelSQL(getPool, "social_alerts", require("./Schemas/socialAlertSchema")),
+		new ModelSQL(getPool, "forms", require("./Schemas/formSchema")),
+		new ModelSQL(getPool, "form_responses", require("./Schemas/formResponseSchema")),
 	];
 
 	addToGlobal("Servers", Servers);
@@ -137,6 +145,10 @@ exports.initialize = async () => {
 	addToGlobal("TempRoles", TempRoles);
 	addToGlobal("InviteTracking", InviteTracking);
 	addToGlobal("Snippets", Snippets);
+	addToGlobal("EmbedTemplates", EmbedTemplates);
+	addToGlobal("SocialAlerts", SocialAlerts);
+	addToGlobal("Forms", Forms);
+	addToGlobal("FormResponses", FormResponses);
 	addToGlobal("Client", pool);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -165,6 +177,10 @@ exports.initialize = async () => {
 		TempRoles, tempRoles: TempRoles,
 		InviteTracking, inviteTracking: InviteTracking,
 		Snippets, snippets: Snippets,
+		EmbedTemplates, embedTemplates: EmbedTemplates,
+		SocialAlerts, socialAlerts: SocialAlerts,
+		Forms, forms: Forms,
+		FormResponses, formResponses: FormResponses,
 		client: pool,
 		pool,
 	});

@@ -7,6 +7,173 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.10.0] - 2025-12-31
+
+### Added
+
+#### Embed Builder System (Free Feature)
+
+- **Visual Embed Creator** - Comprehensive embed creation and management
+  - **Dashboard UI** (`/dashboard/:svrid/embed-builder`)
+    - Live preview with Discord-accurate styling
+    - Form sections: Basic info, Author, Footer, Images, Fields (up to 25)
+    - Color picker with preset palette
+    - Template save/load functionality
+    - Export to JSON for sharing
+    - Variable replacement system: `{user}`, `{server}`, `{channel}`, `{member_count}`
+  
+  - **Slash Commands** (`/embed`)
+    - `/embed create quick` - Simple embed creation (title, description, color, channel)
+    - `/embed create advanced` - Modal-based builder with 5 inputs
+    - `/embed template save` - Save embed as reusable template
+    - `/embed template list` - List all server templates (up to 10)
+    - `/embed template load` - Load and send template with variable replacement
+    - `/embed template delete` - Remove template (creator/admin only)
+
+- **Embed Template System** (`Modules/EmbedBuilder/`)
+  - **EmbedBuilder.js** - Core embed creation and validation
+    - `createFromData()` - Creates Discord embed from JSON
+    - `validate()` - Validates against Discord limits (6000 char total)
+    - `parseColor()` - Hex to integer conversion
+    - `replaceVariables()` - Template variable replacement
+  - **EmbedTemplateManager.js** - Template storage and management
+    - Create, update, delete templates
+    - Search by name, creator, or server
+    - Usage tracking and popular template discovery
+    - Per-server template library
+
+- **Database Schema**
+  - `embedTemplateSchema.js` - Template storage (16-char ID, server_id, name, description, embed_data, use_count)
+  - Migration: `028_add_embed_templates.sql`
+
+#### Social Media Alerts System (Tier-Gated)
+
+- **Twitch & YouTube Monitoring** - Real-time social media notifications
+  - **Twitch Integration** (`Modules/SocialAlerts/TwitchMonitor.js`)
+    - Stream status monitoring via Twitch Helix API
+    - OAuth 2.0 authentication with auto-refresh
+    - Detects: stream start, stream end, title/game changes
+    - Rate limit management with intelligent polling
+  
+  - **YouTube Integration** (`Modules/SocialAlerts/YouTubeMonitor.js`)
+    - Video upload monitoring via YouTube Data API v3
+    - Channel activity detection
+    - New video notifications with metadata
+  
+  - **Alert Manager** (`Modules/SocialAlerts/SocialAlertsManager.js`)
+    - Multi-platform orchestration
+    - Tier-based limits: 3 free, 10 Tier 1, unlimited Tier 2
+    - Custom embed templates with placeholders
+    - Role mention configuration
+    - Per-server alert management
+
+- **Slash Commands** (`/socialalerts`)
+  - `/socialalerts add` - Configure new alert (platform, account, channel)
+  - `/socialalerts list` - View all configured alerts
+  - `/socialalerts toggle` - Enable/disable specific alert
+  - `/socialalerts remove` - Delete alert configuration
+
+- **Dashboard Integration** (`/dashboard/:svrid/socialalerts`)
+  - Visual alert configuration interface
+  - Embed template customization
+  - Role mention selection
+  - Alert status monitoring
+
+- **Database Schema**
+  - `socialAlertSchema.js` - Alert configuration (server_id, platform, account_id, channel_id, template, role_mentions)
+  - Migration: `030_add_social_alerts.sql`
+
+#### Form Builder System (Tier-Gated)
+
+- **Application & Survey Forms** - Discord modal-based form system
+  - **Form Creation** (`/dashboard/:svrid/forms`)
+    - Visual form builder with field editor
+    - 6 field types: Short text, Long text, Single choice, Multiple choice, Number, Date
+    - Field validation rules (required, min/max length)
+    - Submit channel configuration
+    - Review channel for staff approval
+    - Auto-role assignment on approval
+    - Webhook integration for external systems
+
+- **Form Module** (`Modules/FormBuilder.js`)
+  - Form creation and validation engine
+  - Modal generation from form configuration
+  - Response storage and tracking
+  - Approval/rejection workflow
+  - Monthly response limits enforcement
+
+- **Dashboard Controllers** (`Web/controllers/dashboard/forms.js`)
+  - Form CRUD operations (create, read, update, delete)
+  - Response management interface
+  - Approve/deny buttons with reason tracking
+  - Bulk response actions
+  - Export responses to CSV
+
+- **Tier Limits**
+  - **Free:** 2 forms, 50 responses/month
+  - **Tier 1 (Starter):** 5 forms, 200 responses/month
+  - **Tier 2 (Premium):** Unlimited forms and responses
+
+- **Database Schemas**
+  - `formSchema.js` - Form configuration (server_id, name, fields[], submit_channel, review_channel, auto_role_id)
+  - `formResponseSchema.js` - Response tracking (form_id, user_id, answers[], status, reviewed_by, reviewed_at)
+  - Migrations: `031_add_forms.sql`
+
+### Changed
+
+- **Wiki Documentation** (`scripts/seed-wiki.js`)
+  - Updated server management documentation
+  - Added embed builder guides
+  - Enhanced premium feature descriptions
+  - Improved navigation and cross-references
+
+- **Dashboard Navigation** (`Web/views/partials/admin-menu.ejs`)
+  - Added "Embed Builder" section
+  - Added "Social Alerts" section
+  - Added "Forms" section
+  - Improved menu organization and icons
+
+### Fixed
+
+- **Server Icons** - Display actual Discord server icons instead of offline placeholders
+- **CSP Policy** - Allow FontAwesome webfonts in Content Security Policy `font-src` directive
+- **Database Migrations** - Cleaned up duplicate migration files (024, 025 → 026)
+
+### Technical Details
+
+**Embed Builder Benefits:**
+- Closes competitive gap with MEE6 (they have paid embed builder, ours is free)
+- User-friendly alternative to JSON embed creation
+- Template sharing capability within servers
+- 6000 character validation ensures Discord compliance
+
+**Social Alerts Benefits:**
+- Major competitive feature (MEE6, Carl-bot, Dyno all have this)
+- Drives community engagement and retention
+- Supports content creators and gaming communities
+- Multi-platform architecture (expandable to Twitter, Reddit)
+
+**Form Builder Benefits:**
+- Fills critical gap for server management
+- Enables staff applications, member screening, feedback collection
+- Competitive with specialized bots (Appy)
+- Approval workflow reduces admin overhead
+
+**Performance:**
+- Social alerts: 1-minute polling interval with caching
+- Form responses: Atomic database updates prevent race conditions
+- Embed templates: In-memory caching for popular templates
+
+**API Requirements:**
+```bash
+# Social Alerts
+TWITCH_CLIENT_ID=your_client_id
+TWITCH_CLIENT_SECRET=your_client_secret
+YOUTUBE_API_KEY=your_api_key
+```
+
+---
+
 ## [1.9.0] - 2025-12-31
 
 ### Added

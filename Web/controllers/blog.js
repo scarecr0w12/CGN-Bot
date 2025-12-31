@@ -102,7 +102,16 @@ controllers.index = async (req, { res }) => {
 };
 
 controllers.article = async (req, { res }) => {
-	const blogDocument = await Blog.findOne(new ObjectId(req.params.id));
+	let blogDocument;
+
+	// Try to parse as ObjectId first
+	try {
+		blogDocument = await Blog.findOne(new ObjectId(req.params.id));
+	} catch (err) {
+		// If ObjectId parsing fails, try searching by slug
+		blogDocument = await Blog.findOne({ slug: req.params.id });
+	}
+
 	if (!blogDocument) {
 		renderError(res, "Sorry, that blog doesn't exist!");
 	} else {

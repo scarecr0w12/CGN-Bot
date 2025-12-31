@@ -23,6 +23,11 @@ const menuSections = {
 		label: 'AI Assistant',
 		paths: ['ai/settings', 'ai/governance', 'ai/memory', 'ai/personality', 'ai/models']
 	},
+	embedBuilder: {
+		icon: 'fas fa-comment-dots',
+		label: 'Embed Builder',
+		paths: ['embed-builder']
+	},
 	extensions: {
 		icon: 'fa fa-puzzle-piece',
 		label: 'Extensions',
@@ -42,6 +47,16 @@ const menuSections = {
 		icon: 'fas fa-ticket-alt',
 		label: 'Tickets',
 		paths: ['tickets', 'tickets/settings']
+	},
+	socialAlerts: {
+		icon: 'fas fa-bell',
+		label: 'Social Alerts',
+		paths: ['socialalerts']
+	},
+	forms: {
+		icon: 'fas fa-file-alt',
+		label: 'Form Builder',
+		paths: ['forms', 'forms/create']
 	},
 	serverManagement: {
 		icon: 'fas fa-server',
@@ -226,6 +241,24 @@ const menuItem = (path, label, icon = null) => {
 
 					<% if(isActive(`${basePath}/ai/models`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
 					<%- menuItem('ai/models', 'AI Models') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.embedBuilder) ? ' has-active' : '' %>" data-section="embedBuilder">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.embedBuilder.icon %>"></i></span>
+				<span><%= menuSections.embedBuilder.label %></span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/embed-builder`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('embed-builder', 'Visual Builder', 'fas fa-paint-brush') %>
 				</li>
 			</ul>
 		</div>

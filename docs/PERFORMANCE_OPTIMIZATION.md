@@ -223,7 +223,7 @@ res.setHeader("Cache-Control", "...");
 ```
 
 ### Session Store Optimization
-Priority: Redis > MongoDB > MariaDB > Memory
+Priority: Redis > MariaDB
 
 Redis provides:
 - Cross-shard session sharing

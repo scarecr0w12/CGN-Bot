@@ -19,6 +19,9 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 - **🛠️ Developer Tools** - Code execution, linting, regex testing, and JSON utilities
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
 - **⚙️ Server Management** - Dashboard-based channel and role management with drag-and-drop
+- **🎨 Embed Builder** - Visual embed creator with templates, live preview, and variable replacement
+- **📢 Social Alerts** - Twitch/YouTube stream and upload notifications with custom embeds
+- **📝 Form Builder** - Application forms with approval workflow, auto-roles, and webhooks
 - **🧩 Extensions** - Create, share, and install custom server extensions with slash command support
 - **🎫 Ticket System** - Per-server support tickets with categories, panels, and transcripts
 - **🎮 Game Updates** - Monitor and announce updates for Minecraft, Rust, Terraria, and more

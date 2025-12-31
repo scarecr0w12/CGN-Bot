@@ -9,10 +9,10 @@ ALTER TABLE `servers`
 ADD COLUMN IF NOT EXISTS `subscription` JSON DEFAULT NULL,
 ADD COLUMN IF NOT EXISTS `payment_ids` JSON DEFAULT NULL;
 
--- Add indexes for subscription queries
-ALTER TABLE `servers`
-ADD INDEX IF NOT EXISTS `idx_servers_subscription_tier` ((CAST(subscription->>'$.tier_id' AS CHAR(64)))),
-ADD INDEX IF NOT EXISTS `idx_servers_subscription_active` ((CAST(subscription->>'$.is_active' AS UNSIGNED)));
+-- Note: Functional indexes on JSON fields are not supported in all MariaDB versions
+-- If needed, these can be added manually on compatible versions:
+-- CREATE INDEX idx_servers_subscription_tier ON servers ((CAST(subscription->>'$.tier_id' AS CHAR(64))));
+-- CREATE INDEX idx_servers_subscription_active ON servers ((CAST(subscription->>'$.is_active' AS UNSIGNED)));
 
 -- Show the updated table structure
 DESCRIBE `servers`;

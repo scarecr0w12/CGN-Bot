@@ -1,0 +1,294 @@
+<%- include('../../partials/header', { title: title }) %>
+<%- include('../../partials/dashboard/sidebar') %>
+
+<div class="dashboard-content">
+    <div class="dashboard-header">
+        <h1><i class="fas fa-bell"></i> Social Media Alerts</h1>
+        <p>Get notified when your favorite creators go live or upload new content</p>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Manage Alerts</h2>
+            <div class="tier-badge tier-<%= tier %>">
+                <i class="fas fa-crown"></i> <%= tier === 'free' ? 'Free' : tier === 'starter' ? 'Tier 1' : 'Tier 2' %>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="alert-info">
+                <p><strong>Usage:</strong> <%= currentCount %> / <%= maxAlerts %> alerts</p>
+                <% if (!canAdd) { %>
+                    <p class="text-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        You've reached your alert limit. <a href="/premium">Upgrade to add more alerts</a>
+                    </p>
+                <% } %>
+            </div>
+
+            <% if (canAdd) { %>
+            <button class="btn btn-primary" onclick="showAddAlertModal()">
+                <i class="fas fa-plus"></i> Add Alert
+            </button>
+            <% } %>
+
+            <div class="alerts-list">
+                <% if (alerts.length === 0) { %>
+                    <div class="empty-state">
+                        <i class="fas fa-bell-slash fa-3x"></i>
+                        <p>No alerts configured yet</p>
+                        <% if (canAdd) { %>
+                            <button class="btn btn-primary" onclick="showAddAlertModal()">Add Your First Alert</button>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Platform</th>
+                                <th>Account</th>
+                                <th>Channel</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% alerts.forEach(alert => { %>
+                                <tr>
+                                    <td>
+                                        <span class="platform-badge platform-<%= alert.platform %>">
+                                            <i class="fab fa-<%= alert.platform %>"></i> <%= alert.platform %>
+                                        </span>
+                                    </td>
+                                    <td><%= alert.account_name %></td>
+                                    <td><#<%= alert.channel_id %>></td>
+                                    <td>
+                                        <label class="switch">
+                                            <input type="checkbox" <%= alert.enabled ? 'checked' : '' %> 
+                                                   onchange="toggleAlert('<%= alert._id %>', this.checked)">
+                                            <span class="slider"></span>
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteAlert('<%= alert._id %>')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Alert Modal -->
+    <div id="addAlertModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Social Media Alert</h3>
+                <span class="close" onclick="closeAddAlertModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addAlertForm">
+                    <div class="form-group">
+                        <label>Platform</label>
+                        <select name="platform" required>
+                            <option value="">Select Platform</option>
+                            <option value="twitch">Twitch</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Account Username/ID</label>
+                        <input type="text" name="account" placeholder="username or channel ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Discord Channel</label>
+                        <select name="channel_id" required>
+                            <option value="">Select Channel</option>
+                            <!-- Populated via JS -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Custom Message Template (Optional)</label>
+                        <textarea name="template" rows="3" placeholder="{username} is now live! {url}"></textarea>
+                        <small>Variables: {username}, {title}, {url}, {game}</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Role Mentions (Optional)</label>
+                        <input type="text" name="role_mentions" placeholder="@Role1, @Role2">
+                        <small>Separate multiple roles with commas</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddAlertModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitAlert()">Add Alert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.platform-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    text-transform: capitalize;
+}
+.platform-twitch { background: #9146ff; color: white; }
+.platform-youtube { background: #ff0000; color: white; }
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider { background-color: #4caf50; }
+input:checked + .slider:before { transform: translateX(26px); }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+}
+.modal-content {
+    background-color: var(--bg-secondary);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-body { padding: 20px; }
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover { color: #fff; }
+</style>
+
+<script>
+async function showAddAlertModal() {
+    // Load channels
+    const channels = await fetch(`/dashboard/<%= serverDocument._id %>/channels`).then(r => r.json());
+    const select = document.querySelector('[name="channel_id"]');
+    select.innerHTML = '<option value="">Select Channel</option>' +
+        channels.filter(c => c.type === 0).map(c => `<option value="${c.id}">#${c.name}</option>`).join('');
+    
+    document.getElementById('addAlertModal').style.display = 'block';
+}
+
+function closeAddAlertModal() {
+    document.getElementById('addAlertModal').style.display = 'none';
+    document.getElementById('addAlertForm').reset();
+}
+
+async function submitAlert() {
+    const form = document.getElementById('addAlertForm');
+    const data = new FormData(form);
+    
+    try {
+        const response = await fetch(`/dashboard/<%= serverDocument._id %>/socialalerts/add`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(data)),
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (error) {
+        alert('Failed to add alert: ' + error.message);
+    }
+}
+
+async function toggleAlert(alertId, enabled) {
+    try {
+        await fetch(`/dashboard/<%= serverDocument._id %>/socialalerts/${alertId}/toggle`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled }),
+        });
+    } catch (error) {
+        alert('Failed to toggle alert: ' + error.message);
+    }
+}
+
+async function deleteAlert(alertId) {
+    if (!confirm('Are you sure you want to delete this alert?')) return;
+    
+    try {
+        const response = await fetch(`/dashboard/<%= serverDocument._id %>/socialalerts/${alertId}`, {
+            method: 'DELETE',
+        });
+        
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Failed to delete alert');
+        }
+    } catch (error) {
+        alert('Failed to delete alert: ' + error.message);
+    }
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('addAlertModal');
+    if (event.target == modal) {
+        closeAddAlertModal();
+    }
+}
+</script>
+
+<%- include('../../partials/footer') %>

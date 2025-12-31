@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-SkynetBot is a mature Discord bot built on **Discord.js v14** with custom sharding, dual-database support (MongoDB/MariaDB), and a sophisticated extension marketplace with sandboxed execution. The codebase demonstrates solid architectural decisions but has areas requiring attention, particularly around test coverage.
+SkynetBot is a mature Discord bot built on **Discord.js v14** with custom sharding, MariaDB database backend, and a sophisticated extension marketplace with sandboxed execution. The codebase demonstrates solid architectural decisions but has areas requiring attention, particularly around test coverage.
 
 ---
 
@@ -90,9 +90,8 @@ SkynetBot is a mature Discord bot built on **Discord.js v14** with custom shardi
 
 | Component | Location | Status |
 |-----------|----------|--------|
-| MongoDB Driver | `Database/Driver.js` | ✅ Primary backend |
-| MariaDB Driver | `Database/DriverSQL.js` | ✅ Alternative |
-| Custom ORM | `Database/Model.js`, `Database/ModelSQL.js` | ✅ Functional |
+| MariaDB Driver | `Database/DriverSQL.js` | ✅ Active |
+| Custom ORM | `Database/ModelSQL.js` | ✅ Functional |
 | Schema Validation | `Database/Schema.js` | ✅ Functional |
 | Migrations | `Database/migrations/` | ⚠️ 23 files, duplicate numbers |
 | Schemas | `Database/Schemas/` | ✅ 34 schema files |
