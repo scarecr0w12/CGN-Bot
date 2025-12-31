@@ -216,6 +216,8 @@ exports.open = async (client, auth, configJS, logger) => {
 				],
 				fontSrc: [
 					"'self'",
+					"https://cdnjs.cloudflare.com",
+					"cdnjs.cloudflare.com",
 					"https://fonts.gstatic.com",
 					"fonts.gstatic.com",
 					"https://analytics.thecorehosting.net",
