@@ -82,6 +82,8 @@ module.exports = async (req, { res }) => {
 		roundedUptime: getRoundedUptime(uptime),
 		featuredExtensions,
 		featuredPosts,
+		botAvatar: req.app.client.user ? req.app.client.user.displayAvatarURL({ size: 512 }) : "/static/img/logo.png",
+		botName: req.app.client.user ? req.app.client.user.username : "Skynet",
 	});
 
 	res.render();

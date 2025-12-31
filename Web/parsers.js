@@ -26,10 +26,12 @@ parsers.serverData = async (req, serverDocument, webp = false) => {
 	if (svr.success) {
 		const owner = req.app.client.users.cache.get(svr.ownerId) || svr.members[svr.ownerId] ? svr.members[svr.ownerId].user : { username: "invalid-user", id: "invalid-user" };
 		const serverListing = serverDocument.config.public_data.server_listing;
+		// Get actual guild object for iconURL method
+		const guild = req.app.client.guilds.cache.get(svr.id);
 		data = {
 			name: svr.name,
 			id: svr.id,
-			icon: req.app.client.getAvatarURL(svr.id, svr.icon, "icons", webp),
+			icon: guild ? guild.iconURL({ size: 512, extension: webp ? "webp" : "png" }) || "/static/img/discord-icon.png" : req.app.client.getAvatarURL(svr.id, svr.icon, "icons", webp),
 			owner: {
 				username: owner.username,
 				id: owner.id,
