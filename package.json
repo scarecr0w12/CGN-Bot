@@ -74,7 +74,7 @@
     "isolated-vm": "^5.0.1",
     "jimp": "^1.6.0",
     "json-schema": "^0.4.0",
-    "jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.3",
     "libsodium-wrappers": "^0.7.15",
     "mariadb": "^3.4.5",
     "mathjs": "^13.2.0",
