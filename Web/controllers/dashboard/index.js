@@ -155,3 +155,6 @@ controllers.serverManagement = require("./server-management");
 controllers.embedBuilder = require("./embed-builder");
 controllers.socialalerts = require("./socialalerts");
 controllers.forms = require("./forms");
+controllers.welcomeImages = require("./welcome-images");
+controllers.gamingAlerts = require("./gaming-alerts");
+controllers.customization = require("./customization");

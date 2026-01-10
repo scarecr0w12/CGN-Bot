@@ -1,6 +1,6 @@
 /**
  * Audio Module - Music playback system for Discord
- * Tier 2 Premium Feature
+ * Available for all servers
  */
 const AudioManager = require("./AudioManager");
 const MusicQueue = require("./MusicQueue");

@@ -41,7 +41,7 @@ Welcome to the official documentation for **SkynetBot** - your all-in-one Discor
 - 🔔 [Social Media Alerts](Social-Media-Alerts) - Twitch & YouTube notifications
 - 📝 [Form Builder](Form-Builder) - Custom application forms
 - 🎫 [Ticket System](Ticket-System) - Support ticket system (Premium)
-- 🎵 [Music System](Music-Guide) - High-quality music playback (Premium)
+- 🎵 [Music System](Music-Guide) - High-quality music playback
 - 💻 [Developer Tools](Developer-Tools) - Code execution and utilities (Premium)
 - 🔧 [Server Management](Server-Management) - Manage channels and roles from dashboard (Premium)
 - ⭐ [Premium Features](Premium-Features) - Server subscriptions
@@ -751,7 +751,7 @@ Premium tiers (configured by the bot operator) typically include:
 - **Increased Limits**: Higher rate limits and quotas
 - **Advanced AI**: Access to more powerful AI models
 - **Priority Support**: Faster response times
-- **Exclusive Commands**: Premium-only features (Music, Dev Tools)
+- **Exclusive Commands**: Premium-only features (Dev Tools, Tickets)
 - **Extended Storage**: More extension storage
 - **Custom Branding**: Remove bot branding
 
@@ -831,11 +831,6 @@ Premium servers may get:
 - Higher daily token limits
 - Longer conversation memory
 - Priority response times
-
-### Music System (Tier 2)
-- High-quality playback
-- DJ controls and audio filters
-- Queue management and lyrics
 
 ### Developer Tools (Tier 2)
 - Code execution sandbox (JavaScript)
@@ -1075,7 +1070,7 @@ See also: [Premium Features](Premium-Features) | [Server Owner Guide](Server-Own
 
 High-quality music playback for your server with DJ controls and audio filters.
 
-**Requires:** Tier 2 Premium
+**Available for all servers!**
 
 ---
 

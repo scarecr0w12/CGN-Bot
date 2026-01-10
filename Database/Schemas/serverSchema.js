@@ -125,6 +125,13 @@ module.exports = new Schema({
 	// Server ticket system configuration (Tier 2)
 	tickets: require("./serverTicketConfigSchema.js"),
 
+	// Server language preference (also in config.language for backward compatibility)
+	language: {
+		type: String,
+		default: "en",
+		maxlength: 5,
+	},
+
 	// MariaDB timestamp fields
 	created_at: Date,
 	updated_at: Date,

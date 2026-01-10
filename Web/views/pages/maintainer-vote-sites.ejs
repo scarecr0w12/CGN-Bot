@@ -47,7 +47,7 @@
 												<input class="input" type="url" name="icon_url[]" value="<%= site.icon_url || '' %>">
 												<% if (site.icon_url) { %>
 												<figure class="image is-24x24" style="margin-top: 0.25rem;">
-													<img src="<%= site.icon_url %>" alt="<%= site.name %> icon" onerror="this.style.display='none';">
+													<img src="<%= site.icon_url %>" alt="<%= site.name %> icon" width="24" height="24" loading="lazy" onerror="this.style.display='none';">
 												</figure>
 												<% } %>
 											</td>

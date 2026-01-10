@@ -1,0 +1,35 @@
+<%
+/**
+ * Cloudflare Turnstile Widget Partial
+ * 
+ * Usage in forms:
+ * <%- include('../partials/turnstile-widget') %>
+ * 
+ * For invisible mode, add data-callback to your form:
+ * <%- include('../partials/turnstile-widget', { mode: 'invisible', callback: 'onTurnstileSuccess' }) %>
+ * 
+ * The widget will only render if Turnstile is configured
+ */
+const mode = locals.mode || turnstile.size || 'normal'; // invisible, normal, compact
+const appearance = locals.appearance || turnstile.theme || 'auto'; // auto, light, dark
+const callback = locals.callback || null;
+const action = locals.action || '';
+%>
+<% if (locals.turnstile && locals.turnstile.enabled) { %>
+<!-- Cloudflare Turnstile Widget -->
+<div class="turnstile-container" <% if (mode === 'invisible') { %>style="display: none;"<% } else { %>style="margin: 1rem 0;"<% } %>>
+	<div class="cf-turnstile" 
+		data-sitekey="<%= turnstile.sitekey %>" 
+		data-theme="<%= appearance %>"
+		data-size="<%= mode %>"
+		<% if (callback) { %>data-callback="<%= callback %>"<% } %>
+		<% if (action) { %>data-action="<%= action %>"<% } %>>
+	</div>
+</div>
+
+<!-- Turnstile Script (loaded once per page) -->
+<% if (!locals.turnstileScriptLoaded) { %>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<% locals.turnstileScriptLoaded = true; %>
+<% } %>
+<% } %>

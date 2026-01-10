@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Turnstile Test - <%= botName %></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+	<style>
+		.container { margin-top: 3rem; }
+		.test-result { margin-top: 1rem; padding: 1rem; border-radius: 4px; }
+		.test-result.success { background: #48c78e; color: white; }
+		.test-result.error { background: #f14668; color: white; }
+	</style>
+</head>
+<body>
+	<section class="section">
+		<div class="container">
+			<h1 class="title">Cloudflare Turnstile Test</h1>
+			<p class="subtitle">Testing invisible bot protection</p>
+
+			<% if (locals.testResult) { %>
+			<div class="notification <%= testResult.success ? 'is-success' : 'is-danger' %>">
+				<strong><%= testResult.success ? '✅ Success!' : '❌ Failed' %></strong>
+				<p><%= testResult.message %></p>
+				<% if (testResult.details) { %>
+					<pre style="margin-top: 1rem; background: rgba(0,0,0,0.1); padding: 1rem; border-radius: 4px;"><%= JSON.stringify(testResult.details, null, 2) %></pre>
+				<% } %>
+			</div>
+			<% } %>
+
+			<div class="columns">
+				<div class="column is-half">
+					<div class="box">
+						<h2 class="subtitle">Test 1: Invisible Mode</h2>
+						<p>This form uses invisible Turnstile - you won't see a widget.</p>
+						<form id="invisible-form" method="POST" action="/test-turnstile">
+							<input type="hidden" name="test_type" value="invisible">
+							<div class="field">
+								<label class="label">Name</label>
+								<div class="control">
+									<input class="input" type="text" name="name" placeholder="Enter your name" required>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Email</label>
+								<div class="control">
+									<input class="input" type="email" name="email" placeholder="your@email.com" required>
+								</div>
+							</div>
+							
+							<%- include('../partials/turnstile-widget', { mode: 'invisible' }) %>
+							
+							<div class="field">
+								<div class="control">
+									<button class="button is-primary" type="submit">Submit (Invisible)</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<div class="column is-half">
+					<div class="box">
+						<h2 class="subtitle">Test 2: Normal Mode</h2>
+						<p>This form shows the visible Turnstile widget.</p>
+						<form id="normal-form" method="POST" action="/test-turnstile">
+							<input type="hidden" name="test_type" value="normal">
+							<div class="field">
+								<label class="label">Name</label>
+								<div class="control">
+									<input class="input" type="text" name="name" placeholder="Enter your name" required>
+								</div>
+							</div>
+							<div class="field">
+								<label class="label">Email</label>
+								<div class="control">
+									<input class="input" type="email" name="email" placeholder="your@email.com" required>
+								</div>
+							</div>
+							
+							<%- include('../partials/turnstile-widget', { mode: 'normal' }) %>
+							
+							<div class="field">
+								<div class="control">
+									<button class="button is-info" type="submit">Submit (Normal)</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="box">
+				<h2 class="subtitle">Configuration</h2>
+				<table class="table is-striped is-fullwidth">
+					<tr>
+						<td><strong>Turnstile Enabled</strong></td>
+						<td><%= turnstile.enabled ? '✅ Yes' : '❌ No' %></td>
+					</tr>
+					<tr>
+						<td><strong>Sitekey</strong></td>
+						<td><code><%= turnstile.sitekey || 'Not configured' %></code></td>
+					</tr>
+					<tr>
+						<td><strong>Theme</strong></td>
+						<td><%= turnstile.theme %></td>
+					</tr>
+					<tr>
+						<td><strong>Size</strong></td>
+						<td><%= turnstile.size %></td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="content">
+				<h3>Testing Tips</h3>
+				<ul>
+					<li><strong>Development Keys:</strong> Use test keys that always pass:
+						<ul>
+							<li>Sitekey: <code>1x00000000000000000000AA</code></li>
+							<li>Secret: <code>1x0000000000000000000000000000000AA</code></li>
+						</ul>
+					</li>
+					<li><strong>Invisible Mode:</strong> Automatically verifies on form submit, no user interaction needed</li>
+					<li><strong>Normal Mode:</strong> Shows a visible checkbox that users must interact with</li>
+					<li>Check server console logs for verification results</li>
+				</ul>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

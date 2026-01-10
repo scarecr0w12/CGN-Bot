@@ -1,0 +1,480 @@
+<%- include('../../partials/head', { title }) %>
+<%- include('../../partials/header') %>
+
+<div class="dashboard-container">
+	<%- include('../../partials/admin-menu') %>
+	
+	<div class="dashboard-content">
+		<div class="dashboard-header">
+			<h1>🖼️ Welcome Images</h1>
+			<p>Create custom welcome images for new members</p>
+		</div>
+
+		<div class="content-section">
+			<!-- Status Card -->
+			<div class="card">
+				<div class="card-header">
+					<h3>Current Status</h3>
+					<div class="toggle-switch">
+						<input type="checkbox" id="enabled" name="enabled" <%= config && config.enabled ? 'checked' : '' %>>
+						<label for="enabled">Enabled</label>
+					</div>
+				</div>
+				<div class="card-body">
+					<% if (config) { %>
+						<div class="status-grid">
+							<div class="status-item">
+								<span class="label">Channel:</span>
+								<span class="value">
+									<% if (config.channel_id) { %>
+										#<%= channels.find(c => c.id === config.channel_id)?.name || 'Unknown' %>
+									<% } else { %>
+										<em>Not set</em>
+									<% } %>
+								</span>
+							</div>
+							<div class="status-item">
+								<span class="label">Template:</span>
+								<span class="value"><%= config.template_id || 'default' %></span>
+							</div>
+							<div class="status-item">
+								<span class="label">Size:</span>
+								<span class="value"><%= config.width %>x<%= config.height %>px</span>
+							</div>
+						</div>
+					<% } else { %>
+						<p class="text-muted">Welcome images not configured yet. Fill in the form below to get started!</p>
+					<% } %>
+				</div>
+			</div>
+
+			<!-- Configuration Form -->
+			<form id="welcomeImageForm" class="card">
+				<div class="card-header">
+					<h3>Configuration</h3>
+				</div>
+				<div class="card-body">
+					<!-- Channel Selection -->
+					<div class="form-group">
+						<label for="channel_id">Welcome Channel *</label>
+						<select id="channel_id" name="channel_id" required>
+							<option value="">Select a channel</option>
+							<% channels.forEach(channel => { %>
+								<option value="<%= channel.id %>" <%= config && config.channel_id === channel.id ? 'selected' : '' %>>
+									#<%= channel.name %>
+								</option>
+							<% }) %>
+						</select>
+						<small class="form-help">Channel where welcome images will be sent</small>
+					</div>
+
+					<!-- Template Selection -->
+					<div class="form-group">
+						<label>Template</label>
+						<div class="template-grid">
+							<% builtInTemplates.forEach(template => { %>
+								<div class="template-card">
+									<input type="radio" 
+										id="template_<%= template.id %>" 
+										name="template_id" 
+										value="<%= template.id %>"
+										<%= config && config.template_id === template.id ? 'checked' : '' %>
+										<%= !config && template.id === 'default' ? 'checked' : '' %>>
+									<label for="template_<%= template.id %>">
+										<img src="<%= template.preview %>" alt="<%= template.name %>" loading="lazy">
+										<span class="template-name"><%= template.name %></span>
+									</label>
+								</div>
+							<% }) %>
+						</div>
+					</div>
+
+					<!-- Background Options -->
+					<div class="form-group">
+						<label>Background Type</label>
+						<div class="radio-group">
+							<label class="radio-inline">
+								<input type="radio" name="background_type" value="builtin" 
+									<%= !config || config.background?.type === 'builtin' ? 'checked' : '' %>>
+								Built-in Template
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="background_type" value="color"
+									<%= config && config.background?.type === 'color' ? 'checked' : '' %>>
+								Solid Color
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="background_type" value="custom"
+									<%= config && config.background?.type === 'custom' ? 'checked' : '' %>
+									<%= tier === 'free' ? 'disabled' : '' %>>
+								Custom Image <%= tier === 'free' ? '(Tier 1+)' : '' %>
+							</label>
+						</div>
+					</div>
+
+					<!-- Color Picker (shown when color is selected) -->
+					<div class="form-group" id="colorPicker" style="display: none;">
+						<label for="background_value">Background Color</label>
+						<input type="color" id="background_value" name="background_value" 
+							value="<%= config?.background?.value || '#7289DA' %>">
+					</div>
+
+					<!-- Custom Upload Section -->
+					<% if (tier !== 'free') { %>
+						<div class="form-group" id="customUpload" style="display: none;">
+							<label>Custom Background</label>
+							<div class="upload-area">
+								<input type="file" id="backgroundFile" accept="image/png,image/jpeg">
+								<div class="upload-info">
+									<p>📷 Upload a custom background image</p>
+									<p class="text-muted">Max 5MB • PNG or JPG • 1024x450px recommended</p>
+									<% if (tier === 'starter') { %>
+										<p class="text-warning">⚠️ Tier 1: Limited to 1 custom background</p>
+									<% } %>
+								</div>
+							</div>
+						</div>
+					<% } %>
+
+					<!-- Text Configuration -->
+					<div class="form-group">
+						<label for="text_template">Welcome Text</label>
+						<input type="text" id="text_template" name="text_template" 
+							value="<%= config?.text?.template || 'Welcome {username}!' %>"
+							placeholder="Welcome {username}!">
+						<small class="form-help">
+							Variables: {username}, {tag}, {server}, {memberCount}
+						</small>
+					</div>
+
+					<div class="form-row">
+						<div class="form-group">
+							<label for="text_size">Text Size</label>
+							<input type="number" id="text_size" name="text_size" 
+								value="<%= config?.text?.size || 48 %>" min="12" max="120">
+						</div>
+						<div class="form-group">
+							<label for="text_color">Text Color</label>
+							<input type="color" id="text_color" name="text_color" 
+								value="<%= config?.text?.color || '#FFFFFF' %>">
+						</div>
+					</div>
+
+					<!-- Subtitle Configuration -->
+					<div class="form-group">
+						<label for="subtitle_template">Subtitle Text</label>
+						<input type="text" id="subtitle_template" name="subtitle_template" 
+							value="<%= config?.subtitle?.template || 'Member #{memberCount}' %>"
+							placeholder="Member #{memberCount}">
+					</div>
+
+					<!-- Avatar Configuration -->
+					<div class="form-group">
+						<label>
+							<input type="checkbox" name="avatar_enabled" value="true"
+								<%= !config || config.avatar?.enabled !== false ? 'checked' : '' %>>
+							Show Avatar
+						</label>
+					</div>
+
+					<div id="avatarSettings" style="<%= config && config.avatar?.enabled === false ? 'display:none' : '' %>">
+						<div class="form-row">
+							<div class="form-group">
+								<label for="avatar_size">Avatar Size (px)</label>
+								<input type="number" id="avatar_size" name="avatar_size" 
+									value="<%= config?.avatar?.size || 150 %>" min="50" max="300">
+							</div>
+							<div class="form-group">
+								<label for="avatar_x">Position X (%)</label>
+								<input type="number" id="avatar_x" name="avatar_x" 
+									value="<%= config?.avatar?.x || 50 %>" min="0" max="100">
+							</div>
+							<div class="form-group">
+								<label for="avatar_y">Position Y (%)</label>
+								<input type="number" id="avatar_y" name="avatar_y" 
+									value="<%= config?.avatar?.y || 30 %>" min="0" max="100">
+							</div>
+						</div>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary">💾 Save Configuration</button>
+						<button type="button" id="testBtn" class="btn btn-secondary">🔍 Generate Test Image</button>
+						<a href="https://skynetbot.net/wiki/Welcome-Images" target="_blank" class="btn btn-link">
+							📚 Documentation
+						</a>
+					</div>
+				</div>
+			</form>
+
+			<!-- Tier Info -->
+			<div class="card info-card">
+				<div class="card-header">
+					<h3>💎 Tier Limits</h3>
+				</div>
+				<div class="card-body">
+					<table class="tier-table">
+						<thead>
+							<tr>
+								<th>Tier</th>
+								<th>Templates</th>
+								<th>Custom Uploads</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="<%= tier === 'free' ? 'active' : '' %>">
+								<td>Free</td>
+								<td>3 templates</td>
+								<td>❌ Not available</td>
+							</tr>
+							<tr class="<%= tier === 'starter' ? 'active' : '' %>">
+								<td>Tier 1 (Starter)</td>
+								<td>10 templates</td>
+								<td>1 upload</td>
+							</tr>
+							<tr class="<%= tier === 'premium' ? 'active' : '' %>">
+								<td>Tier 2 (Premium)</td>
+								<td>Unlimited</td>
+								<td>Unlimited</td>
+							</tr>
+						</tbody>
+					</table>
+					<% if (tier === 'free') { %>
+						<p class="text-center mt-3">
+							<a href="/premium" class="btn btn-premium">🚀 Upgrade for Custom Backgrounds</a>
+						</p>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Test Image Modal -->
+<div id="testModal" class="modal" style="display: none;">
+	<div class="modal-content">
+		<span class="close">&times;</span>
+		<h2>🖼️ Test Welcome Image</h2>
+		<div id="testImageContainer"></div>
+	</div>
+</div>
+
+<style>
+.template-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+
+.template-card {
+	position: relative;
+}
+
+.template-card input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+}
+
+.template-card label {
+	display: block;
+	border: 2px solid #ddd;
+	border-radius: 8px;
+	overflow: hidden;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.template-card input:checked + label {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
+}
+
+.template-card img {
+	width: 100%;
+	height: 120px;
+	object-fit: cover;
+}
+
+.template-name {
+	display: block;
+	padding: 0.5rem;
+	text-align: center;
+	background: #f5f5f5;
+	font-size: 0.875rem;
+}
+
+.upload-area {
+	border: 2px dashed #ddd;
+	border-radius: 8px;
+	padding: 2rem;
+	text-align: center;
+	transition: border-color 0.2s;
+}
+
+.upload-area:hover {
+	border-color: var(--color-primary);
+}
+
+.status-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+}
+
+.status-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.status-item .label {
+	font-weight: 600;
+	color: #666;
+	font-size: 0.875rem;
+}
+
+.status-item .value {
+	font-size: 1rem;
+}
+
+.tier-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.tier-table th,
+.tier-table td {
+	padding: 0.75rem;
+	text-align: left;
+	border-bottom: 1px solid #eee;
+}
+
+.tier-table tr.active {
+	background: #f0f7ff;
+	font-weight: 600;
+}
+
+.modal {
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+	background-color: #fff;
+	margin: 5% auto;
+	padding: 2rem;
+	border-radius: 8px;
+	width: 80%;
+	max-width: 600px;
+}
+
+.close {
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const form = document.getElementById('welcomeImageForm');
+	const testBtn = document.getElementById('testBtn');
+	const bgTypeRadios = document.querySelectorAll('input[name="background_type"]');
+	const colorPicker = document.getElementById('colorPicker');
+	const customUpload = document.getElementById('customUpload');
+	const avatarEnabledCheckbox = document.querySelector('input[name="avatar_enabled"]');
+	const avatarSettings = document.getElementById('avatarSettings');
+
+	// Show/hide background options
+	bgTypeRadios.forEach(radio => {
+		radio.addEventListener('change', () => {
+			colorPicker.style.display = radio.value === 'color' ? 'block' : 'none';
+			if (customUpload) {
+				customUpload.style.display = radio.value === 'custom' ? 'block' : 'none';
+			}
+		});
+	});
+
+	// Trigger initial state
+	document.querySelector('input[name="background_type"]:checked')?.dispatchEvent(new Event('change'));
+
+	// Avatar settings toggle
+	if (avatarEnabledCheckbox) {
+		avatarEnabledCheckbox.addEventListener('change', () => {
+			avatarSettings.style.display = avatarEnabledCheckbox.checked ? 'block' : 'none';
+		});
+	}
+
+	// Form submission
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const formData = new FormData(form);
+		const enabled = document.getElementById('enabled').checked;
+		formData.append('enabled', enabled);
+
+		try {
+			const response = await fetch(window.location.pathname, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(Object.fromEntries(formData)),
+			});
+
+			const data = await response.json();
+			if (data.success) {
+				SkynetUtil.showNotification('✅ Configuration saved successfully!', 'success');
+				setTimeout(() => window.location.reload(), 1000);
+			} else {
+				SkynetUtil.showNotification(`❌ ${data.error}`, 'error');
+			}
+		} catch (err) {
+			SkynetUtil.showNotification('❌ Failed to save configuration', 'error');
+		}
+	});
+
+	// Test image generation
+	testBtn.addEventListener('click', async () => {
+		try {
+			const response = await fetch(`${window.location.pathname}/test`, {
+				method: 'POST',
+			});
+
+			if (response.ok) {
+				const blob = await response.blob();
+				const url = URL.createObjectURL(blob);
+				
+				const modal = document.getElementById('testModal');
+				const container = document.getElementById('testImageContainer');
+				container.innerHTML = `<img src="${url}" alt="Test Welcome Image" style="max-width: 100%; border-radius: 8px;">`;
+				modal.style.display = 'block';
+			} else {
+				const data = await response.json();
+				SkynetUtil.showNotification(`❌ ${data.error}`, 'error');
+			}
+		} catch (err) {
+			SkynetUtil.showNotification('❌ Failed to generate test image', 'error');
+		}
+	});
+
+	// Close modal
+	document.querySelector('.close')?.addEventListener('click', () => {
+		document.getElementById('testModal').style.display = 'none';
+	});
+
+	window.addEventListener('click', (e) => {
+		const modal = document.getElementById('testModal');
+		if (e.target === modal) {
+			modal.style.display = 'none';
+		}
+	});
+});
+</script>
+
+<%- include('../../partials/footer') %>

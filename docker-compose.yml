@@ -79,34 +79,18 @@ services:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/prometheus-entrypoint.sh:/prometheus-entrypoint.sh:ro
       - ./data/prometheus:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=30d'
-      - '--web.enable-lifecycle'
+    environment:
+      - GRAFANA_PROMETHEUS_URL=${GRAFANA_PROMETHEUS_URL}
+      - GRAFANA_PROMETHEUS_USERNAME=${GRAFANA_PROMETHEUS_USERNAME}
+      - GRAFANA_PROMETHEUS_API_KEY=${GRAFANA_PROMETHEUS_API_KEY}
+    entrypoint: ["/bin/sh", "/prometheus-entrypoint.sh"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  grafana:
-    image: grafana/grafana:latest
-    container_name: skynetbot-grafana
-    restart: always
-    security_opt:
-      - apparmor:unconfined
-    ports:
-      - "3002:3000"
-    volumes:
-      - ./data/grafana:/var/lib/grafana
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-    environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
-      - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL:-http://localhost:3002}
-      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
-    depends_on:
-      - prometheus
+  # Grafana removed - using Grafana Cloud (https://scarecr0w12.grafana.net/)
+  # Local data preserved in ./data/grafana/ for backup
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -125,6 +109,35 @@ services:
       - '--path.sysfs=/host/sys'
       - '--path.rootfs=/rootfs'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      # Disable unnecessary collectors to reduce metric cardinality
+      - '--no-collector.arp'
+      - '--no-collector.bcache'
+      - '--no-collector.bonding'
+      - '--no-collector.btrfs'
+      - '--no-collector.conntrack'
+      - '--no-collector.edac'
+      - '--no-collector.entropy'
+      - '--no-collector.fibrechannel'
+      - '--no-collector.hwmon'
+      - '--no-collector.infiniband'
+      - '--no-collector.ipvs'
+      - '--no-collector.mdadm'
+      - '--no-collector.nfs'
+      - '--no-collector.nfsd'
+      - '--no-collector.nvme'
+      - '--no-collector.powersupplyclass'
+      - '--no-collector.pressure'
+      - '--no-collector.rapl'
+      - '--no-collector.schedstat'
+      - '--no-collector.sockstat'
+      - '--no-collector.softnet'
+      - '--no-collector.tapestats'
+      - '--no-collector.textfile'
+      - '--no-collector.thermal_zone'
+      - '--no-collector.timex'
+      - '--no-collector.udp_queues'
+      - '--no-collector.xfs'
+      - '--no-collector.zfs'
 
   mariadb-exporter:
     image: prom/mysqld-exporter:latest
@@ -177,3 +190,27 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+
+  # ============================================
+  # Promtail - Log Shipping to Grafana Cloud
+  # ============================================
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: skynetbot-promtail
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "9080:9080"
+    volumes:
+      - ./logs:/var/log/skynetbot:ro
+      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yml:ro
+      - ./data/promtail:/tmp
+    environment:
+      - GRAFANA_LOKI_URL=${GRAFANA_LOKI_URL}
+      - GRAFANA_LOKI_USERNAME=${GRAFANA_LOKI_USERNAME}
+      - GRAFANA_LOKI_API_KEY=${GRAFANA_LOKI_API_KEY}
+    command: -config.file=/etc/promtail/config.yml -config.expand-env=true
+    depends_on:
+      - bot

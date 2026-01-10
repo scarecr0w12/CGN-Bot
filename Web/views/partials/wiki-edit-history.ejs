@@ -15,7 +15,7 @@ del {
 <% pageData.updates.forEach((revision, i) => { %>
     <article class="media">
         <div class="media-left">
-            <img class="image is-48x48" src="<%= revision.responsibleUser.avatar %>" alt="<%= revision.responsibleUser.id %>">
+            <img class="image is-48x48" src="<%= revision.responsibleUser.avatar %>" alt="<%= revision.responsibleUser.id %>" width="48" height="48" loading="lazy">
         </div>
         <div class="media-content">
             <p class="title is-4">@<%= revision.responsibleUser.name %></p>

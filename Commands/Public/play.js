@@ -1,18 +1,6 @@
-const TierManager = require("../../Modules/TierManager");
 const { ChannelType } = require("discord.js");
 
 module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg, commandData) => {
-	const hasTier2 = await TierManager.hasMinimumTierLevel(msg.guild.id, 2);
-	if (!hasTier2) {
-		return msg.send({
-			embeds: [{
-				color: Colors.ERROR,
-				title: "🔒 Premium Feature",
-				description: "Music commands require **Tier 2 (Premium)** subscription.\nUpgrade your server to unlock music playback!",
-			}],
-		});
-	}
-
 	if (!msg.suffix) {
 		return msg.sendInvalidUsage(commandData, "Please provide a song name or URL to play.");
 	}

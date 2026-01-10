@@ -103,6 +103,19 @@ class Ready extends BaseEvent {
 				.catch(err => logger.warn(`Failed to prune old server documents -_-`, {}, err));
 		}
 		await this.setBotActivity();
+		await this.initializeBotCustomization();
+	}
+
+	// Initialize Bot Customization Manager
+	async initializeBotCustomization () {
+		try {
+			if (this.client.botCustomization) {
+				await this.client.botCustomization.initialize();
+				logger.debug("BotCustomizationManager initialized and ready");
+			}
+		} catch (error) {
+			logger.error(`Failed to initialize BotCustomizationManager: ${error.message}`);
+		}
 	}
 
 	// Set bot's "now playing" activity

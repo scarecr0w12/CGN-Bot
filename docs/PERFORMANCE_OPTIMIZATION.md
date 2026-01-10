@@ -148,13 +148,15 @@ if (acceptsWebP && req.path.startsWith("/img")) {
 ### Lazy Loading
 **Location:** `Web/public/js/lazy-load.js`
 
-Intersection Observer-based lazy loading:
+**IMPORTANT:** Most images now use native `loading="lazy"` attribute instead of the custom lazy loader. See `docs/IMAGE_OPTIMIZATION.md` for complete image optimization guide.
+
+Intersection Observer-based lazy loading (for advanced use cases):
 
 ```html
-<!-- Instead of: -->
-<img src="/static/img/large-image.jpg" alt="Description">
+<!-- Preferred method (native): -->
+<img src="/static/img/large-image.jpg" alt="Description" width="800" height="600" loading="lazy">
 
-<!-- Use: -->
+<!-- Advanced method (custom loader): -->
 <img data-src="/static/img/large-image.jpg" alt="Description" class="lazy">
 ```
 
@@ -168,6 +170,8 @@ Intersection Observer-based lazy loading:
 - Reduces initial page weight by 40-70%
 - Improves Time to Interactive (TTI) by 1-3 seconds
 - Reduces bandwidth for users who don't scroll
+
+**See also:** `docs/IMAGE_OPTIMIZATION.md` for comprehensive image optimization guidelines
 
 ---
 

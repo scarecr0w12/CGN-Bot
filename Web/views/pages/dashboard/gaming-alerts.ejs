@@ -1,0 +1,366 @@
+<%- include('../../partials/head', { title }) %>
+<%- include('../../partials/header') %>
+
+<div class="dashboard-container">
+	<%- include('../../partials/admin-menu') %>
+	
+	<div class="dashboard-content">
+		<div class="dashboard-header">
+			<h1>🎮 Gaming Alerts</h1>
+			<p>Get notified about free games and sales from Epic Games Store and Steam</p>
+		</div>
+
+		<div class="content-section">
+			<!-- Status Card -->
+			<div class="card">
+				<div class="card-header">
+					<h3>Current Status</h3>
+					<div class="toggle-switch">
+						<input type="checkbox" id="enabled" name="enabled" <%= config && config.enabled ? 'checked' : '' %>>
+						<label for="enabled">Enabled</label>
+					</div>
+				</div>
+				<div class="card-body">
+					<% if (config && config.enabled) { %>
+						<div class="status-grid">
+							<div class="status-item">
+								<span class="label">Channel:</span>
+								<span class="value">#<%= channels.find(c => c.id === config.channel_id)?.name || 'Unknown' %></span>
+							</div>
+							<div class="status-item">
+								<span class="label">Min Discount:</span>
+								<span class="value"><%= config.min_discount %>%</span>
+							</div>
+						</div>
+					<% } else { %>
+						<p class="text-muted">Gaming alerts not configured yet. Fill in the form below to get started!</p>
+					<% } %>
+				</div>
+			</div>
+
+			<!-- Configuration Form -->
+			<form id="gamingAlertsForm" class="card">
+				<div class="card-header">
+					<h3>Configuration</h3>
+				</div>
+				<div class="card-body">
+					<!-- Channel Selection -->
+					<div class="form-group">
+						<label for="channel_id">Alert Channel *</label>
+						<select id="channel_id" name="channel_id" required>
+							<option value="">Select a channel</option>
+							<% channels.forEach(channel => { %>
+								<option value="<%= channel.id %>" <%= config && config.channel_id === channel.id ? 'selected' : '' %>>
+									#<%= channel.name %>
+								</option>
+							<% }) %>
+						</select>
+						<small class="form-help">Channel where gaming alerts will be sent</small>
+					</div>
+
+					<!-- Alert Types -->
+					<div class="form-group">
+						<label>Alert Types</label>
+						<div class="checkbox-group">
+							<label>
+								<input type="checkbox" name="epic_free_games" value="true"
+									<%= !config || config.epic_free_games ? 'checked' : '' %>>
+								Epic Games Free Games
+							</label>
+							<label>
+								<input type="checkbox" name="steam_free_games" value="true"
+									<%= !config || config.steam_free_games ? 'checked' : '' %>>
+								Steam Free Games
+							</label>
+							<label>
+								<input type="checkbox" name="steam_sales" value="true"
+									<%= !config || config.steam_sales ? 'checked' : '' %>>
+								Steam Sales
+							</label>
+						</div>
+					</div>
+
+					<!-- Filters -->
+					<div class="form-row">
+						<div class="form-group">
+							<label for="min_discount">Minimum Discount (%)</label>
+							<input type="number" id="min_discount" name="min_discount" 
+								value="<%= config?.min_discount || 50 %>" min="0" max="100">
+							<small class="form-help">Only alert for sales with this discount or higher</small>
+						</div>
+						<div class="form-group">
+							<label for="max_price">Maximum Price ($)</label>
+							<input type="number" id="max_price" name="max_price" 
+								value="<%= config?.price_filters?.max_price || '' %>" min="0" step="0.01">
+							<small class="form-help">Leave empty for no limit</small>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label>
+							<input type="checkbox" name="free_only" value="true"
+								<%= config?.price_filters?.free_only ? 'checked' : '' %>>
+							Free Games Only (100% off)
+						</label>
+					</div>
+
+					<!-- Notifications -->
+					<div class="form-group">
+						<label for="role_mention">Role to Mention (Optional)</label>
+						<select id="role_mention" name="role_mention">
+							<option value="">No role mention</option>
+							<% roles.forEach(role => { %>
+								<option value="<%= role.id %>" <%= config && config.role_mention === role.id ? 'selected' : '' %>>
+									@<%= role.name %>
+								</option>
+							<% }) %>
+						</select>
+						<small class="form-help">Role to mention in gaming alert messages</small>
+					</div>
+
+					<div class="form-group">
+						<label for="custom_message">Custom Message (Optional)</label>
+						<input type="text" id="custom_message" name="custom_message" 
+							value="<%= config?.custom_message || '' %>"
+							placeholder="🎁 New deal alert!">
+						<small class="form-help">Custom message to include in alerts</small>
+					</div>
+
+					<!-- Steam Tags Filter -->
+					<div class="form-group">
+						<label for="steam_tags">Steam Tags Filter (Optional)</label>
+						<input type="text" id="steam_tags" name="steam_tags" 
+							value="<%= config?.steam_tags?.join(', ') || '' %>"
+							placeholder="Action, RPG, Strategy">
+						<small class="form-help">Comma-separated list of game genres/tags to filter (coming soon)</small>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary">💾 Save Configuration</button>
+						<button type="button" id="testBtn" class="btn btn-secondary">🧪 Send Test Alert</button>
+						<a href="https://skynetbot.net/wiki/Gaming-Alerts" target="_blank" class="btn btn-link">
+							📚 Documentation
+						</a>
+					</div>
+				</div>
+			</form>
+
+			<!-- Recent Alerts -->
+			<div class="card">
+				<div class="card-header">
+					<h3>📜 Recent Alerts</h3>
+					<button id="refreshHistoryBtn" class="btn btn-sm btn-secondary">🔄 Refresh</button>
+				</div>
+				<div class="card-body">
+					<div id="alertHistory">
+						<p class="text-muted">Loading alert history...</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Tier Info -->
+			<div class="card info-card">
+				<div class="card-header">
+					<h3>ℹ️ About Gaming Alerts</h3>
+				</div>
+				<div class="card-body">
+					<p><strong>Epic Games Store:</strong> Checks for currently free games every hour.</p>
+					<p><strong>Steam:</strong> Monitors featured deals and specials for significant discounts.</p>
+					<p class="mt-3">
+						Gaming alerts are available on all tiers. Upgrade for more customization options and priority support!
+					</p>
+					<% if (tier === 'free') { %>
+						<p class="text-center mt-3">
+							<a href="/premium" class="btn btn-premium">🚀 Upgrade for More Features</a>
+						</p>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.status-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+}
+
+.status-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.status-item .label {
+	font-weight: 600;
+	color: #666;
+	font-size: 0.875rem;
+}
+
+.status-item .value {
+	font-size: 1rem;
+}
+
+.checkbox-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.checkbox-group label {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+#alertHistory {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.alert-item {
+	padding: 1rem;
+	border-bottom: 1px solid #eee;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.alert-item:last-child {
+	border-bottom: none;
+}
+
+.alert-info {
+	flex: 1;
+}
+
+.alert-badge {
+	padding: 0.25rem 0.75rem;
+	border-radius: 4px;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.alert-badge.epic {
+	background: #000;
+	color: #fff;
+}
+
+.alert-badge.steam {
+	background: #1b2838;
+	color: #66c0f4;
+}
+
+.alert-badge.free {
+	background: #2ecc71;
+	color: #fff;
+}
+
+.alert-badge.sale {
+	background: #e74c3c;
+	color: #fff;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const form = document.getElementById('gamingAlertsForm');
+	const testBtn = document.getElementById('testBtn');
+	const refreshHistoryBtn = document.getElementById('refreshHistoryBtn');
+
+	// Load history on page load
+	loadAlertHistory();
+
+	// Form submission
+	form.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		const formData = new FormData(form);
+		const enabled = document.getElementById('enabled').checked;
+		formData.append('enabled', enabled);
+
+		try {
+			const response = await fetch(window.location.pathname, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(Object.fromEntries(formData)),
+			});
+
+			const data = await response.json();
+			if (data.success) {
+				SkynetUtil.showNotification('✅ Configuration saved successfully!', 'success');
+				setTimeout(() => window.location.reload(), 1000);
+			} else {
+				SkynetUtil.showNotification(`❌ ${data.error}`, 'error');
+			}
+		} catch (err) {
+			SkynetUtil.showNotification('❌ Failed to save configuration', 'error');
+		}
+	});
+
+	// Test alert
+	testBtn.addEventListener('click', async () => {
+		try {
+			testBtn.disabled = true;
+			testBtn.textContent = '⏳ Sending...';
+
+			const response = await fetch(`${window.location.pathname}/test`, {
+				method: 'POST',
+			});
+
+			const data = await response.json();
+			if (data.success) {
+				SkynetUtil.showNotification(`✅ Test alert sent! (${data.type}: ${data.game})`, 'success');
+			} else {
+				SkynetUtil.showNotification(`❌ ${data.error}`, 'error');
+			}
+		} catch (err) {
+			SkynetUtil.showNotification('❌ Failed to send test alert', 'error');
+		} finally {
+			testBtn.disabled = false;
+			testBtn.textContent = '🧪 Send Test Alert';
+		}
+	});
+
+	// Refresh history
+	refreshHistoryBtn.addEventListener('click', loadAlertHistory);
+
+	// Load alert history
+	async function loadAlertHistory() {
+		try {
+			const response = await fetch(`${window.location.pathname}/history?limit=20`);
+			const data = await response.json();
+
+			const container = document.getElementById('alertHistory');
+
+			if (!data.success || data.history.length === 0) {
+				container.innerHTML = '<p class="text-muted">No alerts sent yet</p>';
+				return;
+			}
+
+			container.innerHTML = data.history.map(alert => `
+				<div class="alert-item">
+					<div class="alert-info">
+						<strong>${alert.game_title}</strong>
+						<div class="text-muted" style="font-size: 0.875rem;">
+							${new Date(alert.notified_at).toLocaleString()}
+							${alert.discount_percentage ? ` • ${alert.discount_percentage}% off` : ''}
+							${alert.sale_price ? ` • $${alert.sale_price}` : ''}
+						</div>
+					</div>
+					<div style="display: flex; gap: 0.5rem;">
+						<span class="alert-badge ${alert.store}">${alert.store.toUpperCase()}</span>
+						<span class="alert-badge ${alert.alert_type}">${alert.alert_type.toUpperCase()}</span>
+					</div>
+				</div>
+			`).join('');
+		} catch (err) {
+			document.getElementById('alertHistory').innerHTML = '<p class="text-danger">Failed to load history</p>';
+		}
+	}
+});
+</script>
+
+<%- include('../../partials/footer') %>

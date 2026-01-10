@@ -5,6 +5,7 @@ const DB = require("../../Database/Driver");
 const IsolatedSandbox = require("./API/IsolatedSandbox");
 const EventsHandler = require("./EventsHandler");
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
+const { getInstance: getExtensionStorage } = require("../../Modules/ExtensionStorage");
 
 /**
  * Manages all operations of extensions on the Shard Worker.
@@ -138,13 +139,19 @@ class ExtensionManager extends DJSClient {
 	}
 
 	/**
-	 * Fetches the code associated with a versionDocument from the FS.
-	 * @param {Object} versionDocument
+	 * Fetch the code for an extension.
+	 * @param {object} versionDocument
 	 * @returns {Promise<string>}
 	 */
-	fetchExtensionCode (versionDocument) {
-		const basePath = `${__dirname}/../../extensions/${versionDocument.code_id}`;
-		return fs.readFile(`${basePath}.skyext`, "utf8").catch(() => fs.readFile(`${basePath}.gabext`, "utf8"));
+	async fetchExtensionCode (versionDocument) {
+		const storage = getExtensionStorage();
+		try {
+			return await storage.load(versionDocument.code_id);
+		} catch (err) {
+			// Fallback to legacy .gabext files if they exist
+			const basePath = `${__dirname}/../../extensions/${versionDocument.code_id}`;
+			return fs.readFile(`${basePath}.gabext`, "utf8");
+		}
 	}
 
 	/**

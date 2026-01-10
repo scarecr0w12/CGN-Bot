@@ -87,6 +87,10 @@ exports.initialize = async () => {
 		SocialAlerts,
 		Forms,
 		FormResponses,
+		WelcomeImages,
+		WelcomeImageUploads,
+		GamingAlerts,
+		GamingAlertHistory,
 	] = [
 		new ModelSQL(getPool, "servers", require("./Schemas/serverSchema")),
 		new ModelSQL(getPool, "users", require("./Schemas/userSchema")),
@@ -118,6 +122,10 @@ exports.initialize = async () => {
 		new ModelSQL(getPool, "social_alerts", require("./Schemas/socialAlertSchema")),
 		new ModelSQL(getPool, "forms", require("./Schemas/formSchema")),
 		new ModelSQL(getPool, "form_responses", require("./Schemas/formResponseSchema")),
+		new ModelSQL(getPool, "welcome_images", require("./Schemas/welcomeImageSchema")),
+		new ModelSQL(getPool, "welcome_image_uploads", require("./Schemas/welcomeImageSchema")),
+		new ModelSQL(getPool, "gaming_alerts", require("./Schemas/gamingAlertSchema")),
+		new ModelSQL(getPool, "gaming_alert_history", require("./Schemas/gamingAlertSchema")),
 	];
 
 	addToGlobal("Servers", Servers);
@@ -149,6 +157,10 @@ exports.initialize = async () => {
 	addToGlobal("SocialAlerts", SocialAlerts);
 	addToGlobal("Forms", Forms);
 	addToGlobal("FormResponses", FormResponses);
+	addToGlobal("WelcomeImages", WelcomeImages);
+	addToGlobal("WelcomeImageUploads", WelcomeImageUploads);
+	addToGlobal("GamingAlerts", GamingAlerts);
+	addToGlobal("GamingAlertHistory", GamingAlertHistory);
 	addToGlobal("Client", pool);
 	addToGlobal("Database", {
 		Servers, servers: Servers,
@@ -181,6 +193,10 @@ exports.initialize = async () => {
 		SocialAlerts, socialAlerts: SocialAlerts,
 		Forms, forms: Forms,
 		FormResponses, formResponses: FormResponses,
+		WelcomeImages, welcomeImages: WelcomeImages,
+		WelcomeImageUploads, welcomeImageUploads: WelcomeImageUploads,
+		GamingAlerts, gamingAlerts: GamingAlerts,
+		GamingAlertHistory, gamingAlertHistory: GamingAlertHistory,
 		client: pool,
 		pool,
 	});

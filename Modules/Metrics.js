@@ -9,9 +9,12 @@ const client = require("prom-client");
 const register = new client.Registry();
 
 // Add default metrics (CPU, memory, event loop, etc.)
+// Reduced set to minimize cardinality for Grafana Cloud free tier
 client.collectDefaultMetrics({
 	register,
 	prefix: "skynetbot_",
+	// Only collect essential default metrics
+	labels: { app: "skynetbot" },
 });
 
 // ============================================

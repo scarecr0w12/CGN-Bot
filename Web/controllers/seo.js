@@ -11,6 +11,31 @@ const robotsTxt = async (req, res) => {
 	const robots = `# Skynet Discord Bot - Robots.txt
 # https://www.robotstxt.org/
 
+# AI Search Engines & LLM Crawlers
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: Claude-Web
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: anthropic-ai
+User-agent: Omgilibot
+Allow: /
+Crawl-delay: 1
+
+# Traditional Search Engines
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Slurp
+User-agent: DuckDuckBot
+User-agent: Baiduspider
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 1
+
+# All Other Bots
 User-agent: *
 Allow: /
 
@@ -48,6 +73,7 @@ const sitemapXml = async (req, res) => {
 	// Static pages with their priority and change frequency
 	const staticPages = [
 		{ url: "/", priority: "1.0", changefreq: "daily" },
+		{ url: "/faq", priority: "0.9", changefreq: "weekly" },
 		{ url: "/extensions/gallery", priority: "0.9", changefreq: "daily" },
 		{ url: "/activity/servers", priority: "0.8", changefreq: "hourly" },
 		{ url: "/activity/users", priority: "0.7", changefreq: "hourly" },
@@ -57,6 +83,7 @@ const sitemapXml = async (req, res) => {
 		{ url: "/status", priority: "0.6", changefreq: "always" },
 		{ url: "/donate", priority: "0.5", changefreq: "monthly" },
 		{ url: "/membership", priority: "0.6", changefreq: "monthly" },
+		{ url: "/vote", priority: "0.7", changefreq: "weekly" },
 		{ url: "/add", priority: "0.9", changefreq: "monthly" },
 	];
 

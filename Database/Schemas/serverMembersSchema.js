@@ -1,5 +1,7 @@
-const { ObjectId } = require("mongodb");
 const Schema = require("../Schema");
+
+// Simple UUID generator for MariaDB
+const generateId = () => Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
 
 module.exports = Schema.Map({
 	_id: {
@@ -34,7 +36,7 @@ module.exports = Schema.Map({
 	strikes: [new Schema({
 		_id: {
 			type: String,
-			default: () => new ObjectId().toString(),
+			default: generateId,
 		},
 		admin: {
 			type: String,

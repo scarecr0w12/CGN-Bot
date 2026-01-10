@@ -102,7 +102,7 @@
 								<% configData.strikes.forEach(strike => { %>
 								<tr>
 									<td>
-										<img class="image is-24x24" src="<%= strike.avatar %>" alt="<%= strike.id %>">
+										<img class="image is-24x24" src="<%= strike.avatar %>" alt="<%= strike.id %>" width="24" height="24" loading="lazy">
 									</td>
 									<td>
 										<a href="/profile/<%= strike.id %>" style="color: inherit;"><%= strike.name %></a>
@@ -150,7 +150,7 @@
 												<% strike.strikes.forEach(subStrike => { %>
 												<article class="media">
 													<div class="media-left">
-														<img class="image is-64x64" src="<%= subStrike.creator.avatar %>" alt="<%= subStrike.creator.id %>">
+														<img class="image is-64x64" src="<%= subStrike.creator.avatar %>" alt="<%= subStrike.creator.id %>" width="64" height="64" loading="lazy">
 													</div>
 													<div class="media-content">
 														<div class="content">

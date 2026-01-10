@@ -143,6 +143,15 @@ controllers.moderation = async (req, { res }) => {
 		modlog: {
 			isEnabled: serverDocument.modlog.isEnabled,
 			channel_id: serverDocument.modlog.channel_id,
+			events: serverDocument.modlog.events || {
+				strikes: true,
+				kicks: true,
+				bans: true,
+				mutes: true,
+				filter_violations: true,
+				raid_alerts: true,
+				alt_detection: true,
+			},
 		},
 	});
 	res.render();
@@ -164,6 +173,15 @@ controllers.moderation.post = async (req, res) => {
 	});
 	serverQueryDocument.set("modlog.isEnabled", req.body["modlog-isEnabled"] === "on");
 	if (req.body["modlog-channel_id"]) serverQueryDocument.set("modlog.channel_id", req.body["modlog-channel_id"] || null);
+
+	// Update modlog event type settings
+	serverQueryDocument.set("modlog.events.strikes", req.body["modlog-events-strikes"] === "on");
+	serverQueryDocument.set("modlog.events.kicks", req.body["modlog-events-kicks"] === "on");
+	serverQueryDocument.set("modlog.events.bans", req.body["modlog-events-bans"] === "on");
+	serverQueryDocument.set("modlog.events.mutes", req.body["modlog-events-mutes"] === "on");
+	serverQueryDocument.set("modlog.events.filter_violations", req.body["modlog-events-filter_violations"] === "on");
+	serverQueryDocument.set("modlog.events.raid_alerts", req.body["modlog-events-raid_alerts"] === "on");
+	serverQueryDocument.set("modlog.events.alt_detection", req.body["modlog-events-alt_detection"] === "on");
 
 	save(req, res, true);
 };

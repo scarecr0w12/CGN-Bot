@@ -41,10 +41,44 @@ module.exports = class ModLog {
 		return info.join("\n");
 	}
 
+	/**
+	 * Map action types to event settings
+	 * @param {string} type - The modlog entry type
+	 * @returns {string|null} The event setting key, or null if always logged
+	 */
+	static getEventSettingKey (type) {
+		const mapping = {
+			Strike: "strikes",
+			"Strike Removed": "strikes",
+			"Strikes Cleared": "strikes",
+			Kick: "kicks",
+			Ban: "bans",
+			"Temp Ban": "bans",
+			Unban: "bans",
+			Softban: "bans",
+			Mute: "mutes",
+			"Temp Mute": "mutes",
+			Unmute: "mutes",
+			"Filter Violation": "filter_violations",
+			"Spam Detected": "filter_violations",
+			"Raid Detected": "raid_alerts",
+			"Kick (Alt Detection)": "alt_detection",
+			"Ban (Alt Detection)": "alt_detection",
+			Quarantine: "alt_detection",
+		};
+		return mapping[type] || null;
+	}
+
 	static async create (guild, type, member, creator, reason = null) {
 		const serverDocument = await Servers.findOne(guild.id);
 		const serverQueryDocument = serverDocument.query;
 		if (serverDocument && serverDocument.modlog.isEnabled && serverDocument.modlog.channel_id) {
+			// Check if this event type is enabled
+			const eventKey = ModLog.getEventSettingKey(type);
+			if (eventKey && !serverDocument.modlog.events[eventKey]) {
+				// Event type is disabled, don't log
+				return null;
+			}
 			const ch = guild.channels.cache.get(serverDocument.modlog.channel_id);
 			if (ch && ch.type === ChannelType.GuildText) {
 				let affectedUser;

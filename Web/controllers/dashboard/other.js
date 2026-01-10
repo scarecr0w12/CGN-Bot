@@ -256,11 +256,7 @@ controllers.extensions.post = async (req, { res }) => {
 			_id: id.toString(),
 			version: parseInt(req.body.v),
 			installed_by: installerUserId,
-			disabled_channel_ids: [],
-			keywords: [],
-			// Preserve extension runtime storage (and any per-extension settings stored there)
 			store: existingServerExtensionDocument && existingServerExtensionDocument.store ? existingServerExtensionDocument.store : {},
-			// Preserve last known status unless we are installing fresh
 			status: existingServerExtensionDocument && existingServerExtensionDocument.status ? existingServerExtensionDocument.status : { code: 0, description: "" },
 		};
 
@@ -268,10 +264,10 @@ controllers.extensions.post = async (req, { res }) => {
 			case "command":
 				serverExtensionDocument.key = req.body.key || versionDocument.key;
 				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
+				serverExtensionDocument.disabled_channel_ids = [];
 				Object.values(req.svr.channels).forEach(ch => {
 					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});
-				// Season extension: store per-server toggle for whether to reset points on season reset
 				if (versionDocument.key === "season") {
 					serverExtensionDocument.store = serverExtensionDocument.store || {};
 					serverExtensionDocument.store.season_reset_points = req.body.season_reset_points === "on";
@@ -283,6 +279,7 @@ controllers.extensions.post = async (req, { res }) => {
 				break;
 			case "keyword":
 				serverExtensionDocument.admin_level = parseInt(req.body.adminLevel) || 0;
+				serverExtensionDocument.disabled_channel_ids = [];
 				Object.values(req.svr.channels).forEach(ch => {
 					if (!req.body[`enabled_channel_ids-${ch.id}`] && ch.type === ChannelType.GuildText) serverExtensionDocument.disabled_channel_ids.push(ch.id);
 				});

@@ -1,12 +1,24 @@
 global:
-  scrape_interval: 15s
-  evaluation_interval: 15s
+  scrape_interval: 60s
+  evaluation_interval: 60s
+
+# Remote write to Grafana Cloud
+remote_write:
+  - url: ${GRAFANA_PROMETHEUS_URL}
+    basic_auth:
+      username: ${GRAFANA_PROMETHEUS_USERNAME}
+      password: ${GRAFANA_PROMETHEUS_API_KEY}
 
 scrape_configs:
   # Prometheus self-monitoring
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+    metric_relabel_configs:
+      # Drop verbose Prometheus internal metrics
+      - source_labels: [__name__]
+        regex: 'prometheus_engine_.*|prometheus_rule_.*|prometheus_tsdb_.*'
+        action: drop
 
   # Node Exporter - Host system metrics
   - job_name: 'node-exporter'
@@ -16,20 +28,61 @@ scrape_configs:
       - source_labels: [__address__]
         target_label: instance
         replacement: 'skynetbot-host'
+    metric_relabel_configs:
+      # Drop per-CPU metrics (keep only aggregated)
+      - source_labels: [__name__, cpu]
+        regex: 'node_cpu_seconds_total;[0-9]+'
+        action: drop
+      # Drop detailed network metrics
+      - source_labels: [__name__]
+        regex: 'node_network_transmit_.*|node_network_receive_.*'
+        action: drop
+      # Keep only essential filesystem metrics
+      - source_labels: [__name__]
+        regex: 'node_filesystem_(avail|size|files).*'
+        action: keep
+        # This will be applied after other drops
 
   # SkynetBot Application metrics
   - job_name: 'skynetbot'
     static_configs:
       - targets: ['172.17.0.1:8080']
     metrics_path: '/metrics'
-    scrape_interval: 10s
+    scrape_interval: 30s  # Reduced from 10s to 30s
+    metric_relabel_configs:
+      # Drop high-cardinality command metrics (keep only totals)
+      - source_labels: [__name__, command]
+        regex: 'skynetbot_discord_commands_total;.*'
+        action: drop
+      # Keep aggregated command count without command labels
+      - source_labels: [__name__]
+        regex: 'skynetbot_discord_commands_total'
+        action: keep
+      # Drop detailed HTTP route metrics (keep only status codes)
+      - source_labels: [__name__, route]
+        regex: 'skynetbot_http_request.*_seconds.*'
+        action: drop
+      # Drop individual shard latency (keep only aggregates)
+      - source_labels: [__name__]
+        regex: 'skynetbot_discord_shard_(latency|heartbeat_latency)_ms'
+        action: drop
 
   # MariaDB Exporter - Database metrics
   - job_name: 'mariadb'
     static_configs:
       - targets: ['skynetbot-mariadb-exporter:9104']
+    metric_relabel_configs:
+      # Keep only critical MariaDB metrics
+      - source_labels: [__name__]
+        regex: 'mysql_(global_status_(connections|queries|slow_queries|threads_running|uptime)|global_variables_.*)'
+        action: keep
 
   # Redis Exporter - Cache metrics
   - job_name: 'redis'
     static_configs:
       - targets: ['skynetbot-redis-exporter:9121']
+    metric_relabel_configs:
+      # Keep only essential Redis metrics
+      - source_labels: [__name__]
+        regex: 'redis_(connected_clients|used_memory.*|instantaneous_ops_per_sec|keyspace_.*)'
+        action: keep

@@ -1,17 +1,4 @@
-const TierManager = require("../../Modules/TierManager");
-
 module.exports = async ({ client, Constants: { Colors } }, documents, msg, commandData) => {
-	const hasTier2 = await TierManager.hasMinimumTierLevel(msg.guild.id, 2);
-	if (!hasTier2) {
-		return msg.send({
-			embeds: [{
-				color: Colors.ERROR,
-				title: "🔒 Premium Feature",
-				description: "Music commands require **Tier 2 (Premium)** subscription.",
-			}],
-		});
-	}
-
 	if (!client.audioManager) {
 		return msg.send({
 			embeds: [{

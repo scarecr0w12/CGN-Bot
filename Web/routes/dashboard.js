@@ -70,6 +70,10 @@ module.exports = router => {
 	setupDashboardPage(router, "/administration/roles", [], controllers.dashboard.administration.roles);
 	setupDashboardPage(router, "/administration/logs", [], controllers.dashboard.administration.logs);
 
+	// Bot Customization
+	setupDashboardPage(router, "/customization", [], controllers.dashboard.customization.get);
+	router.post("/:svrid/customization/reset", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.customization.reset);
+
 	// Scan members API endpoint
 	router.post("/:svrid/administration/scan-members", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.administration.scanMembers);
 
@@ -132,6 +136,21 @@ module.exports = router => {
 	router.put("/:svrid/forms/:formId", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.update);
 	router.post("/:svrid/forms/:formId/toggle", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.toggle);
 	router.delete("/:svrid/forms/:formId", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.forms.delete);
+
+	// Welcome Images
+	setupDashboardPage(router, "/welcome-images", [], controllers.dashboard.welcomeImages.index);
+	router.post("/:svrid/welcome-images", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.welcomeImages.update);
+	router.post("/:svrid/welcome-images/upload", controllers.dashboard.welcomeImages.uploadBackground);
+	router.delete("/:svrid/welcome-images/upload/:uploadId",
+		[middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess],
+		controllers.dashboard.welcomeImages.deleteUpload);
+	router.post("/:svrid/welcome-images/test", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.welcomeImages.generateTest);
+
+	// Gaming Alerts
+	setupDashboardPage(router, "/gaming-alerts", [], controllers.dashboard.gamingAlerts.index);
+	router.post("/:svrid/gaming-alerts", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.gamingAlerts.update);
+	router.post("/:svrid/gaming-alerts/test", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.gamingAlerts.test);
+	router.get("/:svrid/gaming-alerts/history", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.gamingAlerts.history);
 
 	// Helper endpoint for getting channels
 	router.get("/:svrid/channels", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], (req, res) => {

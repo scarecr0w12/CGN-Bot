@@ -120,7 +120,7 @@
 										<div class="generic-feature-box-slider">
 											<div class="field">
 												<input id="modlog-isEnabled" type="checkbox" name="modlog-isEnabled" class="switch is-medium is-success is-rounded"<%= configData.modlog.isEnabled ? " checked " : "" %>>
-												<label for="modlog-isEnabled" style="padding-left: 3.75rem;" data-toggle-gfba="moderation-modlog-options"></label>
+												<label for="modlog-isEnabled" style="padding-left: 3.75rem;" data-toggle-gfba="moderation-modlog-options,modlog-events-section"></label>
 											</div>
 										</div>
 										<div class="generic-feature-box-description">
@@ -136,6 +136,55 @@
 															<% }); %>
 														</select>
 													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div id="modlog-events-section" class="generic-feature-box-content"<%= !configData.modlog.isEnabled ? " style='display:none;'" : "" %>>
+										<div class="content">
+											<p class="has-text-weight-semibold">Event Types to Log:</p>
+											<div class="columns is-multiline">
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-strikes"<%= configData.modlog.events.strikes ? " checked" : "" %>>
+														<strong>Strikes</strong> - User warnings and strike removal
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-kicks"<%= configData.modlog.events.kicks ? " checked" : "" %>>
+														<strong>Kicks</strong> - Member kick actions
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-bans"<%= configData.modlog.events.bans ? " checked" : "" %>>
+														<strong>Bans</strong> - Bans, unbans, and temp bans
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-mutes"<%= configData.modlog.events.mutes ? " checked" : "" %>>
+														<strong>Mutes</strong> - Mute and unmute actions
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-filter_violations"<%= configData.modlog.events.filter_violations ? " checked" : "" %>>
+														<strong>Filter Violations</strong> - Spam and filter triggers
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-raid_alerts"<%= configData.modlog.events.raid_alerts ? " checked" : "" %>>
+														<strong>Raid Alerts</strong> - Raid detection events
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-alt_detection"<%= configData.modlog.events.alt_detection ? " checked" : "" %>>
+														<strong>Alt Detection</strong> - Alt account actions
+													</label>
 												</div>
 											</div>
 										</div>

@@ -865,4 +865,31 @@ module.exports = new Schema({
 	}),
 	// AI configuration
 	ai: serverAISchema,
+	// Bot Personalization (Tier 2+)
+	bot_customization: new Schema({
+		nickname: {
+			type: String,
+			default: "",
+			maxlength: 32,
+		},
+		status_text: {
+			type: String,
+			default: "",
+			maxlength: 128,
+		},
+		status_type: {
+			type: String,
+			default: "PLAYING",
+			enum: ["PLAYING", "WATCHING", "LISTENING", "COMPETING", "STREAMING"],
+		},
+		status_state: {
+			type: String,
+			default: "online",
+			enum: ["online", "idle", "dnd", "invisible"],
+		},
+		isEnabled: {
+			type: Boolean,
+			default: false,
+		},
+	}),
 });

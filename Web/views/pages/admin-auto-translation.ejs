@@ -74,7 +74,7 @@
 									<% configData.translated_messages.forEach(autoTranslationDocument => { %>
 										<tr>
 											<td>
-												<img class="image is-24x24" src="<%= autoTranslationDocument.avatar %>" alt="<%= autoTranslationDocument._id %>">
+												<img class="image is-24x24" src="<%= autoTranslationDocument.avatar %>" alt="<%= autoTranslationDocument._id %>" width="24" height="24" loading="lazy">
 											</td>
 											<td>
 												<%= autoTranslationDocument.username %>

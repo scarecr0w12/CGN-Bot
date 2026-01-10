@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Frequently Asked Questions - Skynet Discord Bot | Setup, Features & Support</title>
+	<%
+	if (typeof pageData !== "undefined") {
+		pageData.seo = {
+			title: "Frequently Asked Questions - Skynet Discord Bot | Setup, Features & Support",
+			description: "Get answers to common questions about Skynet Discord bot. Learn about setup, features, premium tiers, extensions, music system, moderation tools, and more.",
+			keywords: "Discord bot FAQ, Skynet bot help, Discord bot setup guide, Discord bot features, premium Discord bot, Discord bot support, how to use Discord bot",
+			type: "website"
+		};
+		pageData.breadcrumbs = [
+			{ name: "Home", url: "/" },
+			{ name: "FAQ", url: "/faq" }
+		];
+	}
+	%>
+	<%- include("../partials/head") %>
+
+	<!-- Enhanced FAQ Schema with detailed answers -->
+	<script type="application/ld+json"<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
+	{
+		"@context": "https://schema.org",
+		"@type": "FAQPage",
+		"mainEntity": [
+			{
+				"@type": "Question",
+				"name": "What is Skynet Discord bot?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet is a free, feature-rich Discord bot that provides advanced moderation tools, fun commands, AI chat integration, custom extensions, leveling systems, giveaways, music playback, ticket support, and a comprehensive web dashboard. It's designed for server owners who want powerful automation without paying monthly fees."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Is Skynet completely free to use?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. Skynet's core features are 100% free including moderation, auto-moderation, leveling, fun commands, giveaways, custom commands, role management, and the web dashboard. Premium tiers (Starter, Premium, Ultimate) unlock advanced features like Music System, AI chat, Developer Tools, Ticket System, and Server Management, but you can earn these through Vote Points without spending money."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I add Skynet to my Discord server?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Click the 'Add to Server' button on our homepage, select your Discord server from the dropdown, review the requested permissions, and click 'Authorize'. Skynet will join instantly and is ready to use. Access the web dashboard to customize settings or use /help in Discord to see available commands."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What permissions does Skynet need?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet requires standard permissions: Read Messages, Send Messages, Manage Messages (for moderation), Manage Roles (for leveling rewards), Kick/Ban Members (for moderation actions), and Embed Links. Music features require Voice Channel permissions. All permissions are used only for the features you enable."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What are Extensions and how do they work?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Extensions are custom commands built with JavaScript that extend Skynet's functionality. They run in a secure isolated sandbox for safety. You can create extensions using our visual Extension Builder (no coding required), browse the community gallery to install ready-made extensions, or write advanced extensions with full API access. Extensions can be shared between servers using the .skypkg export format."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How does the leveling and points system work?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Members earn SkynetPoints through server activity: chatting, reactions, voice time, and participation. Points accumulate toward levels. Server owners can configure point rates, set level-up role rewards, enable/disable specific earning methods, and view leaderboards through the dashboard. The system includes anti-spam protection to prevent abuse."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What premium features are available?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Premium comes in 3 tiers. Starter Tier: Music System, AI Chat (basic), Developer Tools, Sentiment Analysis, Advanced Analytics. Premium Tier: Everything in Starter plus Ticket System, Enhanced AI, Priority Support. Ultimate Tier: Everything plus Server Management Dashboard, Custom Branding, Dedicated Support. All tiers are server-based and can be earned through Vote Points."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do Vote Points work?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Vote for Skynet on bot listing sites (Top.gg, Discord Bot List, etc.) to earn Vote Points. Each vote gives points, with bonus points on weekends. Redeem points for premium server subscriptions or purchase premium extensions from the gallery. No payment required - voting is the only way to earn points."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Does Skynet have a music bot feature?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. Premium Tier servers get access to high-quality music playback from YouTube, Spotify, and SoundCloud. Features include queue management, DJ role controls, audio filters (bassboost, nightcore, 8D), loop modes, volume control, and playlist support. Use /play, /queue, /skip, /filter commands and more."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What moderation tools does Skynet provide?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet includes comprehensive moderation: Auto-moderation (spam, caps, links, mentions, invites, sentiment analysis), manual commands (warn, mute, kick, ban, purge), warning system with auto-escalation, logging (mod logs, message logs, join/leave logs), raid protection, and anti-spam filters. All configurable through the dashboard."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I customize Skynet's commands?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. Disable built-in commands you don't want, create custom commands with the dashboard, build Extensions for advanced functionality, set command-specific permissions, configure command cooldowns, and create command aliases. The Extension Builder lets you create complex custom commands without coding knowledge."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Does Skynet support multiple languages?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet supports 15 languages: English, Spanish, French, German, Portuguese, Japanese, Korean, Chinese, Russian, Italian, Dutch, Polish, Turkish, Arabic, and Hindi. Users can set their preferred language with /language user, and server admins can set a server-wide default with /language server. The web dashboard also adapts to your language preference."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I set up the Ticket System?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Premium Tier servers can enable the Ticket System from the dashboard. Configure ticket categories (Support, Reports, Applications), set staff roles who can view tickets, choose whether tickets are public or private, and customize the ticket creation message. Users create tickets with /ticket create and staff manage them through Discord or the web dashboard."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What are Developer Tools?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Premium Tier includes Developer Tools for testing and development: /coderun (execute Python/JavaScript/PHP), /lint (code linting), /codeformat (auto-formatting), /snippet (save/share code), /regex (test regular expressions), /json (validate/format JSON), /http (make API requests). Perfect for development Discord servers and coding communities."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I migrate from another Discord bot?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. Skynet's features work immediately without complex setup. Configure moderation rules, leveling rates, and role rewards through the intuitive dashboard. Most bots use similar command structures, so your members will adapt quickly. Join our support Discord for migration assistance and guides for specific bots like MEE6, Dyno, or Carl-bot."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Is my server data safe with Skynet?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes. Skynet follows Discord's privacy guidelines and stores only necessary data: server settings, member activity for leveling, moderation logs, and custom configurations. You can export all your server data anytime from the dashboard. We never sell data to third parties. Extensions run in isolated sandboxes and cannot access sensitive information."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "How do I get support for Skynet?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Access support through multiple channels: Join our official Discord server for community help, browse the comprehensive Wiki for guides and tutorials, check the FAQ page, or contact staff through the dashboard feedback widget. Premium tier users get priority support with faster response times."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "What makes Skynet different from other Discord bots?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Skynet is unique because: it's free with no feature paywalls, includes a powerful Extension system for unlimited customization, has an intuitive web dashboard, premium features can be earned through voting (no payment required), supports 15 languages, combines moderation + fun + utility + music in one bot, and is actively developed with regular updates."
+				}
+			}
+		]
+	}
+	</script>
+</head>
+<body>
+	<!-- Modern Hero Section -->
+	<section class="hero is-medium" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); position: relative; overflow: hidden;">
+		<%- include("../partials/header") %>
+		
+		<div class="hero-body" style="position: relative; z-index: 1;">
+			<div class="container has-text-centered">
+				<div style="display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+					<i class="fas fa-question-circle" style="font-size: 2.5rem; color: white;"></i>
+					<h1 class="title is-1 has-text-white" style="margin: 0; font-weight: 700;">Frequently Asked Questions</h1>
+				</div>
+				<p class="subtitle is-4 has-text-white" style="opacity: 0.95; max-width: 700px; margin: 0 auto;">
+					Get quick answers to common questions about Skynet Discord bot. Learn how to set up, customize, and maximize your server's potential.
+				</p>
+				<div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+					<span class="tag is-light is-medium" style="font-size: 0.9rem; padding: 0.5rem 1rem;">💬 Setup Guide</span>
+					<span class="tag is-light is-medium" style="font-size: 0.9rem; padding: 0.5rem 1rem;">⚡ Quick Answers</span>
+					<span class="tag is-light is-medium" style="font-size: 0.9rem; padding: 0.5rem 1rem;">🎯 Best Practices</span>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Decorative Navigation -->
+		<nav class="container" style="position: relative; z-index: 2; padding-bottom: 1.5rem;">
+			<div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+				<a href="#general" class="has-text-white" style="opacity: 0.9; font-weight: 500; transition: opacity 0.2s;">
+					<i class="fas fa-info-circle"></i> General
+				</a>
+				<a href="#setup" class="has-text-white" style="opacity: 0.9; font-weight: 500; transition: opacity 0.2s;">
+					<i class="fas fa-cog"></i> Setup
+				</a>
+				<a href="#features" class="has-text-white" style="opacity: 0.9; font-weight: 500; transition: opacity 0.2s;">
+					<i class="fas fa-star"></i> Features
+				</a>
+				<a href="#premium" class="has-text-white" style="opacity: 0.9; font-weight: 500; transition: opacity 0.2s;">
+					<i class="fas fa-crown"></i> Premium
+				</a>
+				<a href="#support" class="has-text-white" style="opacity: 0.9; font-weight: 500; transition: opacity 0.2s;">
+					<i class="fas fa-life-ring"></i> Support
+				</a>
+			</div>
+		</nav>
+	</section>
+
+	<main class="section" style="padding-top: 4rem; padding-bottom: 4rem; background: var(--surface-1);">
+		<div class="container" style="max-width: 1000px;">
+			<div class="content-wrapper">
+
+				<!-- General Questions -->
+				<div class="faq-section" id="general">
+					<h2 class="title is-3" style="margin-bottom: 1.5rem; color: var(--color-primary);">
+						<i class="fas fa-info-circle" style="margin-right: 0.5rem;"></i>General Questions
+					</h2>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-primary);">
+						<h3 class="title is-5" style="color: var(--color-primary); margin-bottom: 1rem;">What is Skynet Discord bot?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Skynet is a free, feature-rich Discord bot that provides advanced moderation tools, fun commands, AI chat integration, custom extensions, leveling systems, giveaways, music playback, ticket support, and a comprehensive web dashboard. It's designed for server owners who want powerful automation without paying monthly fees.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-primary);">
+						<h3 class="title is-5" style="color: var(--color-primary); margin-bottom: 1rem;">Is Skynet completely free to use?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes. Skynet's core features are 100% free including moderation, auto-moderation, leveling, fun commands, giveaways, custom commands, role management, and the web dashboard.</p>
+							<p>Premium tiers (Starter, Premium, Ultimate) unlock advanced features like Music System, AI chat, Developer Tools, Ticket System, and Server Management, but you can <strong>earn these through Vote Points without spending money</strong>.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-primary);">
+						<h3 class="title is-5" style="color: var(--color-primary); margin-bottom: 1rem;">What makes Skynet different from other Discord bots?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Skynet stands out because:</p>
+							<ul>
+								<li>✅ <strong>Completely free</strong> with no feature paywalls</li>
+								<li>✅ <strong>Extension system</strong> for unlimited customization</li>
+								<li>✅ <strong>Intuitive web dashboard</strong> for easy configuration</li>
+								<li>✅ <strong>Earn premium features</strong> through voting (no payment required)</li>
+								<li>✅ <strong>15 languages supported</strong></li>
+								<li>✅ <strong>All-in-one solution</strong>: moderation + fun + utility + music</li>
+								<li>✅ <strong>Active development</strong> with regular updates</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<!-- Setup & Configuration -->
+				<div class="faq-section" id="setup" style="margin-top: 4rem;">
+					<h2 class="title is-3" style="margin-bottom: 1.5rem; color: var(--color-primary);">
+						<i class="fas fa-cog" style="margin-right: 0.5rem;"></i>Setup & Configuration
+					</h2>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-accent);">
+						<h3 class="title is-5" style="color: var(--color-accent); margin-bottom: 1rem;">How do I add Skynet to my Discord server?</h3>
+						<div class="content">
+							<p><strong>Step-by-step process:</strong></p>
+							<ol>
+								<li>Click the <strong>"Add to Server"</strong> button on our homepage</li>
+								<li>Select your Discord server from the dropdown menu</li>
+								<li>Review the requested permissions</li>
+								<li>Click <strong>"Authorize"</strong></li>
+								<li>Complete the CAPTCHA verification</li>
+							</ol>
+							<p>Skynet will join instantly and is ready to use! Access the web dashboard to customize settings or use <code>/help</code> in Discord to see available commands.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-accent);">
+						<h3 class="title is-5" style="color: var(--color-accent); margin-bottom: 1rem;">What permissions does Skynet need?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Skynet requires these standard permissions:</p>
+							<ul>
+								<li><strong>Read Messages</strong> - To see commands and content</li>
+								<li><strong>Send Messages</strong> - To respond to commands</li>
+								<li><strong>Manage Messages</strong> - For moderation (deleting spam, etc.)</li>
+								<li><strong>Manage Roles</strong> - For leveling rewards and role automation</li>
+								<li><strong>Kick/Ban Members</strong> - For moderation actions</li>
+								<li><strong>Embed Links</strong> - For rich message formatting</li>
+								<li><strong>Voice Channel Permissions</strong> - Required only for Music features</li>
+							</ul>
+							<p>All permissions are used <strong>only for the features you enable</strong>. You can review and manage bot permissions anytime in Server Settings → Roles.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-accent);">
+						<h3 class="title is-5" style="color: var(--color-accent); margin-bottom: 1rem;">Can I customize Skynet's commands?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes, extensive customization is available:</p>
+							<ul>
+								<li><strong>Disable commands</strong> you don't want from the dashboard</li>
+								<li><strong>Create custom commands</strong> with variables and responses</li>
+								<li><strong>Build Extensions</strong> for advanced functionality</li>
+								<li><strong>Set command-specific permissions</strong> by role</li>
+								<li><strong>Configure command cooldowns</strong> to prevent spam</li>
+								<li><strong>Create command aliases</strong> for easier access</li>
+							</ul>
+							<p>The Extension Builder lets you create complex custom commands without coding knowledge.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Features -->
+				<div class="faq-section" id="features" style="margin-top: 4rem;">
+					<h2 class="title is-3" style="margin-bottom: 1.5rem; color: var(--color-primary);">
+						<i class="fas fa-star" style="margin-right: 0.5rem;"></i>Features & Functionality
+					</h2>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">What are Extensions and how do they work?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Extensions are custom commands built with JavaScript that extend Skynet's functionality. They run in a <strong>secure isolated sandbox</strong> for safety.</p>
+							<p><strong>How to use Extensions:</strong></p>
+							<ul>
+								<li><strong>Create:</strong> Use our visual Extension Builder (no coding required)</li>
+								<li><strong>Browse:</strong> Install ready-made extensions from the community gallery</li>
+								<li><strong>Advanced:</strong> Write extensions with full API access to Discord, HTTP requests, etc.</li>
+								<li><strong>Share:</strong> Export extensions as .skypkg files to share between servers</li>
+							</ul>
+							<p>Popular extension types: custom games, API integrations, utility tools, role management, and server-specific features.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">How does the leveling and points system work?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Members earn <strong>SkynetPoints</strong> through server activity:</p>
+							<ul>
+								<li>💬 <strong>Chatting</strong> - Points per message (with spam protection)</li>
+								<li>👍 <strong>Reactions</strong> - Points for giving/receiving reactions</li>
+								<li>🎤 <strong>Voice Time</strong> - Points per minute in voice channels</li>
+								<li>🎯 <strong>Participation</strong> - Bonus points for events and giveaways</li>
+							</ul>
+							<p><strong>Server owners can:</strong></p>
+							<ul>
+								<li>Configure point earning rates</li>
+								<li>Set level-up role rewards (e.g., "Level 10" role at level 10)</li>
+								<li>Enable/disable specific earning methods</li>
+								<li>View leaderboards through the dashboard</li>
+								<li>Export activity data for analytics</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">What moderation tools does Skynet provide?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Comprehensive moderation suite includes:</p>
+							<p><strong>Auto-Moderation:</strong></p>
+							<ul>
+								<li>Spam detection and prevention</li>
+								<li>Caps lock filter</li>
+								<li>Link/invite filtering with whitelist</li>
+								<li>Mass mention protection</li>
+								<li>Sentiment analysis (detects toxic/harmful content)</li>
+							</ul>
+							<p><strong>Manual Commands:</strong></p>
+							<ul>
+								<li><code>/warn</code> - Issue warnings to members</li>
+								<li><code>/mute</code> - Temporarily mute users</li>
+								<li><code>/kick</code> - Remove members from server</li>
+								<li><code>/ban</code> - Permanently ban users</li>
+								<li><code>/purge</code> - Bulk delete messages</li>
+							</ul>
+							<p><strong>Advanced Features:</strong></p>
+							<ul>
+								<li>Warning system with auto-escalation</li>
+								<li>Comprehensive logging (mod logs, message logs, join/leave logs)</li>
+								<li>Raid protection and anti-spam filters</li>
+								<li>All configurable through the dashboard</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">Does Skynet have a music bot feature?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes! <strong>Premium Tier servers</strong> get access to high-quality music playback.</p>
+							<p><strong>Supported Platforms:</strong></p>
+							<ul>
+								<li>🎵 YouTube</li>
+								<li>🎵 Spotify</li>
+								<li>🎵 SoundCloud</li>
+							</ul>
+							<p><strong>Features:</strong></p>
+							<ul>
+								<li>Queue management (add, remove, skip, shuffle)</li>
+								<li>DJ role controls (restrict who can control playback)</li>
+								<li>Audio filters (bassboost, nightcore, 8D, vaporwave)</li>
+								<li>Loop modes (song, queue, off)</li>
+								<li>Volume control and seek</li>
+								<li>Playlist support</li>
+							</ul>
+							<p><strong>Commands:</strong> <code>/play</code>, <code>/queue</code>, <code>/skip</code>, <code>/filter</code>, <code>/volume</code>, <code>/loop</code>, and more.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">What are Developer Tools?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Premium Tier includes Developer Tools for testing and development:</p>
+							<ul>
+								<li><code>/coderun</code> - Execute Python, JavaScript, PHP code in a sandbox</li>
+								<li><code>/lint</code> - Code linting and error checking</li>
+								<li><code>/codeformat</code> - Auto-formatting for clean code</li>
+								<li><code>/snippet</code> - Save and share code snippets</li>
+								<li><code>/regex</code> - Test regular expressions</li>
+								<li><code>/json</code> - Validate and format JSON</li>
+								<li><code>/http</code> - Make API requests and test endpoints</li>
+							</ul>
+							<p>Perfect for development Discord servers, coding communities, and testing APIs.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">How do I set up the Ticket System?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Premium Tier servers can enable the Ticket System from the dashboard.</p>
+							<p><strong>Setup steps:</strong></p>
+							<ol>
+								<li>Navigate to <strong>Dashboard → Tickets</strong></li>
+								<li>Enable the Ticket System</li>
+								<li>Configure ticket categories (Support, Reports, Applications, etc.)</li>
+								<li>Set staff roles who can view and manage tickets</li>
+								<li>Choose whether tickets are public or private</li>
+								<li>Customize the ticket creation message and panel</li>
+							</ol>
+							<p><strong>Usage:</strong> Users create tickets with <code>/ticket create</code>. Staff manage them through Discord or the web dashboard with full conversation history and status tracking.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Premium & Vote Points -->
+				<div class="faq-section" id="premium" style="margin-top: 4rem;">
+					<h2 class="title is-3" style="margin-bottom: 1.5rem; color: var(--color-premium);">
+						<i class="fas fa-crown" style="margin-right: 0.5rem;"></i>Premium & Vote Points
+					</h2>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">What premium features are available?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Premium comes in 3 tiers:</p>
+							
+							<p><strong>🥉 Starter Tier:</strong></p>
+							<ul>
+								<li>Music System (high-quality playback + filters)</li>
+								<li>AI Chat (basic model access)</li>
+								<li>Developer Tools (code execution, linting)</li>
+								<li>Sentiment Analysis for moderation</li>
+								<li>Advanced Analytics</li>
+							</ul>
+
+							<p><strong>🥈 Premium Tier (Everything in Starter plus):</strong></p>
+							<ul>
+								<li>Ticket System for support management</li>
+								<li>Enhanced AI (GPT-4, Claude models)</li>
+								<li>Priority Support (faster response times)</li>
+								<li>Extended analytics history</li>
+							</ul>
+
+							<p><strong>🥇 Ultimate Tier (Everything in Premium plus):</strong></p>
+							<ul>
+								<li>Server Management Dashboard (manage channels/roles from web)</li>
+								<li>Custom Branding (bot nickname, avatar per server)</li>
+								<li>Dedicated Support (direct staff contact)</li>
+								<li>Beta feature access</li>
+							</ul>
+
+							<p><strong>All tiers are server-based</strong> and can be earned through Vote Points or purchased with crypto via BTCPay.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">How do Vote Points work?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Vote Points are earned by voting for Skynet on bot listing sites.</p>
+							<p><strong>How to earn:</strong></p>
+							<ol>
+								<li>Visit the <a href="/vote">Vote page</a></li>
+								<li>Click on a voting site (Top.gg, Discord Bot List, etc.)</li>
+								<li>Complete the vote</li>
+								<li>Earn points instantly (bonus points on weekends!)</li>
+							</ol>
+							<p><strong>Redeem points for:</strong></p>
+							<ul>
+								<li>Premium server subscriptions (1 month, 3 months, 1 year)</li>
+								<li>Premium extensions from the gallery</li>
+								<li>Special roles and perks</li>
+							</ul>
+							<p><strong>No payment required</strong> - voting is completely free!</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Support & Migration -->
+				<div class="faq-section" id="support" style="margin-top: 4rem;">
+					<h2 class="title is-3" style="margin-bottom: 1.5rem; color: var(--color-primary);">
+						<i class="fas fa-life-ring" style="margin-right: 0.5rem;"></i>Support & Migration
+					</h2>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">Can I migrate from another Discord bot?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes! Skynet makes migration easy.</p>
+							<p><strong>Migration process:</strong></p>
+							<ol>
+								<li>Add Skynet to your server (it works alongside existing bots)</li>
+								<li>Configure moderation rules and leveling rates through the dashboard</li>
+								<li>Set up role rewards to match your current system</li>
+								<li>Test features before removing the old bot</li>
+								<li>When ready, remove the previous bot</li>
+							</ol>
+							<p>Most bots use similar command structures, so your members will adapt quickly. <strong>Join our support Discord</strong> for migration assistance and guides for specific bots like MEE6, Dyno, or Carl-bot.</p>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">How do I get support for Skynet?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Multiple support channels are available:</p>
+							<ul>
+								<li>💬 <strong>Discord Server</strong> - Join our official server for community help</li>
+								<li>📚 <strong>Wiki</strong> - Browse comprehensive guides and tutorials</li>
+								<li>❓ <strong>FAQ Page</strong> - Check common questions and answers</li>
+								<li>📝 <strong>Dashboard Feedback</strong> - Contact staff directly through the widget</li>
+								<li>⭐ <strong>Priority Support</strong> - Premium tier users get faster response times</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">Is my server data safe with Skynet?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes, your data is secure.</p>
+							<p><strong>Data we store:</strong></p>
+							<ul>
+								<li>Server settings and configurations</li>
+								<li>Member activity for leveling (points, XP, levels)</li>
+								<li>Moderation logs (warnings, bans, kicks)</li>
+								<li>Custom commands and extensions</li>
+							</ul>
+							<p><strong>Security measures:</strong></p>
+							<ul>
+								<li>✅ Follow Discord's privacy guidelines</li>
+								<li>✅ You can export all your server data anytime</li>
+								<li>✅ We never sell data to third parties</li>
+								<li>✅ Extensions run in isolated sandboxes</li>
+								<li>✅ Regular security audits</li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="box modern-card" style="margin-bottom: 1.5rem; border-left: 4px solid var(--color-info);">
+						<h3 class="title is-5" style="color: var(--color-info); margin-bottom: 1rem;">Does Skynet support multiple languages?</h3>
+						<div class="content">
+							<p><strong>Answer:</strong> Yes! Skynet supports 15 languages:</p>
+							<p>🌍 English, Spanish, French, German, Portuguese, Japanese, Korean, Chinese, Russian, Italian, Dutch, Polish, Turkish, Arabic, and Hindi</p>
+							<p><strong>How to change language:</strong></p>
+							<ul>
+								<li><code>/language user [language]</code> - Set your personal language preference</li>
+								<li><code>/language server [language]</code> - Set server-wide default (admin only)</li>
+								<li>The web dashboard automatically adapts to your language</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<!-- Still have questions? -->
+				<div class="box" style="margin-top: 3rem; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; text-align: center; padding: 2rem;">
+					<h2 class="title is-4" style="color: white; margin-bottom: 1rem;">Still Have Questions?</h2>
+					<p style="margin-bottom: 1.5rem;">Our support team and community are here to help!</p>
+					<div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+						<a href="/wiki" class="button is-light is-medium">
+							<i class="fas fa-book"></i>&nbsp; Browse Wiki
+						</a>
+						<a href="https://discord.gg/SE6xHmvKrZ" class="button is-light is-medium" target="_blank" rel="noopener">
+							<i class="fab fa-discord"></i>&nbsp; Join Discord
+						</a>
+						<a href="/dashboard" class="button is-light is-medium">
+							<i class="fas fa-tachometer-alt"></i>&nbsp; Dashboard
+						</a>
+					</div>
+				</div>
+
+			</div>
+		</section>
+	</main>
+
+	<%- include("../partials/footer") %>
+	<script src="/static/js/app-skynet-v1.min.js"></script>
+</body>
+</html>

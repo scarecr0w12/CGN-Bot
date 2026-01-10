@@ -10,6 +10,7 @@ const PremiumExtensionsManager = require("../../Modules/PremiumExtensionsManager
 const VoteRewardsManager = require("../../Modules/VoteRewardsManager");
 const { generateUniqueSlug } = require("../../Modules/Utils/Slug");
 const CacheManager = require("../../Modules/CacheManager");
+const { getInstance: getExtensionStorage } = require("../../Modules/ExtensionStorage");
 
 const controllers = module.exports;
 
@@ -448,7 +449,8 @@ controllers.builder.post = async (req, res) => {
 					sendResponse(true);
 				} else {
 					try {
-						await fs.outputFileAtomic(`${__dirname}/../../extensions/${codeID}.skyext`, req.body.code);
+						const storage = getExtensionStorage();
+						await storage.save(codeID, req.body.code);
 						sendResponse();
 					} catch (error) {
 						logger.warn(`Failed to save extension at ${req.path}`, { usrid: req.user.id }, err);
@@ -630,7 +632,8 @@ controllers.export = async (req, res) => {
 
 	try {
 		// Read the extension code
-		const code = await fs.readFile(path.join(__dirname, `../../extensions/${versionDocument.code_id}.skyext`), "utf8");
+		const storage = getExtensionStorage();
+		const code = await storage.load(versionDocument.code_id);
 
 		// Build the portable package
 		const extensionPackage = {
@@ -746,7 +749,8 @@ controllers.import = async (req, res) => {
 		await galleryDocument.save();
 
 		// Save the extension code file
-		await fs.outputFileAtomic(`${__dirname}/../../extensions/${versionData.code_id}.skyext`, extension.code);
+		const storage = getExtensionStorage();
+		await storage.save(versionData.code_id, extension.code);
 
 		logger.info("Extension imported successfully", {
 			usrid: req.user.id,

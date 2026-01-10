@@ -53,7 +53,7 @@ const isModEnabled = (serverDocument) => serverDocument?.config?.moderation?.isE
  * @param {Object} serverDocument - Server document
  * @returns {boolean}
  */
-const isModLogEnabled = (serverDocument) => serverDocument?.config?.modlog?.isEnabled ?? DEFAULTS.MOD_LOG_ENABLED;
+const isModLogEnabled = (serverDocument) => serverDocument?.modlog?.isEnabled ?? DEFAULTS.MOD_LOG_ENABLED;
 
 /**
  * Get mod log channel ID
@@ -62,7 +62,7 @@ const isModLogEnabled = (serverDocument) => serverDocument?.config?.modlog?.isEn
  */
 const getModLogChannel = (serverDocument) => {
 	if (!isModLogEnabled(serverDocument)) return null;
-	return serverDocument?.config?.modlog?.channelID || null;
+	return serverDocument?.modlog?.channel_id || null;
 };
 
 /**

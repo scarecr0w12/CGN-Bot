@@ -1,0 +1,335 @@
+<%- include('../partials/head', { pageTitle: 'Bot Customization - Dashboard' }) %>
+<%- include('../partials/header') %>
+
+<div class="dashboard-container">
+	<%- include('../partials/admin-menu') %>
+	
+	<main class="dashboard-content">
+		<div class="content-header">
+			<h1>🎨 Bot Customization</h1>
+			<p>Customize how the bot appears in your server (Tier 2+)</p>
+		</div>
+
+		<% if (!tier || (tier.tier_id !== 'premium' && tier.tier_id !== 'enterprise')) { %>
+			<div class="alert alert-warning">
+				<h3>⚠️ Premium Feature Required</h3>
+				<p>Bot customization requires <strong>Tier 2 (Premium)</strong> or higher.</p>
+				<div class="button-group">
+					<a href="/membership" class="btn btn-primary">Upgrade Now</a>
+					<a href="https://top.gg/bot/skynetbot/vote" target="_blank" class="btn btn-secondary">Vote for Free Premium</a>
+				</div>
+			</div>
+		<% } else { %>
+			<div class="card">
+				<div class="card-header">
+					<h2>Customization Settings</h2>
+					<label class="switch">
+						<input type="checkbox" id="isEnabled" <%= customization.isEnabled ? 'checked' : '' %>>
+						<span class="slider"></span>
+					</label>
+				</div>
+
+				<form id="customizationForm" class="card-body">
+					<div class="alert alert-info">
+						<strong>💡 Note:</strong> Nickname changes are server-specific, but status changes affect all servers where the bot is present.
+					</div>
+
+					<div class="form-section">
+						<h3>Bot Nickname</h3>
+						<p class="text-muted">Customize the bot's display name in your server</p>
+						
+						<div class="form-group">
+							<label for="nickname">Nickname (leave empty for default)</label>
+							<input 
+								type="text" 
+								id="nickname" 
+								name="nickname" 
+								value="<%= customization.nickname %>"
+								maxlength="32"
+								placeholder="CGN-Bot"
+								class="form-control"
+							>
+							<small class="form-text">Max 32 characters</small>
+						</div>
+					</div>
+
+					<div class="form-section">
+						<h3>Bot Status</h3>
+						<p class="text-muted">Customize the bot's activity status (global)</p>
+						
+						<div class="form-group">
+							<label for="status_text">Status Text</label>
+							<input 
+								type="text" 
+								id="status_text" 
+								name="status_text" 
+								value="<%= customization.status_text %>"
+								maxlength="128"
+								placeholder="discord.gg/SE6xHmvKrZ | /help"
+								class="form-control"
+							>
+							<small class="form-text">Max 128 characters</small>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="status_type">Status Type</label>
+								<select id="status_type" name="status_type" class="form-control">
+									<option value="PLAYING" <%= customization.status_type === 'PLAYING' ? 'selected' : '' %>>Playing</option>
+									<option value="WATCHING" <%= customization.status_type === 'WATCHING' ? 'selected' : '' %>>Watching</option>
+									<option value="LISTENING" <%= customization.status_type === 'LISTENING' ? 'selected' : '' %>>Listening to</option>
+									<option value="COMPETING" <%= customization.status_type === 'COMPETING' ? 'selected' : '' %>>Competing in</option>
+								</select>
+							</div>
+
+							<div class="form-group col-md-6">
+								<label for="status_state">Status State</label>
+								<select id="status_state" name="status_state" class="form-control">
+									<option value="online" <%= customization.status_state === 'online' ? 'selected' : '' %>>🟢 Online</option>
+									<option value="idle" <%= customization.status_state === 'idle' ? 'selected' : '' %>>🟡 Idle</option>
+									<option value="dnd" <%= customization.status_state === 'dnd' ? 'selected' : '' %>>🔴 Do Not Disturb</option>
+								</select>
+							</div>
+						</div>
+					</div>
+
+					<div class="form-section">
+						<h3>Preview</h3>
+						<div class="bot-preview">
+							<div class="preview-bot-card">
+								<div class="status-indicator" data-status="<%= customization.status_state %>"></div>
+								<div class="bot-avatar">
+									<img src="https://cdn.discordapp.com/avatars/<%= client.user.id %>/<%= client.user.avatar %>.png" alt="Bot Avatar">
+								</div>
+								<div class="bot-info">
+									<div class="bot-name" id="previewNickname"><%= customization.nickname || 'CGN-Bot' %></div>
+									<div class="bot-status">
+										<span id="previewStatusType"><%= customization.status_type || 'PLAYING' %></span>
+										<span id="previewStatusText"><%= customization.status_text || 'discord.gg/SE6xHmvKrZ | /help' %></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="button-group">
+						<button type="submit" class="btn btn-primary">💾 Save Changes</button>
+						<button type="button" id="resetBtn" class="btn btn-danger">🔄 Reset to Defaults</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="card mt-4">
+				<div class="card-header">
+					<h2>Slash Commands</h2>
+				</div>
+				<div class="card-body">
+					<p>You can also manage bot customization using slash commands:</p>
+					<ul class="command-list">
+						<li><code>/botcustom nickname [name]</code> - Set custom nickname</li>
+						<li><code>/botcustom status [text] [type] [state]</code> - Set custom status</li>
+						<li><code>/botcustom enable</code> - Enable customization</li>
+						<li><code>/botcustom disable</code> - Disable and reset</li>
+						<li><code>/botcustom view</code> - View current settings</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="alert alert-info mt-4">
+				<h4>🔮 Coming Soon: Tier 3 Enterprise</h4>
+				<p>Get a dedicated bot instance with full customization including:</p>
+				<ul>
+					<li>Custom bot avatar (per-server)</li>
+					<li>White-label branding</li>
+					<li>Custom bot token</li>
+					<li>Dedicated hosting</li>
+				</ul>
+			</div>
+		<% } %>
+	</main>
+</div>
+
+<style>
+.bot-preview {
+	background: var(--bg-secondary);
+	padding: 2rem;
+	border-radius: 8px;
+	margin-top: 1rem;
+}
+
+.preview-bot-card {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem;
+	background: var(--bg-primary);
+	border-radius: 8px;
+	position: relative;
+	max-width: 400px;
+}
+
+.status-indicator {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	border: 3px solid var(--bg-primary);
+}
+
+.status-indicator[data-status="online"] { background: #3ba55d; }
+.status-indicator[data-status="idle"] { background: #faa81a; }
+.status-indicator[data-status="dnd"] { background: #ed4245; }
+.status-indicator[data-status="invisible"] { background: #747f8d; }
+
+.bot-avatar {
+	position: relative;
+	width: 64px;
+	height: 64px;
+	flex-shrink: 0;
+}
+
+.bot-avatar img {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.bot-info {
+	flex: 1;
+}
+
+.bot-name {
+	font-weight: 600;
+	font-size: 1.1rem;
+	margin-bottom: 0.25rem;
+}
+
+.bot-status {
+	font-size: 0.9rem;
+	color: var(--text-muted);
+}
+
+.command-list {
+	list-style: none;
+	padding: 0;
+}
+
+.command-list li {
+	padding: 0.5rem 0;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.command-list li:last-child {
+	border-bottom: none;
+}
+
+.command-list code {
+	background: var(--bg-secondary);
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	font-family: 'Courier New', monospace;
+}
+
+.form-section {
+	margin-bottom: 2rem;
+	padding-bottom: 2rem;
+	border-bottom: 1px solid var(--border-color);
+}
+
+.form-section:last-of-type {
+	border-bottom: none;
+}
+
+.form-row {
+	display: flex;
+	gap: 1rem;
+}
+
+.form-row .form-group {
+	flex: 1;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const form = document.getElementById('customizationForm');
+	const isEnabledToggle = document.getElementById('isEnabled');
+	const resetBtn = document.getElementById('resetBtn');
+
+	// Live preview updates
+	const nicknameInput = document.getElementById('nickname');
+	const statusTextInput = document.getElementById('status_text');
+	const statusTypeSelect = document.getElementById('status_type');
+	const statusStateSelect = document.getElementById('status_state');
+
+	nicknameInput?.addEventListener('input', () => {
+		document.getElementById('previewNickname').textContent = nicknameInput.value || 'CGN-Bot';
+	});
+
+	statusTextInput?.addEventListener('input', () => {
+		document.getElementById('previewStatusText').textContent = statusTextInput.value || 'discord.gg/SE6xHmvKrZ | /help';
+	});
+
+	statusTypeSelect?.addEventListener('change', () => {
+		document.getElementById('previewStatusType').textContent = statusTypeSelect.value;
+	});
+
+	statusStateSelect?.addEventListener('change', () => {
+		document.querySelector('.status-indicator').setAttribute('data-status', statusStateSelect.value);
+	});
+
+	// Form submission
+	form?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+
+		const formData = new FormData(form);
+		formData.append('isEnabled', isEnabledToggle.checked);
+
+		try {
+			const response = await fetch(window.location.pathname, {
+				method: 'POST',
+				body: new URLSearchParams(formData),
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				SkynetUtil.showMessage('success', data.message || 'Settings saved successfully!');
+			} else {
+				SkynetUtil.showMessage('error', data.message || 'Failed to save settings');
+			}
+		} catch (error) {
+			SkynetUtil.showMessage('error', 'An error occurred');
+			console.error(error);
+		}
+	});
+
+	// Reset button
+	resetBtn?.addEventListener('click', async () => {
+		if (!confirm('Reset all customization to defaults?')) return;
+
+		try {
+			const response = await fetch(window.location.pathname + '/reset', {
+				method: 'POST',
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				SkynetUtil.showMessage('success', 'Customization reset to defaults');
+				setTimeout(() => window.location.reload(), 1500);
+			} else {
+				SkynetUtil.showMessage('error', data.message || 'Failed to reset');
+			}
+		} catch (error) {
+			SkynetUtil.showMessage('error', 'An error occurred');
+			console.error(error);
+		}
+	});
+});
+</script>
+
+<%- include('../partials/footer') %>

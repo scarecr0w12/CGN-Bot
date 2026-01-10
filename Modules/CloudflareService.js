@@ -2,12 +2,15 @@
  * CloudflareService - Centralized Cloudflare API integration
  *
  * Provides:
- * - Cache purging (full/selective)
- * - Zone analytics
- * - Security settings management
- * - Rate limiting rules
+ * - Cache management
+ * - Analytics and metrics
+ * - Security settings
+ * - Firewall rules
  * - DNS management
  */
+
+const { fetch } = require("undici");
+const logger = global.logger || console;
 
 const CLOUDFLARE_API_BASE = "https://api.cloudflare.com/client/v4";
 
@@ -584,6 +587,81 @@ class CloudflareService {
 	 */
 	async listZones () {
 		return this.apiRequest("/zones");
+	}
+
+	// ============================================
+	// TURNSTILE BOT PROTECTION
+	// ============================================
+
+	/**
+	 * Verify Turnstile token
+	 * @param {string} token - The cf-turnstile-response token from the client
+	 * @param {string} remoteIP - Optional visitor IP address for additional validation
+	 * @param {string} idempotencyKey - Optional UUID for retry protection
+	 * @returns {Promise<Object>} Verification result
+	 */
+	async verifyTurnstile (token, remoteIP = null, idempotencyKey = null) {
+		if (!process.env.CLOUDFLARE_TURNSTILE_SECRET) {
+			throw new Error("Cloudflare Turnstile secret key not configured");
+		}
+
+		if (!token) {
+			throw new Error("Turnstile token is required");
+		}
+
+		const body = {
+			secret: process.env.CLOUDFLARE_TURNSTILE_SECRET,
+			response: token,
+		};
+
+		if (remoteIP) {
+			body.remoteip = remoteIP;
+		}
+
+		if (idempotencyKey) {
+			body.idempotency_key = idempotencyKey;
+		}
+
+		try {
+			const response = await fetch(
+				"https://challenges.cloudflare.com/turnstile/v0/siteverify",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(body),
+				},
+			);
+
+			const result = await response.json();
+
+			if (!result.success) {
+				logger.warn("Turnstile verification failed", {
+					errorCodes: result["error-codes"],
+					remoteIP,
+				});
+			}
+
+			return result;
+		} catch (err) {
+			logger.error("Turnstile verification request failed", {}, err);
+			throw new Error(`Turnstile verification failed: ${err.message}`);
+		}
+	}
+
+	/**
+	 * Verify Turnstile token with enhanced error handling
+	 * @param {string} token - The cf-turnstile-response token
+	 * @param {string} remoteIP - Visitor IP address
+	 * @returns {Promise<boolean>} True if valid, false otherwise
+	 */
+	async verifyTurnstileSimple (token, remoteIP = null) {
+		try {
+			const result = await this.verifyTurnstile(token, remoteIP);
+			return result.success === true;
+		} catch (err) {
+			logger.error("Turnstile verification error", {}, err);
+			return false;
+		}
 	}
 
 	// ============================================

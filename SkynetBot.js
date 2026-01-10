@@ -84,6 +84,9 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	console.log(`[DEBUG] ${dbName} connected`);
 	logger.info(`Successfully connected to ${dbName}!`);
 
+	// Assign database to client so modules can access it
+	client.database = global.Database;
+
 	console.log("[DEBUG] Initializing Discord Events...");
 	logger.silly("Initializing Discord Events.");
 	client.events = new EventHandler(client, configJS);
@@ -95,6 +98,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	client.tempStorage = new TemporaryStorage();
 	client.subscriptionCheck = new SubscriptionCheck(client);
 	console.log("[DEBUG] Traffic, Central, TempStorage, and SubscriptionCheck initialized");
+
+	// Initialize Bot Customization Manager
+	const BotCustomizationManager = require("./Modules/BotCustomizationManager");
+	client.botCustomization = new BotCustomizationManager(client);
+	console.log("[DEBUG] BotCustomizationManager initialized");
 
 	client.IPC.on("getGuild", async (msg, callback) => {
 		if (msg.target === "*") {
@@ -912,6 +920,22 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			client.socialAlerts = new SocialAlertsManager(client);
 			await client.socialAlerts.initialize();
 			logger.info("Social Alerts Manager initialized!");
+
+			// Initialize Form Builder
+			const FormBuilder = require("./Modules/FormBuilder");
+			client.formBuilder = new FormBuilder(client);
+			logger.info("Form Builder initialized!");
+
+			// Initialize Welcome Image Generator
+			const WelcomeImageGenerator = require("./Modules/WelcomeImageGenerator");
+			client.welcomeImageGenerator = new WelcomeImageGenerator(client);
+			logger.info("Welcome Image Generator initialized!");
+
+			// Initialize Gaming Alerts Manager
+			const GamingAlertsManager = require("./Modules/GamingAlerts/GamingAlertsManager");
+			client.gamingAlerts = new GamingAlertsManager(client);
+			await client.gamingAlerts.initialize();
+			logger.info("Gaming Alerts Manager initialized!");
 
 			client.isReady = true;
 			console.log("[DEBUG] WebServer started, client is ready!");

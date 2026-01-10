@@ -280,21 +280,48 @@ npm run migrate
 ### Immediate (January 2026)
 1. ✅ Social Media Alerts - **COMPLETE**
 2. ✅ Form Builder - **COMPLETE**
-3. 📝 Add slash commands for Form Builder
-4. 📝 Add dashboard UI for both systems
-5. 📝 Documentation and user guides
+3. ✅ Add dashboard UI for both systems - **COMPLETE**
+4. ✅ Add slash commands for Form Builder - **COMPLETE**
+5. ✅ Documentation and user guides - **COMPLETE**
 
 ### Short-term (February 2026)
-1. Welcome Image Generator
-2. Gaming Alerts System
-3. Extension marketplace promotion
-4. SEO content for new features
+1. ✅ Welcome Image Generator - **COMPLETE**
+   - Canvas-based image generation with custom templates
+   - Dashboard UI for configuration and preview
+   - Slash commands for management (/welcomeimage)
+   - Tier-gated custom background uploads
+   - Built-in templates and color options
+2. ✅ Gaming Alerts System - **COMPLETE**
+   - Epic Games Store free games alerts
+   - Steam sales and free games monitoring
+   - Configurable filters (discount %, price, tags)
+   - Dashboard UI with alert history
+   - Slash commands (/gamingalerts)
+   - Hourly automated checks
+3. ✅ Extension marketplace promotion - **COMPLETE**
+   - Created comprehensive promotion strategy document
+   - Outlined 4-phase rollout plan (Q1-Q4 2026)
+   - Defined KPIs and success metrics
+4. ✅ SEO content for new features - **COMPLETE**
+   - 3 blog posts published
+   - 4 Wiki documentation pages created
+   - Premium Features page updated
 
 ### Mid-term (March-April 2026)
-1. Bot Personalization (Tier 3)
-2. Mobile app planning
-3. Advanced analytics
-4. Enterprise positioning
+1. ✅ Bot Personalization (Tier 2) - **COMPLETE**
+   - Custom bot nickname per server
+   - Custom bot status (global)
+   - Dashboard UI for configuration
+   - Slash commands (/botcustom)
+   - Tier gating and validation
+2. 📝 Bot Personalization (Tier 3) - **DESIGNED**
+   - Architecture documented in BOT_PERSONALIZATION_TIER3.md
+   - Dedicated bot instances with full customization
+   - White-label branding capabilities
+   - Planned for Q2-Q3 2026
+3. Mobile app planning
+4. Advanced analytics
+5. Enterprise positioning
 
 ---
 

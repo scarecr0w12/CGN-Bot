@@ -62,6 +62,12 @@ const menuSections = {
 		icon: 'fas fa-server',
 		label: 'Server Management',
 		paths: ['server-management/channels', 'server-management/roles']
+	},
+	customization: {
+		icon: 'fas fa-palette',
+		label: 'Bot Customization',
+		paths: ['customization'],
+		tier: 'premium'
 	}
 };
 
@@ -350,7 +356,7 @@ const menuItem = (path, label, icon = null) => {
 			<p class="menu-label">
 				<span class="icon is-small"><i class="<%= menuSections.serverManagement.icon %>"></i></span>
 				<span><%= menuSections.serverManagement.label %></span>
-				<span class="tag is-warning is-small ml-2">Tier 2</span>
+				<span class="tag is-info is-small">Tier 2</span>
 			</p>
 			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
 		</div>
@@ -358,10 +364,29 @@ const menuItem = (path, label, icon = null) => {
 			<ul class="menu-list">
 				<li>
 					<% if(isActive(`${basePath}/server-management/channels`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
-					<%- menuItem('server-management/channels', 'Manage Channels', 'fas fa-hashtag') %>
+					<%- menuItem('server-management/channels', 'Channels', 'fas fa-hashtag') %>
 
 					<% if(isActive(`${basePath}/server-management/roles`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
-					<%- menuItem('server-management/roles', 'Manage Roles', 'fas fa-users-cog') %>
+					<%- menuItem('server-management/roles', 'Roles', 'fas fa-user-tag') %>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="menu-section<%= getSectionActive(menuSections.customization) ? ' has-active' : '' %>" data-section="customization">
+		<div class="menu-section-header">
+			<p class="menu-label">
+				<span class="icon is-small"><i class="<%= menuSections.customization.icon %>"></i></span>
+				<span><%= menuSections.customization.label %></span>
+				<span class="tag is-info is-small">Tier 2</span>
+			</p>
+			<span class="collapse-icon"><i class="fas fa-chevron-down"></i></span>
+		</div>
+		<div class="menu-section-content">
+			<ul class="menu-list">
+				<li>
+					<% if(isActive(`${basePath}/customization`)) { %><%- include('../partials/admin-sudo.ejs') %><% } %>
+					<%- menuItem('customization', 'Appearance Settings', 'fas fa-paint-brush') %>
 				</li>
 			</ul>
 		</div>

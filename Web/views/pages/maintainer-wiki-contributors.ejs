@@ -67,7 +67,7 @@
 											<% for(var i=0; i<configData.wiki_contributors.length; i++) { %>
 												<tr>
 													<td>
-														<img class="image is-24x24" src="<%= configData.wiki_contributors[i].avatar %>" alt="<%= configData.wiki_contributors[i].id %>">
+														<img class="image is-24x24" src="<%= configData.wiki_contributors[i].avatar %>" alt="<%= configData.wiki_contributors[i].id %>" width="24" height="24" loading="lazy">
 													</td>
 													<td>
 														<a href="/profile/<%= configData.wiki_contributors[i].id %>" style="color: inherit; text-decoration: none;">

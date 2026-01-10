@@ -254,7 +254,7 @@
 										<div class="ticket-meta">
 											<span class="ticket-number">#<%= configData.ticket.ticket_number %></span>
 											<div class="ticket-user">
-												<img src="<%= configData.ticket.user_avatar %>" alt="" class="ticket-avatar">
+												<img src="<%= configData.ticket.user_avatar %>" alt="" class="ticket-avatar" width="32" height="32" loading="lazy">
 												<span><%= configData.ticket.username %></span>
 											</div>
 											<span class="has-text-grey-light">
@@ -281,7 +281,7 @@
 									<% if (configData.messages && configData.messages.length > 0) { %>
 										<% configData.messages.forEach(msg => { %>
 										<div class="message-item <%= msg.is_system_message ? 'is-system' : '' %>">
-											<img src="<%= msg.author_avatar %>" alt="" class="message-avatar">
+											<img src="<%= msg.author_avatar %>" alt="" class="message-avatar" width="40" height="40" loading="lazy">
 											<div class="message-content">
 												<div class="message-header">
 													<span class="message-author <%= msg.is_staff ? 'is-staff' : '' %>"><%= msg.author_username %></span>

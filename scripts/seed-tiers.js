@@ -147,7 +147,7 @@ const defaultTiers = [
 		is_default: true,
 		color: "#888888",
 		badge_icon: null,
-		features: [], // Free tier gets NO premium features
+		features: ["music_system"], // Music system now available for free
 	},
 	{
 		_id: "starter",

@@ -32,6 +32,7 @@ const crypto = require("crypto");
 const middleware = require("./middleware");
 const cloudflareMiddleware = require("./middleware/cloudflare");
 const securityMiddleware = require("./middleware/security");
+const turnstileMiddleware = require("./middleware/turnstile");
 const { initialize: initCloudflare } = require("../Modules/CloudflareService");
 const metrics = require("../Modules/Metrics");
 const I18n = require("../Modules/I18n");
@@ -329,6 +330,9 @@ exports.open = async (client, auth, configJS, logger) => {
 	// Apply security middleware for input sanitization
 	app.use(securityMiddleware.sanitizeJsonResponse);
 	app.use(securityMiddleware.apiSecurityHeaders);
+
+	// Add Turnstile configuration to all templates
+	app.use(turnstileMiddleware.addTurnstileConfig);
 
 	app.set("json spaces", 2);
 

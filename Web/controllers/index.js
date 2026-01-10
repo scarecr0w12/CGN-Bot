@@ -9,6 +9,7 @@ controllers.wiki = require("./wiki");
 controllers.blog = require("./blog");
 controllers.donate = require("./donate");
 controllers.status = require("./status");
+controllers.faq = require("./faq");
 
 controllers.dashboard = require("./dashboard");
 controllers.console = require("./maintainer");

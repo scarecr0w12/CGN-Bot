@@ -254,6 +254,18 @@ const fullImageUrl = seo.image.startsWith("http") ? seo.image : (_hostingURL ? _
 </script>
 <% } %>
 
+<!-- Google Analytics (gtag.js) -->
+<% if (_isProduction && !_disableExternalScripts) { %>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DECGPPV1G7"></script>
+<script<%= typeof nonce !== 'undefined' ? ' nonce="' + nonce + '"' : '' %>>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DECGPPV1G7');
+</script>
+<% } %>
+
 <% if (_injection.headScript && _isProduction && !_disableExternalScripts) { %>
 	<%- _injection.headScript %>
 <% } %>
