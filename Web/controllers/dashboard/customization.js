@@ -3,33 +3,47 @@
  * Handles dashboard UI for bot personalization features (Tier 2+)
  */
 
+const Logger = require("../../../Internals/Logger");
+const logger = new Logger("Customization");
+
 module.exports = {
 	async get (req, res) {
-		const { guild } = res.locals;
-		const serverDocument = await global.Servers.findOne({ _id: guild.id });
+		try {
+			const serverDocument = req.svr.document;
 
-		const customization = serverDocument?.config?.bot_customization || {
-			nickname: "",
-			status_text: "",
-			status_type: "PLAYING",
-			status_state: "online",
-			isEnabled: false,
-		};
+			const customization = serverDocument?.config?.bot_customization || {
+				nickname: "",
+				status_text: "",
+				status_type: "PLAYING",
+				status_state: "online",
+				isEnabled: false,
+			};
 
-		res.render("pages/admin-bot-customization", {
-			...req.isAPI ? {} : res.locals.dashboardData,
-			customization,
-		});
+			const botMember = req.svr.members?.[req.app.client.user.id];
+			const botName = botMember?.nickname || req.app.client.user.username;
+
+			res.setPageData({
+				page: "admin-bot-customization.ejs",
+				customization,
+				botName,
+			});
+			res.render();
+		} catch (error) {
+			logger.error("Error loading bot customization page", {}, error);
+			return res.status(500).render("pages/error.ejs", {
+				error_text: "Error",
+				error_line: "Failed to load bot customization settings.",
+			});
+		}
 	},
 
 	async post (req, res) {
-		const { guild } = res.locals;
 		const { nickname, status_text, status_type, status_state, isEnabled } = req.body;
 
 		try {
 			// Check tier permission
 			const TierManager = require("../../../Modules/TierManager");
-			const tier = await TierManager.getServerTier(guild.id);
+			const tier = await TierManager.getServerTier(req.svr.id);
 
 			if (!tier || (tier.tier_id !== "premium" && tier.tier_id !== "enterprise")) {
 				return res.status(403).json({
@@ -39,7 +53,7 @@ module.exports = {
 			}
 
 			// Update configuration
-			const serverDocument = await global.Servers.findOne({ _id: guild.id });
+			const serverDocument = req.svr.document;
 			if (!serverDocument) {
 				return res.status(404).json({ success: false, message: "Server not found" });
 			}
@@ -62,7 +76,7 @@ module.exports = {
 
 			// Apply changes via BotCustomizationManager
 			if (req.app.client?.botCustomization) {
-				await req.app.client.botCustomization.updateCustomization(guild.id, {
+				await req.app.client.botCustomization.updateCustomization(req.svr.id, {
 					nickname: serverDocument.config.bot_customization.nickname,
 					status_text: serverDocument.config.bot_customization.status_text,
 					status_type: serverDocument.config.bot_customization.status_type,
@@ -79,11 +93,9 @@ module.exports = {
 	},
 
 	async reset (req, res) {
-		const { guild } = res.locals;
-
 		try {
 			if (req.app.client?.botCustomization) {
-				await req.app.client.botCustomization.resetCustomization(guild.id);
+				await req.app.client.botCustomization.resetCustomization(req.svr.id);
 			}
 
 			res.json({ success: true, message: "Bot customization reset to defaults" });

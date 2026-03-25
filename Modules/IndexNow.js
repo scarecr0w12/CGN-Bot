@@ -46,10 +46,11 @@ class IndexNow {
 	 * Load statistics from Redis
 	 */
 	async loadStats () {
-		if (!Redis || !Redis.isEnabled()) return;
+		if (!Redis || !Redis.isEnabled() || !Redis.isReady()) return;
 
 		try {
-			const client = await Redis.getClient();
+			const client = Redis.getClient();
+			if (!client) return;
 			const data = await client.get(REDIS_KEY);
 			if (data) {
 				const parsed = JSON.parse(data);
@@ -65,10 +66,11 @@ class IndexNow {
 	 * Save statistics to Redis
 	 */
 	async saveStats () {
-		if (!Redis || !Redis.isEnabled()) return;
+		if (!Redis || !Redis.isEnabled() || !Redis.isReady()) return;
 
 		try {
-			const client = await Redis.getClient();
+			const client = Redis.getClient();
+			if (!client) return;
 			await client.set(REDIS_KEY, JSON.stringify(this.stats));
 		} catch (err) {
 			logger.warn("IndexNow: Failed to save stats to Redis", err);

@@ -8,8 +8,14 @@ const getMarketplaceSettings = async () => {
 const getOrCreateUser = async userId => {
 	let user = await Users.findOne(userId);
 	if (!user) {
-		user = Users.new({ _id: userId });
-		await user.save();
+		try {
+			user = Users.new({ _id: userId });
+			await user.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
 		user = await Users.findOne(userId);
 	}
 	return user;

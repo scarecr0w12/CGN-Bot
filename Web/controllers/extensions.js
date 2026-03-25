@@ -798,8 +798,14 @@ controllers.gallery.modify = async (req, { res }) => {
 					return userDocument;
 				} else {
 					try {
-						userDocument = await Users.new({ _id: req.user.id });
-						await userDocument.save();
+						try {
+							userDocument = Users.new({ _id: req.user.id });
+							await userDocument.save();
+						} catch (err) {
+							if (!/duplicate key|1062/.test(err.message)) {
+								throw err;
+							}
+						}
 						userDocument = await Users.findOne(req.user.id);
 					} catch (err) {
 						logger.error("Failed to create user document for extension upvote", { usrid: req.user.id }, err);
@@ -838,7 +844,17 @@ controllers.gallery.modify = async (req, { res }) => {
 					await userDocument.save();
 
 					let ownerUserDocument = await CacheManager.getUser(galleryDocument.owner_id);
-					if (!ownerUserDocument) ownerUserDocument = await Users.new({ _id: galleryDocument.owner_id });
+					if (!ownerUserDocument) {
+						try {
+							ownerUserDocument = Users.new({ _id: galleryDocument.owner_id });
+							await ownerUserDocument.save();
+						} catch (err) {
+							if (!/duplicate key|1062/.test(err.message)) {
+								throw err;
+							}
+						}
+						ownerUserDocument = await Users.findOne(galleryDocument.owner_id);
+					}
 					ownerUserDocument.query.inc("points", vote * 10);
 					await ownerUserDocument.save();
 

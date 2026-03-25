@@ -9,7 +9,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	if (!client.audioManager) {
+	if (!client.lavalink) {
 		return msg.send({
 			embeds: [{
 				color: Colors.ERROR,
@@ -18,7 +18,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	const guildPlayer = client.audioManager.getPlayer(msg.guild.id);
+	const guildPlayer = client.lavalink.getPlayer(msg.guild.id);
 	if (!guildPlayer) {
 		return msg.send({
 			embeds: [{
@@ -28,7 +28,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	if (guildPlayer.connection?.joinConfig?.channelId !== voiceChannel.id) {
+	if (guildPlayer.voiceChannel !== voiceChannel.id) {
 		return msg.send({
 			embeds: [{
 				color: Colors.ERROR,
@@ -115,7 +115,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 				return msg.send({
 					embeds: [{
 						color: Colors.INFO,
-						description: `🔊 Current volume: **${guildPlayer.queue.volume}%**\nUse \`dj volume <0-200>\` to change.`,
+						description: `🔊 Current volume: **${guildPlayer.volume}%**\nUse \`dj volume <0-200>\` to change.`,
 					}],
 				});
 			}
@@ -131,7 +131,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		case "loop": {
 			const mode = args[1];
 			if (!mode || !["off", "track", "queue"].includes(mode)) {
-				const currentMode = guildPlayer.queue.loop ? "track" : guildPlayer.queue.loopQueue ? "queue" : "off";
+				const currentMode = guildPlayer.trackRepeat ? "track" : guildPlayer.queueRepeat ? "queue" : "off";
 				return msg.send({
 					embeds: [{
 						color: Colors.INFO,
@@ -139,7 +139,16 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 					}],
 				});
 			}
-			guildPlayer.queue.setLoop(mode);
+			if (mode === "track") {
+				guildPlayer.setTrackRepeat(true);
+				guildPlayer.setQueueRepeat(false);
+			} else if (mode === "queue") {
+				guildPlayer.setTrackRepeat(false);
+				guildPlayer.setQueueRepeat(true);
+			} else {
+				guildPlayer.setTrackRepeat(false);
+				guildPlayer.setQueueRepeat(false);
+			}
 			const icons = { off: "➡️", track: "🔂", queue: "🔁" };
 			return msg.send({
 				embeds: [{

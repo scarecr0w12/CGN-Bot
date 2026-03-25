@@ -100,7 +100,7 @@ class SpamHandler extends BaseEvent {
 						admin: this.client.user.id,
 						reason: `First-time spam violation in #${msg.channel.name} (${msg.channel})`,
 					});
-					ModLog.create(msg.guild, "Spam Warning", msg.member, this.client.user, `First-time spam violation in #${msg.channel.name}`);
+					await ModLog.create(msg.guild, "Spam Warning", msg.member, this.client.user, `First-time spam violation in #${msg.channel.name}`);
 				} else if (spamDocument.val.message_count === serverDocument.config.moderation.filters.spam_filter.message_sensitivity * 2) {
 					// Second-time spam filter violation
 					// eslint-disable-next-line max-len

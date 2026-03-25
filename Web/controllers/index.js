@@ -53,8 +53,8 @@ controllers.paperwork = (req, { res }) => {
 };
 
 controllers.error = (req, res, next) => {
-	if (req.query.err === "discord") renderError(res, "The Discord OAuth flow could not be completed.");
-	else if (req.query.err === "json") renderError(res, "That doesn't look like a valid trivia set to me!");
+	if (req.query.err === "discord") renderError(res, "The Discord OAuth flow could not be completed.", null, 400);
+	else if (req.query.err === "json") renderError(res, "That doesn't look like a valid trivia set to me!", null, 400);
 	else if (req.debugMode) renderError(res, "I AM ERROR");
 	else return next();
 };

@@ -82,7 +82,10 @@ class AIManager {
 	 * @returns {Object} Provider instance
 	 */
 	buildProvider (providerName, config) {
-		return this.providerFactory.create(providerName, config);
+		console.log(`[AIManager] buildProvider called with providerName=${providerName}, config=${JSON.stringify(config).substring(0, 200)}`);
+		const provider = this.providerFactory.create(providerName, config);
+		console.log(`[AIManager] Provider created: ${provider.constructor.name}`);
+		return provider;
 	}
 
 	/**
@@ -238,9 +241,38 @@ class AIManager {
 		const memoryConfig = aiConfig.memory || {};
 		const vectorConfig = aiConfig.vectorMemory || {};
 
-		// Get system prompt
-		let systemPrompt = aiConfig.systemPrompt ||
-			"You are a helpful AI assistant in a Discord server. Be concise and helpful.";
+		// Get conversation history FIRST to determine if we have context
+		const history = await this.memory.getHistory(
+			serverDocument._id,
+			channelId,
+			user.id,
+			memoryConfig,
+		);
+
+		// Build system prompt - START WITH CRITICAL INSTRUCTION FIRST
+		let systemPrompt = "You are a helpful AI assistant. Your task is to answer the user's current question or respond to their latest message.\n\n";
+
+		// Add personality (persona/tone) if configured
+		if (aiConfig.personality) {
+			systemPrompt += aiConfig.personality;
+		}
+
+		// Add main system prompt (instructions/behavior) if configured
+		if (aiConfig.systemPrompt) {
+			if (aiConfig.personality) {
+				systemPrompt += "\n\n";
+			}
+			systemPrompt += aiConfig.systemPrompt;
+		}
+
+		// Use default if neither is configured
+		if (!systemPrompt.includes("You are")) {
+			systemPrompt += "You are a helpful AI assistant in a Discord server. Be concise and helpful.";
+		}
+
+		if (history.length > 0) {
+			systemPrompt += "\n\nIMPORTANT: Below is the conversation history. Use it for context, but ALWAYS respond to the user's LATEST message with a NEW response. Do not repeat previous responses.";
+		}
 
 		// Inject vector memory context if enabled
 		if (vectorConfig.enabled && vectorConfig.injectContext && currentMessage) {
@@ -254,15 +286,18 @@ class AIManager {
 
 		const messages = [{ role: "system", content: systemPrompt }];
 
-		// Get conversation history
-		const history = await this.memory.getHistory(
-			serverDocument._id,
-			channelId,
-			user.id,
-			memoryConfig,
+		logger.debug(
+			`AI Context: Retrieved ${history.length} history messages for guild ${serverDocument._id}, ` +
+			`channel ${channelId}, user ${user.id}. Memory config: ` +
+			`limit=${memoryConfig.limit}, perUserEnabled=${memoryConfig.perUserEnabled}`,
 		);
 
 		messages.push(...history);
+
+		logger.debug(`AI Context: Final message count = ${messages.length} (1 system + ${history.length} history)`);
+		logger.debug(`AI Context: System prompt: ${systemPrompt.substring(0, 200)}`);
+		logger.debug(`AI Context: History messages: ${JSON.stringify(history.map(m => ({ role: m.role, content: m.content.substring(0, 100) })))}`);
+		logger.debug(`AI Context: Full messages array: ${JSON.stringify(messages.map(m => ({ role: m.role, content: m.content.substring(0, 100) })))}`);
 
 		return messages;
 	}
@@ -415,10 +450,21 @@ class AIManager {
 	 * @returns {AsyncGenerator|Promise} Response or stream
 	 */
 	async chat ({ serverDocument, channel, user, message, stream = false }) {
+		console.log(`[AIManager] chat() called with message: "${message.substring(0, 100)}"`);
 		const { providerName, model, providerConfig } = await this.resolveProviderAndModel(serverDocument);
+		console.log(`[AIManager] Resolved provider: ${providerName}, model: ${typeof model === "object" ? model.name : model}`);
+		console.log(`[AIManager] Provider config: ${JSON.stringify(providerConfig).substring(0, 200)}`);
 
-		if (!providerConfig || !providerConfig.apiKey) {
+		// Check if provider requires API key
+		if (providerName !== "ollama" && (!providerConfig || !providerConfig.apiKey)) {
+			console.log(`[AIManager] ERROR: No API key for provider ${providerName}`);
 			throw new Error("AI provider not configured. Ask an admin to set up an API key.");
+		}
+
+		// Check if OpenAI-compatible requires baseUrl
+		if ((providerName === "openai_compatible" || providerName.includes("compatible")) && !providerConfig.baseUrl) {
+			console.log(`[AIManager] ERROR: No baseUrl for OpenAI-compatible provider`);
+			throw new Error("OpenAI-compatible provider requires a base URL. Ask an admin to configure it.");
 		}
 
 		const provider = this.buildProvider(providerName, providerConfig);
@@ -435,7 +481,12 @@ class AIManager {
 
 		// Build context (pass current message for vector memory search)
 		const messages = await this.buildContext(serverDocument, channel.id, user, resolvedMessage);
-		messages.push({ role: "user", content: resolvedMessage });
+
+		// Add current user message with explicit marker for clarity
+		messages.push({
+			role: "user",
+			content: `[CURRENT MESSAGE] ${resolvedMessage}`,
+		});
 
 		// Perform chat
 		if (stream) {
@@ -450,7 +501,24 @@ class AIManager {
 	 * @private
 	 */
 	async _singleChat (provider, modelName, messages, serverDocument, channel, user, originalMessage, providerName) {
-		const response = await provider.chat({ model: modelName, messages, stream: false });
+		logger.debug(`AI _singleChat: Sending ${messages.length} messages to provider. Messages: ${JSON.stringify(messages.map(m => ({ role: m.role, content: m.content.substring(0, 150) })))}`);
+		console.log(`[AIManager] Calling provider.chat() with model ${modelName}`);
+		let response = await provider.chat({ model: modelName, messages, stream: false });
+		console.log(`[AIManager] Provider returned response: ${response.substring(0, 200)}`);
+
+		// Check if response is just a greeting and not answering the user's question
+		if (response.includes("Hey there") && response.includes("AI assistant") && !response.includes("2+2") && !response.includes("4") && originalMessage && originalMessage.length > 0) {
+			// The LLM is returning just the greeting, not answering the question
+			// Try again with a more explicit prompt
+			console.log(`[AIManager] Detected greeting-only response, retrying with explicit question prompt`);
+			const explicitMessages = [
+				{ role: "system", content: `You are a helpful AI assistant. The user asked: "${originalMessage}". Answer their question directly and specifically. Do not greet them or introduce yourself.` },
+				...messages.slice(1), // Skip the original system prompt
+				{ role: "user", content: `Please answer this question: ${originalMessage}` },
+			];
+			response = await provider.chat({ model: modelName, messages: explicitMessages, stream: false });
+			console.log(`[AIManager] Retry response: ${response.substring(0, 200)}`);
+		}
 
 		// Record usage
 		const usage = provider.getLastUsage();
@@ -460,13 +528,15 @@ class AIManager {
 
 		// Remember conversation
 		const aiConfigMem = serverDocument.config.ai || {};
+		const memoryConfig = aiConfigMem.memory || { limit: 10, perUserEnabled: false, perUserLimit: 5 };
+		logger.debug(`AI Chat: Calling remember with config: ${JSON.stringify(memoryConfig)}`);
 		await this.memory.remember(
 			serverDocument._id,
 			channel.id,
 			user.id,
 			originalMessage,
 			response,
-			aiConfigMem.memory || {},
+			memoryConfig,
 		);
 
 		// Store in vector memory (async, non-blocking)

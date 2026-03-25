@@ -20,7 +20,7 @@
 					</h1>
 					<article class="message is-primary">
 						<div class="message-body">
-							Customize the personality and behavior of your AI assistant. This System Prompt is sent to the AI at the start of every conversation context.
+							Customize the personality, tone, and character traits of your AI assistant. This defines how the bot presents itself and interacts with users.
 						</div>
 					</article>
 
@@ -32,13 +32,17 @@
 					</article>
 					<% } else { %>
 					<form id="form" onsubmit="SkynetUtil.submitForm(); return false;">
-						<!-- System Prompt -->
+						<!-- AI Personality -->
 						<div class="field">
-							<label class="label">System Prompt & Instructions</label>
+							<label class="label">Personality & Tone</label>
 							<div class="control">
-								<textarea name="systemPrompt" class="textarea is-primary" rows="10" maxlength="4000" placeholder="You are a helpful AI assistant..."><%= configData.ai.systemPrompt %></textarea>
+								<textarea name="personality" class="textarea is-primary" rows="25" maxlength="16000" placeholder="You are a helpful AI assistant..."><%= configData.ai.personality %></textarea>
 							</div>
-							<p class="help">Define the AI's personality, tone, constraints, and specific instructions.</p>
+							<p class="help">
+								Define the AI's personality, tone, style, and character traits. This shapes how the bot presents itself.
+								<br>
+								<span id="charCount">0</span> / 16000 characters (~<span id="tokenEstimate">0</span> tokens)
+							</p>
 						</div>
 
 						<br>
@@ -54,5 +58,25 @@
 
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
+
+	<script>
+		// Character and token counter for personality
+		const personalityTextarea = document.querySelector('[name="personality"]');
+		const charCountSpan = document.getElementById('charCount');
+		const tokenEstimateSpan = document.getElementById('tokenEstimate');
+
+		function updateCounts() {
+			const chars = personalityTextarea.value.length;
+			const tokens = Math.ceil(chars / 4);
+			charCountSpan.textContent = chars.toLocaleString();
+			tokenEstimateSpan.textContent = tokens.toLocaleString();
+		}
+
+		// Update on input
+		personalityTextarea.addEventListener('input', updateCounts);
+
+		// Initial count on page load
+		updateCounts();
+	</script>
 </body>
 </html>

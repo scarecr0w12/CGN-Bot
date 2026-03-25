@@ -71,7 +71,7 @@ module.exports = router => {
 	setupDashboardPage(router, "/administration/logs", [], controllers.dashboard.administration.logs);
 
 	// Bot Customization
-	setupDashboardPage(router, "/customization", [], controllers.dashboard.customization.get);
+	setupDashboardPage(router, "/customization", [], controllers.dashboard.customization);
 	router.post("/:svrid/customization/reset", [middleware.checkUnavailableAPI, middleware.markAsAPI, middleware.authorizeDashboardAccess], controllers.dashboard.customization.reset);
 
 	// Scan members API endpoint

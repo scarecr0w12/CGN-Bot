@@ -40,14 +40,23 @@ class OpenAICompatibleProvider extends BaseProvider {
 			...params,
 		};
 
+		console.log(`[OpenAICompatibleProvider] Making API call to ${url}`);
+		console.log(`[OpenAICompatibleProvider] Base URL: ${this.baseUrl}`);
+		console.log(`[OpenAICompatibleProvider] Model: ${model}`);
+		console.log(`[OpenAICompatibleProvider] Messages count: ${messages.length}`);
+		console.log(`[OpenAICompatibleProvider] Request body: ${JSON.stringify(body).substring(0, 500)}`);
+
 		const response = await fetch(url, {
 			method: "POST",
 			headers,
 			body: JSON.stringify(body),
 		});
 
+		console.log(`[OpenAICompatibleProvider] Response status: ${response.status}`);
+
 		if (!response.ok) {
 			const error = await response.text();
+			console.log(`[OpenAICompatibleProvider] API error: ${error}`);
 			throw new Error(`API error: ${response.status} - ${error}`);
 		}
 
@@ -65,6 +74,8 @@ class OpenAICompatibleProvider extends BaseProvider {
 	async _handleResponse (response) {
 		const data = await response.json();
 
+		console.log(`[OpenAICompatibleProvider] Response data: ${JSON.stringify(data).substring(0, 500)}`);
+
 		if (data.usage) {
 			this.setLastUsage({
 				prompt: data.usage.prompt_tokens || 0,
@@ -74,7 +85,9 @@ class OpenAICompatibleProvider extends BaseProvider {
 		}
 
 		const choice = data.choices && data.choices[0];
-		return choice && choice.message ? choice.message.content : "";
+		const content = choice && choice.message ? choice.message.content : "";
+		console.log(`[OpenAICompatibleProvider] Returning content: ${content.substring(0, 200)}`);
+		return content;
 	}
 
 	/**

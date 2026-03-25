@@ -1,5 +1,5 @@
 module.exports = async ({ client, Constants: { Colors } }, documents, msg, commandData) => {
-	if (!client.audioManager) {
+	if (!client.lavalink) {
 		return msg.send({
 			embeds: [{
 				color: Colors.INFO,
@@ -8,7 +8,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	const guildPlayer = client.audioManager.getPlayer(msg.guild.id);
+	const guildPlayer = client.lavalink.getPlayer(msg.guild.id);
 	if (!guildPlayer) {
 		return msg.send({
 			embeds: [{
@@ -18,9 +18,13 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	const currentTrack = guildPlayer.queue.currentTrack;
+	const currentTrack = guildPlayer.queue.current;
 	const page = parseInt(msg.suffix) || 1;
-	const { tracks, totalPages, total } = guildPlayer.queue.getPage(page, 10);
+	const perPage = 10;
+	const start = (page - 1) * perPage;
+	const tracks = guildPlayer.queue.slice(start, start + perPage);
+	const totalPages = Math.ceil(guildPlayer.queue.size / perPage) || 1;
+	const total = guildPlayer.queue.size;
 
 	if (!currentTrack && tracks.length === 0) {
 		return msg.send({
@@ -34,17 +38,17 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 	let description = "";
 
 	if (currentTrack) {
-		const loopIcon = guildPlayer.queue.loop ? "🔂" : guildPlayer.queue.loopQueue ? "🔁" : "";
-		const pauseIcon = guildPlayer.isPaused ? "⏸️" : "▶️";
+		const loopIcon = guildPlayer.trackRepeat ? "🔂" : guildPlayer.queueRepeat ? "🔁" : "";
+		const pauseIcon = guildPlayer.paused ? "⏸️" : "▶️";
 		description += `**${pauseIcon} Now Playing ${loopIcon}**\n`;
-		description += `[${currentTrack.title}](${currentTrack.url}) - \`${currentTrack.durationFormatted}\`\n\n`;
+		description += `[${currentTrack.title}](${currentTrack.uri}) - \`${client.lavalink.formatDuration(currentTrack.duration)}\`\n\n`;
 	}
 
 	if (tracks.length > 0) {
 		description += "**📋 Up Next:**\n";
 		const startIndex = (page - 1) * 10;
 		tracks.forEach((track, index) => {
-			description += `\`${startIndex + index + 1}.\` [${track.title}](${track.url}) - \`${track.durationFormatted}\`\n`;
+			description += `\`${startIndex + index + 1}.\` [${track.title}](${track.uri}) - \`${client.lavalink.formatDuration(track.duration)}\`\n`;
 		});
 	}
 
@@ -63,7 +67,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 			title: `🎵 Music Queue - ${msg.guild.name}`,
 			description: description,
 			footer: {
-				text: `Page ${page}/${totalPages} • ${total} tracks • Total: ${formatDuration(guildPlayer.queue.totalDuration)} • Volume: ${guildPlayer.queue.volume}%`,
+				text: `Page ${page}/${totalPages} • ${total} tracks • Volume: ${guildPlayer.volume}%`,
 			},
 		}],
 	});

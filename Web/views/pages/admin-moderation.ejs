@@ -111,7 +111,7 @@
 								<article class="message is-primary">
 									<div class="message-body">
 										<div class="content">
-											Skynet's ModLog feature makes it easy for moderators to keep track of why members have been muted, kicked, and banned. It is integrated with other Skynet moderation commands: <code>ban</code>, <code>kick</code>, <code>mute</code>, <code>reason</code>, <code>softban</code>, <code>unban</code>, <code>unmute</code>, <code>warn</code>. Moderation logging works as a full replacement for kick/ban status messages, and stores incidents as cases with reasons for each action.
+											Skynet's ModLog feature tracks all server moderation actions, member activity, and structural changes. It stores incidents as cases with reasons, edit history, and severity levels. Use <code>/modlog search</code>, <code>/modlog stats</code>, and <code>/modlog export</code> for advanced queries and reporting.
 										</div>
 									</div>
 								</article>
@@ -142,48 +142,120 @@
 									</div>
 									<div id="modlog-events-section" class="generic-feature-box-content"<%= !configData.modlog.isEnabled ? " style='display:none;'" : "" %>>
 										<div class="content">
-											<p class="has-text-weight-semibold">Event Types to Log:</p>
+											<p class="has-text-weight-semibold">Moderation Events:</p>
 											<div class="columns is-multiline">
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-strikes"<%= configData.modlog.events.strikes ? " checked" : "" %>>
-														<strong>Strikes</strong> - User warnings and strike removal
+														<strong>Strikes</strong> - User warnings
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-kicks"<%= configData.modlog.events.kicks ? " checked" : "" %>>
-														<strong>Kicks</strong> - Member kick actions
+														<strong>Kicks</strong> - Member kicks
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-bans"<%= configData.modlog.events.bans ? " checked" : "" %>>
-														<strong>Bans</strong> - Bans, unbans, and temp bans
+														<strong>Bans</strong> - Bans and unbans
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-mutes"<%= configData.modlog.events.mutes ? " checked" : "" %>>
-														<strong>Mutes</strong> - Mute and unmute actions
+														<strong>Mutes</strong> - Mute actions
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-filter_violations"<%= configData.modlog.events.filter_violations ? " checked" : "" %>>
-														<strong>Filter Violations</strong> - Spam and filter triggers
+														<strong>Filter Violations</strong> - Spam triggers
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-raid_alerts"<%= configData.modlog.events.raid_alerts ? " checked" : "" %>>
-														<strong>Raid Alerts</strong> - Raid detection events
+														<strong>Raid Alerts</strong> - Raid detection
 													</label>
 												</div>
 												<div class="column is-half">
 													<label class="checkbox">
 														<input type="checkbox" name="modlog-events-alt_detection"<%= configData.modlog.events.alt_detection ? " checked" : "" %>>
-														<strong>Alt Detection</strong> - Alt account actions
+														<strong>Alt Detection</strong> - Alt accounts
+													</label>
+												</div>
+											</div>
+											<p class="has-text-weight-semibold" style="margin-top: 1rem;">Member & Server Events:</p>
+											<div class="columns is-multiline">
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-message_deleted"<%= configData.modlog.events.message_deleted ? " checked" : "" %>>
+														<strong>Message Deleted</strong> - Deleted messages
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-message_edited"<%= configData.modlog.events.message_edited ? " checked" : "" %>>
+														<strong>Message Edited</strong> - Edited messages
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-member_joined"<%= configData.modlog.events.member_joined ? " checked" : "" %>>
+														<strong>Member Joined</strong> - New members
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-member_left"<%= configData.modlog.events.member_left ? " checked" : "" %>>
+														<strong>Member Left</strong> - Members leaving
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-bulk_delete"<%= configData.modlog.events.bulk_delete ? " checked" : "" %>>
+														<strong>Bulk Delete</strong> - Bulk message deletes
+													</label>
+												</div>
+											</div>
+											<p class="has-text-weight-semibold" style="margin-top: 1rem;">Role & Channel Events:</p>
+											<div class="columns is-multiline">
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-role_created"<%= configData.modlog.events.role_created ? " checked" : "" %>>
+														<strong>Role Created</strong> - New roles
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-role_deleted"<%= configData.modlog.events.role_deleted ? " checked" : "" %>>
+														<strong>Role Deleted</strong> - Deleted roles
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-role_modified"<%= configData.modlog.events.role_modified ? " checked" : "" %>>
+														<strong>Role Modified</strong> - Role changes
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-channel_created"<%= configData.modlog.events.channel_created ? " checked" : "" %>>
+														<strong>Channel Created</strong> - New channels
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-channel_deleted"<%= configData.modlog.events.channel_deleted ? " checked" : "" %>>
+														<strong>Channel Deleted</strong> - Deleted channels
+													</label>
+												</div>
+												<div class="column is-half">
+													<label class="checkbox">
+														<input type="checkbox" name="modlog-events-channel_modified"<%= configData.modlog.events.channel_modified ? " checked" : "" %>>
+														<strong>Channel Modified</strong> - Channel changes
 													</label>
 												</div>
 											</div>

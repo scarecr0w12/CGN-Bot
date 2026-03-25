@@ -10,12 +10,12 @@ A feature-rich Discord bot with a powerful web dashboard, designed to bring more
 ## Features
 
 - **🤖 AI Integration** - Chat with AI and generate images using DALL-E/Stable Diffusion
-- **🧠 Sentiment Analysis** - AI-powered automod with Google Cloud NL API or AI fallback
+- **🧠 AI Memory & Prompting** - Larger system prompts, conversation memory, and optional Qdrant vector memory
 - **🌍 Multilingual** - Full i18n support for 15 languages
 - **💰 Economy System** - Full economy with daily rewards, jobs, shops, trading, quests, and achievements
-- **🎵 Music System** - High-quality music playback with filters, lyrics, and DJ controls
+- **🎵 Music System** - Lavalink-powered playback with queue controls, filters, and improved reliability
 - **🎮 Entertainment** - 60+ game extensions, polls, giveaways, and fun commands
-- **🛡️ Moderation** - Progressive strike system, auto-mod filters, audit logging
+- **🛡️ Moderation** - Progressive strike system, raid/spam detection, expanded audit logging, and modlog exports
 - **🛠️ Developer Tools** - Code execution, linting, regex testing, and JSON utilities
 - **📊 Analytics** - Activity scoring, server statistics, and leaderboards
 - **⚙️ Server Management** - Dashboard-based channel and role management with drag-and-drop
@@ -54,6 +54,10 @@ node master.js
 ## Documentation
 
 - [Changelog](CHANGELOG.md) - Version history and release notes
+- [Lavalink Setup](docs/LAVALINK_SETUP.md) - Configure the Lavalink-based audio stack
+- [Audio Cookie Setup](docs/AUDIO_SETUP.md) - Legacy `play-dl` cookie setup reference
+- [Memory Systems](docs/MEMORY_SYSTEMS.md) - AI conversation and vector memory architecture
+- [AI System Review](docs/AI_SYSTEM_REVIEW.md) - Review of AI fixes and prompt improvements
 - [Feature Development](docs/FEATURE_DEVELOPMENT.md) - Tier-gated feature implementation guide
 - [MariaDB Migration](docs/MARIADB_MIGRATION.md) - Guide for migrating from MongoDB to MariaDB
 - [Distributed Architecture](docs/DISTRIBUTED_ARCHITECTURE.md) - Distributed systems architecture guide

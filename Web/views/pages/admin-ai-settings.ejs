@@ -207,9 +207,9 @@
 						<div class="field">
 							<label class="label">AI Personality & Instructions</label>
 							<div class="control">
-								<textarea name="systemPrompt" class="textarea is-primary" rows="4" maxlength="4000" placeholder="You are a helpful AI assistant..."><%= configData.ai.systemPrompt %></textarea>
+								<textarea name="systemPrompt" class="textarea is-primary" rows="8" maxlength="16000" placeholder="You are a helpful AI assistant..."><%= configData.ai.systemPrompt %></textarea>
 							</div>
-							<p class="help">Define the AI's personality and behavior. This is sent with every conversation.</p>
+							<p class="help">Define the AI's personality and behavior. This is sent with every conversation. For detailed prompts, use the <a href="/dashboard/<%= serverData.id %>/ai/personality">AI Personality page</a>.</p>
 						</div>
 
 						<hr>
@@ -376,6 +376,9 @@
 			
 			try {
 				const response = await fetch(`/dashboard/${serverData.id}/ai/models?provider=${provider}`);
+				if (!response.ok) {
+					throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+				}
 				const data = await response.json();
 				console.log('AI Models API response:', data);
 				
@@ -385,7 +388,7 @@
 					modelStatus.className = 'help has-text-success';
 					modelStatus.innerHTML = `<i class="fas fa-check"></i> Found ${models.length} models from API`;
 				} else {
-					// Use fallback models
+					// Use fallback models when API fails or returns empty
 					models = fallbackModels[provider] || [];
 					if (models.length > 0) {
 						modelStatus.className = 'help has-text-warning';
@@ -396,13 +399,16 @@
 					}
 				}
 				
+				console.log(`Using ${models.length} models for provider ${provider}`);
 				populateModelSelect(models, provider);
 			} catch (error) {
+				console.error('Error fetching models:', error);
 				// Use fallback models on error
 				const models = fallbackModels[provider] || [];
+				console.log(`Fallback: Using ${models.length} models for provider ${provider}`);
 				populateModelSelect(models, provider);
 				modelStatus.className = 'help has-text-danger';
-				modelStatus.innerHTML = `<i class="fas fa-times"></i> Error fetching models. Using defaults.`;
+				modelStatus.innerHTML = `<i class="fas fa-times"></i> Error fetching models: ${error.message}. Using defaults.`;
 			} finally {
 				const finalSelect = document.getElementById('model-name');
 				const finalWrapper = document.getElementById('model-select-wrapper');
@@ -413,18 +419,26 @@
 
 		function populateModelSelect(models, provider) {
 			const modelSelect = document.getElementById('model-name');
-			const currentValue = modelSelect.value;
+			if (!modelSelect) {
+				console.error('Model select element not found');
+				return;
+			}
 			
+			const currentValue = modelSelect.value;
 			modelSelect.innerHTML = '';
 			
+			// If no models available at all, convert to input
 			if (models.length === 0) {
-				// Allow manual entry if no models available
+				console.log('No models available, converting to input');
 				const wrapper = document.getElementById('model-select-wrapper');
-				wrapper.outerHTML = `<input name="model-name" id="model-name" class="input is-primary" type="text" value="${currentValue}" placeholder="Enter model name manually">`;
+				if (wrapper) {
+					wrapper.outerHTML = `<input name="model-name" id="model-name" class="input is-primary" type="text" value="${currentValue}" placeholder="Enter model name manually">`;
+				}
 				return;
 			}
 			
 			// Add models to select
+			console.log(`Adding ${models.length} models to select for provider ${provider}`);
 			models.forEach(model => {
 				const option = document.createElement('option');
 				option.value = model;

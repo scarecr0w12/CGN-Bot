@@ -63,14 +63,21 @@ class AnthropicProvider extends BaseProvider {
 			body.system = systemPrompt;
 		}
 
+		console.log(`[AnthropicProvider] Making API call to ${url} with model ${model}`);
+		console.log(`[AnthropicProvider] API Key present: ${!!this.apiKey}`);
+		console.log(`[AnthropicProvider] Request body: ${JSON.stringify(body).substring(0, 500)}`);
+
 		const response = await fetch(url, {
 			method: "POST",
 			headers,
 			body: JSON.stringify(body),
 		});
 
+		console.log(`[AnthropicProvider] Response status: ${response.status}`);
+
 		if (!response.ok) {
 			const error = await response.text();
+			console.log(`[AnthropicProvider] API error: ${error}`);
 			throw new Error(`Anthropic API error: ${response.status} - ${error}`);
 		}
 

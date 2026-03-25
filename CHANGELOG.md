@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Lavalink audio stack** with `Modules/LavalinkManager.js`, Docker service wiring, and `lavalink-config.yml` for more reliable music playback.
+- **Expanded modlog coverage** for role, channel, member join/leave, username change, message delete, and bulk delete events.
+- **Richer modlog configuration** with per-event toggles, retention settings, severity metadata, edit history, and JSON/CSV export support.
+- **New operations and architecture docs** for Lavalink setup, audio setup, AI system review, and memory systems.
+
+### Changed
+
+- **Music commands** (`!play`, `!queue`, `!skip`, `!dj`) now target the Lavalink-backed audio flow instead of relying solely on the older playback path.
+- **AI configuration** now supports larger personality/system prompt lengths and expanded memory settings for short-term conversation history and optional vector memory.
+- **AI context handling** was refined across the dashboard and providers to improve prompt construction, conversation recall, and model interoperability.
+- **Dashboard moderation and AI pages** were updated to expose the new modlog and AI memory/prompt controls more clearly.
+- **Landing page and shared web UI flows** received supporting polish for the updated feature set and form handling.
+
+### Fixed
+
+- **`/ai ask` context bug** where incorrect parameters prevented proper server/channel context building and caused weaker or repetitive responses.
+- **Modlog robustness issues** when no server document exists or when optional event settings are unset.
+- **Dashboard customization route handling** so the customization page resolves through the expected controller entry point.
+- **Package tooling** by aligning the Husky `prepare` script with the current Husky command format.
+
 ## [1.11.0] - 2025-01-10
 
 ### Added

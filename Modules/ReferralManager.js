@@ -27,7 +27,15 @@ const ReferralManager = module.exports;
 ReferralManager.generateReferralCode = async userId => {
 	let userDocument = await Users.findOne(userId);
 	if (!userDocument) {
-		userDocument = await Users.new({ _id: userId });
+		try {
+			userDocument = Users.new({ _id: userId });
+			await userDocument.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
+		userDocument = await Users.findOne(userId);
 	}
 
 	// Return existing code if user already has one

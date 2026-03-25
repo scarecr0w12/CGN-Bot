@@ -62,6 +62,49 @@ class VectorMemory {
 		return `${this._collectionPrefix}${guildId}`;
 	}
 
+	getConfiguredVectorSize (config) {
+		return config.vectorSize || DEFAULT_VECTOR_SIZE;
+	}
+
+	getCollectionVectorSize (info) {
+		return info?.config?.params?.vectors?.size || DEFAULT_VECTOR_SIZE;
+	}
+
+	async createCollectionWithIndexes (client, collectionName, vectorSize, guildId) {
+		await client.createCollection(collectionName, {
+			vectors: {
+				size: vectorSize,
+				distance: "Cosine",
+			},
+		});
+
+		await client.createPayloadIndex(collectionName, {
+			field_name: "channel_id",
+			field_schema: "keyword",
+			wait: true,
+		});
+
+		await client.createPayloadIndex(collectionName, {
+			field_name: "user_id",
+			field_schema: "keyword",
+			wait: true,
+		});
+
+		await client.createPayloadIndex(collectionName, {
+			field_name: "type",
+			field_schema: "keyword",
+			wait: true,
+		});
+
+		await client.createPayloadIndex(collectionName, {
+			field_name: "timestamp",
+			field_schema: "integer",
+			wait: true,
+		});
+
+		logger.info(`Created Qdrant collection ${collectionName} for guild ${guildId}`, { vectorSize });
+	}
+
 	/**
 	 * Ensure the collection exists for a guild
 	 * @param {string} guildId - The guild ID
@@ -73,7 +116,7 @@ class VectorMemory {
 		if (!client) return false;
 
 		const collectionName = this.getCollectionName(guildId);
-		const vectorSize = config.vectorSize || DEFAULT_VECTOR_SIZE;
+		const vectorSize = this.getConfiguredVectorSize(config);
 
 		try {
 			// Check if collection exists
@@ -81,40 +124,20 @@ class VectorMemory {
 			const exists = collections.collections.some(c => c.name === collectionName);
 
 			if (!exists) {
-				// Create collection with appropriate vector size
-				await client.createCollection(collectionName, {
-					vectors: {
-						size: vectorSize,
-						distance: "Cosine",
-					},
-					optimizers_config: {
-						default_segment_number: 2,
-					},
-					replication_factor: 1,
-				});
+				await this.createCollectionWithIndexes(client, collectionName, vectorSize, guildId);
+				return true;
+			}
 
-				// Create payload index for efficient filtering
-				await client.createPayloadIndex(collectionName, {
-					field_name: "channel_id",
-					field_schema: "keyword",
-				});
+			const info = await client.getCollection(collectionName);
+			const existingVectorSize = this.getCollectionVectorSize(info);
 
-				await client.createPayloadIndex(collectionName, {
-					field_name: "user_id",
-					field_schema: "keyword",
+			if (existingVectorSize !== vectorSize) {
+				logger.warn(`Recreating Qdrant collection ${collectionName} for guild ${guildId} due to vector size mismatch`, {
+					existingVectorSize,
+					configuredVectorSize: vectorSize,
 				});
-
-				await client.createPayloadIndex(collectionName, {
-					field_name: "type",
-					field_schema: "keyword",
-				});
-
-				await client.createPayloadIndex(collectionName, {
-					field_name: "timestamp",
-					field_schema: "integer",
-				});
-
-				logger.info(`Created Qdrant collection ${collectionName} for guild ${guildId}`);
+				await client.deleteCollection(collectionName);
+				await this.createCollectionWithIndexes(client, collectionName, vectorSize, guildId);
 			}
 
 			return true;
@@ -146,7 +169,11 @@ class VectorMemory {
 				if (providerConfig && providerConfig.baseUrl) {
 					const provider = aiManager.buildProvider("openai_compatible", providerConfig);
 					if (typeof provider.embed === "function") {
-						return await provider.embed(text, embeddingModel);
+						const embedding = await provider.embed(text, embeddingModel);
+						if (Array.isArray(embedding) && embedding.length > 0 && vectorConfig.vectorSize !== embedding.length) {
+							vectorConfig.vectorSize = embedding.length;
+						}
+						return embedding;
 					}
 				}
 			}
@@ -163,7 +190,11 @@ class VectorMemory {
 					input: text,
 				});
 
-				return response.data[0].embedding;
+				const embedding = response.data[0].embedding;
+				if (Array.isArray(embedding) && embedding.length > 0 && vectorConfig.vectorSize !== embedding.length) {
+					vectorConfig.vectorSize = embedding.length;
+				}
+				return embedding;
 			}
 
 			return null;
@@ -241,6 +272,9 @@ class VectorMemory {
 		const collectionName = this.getCollectionName(guildId);
 
 		try {
+			const collectionReady = await this.ensureCollection(guildId, config);
+			if (!collectionReady) return [];
+
 			// Build filter
 			const filter = { must: [] };
 

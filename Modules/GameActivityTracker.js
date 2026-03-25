@@ -83,6 +83,11 @@ const startSession = async (serverDocument, userId, gameName) => {
 		// End existing session first if game changed
 		if (existingSession.game_name !== gameName) {
 			await endSession(serverDocument, userId);
+			// Reload server document to ensure session was removed
+			serverDocument = await Servers.findOne(serverDocument._id);
+			if (!serverDocument || !Array.isArray(serverDocument.game_sessions)) {
+				return;
+			}
 		} else {
 			// Same game, already tracking
 			return;

@@ -32,11 +32,17 @@ module.exports = new Schema({
 		type: Object,
 		default: {},
 	},
-	// System prompt for AI conversations
+	// Main system prompt for AI conversations (instructions, behavior, constraints)
 	systemPrompt: {
 		type: String,
 		default: "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
-		maxlength: 4000,
+		maxlength: 16000,
+	},
+	// AI Personality/Persona (tone, style, character traits)
+	personality: {
+		type: String,
+		default: "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
+		maxlength: 16000,
 	},
 	// Rate limiting configuration
 	rateLimits: new Schema({

@@ -1,6 +1,6 @@
 const BaseEvent = require("../BaseEvent.js");
 const { LoggingLevels, Colors } = require("../../Constants");
-const { create: CreateModLog } = require("../../../Modules/ModLog");
+const ModLog = require("../../../Modules/ModLog");
 const TierManager = require("../../../Modules/TierManager");
 
 // In-memory storage for join tracking per guild
@@ -85,9 +85,8 @@ class RaidDetection extends BaseEvent {
 					if (role) {
 						try {
 							await member.roles.add(role, "Alt account detection - quarantine");
-							this.client.logMessage(serverDocument, LoggingLevels.INFO,
-								`Quarantined potential alt "${member.user.tag}" (account age: ${accountAgeDays} days)`,
-								null, member.id);
+							await ModLog.create(member.guild, "Quarantine (Alt Detection)", member, null,
+								`Account age: ${accountAgeDays} days (min: ${minAge} days)`);
 						} catch (err) {
 							logger.debug("Failed to add quarantine role", { svrid: member.guild.id, usrid: member.id }, err);
 						}
@@ -107,7 +106,7 @@ class RaidDetection extends BaseEvent {
 					}).catch(() => null);
 
 					await member.kick("Alt account detection - account too new");
-					CreateModLog(member.guild, "Kick (Alt Detection)", member, null,
+					await ModLog.create(member.guild, "Kick (Alt Detection)", member, null,
 						`Account age: ${accountAgeDays} days (min: ${minAge} days)`);
 				} catch (err) {
 					logger.debug("Failed to kick suspected alt", { svrid: member.guild.id, usrid: member.id }, err);
@@ -129,7 +128,7 @@ class RaidDetection extends BaseEvent {
 						deleteMessageSeconds: 0,
 						reason: "Alt account detection - account too new",
 					});
-					CreateModLog(member.guild, "Ban (Alt Detection)", member, null,
+					await ModLog.create(member.guild, "Ban (Alt Detection)", member, null,
 						`Account age: ${accountAgeDays} days (min: ${minAge} days)`);
 				} catch (err) {
 					logger.debug("Failed to ban suspected alt", { svrid: member.guild.id, usrid: member.id }, err);
@@ -224,7 +223,7 @@ class RaidDetection extends BaseEvent {
 				embeds: [alertEmbed],
 			});
 
-			CreateModLog(member.guild, "Raid Detected", null, null,
+			await ModLog.create(member.guild, "Raid Detected", null, null,
 				`${tracker.joins.length} joins in ${antiraid.time_window}s - Action: ${antiraid.action}`);
 
 			// Handle recent joins during raid

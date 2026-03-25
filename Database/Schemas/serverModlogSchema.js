@@ -10,6 +10,10 @@ module.exports = new Schema({
 		type: Number,
 		default: 0,
 	},
+	retention_days: {
+		type: Number,
+		default: 90,
+	},
 	events: new Schema({
 		strikes: {
 			type: Boolean,
@@ -39,10 +43,53 @@ module.exports = new Schema({
 			type: Boolean,
 			default: true,
 		},
+		message_deleted: {
+			type: Boolean,
+			default: true,
+		},
+		message_edited: {
+			type: Boolean,
+			default: true,
+		},
+		member_joined: {
+			type: Boolean,
+			default: true,
+		},
+		member_left: {
+			type: Boolean,
+			default: true,
+		},
+		role_created: {
+			type: Boolean,
+			default: true,
+		},
+		role_deleted: {
+			type: Boolean,
+			default: true,
+		},
+		role_modified: {
+			type: Boolean,
+			default: true,
+		},
+		channel_created: {
+			type: Boolean,
+			default: true,
+		},
+		channel_deleted: {
+			type: Boolean,
+			default: true,
+		},
+		channel_modified: {
+			type: Boolean,
+			default: true,
+		},
+		bulk_delete: {
+			type: Boolean,
+			default: true,
+		},
 	}),
 	entries: [new Schema({
 		_id: {
-			// Based off current_id
 			type: Number,
 			required: true,
 		},
@@ -77,29 +124,42 @@ module.exports = new Schema({
 				"Kick (Alt Detection)",
 				"Ban (Alt Detection)",
 				"Quarantine",
+				"Message Deleted",
+				"Message Edited",
+				"Member Joined",
+				"Member Left",
+				"Channel Created",
+				"Channel Deleted",
+				"Channel Modified",
+				"Bulk Delete",
 			],
 			required: true,
 		},
 		affected_user: {
-			// User Id of the affected user
 			type: String,
-			// We're getting modlogs without affected_user (role deletion is an example)
-			// So, /shrug
-			// required: true,
+		},
+		affected_role: {
+			type: String,
+		},
+		affected_channel: {
+			type: String,
 		},
 		creator: {
-			// User ID of the issuer
 			type: String,
 			required: true,
 		},
 		message_id: {
-			// Message ID of the modlog entry
 			type: String,
 			required: true,
 		},
 		reason: {
 			type: String,
 			maxlength: 1500,
+		},
+		severity: {
+			type: String,
+			enum: ["low", "medium", "high", "critical"],
+			default: "medium",
 		},
 		isValid: {
 			type: Boolean,
@@ -109,5 +169,12 @@ module.exports = new Schema({
 			type: Boolean,
 			default: true,
 		},
+		edit_history: [new Schema({
+			edited_at: Date,
+			edited_by: String,
+			old_reason: String,
+			new_reason: String,
+		})],
+		metadata: Schema.Mixed,
 	})],
 });

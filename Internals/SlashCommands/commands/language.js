@@ -128,7 +128,15 @@ module.exports = {
 			try {
 				let userDocument = await Users.findOne(interaction.user.id);
 				if (!userDocument) {
-					userDocument = await Users.new({ _id: interaction.user.id });
+					try {
+						userDocument = Users.new({ _id: interaction.user.id });
+						await userDocument.save();
+					} catch (err) {
+						if (!/duplicate key|1062/.test(err.message)) {
+							throw err;
+						}
+					}
+					userDocument = await Users.findOne(interaction.user.id);
 				}
 
 				if (!userDocument.preferences) {

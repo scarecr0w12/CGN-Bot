@@ -241,7 +241,7 @@ class BotLists {
 				logger.warn("Failed to post stats to topbotlist.net", { status: response.status, body: text });
 			}
 		} catch (err) {
-			logger.error("Error posting to topbotlist.net", {}, err);
+			logger.warn("Error posting to topbotlist.net", {}, err);
 		}
 	}
 
@@ -267,7 +267,7 @@ class BotLists {
 
 			// Convert commands to Discord API format
 			const commandsData = slashHandler.commands.map(cmd => cmd.data.toJSON());
-			const url = `https://top.gg/api/v1/bots/${this.client.user.id}/commands`;
+			const url = "https://top.gg/api/v1/projects/@me/commands";
 
 			logger.debug("Posting commands to top.gg", {
 				url,
@@ -369,28 +369,12 @@ class BotLists {
 				return { success: false, error: "No slash commands loaded" };
 			}
 
-			// Convert commands to Discord API format (topbotlist expects same format)
-			const commandsData = slashHandler.commands.map(cmd => cmd.data.toJSON());
-
-			const response = await fetch(`https://topbotlist.net/api/bots/${this.client.user.id}/commands`, {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${apiToken}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(commandsData),
+			logger.info("Skipping topbotlist.net command sync", {
+				reason: "No documented stable command sync endpoint is currently configured",
 			});
-
-			if (response.ok) {
-				logger.info("Posted slash commands to topbotlist.net", { count: commandsData.length });
-				return { success: true, count: commandsData.length };
-			} else {
-				const text = await response.text().catch(() => "");
-				logger.warn("Failed to post commands to topbotlist.net", { status: response.status, body: text });
-				return { success: false, error: `HTTP ${response.status}: ${text}` };
-			}
+			return { success: false, skipped: true, error: "topbotlist.net command sync is not currently supported" };
 		} catch (err) {
-			logger.error("Error posting commands to topbotlist.net", {}, err);
+			logger.warn("Error posting commands to topbotlist.net", {}, err);
 			return { success: false, error: err.message };
 		}
 	}

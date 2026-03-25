@@ -34,9 +34,13 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 		});
 	}
 
-	if (!client.audioManager) {
-		const AudioManager = require("../../Internals/Audio/AudioManager");
-		client.audioManager = new AudioManager(client);
+	if (!client.lavalink || !client.lavalink.hasAvailableNodes || !client.lavalink.hasAvailableNodes()) {
+		return msg.send({
+			embeds: [{
+				color: Colors.ERROR,
+				description: "❌ Audio system is reconnecting. Please try again in a few seconds.",
+			}],
+		});
 	}
 
 	const loadingMsg = await msg.send({
@@ -47,7 +51,16 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 	});
 
 	try {
-		const tracks = await client.audioManager.search(msg.suffix, msg.author.id);
+		if (!client.lavalink.hasAvailableNodes || !client.lavalink.hasAvailableNodes()) {
+			return loadingMsg.edit({
+				embeds: [{
+					color: Colors.ERROR,
+					description: "❌ Audio system is reconnecting. Please try again in a few seconds.",
+				}],
+			});
+		}
+
+		const tracks = await client.lavalink.search(msg.suffix, msg.author.id);
 
 		if (!tracks || tracks.length === 0) {
 			return loadingMsg.edit({
@@ -58,31 +71,29 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 			});
 		}
 
-		const guildPlayer = client.audioManager.createPlayer(msg.guild.id);
+		const player = client.lavalink.createPlayer(msg.guild.id, voiceChannel, msg.channel);
 
-		try {
-			await guildPlayer.connect(voiceChannel, msg.channel);
-		} catch (err) {
-			return loadingMsg.edit({
-				embeds: [{
-					color: Colors.ERROR,
-					description: "❌ Failed to connect to the voice channel.",
-				}],
-			});
+		// Connect to voice channel if not connected
+		if (player.state !== "CONNECTED") {
+			player.connect();
 		}
 
-		const isPlaylist = tracks.length > 1;
-		const wasEmpty = guildPlayer.queue.isEmpty && !guildPlayer.isPlaying;
+		const wasEmpty = player.queue.size === 0 && !player.playing;
 
-		for (const track of tracks) {
-			guildPlayer.queue.add(track);
+		// Add tracks to queue
+		if (tracks.length === 1) {
+			player.queue.add(tracks[0]);
+		} else {
+			player.queue.add(tracks);
 		}
 
-		if (wasEmpty) {
-			guildPlayer.play();
+		// Start playing if queue was empty
+		if (!player.playing && !player.paused && wasEmpty) {
+			player.play();
 		}
 
-		if (isPlaylist) {
+		// Handle response
+		if (tracks.length > 1) {
 			return loadingMsg.edit({
 				embeds: [{
 					color: Colors.SUCCESS,
@@ -94,16 +105,16 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 		}
 
 		const track = tracks[0];
-		const position = guildPlayer.queue.size;
+		const position = player.queue.size;
 
 		return loadingMsg.edit({
 			embeds: [{
 				color: Colors.SUCCESS,
 				title: wasEmpty ? "🎵 Now Playing" : "🎵 Added to Queue",
-				description: `[${track.title}](${track.url})`,
+				description: `[${track.title}](${track.uri})`,
 				thumbnail: track.thumbnail ? { url: track.thumbnail } : undefined,
 				fields: [
-					{ name: "Duration", value: track.durationFormatted, inline: true },
+					{ name: "Duration", value: client.lavalink.formatDuration(track.duration), inline: true },
 					{ name: "Position", value: wasEmpty ? "Now" : `#${position}`, inline: true },
 				],
 				footer: { text: `Requested by ${msg.author.tag}` },
@@ -111,6 +122,16 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 		});
 	} catch (error) {
 		logger.error("Play command error", { guildId: msg.guild.id }, error);
+
+		if (error && typeof error.message === "string" && error.message.toLowerCase().includes("no available nodes")) {
+			return loadingMsg.edit({
+				embeds: [{
+					color: Colors.ERROR,
+					description: "❌ Audio system is offline (no Lavalink nodes available). Please try again shortly.",
+				}],
+			});
+		}
+
 		return loadingMsg.edit({
 			embeds: [{
 				color: Colors.ERROR,

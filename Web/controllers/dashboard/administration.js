@@ -48,10 +48,16 @@ controllers.scanMembers = async (req, res) => {
 			let userDocument = await Users.findOne(memberId);
 			if (!userDocument) {
 				// Create new user document
-				userDocument = Users.new({ _id: memberId });
-				userDocument.username = member.user.username;
-				await userDocument.save();
-				created++;
+				try {
+					userDocument = Users.new({ _id: memberId });
+					userDocument.username = member.user.username;
+					await userDocument.save();
+					created++;
+				} catch (err) {
+					if (!/duplicate key|1062/.test(err.message)) {
+						throw err;
+					}
+				}
 			} else if (!userDocument.username || userDocument.username !== member.user.username) {
 				// Update username if missing or changed
 				userDocument.query.set("username", member.user.username);
@@ -143,6 +149,7 @@ controllers.moderation = async (req, { res }) => {
 		modlog: {
 			isEnabled: serverDocument.modlog.isEnabled,
 			channel_id: serverDocument.modlog.channel_id,
+			retention_days: serverDocument.modlog.retention_days || 90,
 			events: serverDocument.modlog.events || {
 				strikes: true,
 				kicks: true,
@@ -151,6 +158,17 @@ controllers.moderation = async (req, { res }) => {
 				filter_violations: true,
 				raid_alerts: true,
 				alt_detection: true,
+				message_deleted: true,
+				message_edited: true,
+				member_joined: true,
+				member_left: true,
+				role_created: true,
+				role_deleted: true,
+				role_modified: true,
+				channel_created: true,
+				channel_deleted: true,
+				channel_modified: true,
+				bulk_delete: true,
 			},
 		},
 	});
@@ -182,6 +200,17 @@ controllers.moderation.post = async (req, res) => {
 	serverQueryDocument.set("modlog.events.filter_violations", req.body["modlog-events-filter_violations"] === "on");
 	serverQueryDocument.set("modlog.events.raid_alerts", req.body["modlog-events-raid_alerts"] === "on");
 	serverQueryDocument.set("modlog.events.alt_detection", req.body["modlog-events-alt_detection"] === "on");
+	serverQueryDocument.set("modlog.events.message_deleted", req.body["modlog-events-message_deleted"] === "on");
+	serverQueryDocument.set("modlog.events.message_edited", req.body["modlog-events-message_edited"] === "on");
+	serverQueryDocument.set("modlog.events.member_joined", req.body["modlog-events-member_joined"] === "on");
+	serverQueryDocument.set("modlog.events.member_left", req.body["modlog-events-member_left"] === "on");
+	serverQueryDocument.set("modlog.events.role_created", req.body["modlog-events-role_created"] === "on");
+	serverQueryDocument.set("modlog.events.role_deleted", req.body["modlog-events-role_deleted"] === "on");
+	serverQueryDocument.set("modlog.events.role_modified", req.body["modlog-events-role_modified"] === "on");
+	serverQueryDocument.set("modlog.events.channel_created", req.body["modlog-events-channel_created"] === "on");
+	serverQueryDocument.set("modlog.events.channel_deleted", req.body["modlog-events-channel_deleted"] === "on");
+	serverQueryDocument.set("modlog.events.channel_modified", req.body["modlog-events-channel_modified"] === "on");
+	serverQueryDocument.set("modlog.events.bulk_delete", req.body["modlog-events-bulk_delete"] === "on");
 
 	save(req, res, true);
 };

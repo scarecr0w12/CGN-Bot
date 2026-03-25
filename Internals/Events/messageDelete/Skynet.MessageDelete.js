@@ -1,5 +1,6 @@
 const BaseEvent = require("../BaseEvent.js");
 const { StatusMessages } = require("../../Constants");
+const ModLog = require("../../../Modules/ModLog");
 
 class MessageDelete extends BaseEvent {
 	requirements (msg) {
@@ -24,6 +25,19 @@ class MessageDelete extends BaseEvent {
 				this.client.snipes.delete(msg.channel.id);
 			}
 		}, 300000);
+
+		// Log message deletion to modlog
+		try {
+			const reason = `Message content: ${msg.content.substring(0, 100)}${msg.content.length > 100 ? "..." : ""}`;
+			const result = await ModLog.create(msg.guild, "Message Deleted", msg.author, null, reason);
+			if (result instanceof Error) {
+				logger.debug("ModLog.create returned error", { svrid: msg.guild.id, chid: msg.channel.id, error: result.message });
+			} else {
+				logger.debug("Message deletion logged to modlog", { svrid: msg.guild.id, chid: msg.channel.id, caseId: result });
+			}
+		} catch (err) {
+			logger.debug("Failed to log message deletion to modlog", { svrid: msg.guild.id, chid: msg.channel.id }, err);
+		}
 
 		const serverDocument = await Servers.findOne(msg.guild.id);
 		if (!serverDocument) {
@@ -64,7 +78,17 @@ class MessageDelete extends BaseEvent {
 
 				if (message && ![this.client.user.id, msg.author.id].includes(message.author.id) && !message.author.bot) {
 					let userDocument = await Users.findOne(message.author.id);
-					if (!userDocument) userDocument = Users.new({ _id: message.author.id });
+					if (!userDocument) {
+						try {
+							userDocument = Users.new({ _id: message.author.id });
+							await userDocument.save();
+						} catch (err) {
+							if (!/duplicate key|1062/.test(err.message)) {
+								throw err;
+							}
+						}
+						userDocument = await Users.findOne(message.author.id);
+					}
 
 					// Decrement points
 					userDocument.query.inc("points", -1);

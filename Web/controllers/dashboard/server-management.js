@@ -58,6 +58,7 @@ module.exports.channels = async (req, { res }) => {
 			forumChannels,
 			announcementChannels,
 			channelTypes: ChannelType,
+			botName: req.svr.members[req.app.client.user.id]?.nickname || req.app.client.user.username,
 		});
 		res.render();
 	} catch (err) {
@@ -99,6 +100,7 @@ module.exports.roles = async (req, { res }) => {
 			page: "admin-server-roles.ejs",
 			roles,
 			permissions: PermissionFlagsBits,
+			botName: req.svr.members[req.app.client.user.id]?.nickname || req.app.client.user.username,
 		});
 		res.render();
 	} catch (err) {

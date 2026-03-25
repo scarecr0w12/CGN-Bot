@@ -86,8 +86,14 @@ const addPoints = async (userId, amount, type, metadata = {}) => {
 
 	let user = await Users.findOne(userId);
 	if (!user) {
-		user = Users.new({ _id: userId });
-		await user.save();
+		try {
+			user = Users.new({ _id: userId });
+			await user.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
 		user = await Users.findOne(userId);
 	}
 
@@ -210,8 +216,14 @@ const processVote = async (userId, site, isWeekend = false) => {
 	// Update user's vote tracking
 	let user = await Users.findOne(userId);
 	if (!user) {
-		user = Users.new({ _id: userId });
-		await user.save();
+		try {
+			user = Users.new({ _id: userId });
+			await user.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
 		user = await Users.findOne(userId);
 	}
 
@@ -615,8 +627,14 @@ const redeemForExtension = async (userId, extensionId) => {
 	if (creatorSharePoints > 0 && extension.owner_id) {
 		let creator = await Users.findOne(extension.owner_id);
 		if (!creator) {
-			creator = Users.new({ _id: extension.owner_id });
-			await creator.save();
+			try {
+				creator = Users.new({ _id: extension.owner_id });
+				await creator.save();
+			} catch (err) {
+				if (!/duplicate key|1062/.test(err.message)) {
+					throw err;
+				}
+			}
 			creator = await Users.findOne(extension.owner_id);
 		}
 

@@ -32,9 +32,11 @@ module.exports = {
 	],
 	guildMemberAdd: [
 		"Skynet.GuildMemberAdd",
+		"Skynet.ModLogMemberAdd",
 	],
 	guildMemberRemove: [
 		"Skynet.GuildMemberRemove",
+		"Skynet.ModLogMemberRemove",
 	],
 	guildMemberUpdate: [
 		"Skynet.GuildMemberUpdate",
@@ -49,13 +51,14 @@ module.exports = {
 
 	],
 	roleCreate: [
-
+		"Skynet.ModLogRoleCreate",
 	],
 	roleDelete: [
 		"Skynet.RoleDelete",
+		"Skynet.ModLogRoleDelete",
 	],
 	roleUpdate: [
-
+		"Skynet.ModLogRoleUpdate",
 	],
 	emojiCreate: [
 
@@ -73,13 +76,14 @@ module.exports = {
 		"Skynet.GuildBanRemove",
 	],
 	channelCreate: [
-
+		"Skynet.ModLogChannelCreate",
 	],
 	channelDelete: [
 		"Skynet.ChannelDelete",
+		"Skynet.ModLogChannelDelete",
 	],
 	channelUpdate: [
-
+		"Skynet.ModLogChannelUpdate",
 	],
 	channelPinsUpdate: [
 
@@ -110,7 +114,7 @@ module.exports = {
 		"Skynet.MessageUpdate",
 	],
 	messageDeleteBulk: [
-
+		"Skynet.MessageDeleteBulk",
 	],
 	messageReactionAdd: [
 

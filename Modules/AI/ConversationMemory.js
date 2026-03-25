@@ -8,9 +8,6 @@ const Redis = require("../../Database/Redis");
 
 class ConversationMemory {
 	constructor () {
-		// Check if Redis is available for persistent storage
-		this._useRedis = Redis.isEnabled() && Redis.isReady();
-
 		// In-memory cache fallback
 		// Key format: "guildId:channelId" or "guildId:channelId:userId"
 		this._cache = new Map();
@@ -18,6 +15,21 @@ class ConversationMemory {
 
 		// Redis TTL for conversation history (24 hours)
 		this._redisTTL = 86400;
+	}
+
+	/**
+	 * Check if Redis is available (dynamic check, not cached)
+	 * @returns {boolean} True if Redis is enabled and ready
+	 * @private
+	 */
+	_isRedisAvailable () {
+		try {
+			const enabled = Redis.isEnabled && typeof Redis.isEnabled === "function" && Redis.isEnabled();
+			const ready = Redis.isReady && typeof Redis.isReady === "function" && Redis.isReady();
+			return !!(enabled && ready);
+		} catch (err) {
+			return false;
+		}
 	}
 
 	/**
@@ -57,26 +69,34 @@ class ConversationMemory {
 		let channelHistory = [];
 		let userHistory = [];
 
-		if (this._useRedis) {
+		logger.debug(`ConversationMemory.getHistory: START - Cache size=${this._cache.size}, Cache keys=${Array.from(this._cache.keys()).join(", ")}`);
+		logger.debug(`ConversationMemory.getHistory: Redis available=${this._isRedisAvailable()}, limit=${limit}, perUserEnabled=${perUserEnabled}`);
+
+		if (this._isRedisAvailable()) {
 			// Try Redis first
 			const channelKey = `conv:${guildId}:${channelId}`;
 			channelHistory = await this._getRedisHistory(channelKey, limit) || [];
+			logger.debug(`ConversationMemory.getHistory: Redis channel history length=${channelHistory.length}`);
 
 			if (perUserEnabled) {
 				const userKey = `conv:${guildId}:${channelId}:${userId}`;
 				userHistory = await this._getRedisHistory(userKey, perUserLimit) || [];
+				logger.debug(`ConversationMemory.getHistory: Redis user history length=${userHistory.length}`);
 			}
 		}
 
 		// Fallback to in-memory if Redis failed or returned empty
 		if (channelHistory.length === 0) {
 			const channelKey = `${guildId}:${channelId}`;
+			logger.debug(`ConversationMemory.getHistory: Looking for in-memory channel key: ${channelKey}. Cache size: ${this._cache.size}`);
 			channelHistory = this._cache.get(channelKey) || [];
+			logger.debug(`ConversationMemory.getHistory: In-memory channel history length=${channelHistory.length}. Cache keys: ${Array.from(this._cache.keys()).join(", ")}`);
 		}
 
 		if (perUserEnabled && userHistory.length === 0) {
 			const userKey = `${guildId}:${channelId}:${userId}`;
 			userHistory = this._cache.get(userKey) || [];
+			logger.debug(`ConversationMemory.getHistory: In-memory user history length=${userHistory.length}`);
 		}
 
 		// Merge histories based on strategy
@@ -116,7 +136,9 @@ class ConversationMemory {
 		const perUserLimit = config.perUserLimit || 5;
 		const timestamp = Date.now();
 
-		if (this._useRedis) {
+		logger.debug(`ConversationMemory.remember: Storing message for guild ${guildId}, channel ${channelId}, user ${userId}. Redis available=${this._isRedisAvailable()}`);
+
+		if (this._isRedisAvailable()) {
 			try {
 				const client = Redis.getClient();
 				const pipeline = client.pipeline();
@@ -138,6 +160,7 @@ class ConversationMemory {
 				}
 
 				await pipeline.exec();
+				logger.debug(`ConversationMemory.remember: Stored message in Redis for channel ${channelKey}`);
 				return;
 			} catch (err) {
 				logger.warn("Redis remember failed, falling back to memory", {}, err);
@@ -159,6 +182,7 @@ class ConversationMemory {
 		}
 
 		this._cache.set(channelKey, channelHistory);
+		logger.debug(`ConversationMemory.remember: Stored message in memory for channel ${channelKey}. Total messages: ${channelHistory.length}`);
 
 		// Add to user history if enabled
 		if (perUserEnabled) {
@@ -189,7 +213,7 @@ class ConversationMemory {
 	 * @param {string} userId - Optional user ID to clear only user history
 	 */
 	async clear (guildId, channelId, userId = null) {
-		if (this._useRedis) {
+		if (this._isRedisAvailable()) {
 			try {
 				const client = Redis.getClient();
 				if (userId) {
@@ -237,7 +261,7 @@ class ConversationMemory {
 	 * @param {string} guildId - The guild ID
 	 */
 	async clearGuild (guildId) {
-		if (this._useRedis) {
+		if (this._isRedisAvailable()) {
 			try {
 				const client = Redis.getClient();
 				// Scan for all keys matching this guild

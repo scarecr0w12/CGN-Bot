@@ -294,10 +294,16 @@ class MessageCreate extends BaseEvent {
 							if (!cmd) cmd = msg.command;
 						}
 						const metadata = this.client.getPublicCommandMetadata(cmd);
+						const commandConfig = serverDocument.config.commands[cmd];
+						// Use defaults if command not yet in database (new commands), skip if metadata is null
+						const isEnabled = commandConfig?.isEnabled ?? metadata?.defaults?.isEnabled ?? false;
+						const adminLevel = commandConfig?.admin_level ?? metadata?.defaults?.adminLevel ?? 0;
+						const cmdDisabledChannels = commandConfig?.disabled_channel_ids ?? [];
+
 						if (msg.command !== null && cmd !== null && metadata &&
-								serverDocument.config.commands[cmd].isEnabled &&
-								(metadata.adminExempt || memberBotAdminLevel >= serverDocument.config.commands[cmd].admin_level) &&
-								!serverDocument.config.commands[cmd].disabled_channel_ids.includes(msg.channel.id)) {
+								isEnabled &&
+								(metadata.adminExempt || memberBotAdminLevel >= adminLevel) &&
+								!cmdDisabledChannels.includes(msg.channel.id)) {
 							// Increment command usage count
 							this.incrementCommandUsage(serverDocument, cmd);
 							// Track command in Prometheus metrics

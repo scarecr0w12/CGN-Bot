@@ -42,7 +42,7 @@ controllers.settings = async (req, { res }) => {
 			isEnabled: aiConfig.isEnabled || false,
 			defaultProvider: aiConfig.defaultProvider || "openai",
 			model: aiConfig.model || { name: "gpt-4o-mini", provider: "openai" },
-			systemPrompt: aiConfig.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
+			systemPrompt: aiConfig.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful. Respond helpfully to user queries.",
 			providers: {
 				openai: {
 					apiKey: aiConfig.providers && aiConfig.providers.openai ? aiConfig.providers.openai.apiKey ? "••••••••" : "" : "",
@@ -159,8 +159,8 @@ controllers.settings.post = async (req, res) => {
 		},
 		providers: providers,
 		systemPrompt: req.body.systemPrompt ?
-			req.body.systemPrompt.substring(0, 4000) :
-			existingAi.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
+			req.body.systemPrompt.substring(0, 16000) :
+			existingAi.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful. Respond helpfully to user queries.",
 		rateLimits: {
 			cooldownSec: parseInt(req.body["rateLimits-cooldownSec"]) || 10,
 			perUserPerMin: parseInt(req.body["rateLimits-perUserPerMin"]) || 6,
@@ -597,7 +597,7 @@ controllers.vectorStats = async (req, res) => {
 };
 
 /**
- * AI Personality - System Prompt configuration
+ * AI Personality - Bot persona/tone configuration
  */
 controllers.personality = async (req, { res }) => {
 	// Check if server has AI features (premium is per-server)
@@ -613,7 +613,7 @@ controllers.personality = async (req, { res }) => {
 
 	res.setConfigData({
 		ai: {
-			systemPrompt: aiConfig.systemPrompt || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
+			personality: aiConfig.personality || "You are a helpful AI assistant in a Discord server. Be concise, friendly, and helpful.",
 		},
 	});
 
@@ -623,7 +623,7 @@ controllers.personality = async (req, { res }) => {
 controllers.personality.post = async (req, res) => {
 	const serverQueryDocument = req.svr.queryDocument;
 
-	serverQueryDocument.set("config.ai.systemPrompt", req.body.systemPrompt ? req.body.systemPrompt.substring(0, 4000) : "");
+	serverQueryDocument.set("config.ai.personality", req.body.personality ? req.body.personality.substring(0, 16000) : "");
 
 	save(req, res, true);
 };

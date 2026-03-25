@@ -65,17 +65,59 @@ module.exports = class ModLog {
 			"Kick (Alt Detection)": "alt_detection",
 			"Ban (Alt Detection)": "alt_detection",
 			Quarantine: "alt_detection",
+			"Message Deleted": "message_deleted",
+			"Message Edited": "message_edited",
+			"Member Joined": "member_joined",
+			"Member Left": "member_left",
+			"Role Created": "role_created",
+			"Role Deleted": "role_deleted",
+			"Role Modified": "role_modified",
+			"Channel Created": "channel_created",
+			"Channel Deleted": "channel_deleted",
+			"Channel Modified": "channel_modified",
+			"Bulk Delete": "bulk_delete",
 		};
 		return mapping[type] || null;
 	}
 
+	/**
+	 * Get severity level for an action type
+	 * @param {string} type - The modlog entry type
+	 * @returns {string} Severity level: low, medium, high, or critical
+	 */
+	static getSeverityLevel (type) {
+		const severityMap = {
+			Ban: "critical",
+			"Temp Ban": "high",
+			Softban: "high",
+			Kick: "high",
+			Mute: "high",
+			"Temp Mute": "medium",
+			Strike: "medium",
+			"Raid Detected": "critical",
+			"Kick (Alt Detection)": "high",
+			"Ban (Alt Detection)": "critical",
+			Quarantine: "high",
+			"Filter Violation": "medium",
+			"Spam Detected": "medium",
+			"Channel Deleted": "high",
+			"Role Deleted": "high",
+			"Bulk Delete": "high",
+		};
+		return severityMap[type] || "low";
+	}
+
 	static async create (guild, type, member, creator, reason = null) {
 		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument) {
+			return new Error("MISSING_MODLOG_CHANNEL");
+		}
 		const serverQueryDocument = serverDocument.query;
 		if (serverDocument && serverDocument.modlog.isEnabled && serverDocument.modlog.channel_id) {
 			// Check if this event type is enabled
 			const eventKey = ModLog.getEventSettingKey(type);
-			if (eventKey && !serverDocument.modlog.events[eventKey]) {
+			const modlogEvents = serverDocument.modlog.events || {};
+			if (eventKey && modlogEvents[eventKey] === false) {
 				// Event type is disabled, don't log
 				return null;
 			}
@@ -85,10 +127,7 @@ module.exports = class ModLog {
 				if (member) {
 					affectedUser = ModLog.getUserText(member instanceof GuildMember ? member.user : member);
 				}
-				let creatorStr;
-				if (creator) {
-					creatorStr = ModLog.getUserText(creator instanceof GuildMember ? creator.user : creator);
-				}
+				const creatorStr = creator ? ModLog.getUserText(creator instanceof GuildMember ? creator.user : creator) : "System";
 				serverQueryDocument.inc("modlog.current_id");
 				const description = ModLog.getEntryText(serverDocument.modlog.current_id, type, affectedUser, creatorStr, reason);
 				const m = await ch.send({
@@ -134,8 +173,19 @@ module.exports = class ModLog {
 			const modlogEntryQueryDocument = serverDocument.query.id("modlog.entries", parseInt(id));
 			const modlogEntryDocument = modlogEntryQueryDocument.val;
 			if (modlogEntryDocument) {
+				const oldReason = modlogEntryDocument.reason;
 				if (data.creator) modlogEntryQueryDocument.set("creator", ModLog.getUserText(data.creator.user));
-				if (data.reason) modlogEntryQueryDocument.set("reason", data.reason);
+				if (data.reason) {
+					modlogEntryQueryDocument.set("reason", data.reason);
+					// Track edit history
+					const editEntry = {
+						edited_at: new Date(),
+						edited_by: data.creator ? ModLog.getUserText(data.creator.user) : "System",
+						old_reason: oldReason,
+						new_reason: data.reason,
+					};
+					modlogEntryQueryDocument.push("edit_history", editEntry);
+				}
 				const channel = guild.channels.cache.get(serverDocument.modlog.channel_id);
 
 				if (channel && channel.type === ChannelType.GuildText) {
@@ -146,7 +196,7 @@ module.exports = class ModLog {
 								description: ModLog.getEntryText(modlogEntryDocument._id, modlogEntryDocument.type, modlogEntryDocument.affected_user, modlogEntryDocument.creator, modlogEntryDocument.reason),
 								color: Colors.INFO,
 								footer: {
-									text: `Use "${guild.commandPrefix}reason ${serverDocument.modlog.current_id} <reason>" to change the reason. | Entry created`,
+									text: `Use "/modlog reason ${serverDocument.modlog.current_id} <reason>" to change the reason. | Entry created`,
 								},
 								timestamp: message.embeds[0].timestamp,
 							}],
@@ -163,6 +213,163 @@ module.exports = class ModLog {
 		} else {
 			return new Error("MISSING_MODLOG_CHANNEL");
 		}
+	}
+
+	/**
+	 * Search modlog entries by various criteria
+	 * @param {Guild} guild
+	 * @param {Object} filters - Search filters
+	 * @param {string} filters.userId - Filter by affected user ID
+	 * @param {string} filters.type - Filter by entry type
+	 * @param {string} filters.creator - Filter by creator ID
+	 * @param {Date} filters.startDate - Filter entries after this date
+	 * @param {Date} filters.endDate - Filter entries before this date
+	 * @param {string} filters.severity - Filter by severity level
+	 * @param {number} filters.limit - Maximum results (default 50)
+	 * @returns {Promise<Array>} Filtered entries
+	 */
+	static async search (guild, filters = {}) {
+		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument || !serverDocument.modlog.isEnabled) {
+			return [];
+		}
+
+		let results = serverDocument.modlog.entries || [];
+
+		if (filters.userId) {
+			results = results.filter(e => e.affected_user && e.affected_user.includes(filters.userId));
+		}
+
+		if (filters.type) {
+			results = results.filter(e => e.type === filters.type);
+		}
+
+		if (filters.creator) {
+			results = results.filter(e => e.creator && e.creator.includes(filters.creator));
+		}
+
+		if (filters.startDate) {
+			results = results.filter(e => e.timestamp >= filters.startDate);
+		}
+
+		if (filters.endDate) {
+			results = results.filter(e => e.timestamp <= filters.endDate);
+		}
+
+		if (filters.severity) {
+			results = results.filter(e => e.severity === filters.severity);
+		}
+
+		const limit = filters.limit || 50;
+		return results.slice(-limit).reverse();
+	}
+
+	/**
+	 * Get modlog statistics
+	 * @param {Guild} guild
+	 * @returns {Promise<Object>} Statistics object
+	 */
+	static async getStats (guild) {
+		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument || !serverDocument.modlog.isEnabled) {
+			return null;
+		}
+
+		const entries = serverDocument.modlog.entries || [];
+		const stats = {
+			total_entries: entries.length,
+			by_type: {},
+			by_severity: { low: 0, medium: 0, high: 0, critical: 0 },
+			by_creator: {},
+			last_entry: entries.length > 0 ? entries[entries.length - 1].timestamp : null,
+		};
+
+		entries.forEach(entry => {
+			stats.by_type[entry.type] = (stats.by_type[entry.type] || 0) + 1;
+			stats.by_severity[entry.severity || "medium"]++;
+			if (entry.creator) {
+				stats.by_creator[entry.creator] = (stats.by_creator[entry.creator] || 0) + 1;
+			}
+		});
+
+		return stats;
+	}
+
+	/**
+	 * Export modlog entries to JSON
+	 * @param {Guild} guild
+	 * @param {Object} filters - Optional filters (same as search)
+	 * @returns {Promise<Object>} JSON export object
+	 */
+	static async exportJSON (guild, filters = {}) {
+		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument || !serverDocument.modlog.isEnabled) {
+			return null;
+		}
+
+		const entries = await ModLog.search(guild, { ...filters, limit: 10000 });
+		return {
+			server_id: guild.id,
+			server_name: guild.name,
+			exported_at: new Date().toISOString(),
+			total_entries: entries.length,
+			entries: entries,
+		};
+	}
+
+	/**
+	 * Export modlog entries to CSV
+	 * @param {Guild} guild
+	 * @param {Object} filters - Optional filters (same as search)
+	 * @returns {Promise<string>} CSV formatted string
+	 */
+	static async exportCSV (guild, filters = {}) {
+		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument || !serverDocument.modlog.isEnabled) {
+			return null;
+		}
+
+		const entries = await ModLog.search(guild, { ...filters, limit: 10000 });
+		const headers = ["Case ID", "Timestamp", "Type", "Affected User", "Creator", "Reason", "Severity"];
+		const rows = entries.map(e => [
+			e._id,
+			e.timestamp.toISOString(),
+			e.type,
+			e.affected_user || "N/A",
+			e.creator || "N/A",
+			(e.reason || "").replace(/"/g, '""'),
+			e.severity || "medium",
+		]);
+
+		const csv = [
+			headers.map(h => `"${h}"`).join(","),
+			...rows.map(r => r.map(v => `"${v}"`).join(",")),
+		].join("\n");
+
+		return csv;
+	}
+
+	/**
+	 * Clean up old modlog entries based on retention policy
+	 * @param {Guild} guild
+	 * @returns {Promise<number>} Number of entries deleted
+	 */
+	static async cleanup (guild) {
+		const serverDocument = await Servers.findOne(guild.id);
+		if (!serverDocument || !serverDocument.modlog.isEnabled) {
+			return 0;
+		}
+
+		const retentionDays = serverDocument.modlog.retention_days || 90;
+		const cutoffDate = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+
+		const entries = serverDocument.modlog.entries || [];
+		const originalLength = entries.length;
+
+		serverDocument.query.set("modlog.entries", entries.filter(e => e.timestamp > cutoffDate));
+		await serverDocument.save();
+
+		return originalLength - serverDocument.modlog.entries.length;
 	}
 
 	static async delete (guild, id) {

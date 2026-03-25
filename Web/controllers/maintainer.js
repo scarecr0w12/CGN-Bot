@@ -185,10 +185,16 @@ controllers.globalScan = async (req, res) => {
 
 					let userDocument = await Users.findOne(memberId);
 					if (!userDocument) {
-						userDocument = Users.new({ _id: memberId });
-						userDocument.username = member.user.username;
-						await userDocument.save();
-						totalCreated++;
+						try {
+							userDocument = Users.new({ _id: memberId });
+							userDocument.username = member.user.username;
+							await userDocument.save();
+							totalCreated++;
+						} catch (err) {
+							if (!/duplicate key|1062/.test(err.message)) {
+								throw err;
+							}
+						}
 					} else if (!userDocument.username || userDocument.username !== member.user.username) {
 						userDocument.query.set("username", member.user.username);
 						await userDocument.save();

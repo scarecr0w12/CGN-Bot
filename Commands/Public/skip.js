@@ -9,7 +9,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	if (!client.audioManager) {
+	if (!client.lavalink) {
 		return msg.send({
 			embeds: [{
 				color: Colors.ERROR,
@@ -18,8 +18,8 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	const guildPlayer = client.audioManager.getPlayer(msg.guild.id);
-	if (!guildPlayer || !guildPlayer.isPlaying) {
+	const guildPlayer = client.lavalink.getPlayer(msg.guild.id);
+	if (!guildPlayer || !guildPlayer.playing) {
 		return msg.send({
 			embeds: [{
 				color: Colors.ERROR,
@@ -28,7 +28,7 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	if (guildPlayer.connection?.joinConfig?.channelId !== voiceChannel.id) {
+	if (guildPlayer.voiceChannel !== voiceChannel.id) {
 		return msg.send({
 			embeds: [{
 				color: Colors.ERROR,
@@ -37,8 +37,8 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 		});
 	}
 
-	const currentTrack = guildPlayer.queue.currentTrack;
-	guildPlayer.skip();
+	const currentTrack = guildPlayer.queue.current;
+	guildPlayer.stop();
 
 	return msg.send({
 		embeds: [{

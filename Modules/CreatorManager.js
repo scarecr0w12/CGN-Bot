@@ -109,7 +109,15 @@ CreatorManager.getCreatorStatus = async userId => {
 CreatorManager.setFeaturedStatus = async (userId, isFeatured, maintainerId, reason = "", bonusShare = 5) => {
 	let userDocument = await Users.findOne(userId);
 	if (!userDocument) {
-		userDocument = await Users.new({ _id: userId });
+		try {
+			userDocument = Users.new({ _id: userId });
+			await userDocument.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
+		userDocument = await Users.findOne(userId);
 	}
 
 	// Initialize creator_status if needed

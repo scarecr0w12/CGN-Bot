@@ -377,7 +377,15 @@ const setUserTier = async (userId, tierId, source = "manual", expiresAt = null, 
 
 	let user = await Users.findOne(userId);
 	if (!user) {
-		user = Users.new({ _id: userId });
+		try {
+			user = Users.new({ _id: userId });
+			await user.save();
+		} catch (err) {
+			if (!/duplicate key|1062/.test(err.message)) {
+				throw err;
+			}
+		}
+		user = await Users.findOne(userId);
 	}
 
 	const oldSubscription = user.subscription || {};

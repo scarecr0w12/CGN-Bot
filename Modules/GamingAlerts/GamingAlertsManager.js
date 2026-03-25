@@ -32,6 +32,12 @@ class GamingAlertsManager {
 		try {
 			logger.debug("Running periodic gaming alerts check...");
 
+			// Ensure database is initialized
+			if (!this.client.database || !this.client.database.models || !this.client.database.models.gamingAlerts) {
+				logger.debug("Database or models not initialized yet, skipping gaming alerts check");
+				return;
+			}
+
 			const GamingAlerts = this.client.database.models.gamingAlerts;
 			const alerts = await GamingAlerts.find({ enabled: true }).exec();
 

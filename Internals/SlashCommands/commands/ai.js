@@ -56,25 +56,33 @@ module.exports = {
 				await interaction.deferReply();
 
 				try {
-					// Use the AI manager if available
-					if (client.aiManager) {
-						const response = await client.aiManager.chat(
-							interaction.guild.id,
-							interaction.user.id,
-							message,
-						);
-						return interaction.editReply(response.substring(0, 2000));
-					} else {
-						return interaction.editReply("AI service is not available.");
+					// Initialize AI manager if not already done
+					if (!client.aiManager) {
+						const { AIManager } = require("../../../Modules/AI");
+						client.aiManager = new AIManager(client);
+						await client.aiManager.initialize();
 					}
+
+					console.log(`[AI Command] Calling aiManager.chat() for guild ${interaction.guild.id}`);
+					const response = await client.aiManager.chat({
+						serverDocument,
+						channel: interaction.channel,
+						user: interaction.user,
+						message,
+						stream: false,
+					});
+					console.log(`[AI Command] Got response: ${response.substring(0, 200)}`);
+					return interaction.editReply(response.substring(0, 2000));
 				} catch (err) {
+					console.log(`[AI Command] Error: ${err.message}`);
+					logger.error("AI chat error", {}, err);
 					return interaction.editReply("Failed to get AI response. Please try again.");
 				}
 			}
 
 			case "clear": {
 				if (client.aiManager) {
-					client.aiManager.clearHistory(interaction.guild.id, interaction.user.id);
+					await client.aiManager.memory.clear(interaction.guild.id, interaction.channel.id, interaction.user.id);
 				}
 				return interaction.reply({
 					content: "Your AI conversation history has been cleared! 🗑️",

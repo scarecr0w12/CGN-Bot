@@ -192,6 +192,32 @@ services:
         condition: service_healthy
 
   # ============================================
+  # Lavalink - Audio Streaming Server
+  # ============================================
+
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:3
+    container_name: skynetbot-lavalink
+    restart: always
+    security_opt:
+      - apparmor:unconfined
+    ports:
+      - "127.0.0.1:2333:2333"
+    volumes:
+      - ./lavalink-config.yml:/opt/Lavalink/application.yml:ro
+      - ./data/lavalink:/opt/Lavalink/logs
+      - ./data/lavalink/plugins:/opt/Lavalink/plugins
+    environment:
+      - SERVER_PORT=2333
+      - LAVALINK_PASSWORD=${LAVALINK_PASSWORD:-youshallnotpass}
+      - LAVALINK_SERVER_PASSWORD=${LAVALINK_PASSWORD:-youshallnotpass}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -H \"Authorization: ${LAVALINK_PASSWORD:-youshallnotpass}\" http://localhost:2333/version"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ============================================
   # Promtail - Log Shipping to Grafana Cloud
   # ============================================
 

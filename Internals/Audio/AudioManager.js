@@ -227,8 +227,13 @@ class AudioManager {
 		try {
 			let info;
 
-			if (playDl.yt_validate(query) === "video") {
+			// Validate and search for YouTube content
+			const validationType = playDl.yt_validate(query);
+			logger.debug("Searching for audio", { query, validationType });
+
+			if (validationType === "video") {
 				info = await playDl.video_basic_info(query);
+				logger.debug("Found YouTube video", { title: info.video_details.title, url: info.video_details.url });
 				return [new Track({
 					title: info.video_details.title,
 					url: info.video_details.url,
@@ -239,9 +244,11 @@ class AudioManager {
 				})];
 			}
 
-			if (playDl.yt_validate(query) === "playlist") {
+			if (validationType === "playlist") {
+				logger.debug("Processing YouTube playlist", { query });
 				const playlist = await playDl.playlist_info(query, { incomplete: true });
 				const videos = await playlist.all_videos();
+				logger.debug("Found playlist videos", { count: videos.length });
 				return videos.map(video => new Track({
 					title: video.title,
 					url: video.url,
@@ -252,7 +259,16 @@ class AudioManager {
 				}));
 			}
 
+			// Search YouTube by keyword
+			logger.debug("Searching YouTube by keyword", { query });
 			const searchResults = await playDl.search(query, { limit: 5 });
+
+			if (!searchResults || searchResults.length === 0) {
+				logger.warn("No search results found", { query });
+				return [];
+			}
+
+			logger.debug("Found search results", { count: searchResults.length });
 			return searchResults.map(video => new Track({
 				title: video.title,
 				url: video.url,
@@ -262,7 +278,7 @@ class AudioManager {
 				source: "youtube",
 			}));
 		} catch (error) {
-			logger.error("Search error", { query }, error);
+			logger.error("Search error - YouTube may require cookies. See .youtube-cookies.json setup", { query, error: error.message }, error);
 			throw error;
 		}
 	}

@@ -732,7 +732,21 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			try {
 				if (msg.guild && !msg.guild.members.me) await msg.guild.members.fetch(client.user.id);
 				// Discord.js v14: webhookID is now webhookId
-				if (msg.guild && !msg.member && !msg.webhookId) await msg.guild.members.fetch(msg.author);
+				if (msg.guild && !msg.member && !msg.webhookId) {
+					try {
+						await msg.guild.members.fetch(msg.author);
+					} catch (err) {
+						if (err && (err.code === 10007 || err.code === 10013)) {
+							logger.debug("Failed to fetch message author guild member (likely left server).", {
+								svrid: msg.guild.id,
+								usrid: msg.author.id,
+								msgid: msg.id,
+							});
+						} else {
+							throw err;
+						}
+					}
+				}
 				await msg.build();
 				await client.events.onEvent("messageCreate", msg, proctime);
 			} catch (err) {
@@ -887,6 +901,15 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	/**
+	 * RAW - Voice State Updates for Lavalink
+	 */
+	client.on("raw", d => {
+		if (client.lavalink && client.lavalink.manager) {
+			client.lavalink.manager.updateVoiceState(d);
+		}
+	});
+
+	/**
 	 * READY
 	 */
 	client.once("ready", async () => {
@@ -925,6 +948,12 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			const FormBuilder = require("./Modules/FormBuilder");
 			client.formBuilder = new FormBuilder(client);
 			logger.info("Form Builder initialized!");
+
+			// Initialize Lavalink Audio System
+			const LavalinkManager = require("./Modules/LavalinkManager");
+			client.lavalink = new LavalinkManager(client);
+			await client.lavalink.initialize();
+			logger.info("Lavalink Audio System initialized!");
 
 			// Initialize Welcome Image Generator
 			const WelcomeImageGenerator = require("./Modules/WelcomeImageGenerator");
