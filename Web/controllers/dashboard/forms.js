@@ -3,7 +3,7 @@ const logger = new Logger("Dashboard-Forms");
 
 module.exports = {
 	// GET /dashboard/:id/forms
-	async index(req, res) {
+	async index (req, res) {
 		try {
 			const { serverDocument } = req;
 			const Forms = req.app.get("client").database.models.forms;
@@ -12,7 +12,6 @@ module.exports = {
 				.sort({ created_at: -1 })
 				.exec();
 
-			// Get tier limits
 			const TierManager = require("../../../Modules/TierManager");
 			const tier = await TierManager.getServerTier(serverDocument._id);
 			const tierLimits = {
@@ -43,21 +42,20 @@ module.exports = {
 	},
 
 	// GET /dashboard/:id/forms/create
-	async create(req, res) {
+	async create (req, res) {
 		try {
 			const { serverDocument } = req;
-
-			// Get server channels for dropdown
 			const guild = req.app.get("client").guilds.cache.get(serverDocument._id);
-			const channels = guild ? Array.from(guild.channels.cache.values())
-				.filter(c => c.type === 0)
-				.map(c => ({ id: c.id, name: c.name }))
-				: [];
-
-			const roles = guild ? Array.from(guild.roles.cache.values())
-				.filter(r => !r.managed && r.id !== guild.id)
-				.map(r => ({ id: r.id, name: r.name }))
-				: [];
+			const channels = guild ?
+				Array.from(guild.channels.cache.values())
+					.filter(c => c.type === 0)
+					.map(c => ({ id: c.id, name: c.name })) :
+				[];
+			const roles = guild ?
+				Array.from(guild.roles.cache.values())
+					.filter(r => !r.managed && r.id !== guild.id)
+					.map(r => ({ id: r.id, name: r.name })) :
+				[];
 
 			res.render("pages/dashboard/forms/editor", {
 				title: "Create Form",
@@ -77,7 +75,7 @@ module.exports = {
 	},
 
 	// GET /dashboard/:id/forms/:formId/edit
-	async edit(req, res) {
+	async edit (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { formId } = req.params;
@@ -93,15 +91,16 @@ module.exports = {
 			}
 
 			const guild = req.app.get("client").guilds.cache.get(serverDocument._id);
-			const channels = guild ? Array.from(guild.channels.cache.values())
-				.filter(c => c.type === 0)
-				.map(c => ({ id: c.id, name: c.name }))
-				: [];
-
-			const roles = guild ? Array.from(guild.roles.cache.values())
-				.filter(r => !r.managed && r.id !== guild.id)
-				.map(r => ({ id: r.id, name: r.name }))
-				: [];
+			const channels = guild ?
+				Array.from(guild.channels.cache.values())
+					.filter(c => c.type === 0)
+					.map(c => ({ id: c.id, name: c.name })) :
+				[];
+			const roles = guild ?
+				Array.from(guild.roles.cache.values())
+					.filter(r => !r.managed && r.id !== guild.id)
+					.map(r => ({ id: r.id, name: r.name })) :
+				[];
 
 			res.render("pages/dashboard/forms/editor", {
 				title: "Edit Form",
@@ -121,7 +120,7 @@ module.exports = {
 	},
 
 	// POST /dashboard/:id/forms
-	async store(req, res) {
+	async store (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { name, description, fields, submit_channel, review_channel, auto_role_id, webhook_url } = req.body;
@@ -167,7 +166,7 @@ module.exports = {
 	},
 
 	// PUT /dashboard/:id/forms/:formId
-	async update(req, res) {
+	async update (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { formId } = req.params;
@@ -199,7 +198,7 @@ module.exports = {
 	},
 
 	// POST /dashboard/:id/forms/:formId/toggle
-	async toggle(req, res) {
+	async toggle (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { formId } = req.params;
@@ -222,7 +221,7 @@ module.exports = {
 	},
 
 	// DELETE /dashboard/:id/forms/:formId
-	async delete(req, res) {
+	async delete (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { formId } = req.params;
@@ -241,7 +240,7 @@ module.exports = {
 	},
 
 	// GET /dashboard/:id/forms/:formId/responses
-	async responses(req, res) {
+	async responses (req, res) {
 		try {
 			const { serverDocument } = req;
 			const { formId } = req.params;
@@ -256,7 +255,6 @@ module.exports = {
 				});
 			}
 
-			// Get form responses (placeholder - implement based on your response storage)
 			const responses = [];
 
 			res.render("pages/dashboard/forms/responses", {

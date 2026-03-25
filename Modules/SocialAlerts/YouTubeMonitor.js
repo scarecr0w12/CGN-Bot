@@ -142,7 +142,7 @@ class YouTubeMonitor {
 			{
 				last_check: status.checked_at,
 				last_status: status,
-			}
+			},
 		);
 
 		// Update in-memory cache

@@ -102,7 +102,7 @@ class TwitchMonitor {
 			const response = await fetch(url.toString(), {
 				headers: {
 					"Client-ID": this.clientId,
-					"Authorization": `Bearer ${this.accessToken}`,
+					Authorization: `Bearer ${this.accessToken}`,
 				},
 			});
 
@@ -157,7 +157,7 @@ class TwitchMonitor {
 			{
 				last_check: status.checked_at,
 				last_status: status,
-			}
+			},
 		);
 
 		// Update in-memory cache
@@ -192,7 +192,7 @@ class TwitchMonitor {
 			const response = await fetch(`${this.apiUrl}/users?login=${login}`, {
 				headers: {
 					"Client-ID": this.clientId,
-					"Authorization": `Bearer ${this.accessToken}`,
+					Authorization: `Bearer ${this.accessToken}`,
 				},
 			});
 

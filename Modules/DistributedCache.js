@@ -289,6 +289,9 @@ class DistributedCache {
 			const publisher = redisClient.getPublisher();
 			await publisher.publish(CHANNELS.SHARD_EVENT, message);
 
+			// Also trigger local handlers immediately
+			this._handleShardEvent({ event, payload });
+
 			logger.debug("DistributedCache: Broadcasted shard event", { event });
 
 			if (metrics) {
