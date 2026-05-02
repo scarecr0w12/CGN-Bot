@@ -141,7 +141,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument, ser
 				title: `💡 Suggestion #${suggestionId}`,
 				description: suggestion,
 				author: {
-					name: `${msg.author.tag}`,
+					name: `${msg.author.username}`,
 					iconURL: msg.author.displayAvatarURL(),
 				},
 				footer: { text: `User ID: ${msg.author.id}` },

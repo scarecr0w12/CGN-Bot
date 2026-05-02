@@ -48,11 +48,11 @@ module.exports = {
 		}
 
 		try {
-			await member.setNickname(nickname, `Changed by @${interaction.user.tag}`);
+			await member.setNickname(nickname, `Changed by @${interaction.user.username}`);
 
 			const desc = nickname ?
-				`Changed **@${user.tag}**'s nickname to **${nickname}**` :
-				`Reset **@${user.tag}**'s nickname`;
+				`Changed **@${user.username}**'s nickname to **${nickname}**` :
+				`Reset **@${user.username}**'s nickname`;
 
 			return interaction.reply({
 				embeds: [{

@@ -212,7 +212,7 @@ module.exports = {
 				const starEmbed = {
 					color: 0xFFD700,
 					author: {
-						name: message.author.tag,
+						name: message.author.username,
 						icon_url: message.author.displayAvatarURL(),
 					},
 					description: message.content || null,

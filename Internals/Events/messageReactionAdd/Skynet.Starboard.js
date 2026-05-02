@@ -65,7 +65,7 @@ class StarboardReaction extends BaseEvent {
 		const starEmbed = {
 			color: 0xFFD700,
 			author: {
-				name: message.author.tag,
+				name: message.author.username,
 				iconURL: message.author.displayAvatarURL(),
 			},
 			description: message.content || null,

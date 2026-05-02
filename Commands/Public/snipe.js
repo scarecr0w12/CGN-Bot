@@ -17,7 +17,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	const embed = {
 		color: Colors.INFO,
 		author: {
-			name: author.tag,
+			name: author.username,
 			iconURL: author.displayAvatarURL(),
 		},
 		description: content || "*No text content*",

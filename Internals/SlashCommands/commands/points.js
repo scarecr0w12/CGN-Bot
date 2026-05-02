@@ -29,7 +29,7 @@ module.exports = {
 		return interaction.reply({
 			embeds: [{
 				color: 0x3669FA,
-				title: `⭐ ${user.tag}'s Points`,
+				title: `⭐ ${user.username}'s Points`,
 				fields: [
 					{ name: "Points", value: `${points}`, inline: true },
 					{ name: "Rank", value: `#${rank}`, inline: true },

@@ -177,7 +177,7 @@ class WelcomeImageGenerator {
 	parseTemplate (template, member) {
 		return template
 			.replace(/\{username\}/g, member.user.username)
-			.replace(/\{tag\}/g, member.user.tag)
+			.replace(/\{tag\}/g, member.user.username)
 			.replace(/\{discriminator\}/g, member.user.discriminator || "0")
 			.replace(/\{mention\}/g, `@${member.user.username}`)
 			.replace(/\{server\}/g, member.guild.name)

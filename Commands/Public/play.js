@@ -99,7 +99,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 					color: Colors.SUCCESS,
 					title: "📋 Playlist Added",
 					description: `Added **${tracks.length}** tracks to the queue!`,
-					footer: { text: `Requested by ${msg.author.tag}` },
+					footer: { text: `Requested by ${msg.author.username}` },
 				}],
 			});
 		}
@@ -117,7 +117,7 @@ module.exports = async ({ client, Constants: { Colors, Text } }, documents, msg,
 					{ name: "Duration", value: client.lavalink.formatDuration(track.duration), inline: true },
 					{ name: "Position", value: wasEmpty ? "Now" : `#${position}`, inline: true },
 				],
-				footer: { text: `Requested by ${msg.author.tag}` },
+				footer: { text: `Requested by ${msg.author.username}` },
 			}],
 		});
 	} catch (error) {

@@ -317,8 +317,6 @@ controllers.profileEditor = async (req, { res }) => {
 	const serverProfile = publicData.server_profile || {};
 	const serverListing = publicData.server_listing || {};
 
-	console.log("[PROFILE EDITOR] Loading profile for:", serverId);
-	console.log("[PROFILE EDITOR] serverProfile:", JSON.stringify(serverProfile));
 
 	// Get text channels for Discord widget selection (Tier 1+ only)
 	let textChannels = [];
@@ -381,23 +379,17 @@ controllers.profileEditor = async (req, { res }) => {
  * POST /api/server/:serverId/profile
  */
 controllers.updateProfile = async (req, res) => {
-	console.log("[PROFILE UPDATE] Received request for server:", req.params.serverId);
-	console.log("[PROFILE UPDATE] Request body:", JSON.stringify(req.body, null, 2));
 
 	if (!req.isAuthenticated()) {
-		console.log("[PROFILE UPDATE] Not authenticated");
 		return res.status(401).json({ error: "Unauthorized" });
 	}
-	console.log("[PROFILE UPDATE] User authenticated:", req.user.id);
 
 	const serverId = req.params.serverId;
 	const serverDocument = await CacheManager.getServer(serverId);
 
 	if (!serverDocument) {
-		console.log("[PROFILE UPDATE] Server not found:", serverId);
 		return res.status(404).json({ error: "Server not found" });
 	}
-	console.log("[PROFILE UPDATE] Server document found");
 
 	const svr = new GetGuild(req.app.client, serverId);
 	await svr.initialize(req.user.id);
@@ -413,11 +405,8 @@ controllers.updateProfile = async (req, res) => {
 
 	// Check tier - tier object has 'level' property
 	const tierInfo = await TierManager.getServerTier(serverId);
-	console.log("[PROFILE UPDATE] Tier info:", JSON.stringify(tierInfo));
 	const tierLevel = tierInfo?.level || 0;
-	console.log("[PROFILE UPDATE] Tier level:", tierLevel);
 	if (tierLevel < 1) {
-		console.log("[PROFILE UPDATE] Tier too low, rejecting");
 		return res.status(403).json({ error: "Server Profiles require Tier 1 or higher" });
 	}
 
@@ -502,13 +491,9 @@ controllers.updateProfile = async (req, res) => {
 	serverDocument._atomics.$set["config.public_data.server_profile"] = profile;
 
 	try {
-		console.log("[PROFILE UPDATE] Saving document...");
-		console.log("[PROFILE UPDATE] Atomics:", JSON.stringify(serverDocument._atomics));
 		const result = await serverDocument.save();
-		console.log("[PROFILE UPDATE] Save result:", JSON.stringify(result));
 		res.json({ success: true, message: "Profile updated successfully" });
 	} catch (err) {
-		console.log("[PROFILE UPDATE] Save failed:", err.message);
 		logger.warn("Failed to update server profile", { serverId }, err);
 		res.status(500).json({ error: "Failed to save profile" });
 	}

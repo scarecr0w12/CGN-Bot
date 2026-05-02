@@ -20,7 +20,7 @@ module.exports = {
 
 		const embeds = [{
 			color: 0x3669FA,
-			title: `${user.tag}'s Avatar`,
+			title: `${user.username}'s Avatar`,
 			image: { url: globalAvatar },
 			footer: { text: "Global Avatar" },
 		}];
@@ -28,7 +28,7 @@ module.exports = {
 		if (serverAvatar && serverAvatar !== globalAvatar) {
 			embeds.push({
 				color: 0x3669FA,
-				title: `${user.tag}'s Server Avatar`,
+				title: `${user.username}'s Server Avatar`,
 				image: { url: serverAvatar },
 				footer: { text: "Server Avatar" },
 			});

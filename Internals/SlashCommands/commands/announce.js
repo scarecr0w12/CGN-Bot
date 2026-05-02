@@ -128,7 +128,7 @@ module.exports = {
 		const embed = {
 			color,
 			description: message,
-			footer: { text: `Announced by ${interaction.user.tag}` },
+			footer: { text: `Announced by ${interaction.user.username}` },
 			timestamp: new Date().toISOString(),
 		};
 
@@ -230,7 +230,7 @@ module.exports = {
 					embeds: [{
 						color: 0x5865F2,
 						description: message,
-						footer: { text: `Scheduled announcement by ${interaction.user.tag}` },
+						footer: { text: `Scheduled announcement by ${interaction.user.username}` },
 						timestamp: new Date().toISOString(),
 					}],
 				});

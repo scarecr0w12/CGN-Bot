@@ -35,7 +35,7 @@ module.exports = {
 		try {
 			await interaction.channel.setRateLimitPerUser(
 				seconds,
-				`Slowmode ${seconds === 0 ? "disabled" : "set"} by ${interaction.user.tag}`,
+				`Slowmode ${seconds === 0 ? "disabled" : "set"} by ${interaction.user.username}`,
 			);
 
 			if (seconds === 0) {

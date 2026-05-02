@@ -72,7 +72,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 			if (args.includes("-d") || args.includes("--discord") || args.includes("--bot")) {
 				fields.push({
 					name: "Bot User Information",
-					value: `🆔 SkynetBot is using the bot account **${client.user.tag}**, with ID **${client.user.id}**
+					value: `🆔 SkynetBot is using the bot account **${client.user.username}**, with ID **${client.user.id}**
 								\n🔌 Connected to Discord with **${Math.floor(client.ws.ping)}ms** latency, for **${Math.floor(client.uptime / 3600000)} hours** so far`,
 				});
 			}
@@ -167,7 +167,7 @@ module.exports = async ({ client, Constants: { Colors, Perms } }, msg, commandDa
 		await msg.send({
 			embeds: [{
 				color: Colors.INFO,
-				title: `${client.user.tag} running ${version.valid ? `SkynetBot version ${version.metadata.name}` : "an unknown SkynetBot version"}`,
+				title: `${client.user.username} running ${version.valid ? `SkynetBot version ${version.metadata.name}` : "an unknown SkynetBot version"}`,
 				description: `Currently on shard with ID ${client.shardID}, out of ${process.env.SHARD_COUNT} shards total.
 											\nShard's ${process.release.name} process is using ${Math.ceil(process.memoryUsage().heapTotal / 1000000)}MB RAM, with PID ${process.pid}.
 											\nShard has been connected to Discord for ${Math.floor(client.uptime / 3600000)} hours, and manages ${client.guilds.cache.size} guild${client.guilds.cache.size === 1 ? "" : "s"} with a ping of ${Math.floor(client.ws.ping)}ms.`,

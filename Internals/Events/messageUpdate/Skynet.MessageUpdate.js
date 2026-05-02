@@ -14,7 +14,7 @@ class MessageUpdate extends BaseEvent {
 
 		const statusMessageDocument = serverDocument.config.moderation.status_messages.message_edited_message;
 		if (serverDocument.config.moderation.isEnabled && statusMessageDocument.isEnabled && statusMessageDocument.enabled_channel_ids.includes(msg.channel.id)) {
-			logger.verbose(`Message by member '${msg.author.tag}' on server '${msg.guild.name}' edited.`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id, msgid: msg.id });
+			logger.verbose(`Message by member '${msg.author.username}' on server '${msg.guild.name}' edited.`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id, msgid: msg.id });
 
 			// Send message in different channel
 			if (statusMessageDocument.type === "single" && statusMessageDocument.channel_id) {

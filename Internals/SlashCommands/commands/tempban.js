@@ -84,7 +84,7 @@ module.exports = {
 						fields: [
 							{ name: "Duration", value: durationFormatted, inline: true },
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${interaction.user.tag}`, inline: true },
+							{ name: "Moderator", value: `@${interaction.user.username}`, inline: true },
 							{ name: "Unban Date", value: unbanDate.toUTCString(), inline: false },
 						],
 					}],
@@ -96,7 +96,7 @@ module.exports = {
 			// Ban the user
 			await interaction.guild.members.ban(user.id, {
 				deleteMessageSeconds: 86400,
-				reason: `[Tempban: ${durationFormatted}] ${reason} | By @${interaction.user.tag}`,
+				reason: `[Tempban: ${durationFormatted}] ${reason} | By @${interaction.user.username}`,
 			});
 
 			// Store tempban for auto-unban
@@ -118,7 +118,7 @@ module.exports = {
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been temporarily banned! ⏰🔨`,
+					description: `**@${user.username}** has been temporarily banned! ⏰🔨`,
 					fields: [
 						{ name: "Duration", value: durationFormatted, inline: true },
 						{ name: "Unban Date", value: `<t:${Math.floor(unbanDate.getTime() / 1000)}:F>`, inline: true },

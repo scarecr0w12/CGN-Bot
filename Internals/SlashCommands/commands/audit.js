@@ -383,7 +383,7 @@ module.exports = {
 			.map(u => {
 				const isAdmin = u.permissions.has("Administrator");
 				const icon = isAdmin ? "🔴" : "🟡";
-				return `${icon} **${u.member.user.tag}**\n   Via: ${u.roles.slice(0, 3).join(", ")}`;
+				return `${icon} **${u.member.user.username}**\n   Via: ${u.roles.slice(0, 3).join(", ")}`;
 			})
 			.join("\n") || "None (excluding owner)";
 

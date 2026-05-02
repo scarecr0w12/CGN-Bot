@@ -235,6 +235,20 @@ module.exports = new Schema({
 			},
 			apiKey: String,
 		}),
+		webfetch: new Schema({
+			maxChars: {
+				type: Number,
+				default: 6000,
+				min: 500,
+				max: 20000,
+			},
+			timeoutMs: {
+				type: Number,
+				default: 10000,
+				min: 2000,
+				max: 30000,
+			},
+		}),
 	}),
 	// Usage tracking
 	usage: new Schema({

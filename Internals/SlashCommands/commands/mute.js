@@ -50,14 +50,14 @@ module.exports = {
 		}
 
 		try {
-			await member.timeout(durationMs, `${reason} | By @${interaction.user.tag}`);
+			await member.timeout(durationMs, `${reason} | By @${interaction.user.username}`);
 
 			await CreateModLog(interaction.guild, "Mute", member, interaction.user, reason);
 
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been muted! 🔇`,
+					description: `**@${user.username}** has been muted! 🔇`,
 					fields: [
 						{ name: "Duration", value: formatDuration(durationMs), inline: true },
 						{ name: "Reason", value: reason, inline: true },

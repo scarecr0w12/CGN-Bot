@@ -9,7 +9,7 @@ class GuildBanAdd extends BaseEvent {
 		}
 
 		if (serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.status_messages.member_unbanned_message.isEnabled) {
-			logger.verbose(`Member '${user.tag}' unbanned from guild '${guild}'`, { svrid: guild.id, usrid: user.id });
+			logger.verbose(`Member '${user.username}' unbanned from guild '${guild}'`, { svrid: guild.id, usrid: user.id });
 			const channel = guild.channels.cache.get(serverDocument.config.moderation.status_messages.member_unbanned_message.channel_id);
 			if (channel) {
 				const channelDocument = serverDocument.channels[channel.id];

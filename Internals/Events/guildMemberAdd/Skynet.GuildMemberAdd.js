@@ -13,7 +13,7 @@ class GuildMemberAdd extends BaseEvent {
 			if (serverDocument.config.moderation.isEnabled) {
 				// Send new_member_message if necessary
 				if (serverDocument.config.moderation.status_messages.new_member_message.isEnabled) {
-					logger.verbose(`Member "${member.user.tag}" joined server "${member.guild}"`, { svrid: member.guild.id, usrid: member.id });
+					logger.verbose(`Member "${member.user.username}" joined server "${member.guild}"`, { svrid: member.guild.id, usrid: member.id });
 					const ch = member.guild.channels.cache.get(serverDocument.config.moderation.status_messages.new_member_message.channel_id);
 					if (ch) {
 						const channelDocument = serverDocument.channels[ch.id];

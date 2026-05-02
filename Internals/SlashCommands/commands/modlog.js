@@ -223,7 +223,7 @@ module.exports = {
 							title: "📋 Modlog Test",
 							description: "This is a test entry to verify the modlog is working correctly.",
 							fields: [
-								{ name: "Triggered By", value: `${interaction.user.tag}`, inline: true },
+								{ name: "Triggered By", value: `${interaction.user.username}`, inline: true },
 								{ name: "Channel", value: `${channel}`, inline: true },
 							],
 							timestamp: new Date().toISOString(),

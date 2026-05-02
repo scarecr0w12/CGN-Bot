@@ -30,6 +30,9 @@ class WorkerManager {
 			case WorkerTypes.EXTENSION: {
 				return this.safeSend(WorkerEvents.RUN_EXTENSION, data);
 			}
+			case WorkerTypes.TIMER_EXTENSION: {
+				return this.safeSend(WorkerEvents.RUN_TIMER_EXTENSION, data);
+			}
 			default: {
 				throw new Error("CHILD_PROCESS_TYPE_INVALID", workerType);
 			}

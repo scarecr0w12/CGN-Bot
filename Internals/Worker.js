@@ -119,6 +119,26 @@ p.on("runExtension", async (data, callback) => {
 	}
 });
 
+p.on("runTimerExtension", async (data, callback) => {
+	if (!extensionManager.ready) return;
+
+	const guild = extensionManager.guilds.cache.get(data.guild);
+	if (!guild) return callback(false);
+
+	const serverDocument = await Servers.findOne(guild.id);
+	if (!serverDocument) return callback(false);
+	const extensionDocument = await Gallery.findOneByObjectID(data.ext);
+	if (!extensionDocument) return callback(false);
+	const versionDocument = extensionDocument.versions.id(data.extv);
+	if (!versionDocument) return callback(false);
+
+	try {
+		callback(await extensionManager.runExtension(extensionDocument, versionDocument, serverDocument, serverDocument.extensions.id(data.ext), { guild }));
+	} catch (err) {
+		callback(false);
+	}
+});
+
 process.on("unhandledRejection", err => {
 	logger.debug(`An extension failed to handle a Promise rejection`, {}, err);
 });

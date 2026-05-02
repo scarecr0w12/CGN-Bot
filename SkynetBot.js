@@ -17,25 +17,17 @@ global.configJSON = configJSON;
 
 const scope = { disabledEvents: ["TYPING_START"] };
 Boot({ configJS, configJSON, auth }, scope).then(async () => {
-	console.log("[DEBUG] Boot completed, starting shard initialization...");
 	if (scope.safeMode) return;
 
-	console.log("[DEBUG] Loading database driver...");
 	const database = require("./Database/Driver.js");
-	console.log("[DEBUG] Database driver loaded, now loading WebServer...");
 	const WebServer = require("./Web/WebServer");
-	console.log("[DEBUG] WebServer loaded successfully");
 
-	console.log("[DEBUG] Loading private commands...");
 	const privateCommandFiles = require("./Commands/Private");
 
 	// Create a Discord.js Shard Client (v14)
-	console.log("[DEBUG] Creating Discord.js client...");
 	logger.silly("Creating Discord.js client.");
-	console.log("[DEBUG] Requiring SkynetBotClient...");
 	const SkynetBotClient = require("./Internals/Client");
-	const { GatewayIntentBits, Partials } = require("discord.js");
-	console.log("[DEBUG] SkynetBotClient required, now instantiating...");
+	const { GatewayIntentBits, Partials, PermissionFlagsBits } = require("discord.js");
 	const client = new SkynetBotClient({
 		shards: parseInt(process.env.SHARDS),
 		shardCount: parseInt(process.env.SHARD_COUNT),
@@ -64,7 +56,6 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		rest: { offset: 50 },
 		debugMode: process.env.NODE_ENV !== "production",
 	});
-	console.log("[DEBUG] Discord.js client created");
 
 	client.configJS = configJS;
 	client.configJSON = configJSON;
@@ -75,34 +66,28 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	const isMariaDB = databaseType === "mariadb";
 	const dbName = isMariaDB ? "MariaDB" : "MongoDB";
 
-	console.log(`[DEBUG] Connecting to ${dbName}...`);
 	logger.debug(`Connecting to ${dbName}...`, { config: isMariaDB ? { host: process.env.MARIADB_HOST } : configJS.database });
 	await database.initialize(configJS.database).catch(err => {
 		logger.error(`An error occurred while connecting to ${dbName}! Is the database online?`, { config: isMariaDB ? { host: process.env.MARIADB_HOST } : configJS.database }, err);
 		process.exit(1);
 	});
-	console.log(`[DEBUG] ${dbName} connected`);
 	logger.info(`Successfully connected to ${dbName}!`);
 
 	// Assign database to client so modules can access it
 	client.database = global.Database;
 
-	console.log("[DEBUG] Initializing Discord Events...");
 	logger.silly("Initializing Discord Events.");
 	client.events = new EventHandler(client, configJS);
 	await client.events.init();
-	console.log("[DEBUG] Discord Events initialized");
 
 	client.traffic = new Traffic(client.IPC, true);
 	client.central = new SkynetClient(client);
 	client.tempStorage = new TemporaryStorage();
 	client.subscriptionCheck = new SubscriptionCheck(client);
-	console.log("[DEBUG] Traffic, Central, TempStorage, and SubscriptionCheck initialized");
 
 	// Initialize Bot Customization Manager
 	const BotCustomizationManager = require("./Modules/BotCustomizationManager");
 	client.botCustomization = new BotCustomizationManager(client);
-	console.log("[DEBUG] BotCustomizationManager initialized");
 
 	client.IPC.on("getGuild", async (msg, callback) => {
 		if (msg.target === "*") {
@@ -171,7 +156,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		const guildID = msg.guild;
 		const guild = client.guilds.cache.get(guildID);
 		const serverDocument = await Servers.findOne(guild.id);
-		const channel = guild.systemChannel ? guild.systemChannel : guild.channels.cache.filter(c => c.type === 0).first();
+		const channel = guild.systemChannel || guild.channels.cache.find(c => c.type === 0);
 		if (channel && serverDocument) {
 			const invite = await channel.createInvite({ maxAge: 0 }, "Skynet Bot Public Server Listing");
 			serverDocument.query.set("config.public_data.server_listing.invite_link", `https://discord.gg/${invite.code}`);
@@ -184,7 +169,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		const guild = client.guilds.cache.get(guildID);
 		const serverDocument = await Servers.findOne(guild.id);
 		if (!serverDocument) return;
-		const invites = await guild.fetchInvites();
+		const invites = await guild.invites.fetch();
 		const invite = invites.get(serverDocument.config.public_data.server_listing.invite_link.replace("https://discord.gg/", ""));
 		if (invite) invite.delete("Skynet Bot Public Server Listing");
 		serverDocument.query.set("config.public_data.server_listing.invite_link", null);
@@ -192,7 +177,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	});
 
 	client.IPC.on("eval", async (msg, callback) => {
-		let result = client._eval(msg);
+		let result = await client._eval(msg);
 		if (result instanceof Map) result = Array.from(result.entries());
 		callback(result);
 	});
@@ -218,7 +203,8 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		const payload = typeof msg === "string" ? JSON.parse(msg) : msg;
 		if (payload.guild === "*") {
 			client.guilds.cache.forEach(svr => {
-				svr.defaultChannel.send(payload.message);
+				const channel = svr.systemChannel || svr.channels.cache.find(c => c.type === 0 && c.permissionsFor(svr.members.me)?.has(PermissionFlagsBits.SendMessages));
+				if (channel) channel.send(payload.message);
 			});
 		} else {
 			const guild = client.guilds.cache.get(payload.guild);
@@ -724,7 +710,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 					if (!find) await Users.new({ _id: msg.author.id }).save();
 				} catch (err) {
 					if (!/duplicate key/.test(err.message)) {
-						logger.warn(`Failed to create user document for ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id }, err);
+						logger.warn(`Failed to create user document for ${msg.author.username}.`, { msgid: msg.id, usrid: msg.author.id }, err);
 					}
 				}
 			}
@@ -913,14 +899,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 	 * READY
 	 */
 	client.once("ready", async () => {
-		console.log("[DEBUG] Received READY event from Discord!");
 		try {
 			await logger.silly(`Received READY event from Discord!`);
 			await client.events.onEvent("ready");
-			console.log("[DEBUG] Initializing encryption manager...");
 			await logger.silly("Initializing the encryption manager...");
 			client.encryptionManager = new Encryption(client);
-			console.log("[DEBUG] Starting WebServer...");
 			await logger.silly("Running webserver...");
 			WebServer.open(client, auth, configJS, logger);
 
@@ -967,9 +950,7 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 			logger.info("Gaming Alerts Manager initialized!");
 
 			client.isReady = true;
-			console.log("[DEBUG] WebServer started, client is ready!");
 		} catch (err) {
-			console.log("[DEBUG] Error in ready handler:", err.message);
 			logger.error(`An unknown and unexpected error occurred with GAB, we tried our best! x.x`, {}, err);
 			process.exit(1);
 		}
@@ -1071,15 +1052,11 @@ Boot({ configJS, configJSON, auth }, scope).then(async () => {
 		logger.warn(`Received WARN event from Discord.js!`, { info });
 	});
 
-	console.log("[DEBUG] About to login to Discord Gateway...");
 	logger.verbose("Logging in to Discord Gateway.");
 	try {
-		console.log("[DEBUG] Calling client.init()...");
 		await client.init();
-		console.log("[DEBUG] client.init() completed successfully!");
 		client.IPC.send("ready", { id: client.shard.id });
 	} catch (err) {
-		console.log("[DEBUG] client.init() failed with error:", err.message);
 		if (err.code === "TOKEN_INVALID") {
 			logger.error(`The token you provided in auth.js could not be used to login into Discord.`);
 			client.IPC.send("shutdown", { soft: false, err: true });

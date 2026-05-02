@@ -238,7 +238,7 @@ controllers.governance = async (req, { res }) => {
 				budget: usage.budget || { tokensDayTotal: 0, costDayUsd: 0 },
 			},
 		},
-		availableTools: ["websearch"],
+		availableTools: ["websearch", "webfetch"],
 	});
 
 	res.render();
@@ -263,7 +263,7 @@ controllers.governance.post = async (req, res) => {
 	// Build tool access arrays
 	const toolsAllow = [];
 	const toolsDeny = [];
-	const availableTools = ["websearch"];
+	const availableTools = ["websearch", "webfetch"];
 	availableTools.forEach(tool => {
 		if (req.body[`tools-allow-${tool}`] === "on") {
 			toolsAllow.push(tool);

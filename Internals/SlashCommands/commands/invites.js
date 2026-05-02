@@ -245,7 +245,7 @@ module.exports = {
 		await interaction.editReply({
 			embeds: [{
 				color: 0x5865F2,
-				title: `📨 Invite Info for ${user.tag}`,
+				title: `📨 Invite Info for ${user.username}`,
 				thumbnail: { url: user.displayAvatarURL() },
 				fields: [
 					{ name: "Active Invites", value: String(activeInvites), inline: true },
@@ -307,7 +307,7 @@ module.exports = {
 			maxUses,
 			maxAge: expiresHours * 3600,
 			unique: true,
-			reason: `Tracked invite created by ${interaction.user.tag}`,
+			reason: `Tracked invite created by ${interaction.user.username}`,
 		});
 
 		const trackingDoc = InviteTracking.new({
@@ -389,7 +389,7 @@ module.exports = {
 
 		try {
 			const invite = await interaction.guild.invites.fetch(code);
-			await invite.delete(`Deleted by ${interaction.user.tag}`);
+			await invite.delete(`Deleted by ${interaction.user.username}`);
 		} catch {
 			// Invite may already be deleted from Discord
 		}

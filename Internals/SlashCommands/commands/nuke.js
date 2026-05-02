@@ -43,7 +43,7 @@ module.exports = {
 			const deleted = await interaction.channel.bulkDelete(messages, true);
 
 			return interaction.editReply({
-				content: `🗑️ Deleted **${deleted.size}** message${deleted.size !== 1 ? "s" : ""}!${user ? ` (from @${user.tag})` : ""}`,
+				content: `🗑️ Deleted **${deleted.size}** message${deleted.size !== 1 ? "s" : ""}!${user ? ` (from @${user.username})` : ""}`,
 			});
 		} catch (err) {
 			return interaction.editReply(`Failed to delete messages: ${err.message}`);

@@ -57,7 +57,7 @@ module.exports = async () => {
 			for (const cmd of allCommandsKey) {
 				if (serverDocument.config.commands[cmd]) continue;
 				const newCommand = defaultCommandObject(publicCommands[cmd].defaults.adminLevel, publicCommands[cmd].defaults.isEnabled);
-				serverDocument.query.set(`config.commands${cmd}`, newCommand);
+				serverDocument.query.set(`config.commands.${cmd}`, newCommand);
 			}
 
 			await Servers.delete({ _id: serverDocument._id });
@@ -87,8 +87,10 @@ module.exports = async () => {
 				await migrateChannelsAndMembers();
 				logger.info(`Successfully migrated "${database.db}"! You may now launch SkynetBot without the "--migrate" flag.`);
 				process.exit(0);
-				// eslint-disable-next-line
-			} catch (_) {}
+			} catch (err) {
+				logger.error("Migration failed!", {}, err);
+				process.exit(-1);
+			}
 		})
 		.catch(err => {
 			logger.error(`Failed to connect to the database!`, {}, err);

@@ -25,7 +25,6 @@ module.exports = async (req, { res }) => {
 			.sort({ featured: -1, points: -1 })
 			.limit(10)
 			.exec();
-		console.log(`[LANDING] Found ${extensions.length} gallery extensions for carousel`);
 		featuredExtensions = extensions.map(ext => ({
 			_id: ext._id.toString(),
 			name: ext.name,
@@ -35,7 +34,6 @@ module.exports = async (req, { res }) => {
 			tags: ext.tags || [],
 		}));
 	} catch (err) {
-		console.error("[LANDING] Failed to fetch extensions for carousel:", err);
 	}
 
 	// Fetch latest blog posts
@@ -60,7 +58,6 @@ module.exports = async (req, { res }) => {
 			}));
 		}
 	} catch (err) {
-		console.error("[LANDING] Failed to fetch blog posts:", err);
 	}
 
 	const ConfigManager = require("../../Modules/ConfigManager");

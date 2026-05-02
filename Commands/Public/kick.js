@@ -55,7 +55,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					},
 					{
 						name: `Moderator`,
-						value: `@${msg.author.tag}`,
+						value: `@${msg.author.username}`,
 						inline: true,
 					},
 				],
@@ -79,7 +79,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 		response.delete().catch();
 		if (response && response.content && configJS.yesStrings.includes(response.content.toLowerCase().trim())) {
 			await dmKicked(member.id);
-			await member.kick(`${reason} | Command issued by @${msg.author.tag}`);
+			await member.kick(`${reason} | Command issued by @${msg.author.username}`);
 			await CreateModLog(msg.guild, "Kick", member, msg.author, reason);
 			return kicked();
 		} else {

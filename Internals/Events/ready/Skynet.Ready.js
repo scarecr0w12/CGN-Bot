@@ -164,8 +164,7 @@ class Ready extends BaseEvent {
 				this.client.setInterval(clearMessageCount, 86400000);
 			}, msToMidnight);
 		}
-		// TODO: Add to array this.startTimerExtensions()
-		await Promise.all([this.resetVoiceStatsCollector(), this.statsCollector(), this.setReminders(), this.setCountdowns(), this.setGiveaways(), this.startStreamingRSS(), this.checkStreamers(), this.startMessageOfTheDay()]);
+		await Promise.all([this.resetVoiceStatsCollector(), this.statsCollector(), this.setReminders(), this.setCountdowns(), this.setGiveaways(), this.startStreamingRSS(), this.checkStreamers(), this.startMessageOfTheDay(), this.startTimerExtensions()]);
 		await logger.debug("Posting stats data to Discord Bot listings.");
 		await PostShardedData(this.client);
 		await logger.debug(`Reloading all commands.`);
@@ -486,11 +485,11 @@ class Ready extends BaseEvent {
 				if (memberDocument && member && serverDocument.config.moderation.isEnabled && serverDocument.config.moderation.autokick_members.isEnabled && Date.now() - memberDocument.last_active > serverDocument.config.moderation.autokick_members.max_inactivity && !memberDocument.cannotAutokick && this.client.getUserBotAdmin(guild, serverDocument, member) === 0 && member.kickable) {
 					try {
 						await member.kick(`Kicked for inactivity on server.`);
-						logger.verbose(`Kicked member "${member.user.tag}" due to inactivity on server "${guild}"`, { svrid: guild.id, usrid: member.user.id });
+						logger.verbose(`Kicked member "${member.user.username}" due to inactivity on server "${guild}"`, { svrid: guild.id, usrid: member.user.id });
 					} catch (err) {
 						serverDocument.query.id("members", memberDocument._id).set("cannotAutokick", true);
 						serverDocument.save();
-						logger.debug(`Failed to kick member "${member.user.tag}" due to inactivity on server "${guild}"`, { svrid: guild.id, usrid: member.user.id }, err);
+						logger.debug(`Failed to kick member "${member.user.username}" due to inactivity on server "${guild}"`, { svrid: guild.id, usrid: member.user.id }, err);
 					}
 				}
 			});
@@ -500,7 +499,31 @@ class Ready extends BaseEvent {
 		}, 900000);
 	}
 
-	// TODO: async runTimerExtensions
+	async startTimerExtensions () {
+		const serverDocuments = await Servers.find({
+			_id: { $in: Array.from(this.client.guilds.cache.keys()) },
+		}).exec().catch(err => {
+			logger.warn("Failed to load server documents for timer extensions", {}, err);
+		});
+		if (!serverDocuments) return;
+		for (const serverDocument of serverDocuments) {
+			if (!serverDocument.extensions || !serverDocument.extensions.length) continue;
+			for (const extensionConfigDocument of serverDocument.extensions) {
+				const extensionDocument = await Gallery.findOneByObjectID(extensionConfigDocument._id).catch(() => null);
+				if (!extensionDocument) continue;
+				const versionDocument = extensionDocument.versions.id(extensionConfigDocument.version);
+				if (!versionDocument || versionDocument.type !== "timer") continue;
+				const intervalMs = extensionConfigDocument.interval || versionDocument.interval;
+				if (!intervalMs || intervalMs < 60000) continue;
+				logger.verbose(`Scheduling timer extension "${extensionDocument.name}" for server ${serverDocument._id} every ${intervalMs}ms.`, { svrid: serverDocument._id, extid: extensionConfigDocument._id });
+				this.client.setInterval(async () => {
+					await this.client.runTimerExtension(serverDocument._id, extensionConfigDocument).catch(err => {
+						logger.debug(`Timer extension "${extensionDocument.name}" failed.`, { svrid: serverDocument._id, extid: extensionConfigDocument._id }, err);
+					});
+				}, intervalMs, `timer-ext-${serverDocument._id}-${extensionConfigDocument._id}`);
+			}
+		}
+	}
 }
 
 module.exports = Ready;

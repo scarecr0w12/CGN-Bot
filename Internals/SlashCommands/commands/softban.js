@@ -65,7 +65,7 @@ module.exports = {
 						description: `You've been softbanned from \`${interaction.guild.name}\`!`,
 						fields: [
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${interaction.user.tag}`, inline: true },
+							{ name: "Moderator", value: `@${interaction.user.username}`, inline: true },
 						],
 						footer: { text: "A softban means your messages were deleted but you can rejoin." },
 					}],
@@ -77,10 +77,10 @@ module.exports = {
 			// Ban then unban
 			await interaction.guild.members.ban(user.id, {
 				deleteMessageSeconds: days * 86400,
-				reason: `[Softban] ${reason} | By @${interaction.user.tag}`,
+				reason: `[Softban] ${reason} | By @${interaction.user.username}`,
 			});
 
-			await interaction.guild.members.unban(user.id, `Softban unban | By @${interaction.user.tag}`);
+			await interaction.guild.members.unban(user.id, `Softban unban | By @${interaction.user.username}`);
 
 			// Create ModLog
 			await CreateModLog(interaction.guild, "Softban", member || user, interaction.user, reason);
@@ -88,7 +88,7 @@ module.exports = {
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been softbanned! 🔨`,
+					description: `**@${user.username}** has been softbanned! 🔨`,
 					footer: { text: `Deleted ${days} day(s) of messages` },
 				}],
 			});

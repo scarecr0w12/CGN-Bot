@@ -87,10 +87,13 @@ module.exports = async ({ client, Constants: { Colors, Text }, Utils: { GetFlagF
 
 	msg.send({
 		embeds: [{
-			author: guild.owner?.user ? {
-				name: `Owned by ${guild.owner.user.tag}`,
-				iconURL: guild.owner.user.displayAvatarURL(),
-			} : undefined,
+			author: guild.ownerId ? (() => {
+				const ownerMember = guild.members.cache.get(guild.ownerId);
+				return ownerMember ? {
+					name: `Owned by ${ownerMember.user.username}`,
+					iconURL: ownerMember.user.displayAvatarURL(),
+				} : { name: `Owner ID: ${guild.ownerId}` };
+			})() : undefined,
 			color: Colors.INFO,
 			title: `Information for ${guild.name} :: ${guild.id}`,
 			url: `${configJS.hostingURL}activity/servers?q=${encodeURIComponent(guild.name)}`,

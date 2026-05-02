@@ -53,7 +53,7 @@ module.exports = {
 			try {
 				await interaction.channel.permissionOverwrites.edit(everyoneRole, {
 					SendMessages: false,
-				}, { reason: `${lockReason} | Locked by @${interaction.user.tag}` });
+				}, { reason: `${lockReason} | Locked by @${interaction.user.username}` });
 
 				return interaction.reply({
 					embeds: [{
@@ -86,7 +86,7 @@ module.exports = {
 			try {
 				await interaction.channel.permissionOverwrites.edit(everyoneRole, {
 					SendMessages: null,
-				}, { reason: `${unlockReason} | Unlocked by @${interaction.user.tag}` });
+				}, { reason: `${unlockReason} | Unlocked by @${interaction.user.username}` });
 
 				return interaction.reply({
 					embeds: [{

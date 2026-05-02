@@ -23,7 +23,7 @@ const Messages = {
 	AWAIT_QUIT: `The user quitted the menu!`,
 
 	// Shared Command related
-	UNAUTHORIZED_USER: user => `"${user.tag}" is not part of the sudo or normal maintainer list.`,
+	UNAUTHORIZED_USER: user => `"${user.username}" is not part of the sudo or normal maintainer list.`,
 	SHARED_INVALID_MODE: (mode, command) => `"${mode}" is an invalid mode for command ${command}`,
 
 	// Action-related

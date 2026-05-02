@@ -65,7 +65,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			}
 
 			if (nickname.trim() === ".") nickname = null;
-			await member.edit({ nick: nickname }, `Command issued by ${msg.author.tag}`);
+			await member.edit({ nick: nickname }, `Command issued by ${msg.author.username}`);
 			msg.send({
 				embeds: [{
 					color: Colors.SUCCESS,
@@ -95,7 +95,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				});
 			}
 
-			await msg.member.edit({ nick: nickname }, `Command issued by ${msg.author.tag}`);
+			await msg.member.edit({ nick: nickname }, `Command issued by ${msg.author.username}`);
 			msg.send({
 				color: Colors.SUCCESS,
 				description: `You now have the nickname \`${msg.member.nickname}\` on this server 💥`,

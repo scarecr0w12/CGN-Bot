@@ -6,6 +6,30 @@ const controllers = module.exports;
 const logger = global.logger;
 const TierManager = require("../../../Modules/TierManager");
 
+const ensureTicketConfig = serverDocument => {
+	if (!serverDocument.tickets) {
+		serverDocument.tickets = {};
+	}
+
+	if (!Array.isArray(serverDocument.tickets.categories)) {
+		serverDocument.tickets.categories = [];
+	}
+
+	if (!Array.isArray(serverDocument.tickets.panels)) {
+		serverDocument.tickets.panels = [];
+	}
+
+	if (!Array.isArray(serverDocument.tickets.support_roles)) {
+		serverDocument.tickets.support_roles = [];
+	}
+
+	if (!serverDocument.tickets.auto_close) {
+		serverDocument.tickets.auto_close = {};
+	}
+
+	return serverDocument.tickets;
+};
+
 /**
  * Check if server has Tier 2 access for tickets
  */
@@ -95,41 +119,41 @@ controllers.update = async (req, res) => {
 	} = req.body;
 
 	try {
-		const query = serverDocument.query;
+		const ticketConfig = ensureTicketConfig(serverDocument);
 
 		if (enabled !== undefined) {
-			query.set("tickets.enabled", enabled === "true" || enabled === true);
+			ticketConfig.enabled = enabled === "true" || enabled === true;
 		}
 		if (ticketCategoryId !== undefined) {
-			query.set("tickets.ticket_category_id", ticketCategoryId || null);
+			ticketConfig.ticket_category_id = ticketCategoryId || null;
 		}
 		if (transcriptChannelId !== undefined) {
-			query.set("tickets.transcript_channel_id", transcriptChannelId || null);
+			ticketConfig.transcript_channel_id = transcriptChannelId || null;
 		}
 		if (logChannelId !== undefined) {
-			query.set("tickets.log_channel_id", logChannelId || null);
+			ticketConfig.log_channel_id = logChannelId || null;
 		}
 		if (supportRoles !== undefined) {
 			const roles = Array.isArray(supportRoles) ? supportRoles : [supportRoles].filter(Boolean);
-			query.set("tickets.support_roles", roles);
+			ticketConfig.support_roles = roles;
 		}
 		if (defaultWelcomeMessage !== undefined) {
-			query.set("tickets.default_welcome_message", defaultWelcomeMessage);
+			ticketConfig.default_welcome_message = defaultWelcomeMessage;
 		}
 		if (channelNamePattern !== undefined) {
-			query.set("tickets.channel_name_pattern", channelNamePattern || "ticket-{number}");
+			ticketConfig.channel_name_pattern = channelNamePattern || "ticket-{number}";
 		}
 		if (maxTicketsPerUser !== undefined) {
-			query.set("tickets.max_tickets_per_user", parseInt(maxTicketsPerUser, 10) || 3);
+			ticketConfig.max_tickets_per_user = parseInt(maxTicketsPerUser, 10) || 3;
 		}
 		if (autoCloseEnabled !== undefined) {
-			query.set("tickets.auto_close.enabled", autoCloseEnabled === "true" || autoCloseEnabled === true);
+			ticketConfig.auto_close.enabled = autoCloseEnabled === "true" || autoCloseEnabled === true;
 		}
 		if (autoCloseInactiveHours !== undefined) {
-			query.set("tickets.auto_close.inactive_hours", parseInt(autoCloseInactiveHours, 10) || 48);
+			ticketConfig.auto_close.inactive_hours = parseInt(autoCloseInactiveHours, 10) || 48;
 		}
 		if (autoCloseWarningHours !== undefined) {
-			query.set("tickets.auto_close.warning_hours", parseInt(autoCloseWarningHours, 10) || 24);
+			ticketConfig.auto_close.warning_hours = parseInt(autoCloseWarningHours, 10) || 24;
 		}
 
 		await serverDocument.save();
@@ -157,7 +181,8 @@ controllers.addCategory = async (req, res) => {
 	}
 
 	try {
-		const categories = serverDocument.tickets?.categories || [];
+		const ticketConfig = ensureTicketConfig(serverDocument);
+		const categories = [...ticketConfig.categories];
 		const categoryId = name.toLowerCase().replace(/[^a-z0-9]/g, "-");
 
 		// Check for duplicate
@@ -174,7 +199,7 @@ controllers.addCategory = async (req, res) => {
 			welcome_message: welcomeMessage || "",
 		});
 
-		serverDocument.query.set("tickets.categories", categories);
+		ticketConfig.categories = categories;
 		await serverDocument.save();
 
 		res.json({ success: true, categoryId });
@@ -201,8 +226,8 @@ controllers.deleteCategory = async (req, res) => {
 	}
 
 	try {
-		const categories = (serverDocument.tickets?.categories || []).filter(c => c._id !== categoryId);
-		serverDocument.query.set("tickets.categories", categories);
+		const ticketConfig = ensureTicketConfig(serverDocument);
+		ticketConfig.categories = ticketConfig.categories.filter(c => c._id !== categoryId);
 		await serverDocument.save();
 
 		res.json({ success: true });

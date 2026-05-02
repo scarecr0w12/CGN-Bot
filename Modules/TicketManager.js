@@ -228,16 +228,14 @@ class TicketManager {
 			color: 0x3273dc,
 			title: `🎫 New Support Ticket #${ticket.ticket_number}`,
 			author: {
-				name: msg.author.tag,
+				name: msg.author.username,
 				icon_url: msg.author.displayAvatarURL(),
 			},
 			description: ticket.subject.substring(0, 1000),
 			fields: [
 				{ name: "Category", value: ticket.category, inline: true },
-				{ name: "Priority", value: ticket.priority, inline: true },
-				{ name: "Status", value: ticket.status, inline: true },
+				{ name: "From", value: `<@${msg.author.id}>`, inline: true },
 			],
-			footer: { text: `User ID: ${msg.author.id} | Ticket ID: ${ticket._id}` },
 			timestamp: new Date().toISOString(),
 		};
 
@@ -275,7 +273,7 @@ class TicketManager {
 			color: 0xe0e7ff,
 			title: `📨 New Reply on Ticket #${ticket.ticket_number}`,
 			author: {
-				name: msg.author.tag,
+				name: msg.author.username,
 				icon_url: msg.author.displayAvatarURL(),
 			},
 			description: msg.content.substring(0, 1000),

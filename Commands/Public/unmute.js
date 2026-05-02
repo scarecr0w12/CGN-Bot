@@ -40,7 +40,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 				});
 			}
 
-			await client.unmuteMember(msg.channel, member, `Unmuted ${member.user.tag} in #${msg.channel.name} | Command issued by ${msg.author.tag}`);
+			await client.unmuteMember(msg.channel, member, `Unmuted ${member.user.username} in #${msg.channel.name} | Command issued by ${msg.author.username}`);
 			await ModLog.create(msg.guild, "Unmute", member, msg.author, reason);
 			msg.send({
 				embeds: [{

@@ -131,7 +131,7 @@ module.exports = async (main, documents, msg, commandData) => {
 						value: textToRewrite.length > 1000 ? `${textToRewrite.substring(0, 997)}...` : textToRewrite,
 					},
 				],
-				footer: { text: `Requested by ${msg.author.tag}` },
+				footer: { text: `Requested by ${msg.author.username}` },
 			}],
 		});
 	} catch (error) {

@@ -31,7 +31,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	try {
 		await msg.channel.permissionOverwrites.edit(everyoneRole, {
 			SendMessages: null,
-		}, { reason: `${reason} | Unlocked by @${msg.author.tag}` });
+		}, { reason: `${reason} | Unlocked by @${msg.author.username}` });
 
 		return msg.send({
 			embeds: [{

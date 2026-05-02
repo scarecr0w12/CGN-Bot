@@ -18,7 +18,7 @@ module.exports = {
 
 		if (!memberDocument || !memberDocument.strikes || memberDocument.strikes.length === 0) {
 			return interaction.reply({
-				content: `**@${user.tag}** has no strikes! ✨`,
+				content: `**@${user.username}** has no strikes! ✨`,
 				ephemeral: true,
 			});
 		}
@@ -31,7 +31,7 @@ module.exports = {
 		return interaction.reply({
 			embeds: [{
 				color: 0xFFFF00,
-				title: `⚠️ Strikes for ${user.tag}`,
+				title: `⚠️ Strikes for ${user.username}`,
 				description: strikes,
 				footer: { text: `Total: ${memberDocument.strikes.length} strike(s)` },
 			}],

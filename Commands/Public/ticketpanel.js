@@ -7,7 +7,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	}
 
 	// Check if ticket system is enabled
-	if (!client.serverTicketManager.isEnabled(serverDocument)) {
+	if (!await client.serverTicketManager.isEnabled(serverDocument)) {
 		return msg.send({
 			embeds: [{
 				color: Colors.SOFT_ERR,

@@ -293,7 +293,7 @@ module.exports = {
 				return interaction.reply({
 					embeds: [{
 						color: isSuspicious ? 0xFF6B6B : 0x00FF00,
-						title: `🔍 Account Check: ${user.tag}`,
+						title: `🔍 Account Check: ${user.username}`,
 						thumbnail: { url: user.displayAvatarURL() },
 						fields: [
 							{

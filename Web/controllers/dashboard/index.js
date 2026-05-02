@@ -76,16 +76,11 @@ controllers.home = async (req, { res }) => {
 };
 
 controllers.overview = async (req, { res }) => {
-	console.log("[OVERVIEW] Starting overview controller");
 	try {
 		// Redirect to maintainer console if necessary
 		if (!req.svr && req.isAuthorized) {
-			console.log("[OVERVIEW] Redirecting to maintainer console");
 			res.redirect("/dashboard/maintainer/maintainer");
 		} else {
-			console.log("[OVERVIEW] Processing server overview for:", req.svr && req.svr.id);
-			console.log("[OVERVIEW] req.svr exists:", !!req.svr);
-			console.log("[OVERVIEW] req.svr.document exists:", !!(req.svr && req.svr.document));
 
 			let topCommand;
 			let topCommandUsage = 0;
@@ -139,7 +134,6 @@ controllers.overview = async (req, { res }) => {
 			res.render();
 		}
 	} catch (err) {
-		console.error("[OVERVIEW ERROR]", err);
 		throw err;
 	}
 };

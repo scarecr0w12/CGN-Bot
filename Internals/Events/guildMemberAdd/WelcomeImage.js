@@ -35,7 +35,7 @@ module.exports = async (client, member) => {
 			files: [attachment],
 		});
 
-		logger.info(`Sent welcome image for ${member.user.tag} in ${member.guild.name}`);
+		logger.info(`Sent welcome image for ${member.user.username} in ${member.guild.name}`);
 	} catch (err) {
 		logger.error("Failed to send welcome image:", err);
 	}

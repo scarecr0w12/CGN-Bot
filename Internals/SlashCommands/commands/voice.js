@@ -202,7 +202,7 @@ module.exports = {
 					],
 				},
 			],
-			reason: `Voice Management | Created by ${interaction.user.tag}`,
+			reason: `Voice Management | Created by ${interaction.user.username}`,
 		});
 
 		serverDocument.query.push("config.room_data", {
@@ -258,7 +258,7 @@ module.exports = {
 
 		await voiceChannel.permissionOverwrites.edit(interaction.guild.id, {
 			Connect: lock ? false : null,
-		}, { reason: `Voice Management | ${lock ? "Locked" : "Unlocked"} by ${interaction.user.tag}` });
+		}, { reason: `Voice Management | ${lock ? "Locked" : "Unlocked"} by ${interaction.user.username}` });
 
 		await interaction.editReply({
 			embeds: [{
@@ -292,7 +292,7 @@ module.exports = {
 		await voiceChannel.permissionOverwrites.edit(user.id, {
 			ViewChannel: true,
 			Connect: true,
-		}, { reason: `Voice Management | Invited by ${interaction.user.tag}` });
+		}, { reason: `Voice Management | Invited by ${interaction.user.username}` });
 
 		await interaction.editReply({
 			embeds: [{
@@ -307,7 +307,7 @@ module.exports = {
 				embeds: [{
 					color: 0x5865F2,
 					title: "🔊 Voice Channel Invite",
-					description: `**${interaction.user.tag}** invited you to join their voice channel in **${interaction.guild.name}**`,
+					description: `**${interaction.user.username}** invited you to join their voice channel in **${interaction.guild.name}**`,
 					fields: [{ name: "Channel", value: voiceChannel.name }],
 				}],
 			});
@@ -345,7 +345,7 @@ module.exports = {
 
 		await voiceChannel.permissionOverwrites.edit(user.id, {
 			Connect: false,
-		}, { reason: `Voice Management | Kicked by ${interaction.user.tag}` });
+		}, { reason: `Voice Management | Kicked by ${interaction.user.username}` });
 
 		await interaction.editReply({
 			embeds: [{
@@ -397,7 +397,7 @@ module.exports = {
 			MuteMembers: true,
 			DeafenMembers: true,
 			MoveMembers: true,
-		}, { reason: `Voice Management | Ownership transferred by ${interaction.user.tag}` });
+		}, { reason: `Voice Management | Ownership transferred by ${interaction.user.username}` });
 
 		const roomIndex = serverDocument.config.room_data.findIndex(r => r._id === voiceChannel.id);
 		if (roomIndex !== -1) {
@@ -421,7 +421,7 @@ module.exports = {
 		const name = interaction.options.getString("name");
 
 		const oldName = voiceChannel.name;
-		await voiceChannel.setName(name, `Voice Management | Renamed by ${interaction.user.tag}`);
+		await voiceChannel.setName(name, `Voice Management | Renamed by ${interaction.user.username}`);
 
 		await interaction.editReply({
 			embeds: [{
@@ -438,7 +438,7 @@ module.exports = {
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
 		const count = interaction.options.getInteger("count");
 
-		await voiceChannel.setUserLimit(count, `Voice Management | Limit set by ${interaction.user.tag}`);
+		await voiceChannel.setUserLimit(count, `Voice Management | Limit set by ${interaction.user.username}`);
 
 		await interaction.editReply({
 			embeds: [{
@@ -491,7 +491,7 @@ module.exports = {
 			MuteMembers: true,
 			DeafenMembers: true,
 			MoveMembers: true,
-		}, { reason: `Voice Management | Claimed by ${interaction.user.tag}` });
+		}, { reason: `Voice Management | Claimed by ${interaction.user.username}` });
 
 		const roomIndex = serverDocument.config.room_data.findIndex(r => r._id === voiceChannel.id);
 		if (roomIndex !== -1) {
@@ -585,7 +585,7 @@ module.exports = {
 		const { voiceChannel } = this.getOwnedChannel(interaction, serverDocument);
 
 		const channelName = voiceChannel.name;
-		await voiceChannel.delete(`Voice Management | Deleted by ${interaction.user.tag}`);
+		await voiceChannel.delete(`Voice Management | Deleted by ${interaction.user.username}`);
 
 		serverDocument.query.pull("config.room_data", voiceChannel.id);
 		await serverDocument.save();

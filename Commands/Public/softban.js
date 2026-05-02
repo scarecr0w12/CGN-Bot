@@ -92,7 +92,7 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 						description: `You've been softbanned from \`${msg.guild.name}\`! 🔨`,
 						fields: [
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${msg.author.tag}`, inline: true },
+							{ name: "Moderator", value: `@${msg.author.username}`, inline: true },
 						],
 						footer: { text: "A softban means your messages were deleted but you can rejoin." },
 						thumbnail: { url: msg.guild.iconURL() },
@@ -105,11 +105,11 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 			// Ban
 			await member.ban({
 				deleteMessageSeconds: days * 86400,
-				reason: `[Softban] ${reason} | By @${msg.author.tag}`,
+				reason: `[Softban] ${reason} | By @${msg.author.username}`,
 			});
 
 			// Immediately unban
-			await msg.guild.members.unban(member.id, `Softban unban | Originally by @${msg.author.tag}`);
+			await msg.guild.members.unban(member.id, `Softban unban | Originally by @${msg.author.username}`);
 
 			// Create ModLog entry
 			await CreateModLog(msg.guild, "Softban", member, msg.author, reason);

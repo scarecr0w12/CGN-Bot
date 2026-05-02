@@ -792,7 +792,7 @@ module.exports = {
 			throw new Error("This user already has this temporary role. Remove it first to reassign.");
 		}
 
-		await member.roles.add(role, `Temp role by ${interaction.user.tag}: ${reason || "No reason"}`);
+		await member.roles.add(role, `Temp role by ${interaction.user.username}: ${reason || "No reason"}`);
 
 		const expiresAt = new Date(Date.now() + duration);
 
@@ -815,7 +815,7 @@ module.exports = {
 				color: 0x57F287,
 				title: "✅ Temporary Role Assigned",
 				fields: [
-					{ name: "User", value: `${user.tag}`, inline: true },
+					{ name: "User", value: `${user.username}`, inline: true },
 					{ name: "Role", value: role.name, inline: true },
 					{ name: "Expires", value: `<t:${expiresTimestamp}:R>`, inline: true },
 					{ name: "Reason", value: reason || "No reason provided", inline: false },
@@ -879,7 +879,7 @@ module.exports = {
 
 		const member = await interaction.guild.members.fetch(user.id).catch(() => null);
 		if (member && member.roles.cache.has(role.id)) {
-			await member.roles.remove(role, `Temp role removed early by ${interaction.user.tag}`);
+			await member.roles.remove(role, `Temp role removed early by ${interaction.user.username}`);
 		}
 
 		await global.TempRoles.delete({ _id: tempRole._id });
@@ -888,7 +888,7 @@ module.exports = {
 			embeds: [{
 				color: 0x57F287,
 				title: "✅ Temporary Role Removed",
-				description: `Removed **${role.name}** from ${user.tag}`,
+				description: `Removed **${role.name}** from ${user.username}`,
 			}],
 		});
 	},

@@ -64,7 +64,7 @@ module.exports = {
 						description: `You've been banned from \`${interaction.guild.name}\`! 🔨`,
 						fields: [
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${interaction.user.tag}`, inline: true },
+							{ name: "Moderator", value: `@${interaction.user.username}`, inline: true },
 						],
 					}],
 				});
@@ -74,7 +74,7 @@ module.exports = {
 
 			await interaction.guild.members.ban(user.id, {
 				deleteMessageSeconds: days * 86400,
-				reason: `${reason} | By @${interaction.user.tag}`,
+				reason: `${reason} | By @${interaction.user.username}`,
 			});
 
 			await CreateModLog(interaction.guild, "Ban", member || user, interaction.user, reason);
@@ -82,7 +82,7 @@ module.exports = {
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been banned! 🔨`,
+					description: `**@${user.username}** has been banned! 🔨`,
 					fields: [
 						{ name: "Reason", value: reason, inline: true },
 					],

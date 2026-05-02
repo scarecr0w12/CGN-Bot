@@ -106,7 +106,7 @@ class RolePanelReaction extends BaseEvent {
 			// Add role
 			await member.roles.add(role, "Role panel reaction");
 
-			logger.verbose(`Added role ${role.name} to ${user.tag} via reaction panel`, {
+			logger.verbose(`Added role ${role.name} to ${user.username} via reaction panel`, {
 				svrid: guild.id,
 				usrid: user.id,
 			});

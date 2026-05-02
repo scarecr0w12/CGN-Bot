@@ -31,7 +31,6 @@ controllers.scanMembers = async (req, res) => {
 		}
 
 		// Fetch all members
-		console.log(`[SCAN] Starting member scan for server ${guild.name} (${guild.id})`);
 		const members = await guild.members.fetch();
 
 		let created = 0;
@@ -68,7 +67,6 @@ controllers.scanMembers = async (req, res) => {
 			}
 		}
 
-		console.log(`[SCAN] Completed scan for ${guild.name}: created=${created}, updated=${updated}, skipped=${skipped}`);
 
 		res.json({
 			success: true,
@@ -79,7 +77,6 @@ controllers.scanMembers = async (req, res) => {
 			skipped,
 		});
 	} catch (err) {
-		console.error("[SCAN ERROR]", err);
 		res.status(500).json({ error: err.message });
 	}
 };
@@ -739,7 +736,7 @@ controllers.logs = async (req, { res }) => {
 			if (serverLog.channelid) serverLog.ch = ch ? ch.name : "invalid-channel";
 
 			const member = serverLog.userid ? svr.members[serverLog.userid] : null;
-			if (serverLog.userid) serverLog.usr = member ? `${member.user.username}#${member.user.discriminator}` : "invalid-user";
+			if (serverLog.userid) serverLog.usr = member ? (member.user.discriminator && member.user.discriminator !== "0" ? `${member.user.username}#${member.user.discriminator}` : member.user.username) : "invalid-user";
 
 			switch (serverLog.level) {
 				case "warn":

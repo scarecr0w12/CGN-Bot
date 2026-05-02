@@ -165,7 +165,7 @@ module.exports = async (main, documents, msg, commandData) => {
 						value: `\`\`\`\n${content.substring(0, 450)}\n\`\`\``,
 					},
 				] : [],
-				footer: { text: `Level: ${level} • Requested by ${msg.author.tag}` },
+				footer: { text: `Level: ${level} • Requested by ${msg.author.username}` },
 			}],
 		});
 	} catch (error) {

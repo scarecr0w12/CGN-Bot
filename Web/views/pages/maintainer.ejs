@@ -221,67 +221,104 @@
 	<%- include('../partials/footer') %>
 	<%- include('../partials/scroll-top-button') %>
 	<script>
-	document.addEventListener("DOMContentLoaded", function() {
+	(function() {
+	  let trafficChartsInitialized = false;
+	  let trafficChartsRetryTimeout = null;
+	  const monthTrafficData = <%- JSON.stringify(pageData.trafficData.month) %>;
+	  const weekTrafficData = <%- JSON.stringify(pageData.trafficData.week) %>;
+	  const dayTrafficData = <%- JSON.stringify(pageData.trafficData.day) %>;
+
 	  function formatDate(ts) {
 		const d = new Date(ts);
 		return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	  }
+
 	  function formatHour(ts) {
 		const d = new Date(ts);
 		return d.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
 	  }
-	  <% if (pageData.trafficData.month.length > 0) { %>
-	  new Morris.Line({
-		element: "traffic-chart-month",
-		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
-		data: <%- JSON.stringify(pageData.trafficData.month) %>,
-		xkey: "_id",
-		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Page Views", "Authenticated", "Unique Visitors"],
-		dateFormat: formatDate,
-		xLabelFormat: formatDate,
-		parseTime: true,
-		resize: true,
-		hideHover: 'auto',
-		smooth: true,
-		pointSize: 4
-	  });
-	  <% } %>
-	  <% if (pageData.trafficData.week.length > 0) { %>
-	  new Morris.Line({
-		element: "traffic-chart-week",
-		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
-		data: <%- JSON.stringify(pageData.trafficData.week) %>,
-		xkey: "_id",
-		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Page Views", "Authenticated", "Unique Visitors"],
-		dateFormat: formatDate,
-		xLabelFormat: formatDate,
-		parseTime: true,
-		resize: true,
-		hideHover: 'auto',
-		smooth: true,
-		pointSize: 4
-	  });
-	  <% } %>
-	  <% if (pageData.trafficData.day.length > 1) { %>
-	  new Morris.Line({
-		element: "traffic-chart-day",
-		lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
-		data: <%- JSON.stringify(pageData.trafficData.day) %>,
-		xkey: "_id",
-		ykeys: ["pageViews", "authViews", "uniqueUsers"],
-		labels: ["Page Views", "Authenticated", "Unique Visitors"],
-		dateFormat: formatHour,
-		xLabelFormat: formatHour,
-		parseTime: true,
-		resize: true,
-		hideHover: 'auto',
-		smooth: true,
-		pointSize: 4
-	  });
-	  <% } %>
-	});
+
+	  function clearChart(elementId) {
+		const element = document.getElementById(elementId);
+		if (element) element.innerHTML = "";
+	  }
+
+	  function initTrafficCharts() {
+		if (trafficChartsInitialized) return;
+		if (typeof Morris === "undefined" || !Morris || typeof Morris.Line !== "function") {
+			if (!trafficChartsRetryTimeout) {
+				trafficChartsRetryTimeout = setTimeout(() => {
+					trafficChartsRetryTimeout = null;
+					initTrafficCharts();
+				}, 250);
+			}
+			return;
+		}
+
+		trafficChartsInitialized = true;
+
+		if (monthTrafficData.length > 0) {
+			clearChart("traffic-chart-month");
+			new Morris.Line({
+				element: "traffic-chart-month",
+				lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
+				data: monthTrafficData,
+				xkey: "_id",
+				ykeys: ["pageViews", "authViews", "uniqueUsers"],
+				labels: ["Page Views", "Authenticated", "Unique Visitors"],
+				dateFormat: formatDate,
+				xLabelFormat: formatDate,
+				parseTime: true,
+				resize: true,
+				hideHover: 'auto',
+				smooth: true,
+				pointSize: 4
+			});
+		}
+
+		if (weekTrafficData.length > 0) {
+			clearChart("traffic-chart-week");
+			new Morris.Line({
+				element: "traffic-chart-week",
+				lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
+				data: weekTrafficData,
+				xkey: "_id",
+				ykeys: ["pageViews", "authViews", "uniqueUsers"],
+				labels: ["Page Views", "Authenticated", "Unique Visitors"],
+				dateFormat: formatDate,
+				xLabelFormat: formatDate,
+				parseTime: true,
+				resize: true,
+				hideHover: 'auto',
+				smooth: true,
+				pointSize: 4
+			});
+		}
+
+		if (dayTrafficData.length > 1) {
+			clearChart("traffic-chart-day");
+			new Morris.Line({
+				element: "traffic-chart-day",
+				lineColors: ["#00d1b2", "#ffdd57", "#3273dc"],
+				data: dayTrafficData,
+				xkey: "_id",
+				ykeys: ["pageViews", "authViews", "uniqueUsers"],
+				labels: ["Page Views", "Authenticated", "Unique Visitors"],
+				dateFormat: formatHour,
+				xLabelFormat: formatHour,
+				parseTime: true,
+				resize: true,
+				hideHover: 'auto',
+				smooth: true,
+				pointSize: 4
+			});
+		}
+	  }
+
+	  document.addEventListener("DOMContentLoaded", initTrafficCharts);
+	  document.addEventListener("turbolinks:load", initTrafficCharts);
+	  initTrafficCharts();
+	})();
 	</script>
 </body>
 </html>

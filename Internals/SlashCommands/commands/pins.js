@@ -204,7 +204,7 @@ module.exports = {
 					return interaction.editReply({ content: "❌ Message not found. Item removed from queue." });
 				}
 
-				await message.pin(`Approved by ${interaction.user.tag}`);
+				await message.pin(`Approved by ${interaction.user.username}`);
 				serverDocument.query.pull("config.pins.queue", item);
 				await serverDocument.save();
 
@@ -412,7 +412,7 @@ module.exports = {
 					const age = now - pin.createdTimestamp;
 
 					if (i >= maxPins || age > maxAgeMs) {
-						await pin.unpin(`Pin rotation cleanup by ${interaction.user.tag}`);
+						await pin.unpin(`Pin rotation cleanup by ${interaction.user.username}`);
 						totalUnpinned++;
 					}
 				}
@@ -477,7 +477,7 @@ module.exports = {
 			const embed = {
 				color: 0x5865F2,
 				author: {
-					name: pin.author.tag,
+					name: pin.author.username,
 					icon_url: pin.author.displayAvatarURL(),
 				},
 				description: pin.content || "*No text content*",

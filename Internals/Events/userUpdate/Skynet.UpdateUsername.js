@@ -3,7 +3,7 @@ const ConfigManager = require("../../../Modules/ConfigManager");
 
 class UsernameUpdater extends BaseEvent {
 	async requirements (oldUser, newUser) {
-		if (oldUser.id === this.client.user.id || oldUser.bot || oldUser.tag === newUser.tag) return false;
+		if (oldUser.id === this.client.user.id || oldUser.bot || oldUser.username === newUser.username) return false;
 		const isBlocked = await ConfigManager.isUserBlocked(oldUser.id);
 		return !isBlocked;
 	}
@@ -21,10 +21,10 @@ class UsernameUpdater extends BaseEvent {
 			}
 			userDocument = await Users.findOne(oldUser.id);
 		}
-		userDocument.query.set("username", newUser.tag);
+		userDocument.query.set("username", newUser.username);
 		if (userDocument.past_names && !userDocument.past_names.includes(oldUser.username)) userDocument.query.push("past_names", oldUser.username);
 		userDocument.save().catch(err => {
-			logger.debug(`Failed to save userDocument ${oldUser.tag} for UpdateUsername.`, { usrid: oldUser.id }, err);
+			logger.debug(`Failed to save userDocument ${oldUser.username} for UpdateUsername.`, { usrid: oldUser.id }, err);
 		});
 	}
 }

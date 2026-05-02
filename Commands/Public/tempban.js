@@ -148,7 +148,7 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 						fields: [
 							{ name: "Duration", value: durationFormatted, inline: true },
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${msg.author.tag}`, inline: true },
+							{ name: "Moderator", value: `@${msg.author.username}`, inline: true },
 							{ name: "Unban Date", value: unbanDate.toUTCString(), inline: false },
 						],
 						thumbnail: { url: msg.guild.iconURL() },
@@ -159,7 +159,7 @@ module.exports = async ({ client, Constants: { Colors }, configJS }, { serverDoc
 			// Ban the user
 			await member.ban({
 				deleteMessageSeconds: 86400,
-				reason: `[Tempban: ${durationFormatted}] ${reason} | By @${msg.author.tag}`,
+				reason: `[Tempban: ${durationFormatted}] ${reason} | By @${msg.author.username}`,
 			});
 
 			// Store tempban for auto-unban

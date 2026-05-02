@@ -215,7 +215,7 @@ module.exports = {
 		return interaction.reply({
 			embeds: [{
 				color: 0x5865F2,
-				title: `💤 ${user.tag} is AFK`,
+				title: `💤 ${user.username} is AFK`,
 				description: memberDocument.afk_message,
 				fields: [
 					{ name: "Since", value: since, inline: true },

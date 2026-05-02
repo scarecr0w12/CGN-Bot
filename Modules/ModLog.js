@@ -18,7 +18,7 @@ module.exports = class ModLog {
 	 * @returns {string}
 	 */
 	static getUserText (user) {
-		return `${user.tag} <${user.id}>`;
+		return `${user.username} <${user.id}>`;
 	}
 
 	/**

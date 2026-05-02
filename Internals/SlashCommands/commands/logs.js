@@ -350,7 +350,7 @@ module.exports = {
 			return interaction.editReply({
 				embeds: [{
 					color: 0xFEE75C,
-					title: `📋 History for ${user.tag}`,
+					title: `📋 History for ${user.username}`,
 					description: "No moderation actions found for this user.",
 					thumbnail: { url: user.displayAvatarURL() },
 				}],
@@ -377,7 +377,7 @@ module.exports = {
 		await interaction.editReply({
 			embeds: [{
 				color: 0x5865F2,
-				title: `📋 History for ${user.tag}`,
+				title: `📋 History for ${user.username}`,
 				thumbnail: { url: user.displayAvatarURL() },
 				fields: [
 					{ name: `Actions Received (${asTarget.length})`, value: targetList },

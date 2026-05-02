@@ -47,7 +47,7 @@ class RaidDetection extends BaseEvent {
 
 		if (accountAgeDays >= minAge) return;
 
-		logger.verbose(`Alt detection triggered for "${member.user.tag}" (${accountAgeDays} days old)`, {
+		logger.verbose(`Alt detection triggered for "${member.user.username}" (${accountAgeDays} days old)`, {
 			svrid: member.guild.id,
 			usrid: member.id,
 		});
@@ -62,7 +62,7 @@ class RaidDetection extends BaseEvent {
 			title: "🔍 Potential Alt Account Detected",
 			thumbnail: { url: member.user.displayAvatarURL() },
 			fields: [
-				{ name: "User", value: `${member.user.tag} (${member.id})`, inline: true },
+				{ name: "User", value: `${member.user.username} (${member.id})`, inline: true },
 				{ name: "Account Age", value: `${accountAgeDays} days`, inline: true },
 				{ name: "Threshold", value: `${minAge} days`, inline: true },
 				{ name: "Created At", value: `<t:${Math.floor(member.user.createdAt.getTime() / 1000)}:F>`, inline: false },
@@ -139,7 +139,7 @@ class RaidDetection extends BaseEvent {
 			case "flag":
 			default:
 				this.client.logMessage(serverDocument, LoggingLevels.INFO,
-					`Flagged potential alt "${member.user.tag}" (account age: ${accountAgeDays} days)`,
+					`Flagged potential alt "${member.user.username}" (account age: ${accountAgeDays} days)`,
 					null, member.id);
 				break;
 		}
@@ -310,7 +310,7 @@ class RaidDetection extends BaseEvent {
 			default:
 				// Just log - lockdown would prevent joins at Discord level if configured
 				this.client.logMessage(serverDocument, LoggingLevels.INFO,
-					`Raid join tracked: "${member.user.tag}" (age: ${accountAgeDays} days)`,
+					`Raid join tracked: "${member.user.username}" (age: ${accountAgeDays} days)`,
 					null, member.id);
 				break;
 		}

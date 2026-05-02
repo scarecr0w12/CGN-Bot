@@ -21,7 +21,7 @@ module.exports = {
 		const embed = {
 			color: 0x3669FA,
 			author: {
-				name: author.tag,
+				name: author.username,
 				iconURL: author.displayAvatarURL(),
 			},
 			description: content || "*No text content*",

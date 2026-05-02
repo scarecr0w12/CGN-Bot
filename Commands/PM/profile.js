@@ -13,10 +13,10 @@ module.exports = async ({ client, configJS, Utils: { IsURL }, Constants: { Color
 			embeds: [{
 				color: Colors.LIGHT_BLUE,
 				author: {
-					name: `Profile setup for ${msg.author.tag}`,
+					name: `Profile setup for ${msg.author.username}`,
 				},
 				title: `Let's setup your SkynetBot profile ~~--~~ See it by clicking here`,
-				url: `${configJS.hostingURL}activity/users?q=${encodeURIComponent(`${msg.author.tag}`)}`,
+				url: `${configJS.hostingURL}activity/users?q=${encodeURIComponent(`${msg.author.username}`)}`,
 				thumbnail: {
 					url: msg.author.displayAvatarURL({ size: 64, format: "png" }),
 				},
@@ -60,7 +60,7 @@ module.exports = async ({ client, configJS, Utils: { IsURL }, Constants: { Color
 					url: msg.author.displayAvatarURL({ size: 64, format: "png" }),
 				},
 				author: {
-					name: `Profile setup for ${msg.author.tag}`,
+					name: `Profile setup for ${msg.author.username}`,
 				},
 				description: `Your current image URL is: \`\`\`\n${msg.author.userDocument.profile_background_image}\`\`\`\nWould you like a new one? Just paste in a URL.`,
 				footer: {
@@ -107,7 +107,7 @@ module.exports = async ({ client, configJS, Utils: { IsURL }, Constants: { Color
 					url: msg.author.displayAvatarURL({ size: 64, format: "png" }),
 				},
 				author: {
-					name: `Profile setup for ${msg.author.tag}`,
+					name: `Profile setup for ${msg.author.username}`,
 				},
 				footer: {
 					text: `Answer with "." to not change your bio, or "none" to reset it | This message expires in 5 minutes`,
@@ -161,7 +161,7 @@ module.exports = async ({ client, configJS, Utils: { IsURL }, Constants: { Color
 				color: Colors.GREEN,
 				title: `You're all set! ~~--~~ Click here to see your profile. 👀`,
 				description: `Thanks for your input.`,
-				url: `${configJS.hostingURL}activity/users?q=${encodeURIComponent(`${msg.author.tag}`)}`,
+				url: `${configJS.hostingURL}activity/users?q=${encodeURIComponent(`${msg.author.username}`)}`,
 				footer: {
 					text: `Changed your mind? Run "profile setup" once again!`,
 				},

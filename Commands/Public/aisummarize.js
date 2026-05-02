@@ -89,7 +89,7 @@ module.exports = async (main, documents, msg, commandData) => {
 					color: 0x5865F2,
 					title: `📝 Channel Summary (${filteredMessages.length} messages)`,
 					description: summary.substring(0, 4000),
-					footer: { text: `Style: ${style} • Requested by ${msg.author.tag}` },
+					footer: { text: `Style: ${style} • Requested by ${msg.author.username}` },
 				}],
 			});
 		}

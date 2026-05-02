@@ -18,7 +18,7 @@ module.exports = async ({ client, Constants: { Colors } }, msg, commandData) => 
 					},
 				}],
 			});
-			if (!initMsg) return logger.debug(`Failed to send message for giveaway command to ${msg.author.tag}.`, { usrid: msg.author.id, msgid: msg.id });
+			if (!initMsg) return logger.debug(`Failed to send message for giveaway command to ${msg.author.username}.`, { usrid: msg.author.id, msgid: msg.id });
 			const relay = () => client.relayCommand("giveaway", { str: svrname, usrid: msg.author.id }, { initMsg: initMsg.id, usrid: msg.author.id, svrname, chname });
 			setTimeout(async () => {
 				const relayRes = await relay();

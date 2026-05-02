@@ -39,14 +39,14 @@ module.exports = {
 		}
 
 		try {
-			await member.timeout(null, `${reason} | By @${interaction.user.tag}`);
+			await member.timeout(null, `${reason} | By @${interaction.user.username}`);
 
 			await CreateModLog(interaction.guild, "Unmute", member, interaction.user, reason);
 
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been unmuted! 🔊`,
+					description: `**@${user.username}** has been unmuted! 🔊`,
 					fields: [
 						{ name: "Reason", value: reason, inline: true },
 					],

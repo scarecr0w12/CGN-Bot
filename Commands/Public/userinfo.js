@@ -99,7 +99,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 			name: "📋 User Information",
 			value: [
 				`**ID:** ${user.id}`,
-				`**Username:** ${user.tag}`,
+				`**Username:** ${user.username}`,
 				`**Nickname:** ${member.nickname || "None"}`,
 				`**Bot:** ${user.bot ? "Yes 🤖" : "No"}`,
 			].join("\n"),
@@ -156,7 +156,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 			title: `User Info: ${client.getName(serverDocument, member)}`,
 			thumbnail: { url: user.displayAvatarURL({ size: 256, dynamic: true }) },
 			fields,
-			footer: { text: `Requested by ${msg.author.tag}` },
+			footer: { text: `Requested by ${msg.author.username}` },
 			timestamp: new Date().toISOString(),
 		}],
 	});

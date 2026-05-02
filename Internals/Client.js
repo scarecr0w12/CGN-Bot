@@ -196,7 +196,7 @@ module.exports = class SkynetClient extends DJSClient {
 	getName (serverDocument, member, ignoreNick = false) {
 		return RemoveFormatting(
 			(serverDocument.config.name_display.use_nick && !ignoreNick ? member.nickname ? member.nickname : member.user.username : member.user.username) +
-			(serverDocument.config.name_display.show_discriminator ? `#${member.user.discriminator}` : ""),
+			(serverDocument.config.name_display.show_discriminator && member.user.discriminator && member.user.discriminator !== "0" ? `#${member.user.discriminator}` : ""),
 		);
 	}
 
@@ -385,8 +385,12 @@ module.exports = class SkynetClient extends DJSClient {
 				string = string.slice(1);
 			}
 			if (string.lastIndexOf("#") === string.length - 5 && !isNaN(string.substring(string.lastIndexOf("#") + 1))) {
-				foundMember = server.members.cache.filter(member => member.user.username === string.substring(0, string.lastIndexOf("#") + 1))
-					.find(member => member.user.discriminator === string.substring(string.lastIndexOf("#") + 1));
+				const hashPos = string.lastIndexOf("#");
+				const nameQuery = string.substring(0, hashPos);
+				const discQuery = string.substring(hashPos + 1);
+				foundMember = server.members.cache
+					.filter(member => member.user.username === nameQuery && member.user.discriminator === discQuery && member.user.discriminator !== "0")
+					.values().next().value || null;
 			}
 			if (!foundMember) {
 				foundMember = server.members.cache.find(member => member.user.username.toLowerCase() === string.toLowerCase());
@@ -630,7 +634,7 @@ module.exports = class SkynetClient extends DJSClient {
 										}
 									})
 									.catch(err => {
-										logger.warn(`Failed to find or save user data (for ${member.user.tag}) for points.`, { usrid: member.id }, err);
+										logger.warn(`Failed to find or save user data (for ${member.user.username}) for points.`, { usrid: member.id }, err);
 									});
 							}
 							// Assign new rank role if necessary
@@ -638,7 +642,7 @@ module.exports = class SkynetClient extends DJSClient {
 								const role = server.roles.cache.get(rank.role_id);
 								if (role) {
 									member.roles.add(role, `Added member to role for leveling up in ranks.`).catch(err => {
-										logger.warn(`Failed to add member "${member.user.tag}" to role "${role.name}" on server "${server}" for rank level up.`, {
+										logger.warn(`Failed to add member "${member.user.username}" to role "${role.name}" on server "${server}" for rank level up.`, {
 											svrid: server.id,
 											usrid: member.id,
 											roleid: role.id,
@@ -676,13 +680,13 @@ module.exports = class SkynetClient extends DJSClient {
 		const userQueryDocument = userDocument.query;
 
 		roleID = roleID ? roleID.id || roleID : null;
-		this.logMessage(serverDocument, LoggingLevels.INFO, `Handling a violation by member "${member.user.tag}"; ${adminMessage}`, null, member.id);
+		this.logMessage(serverDocument, LoggingLevels.INFO, `Handling a violation by member "${member.user.username}"; ${adminMessage}`, null, member.id);
 
 		// Deduct 50 SkynetPoints if necessary
 		if (serverDocument.config.commands.points.isEnabled) {
 			userQueryDocument.inc("points", -50);
 			await userDocument.save().catch(userErr => {
-				logger.warn(`Failed to save user data (for ${member.user.tag}) for points.`, { usrid: member.id }, userErr);
+				logger.warn(`Failed to save user data (for ${member.user.username}) for points.`, { usrid: member.id }, userErr);
 			});
 		}
 
@@ -699,7 +703,7 @@ module.exports = class SkynetClient extends DJSClient {
 				try {
 					await member.roles.add(role, `Added the role to the member due to a violation.`);
 				} catch (err) {
-					logger.warn(`Failed to add member "${member.user.tag}" to role "${role.name}" on server "${server.name}"`, { svrid: server.id, usrid: member.id, roleid: role.id }, err);
+					logger.warn(`Failed to add member "${member.user.username}" to role "${role.name}" on server "${server.name}"`, { svrid: server.id, usrid: member.id, roleid: role.id }, err);
 				}
 			}
 		}
@@ -905,18 +909,18 @@ module.exports = class SkynetClient extends DJSClient {
 	 */
 	hasOverwritePerms (allowedOrDenied) {
 		const PERMS = [
-			"CREATE_INSTANT_INVITE",
+			PermissionFlagsBits.CreateInstantInvite,
 			PermissionFlagsBits.ManageChannels,
 			PermissionFlagsBits.ManageRoles,
-			"MANAGE_WEBHOOKS",
+			PermissionFlagsBits.ManageWebhooks,
 			PermissionFlagsBits.ViewChannel,
-			"SEND_TTS_MESSAGES",
+			PermissionFlagsBits.SendTTSMessages,
 			PermissionFlagsBits.ManageMessages,
 			PermissionFlagsBits.EmbedLinks,
 			PermissionFlagsBits.AttachFiles,
 			PermissionFlagsBits.ReadMessageHistory,
 			PermissionFlagsBits.MentionEveryone,
-			"USE_EXTERNAL_EMOJIS",
+			PermissionFlagsBits.UseExternalEmojis,
 			PermissionFlagsBits.AddReactions,
 		];
 		const howMany = [];
@@ -932,7 +936,7 @@ module.exports = class SkynetClient extends DJSClient {
 	 * @param {Discord.GuildMember} member The member to mute
 	 * @param {String} [reason] Optional reason for the mute
 	 */
-	async muteMember (channel, member, reason = `Muted ${member.user.tag} in #${channel.name}`) {
+	async muteMember (channel, member, reason = `Muted ${member.user.username} in #${channel.name}`) {
 		if (!this.isMuted(channel, member) && channel.type === ChannelType.GuildText) {
 			try {
 				// Discord.js v14: use permissionOverwrites.edit instead of updateOverwrite
@@ -943,7 +947,7 @@ module.exports = class SkynetClient extends DJSClient {
 				logger.verbose(`Probably missing permissions to mute member in "${channel.guild}".`, { svrid: channel.guild.id, chid: channel.id }, err);
 				const serverDocument = await Servers.findOne(channel.guild.id);
 				if (serverDocument) {
-					this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to mute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+					this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to mute ${member.user.username} in #${channel.name} - missing permissions`, channel.id, member.id);
 				}
 			}
 		}
@@ -955,7 +959,7 @@ module.exports = class SkynetClient extends DJSClient {
 	 * @param {Discord.GuildMember} member The member to unmute
 	 * @param {String} [reason] Optional reason for the unmute
 	 */
-	async unmuteMember (channel, member, reason = `Unmuted ${member.user.tag} in #${channel.name}`) {
+	async unmuteMember (channel, member, reason = `Unmuted ${member.user.username} in #${channel.name}`) {
 		if (this.isMuted(channel, member) && channel.type === ChannelType.GuildText) {
 			// Discord.js v14: use .cache for collections
 			const overwrite = channel.permissionOverwrites.cache.get(member.id);
@@ -972,7 +976,7 @@ module.exports = class SkynetClient extends DJSClient {
 						logger.verbose(`Probably missing permissions to unmute member in "${channel.guild}".`, { chid: channel.id, svrid: channel.guild.id }, err);
 						const serverDocument = await Servers.findOne(channel.guild.id);
 						if (serverDocument) {
-							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.username} in #${channel.name} - missing permissions`, channel.id, member.id);
 						}
 					}
 				} else {
@@ -982,7 +986,7 @@ module.exports = class SkynetClient extends DJSClient {
 						logger.verbose(`Probably missing permissions to unmute member in "${channel.guild}".`, { chid: channel.id, svrid: channel.guild.id }, err);
 						const serverDocument = await Servers.findOne(channel.guild.id);
 						if (serverDocument) {
-							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.tag} in #${channel.name} - missing permissions`, channel.id, member.id);
+							this.logMessage(serverDocument, LoggingLevels.WARN, `Failed to unmute ${member.user.username} in #${channel.name} - missing permissions`, channel.id, member.id);
 						}
 					}
 				}
@@ -1075,6 +1079,15 @@ module.exports = class SkynetClient extends DJSClient {
 			ext: extensionConfigDocument._id, extv: extensionConfigDocument.version,
 		});
 		if (result === false) logger.debug(`Failed to run message extension in guild.`, { msgid: msg.id, svrid: msg.guild.id, extid: extensionConfigDocument._id, extv: extensionConfigDocument.version });
+		return result;
+	}
+
+	async runTimerExtension (guildId, extensionConfigDocument) {
+		const result = await this.workerManager.sendValueToWorker(WorkerTypes.TIMER_EXTENSION, {
+			guild: guildId,
+			ext: extensionConfigDocument._id, extv: extensionConfigDocument.version,
+		});
+		if (result === false) logger.debug(`Failed to run timer extension in guild.`, { svrid: guildId, extid: extensionConfigDocument._id, extv: extensionConfigDocument.version });
 		return result;
 	}
 

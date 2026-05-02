@@ -364,7 +364,7 @@ module.exports = {
 			throw new Error("User is already verified.");
 		}
 
-		await member.roles.add(role, `Manually verified by ${interaction.user.tag}`);
+		await member.roles.add(role, `Manually verified by ${interaction.user.username}`);
 
 		await interaction.reply({
 			embeds: [{
@@ -409,7 +409,7 @@ module.exports = {
 			throw new Error("User is not verified.");
 		}
 
-		await member.roles.remove(role, `Unverified by ${interaction.user.tag}`);
+		await member.roles.remove(role, `Unverified by ${interaction.user.username}`);
 
 		await interaction.reply({
 			embeds: [{

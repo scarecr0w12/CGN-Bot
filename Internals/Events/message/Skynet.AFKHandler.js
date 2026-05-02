@@ -12,7 +12,7 @@ class AFKHandler extends BaseEvent {
 			if (msg.author.id === this.client.user.id) {
 				return false;
 			} else {
-				logger.silly(`Ignored ${msg.author.tag} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
+				logger.silly(`Ignored ${msg.author.username} for AFK handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}

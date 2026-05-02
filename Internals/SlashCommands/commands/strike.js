@@ -130,7 +130,7 @@ module.exports = {
 				return interaction.reply({
 					embeds: [{
 						color: 0xFFFF00,
-						description: `**@${user.tag}** has received their ${strikeCount}${ordinal} strike! ⚠️`,
+						description: `**@${user.username}** has received their ${strikeCount}${ordinal} strike! ⚠️`,
 						fields: [
 							{ name: "Reason", value: reason, inline: true },
 						],
@@ -141,7 +141,7 @@ module.exports = {
 			case "remove": {
 				if (memberDocument.strikes.length === 0) {
 					return interaction.reply({
-						content: `${user.tag} has no strikes to remove!`,
+						content: `${user.username} has no strikes to remove!`,
 						ephemeral: true,
 					});
 				}
@@ -169,7 +169,7 @@ module.exports = {
 				return interaction.reply({
 					embeds: [{
 						color: 0x00FF00,
-						description: `✅ Removed strike from **@${user.tag}**`,
+						description: `✅ Removed strike from **@${user.username}**`,
 						fields: [
 							{ name: "Removed Reason", value: removedStrike.reason, inline: true },
 							{ name: "Remaining Strikes", value: `${memberDocument.strikes.length}`, inline: true },
@@ -183,7 +183,7 @@ module.exports = {
 				const count = memberDocument.strikes.length;
 				if (count === 0) {
 					return interaction.reply({
-						content: `${user.tag} has no strikes to clear!`,
+						content: `${user.username} has no strikes to clear!`,
 						ephemeral: true,
 					});
 				}
@@ -197,7 +197,7 @@ module.exports = {
 				return interaction.reply({
 					embeds: [{
 						color: 0x00FF00,
-						description: `✅ Cleared **${count}** strike(s) from **@${user.tag}**`,
+						description: `✅ Cleared **${count}** strike(s) from **@${user.username}**`,
 					}],
 					ephemeral: true,
 				});
@@ -206,7 +206,7 @@ module.exports = {
 			case "view": {
 				if (memberDocument.strikes.length === 0) {
 					return interaction.reply({
-						content: `${user.tag} has no strikes.`,
+						content: `${user.username} has no strikes.`,
 						ephemeral: true,
 					});
 				}
@@ -220,7 +220,7 @@ module.exports = {
 				return interaction.reply({
 					embeds: [{
 						color: 0xFFFF00,
-						title: `⚠️ Strikes for ${user.tag}`,
+						title: `⚠️ Strikes for ${user.username}`,
 						description: strikes,
 						footer: { text: `Total: ${memberDocument.strikes.length} strike(s)` },
 					}],

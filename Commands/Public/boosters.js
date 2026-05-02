@@ -32,7 +32,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 
 	const boosterList = boosters.map((member, index) => {
 		const boostingSince = moment(member.premiumSince).fromNow();
-		return `${index + 1}. **${member.user.tag}** - boosting ${boostingSince}`;
+		return `${index + 1}. **${member.user.username}** - boosting ${boostingSince}`;
 	});
 
 	const tierEmoji = BOOST_TIER_EMOJIS[boostTier];

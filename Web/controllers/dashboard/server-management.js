@@ -3,6 +3,23 @@ const { ChannelType, PermissionFlagsBits } = require("discord.js");
 const Logger = require("../../../Internals/Logger");
 const logger = new Logger("ServerManagement");
 
+ const getCollectionValues = collection => {
+	if (!collection) return [];
+	if (collection.cache) return [...collection.cache.values()];
+	if (Array.isArray(collection)) return collection;
+	if (typeof collection === "object") return Object.values(collection);
+	return [];
+ };
+
+ const getBotName = req => req.svr.members?.[req.app.client.user.id]?.nickname || req.app.client.user.username;
+
+ const toBigInt = value => {
+	if (typeof value === "bigint") return value;
+	if (typeof value === "number") return BigInt(value);
+	if (typeof value === "string" && value) return BigInt(value);
+	return 0n;
+ };
+
 /**
  * Server Management Controller (Tier 2)
  * Allows server owners to manage channels, categories, roles, and permissions
@@ -15,31 +32,29 @@ module.exports.channels = async (req, { res }) => {
 	}
 
 	try {
-		const guild = req.app.client.guilds.cache.get(req.svr.id);
-		if (!guild) {
-			return req.app.Helpers.renderError(res, "Server not found", "The bot is not in this server.");
-		}
+		await req.svr.fetchCollection("channels");
 
-		const channels = guild.channels.cache
+		const channels = getCollectionValues(req.svr.channels)
 			.filter(c => c.type !== ChannelType.DM && c.type !== ChannelType.GroupDM)
-			.sort((a, b) => a.rawPosition - b.rawPosition)
+			.sort((a, b) => (a.rawPosition || a.position || 0) - (b.rawPosition || b.position || 0))
 			.map(channel => ({
 				id: channel.id,
 				name: channel.name,
 				type: channel.type,
 				parentId: channel.parentId,
-				position: channel.rawPosition,
+				position: channel.rawPosition || channel.position || 0,
 				topic: channel.topic || null,
 				nsfw: channel.nsfw || false,
 				bitrate: channel.bitrate || null,
 				userLimit: channel.userLimit || null,
 				rateLimitPerUser: channel.rateLimitPerUser || null,
-				permissionOverwrites: channel.permissionOverwrites?.cache.map(overwrite => ({
+				permissionOverwrites: getCollectionValues(channel.permissionOverwrites)
+					.map(overwrite => ({
 					id: overwrite.id,
 					type: overwrite.type,
-					allow: overwrite.allow.bitfield.toString(),
-					deny: overwrite.deny.bitfield.toString(),
-				})) || [],
+					allow: overwrite.allow?.bitfield?.toString?.() || overwrite.allow?.toString?.() || "0",
+					deny: overwrite.deny?.bitfield?.toString?.() || overwrite.deny?.toString?.() || "0",
+					})),
 			}));
 
 		const categories = channels.filter(c => c.type === ChannelType.GuildCategory);
@@ -58,7 +73,7 @@ module.exports.channels = async (req, { res }) => {
 			forumChannels,
 			announcementChannels,
 			channelTypes: ChannelType,
-			botName: req.svr.members[req.app.client.user.id]?.nickname || req.app.client.user.username,
+			botName: getBotName(req),
 		});
 		res.render();
 	} catch (err) {
@@ -74,12 +89,9 @@ module.exports.roles = async (req, { res }) => {
 	}
 
 	try {
-		const guild = req.app.client.guilds.cache.get(req.svr.id);
-		if (!guild) {
-			return req.app.Helpers.renderError(res, "Server not found", "The bot is not in this server.");
-		}
+		await req.svr.fetchCollection("roles");
 
-		const roles = guild.roles.cache
+		const roles = getCollectionValues(req.svr.roles)
 			.sort((a, b) => b.position - a.position)
 			.map(role => ({
 				id: role.id,
@@ -90,9 +102,12 @@ module.exports.roles = async (req, { res }) => {
 				hoist: role.hoist,
 				mentionable: role.mentionable,
 				managed: role.managed,
-				permissions: role.permissions.bitfield.toString(),
+				permissions: toBigInt(role.permissions?.bitfield ?? role.permissions).toString(),
 				permissionsList: Object.entries(PermissionFlagsBits)
-					.filter(([, value]) => (role.permissions.bitfield & value) === value)
+					.filter(([, value]) => {
+						const bitfield = toBigInt(role.permissions?.bitfield ?? role.permissions);
+						return (bitfield & value) === value;
+					})
 					.map(([name]) => name),
 			}));
 
@@ -100,7 +115,7 @@ module.exports.roles = async (req, { res }) => {
 			page: "admin-server-roles.ejs",
 			roles,
 			permissions: PermissionFlagsBits,
-			botName: req.svr.members[req.app.client.user.id]?.nickname || req.app.client.user.username,
+			botName: getBotName(req),
 		});
 		res.render();
 	} catch (err) {

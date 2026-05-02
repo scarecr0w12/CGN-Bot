@@ -11,7 +11,7 @@ class VoteHandler extends BaseEvent {
 			if (msg.author.id === this.client.user.id) {
 				return false;
 			} else {
-				logger.silly(`Ignored ${msg.author.tag} for vote handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
+				logger.silly(`Ignored ${msg.author.username} for vote handler.`, { usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
@@ -74,7 +74,7 @@ class VoteHandler extends BaseEvent {
 							} catch (err) {
 								logger.debug("Failed to save user data for points.", { usrid: member.id }, err);
 							}
-							logger.verbose(`User "${member.user.tag}" ${voteAction} by user "${msg.author.tag}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+							logger.verbose(`User "${member.user.username}" ${voteAction} by user "${msg.author.username}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 						};
 
 						if (voteAction === "gilded") {
@@ -84,7 +84,7 @@ class VoteHandler extends BaseEvent {
 									targetUserDocument.query.inc("points", 10);
 									await saveTargetUserDocument();
 								} else {
-									logger.verbose(`User "${msg.author.tag}" does not have enough points to gild "${member.user.tag}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+									logger.verbose(`User "${msg.author.username}" does not have enough points to gild "${member.user.username}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 									msg.channel.send({
 										embeds: [{
 											color: Colors.SOFT_ERR,
@@ -117,7 +117,7 @@ class VoteHandler extends BaseEvent {
 					// Get target user data
 					const targetUserDocument = await Users.findOne(message.author.id);
 					if (targetUserDocument) {
-						logger.verbose(`User "${message.author.tag}" upvoted by user "${msg.author.tag}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+						logger.verbose(`User "${message.author.username}" upvoted by user "${msg.author.username}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 
 						// Increment points
 						targetUserDocument.query.inc("points");

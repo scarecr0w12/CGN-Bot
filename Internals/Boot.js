@@ -17,9 +17,9 @@ const db = (val, configJS) => {
 		logger.error(`Argument --db requires a parameter.`);
 		return;
 	}
-	const [url, dbname] = val.split(db.lastIndexOf("/"));
-	configJS.database.URL = url;
-	configJS.database.db = dbname;
+	const lastSlash = val.lastIndexOf("/");
+	configJS.database.URL = val.substring(0, lastSlash);
+	configJS.database.db = val.substring(lastSlash + 1);
 };
 
 const token = (val, configJS, configJSON, auth) => {

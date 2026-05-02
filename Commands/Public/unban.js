@@ -7,7 +7,7 @@ const userFilter = query => ({ user }) => {
 		query = query.slice(2, -1);
 	}
 
-	return user.id === query.toLowerCase() || user.tag === query.toLowerCase() || user.username === query.toLowerCase();
+	return user.id === query.toLowerCase() || user.username === query.toLowerCase() || user.username === query.toLowerCase();
 };
 
 module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { serverDocument }, msg, commandData) => {
@@ -26,14 +26,14 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 			});
 		}
 
-		const bans = await msg.guild.fetchBans();
+		const bans = await msg.guild.bans.fetch();
 		const ban = bans.find(userFilter(query.trim()));
 		if (ban && ban.user) {
 			await msg.send({
 				embeds: [{
 					color: Colors.INPUT,
 					title: `Waiting on @__${client.getName(serverDocument, msg.member)}__'s input...`,
-					description: `Are you sure you want to unban **@${ban.user.tag}**?\n\nThey were banned for\`\`\`css\n${ban.reason}\`\`\`\nThey will be unbanned for\`\`\`css\n${reason.trim()}\`\`\``,
+					description: `Are you sure you want to unban **@${ban.user.username}**?\n\nThey were banned for\`\`\`css\n${ban.reason}\`\`\`\nThey will be unbanned for\`\`\`css\n${reason.trim()}\`\`\``,
 					footer: {
 						text: `The unbanned user will not be automatically notified!`,
 					},
@@ -42,12 +42,12 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 			const response = (await msg.channel.awaitMessages({ filter: message => message.author.id === msg.author.id, max: 1, time: 120000 })).first();
 			if (response) response.delete().catch();
 			if (response && configJS.yesStrings.includes(response.content.toLowerCase().trim())) {
-				await msg.guild.members.unban(ban.user, `${reason} | Command issued by ${msg.author.tag}`);
+				await msg.guild.members.unban(ban.user, `${reason} | Command issued by ${msg.author.username}`);
 				await CreateModLog(msg.guild, "Unban", ban.user, msg.member, reason.trim());
 				msg.send({
 					embeds: [{
 						color: Colors.SUCCESS,
-						description: `You've successfully given **@${ban.user.tag}** a second chance 😇`,
+						description: `You've successfully given **@${ban.user.username}** a second chance 😇`,
 						footer: {
 							text: "They better not blow it again...",
 						},

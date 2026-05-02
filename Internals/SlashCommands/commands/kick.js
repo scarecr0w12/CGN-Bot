@@ -61,7 +61,7 @@ module.exports = {
 						description: `You've been kicked from \`${interaction.guild.name}\`! 👢`,
 						fields: [
 							{ name: "Reason", value: reason, inline: true },
-							{ name: "Moderator", value: `@${interaction.user.tag}`, inline: true },
+							{ name: "Moderator", value: `@${interaction.user.username}`, inline: true },
 						],
 					}],
 				});
@@ -69,14 +69,14 @@ module.exports = {
 				// DMs disabled
 			}
 
-			await member.kick(`${reason} | By @${interaction.user.tag}`);
+			await member.kick(`${reason} | By @${interaction.user.username}`);
 
 			await CreateModLog(interaction.guild, "Kick", member, interaction.user, reason);
 
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${user.tag}** has been kicked! 👢`,
+					description: `**@${user.username}** has been kicked! 👢`,
 					fields: [
 						{ name: "Reason", value: reason, inline: true },
 					],

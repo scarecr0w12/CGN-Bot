@@ -211,7 +211,7 @@ module.exports = async (main, documents, msg, commandData) => {
 				{ name: "Size", value: size, inline: true },
 				{ name: "Source", value: imageSource, inline: true },
 			],
-			footer: { text: `Generated for ${msg.author.tag}` },
+			footer: { text: `Generated for ${msg.author.username}` },
 			timestamp: new Date().toISOString(),
 		};
 

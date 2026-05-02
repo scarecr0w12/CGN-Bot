@@ -42,7 +42,7 @@ class User {
 		 * The user's tag (username#discriminator or just username).
 		 * @type {String}
 		 */
-		this.tag = user.tag;
+		this.tag = user.username;
 
 		/**
 		 * Whether the user is a bot.

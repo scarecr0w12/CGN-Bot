@@ -54,7 +54,7 @@ module.exports = {
 				name: "📋 User Information",
 				value: [
 					`**ID:** ${user.id}`,
-					`**Username:** ${user.tag}`,
+					`**Username:** ${user.username}`,
 					`**Nickname:** ${member.nickname || "None"}`,
 					`**Bot:** ${user.bot ? "Yes 🤖" : "No"}`,
 				].join("\n"),
@@ -95,7 +95,7 @@ module.exports = {
 				title: `User Info: ${client.getName(serverDocument, member)}`,
 				thumbnail: { url: user.displayAvatarURL({ size: 256 }) },
 				fields,
-				footer: { text: `Requested by ${interaction.user.tag}` },
+				footer: { text: `Requested by ${interaction.user.username}` },
 				timestamp: new Date().toISOString(),
 			}],
 		});

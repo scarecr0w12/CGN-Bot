@@ -4,6 +4,7 @@
  */
 
 const WebSearchTool = require("./WebSearchTool");
+const WebFetchTool = require("./WebFetchTool");
 
 class ToolRegistry {
 	constructor (aiManager) {
@@ -17,6 +18,7 @@ class ToolRegistry {
 	async initialize () {
 		// Register default tools
 		this.register("websearch", new WebSearchTool());
+		this.register("webfetch", new WebFetchTool());
 
 		logger.info(`AI Tool Registry initialized with ${this.tools.size} tools`);
 	}

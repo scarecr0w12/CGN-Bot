@@ -28,7 +28,7 @@ module.exports = {
 		try {
 			await interaction.channel.permissionOverwrites.edit(everyoneRole, {
 				SendMessages: null,
-			}, { reason: `${reason} | Unlocked by @${interaction.user.tag}` });
+			}, { reason: `${reason} | Unlocked by @${interaction.user.username}` });
 
 			return interaction.reply({
 				embeds: [{

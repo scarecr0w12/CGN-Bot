@@ -163,7 +163,6 @@ controllers.servers.bigmessage.post = async (req, res) => {
 controllers.globalScan = async (req, res) => {
 	try {
 		const guilds = req.app.client.guilds.cache;
-		console.log(`[GLOBAL SCAN] Starting global scan for ${guilds.size} servers`);
 
 		let totalCreated = 0;
 		let totalUpdated = 0;
@@ -205,12 +204,10 @@ controllers.globalScan = async (req, res) => {
 				}
 				serversScanned++;
 			} catch (err) {
-				console.error(`[GLOBAL SCAN] Error scanning ${guild.name}:`, err.message);
 				errors.push({ server: guild.name, error: err.message });
 			}
 		}
 
-		console.log(`[GLOBAL SCAN] Complete: servers=${serversScanned}, created=${totalCreated}, updated=${totalUpdated}, skipped=${totalSkipped}`);
 
 		res.json({
 			success: true,
@@ -223,7 +220,6 @@ controllers.globalScan = async (req, res) => {
 			errors: errors.length > 0 ? errors : undefined,
 		});
 	} catch (err) {
-		console.error("[GLOBAL SCAN ERROR]", err);
 		res.status(500).json({ error: err.message });
 	}
 };

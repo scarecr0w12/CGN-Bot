@@ -66,7 +66,7 @@ module.exports = async ({ Constants: { Text, Colors }, client }, { serverDocumen
 						},
 						{
 							name: "Moderator",
-							value: `@${msg.author.tag}`,
+							value: `@${msg.author.username}`,
 							inline: true,
 						},
 					],

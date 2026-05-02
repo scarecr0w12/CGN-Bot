@@ -210,7 +210,7 @@ module.exports = {
 		const emoji = await interaction.guild.emojis.create({
 			attachment: parsed.url,
 			name,
-			reason: `Emoji stolen by ${interaction.user.tag}`,
+			reason: `Emoji stolen by ${interaction.user.username}`,
 		});
 
 		await interaction.editReply({
@@ -240,7 +240,7 @@ module.exports = {
 		const emoji = await interaction.guild.emojis.create({
 			attachment: url,
 			name,
-			reason: `Emoji added by ${interaction.user.tag}`,
+			reason: `Emoji added by ${interaction.user.username}`,
 		});
 
 		await interaction.editReply({
@@ -274,7 +274,7 @@ module.exports = {
 		}
 
 		const oldName = emoji.name;
-		await emoji.setName(newName, `Renamed by ${interaction.user.tag}`);
+		await emoji.setName(newName, `Renamed by ${interaction.user.username}`);
 
 		await interaction.editReply({
 			embeds: [{
@@ -301,7 +301,7 @@ module.exports = {
 		}
 
 		const emojiName = emoji.name;
-		await emoji.delete(`Deleted by ${interaction.user.tag}`);
+		await emoji.delete(`Deleted by ${interaction.user.username}`);
 
 		await interaction.editReply({
 			embeds: [{
@@ -538,7 +538,7 @@ module.exports = {
 				await interaction.guild.emojis.create({
 					attachment: emoji.url,
 					name: emoji.name,
-					reason: `Imported from pack "${pack.name}" by ${interaction.user.tag}`,
+					reason: `Imported from pack "${pack.name}" by ${interaction.user.username}`,
 				});
 				imported++;
 

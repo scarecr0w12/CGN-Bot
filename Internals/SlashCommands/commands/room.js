@@ -64,7 +64,7 @@ module.exports = {
 						name: `🔊 ${name}`,
 						type: ChannelType.GuildVoice,
 						userLimit: limit,
-						reason: `Temporary room by ${interaction.user.tag}`,
+						reason: `Temporary room by ${interaction.user.username}`,
 					});
 
 					serverQueryDocument.push("config.temp_rooms", {

@@ -1032,7 +1032,7 @@ class IsolatedSandbox {
 			user: interaction.user ? {
 				id: interaction.user.id,
 				username: interaction.user.username,
-				tag: interaction.user.tag,
+				tag: interaction.user.username,
 				bot: interaction.user.bot,
 			} : null,
 			member: interaction.member ? { id: interaction.member.id } : null,
@@ -1054,7 +1054,7 @@ class IsolatedSandbox {
 				id: msg.author.id,
 				username: msg.author.username,
 				discriminator: msg.author.discriminator,
-				tag: msg.author.tag,
+				tag: msg.author.username,
 				bot: msg.author.bot,
 			},
 			channel: {
@@ -1116,7 +1116,7 @@ class IsolatedSandbox {
 			user: {
 				id: client.user.id,
 				username: client.user.username,
-				tag: client.user.tag,
+				tag: client.user.username,
 			},
 			prefix: serverDocument.config.command_prefix,
 		};
@@ -1174,7 +1174,7 @@ class IsolatedSandbox {
 			username: user.username,
 			displayName: user.displayName || user.globalName || user.username,
 			discriminator: user.discriminator,
-			tag: user.tag,
+			tag: user.username,
 			bot: user.bot,
 			system: user.system || false,
 			avatar: user.avatar,

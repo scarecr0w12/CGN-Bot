@@ -148,7 +148,7 @@ class FormBuilder {
 			const { EmbedBuilder } = require("discord.js");
 			const embed = new EmbedBuilder()
 				.setTitle(`✅ Form Submitted: ${form.name}`)
-				.setDescription(`${user.tag} submitted a form response`)
+				.setDescription(`${user.username} submitted a form response`)
 				.setColor("#5865F2")
 				.setTimestamp();
 
@@ -170,7 +170,7 @@ class FormBuilder {
 			const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 			const embed = new EmbedBuilder()
 				.setTitle(`📋 Form Review Required: ${form.name}`)
-				.setDescription(`${user.tag} submitted a response`)
+				.setDescription(`${user.username} submitted a response`)
 				.setColor("#FEE75C")
 				.setFooter({ text: `Response ID: ${response._id}` })
 				.setTimestamp();
@@ -204,7 +204,7 @@ class FormBuilder {
 				form_id: form._id,
 				form_name: form.name,
 				user_id: response.user_id,
-				user_tag: user.tag,
+				user_tag: user.username,
 				responses: response.responses,
 				submitted_at: response.submitted_at,
 			};

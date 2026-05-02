@@ -31,14 +31,14 @@ module.exports = {
 				});
 			}
 
-			await interaction.guild.members.unban(userId, `${reason} | By @${interaction.user.tag}`);
+			await interaction.guild.members.unban(userId, `${reason} | By @${interaction.user.username}`);
 
 			await CreateModLog(interaction.guild, "Unban", ban.user, interaction.user, reason);
 
 			return interaction.reply({
 				embeds: [{
 					color: 0x00FF00,
-					description: `**@${ban.user.tag}** has been unbanned! ✅`,
+					description: `**@${ban.user.username}** has been unbanned! ✅`,
 					fields: [
 						{ name: "Reason", value: reason, inline: true },
 					],

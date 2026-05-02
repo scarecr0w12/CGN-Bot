@@ -14,8 +14,8 @@ class UsernameHandler extends BaseEvent {
 	}
 
 	async handle (msg) {
-		if (this.userDocument && this.userDocument.username !== msg.author.tag) {
-			this.userDocument.query.set("username", msg.author.tag);
+		if (this.userDocument && this.userDocument.username !== msg.author.username) {
+			this.userDocument.query.set("username", msg.author.username);
 			BatchWriteManager.queue(this.userDocument);
 		}
 	}

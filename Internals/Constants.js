@@ -189,7 +189,7 @@ Constants.StatusMessages = {
 			url: user.displayAvatarURL(),
 		},
 		title: "Status Messages - Member Banned",
-		description: message.replaceAll("@user", `**@${user.tag}**`),
+		description: message.replaceAll("@user", `**@${user.username}**`),
 		color: Constants.Colors.RED,
 		timestamp: new Date(),
 	}),
@@ -201,7 +201,7 @@ Constants.StatusMessages = {
 			url: user.displayAvatarURL(),
 		},
 		title: "Status Messages - Member Unbanned",
-		description: message.replaceAll("@user", `**@${user.tag}**`),
+		description: message.replaceAll("@user", `**@${user.username}**`),
 		color: Constants.Colors.GREEN,
 		timestamp: new Date(),
 	}),
@@ -362,6 +362,7 @@ Constants.WorkerTypes = {
 	MATH: "mathjs",
 	EMOJI: "emoji",
 	EXTENSION: "extension",
+	TIMER_EXTENSION: "timerExtension",
 };
 
 Constants.WorkerCommands = {
@@ -375,6 +376,7 @@ Constants.WorkerEvents = {
 	RUN_MATH: "runMathCommand",
 	JUMBO_EMOJI: "jumboEmoji",
 	RUN_EXTENSION: "runExtension",
+	RUN_TIMER_EXTENSION: "runTimerExtension",
 };
 
 /**

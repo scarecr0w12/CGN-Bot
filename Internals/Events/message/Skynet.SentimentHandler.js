@@ -63,7 +63,7 @@ class SentimentHandler extends BaseEvent {
 		this.client.logMessage(
 			serverDocument,
 			LoggingLevels.INFO,
-			`Sentiment violation detected from "${msg.author.tag}": ${actionResult.reasons.join(", ")}`,
+			`Sentiment violation detected from "${msg.author.username}": ${actionResult.reasons.join(", ")}`,
 			msg.channel.id,
 			msg.author.id,
 		);
@@ -202,7 +202,7 @@ class SentimentHandler extends BaseEvent {
 					fields: [
 						{
 							name: "User",
-							value: `${msg.author.tag} (${msg.author.id})`,
+							value: `${msg.author.username} (${msg.author.id})`,
 							inline: true,
 						},
 						{

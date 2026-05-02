@@ -222,7 +222,7 @@ class Member {
 	 * Ban this member from the guild.
 	 * @param {Object} [options] - Ban options
 	 * @param {String} [options.reason] - Reason for the ban
-	 * @param {Number} [options.deleteMessageDays] - Days of messages to delete (0-7)
+	 * @param {Number} [options.deleteMessageDays] - Days of messages to delete (0-7, converted to seconds internally)
 	 * @returns {Promise<Member>}
 	 * @scope ban
 	 */
@@ -231,7 +231,7 @@ class Member {
 		ScopeManager.check(scopes, Scopes.ban.scope);
 		await member.ban({
 			reason: options.reason,
-			deleteMessageDays: options.deleteMessageDays,
+			deleteMessageSeconds: options.deleteMessageDays ? options.deleteMessageDays * 86400 : undefined,
 		}).catch(serializeError);
 		return this;
 	}

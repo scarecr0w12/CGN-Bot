@@ -209,9 +209,9 @@ module.exports = {
 			.sort((a, b) => a.rawPosition - b.rawPosition);
 	},
 
-	getUserList: list => list.filter(usr => usr.bot !== true).map(usr => `${usr.username}#${usr.discriminator}`).sort(),
+	getUserList: list => list.filter(usr => usr.bot !== true).map(usr => usr.username).sort(),
 
-	findQueryUser: (query, guild) => guild.fetchMember(query, true),
+	findQueryUser: (query, svr) => svr.fetchMember(query, true),
 
 	generateCodeID: code => require("crypto")
 		.createHash("md5")

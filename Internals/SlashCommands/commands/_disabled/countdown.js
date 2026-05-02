@@ -39,7 +39,7 @@ module.exports = {
 					`**Time:** <t:${timestamp}:F>`,
 					`**Remaining:** <t:${timestamp}:R>`,
 				].join("\n"),
-				footer: { text: `Set by ${interaction.user.tag}` },
+				footer: { text: `Set by ${interaction.user.username}` },
 			}],
 		});
 	},

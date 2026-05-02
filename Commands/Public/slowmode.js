@@ -41,7 +41,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	// Disable slowmode
 	if (["off", "disable", "0", "none", "clear"].includes(input)) {
 		try {
-			await msg.channel.setRateLimitPerUser(0, `Slowmode disabled by ${msg.author.tag}`);
+			await msg.channel.setRateLimitPerUser(0, `Slowmode disabled by ${msg.author.username}`);
 			return msg.send({
 				embeds: [{
 					color: Colors.SUCCESS,
@@ -118,7 +118,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 	}
 
 	try {
-		await msg.channel.setRateLimitPerUser(seconds, `Slowmode set by ${msg.author.tag}`);
+		await msg.channel.setRateLimitPerUser(seconds, `Slowmode set by ${msg.author.username}`);
 		const formatted = formatDuration(seconds);
 		return msg.send({
 			embeds: [{

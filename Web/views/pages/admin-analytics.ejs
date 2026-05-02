@@ -531,99 +531,139 @@
 	<%- include('../partials/scroll-top-button') %>
 
 	<script>
-	document.addEventListener('turbolinks:load', function() {
-		// Tab switching
-		document.querySelectorAll('.tabs li').forEach(tab => {
-			tab.addEventListener('click', function() {
-				const tabId = this.dataset.tab;
-				
-				// Update active tab
-				document.querySelectorAll('.tabs li').forEach(t => t.classList.remove('is-active'));
-				this.classList.add('is-active');
-				
-				// Update content
-				document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('is-active'));
-				document.getElementById('tab-' + tabId).classList.add('is-active');
-			});
-		});
+	(function() {
+		const pageKey = 'admin-analytics';
+		const hasAnalytics = <%- JSON.stringify(!!pageData.hasAnalytics) %>;
+		const analyticsData = <%- JSON.stringify(pageData.analytics || {}) %>;
 
-		<% if (pageData.hasAnalytics) { %>
-		// Message Distribution Chart
-		const msgDistCtx = document.getElementById('messageDistChart');
-		if (msgDistCtx) {
-			new Chart(msgDistCtx.getContext('2d'), {
-				type: 'doughnut',
-				data: {
-					labels: ['No Messages', '1-50', '51-200', '201-500', '500+'],
-					datasets: [{
-						data: [
-							<%= pageData.analytics.memberActivity.messageDistribution?.none || 0 %>,
-							<%= pageData.analytics.memberActivity.messageDistribution?.low || 0 %>,
-							<%= pageData.analytics.memberActivity.messageDistribution?.medium || 0 %>,
-							<%= pageData.analytics.memberActivity.messageDistribution?.high || 0 %>,
-							<%= pageData.analytics.memberActivity.messageDistribution?.veryHigh || 0 %>
-						],
-						backgroundColor: ['#bdc3c7', '#3498db', '#2ecc71', '#f39c12', '#e74c3c'],
-						borderWidth: 0
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: { legend: { position: 'bottom' } }
-				}
+		function initializeAnalyticsPage() {
+			if (document.body.dataset.analyticsInitialized === pageKey) {
+				return;
+			}
+
+			document.body.dataset.analyticsInitialized = pageKey;
+
+			const chartInstances = {};
+			const tabs = document.querySelectorAll('.tabs li');
+			const panels = document.querySelectorAll('.tab-content');
+
+			function showTab(tabId) {
+				tabs.forEach(tab => tab.classList.toggle('is-active', tab.dataset.tab === tabId));
+				panels.forEach(panel => panel.classList.toggle('is-active', panel.id === 'tab-' + tabId));
+				requestAnimationFrame(() => {
+					Object.values(chartInstances).forEach(chart => chart && chart.resize());
+				});
+			}
+
+			tabs.forEach(tab => {
+				tab.addEventListener('click', function() {
+					showTab(this.dataset.tab);
+				});
 			});
+
+			if (hasAnalytics) {
+			const memberActivity = analyticsData.memberActivity || {};
+			const messageDistribution = memberActivity.messageDistribution || {};
+			const channelActivity = analyticsData.channelActivity || {};
+			const commandStats = analyticsData.commandStats || {};
+			const messageDistributionData = [
+				messageDistribution.none || 0,
+				messageDistribution.low || 0,
+				messageDistribution.medium || 0,
+				messageDistribution.high || 0,
+				messageDistribution.veryHigh || 0
+			];
+			const channelData = channelActivity.topChannels || [];
+			const commandData = commandStats.topCommands || [];
+
+			function upsertChart(key, elementId, factory) {
+				const canvas = document.getElementById(elementId);
+				if (!canvas || typeof Chart === 'undefined') {
+					return;
+				}
+
+				if (chartInstances[key]) {
+					chartInstances[key].destroy();
+				}
+
+				chartInstances[key] = factory(canvas.getContext('2d'));
+			}
+
+			function renderCharts() {
+				upsertChart('messageDistChart', 'messageDistChart', ctx => new Chart(ctx, {
+					type: 'doughnut',
+					data: {
+						labels: ['No Messages', '1-50', '51-200', '201-500', '500+'],
+						datasets: [{
+							data: messageDistributionData,
+							backgroundColor: ['#bdc3c7', '#3498db', '#2ecc71', '#f39c12', '#e74c3c'],
+							borderWidth: 0
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: { legend: { position: 'bottom' } }
+					}
+				}));
+
+				upsertChart('channelChart', 'channelChart', ctx => new Chart(ctx, {
+					type: 'bar',
+					data: {
+						labels: channelData.slice(0, 8).map(c => '#' + c.name),
+						datasets: [{
+							label: 'Messages',
+							data: channelData.slice(0, 8).map(c => c.messages),
+							backgroundColor: 'rgba(50, 115, 220, 0.8)',
+							borderRadius: 6
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						indexAxis: 'y',
+						plugins: { legend: { display: false } }
+					}
+				}));
+
+				upsertChart('commandPieChart', 'commandPieChart', ctx => new Chart(ctx, {
+					type: 'pie',
+					data: {
+						labels: commandData.slice(0, 10).map(c => c.name),
+						datasets: [{
+							data: commandData.slice(0, 10).map(c => c.count),
+							backgroundColor: [
+								'#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
+								'#1abc9c', '#e67e22', '#34495e', '#7f8c8d', '#d35400'
+							]
+						}]
+					},
+					options: {
+						responsive: true,
+						maintainAspectRatio: false,
+						plugins: { legend: { position: 'right' } }
+					}
+				}));
+
+				requestAnimationFrame(() => {
+					Object.values(chartInstances).forEach(chart => chart && chart.resize());
+				});
+			}
+
+			if (typeof Chart === 'undefined') {
+				window.addEventListener('load', renderCharts, { once: true });
+			} else {
+				renderCharts();
+			}
+			}
+
+			const activeTab = document.querySelector('.tabs li.is-active');
+			showTab(activeTab ? activeTab.dataset.tab : 'overview');
 		}
 
-		// Channel Activity Chart
-		const channelCtx = document.getElementById('channelChart');
-		if (channelCtx) {
-			const channelData = <%- JSON.stringify(pageData.analytics.channelActivity.topChannels || []) %>;
-			new Chart(channelCtx.getContext('2d'), {
-				type: 'bar',
-				data: {
-					labels: channelData.slice(0, 8).map(c => '#' + c.name),
-					datasets: [{
-						label: 'Messages',
-						data: channelData.slice(0, 8).map(c => c.messages),
-						backgroundColor: 'rgba(50, 115, 220, 0.8)',
-						borderRadius: 6
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					indexAxis: 'y',
-					plugins: { legend: { display: false } }
-				}
-			});
-		}
-
-		// Command Usage Pie Chart
-		const cmdPieCtx = document.getElementById('commandPieChart');
-		if (cmdPieCtx) {
-			const cmdData = <%- JSON.stringify(pageData.analytics.commandStats.topCommands || []) %>;
-			new Chart(cmdPieCtx.getContext('2d'), {
-				type: 'pie',
-				data: {
-					labels: cmdData.slice(0, 10).map(c => c.name),
-					datasets: [{
-						data: cmdData.slice(0, 10).map(c => c.count),
-						backgroundColor: [
-							'#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6',
-							'#1abc9c', '#e67e22', '#34495e', '#7f8c8d', '#d35400'
-						]
-					}]
-				},
-				options: {
-					responsive: true,
-					maintainAspectRatio: false,
-					plugins: { legend: { position: 'right' } }
-				}
-			});
-		}
-		<% } %>
-	});
+		document.addEventListener('DOMContentLoaded', initializeAnalyticsPage);
+		document.addEventListener('turbolinks:load', initializeAnalyticsPage);
+	})();
 	</script>
 </body>
 </html>

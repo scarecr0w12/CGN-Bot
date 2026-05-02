@@ -56,7 +56,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					url: serverDocument.config.ban_gif,
 				},
 				color: Colors.SUCCESS,
-				description: `Bye-Bye **@${isGuildMember ? client.getName(serverDocument, member) : `${member.tag}`}** 🔨`,
+				description: `Bye-Bye **@${isGuildMember ? client.getName(serverDocument, member) : `${member.username}`}** 🔨`,
 			}],
 		});
 		const dmBanned = async id => {
@@ -74,7 +74,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 								},
 								{
 									name: `Moderator`,
-									value: `@${msg.author.tag}`,
+									value: `@${msg.author.username}`,
 									inline: true,
 								},
 							],
@@ -93,7 +93,7 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 				embeds: [{
 					color: Colors.INPUT,
 					title: `Waiting on @__${client.getName(serverDocument, msg.member)}__'s input...`,
-					description: `${isJustUserID ? `Are you sure you want to ban **@${isGuildMember ? `${client.getName(serverDocument, member)} (${member})` : member.tag}**?` : `Are you sure you want to ban **@${client.getName(serverDocument, member)} (${member})**?`}\n\nThey will be banned for\`\`\`css\n${reason}\`\`\``,
+					description: `${isJustUserID ? `Are you sure you want to ban **@${isGuildMember ? `${client.getName(serverDocument, member)} (${member})` : member.username}**?` : `Are you sure you want to ban **@${client.getName(serverDocument, member)} (${member})**?`}\n\nThey will be banned for\`\`\`css\n${reason}\`\`\``,
 					footer: {
 						text: `They won't be able to join again until they get unbanned!`,
 					},
@@ -118,9 +118,9 @@ module.exports = async ({ client, Constants: { Colors, Text }, configJS }, { ser
 					if (configJS && configJS.yesStrings && configJS.yesStrings.includes(message.content.toLowerCase().trim())) {
 						await dmBanned(member.id);
 						if (isGuildMember) {
-							await member.ban({ deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.tag}` });
+							await member.ban({ deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.username}` });
 						} else {
-							await msg.guild.members.ban(member.id, { deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.tag}` });
+							await msg.guild.members.ban(member.id, { deleteMessageSeconds: days * 86400, reason: `${reason} | Command issued by @${msg.author.username}` });
 						}
 						await CreateModLog(msg.guild, "Ban", member, msg.author, reason);
 						return banned();

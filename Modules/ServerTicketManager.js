@@ -22,6 +22,30 @@ class ServerTicketManager {
 		this.client = client;
 	}
 
+	ensureTicketConfig (serverDocument) {
+		if (!serverDocument.tickets) {
+			serverDocument.tickets = {};
+		}
+
+		if (!Array.isArray(serverDocument.tickets.categories)) {
+			serverDocument.tickets.categories = [];
+		}
+
+		if (!Array.isArray(serverDocument.tickets.panels)) {
+			serverDocument.tickets.panels = [];
+		}
+
+		if (!Array.isArray(serverDocument.tickets.support_roles)) {
+			serverDocument.tickets.support_roles = [];
+		}
+
+		if (!serverDocument.tickets.auto_close) {
+			serverDocument.tickets.auto_close = {};
+		}
+
+		return serverDocument.tickets;
+	}
+
 	/**
 	 * Check if a server has the ticket system enabled and is Tier 2+
 	 * @param {Document} serverDocument
@@ -41,7 +65,8 @@ class ServerTicketManager {
 	 * @returns {number}
 	 */
 	async getNextTicketNumber (serverDocument) {
-		const currentNumber = serverDocument.tickets?.next_ticket_number || 1;
+		const ticketConfig = this.ensureTicketConfig(serverDocument);
+		const currentNumber = ticketConfig.next_ticket_number || 1;
 		serverDocument.query.set("tickets.next_ticket_number", currentNumber + 1);
 		await serverDocument.save();
 		return currentNumber;
@@ -57,7 +82,7 @@ class ServerTicketManager {
 	 * @returns {Promise<Object>} Created ticket data
 	 */
 	async createTicket (guild, serverDocument, member, categoryId = "general", reason = "") {
-		const ticketConfig = serverDocument.tickets;
+		const ticketConfig = this.ensureTicketConfig(serverDocument);
 
 		// Check max tickets per user
 		const userTickets = await global.ServerTickets.find({
@@ -122,7 +147,7 @@ class ServerTicketManager {
 			type: ChannelType.GuildText,
 			parent: parentCategory?.id,
 			permissionOverwrites,
-			topic: `Ticket #${ticketNumber} - ${member.user.tag} - ${category.name}`,
+			topic: `Ticket #${ticketNumber} - ${member.user.username} - ${category.name}`,
 		});
 
 		// Create ticket in database
@@ -149,7 +174,7 @@ class ServerTicketManager {
 		});
 
 		// Create system message
-		await this.addSystemMessage(ticket, member.id, "opened", `Ticket opened by ${member.user.tag}`);
+		await this.addSystemMessage(ticket, member.id, "opened", `Ticket opened by ${member.user.username}`);
 
 		// Send welcome embed
 		const welcomeMessage = category.welcome_message || ticketConfig.default_welcome_message ||
@@ -302,7 +327,7 @@ class ServerTicketManager {
 		}
 
 		await ticket.save();
-		await this.addSystemMessage(ticket, staffMember.id, "claimed", `Claimed by ${staffMember.user.tag}`);
+		await this.addSystemMessage(ticket, staffMember.id, "claimed", `Claimed by ${staffMember.user.username}`);
 
 		return ticket;
 	}
@@ -338,7 +363,7 @@ class ServerTicketManager {
 			await ticket.save();
 		}
 
-		await this.addSystemMessage(ticket, userToAdd.id, "user_added", `${userToAdd.tag} was added`);
+		await this.addSystemMessage(ticket, userToAdd.id, "user_added", `${userToAdd.username} was added`);
 		return ticket;
 	}
 
@@ -367,7 +392,7 @@ class ServerTicketManager {
 		ticket.query.set("updated_at", new Date());
 		await ticket.save();
 
-		await this.addSystemMessage(ticket, userToRemove.id, "user_removed", `${userToRemove.tag} was removed`);
+		await this.addSystemMessage(ticket, userToRemove.id, "user_removed", `${userToRemove.username} was removed`);
 		return ticket;
 	}
 
@@ -490,7 +515,7 @@ class ServerTicketManager {
 	 * Create a ticket panel embed with buttons
 	 */
 	async createPanel (guild, serverDocument, channel, options = {}) {
-		const ticketConfig = serverDocument.tickets;
+		const ticketConfig = this.ensureTicketConfig(serverDocument);
 		const categories = ticketConfig.categories || [];
 
 		const embed = new EmbedBuilder()
@@ -535,7 +560,7 @@ class ServerTicketManager {
 		const message = await channel.send({ embeds: [embed], components: rows });
 
 		// Save panel to config
-		const panels = ticketConfig.panels || [];
+		const panels = [...ticketConfig.panels];
 		panels.push({
 			_id: panelId,
 			channel_id: channel.id,
@@ -546,7 +571,7 @@ class ServerTicketManager {
 			category_ids: categories.map(c => c._id),
 			created_at: new Date(),
 		});
-		serverDocument.query.set("tickets.panels", panels);
+		ticketConfig.panels = panels;
 		await serverDocument.save();
 
 		return { panelId, message };

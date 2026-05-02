@@ -152,7 +152,7 @@ module.exports = async (main, documents, msg, commandData) => {
 			fields: [
 				{ name: "Style", value: style.charAt(0).toUpperCase() + style.slice(1), inline: true },
 			],
-			footer: { text: `Generated for ${msg.author.tag}` },
+			footer: { text: `Generated for ${msg.author.username}` },
 			timestamp: new Date().toISOString(),
 		};
 

@@ -191,6 +191,22 @@ module.exports = async (main, documents, msg, commandData) => {
 				break;
 			}
 
+			case "fetch": {
+				const url = args.slice(1).join(" ").trim();
+				if (!url) {
+					return msg.channel.send("Please provide a URL to fetch.");
+				}
+
+				const result = await aiManager.toolRegistry.execute("webfetch", {
+					serverDocument,
+					user: msg.author,
+					params: { url },
+				});
+
+				await msg.channel.send(result.substring(0, 2000));
+				break;
+			}
+
 			case "help":
 			default: {
 				const prefix = serverDocument.config.command_prefix || configJS.commandPrefix;
@@ -200,11 +216,14 @@ module.exports = async (main, documents, msg, commandData) => {
 					`\`${prefix}ai stream <message>\` - Chat with streaming response`,
 					`\`${prefix}ai clear\` - Clear conversation memory`,
 					`\`${prefix}ai search <query>\` - Search the web`,
+					`\`${prefix}ai fetch <url>\` - Read a web page`,
 					`\`${prefix}ai variables\` - Show available template variables`,
 					`\`${prefix}ai stats\` - View usage statistics (admin)`,
 					"",
 					"**Tips:**",
 					"• The AI remembers recent conversation context",
+					"• Pasting a URL into normal AI chat now lets it read that page automatically",
+					"• Asking it to search online now injects live web search results automatically",
 					"• Use variables like `{{user}}` in your messages",
 					"• Admins can configure AI settings in the dashboard",
 				];

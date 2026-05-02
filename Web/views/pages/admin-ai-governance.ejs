@@ -179,6 +179,22 @@
 										</label>
 									</td>
 								</tr>
+								<tr>
+									<td><code>webfetch</code></td>
+									<td>Fetch and read the contents of a web page from a URL</td>
+									<td>
+										<label class="checkbox">
+											<input name="tools-allow-webfetch" type="checkbox"
+												<%= configData.ai.governance.tools.allow.includes('webfetch') ? 'checked' : '' %>>
+										</label>
+									</td>
+									<td>
+										<label class="checkbox">
+											<input name="tools-deny-webfetch" type="checkbox"
+												<%= configData.ai.governance.tools.deny.includes('webfetch') ? 'checked' : '' %>>
+										</label>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 						<p class="help">If neither is checked, the tool is enabled by default. Deny takes precedence over Allow.</p>

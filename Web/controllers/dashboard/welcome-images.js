@@ -279,7 +279,7 @@ module.exports = {
 			const mockMember = {
 				user: {
 					username: req.user.username || "TestUser",
-					tag: req.user.tag || "TestUser#0000",
+					tag: req.user.username || "TestUser",
 					discriminator: req.user.discriminator || "0000",
 					displayAvatarURL: () => req.user.avatar || "https://cdn.discordapp.com/embed/avatars/0.png",
 				},

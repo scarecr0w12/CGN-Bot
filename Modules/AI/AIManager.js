@@ -10,6 +10,9 @@ const RateLimiter = require("./RateLimiter");
 const UsageTracker = require("./UsageTracker");
 const ToolRegistry = require("./tools/ToolRegistry");
 
+const URL_REGEX = /https?:\/\/[^\s)]+/gi;
+const SEARCH_INTENT_REGEX = /\b(search|look\s*up|find|check online|search online|search the web|look on the web|browse for|google)\b/i;
+
 class AIManager {
 	/**
 	 * @param {Object} client - The Discord client instance
@@ -439,6 +442,91 @@ class AIManager {
 		});
 	}
 
+	_extractUrls (message) {
+		if (!message || typeof message !== "string") {
+			return [];
+		}
+
+		const matches = message.match(URL_REGEX) || [];
+		return Array.from(new Set(matches.map(url => url.replace(/[)>.,!?]+$/g, ""))));
+	}
+
+	_shouldUseWebSearch (message) {
+		if (!message || typeof message !== "string") {
+			return false;
+		}
+
+		if (this._extractUrls(message).length > 0) {
+			return false;
+		}
+
+		return SEARCH_INTENT_REGEX.test(message);
+	}
+
+	_extractSearchQuery (message) {
+		if (!message || typeof message !== "string") {
+			return "";
+		}
+
+		return message
+			.replace(SEARCH_INTENT_REGEX, "")
+			.replace(/^[\s:,-]+/, "")
+			.trim() || message.trim();
+	}
+
+	async _injectToolContext (messages, serverDocument, user, message) {
+		const toolOutputs = [];
+		const urls = this._extractUrls(message).slice(0, 2);
+
+		for (const url of urls) {
+			try {
+				const result = await this.toolRegistry.execute("webfetch", {
+					serverDocument,
+					user,
+					params: { url },
+				});
+
+				if (result) {
+					toolOutputs.push(`[Tool: webfetch]\n${result}`);
+				}
+			} catch (error) {
+				toolOutputs.push(`[Tool: webfetch]\nFailed to fetch ${url}: ${error.message}`);
+			}
+		}
+
+		if (this._shouldUseWebSearch(message)) {
+			const query = this._extractSearchQuery(message);
+
+			if (query) {
+				try {
+					const result = await this.toolRegistry.execute("websearch", {
+						serverDocument,
+						user,
+						params: { query, limit: 5 },
+					});
+
+					if (result) {
+						toolOutputs.push(`[Tool: websearch]\n${result}`);
+					}
+				} catch (error) {
+					toolOutputs.push(`[Tool: websearch]\nSearch failed for \"${query}\": ${error.message}`);
+				}
+			}
+		}
+
+		if (toolOutputs.length === 0) {
+			return messages;
+		}
+
+		return [
+			...messages,
+			{
+				role: "system",
+				content: `Use this live web context if it is relevant to the user's request. Prefer these tool results over stale knowledge when answering current-events or URL-specific questions.\n\n${toolOutputs.join("\n\n")}`,
+			},
+		];
+	}
+
 	/**
 	 * Perform a chat completion
 	 * @param {Object} options - Chat options
@@ -480,7 +568,8 @@ class AIManager {
 		const resolvedMessage = this.resolveVariables(message, serverDocument, channel, user);
 
 		// Build context (pass current message for vector memory search)
-		const messages = await this.buildContext(serverDocument, channel.id, user, resolvedMessage);
+		let messages = await this.buildContext(serverDocument, channel.id, user, resolvedMessage);
+		messages = await this._injectToolContext(messages, serverDocument, user, resolvedMessage);
 
 		// Add current user message with explicit marker for clarity
 		messages.push({
@@ -605,7 +694,7 @@ class AIManager {
 			"{{user}}": user.username,
 			"{{user.id}}": user.id,
 			"{{user.mention}}": `<@${user.id}>`,
-			"{{user.tag}}": user.tag || user.username,
+			"{{user.tag}}": user.username,
 			"{{channel}}": channel.name,
 			"{{channel.id}}": channel.id,
 			"{{server}}": serverDocument._id,

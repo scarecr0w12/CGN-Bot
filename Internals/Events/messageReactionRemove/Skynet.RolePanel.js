@@ -66,7 +66,7 @@ class RolePanelReactionRemove extends BaseEvent {
 			// Remove role
 			await member.roles.remove(role, "Role panel reaction removed");
 
-			logger.verbose(`Removed role ${role.name} from ${user.tag} via reaction panel`, {
+			logger.verbose(`Removed role ${role.name} from ${user.username} via reaction panel`, {
 				svrid: guild.id,
 				usrid: user.id,
 			});

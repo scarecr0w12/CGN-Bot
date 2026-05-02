@@ -65,9 +65,9 @@ class SpamHandler extends BaseEvent {
 				// First-time spam filter violation
 				if (spamDocument.val.message_count === serverDocument.config.moderation.filters.spam_filter.message_sensitivity) {
 					// eslint-disable-next-line max-len
-					logger.verbose(`Handling first-time spam from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}" `, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+					logger.verbose(`Handling first-time spam from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}" `, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 					this.client.logMessage(serverDocument, LoggingLevels.INFO,
-						`Handling first-time spam from member "${msg.author.tag}" in channel "${msg.channel.name}".`, msg.channel.id, msg.author.id);
+						`Handling first-time spam from member "${msg.author.username}" in channel "${msg.channel.name}".`, msg.channel.id, msg.author.id);
 					// Message user and tell them to stop
 					msg.author.send({
 						embeds: [{
@@ -104,9 +104,9 @@ class SpamHandler extends BaseEvent {
 				} else if (spamDocument.val.message_count === serverDocument.config.moderation.filters.spam_filter.message_sensitivity * 2) {
 					// Second-time spam filter violation
 					// eslint-disable-next-line max-len
-					logger.verbose(`Handling second-time spam from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}" `, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+					logger.verbose(`Handling second-time spam from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}" `, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 					this.client.logMessage(serverDocument, LoggingLevels.INFO,
-						`Handling second-time spam from member "${msg.author.tag}" in channel "${msg.channel.name}".`, msg.channel.id, msg.author.id);
+						`Handling second-time spam from member "${msg.author.username}" in channel "${msg.channel.name}".`, msg.channel.id, msg.author.id);
 
 					// Delete spam messages if necessary
 					if (serverDocument.config.moderation.filters.spam_filter.delete_messages) {
@@ -124,7 +124,7 @@ class SpamHandler extends BaseEvent {
 								msg.channel.bulkDelete(filteredMessages, true);
 							} catch (err) {
 								// eslint-disable-next-line max-len
-								logger.verbose(`Failed to delete spam messages from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
+								logger.verbose(`Failed to delete spam messages from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 							}
 						}
 					}

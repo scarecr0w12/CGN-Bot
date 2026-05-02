@@ -234,7 +234,7 @@ module.exports = {
 
 			await channel.permissionOverwrites.edit(everyoneRole, {
 				SendMessages: lock ? false : null,
-			}, { reason: `${lock ? "Locked" : "Unlocked"} by ${interaction.user.tag}` });
+			}, { reason: `${lock ? "Locked" : "Unlocked"} by ${interaction.user.username}` });
 
 			await interaction.reply({
 				embeds: [{
@@ -251,7 +251,7 @@ module.exports = {
 		if (subcommand === "set") {
 			const channel = interaction.options.getChannel("channel") || interaction.channel;
 
-			await channel.setRateLimitPerUser(seconds, `Set by ${interaction.user.tag}`);
+			await channel.setRateLimitPerUser(seconds, `Set by ${interaction.user.username}`);
 
 			await interaction.reply({
 				embeds: [{
@@ -453,7 +453,7 @@ module.exports = {
 				nsfw,
 				rateLimitPerUser,
 				permissionOverwrites,
-				reason: `Channel nuked by ${interaction.user.tag}`,
+				reason: `Channel nuked by ${interaction.user.username}`,
 			});
 
 			await newChannel.send({
@@ -461,7 +461,7 @@ module.exports = {
 					color: 0x57F287,
 					title: "💥 Channel Nuked",
 					description: "This channel has been nuked and recreated.",
-					footer: { text: `By ${interaction.user.tag}` },
+					footer: { text: `By ${interaction.user.username}` },
 				}],
 			});
 		} catch {

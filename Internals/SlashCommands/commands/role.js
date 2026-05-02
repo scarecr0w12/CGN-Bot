@@ -88,11 +88,11 @@ module.exports = {
 				}
 
 				try {
-					await member.roles.add(role, `Added by @${interaction.user.tag}`);
+					await member.roles.add(role, `Added by @${interaction.user.username}`);
 					return interaction.reply({
 						embeds: [{
 							color: 0x00FF00,
-							description: `Added ${role} to **@${user.tag}**`,
+							description: `Added ${role} to **@${user.username}**`,
 						}],
 					});
 				} catch (err) {
@@ -124,11 +124,11 @@ module.exports = {
 				}
 
 				try {
-					await member.roles.remove(role, `Removed by @${interaction.user.tag}`);
+					await member.roles.remove(role, `Removed by @${interaction.user.username}`);
 					return interaction.reply({
 						embeds: [{
 							color: 0x00FF00,
-							description: `Removed ${role} from **@${user.tag}**`,
+							description: `Removed ${role} from **@${user.username}**`,
 						}],
 					});
 				} catch (err) {

@@ -25,7 +25,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 		}
 		if (response && configJS.yesStrings.includes(response.content.toLowerCase().trim())) {
 			let success = true;
-			await msg.channel.delete(`Room Management | Command issued by ${msg.author.tag}`).catch(err => {
+			await msg.channel.delete(`Room Management | Command issued by ${msg.author.username}`).catch(err => {
 				success = false;
 				logger.debug(`Failed to delete room '${msg.channel.name}' on server '${msg.guild.name}'`, { svrid: msg.guild.id, chid: msg.channel.id }, err);
 				question.edit({
@@ -86,7 +86,7 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 					// Discord.js v14: use permissionOverwrites.edit instead of updateOverwrite
 					msg.channel.permissionOverwrites.edit(member, {
 						ViewChannel: true,
-					}, { reason: `Room Management | Command issued by ${msg.member.tag}` }).catch(err => {
+					}, { reason: `Room Management | Command issued by ${msg.member.username}` }).catch(err => {
 						logger.debug(`Failed to add member '${member.user.username}' to room '${msg.channel.name}' on server '${msg.guild.name}'`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: member.id }, err);
 					});
 				}));
@@ -152,10 +152,10 @@ module.exports = async ({ Constants: { Colors, Text }, client }, { serverDocumen
 			}));
 
 			const channel = await msg.guild.channels.create(`talk-room-${Date.now()}`, {
-				reason: `Room Management | Command issued by ${msg.author.tag}`,
+				reason: `Room Management | Command issued by ${msg.author.username}`,
 				type,
 				parent: serverDocument.config.room_category,
-				topic: `Talk Room created by ${msg.author.tag}`,
+				topic: `Talk Room created by ${msg.author.username}`,
 				permissionOverwrites: [{
 					id: msg.guild.id,
 					type: "role",

@@ -60,7 +60,7 @@ const messageHandler = (guild, settings, respond) => {
 			if (discriminatorQuery) {
 				usr = usrs.find(a => (a.user || a).discriminator === discriminatorQuery);
 			} else if (usrs.size > 0) {
-				usr = usrs.first();
+				usr = usrs.values().next().value;
 			}
 		}
 

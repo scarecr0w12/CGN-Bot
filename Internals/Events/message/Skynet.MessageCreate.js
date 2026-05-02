@@ -35,7 +35,7 @@ class MessageCreate extends BaseEvent {
 				logger.silly(`Ignoring self-message.`, { msgid: msg.id });
 				return false;
 			} else {
-				logger.verbose(`Ignored ${msg.author.tag}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: isUserBlocked });
+				logger.verbose(`Ignored ${msg.author.username}.`, { msgid: msg.id, usrid: msg.author.id, globallyBlocked: isUserBlocked });
 				return false;
 			}
 		}
@@ -96,7 +96,7 @@ class MessageCreate extends BaseEvent {
 						embeds: [{
 							color: Colors.INFO,
 							author: {
-								name: `${msg.author.tag} just sent me a PM!`,
+								name: `${msg.author.username} just sent me a PM!`,
 								icon_url: msg.author.displayAvatarURL(),
 							},
 							description: `${url !== "" ? `The message was too large! You can read it [here](${url}). 📨` : `\`\`\`${msg.content}\`\`\``}`,
@@ -199,7 +199,7 @@ class MessageCreate extends BaseEvent {
 						try {
 							await msg.delete();
 						} catch (err) {
-							logger.verbose(`Failed to delete filtered message from member "${msg.author.tag}" in channel ${msg.channel.name} on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
+							logger.verbose(`Failed to delete filtered message from member "${msg.author.username}" in channel ${msg.channel.name} on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 							this.client.logMessage(serverDocument, LoggingLevels.WARN, `I failed to delete a message containing a filtered word x.x`, msg.channel.id, msg.author.id);
 						}
 					}
@@ -224,14 +224,14 @@ class MessageCreate extends BaseEvent {
 
 					// Check if mention count is higher than threshold
 					if (totalMentions > serverDocument.config.moderation.filters.mention_filter.mention_sensitivity) {
-						logger.verbose(`Handling mention spam from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
+						logger.verbose(`Handling mention spam from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id });
 
 						// Delete message if necessary
 						if (serverDocument.config.moderation.filters.mention_filter.delete_message) {
 							try {
 								await msg.delete();
 							} catch (err) {
-								logger.debug(`Failed to delete filtered mention spam message from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
+								logger.debug(`Failed to delete filtered mention spam message from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
 							}
 						}
 
@@ -259,14 +259,14 @@ class MessageCreate extends BaseEvent {
 							// Detect the language (not always accurate; used only to exclude English messages from being translated to English)
 							mstranslate.detect({ text: msg.cleanContent }, (err, res) => {
 								if (err) {
-									logger.debug(`Failed to auto-detect language for message "${msg.cleanContent}" from member "${msg.author.tag}" on server "${msg.guild}"`, { svrid: msg.guild.id, usrid: msg.author.id }, err);
-									this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to auto-detect language for message "${msg.cleanContent}" from member "${msg.author.tag}"`, msg.channel.id, msg.author.id);
+									logger.debug(`Failed to auto-detect language for message "${msg.cleanContent}" from member "${msg.author.username}" on server "${msg.guild}"`, { svrid: msg.guild.id, usrid: msg.author.id }, err);
+									this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to auto-detect language for message "${msg.cleanContent}" from member "${msg.author.username}"`, msg.channel.id, msg.author.id);
 								} else if (res.toLowerCase() !== "en") {
 									// If the message is not in English, attempt to translate it from the language defined for the user
 									mstranslate.translate({ text: msg.cleanContent, from: translatedDocument.source_language, to: "EN" }, (translateErr, translateRes) => {
 										if (translateErr) {
-											logger.debug(`Failed to translate "${msg.cleanContent}" from member "${msg.author.tag}" on server "${msg.guild}"`, { svrid: msg.channel.guild.id, usrid: msg.author.id }, translateErr);
-											this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to translate "${msg.cleanContent}" from member "${msg.author.tag}"`, msg.channel.id, msg.author.id);
+											logger.debug(`Failed to translate "${msg.cleanContent}" from member "${msg.author.username}" on server "${msg.guild}"`, { svrid: msg.channel.guild.id, usrid: msg.author.id }, translateErr);
+											this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to translate "${msg.cleanContent}" from member "${msg.author.username}"`, msg.channel.id, msg.author.id);
 										} else {
 											msg.channel.send({
 												embeds: [{
@@ -318,8 +318,8 @@ class MessageCreate extends BaseEvent {
 										try {
 											await msg.delete();
 										} catch (err) {
-											logger.debug(`Failed to delete NSFW command message from member "${msg.author.tag}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
-											this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to delete NSFW command message from member "${msg.author.tag}" in channel "${msg.channel.name}"`, msg.channel.id, msg.author.id);
+											logger.debug(`Failed to delete NSFW command message from member "${msg.author.username}" in channel "${msg.channel.name}" on server "${msg.guild}"`, { svrid: msg.guild.id, chid: msg.channel.id, usrid: msg.author.id }, err);
+											this.client.logMessage(serverDocument, LoggingLevels.WARN, `Failed to delete NSFW command message from member "${msg.author.username}" in channel "${msg.channel.name}"`, msg.channel.id, msg.author.id);
 										}
 									}
 									// Handle this as a violation

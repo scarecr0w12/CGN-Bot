@@ -10,7 +10,7 @@ module.exports = async ({ client, Constants: { Colors } }, { serverDocument }, m
 		const embedObj = {
 			embeds: [{
 				color: Colors.LIGHT_ORANGE,
-				title: `Alert from ${msg.author.tag}`,
+				title: `Alert from ${msg.author.username}`,
 				description: `In #${msg.channel.name} (${msg.channel}) on **${msg.guild}**\n\`\`\`\n${msg.suffix}\`\`\``,
 				thumbnail: {
 					url: msg.author.displayAvatarURL(),

@@ -52,7 +52,7 @@ module.exports = async (main, documents, msg, commandData) => {
 				const thread = await msg.channel.threads.create({
 					name: threadName,
 					autoArchiveDuration: 60,
-					reason: `AI Thread created by ${msg.author.tag}`,
+					reason: `AI Thread created by ${msg.author.username}`,
 				});
 
 				// Send initial message in thread
@@ -61,7 +61,7 @@ module.exports = async (main, documents, msg, commandData) => {
 						color: 0x5865F2,
 						title: "🤖 AI Thread Started",
 						description: `**Topic:** ${topic}\n\nI'll respond to your messages in this thread. The conversation context will be preserved throughout our discussion.\n\nUse \`/aithread end\` to close this thread when done.`,
-						footer: { text: `Started by ${msg.author.tag}` },
+						footer: { text: `Started by ${msg.author.username}` },
 						timestamp: new Date().toISOString(),
 					}],
 				});

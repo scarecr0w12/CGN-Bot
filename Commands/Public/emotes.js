@@ -52,13 +52,13 @@ module.exports = async ({ client, Constants: { Colors } }, documents, msg, comma
 				if (rawEmoji.user) {
 					fields.push({
 						name: `Created by`,
-						value: `Name: **${rawEmoji.user.username}#${rawEmoji.user.discriminator}**\nID: \`${rawEmoji.user.id}\``,
+						value: `Name: **${rawEmoji.user.username}${rawEmoji.user.discriminator && rawEmoji.user.discriminator !== "0" ? `#${rawEmoji.user.discriminator}` : ""}**\nID: \`${rawEmoji.user.id}\``,
 						inline: true,
 					});
 				} else {
 					fields.push({
 						name: `Created by`,
-						value: `**Unknown User#0000**`,
+						value: `**Unknown User**`,
 						inline: true,
 					});
 				}

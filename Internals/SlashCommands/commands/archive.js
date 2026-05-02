@@ -27,7 +27,7 @@ module.exports = {
 				author: {
 					id: msg.author.id,
 					username: msg.author.username,
-					tag: msg.author.tag,
+					tag: msg.author.username,
 				},
 				content: msg.content,
 				timestamp: msg.createdTimestamp,

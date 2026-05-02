@@ -85,7 +85,7 @@ class TempRoleManager {
 
 		if (member && role && member.roles.cache.has(role.id)) {
 			await member.roles.remove(role, "Temporary role expired");
-			logger.info(`Removed expired temp role ${role.name} from ${member.user.tag}`, {
+			logger.info(`Removed expired temp role ${role.name} from ${member.user.username}`, {
 				svrid: guild.id,
 				usrid: member.id,
 			});

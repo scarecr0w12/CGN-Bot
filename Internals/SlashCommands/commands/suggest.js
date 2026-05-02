@@ -81,7 +81,7 @@ module.exports = {
 						title: `💡 Suggestion #${suggestionId}`,
 						description: suggestion,
 						author: {
-							name: interaction.user.tag,
+							name: interaction.user.username,
 							iconURL: interaction.user.displayAvatarURL(),
 						},
 						footer: { text: `User ID: ${interaction.user.id}` },

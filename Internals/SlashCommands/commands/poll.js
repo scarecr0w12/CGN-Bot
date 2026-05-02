@@ -172,7 +172,7 @@ module.exports = {
 				title: `📊 ${question}`,
 				description: optionsList,
 				fields: embedFields.length > 0 ? embedFields : undefined,
-				footer: { text: `Poll by ${interaction.user.tag} • React to vote!` },
+				footer: { text: `Poll by ${interaction.user.username} • React to vote!` },
 				timestamp: new Date().toISOString(),
 			}],
 			fetchReply: true,
@@ -390,7 +390,7 @@ module.exports = {
 					{ name: "Weight Role", value: `${weightRole} (${weight}x votes)`, inline: true },
 					{ name: "Ends", value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
 				],
-				footer: { text: `Weighted poll by ${interaction.user.tag} • React to vote!` },
+				footer: { text: `Weighted poll by ${interaction.user.username} • React to vote!` },
 			}],
 			fetchReply: true,
 		});
@@ -530,7 +530,7 @@ module.exports = {
 					{ name: "Options", value: String(options.length), inline: true },
 					{ name: "Ends", value: `<t:${Math.floor(endsAt.getTime() / 1000)}:R>`, inline: true },
 				],
-				footer: { text: `Ranked poll by ${interaction.user.tag}` },
+				footer: { text: `Ranked poll by ${interaction.user.username}` },
 			}],
 			fetchReply: true,
 		});

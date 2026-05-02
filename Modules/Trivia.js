@@ -59,7 +59,7 @@ module.exports = class Trivia {
 				.set("score", 0)
 				.set("responders", [])
 				.set("current_question", {});
-			client.logMessage(serverDocument, LoggingLevels.INFO, `User "${member.tag}" just started a trivia game in channel "${ch.name}"`, ch.id, member.id);
+			client.logMessage(serverDocument, LoggingLevels.INFO, `User "${member.user.username}" just started a trivia game in channel "${ch.name}"`, ch.id, member.id);
 			await msg.send({
 				embeds: [{
 					color: Colors.TRIVIA_START,
